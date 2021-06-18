@@ -250,7 +250,8 @@ class SdfAssetPath;
 ///
 ///
 ///
-class UsdGeomXformable : public UsdGeomImageable {
+class UsdGeomXformable : public UsdGeomImageable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -266,13 +267,15 @@ class UsdGeomXformable : public UsdGeomImageable {
   /// Equivalent to UsdGeomXformable::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomXformable(const UsdPrim &prim = UsdPrim()) : UsdGeomImageable(prim)
+  explicit UsdGeomXformable(const UsdPrim &prim = UsdPrim())
+    : UsdGeomImageable(prim)
   {}
 
   /// Construct a UsdGeomXformable on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomXformable(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomXformable(const UsdSchemaBase &schemaObj) : UsdGeomImageable(schemaObj)
+  explicit UsdGeomXformable(const UsdSchemaBase &schemaObj)
+    : UsdGeomImageable(schemaObj)
   {}
 
   /// Destructor.
@@ -381,9 +384,11 @@ class UsdGeomXformable : public UsdGeomImageable {
   /// change to the associated xformOp attributes. The class provides the
   /// convenience method IncludesXformOpAttr for this purpose.
   ///
-  class XformQuery {
+  class XformQuery
+  {
    public:
-    XformQuery() : _resetsXformStack(false)
+    XformQuery()
+      : _resetsXformStack(false)
     {}
 
     /// Constructs an XformQuery object for the given xformable prim.

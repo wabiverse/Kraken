@@ -53,9 +53,11 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Sdf_TimeSampleMapConverter {
+struct Sdf_TimeSampleMapConverter
+{
  public:
   static PyObject *convert(SdfTimeSampleMap const &c)
   {
@@ -64,7 +66,8 @@ struct Sdf_TimeSampleMapConverter {
   }
 };
 
-struct Sdf_RelocatesMapConverter {
+struct Sdf_RelocatesMapConverter
+{
  public:
   static PyObject *convert(SdfRelocatesMap const &c)
   {
@@ -73,7 +76,8 @@ struct Sdf_RelocatesMapConverter {
   }
 };
 
-struct Sdf_VariantSelectionMapConverter {
+struct Sdf_VariantSelectionMapConverter
+{
  public:
   Sdf_VariantSelectionMapConverter()
   {
@@ -106,27 +110,32 @@ struct Sdf_VariantSelectionMapConverter {
   static PyObject *_convert(PyObject *pyDict, SdfVariantSelectionMap *result)
   {
     extract<dict> dictProxy(pyDict);
-    if (!dictProxy.check()) {
+    if (!dictProxy.check())
+    {
       return NULL;
     }
     dict d = dictProxy();
 
     list keys = d.keys();
-    for (int i = 0, numKeys = len(d); i < numKeys; ++i) {
+    for (int i = 0, numKeys = len(d); i < numKeys; ++i)
+    {
       object pyKey = keys[i];
       extract<std::string> keyProxy(pyKey);
-      if (!keyProxy.check()) {
+      if (!keyProxy.check())
+      {
         return NULL;
       }
 
       object pyValue = d[pyKey];
       extract<std::string> valueProxy(pyValue);
-      if (!valueProxy.check()) {
+      if (!valueProxy.check())
+      {
         return NULL;
       }
 
       std::string key = keyProxy();
-      if (result) {
+      if (result)
+      {
         result->insert(std::make_pair(keyProxy(), valueProxy()));
       }
     }
@@ -135,7 +144,8 @@ struct Sdf_VariantSelectionMapConverter {
   }
 };
 
-class Sdf_VariantSelectionProxyWrap {
+class Sdf_VariantSelectionProxyWrap
+{
  public:
   typedef SdfVariantSelectionProxy Type;
   typedef Type::key_type key_type;
@@ -147,12 +157,15 @@ class Sdf_VariantSelectionProxyWrap {
 
   static void SetItem(Type &x, const key_type &key, const mapped_type &value)
   {
-    if (value.empty()) {
+    if (value.empty())
+    {
       x.erase(key);
     }
-    else {
+    else
+    {
       std::pair<iterator, bool> i = x.insert(value_type(key, value));
-      if (!i.second && i.first != iterator()) {
+      if (!i.second && i.first != iterator())
+      {
         i.first->second = value;
       }
     }
@@ -161,14 +174,17 @@ class Sdf_VariantSelectionProxyWrap {
   static mapped_type SetDefault(Type &x, const key_type &key, const mapped_type &def)
   {
     const_iterator i = x.find(key);
-    if (i != x.end()) {
+    if (i != x.end())
+    {
       return i->second;
     }
-    else if (!def.empty()) {
+    else if (!def.empty())
+    {
       SdfChangeBlock block;
       return x[key] = def;
     }
-    else {
+    else
+    {
       return def;
     }
   }
@@ -176,12 +192,14 @@ class Sdf_VariantSelectionProxyWrap {
   static void Update(Type &x, const std::vector<pair_type> &values)
   {
     SdfChangeBlock block;
-    TF_FOR_ALL(i, values)
+    TF_FOR_ALL (i, values)
     {
-      if (i->second.empty()) {
+      if (i->second.empty())
+      {
         x.erase(i->first);
       }
-      else {
+      else
+      {
         x[i->first] = i->second;
       }
     }
@@ -195,7 +213,8 @@ class Sdf_VariantSelectionProxyWrap {
   static void UpdateList(Type &x, const boost::python::list &pairs)
   {
     std::vector<pair_type> values;
-    for (int i = 0, n = len(pairs); i != n; ++i) {
+    for (int i = 0, n = len(pairs); i != n; ++i)
+    {
       values.push_back(pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
     }
     Update(x, values);
@@ -255,13 +274,16 @@ static string _UnregisteredValueRepr(const SdfUnregisteredValue &self)
 static int _UnregisteredValueHash(const SdfUnregisteredValue &self)
 {
   const VtValue &value = self.GetValue();
-  if (value.IsHolding<VtDictionary>()) {
+  if (value.IsHolding<VtDictionary>())
+  {
     return VtDictionaryHash()(value.Get<VtDictionary>());
   }
-  else if (value.IsHolding<std::string>()) {
+  else if (value.IsHolding<std::string>())
+  {
     return TfHash()(value.Get<std::string>());
   }
-  else {
+  else
+  {
     return 0;
   }
 }

@@ -28,7 +28,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static size_t __hash__(Tf_PyEnumWrapper const &self)
 {
@@ -39,7 +40,8 @@ static boost::python::object _GetValueFromFullName(const std::string &fullName)
 {
   bool found = false;
   const TfEnum value = TfEnum::GetValueFromFullName(fullName, &found);
-  if (found) {
+  if (found)
+  {
     return boost::python::object(value);
   }
   return boost::python::object();

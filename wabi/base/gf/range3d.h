@@ -56,7 +56,9 @@ WABI_NAMESPACE_BEGIN
 class GfRange3d;
 class GfRange3f;
 
-template<> struct GfIsGfRange<class GfRange3d> {
+template<>
+struct GfIsGfRange<class GfRange3d>
+{
   static const bool value = true;
 };
 
@@ -69,7 +71,8 @@ template<> struct GfIsGfRange<class GfRange3d> {
 /// operations are component-wise and conform to interval mathematics. An
 /// empty range is one where max < min.
 /// The default empty is [FLT_MAX,-FLT_MAX]
-class GfRange3d {
+class GfRange3d
+{
  public:
   /// Helper typedef.
   typedef GfVec3d MinMaxType;
@@ -92,7 +95,9 @@ class GfRange3d {
   }
 
   /// This constructor initializes the minimum and maximum points.
-  GfRange3d(const GfVec3d &min, const GfVec3d &max) : _min(min), _max(max)
+  GfRange3d(const GfVec3d &min, const GfVec3d &max)
+    : _min(min),
+      _max(max)
   {}
 
   /// Returns the minimum value of the range.
@@ -294,11 +299,13 @@ class GfRange3d {
   /// unary multiply.
   GfRange3d operator*=(double m)
   {
-    if (m > 0) {
+    if (m > 0)
+    {
       _min *= m;
       _max *= m;
     }
-    else {
+    else
+    {
       GfVec3d tmp = _min;
       _min = _max * m;
       _max = tmp * m;

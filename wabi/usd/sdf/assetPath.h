@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 /// disallowed.  Attempts to construct asset paths with such characters will
 /// issue a TfError and produce the default-constructed empty asset path.
 ///
-class SdfAssetPath : public boost::totally_ordered<SdfAssetPath> {
+class SdfAssetPath : public boost::totally_ordered<SdfAssetPath>
+{
  public:
   /// \name Constructors
   /// @{
@@ -92,7 +93,8 @@ class SdfAssetPath : public boost::totally_ordered<SdfAssetPath> {
   }
 
   /// \class Hash
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(const SdfAssetPath &ap) const
     {
       return ap.GetHash();

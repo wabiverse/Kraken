@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdRenderBuffer;
 
-class HdxTaskController final {
+class HdxTaskController final
+{
  public:
   HDX_API
   HdxTaskController(HdRenderIndex *renderIndex, SdfPath const &controllerId);
@@ -316,7 +317,8 @@ class HdxTaskController final {
   // A private scene delegate member variable backs the tasks and the free cam
   // this controller generates. To keep _Delegate simple, the containing class
   // is responsible for marking things dirty.
-  class _Delegate : public HdSceneDelegate {
+  class _Delegate : public HdSceneDelegate
+  {
    public:
     _Delegate(HdRenderIndex *parentIndex, SdfPath const &delegateID)
       : HdSceneDelegate(parentIndex, delegateID)
@@ -324,11 +326,13 @@ class HdxTaskController final {
     ~_Delegate() override = default;
 
     // HdxTaskController set/get interface
-    template<typename T> void SetParameter(SdfPath const &id, TfToken const &key, T const &value)
+    template<typename T>
+    void SetParameter(SdfPath const &id, TfToken const &key, T const &value)
     {
       _valueCacheMap[id][key] = value;
     }
-    template<typename T> T GetParameter(SdfPath const &id, TfToken const &key) const
+    template<typename T>
+    T GetParameter(SdfPath const &id, TfToken const &key) const
     {
       VtValue vParams;
       _ValueCache vCache;
@@ -339,7 +343,8 @@ class HdxTaskController final {
     bool HasParameter(SdfPath const &id, TfToken const &key) const
     {
       _ValueCache vCache;
-      if (TfMapLookup(_valueCacheMap, id, &vCache) && vCache.count(key) > 0) {
+      if (TfMapLookup(_valueCacheMap, id, &vCache) && vCache.count(key) > 0)
+      {
         return true;
       }
       return false;

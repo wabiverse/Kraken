@@ -98,11 +98,13 @@ HdDirtyBits UsdImagingHermiteCurvesAdapter::ProcessPropertyChange(UsdPrim const 
                                                                   SdfPath const &cachePath,
                                                                   TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->points) {
+  if (propertyName == UsdGeomTokens->points)
+  {
     return HdChangeTracker::DirtyPoints;
   }
 
-  else if (propertyName == UsdGeomTokens->curveVertexCounts) {
+  else if (propertyName == UsdGeomTokens->curveVertexCounts)
+  {
     return HdChangeTracker::DirtyTopology;
   }
 

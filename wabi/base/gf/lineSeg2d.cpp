@@ -50,10 +50,12 @@ GfVec2d GfLineSeg2d::FindClosestPoint(const GfVec2d &point, double *t) const
   // and then clamp lt to be on the line segment.
 
   double lt;
-  if (_length == 0.0) {
+  if (_length == 0.0)
+  {
     lt = 0.0;
   }
-  else {
+  else
+  {
     _line.FindClosestPoint(point, &lt);
 
     lt = GfClamp(lt / _length, 0, 1);
@@ -82,7 +84,8 @@ bool GfFindClosestPoints(const GfLine2d &line,
 
   // If we clamp the line segment, change the rayPoint to be
   // the closest point on the ray to the clamped point.
-  if (lt2 <= 0 || lt2 >= 1) {
+  if (lt2 <= 0 || lt2 >= 1)
+  {
     cp1 = line.FindClosestPoint(cp2, &lt1);
   }
 

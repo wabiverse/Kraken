@@ -53,7 +53,8 @@ uint32_t HgiGLDevice::AcquireFramebuffer(HgiGraphicsCmdsDesc const &desc, bool r
 
 void HgiGLDevice::SubmitOps(HgiGLOpsVector const &ops)
 {
-  for (HgiGLOpsFn const &f : ops) {
+  for (HgiGLOpsFn const &f : ops)
+  {
     f();
   }
 }

@@ -30,7 +30,8 @@
 #include <wabi/imaging/hd/light.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Light;
 class Shader;
 class Scene;
@@ -54,7 +55,8 @@ class HdCyclesRenderDelegate;
  * unecessary with the new changes.
  *
  */
-class HdCyclesLight final : public HdLight {
+class HdCyclesLight final : public HdLight
+{
  public:
   /**
    * @brief Construct a new HdCycles Light object
@@ -105,7 +107,8 @@ class HdCyclesLight final : public HdLight {
  private:
   // Tracking for Cycles light shader graphs, saves on potentially
   // expensive new/delete re-creation of graphs for interactive sessions.
-  enum ShaderGraphBits : uint8_t {
+  enum ShaderGraphBits : uint8_t
+  {
     Default = 0,
     Temperature = 1 << 0,
     IES = 1 << 1,

@@ -2,13 +2,15 @@
 #include "zep/editor.h"
 #include "zep/syntax.h"
 
-namespace Zep {
+namespace Zep
+{
 
 ZepTheme::ZepTheme()
 {
   double golden_ratio_conjugate = 0.618033988749895;
   double h = .85f;
-  for (int i = 0; i < (int)ThemeColor::UniqueColorLast; i++) {
+  for (int i = 0; i < (int)ThemeColor::UniqueColorLast; i++)
+  {
     h += golden_ratio_conjugate;
     h = std::fmod(h, 1.0);
     m_uniqueColors.emplace_back(HSVToRGB(float(h) * 360.0f, 0.6f, 200.0f));
@@ -19,7 +21,8 @@ ZepTheme::ZepTheme()
 void ZepTheme::SetThemeType(ThemeType type)
 {
   m_currentTheme = type;
-  switch (type) {
+  switch (type)
+  {
     default:
     case ThemeType::Dark:
       SetDarkTheme();
@@ -131,14 +134,16 @@ ThemeColor ZepTheme::GetUniqueColor(uint32_t index) const
 
 const NVec4f &ZepTheme::GetColor(ThemeColor themeColor) const
 {
-  if (themeColor >= ThemeColor::UniqueColor0) {
+  if (themeColor >= ThemeColor::UniqueColor0)
+  {
     // Return the unique color
     return m_uniqueColors[((uint32_t)themeColor - (uint32_t)ThemeColor::UniqueColor0) %
                           (uint32_t)ThemeColor::UniqueColorLast];
   }
 
   auto itr = m_colors.find(themeColor);
-  if (itr == m_colors.end()) {
+  if (itr == m_colors.end())
+  {
     static const NVec4f one(1.0f);
     return one;
   }

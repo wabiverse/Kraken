@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -123,7 +125,8 @@ void wrapUsdGeomCurves()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static TfPyObjWrapper _ComputeExtent(object points, object widths)
 {
@@ -134,12 +137,14 @@ static TfPyObjWrapper _ComputeExtent(object points, object widths)
   VtValue widthsAsVtValue = UsdPythonToSdfType(widths, SdfValueTypeNames->FloatArray);
 
   // Check Proper conversion to VtVec3fArray
-  if (!pointsAsVtValue.IsHolding<VtVec3fArray>()) {
+  if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+  {
     TF_CODING_ERROR("Improper value for 'points'");
     return object();
   }
 
-  if (!widthsAsVtValue.IsHolding<VtFloatArray>()) {
+  if (!widthsAsVtValue.IsHolding<VtFloatArray>())
+  {
     TF_CODING_ERROR("Improper value for 'widths'");
     return object();
   }
@@ -148,10 +153,12 @@ static TfPyObjWrapper _ComputeExtent(object points, object widths)
   VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
   VtFloatArray widthsArray = widthsAsVtValue.UncheckedGet<VtFloatArray>();
 
-  if (UsdGeomCurves::ComputeExtent(pointsArray, widthsArray, &extent)) {
+  if (UsdGeomCurves::ComputeExtent(pointsArray, widthsArray, &extent))
+  {
     return UsdVtValueToPython(VtValue(extent));
   }
-  else {
+  else
+  {
     return object();
   }
 }

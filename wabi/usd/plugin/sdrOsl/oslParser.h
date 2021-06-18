@@ -115,7 +115,8 @@ struct NdrNodeDiscoveryResult;
 ///     </li>
 /// </ul>
 ///
-class SdrOslParserPlugin : public NdrParserPlugin {
+class SdrOslParserPlugin : public NdrParserPlugin
+{
  public:
   typedef OSL::OSLQuery::Parameter OslParameter;
 

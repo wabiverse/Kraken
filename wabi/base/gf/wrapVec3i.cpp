@@ -61,7 +61,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 ////////////////////////////////////////////////////////////////////////
 // Python buffer protocol support.
@@ -70,7 +71,8 @@ namespace {
 // Python's getreadbuf interface function.
 static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
 {
-  if (segment != 0) {
+  if (segment != 0)
+  {
     // Always one-segment.
     PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
     return -1;
@@ -109,13 +111,15 @@ static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **pt
 // Python's getbuffer interface function.
 static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 {
-  if (view == NULL) {
+  if (view == NULL)
+  {
     PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
     return -1;
   }
 
   // We don't support fortran order.
-  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
+  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
+  {
     PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
     return -1;
   }
@@ -127,26 +131,32 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   view->len = sizeof(GfVec3i);
   view->readonly = 0;
   view->itemsize = sizeof(int);
-  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
+  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
+  {
     view->format = Gf_GetPyBufferFmtFor<int>();
   }
-  else {
+  else
+  {
     view->format = NULL;
   }
-  if ((flags & PyBUF_ND) == PyBUF_ND) {
+  if ((flags & PyBUF_ND) == PyBUF_ND)
+  {
     view->ndim = 1;
     static Py_ssize_t shape = 3;
     view->shape = &shape;
   }
-  else {
+  else
+  {
     view->ndim = 0;
     view->shape = NULL;
   }
-  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
+  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
+  {
     static Py_ssize_t strides = sizeof(int);
     view->strides = &strides;
   }
-  else {
+  else
+  {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
@@ -211,17 +221,20 @@ static list __getslice__(const GfVec3i &self, slice indices)
   const int *end = begin + 3;
 
   slice::range<const int *> bounds;
-  try {
+  try
+  {
     // This appears to be a typo in the boost headers.  The method
     // name should be "get_indices".
     //
     bounds = indices.get_indicies<>(begin, end);
   }
-  catch (std::invalid_argument &) {
+  catch (std::invalid_argument &)
+  {
     return result;
   }
 
-  while (bounds.start != bounds.stop) {
+  while (bounds.start != bounds.stop)
+  {
     result.append(*bounds.start);
     bounds.start += bounds.step;
   }
@@ -259,7 +272,8 @@ static void __setslice__(GfVec3i &self, slice indices, object values)
   //
   PyObject *valuesObj = values.ptr();
 
-  if (!PySequence_Check(valuesObj)) {
+  if (!PySequence_Check(valuesObj))
+  {
     TfPyThrowTypeError("value must be a sequence");
   }
 
@@ -276,24 +290,28 @@ static void __setslice__(GfVec3i &self, slice indices, object values)
   bounds.stop = 0;
   bounds.step = 0;
 
-  try {
+  try
+  {
     // This appears to be a typo in the boost headers.  The method
     // name should be "get_indices".
     //
     bounds = indices.get_indicies<>(begin, end);
   }
-  catch (std::invalid_argument &) {
+  catch (std::invalid_argument &)
+  {
     sliceLength = 0;
   }
 
   // If sliceLength was not set in the exception handling code above,
   // figure out how long it really is.
   //
-  if (sliceLength == -1) {
+  if (sliceLength == -1)
+  {
     sliceLength = ((bounds.stop - bounds.start) / bounds.step) + 1;
   }
 
-  if (PySequence_Length(valuesObj) != sliceLength) {
+  if (PySequence_Length(valuesObj) != sliceLength)
+  {
     TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
                                        PySequence_Length(valuesObj),
                                        sliceLength));
@@ -301,18 +319,21 @@ static void __setslice__(GfVec3i &self, slice indices, object values)
 
   // Short circuit for empty slices
   //
-  if (sliceLength == 0) {
+  if (sliceLength == 0)
+  {
     return;
   }
 
   // Make sure that all items can be extracted before changing the GfVec3i.
   //
-  for (Py_ssize_t i = 0; i < sliceLength; ++i) {
+  for (Py_ssize_t i = 0; i < sliceLength; ++i)
+  {
     // This will throw a TypeError if any of the items cannot be converted.
     _SequenceGetItem(valuesObj, i);
   }
 
-  for (Py_ssize_t i = 0; i < sliceLength; ++i) {
+  for (Py_ssize_t i = 0; i < sliceLength; ++i)
+  {
     *bounds.start = _SequenceGetItem(valuesObj, i);
     bounds.start += bounds.step;
   }
@@ -320,7 +341,8 @@ static void __setslice__(GfVec3i &self, slice indices, object values)
 
 static bool __contains__(const GfVec3i &self, int value)
 {
-  for (size_t i = 0; i < 3; ++i) {
+  for (size_t i = 0; i < 3; ++i)
+  {
     if (self[i] == value)
       return true;
   }
@@ -339,13 +361,15 @@ static GfVec3i __itruediv__(GfVec3i &self, int value)
 }
 #endif
 
-template<class V> static V *__init__()
+template<class V>
+static V *__init__()
 {
   // Default contstructor zero-initializes from python.
   return new V(0);
 }
 
-struct FromPythonTuple {
+struct FromPythonTuple
+{
   FromPythonTuple()
   {
     converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<GfVec3i>());
@@ -363,7 +387,8 @@ struct FromPythonTuple {
     // XXX: Would like to allow general sequences, but currently clients
     // depend on this behavior.
     if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 3 &&
-        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) && _SequenceCheckItem(obj_ptr, 2)) {
+        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) && _SequenceCheckItem(obj_ptr, 2))
+    {
       return obj_ptr;
     }
     return 0;
@@ -382,7 +407,8 @@ struct FromPythonTuple {
 // This adds support for python's builtin pickling library
 // This is used by our Shake plugins which need to pickle entire classes
 // (including code), which we don't support in pxml.
-struct PickleSuite : boost::python::pickle_suite {
+struct PickleSuite : boost::python::pickle_suite
+{
   static boost::python::tuple getinitargs(const GfVec3i &v)
   {
     return boost::python::make_tuple(v[0], v[1], v[2]);

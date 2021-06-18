@@ -39,7 +39,8 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // Anchor the given relativePath to the same path as the layer
 // specified by anchorLayerPath.
@@ -55,13 +56,16 @@ string _AnchorRelativePath(const string &anchorLayerPath, const string &relative
 std::pair<string, string> _ExpandPackagePath(const std::pair<string, string> &packageRelativePath)
 {
   std::pair<string, string> result = packageRelativePath;
-  while (1) {
-    if (result.second.empty()) {
+  while (1)
+  {
+    if (result.second.empty())
+    {
       break;
     }
 
     SdfFileFormatConstPtr packagedFormat = SdfFileFormat::FindByExtension(result.second);
-    if (!packagedFormat || !packagedFormat->IsPackage()) {
+    if (!packagedFormat || !packagedFormat->IsPackage())
+    {
       break;
     }
 
@@ -75,12 +79,14 @@ std::pair<string, string> _ExpandPackagePath(const std::pair<string, string> &pa
 
 string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const string &assetPath)
 {
-  if (!anchor) {
+  if (!anchor)
+  {
     TF_CODING_ERROR("Invalid anchor layer");
     return string();
   }
 
-  if (assetPath.empty()) {
+  if (assetPath.empty())
+  {
     TF_CODING_ERROR("Layer path is empty");
     return string();
   }
@@ -114,7 +120,8 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
   //   layer. If that does not resolve the path is not anchored and is
   //   resolved as-is.
   //
-  if (Sdf_IsPackageOrPackagedLayer(anchor) && TfIsRelativePath(assetPath)) {
+  if (Sdf_IsPackageOrPackagedLayer(anchor) && TfIsRelativePath(assetPath))
+  {
     // XXX: The use of repository path or real path is the same as in
     // SdfLayer::ComputeAbsolutePath. This logic might want to move
     // somewhere common.
@@ -126,13 +133,15 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     // is a package, anchor against its root layer, which may be
     // nested in another package layer.
     std::pair<string, string> packagePath;
-    if (anchor->GetFileFormat()->IsPackage()) {
+    if (anchor->GetFileFormat()->IsPackage())
+    {
       packagePath.first = anchorPackagePath;
       packagePath.second = anchor->GetFileFormat()->GetPackageRootLayerPath(anchor->GetRealPath());
 
       packagePath = _ExpandPackagePath(packagePath);
     }
-    else {
+    else
+    {
       packagePath = ArSplitPackageRelativePathInner(anchorPackagePath);
     }
 
@@ -144,13 +153,15 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     // If assetPath is not a search-relative path, we're done. Otherwise,
     // we need to search in the locations described above.
     const bool isSearchRelativePath = assetPath.front() != '.';
-    if (!isSearchRelativePath) {
+    if (!isSearchRelativePath)
+    {
       return finalLayerPath;
     }
 
     // If anchoring the asset path to the anchor layer resolves to a
     // valid layer, we're done.
-    if (!resolver.Resolve(finalLayerPath).empty()) {
+    if (!resolver.Resolve(finalLayerPath).empty())
+    {
       return finalLayerPath;
     }
 
@@ -158,18 +169,21 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
     // (which may be nested in another package layer). If this resolves
     // to a valid layer, we're done.
     SdfFileFormatConstPtr packageFormat = SdfFileFormat::FindByExtension(packagePath.first);
-    if (packageFormat && packageFormat->IsPackage()) {
+    if (packageFormat && packageFormat->IsPackage())
+    {
       packagePath.second = packageFormat->GetPackageRootLayerPath(packagePath.first);
       packagePath = _ExpandPackagePath(packagePath);
 
       packagePath.second = _AnchorRelativePath(packagePath.second, normAssetPath);
     }
-    else {
+    else
+    {
       packagePath.second = normAssetPath;
     }
 
     finalLayerPath = ArJoinPackageRelativePath(packagePath);
-    if (!resolver.Resolve(finalLayerPath).empty()) {
+    if (!resolver.Resolve(finalLayerPath).empty())
+    {
       return finalLayerPath;
     }
 
@@ -182,18 +196,21 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
   // which we first look relative to the layer, then fall back to search
   // path resolution.
   string finalLayerPath = anchor->ComputeAbsolutePath(assetPath);
-  if (!SdfLayer::IsAnonymousLayerIdentifier(finalLayerPath)) {
+  if (!SdfLayer::IsAnonymousLayerIdentifier(finalLayerPath))
+  {
     if (resolver.IsSearchPath(assetPath) && resolver.Resolve(finalLayerPath).empty())
       return assetPath;
   }
 
   return finalLayerPath;
 #else
-  if (SdfLayer::IsAnonymousLayerIdentifier(assetPath)) {
+  if (SdfLayer::IsAnonymousLayerIdentifier(assetPath))
+  {
     return assetPath;
   }
 
-  if (anchor->IsAnonymous()) {
+  if (anchor->IsAnonymous())
+  {
     return resolver.CreateIdentifier(assetPath);
   }
 

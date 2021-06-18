@@ -32,7 +32,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdRprimCollection::HdRprimCollection() : _forcedRepr(false), _rootPaths(1, SdfPath::AbsoluteRootPath())
+HdRprimCollection::HdRprimCollection()
+  : _forcedRepr(false),
+    _rootPaths(1, SdfPath::AbsoluteRootPath())
 {
   /*NOTHING*/
 }
@@ -58,11 +60,13 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
     _forcedRepr(forcedRepr),
     _materialTag(materialTag)
 {
-  if (!rootPath.IsAbsolutePath()) {
+  if (!rootPath.IsAbsolutePath())
+  {
     TF_CODING_ERROR("Root path must be absolute");
     _rootPaths.push_back(SdfPath::AbsoluteRootPath());
   }
-  else {
+  else
+  {
     _rootPaths.push_back(rootPath);
   }
 }
@@ -98,9 +102,10 @@ SdfPathVector const &HdRprimCollection::GetRootPaths() const
 
 void HdRprimCollection::SetRootPaths(SdfPathVector const &rootPaths)
 {
-  TF_FOR_ALL(pit, rootPaths)
+  TF_FOR_ALL (pit, rootPaths)
   {
-    if (!pit->IsAbsolutePath()) {
+    if (!pit->IsAbsolutePath())
+    {
       TF_CODING_ERROR("Root path must be absolute (<%s>)", pit->GetText());
       return;
     }
@@ -112,7 +117,8 @@ void HdRprimCollection::SetRootPaths(SdfPathVector const &rootPaths)
 
 void HdRprimCollection::SetRootPath(SdfPath const &rootPath)
 {
-  if (!rootPath.IsAbsolutePath()) {
+  if (!rootPath.IsAbsolutePath())
+  {
     TF_CODING_ERROR("Root path must be absolute");
     return;
   }
@@ -122,9 +128,10 @@ void HdRprimCollection::SetRootPath(SdfPath const &rootPath)
 
 void HdRprimCollection::SetExcludePaths(SdfPathVector const &excludePaths)
 {
-  TF_FOR_ALL(pit, excludePaths)
+  TF_FOR_ALL (pit, excludePaths)
   {
-    if (!pit->IsAbsolutePath()) {
+    if (!pit->IsAbsolutePath())
+    {
       TF_CODING_ERROR("Exclude path must be absolute (<%s>)", pit->GetText());
       return;
     }

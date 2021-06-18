@@ -51,7 +51,8 @@ class TraceEventData;
 /// It contains a key (name), categoryId, timestamp, type, and optional
 /// metadata.
 ///
-class TraceEvent {
+class TraceEvent
+{
  public:
   /// Time in "ticks".
   using TimeStamp = uint64_t;
@@ -59,17 +60,39 @@ class TraceEvent {
 
   /// \name Tag enums to select constructors
   /// @{
-  enum BeginTag { Begin };
-  enum EndTag { End };
-  enum TimespanTag { Timespan };
-  enum MarkerTag { Marker };
-  enum CounterDeltaTag { CounterDelta };
-  enum CounterValueTag { CounterValue };
-  enum DataTag { Data };
+  enum BeginTag
+  {
+    Begin
+  };
+  enum EndTag
+  {
+    End
+  };
+  enum TimespanTag
+  {
+    Timespan
+  };
+  enum MarkerTag
+  {
+    Marker
+  };
+  enum CounterDeltaTag
+  {
+    CounterDelta
+  };
+  enum CounterValueTag
+  {
+    CounterValue
+  };
+  enum DataTag
+  {
+    Data
+  };
   /// @}
 
   /// Valid event types
-  enum class EventType : uint8_t {
+  enum class EventType : uint8_t
+  {
     Unknown,       ///< The event is an unknown type.
     Begin,         ///< The event represents the beginning timestamp of a scope.
     End,           ///< The event represents the ending timestamp of a scope.
@@ -82,7 +105,8 @@ class TraceEvent {
   };
 
   /// The different types of data that can be stored in a TraceEvent instance.
-  enum class DataType : uint8_t {
+  enum class DataType : uint8_t
+  {
     String,   ///< The event is storing a string.
     Boolean,  ///< The event is storing a bool.
     Int,      ///< The event is storing an integer.
@@ -297,7 +321,8 @@ class TraceEvent {
  private:
   // Valid event types. This type has more detail that the public facing
   // EventType enum.
-  enum class _InternalEventType : uint8_t {
+  enum class _InternalEventType : uint8_t
+  {
     Begin,
     End,
     Timespan,

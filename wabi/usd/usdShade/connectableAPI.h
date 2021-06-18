@@ -78,7 +78,8 @@ class SdfAssetPath;
 /// UsdShadeInput and UsdShadeOutput.
 ///
 ///
-class UsdShadeConnectableAPI : public UsdAPISchemaBase {
+class UsdShadeConnectableAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -94,13 +95,15 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdShadeConnectableAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeConnectableAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdShadeConnectableAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdShadeConnectableAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeConnectableAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeConnectableAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdShadeConnectableAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -652,7 +655,8 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
 
   /// Return true if the schema type \p T has a connectableAPIBehavior
   /// registered, false otherwise.
-  template<typename T> static bool HasConnectableAPI()
+  template<typename T>
+  static bool HasConnectableAPI()
   {
     static_assert(std::is_base_of<UsdTyped, T>::value, "Provided type must derive UsdTyped.");
     return HasConnectableAPI(TfType::Find<T>());
@@ -719,7 +723,8 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase {
 
 /// A compact struct to represent a bundle of information about an upstream
 /// source attribute
-struct UsdShadeConnectionSourceInfo {
+struct UsdShadeConnectionSourceInfo
+{
   /// \p source is the connectable prim that produces or contains a value
   /// for the given shading attribute.
   UsdShadeConnectableAPI source;

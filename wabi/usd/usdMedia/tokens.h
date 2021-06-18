@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdMediaTokens->auralMode);
 /// \endcode
-struct UsdMediaTokensType {
+struct UsdMediaTokensType
+{
   USDMEDIA_API UsdMediaTokensType();
   /// \brief "auralMode"
   ///

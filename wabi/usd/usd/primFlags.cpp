@@ -34,7 +34,8 @@ const Usd_PrimFlagsPredicate UsdPrimAllPrimsPredicate = Usd_PrimFlagsPredicate::
 
 bool Usd_PrimFlagsPredicate::operator()(const UsdPrim &prim) const
 {
-  if (!prim) {
+  if (!prim)
+  {
     TF_CODING_ERROR("Applying predicate to invalid prim.");
     return false;
   }

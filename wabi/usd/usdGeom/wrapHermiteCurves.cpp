@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -117,7 +119,8 @@ void wrapUsdGeomHermiteCurves()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static std::string _PointAndTangentsRepr(const UsdGeomHermiteCurves::PointAndTangentArrays &arrays)
 {

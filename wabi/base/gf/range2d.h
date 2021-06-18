@@ -56,7 +56,9 @@ WABI_NAMESPACE_BEGIN
 class GfRange2d;
 class GfRange2f;
 
-template<> struct GfIsGfRange<class GfRange2d> {
+template<>
+struct GfIsGfRange<class GfRange2d>
+{
   static const bool value = true;
 };
 
@@ -69,7 +71,8 @@ template<> struct GfIsGfRange<class GfRange2d> {
 /// operations are component-wise and conform to interval mathematics. An
 /// empty range is one where max < min.
 /// The default empty is [FLT_MAX,-FLT_MAX]
-class GfRange2d {
+class GfRange2d
+{
  public:
   /// Helper typedef.
   typedef GfVec2d MinMaxType;
@@ -92,7 +95,9 @@ class GfRange2d {
   }
 
   /// This constructor initializes the minimum and maximum points.
-  GfRange2d(const GfVec2d &min, const GfVec2d &max) : _min(min), _max(max)
+  GfRange2d(const GfVec2d &min, const GfVec2d &max)
+    : _min(min),
+      _max(max)
   {}
 
   /// Returns the minimum value of the range.
@@ -292,11 +297,13 @@ class GfRange2d {
   /// unary multiply.
   GfRange2d operator*=(double m)
   {
-    if (m > 0) {
+    if (m > 0)
+    {
       _min *= m;
       _max *= m;
     }
-    else {
+    else
+    {
       GfVec2d tmp = _min;
       _min = _max * m;
       _max = tmp * m;

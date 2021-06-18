@@ -122,7 +122,8 @@ WABI_NAMESPACE_USING
 
 // ---------------------------------------------------------------------------
 
-struct _VSCGConditionalBase {
+struct _VSCGConditionalBase
+{
   virtual ~_VSCGConditionalBase() = default;
 
   typedef std::shared_ptr<_VSCGConditionalBase> Ptr;
@@ -135,22 +136,27 @@ struct _VSCGConditionalBase {
 namespace  // anonymous
 {
 
-struct ConditionalParamBase : public _VSCGConditionalBase {
-  ConditionalParamBase(const TfToken &name) : paramName(name)
+struct ConditionalParamBase : public _VSCGConditionalBase
+{
+  ConditionalParamBase(const TfToken &name)
+    : paramName(name)
   {}
 
   TfToken paramName;
 };
 
-struct ConditionalParamIsConnected : public ConditionalParamBase {
-  ConditionalParamIsConnected(const TfToken &name) : ConditionalParamBase(name)
+struct ConditionalParamIsConnected : public ConditionalParamBase
+{
+  ConditionalParamIsConnected(const TfToken &name)
+    : ConditionalParamBase(name)
   {}
 
   bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
   {
 
     auto I = node.inputConnections.find(paramName);
-    if (I == node.inputConnections.end()) {
+    if (I == node.inputConnections.end())
+    {
       return false;
     }
 
@@ -158,14 +164,17 @@ struct ConditionalParamIsConnected : public ConditionalParamBase {
   }
 };
 
-struct ConditionalParamIsNotConnected : public ConditionalParamBase {
-  ConditionalParamIsNotConnected(const TfToken &name) : ConditionalParamBase(name)
+struct ConditionalParamIsNotConnected : public ConditionalParamBase
+{
+  ConditionalParamIsNotConnected(const TfToken &name)
+    : ConditionalParamBase(name)
   {}
 
   bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
   {
     auto I = node.inputConnections.find(paramName);
-    if (I == node.inputConnections.end()) {
+    if (I == node.inputConnections.end())
+    {
       return true;
     }
 
@@ -173,8 +182,10 @@ struct ConditionalParamIsNotConnected : public ConditionalParamBase {
   }
 };
 
-struct ConditionalParamIsSet : public ConditionalParamBase {
-  ConditionalParamIsSet(const TfToken &name) : ConditionalParamBase(name)
+struct ConditionalParamIsSet : public ConditionalParamBase
+{
+  ConditionalParamIsSet(const TfToken &name)
+    : ConditionalParamBase(name)
   {}
 
   bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
@@ -183,8 +194,10 @@ struct ConditionalParamIsSet : public ConditionalParamBase {
   }
 };
 
-struct ConditionalParamIsNotSet : public ConditionalParamBase {
-  ConditionalParamIsNotSet(const TfToken &name) : ConditionalParamBase(name)
+struct ConditionalParamIsNotSet : public ConditionalParamBase
+{
+  ConditionalParamIsNotSet(const TfToken &name)
+    : ConditionalParamBase(name)
   {}
 
   bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
@@ -193,30 +206,37 @@ struct ConditionalParamIsNotSet : public ConditionalParamBase {
   }
 };
 
-struct ConditionalParamCmpBase : public ConditionalParamBase {
-  ConditionalParamCmpBase(const TfToken &name, const VtValue &v) : ConditionalParamBase(name), value(v)
+struct ConditionalParamCmpBase : public ConditionalParamBase
+{
+  ConditionalParamCmpBase(const TfToken &name, const VtValue &v)
+    : ConditionalParamBase(name),
+      value(v)
   {}
 
   VtValue value;
 
   static bool ValueAsNumber(const VtValue v, double *result)
   {
-    if (v.IsHolding<float>()) {
+    if (v.IsHolding<float>())
+    {
       *result = v.UncheckedGet<float>();
       return true;
     }
 
-    if (v.IsHolding<int>()) {
+    if (v.IsHolding<int>())
+    {
       *result = v.UncheckedGet<int>();
       return true;
     }
 
-    if (v.IsHolding<double>()) {
+    if (v.IsHolding<double>())
+    {
       *result = v.UncheckedGet<double>();
       return true;
     }
 
-    if (v.IsHolding<bool>()) {
+    if (v.IsHolding<bool>())
+    {
       *result = v.UncheckedGet<bool>();
       return true;
     }
@@ -233,7 +253,8 @@ struct ConditionalParamCmpBase : public ConditionalParamBase {
   {
 
     auto I = node.parameters.find(paramName);
-    if (I != node.parameters.end()) {
+    if (I != node.parameters.end())
+    {
       *result = (*I).second;
       return true;
     }
@@ -241,8 +262,10 @@ struct ConditionalParamCmpBase : public ConditionalParamBase {
     // check for a default
     auto &reg = SdrRegistry::GetInstance();
 
-    if (SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority)) {
-      if (NdrPropertyConstPtr ndrProp = sdrNode->GetInput(paramName)) {
+    if (SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority))
+    {
+      if (NdrPropertyConstPtr ndrProp = sdrNode->GetInput(paramName))
+      {
         *result = ndrProp->GetDefaultValue();
         return true;
       }
@@ -257,12 +280,15 @@ struct ConditionalParamCmpBase : public ConditionalParamBase {
   bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
   {
     VtValue paramValue;
-    if (!GetParameterValue(node, paramName, shaderTypePriority, &paramValue)) {
+    if (!GetParameterValue(node, paramName, shaderTypePriority, &paramValue))
+    {
       return false;
     }
 
-    if (value.IsHolding<std::string>()) {
-      if (paramValue.IsHolding<std::string>()) {
+    if (value.IsHolding<std::string>())
+    {
+      if (paramValue.IsHolding<std::string>())
+      {
         return CompareString(value.UncheckedGet<std::string>(), paramValue.UncheckedGet<std::string>());
       }
       return false;
@@ -270,7 +296,8 @@ struct ConditionalParamCmpBase : public ConditionalParamBase {
 
     double d1 = 0, d2 = 0;
 
-    if (ValueAsNumber(paramValue, &d1) && ValueAsNumber(value, &d2)) {
+    if (ValueAsNumber(paramValue, &d1) && ValueAsNumber(value, &d2))
+    {
 
       // std::cerr << d1 << " " << d2 << std::endl;
       return CompareNumber(d1, d2);
@@ -280,8 +307,10 @@ struct ConditionalParamCmpBase : public ConditionalParamBase {
   }
 };
 
-struct ConditionalParamCmpEqualTo : public ConditionalParamCmpBase {
-  ConditionalParamCmpEqualTo(const TfToken &name, const VtValue &v) : ConditionalParamCmpBase(name, v)
+struct ConditionalParamCmpEqualTo : public ConditionalParamCmpBase
+{
+  ConditionalParamCmpEqualTo(const TfToken &name, const VtValue &v)
+    : ConditionalParamCmpBase(name, v)
   {}
 
   bool CompareNumber(double v1, double v2) override
@@ -295,8 +324,10 @@ struct ConditionalParamCmpEqualTo : public ConditionalParamCmpBase {
   }
 };
 
-struct ConditionalParamCmpNotEqualTo : public ConditionalParamCmpBase {
-  ConditionalParamCmpNotEqualTo(const TfToken &name, const VtValue &v) : ConditionalParamCmpBase(name, v)
+struct ConditionalParamCmpNotEqualTo : public ConditionalParamCmpBase
+{
+  ConditionalParamCmpNotEqualTo(const TfToken &name, const VtValue &v)
+    : ConditionalParamCmpBase(name, v)
   {}
 
   bool CompareNumber(double v1, double v2) override
@@ -310,8 +341,10 @@ struct ConditionalParamCmpNotEqualTo : public ConditionalParamCmpBase {
   }
 };
 
-struct ConditionalParamCmpGreaterThan : public ConditionalParamCmpBase {
-  ConditionalParamCmpGreaterThan(const TfToken &name, const VtValue &v) : ConditionalParamCmpBase(name, v)
+struct ConditionalParamCmpGreaterThan : public ConditionalParamCmpBase
+{
+  ConditionalParamCmpGreaterThan(const TfToken &name, const VtValue &v)
+    : ConditionalParamCmpBase(name, v)
   {}
 
   bool CompareNumber(double v1, double v2) override
@@ -325,8 +358,10 @@ struct ConditionalParamCmpGreaterThan : public ConditionalParamCmpBase {
   }
 };
 
-struct ConditionalParamCmpLessThan : public ConditionalParamCmpBase {
-  ConditionalParamCmpLessThan(const TfToken &name, const VtValue &v) : ConditionalParamCmpBase(name, v)
+struct ConditionalParamCmpLessThan : public ConditionalParamCmpBase
+{
+  ConditionalParamCmpLessThan(const TfToken &name, const VtValue &v)
+    : ConditionalParamCmpBase(name, v)
   {}
 
   bool CompareNumber(double v1, double v2) override
@@ -340,7 +375,8 @@ struct ConditionalParamCmpLessThan : public ConditionalParamCmpBase {
   }
 };
 
-struct ConditionalParamCmpGreaterThanOrEqualTo : public ConditionalParamCmpBase {
+struct ConditionalParamCmpGreaterThanOrEqualTo : public ConditionalParamCmpBase
+{
   ConditionalParamCmpGreaterThanOrEqualTo(const TfToken &name, const VtValue &v)
     : ConditionalParamCmpBase(name, v)
   {}
@@ -356,7 +392,8 @@ struct ConditionalParamCmpGreaterThanOrEqualTo : public ConditionalParamCmpBase 
   }
 };
 
-struct ConditionalParamCmpLessThanOrEqualTo : public ConditionalParamCmpBase {
+struct ConditionalParamCmpLessThanOrEqualTo : public ConditionalParamCmpBase
+{
   ConditionalParamCmpLessThanOrEqualTo(const TfToken &name, const VtValue &v)
     : ConditionalParamCmpBase(name, v)
   {}
@@ -372,7 +409,8 @@ struct ConditionalParamCmpLessThanOrEqualTo : public ConditionalParamCmpBase {
   }
 };
 
-struct ConditionalAnd : _VSCGConditionalBase {
+struct ConditionalAnd : _VSCGConditionalBase
+{
   ConditionalAnd(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
     : _VSCGConditionalBase(),
       left(left),
@@ -396,7 +434,8 @@ struct ConditionalAnd : _VSCGConditionalBase {
   _VSCGConditionalBase *right;
 };
 
-struct ConditionalOr : _VSCGConditionalBase {
+struct ConditionalOr : _VSCGConditionalBase
+{
   ConditionalOr(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
     : _VSCGConditionalBase(),
       left(left),
@@ -422,32 +461,40 @@ struct ConditionalOr : _VSCGConditionalBase {
 
 }  // namespace
 
-struct _VSCGValueContainer {
-  _VSCGValueContainer(const VtValue &v) : value(v)
+struct _VSCGValueContainer
+{
+  _VSCGValueContainer(const VtValue &v)
+    : value(v)
   {}
 
   VtValue value;
 };
 
-struct _VSCGAction {
+struct _VSCGAction
+{
 
-  enum Action {
+  enum Action
+  {
     Connect,
     Ignore,
     SetConstant,
     CopyParam,
   };
 
-  _VSCGAction(Action action) : action(action)
+  _VSCGAction(Action action)
+    : action(action)
   {}
-  _VSCGAction(Action action, const VtValue &value) : action(action), value(value)
+  _VSCGAction(Action action, const VtValue &value)
+    : action(action),
+      value(value)
   {}
 
   Action action;
   VtValue value;
 };
 
-struct _VSCGParserData {
+struct _VSCGParserData
+{
 
   // flex scanner
   void *yyscanner;
@@ -477,7 +524,8 @@ struct _VSCGParserData {
     delete action;
     delete fallbackAction;
 
-    for (auto c : _intermediateConditions) {
+    for (auto c : _intermediateConditions)
+    {
       delete c;
     }
     _intermediateConditions.clear();
@@ -486,7 +534,8 @@ struct _VSCGParserData {
 
 WABI_NAMESPACE_BEGIN
 
-class MatfiltVstructConditionalEvaluatorImpl {
+class MatfiltVstructConditionalEvaluatorImpl
+{
  public:
   ~MatfiltVstructConditionalEvaluatorImpl()
   {
@@ -530,7 +579,8 @@ WABI_NAMESPACE_END
 #  define YYTOKENTYPE
 /* Put the tokens into the symbol table, so that GDB and other debuggers
    know about them.  */
-enum yytokentype {
+enum yytokentype
+{
   NUMBER = 258,
   STRING = 259,
   PARAM = 260,
@@ -558,7 +608,8 @@ enum yytokentype {
 #endif
 
 #if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE {
+typedef union YYSTYPE
+{
 
 /* Line 214 of yacc.c  */
 #  line 457 "hdPrman/virtualStructConditionalGrammar.yy"
@@ -578,7 +629,8 @@ typedef union YYSTYPE {
 #endif
 
 #if !defined YYLTYPE && !defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE {
+typedef struct YYLTYPE
+{
   int first_line;
   int first_column;
   int last_line;
@@ -717,7 +769,8 @@ static int YYID(yyi) int yyi;
 #  ifdef YYSTACK_ALLOC
 /* Pacify GCC's `empty if-body' warning.  */
 #    define YYSTACK_FREE(Ptr) \
-      do { /* empty */ \
+      do \
+      { /* empty */ \
         ; \
       } while (YYID(0))
 #    ifndef YYSTACK_ALLOC_MAXIMUM
@@ -761,7 +814,8 @@ void free(void *);      /* INFRINGES ON USER NAME SPACE */
                                                       defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
-union yyalloc {
+union yyalloc
+{
   yytype_int16 yyss_alloc;
   YYSTYPE yyvs_alloc;
   YYLTYPE yyls_alloc;
@@ -782,7 +836,8 @@ union yyalloc {
 #      define YYCOPY(To, From, Count) __builtin_memcpy(To, From, (Count) * sizeof(*(From)))
 #    else
 #      define YYCOPY(To, From, Count) \
-        do { \
+        do \
+        { \
           YYSIZE_T yyi; \
           for (yyi = 0; yyi < (Count); yyi++) \
             (To)[yyi] = (From)[yyi]; \
@@ -796,7 +851,8 @@ union yyalloc {
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
 #  define YYSTACK_RELOCATE(Stack_alloc, Stack) \
-    do { \
+    do \
+    { \
       YYSIZE_T yynewbytes; \
       YYCOPY(&yyptr->Stack_alloc, Stack, yysize); \
       Stack = &yyptr->Stack_alloc; \
@@ -828,122 +884,1564 @@ union yyalloc {
 
 /* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
 static const yytype_uint8 yytranslate[] = {
-  0, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2, 1, 2, 3, 4, 5,
-  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
+  0,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25};
 
 #if YYDEBUG
 /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
    YYRHS.  */
 static const yytype_uint16 yyprhs[] = {
-  0,   0,   3,   5,   7,   11,  15,  19,  23,  27,  31,  35,  39,  43,  47,  51,  55,  59,  63,
-  67,  71,  75,  79,  83,  87,  91,  95,  99,  103, 107, 111, 115, 119, 123, 127, 131, 135, 139,
-  143, 147, 151, 155, 159, 163, 167, 171, 175, 179, 183, 187, 191, 195, 199, 203, 207, 211, 215,
-  219, 223, 227, 231, 235, 239, 243, 247, 251, 255, 259, 263, 267, 271, 275, 279, 283, 287, 291,
-  295, 299, 303, 307, 311, 315, 319, 323, 327, 331, 335, 339, 343, 347, 351, 355, 359, 363, 367,
-  371, 375, 379, 383, 387, 391, 395, 399, 403, 407, 411, 415, 419, 423, 427, 431, 435, 439, 443,
-  447, 451, 455, 459, 462, 464, 466, 469, 472, 478, 482, 487, 489};
+  0,
+  0,
+  3,
+  5,
+  7,
+  11,
+  15,
+  19,
+  23,
+  27,
+  31,
+  35,
+  39,
+  43,
+  47,
+  51,
+  55,
+  59,
+  63,
+  67,
+  71,
+  75,
+  79,
+  83,
+  87,
+  91,
+  95,
+  99,
+  103,
+  107,
+  111,
+  115,
+  119,
+  123,
+  127,
+  131,
+  135,
+  139,
+  143,
+  147,
+  151,
+  155,
+  159,
+  163,
+  167,
+  171,
+  175,
+  179,
+  183,
+  187,
+  191,
+  195,
+  199,
+  203,
+  207,
+  211,
+  215,
+  219,
+  223,
+  227,
+  231,
+  235,
+  239,
+  243,
+  247,
+  251,
+  255,
+  259,
+  263,
+  267,
+  271,
+  275,
+  279,
+  283,
+  287,
+  291,
+  295,
+  299,
+  303,
+  307,
+  311,
+  315,
+  319,
+  323,
+  327,
+  331,
+  335,
+  339,
+  343,
+  347,
+  351,
+  355,
+  359,
+  363,
+  367,
+  371,
+  375,
+  379,
+  383,
+  387,
+  391,
+  395,
+  399,
+  403,
+  407,
+  411,
+  415,
+  419,
+  423,
+  427,
+  431,
+  435,
+  439,
+  443,
+  447,
+  451,
+  455,
+  459,
+  462,
+  464,
+  466,
+  469,
+  472,
+  478,
+  482,
+  487,
+  489};
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] = {
-  30, 0,  -1, 4,  -1, 3,  -1, 5,  8,  27, -1, 16, 8,  27, -1, 17, 8,  27, -1, 14, 8,  27, -1, 18, 8,  27,
-  -1, 19, 8,  27, -1, 20, 8,  27, -1, 21, 8,  27, -1, 22, 8,  27, -1, 23, 8,  27, -1, 24, 8,  27, -1, 5,
-  9,  27, -1, 16, 9,  27, -1, 17, 9,  27, -1, 14, 9,  27, -1, 18, 9,  27, -1, 19, 9,  27, -1, 20, 9,  27,
-  -1, 21, 9,  27, -1, 22, 9,  27, -1, 23, 9,  27, -1, 24, 9,  27, -1, 5,  10, 27, -1, 16, 10, 27, -1, 17,
-  10, 27, -1, 14, 10, 27, -1, 18, 10, 27, -1, 19, 10, 27, -1, 20, 10, 27, -1, 21, 10, 27, -1, 22, 10, 27,
-  -1, 23, 10, 27, -1, 24, 10, 27, -1, 5,  11, 27, -1, 16, 11, 27, -1, 17, 11, 27, -1, 14, 11, 27, -1, 18,
-  11, 27, -1, 19, 11, 27, -1, 20, 11, 27, -1, 21, 11, 27, -1, 22, 11, 27, -1, 23, 11, 27, -1, 24, 11, 27,
-  -1, 5,  12, 27, -1, 16, 12, 27, -1, 17, 12, 27, -1, 14, 12, 27, -1, 18, 12, 27, -1, 19, 12, 27, -1, 20,
-  12, 27, -1, 21, 12, 27, -1, 22, 12, 27, -1, 23, 12, 27, -1, 24, 12, 27, -1, 5,  13, 27, -1, 16, 13, 27,
-  -1, 17, 13, 27, -1, 14, 13, 27, -1, 18, 13, 27, -1, 19, 13, 27, -1, 20, 13, 27, -1, 21, 13, 27, -1, 22,
-  13, 27, -1, 23, 13, 27, -1, 24, 13, 27, -1, 5,  14, 20, -1, 16, 14, 20, -1, 17, 14, 20, -1, 14, 14, 20,
-  -1, 18, 14, 20, -1, 19, 14, 20, -1, 20, 14, 20, -1, 21, 14, 20, -1, 22, 14, 20, -1, 23, 14, 20, -1, 24,
-  14, 20, -1, 5,  15, 20, -1, 16, 15, 20, -1, 17, 15, 20, -1, 14, 15, 20, -1, 18, 15, 20, -1, 19, 15, 20,
-  -1, 20, 15, 20, -1, 21, 15, 20, -1, 22, 15, 20, -1, 23, 15, 20, -1, 24, 15, 20, -1, 5,  14, 24, -1, 16,
-  14, 24, -1, 17, 14, 24, -1, 14, 14, 24, -1, 18, 14, 24, -1, 19, 14, 24, -1, 20, 14, 24, -1, 21, 14, 24,
-  -1, 22, 14, 24, -1, 23, 14, 24, -1, 24, 14, 24, -1, 5,  15, 24, -1, 16, 15, 24, -1, 17, 15, 24, -1, 14,
-  15, 24, -1, 18, 15, 24, -1, 19, 15, 24, -1, 20, 15, 24, -1, 21, 15, 24, -1, 22, 15, 24, -1, 23, 15, 24,
-  -1, 24, 15, 24, -1, 6,  28, 7,  -1, 28, 16, 28, -1, 28, 17, 28, -1, 23, 5,  -1, 21, -1, 22, -1, 24, 4,
-  -1, 24, 3,  -1, 29, 18, 28, 19, 29, -1, 29, 18, 28, -1, 18, 28, 19, 29, -1, 29, -1, 28, -1};
+  30,
+  0,
+  -1,
+  4,
+  -1,
+  3,
+  -1,
+  5,
+  8,
+  27,
+  -1,
+  16,
+  8,
+  27,
+  -1,
+  17,
+  8,
+  27,
+  -1,
+  14,
+  8,
+  27,
+  -1,
+  18,
+  8,
+  27,
+  -1,
+  19,
+  8,
+  27,
+  -1,
+  20,
+  8,
+  27,
+  -1,
+  21,
+  8,
+  27,
+  -1,
+  22,
+  8,
+  27,
+  -1,
+  23,
+  8,
+  27,
+  -1,
+  24,
+  8,
+  27,
+  -1,
+  5,
+  9,
+  27,
+  -1,
+  16,
+  9,
+  27,
+  -1,
+  17,
+  9,
+  27,
+  -1,
+  14,
+  9,
+  27,
+  -1,
+  18,
+  9,
+  27,
+  -1,
+  19,
+  9,
+  27,
+  -1,
+  20,
+  9,
+  27,
+  -1,
+  21,
+  9,
+  27,
+  -1,
+  22,
+  9,
+  27,
+  -1,
+  23,
+  9,
+  27,
+  -1,
+  24,
+  9,
+  27,
+  -1,
+  5,
+  10,
+  27,
+  -1,
+  16,
+  10,
+  27,
+  -1,
+  17,
+  10,
+  27,
+  -1,
+  14,
+  10,
+  27,
+  -1,
+  18,
+  10,
+  27,
+  -1,
+  19,
+  10,
+  27,
+  -1,
+  20,
+  10,
+  27,
+  -1,
+  21,
+  10,
+  27,
+  -1,
+  22,
+  10,
+  27,
+  -1,
+  23,
+  10,
+  27,
+  -1,
+  24,
+  10,
+  27,
+  -1,
+  5,
+  11,
+  27,
+  -1,
+  16,
+  11,
+  27,
+  -1,
+  17,
+  11,
+  27,
+  -1,
+  14,
+  11,
+  27,
+  -1,
+  18,
+  11,
+  27,
+  -1,
+  19,
+  11,
+  27,
+  -1,
+  20,
+  11,
+  27,
+  -1,
+  21,
+  11,
+  27,
+  -1,
+  22,
+  11,
+  27,
+  -1,
+  23,
+  11,
+  27,
+  -1,
+  24,
+  11,
+  27,
+  -1,
+  5,
+  12,
+  27,
+  -1,
+  16,
+  12,
+  27,
+  -1,
+  17,
+  12,
+  27,
+  -1,
+  14,
+  12,
+  27,
+  -1,
+  18,
+  12,
+  27,
+  -1,
+  19,
+  12,
+  27,
+  -1,
+  20,
+  12,
+  27,
+  -1,
+  21,
+  12,
+  27,
+  -1,
+  22,
+  12,
+  27,
+  -1,
+  23,
+  12,
+  27,
+  -1,
+  24,
+  12,
+  27,
+  -1,
+  5,
+  13,
+  27,
+  -1,
+  16,
+  13,
+  27,
+  -1,
+  17,
+  13,
+  27,
+  -1,
+  14,
+  13,
+  27,
+  -1,
+  18,
+  13,
+  27,
+  -1,
+  19,
+  13,
+  27,
+  -1,
+  20,
+  13,
+  27,
+  -1,
+  21,
+  13,
+  27,
+  -1,
+  22,
+  13,
+  27,
+  -1,
+  23,
+  13,
+  27,
+  -1,
+  24,
+  13,
+  27,
+  -1,
+  5,
+  14,
+  20,
+  -1,
+  16,
+  14,
+  20,
+  -1,
+  17,
+  14,
+  20,
+  -1,
+  14,
+  14,
+  20,
+  -1,
+  18,
+  14,
+  20,
+  -1,
+  19,
+  14,
+  20,
+  -1,
+  20,
+  14,
+  20,
+  -1,
+  21,
+  14,
+  20,
+  -1,
+  22,
+  14,
+  20,
+  -1,
+  23,
+  14,
+  20,
+  -1,
+  24,
+  14,
+  20,
+  -1,
+  5,
+  15,
+  20,
+  -1,
+  16,
+  15,
+  20,
+  -1,
+  17,
+  15,
+  20,
+  -1,
+  14,
+  15,
+  20,
+  -1,
+  18,
+  15,
+  20,
+  -1,
+  19,
+  15,
+  20,
+  -1,
+  20,
+  15,
+  20,
+  -1,
+  21,
+  15,
+  20,
+  -1,
+  22,
+  15,
+  20,
+  -1,
+  23,
+  15,
+  20,
+  -1,
+  24,
+  15,
+  20,
+  -1,
+  5,
+  14,
+  24,
+  -1,
+  16,
+  14,
+  24,
+  -1,
+  17,
+  14,
+  24,
+  -1,
+  14,
+  14,
+  24,
+  -1,
+  18,
+  14,
+  24,
+  -1,
+  19,
+  14,
+  24,
+  -1,
+  20,
+  14,
+  24,
+  -1,
+  21,
+  14,
+  24,
+  -1,
+  22,
+  14,
+  24,
+  -1,
+  23,
+  14,
+  24,
+  -1,
+  24,
+  14,
+  24,
+  -1,
+  5,
+  15,
+  24,
+  -1,
+  16,
+  15,
+  24,
+  -1,
+  17,
+  15,
+  24,
+  -1,
+  14,
+  15,
+  24,
+  -1,
+  18,
+  15,
+  24,
+  -1,
+  19,
+  15,
+  24,
+  -1,
+  20,
+  15,
+  24,
+  -1,
+  21,
+  15,
+  24,
+  -1,
+  22,
+  15,
+  24,
+  -1,
+  23,
+  15,
+  24,
+  -1,
+  24,
+  15,
+  24,
+  -1,
+  6,
+  28,
+  7,
+  -1,
+  28,
+  16,
+  28,
+  -1,
+  28,
+  17,
+  28,
+  -1,
+  23,
+  5,
+  -1,
+  21,
+  -1,
+  22,
+  -1,
+  24,
+  4,
+  -1,
+  24,
+  3,
+  -1,
+  29,
+  18,
+  28,
+  19,
+  29,
+  -1,
+  29,
+  18,
+  28,
+  -1,
+  18,
+  28,
+  19,
+  29,
+  -1,
+  29,
+  -1,
+  28,
+  -1};
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] = {
-  0,    526,  526,  530,  543,  551,  557,  563,  570,  576,  582,  588,  594,  600,  606,  614,
-  622,  628,  634,  641,  647,  653,  660,  666,  672,  678,  687,  695,  701,  707,  714,  720,
-  726,  733,  739,  745,  751,  760,  768,  774,  780,  787,  793,  799,  805,  811,  817,  823,
-  831,  840,  847,  854,  862,  869,  876,  883,  890,  897,  904,  914,  923,  930,  937,  945,
-  952,  959,  966,  973,  980,  987,  998,  1003, 1007, 1011, 1016, 1020, 1024, 1029, 1034, 1039,
-  1043, 1050, 1055, 1060, 1065, 1071, 1076, 1081, 1086, 1091, 1096, 1101, 1110, 1115, 1119, 1123,
-  1128, 1132, 1136, 1140, 1144, 1148, 1152, 1159, 1164, 1168, 1172, 1177, 1181, 1185, 1190, 1194,
-  1198, 1202, 1209, 1212, 1217, 1223, 1231, 1235, 1238, 1244, 1254, 1259, 1270, 1280, 1283};
+  0,
+  526,
+  526,
+  530,
+  543,
+  551,
+  557,
+  563,
+  570,
+  576,
+  582,
+  588,
+  594,
+  600,
+  606,
+  614,
+  622,
+  628,
+  634,
+  641,
+  647,
+  653,
+  660,
+  666,
+  672,
+  678,
+  687,
+  695,
+  701,
+  707,
+  714,
+  720,
+  726,
+  733,
+  739,
+  745,
+  751,
+  760,
+  768,
+  774,
+  780,
+  787,
+  793,
+  799,
+  805,
+  811,
+  817,
+  823,
+  831,
+  840,
+  847,
+  854,
+  862,
+  869,
+  876,
+  883,
+  890,
+  897,
+  904,
+  914,
+  923,
+  930,
+  937,
+  945,
+  952,
+  959,
+  966,
+  973,
+  980,
+  987,
+  998,
+  1003,
+  1007,
+  1011,
+  1016,
+  1020,
+  1024,
+  1029,
+  1034,
+  1039,
+  1043,
+  1050,
+  1055,
+  1060,
+  1065,
+  1071,
+  1076,
+  1081,
+  1086,
+  1091,
+  1096,
+  1101,
+  1110,
+  1115,
+  1119,
+  1123,
+  1128,
+  1132,
+  1136,
+  1140,
+  1144,
+  1148,
+  1152,
+  1159,
+  1164,
+  1168,
+  1172,
+  1177,
+  1181,
+  1185,
+  1190,
+  1194,
+  1198,
+  1202,
+  1209,
+  1212,
+  1217,
+  1223,
+  1231,
+  1235,
+  1238,
+  1244,
+  1254,
+  1259,
+  1270,
+  1280,
+  1283};
 #endif
 
 #if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
-static const char *const yytname[] = {"$end",         "error",
-                                      "$undefined",   "NUMBER",
-                                      "STRING",       "PARAM",
-                                      "LPAR",         "RPAR",
-                                      "OP_EQ",        "OP_NOTEQ",
-                                      "OP_GT",        "OP_LT",
-                                      "OP_GTEQ",      "OP_LTEQ",
-                                      "OP_IS",        "OP_ISNOT",
-                                      "OP_AND",       "OP_OR",
-                                      "KW_IF",        "KW_ELSE",
-                                      "KW_CONNECTED", "KW_CONNECT",
-                                      "KW_IGNORE",    "KW_COPY",
-                                      "KW_SET",       "UNRECOGNIZED_TOKEN",
-                                      "$accept",      "value",
-                                      "expr",         "action",
-                                      "statement",    0};
+static const char *const yytname[] = {"$end", "error", "$undefined", "NUMBER", "STRING", "PARAM", "LPAR", "RPAR", "OP_EQ", "OP_NOTEQ", "OP_GT", "OP_LT", "OP_GTEQ", "OP_LTEQ", "OP_IS", "OP_ISNOT", "OP_AND", "OP_OR", "KW_IF", "KW_ELSE", "KW_CONNECTED", "KW_CONNECT", "KW_IGNORE", "KW_COPY", "KW_SET", "UNRECOGNIZED_TOKEN", "$accept", "value", "expr", "action", "statement", 0};
 #endif
 
 #ifdef YYPRINT
 /* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
    token YYLEX-NUM.  */
-static const yytype_uint16 yytoknum[] = {0,   256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267,
-                                         268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280};
+static const yytype_uint16 yytoknum[] = {0, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280};
 #endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] = {
-  0,  26, 27, 27, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-  28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-  28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-  28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-  28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 30, 30, 30, 30, 30};
+  0,
+  26,
+  27,
+  27,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  28,
+  29,
+  29,
+  29,
+  29,
+  29,
+  30,
+  30,
+  30,
+  30,
+  30};
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] = {
-  0, 2, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 1, 2, 2, 5, 3, 4, 1, 1};
+  0,
+  2,
+  1,
+  1,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  2,
+  1,
+  1,
+  2,
+  2,
+  5,
+  3,
+  4,
+  1,
+  1};
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
    STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
    means the default is an error.  */
 static const yytype_uint8 yydefact[] = {
-  0,   0,   0,   0,   0,   0,   0,   0,  0,  118, 119, 0,   0,   126, 125, 0,   0,  0,  0,  0,  0,
-  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,  0,  0,
-  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,  0,  0,
-  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,  0,  0,
-  0,   0,   0,   0,   0,   0,   0,   0,  0,  0,   0,   117, 0,   0,   0,   0,   0,  0,  0,  0,  121,
-  120, 0,   0,   0,   0,   0,   0,   0,  0,  0,   0,   0,   1,   3,   2,   4,   15, 26, 37, 48, 59,
-  70,  92,  81,  103, 0,   114, 7,   18, 29, 40,  51,  62,  73,  95,  84,  106, 5,  16, 27, 38, 49,
-  60,  71,  93,  82,  104, 6,   17,  28, 39, 50,  61,  72,  94,  83,  105, 8,   19, 30, 41, 52, 63,
-  74,  96,  85,  107, 0,   9,   20,  31, 42, 53,  64,  75,  97,  86,  108, 10,  21, 32, 43, 54, 65,
-  76,  98,  87,  109, 11,  22,  33,  44, 55, 66,  77,  99,  88,  110, 12,  23,  34, 45, 56, 67, 78,
-  100, 89,  111, 13,  24,  35,  46,  57, 68, 79,  101, 90,  112, 14,  25,  36,  47, 58, 69, 80, 102,
-  91,  113, 115, 116, 123, 118, 119, 0,  0,  124, 0,   122};
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  118,
+  119,
+  0,
+  0,
+  126,
+  125,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  117,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  121,
+  120,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  3,
+  2,
+  4,
+  15,
+  26,
+  37,
+  48,
+  59,
+  70,
+  92,
+  81,
+  103,
+  0,
+  114,
+  7,
+  18,
+  29,
+  40,
+  51,
+  62,
+  73,
+  95,
+  84,
+  106,
+  5,
+  16,
+  27,
+  38,
+  49,
+  60,
+  71,
+  93,
+  82,
+  104,
+  6,
+  17,
+  28,
+  39,
+  50,
+  61,
+  72,
+  94,
+  83,
+  105,
+  8,
+  19,
+  30,
+  41,
+  52,
+  63,
+  74,
+  96,
+  85,
+  107,
+  0,
+  9,
+  20,
+  31,
+  42,
+  53,
+  64,
+  75,
+  97,
+  86,
+  108,
+  10,
+  21,
+  32,
+  43,
+  54,
+  65,
+  76,
+  98,
+  87,
+  109,
+  11,
+  22,
+  33,
+  44,
+  55,
+  66,
+  77,
+  99,
+  88,
+  110,
+  12,
+  23,
+  34,
+  45,
+  56,
+  67,
+  78,
+  100,
+  89,
+  111,
+  13,
+  24,
+  35,
+  46,
+  57,
+  68,
+  79,
+  101,
+  90,
+  112,
+  14,
+  25,
+  36,
+  47,
+  58,
+  69,
+  80,
+  102,
+  91,
+  113,
+  115,
+  116,
+  123,
+  118,
+  119,
+  0,
+  0,
+  124,
+  0,
+  122};
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] = {-1, 120, 13, 14, 15};
@@ -952,20 +2450,249 @@ static const yytype_int8 yydefgoto[] = {-1, 120, 13, 14, 15};
    STATE-NUM.  */
 #define YYPACT_NINF -161
 static const yytype_int16 yypact[] = {
-  86,   184,  130,  192,  200,  208,  110,  216,  224,  232,  240,  176,  165,  -14,  14,   16,   11,   11,
-  11,   11,   11,   11,   -7,   117,  248,  232,  240,  256,  264,  -6,   11,   11,   11,   11,   11,   11,
-  118,  119,  11,   11,   11,   11,   11,   11,   146,  260,  11,   11,   11,   11,   11,   11,   261,  262,
-  11,   11,   11,   11,   11,   11,   147,  263,  305,  11,   11,   11,   11,   11,   11,   268,  269,  11,
-  11,   11,   11,   11,   11,   270,  271,  11,   11,   11,   11,   11,   11,   276,  277,  11,   11,   11,
-  11,   11,   11,   278,  279,  -161, 11,   11,   11,   11,   11,   11,   284,  285,  -161, -161, 11,   11,
-  11,   11,   11,   11,   286,  287,  130,  130,  130,  -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, 292,  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, 296,  -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161, -161,
-  17,   309,  -161, -161, 35,   21,   -161, 296,  -161};
+  86,
+  184,
+  130,
+  192,
+  200,
+  208,
+  110,
+  216,
+  224,
+  232,
+  240,
+  176,
+  165,
+  -14,
+  14,
+  16,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  -7,
+  117,
+  248,
+  232,
+  240,
+  256,
+  264,
+  -6,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  118,
+  119,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  146,
+  260,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  261,
+  262,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  147,
+  263,
+  305,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  268,
+  269,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  270,
+  271,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  276,
+  277,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  278,
+  279,
+  -161,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  284,
+  285,
+  -161,
+  -161,
+  11,
+  11,
+  11,
+  11,
+  11,
+  11,
+  286,
+  287,
+  130,
+  130,
+  130,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  292,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  296,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  -161,
+  17,
+  309,
+  -161,
+  -161,
+  35,
+  21,
+  -161,
+  296,
+  -161};
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] = {-161, -12, -2, -160, -161};
@@ -976,52 +2703,913 @@ static const yytype_int16 yypgoto[] = {-161, -12, -2, -160, -161};
    If YYTABLE_NINF, syntax error.  */
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] = {
-  29,  131, 114, 115, 62,  121, 122, 123, 124, 125, 114, 115, 240, 126, 118, 119, 117, 127, 132, 133, 134,
-  135, 136, 137, 104, 105, 142, 143, 144, 145, 146, 147, 116, 114, 152, 153, 154, 155, 156, 157, 95,  0,
-  162, 163, 164, 165, 166, 167, 0,   0,   0,   173, 174, 175, 176, 177, 178, 0,   0,   183, 184, 185, 186,
-  187, 188, 0,   0,   193, 194, 195, 196, 197, 198, 0,   0,   203, 204, 205, 206, 207, 208, 242, 0,   0,
-  213, 214, 215, 216, 217, 218, 0,   1,   2,   0,   223, 224, 225, 226, 227, 228, 3,   0,   4,   5,   6,
-  7,   8,   9,   10,  11,  12,  0,   233, 234, 235, 1,   2,   0,   54,  55,  56,  57,  58,  59,  60,  61,
-  4,   5,   24,  7,   8,   25,  26,  27,  28,  1,   2,   128, 138, 140, 0,   129, 139, 141, 3,   0,   4,
-  5,   24,  7,   8,   25,  26,  27,  28,  30,  31,  32,  33,  34,  35,  36,  37,  0,   0,   0,   148, 168,
-  104, 105, 149, 169, 0,   106, 107, 108, 109, 110, 111, 112, 113, 95,  0,   0,   96,  97,  98,  99,  100,
-  101, 102, 103, 16,  17,  18,  19,  20,  21,  22,  23,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,
-  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  52,  53,  63,  64,  65,  66,  67,  68,  69,
-  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,
-  91,  92,  93,  94,  54,  55,  56,  57,  58,  59,  130, 61,  96,  97,  98,  99,  100, 101, 102, 103, 106,
-  107, 108, 109, 110, 111, 112, 113, 150, 158, 160, 170, 151, 159, 161, 171, 179, 181, 189, 191, 180, 182,
-  190, 192, 199, 201, 209, 211, 200, 202, 210, 212, 219, 221, 229, 231, 220, 222, 230, 232, 168, 0,   0,
-  0,   169, 236, 237, 238, 239, 114, 115, 0,   172, 114, 115, 0,   241};
+  29,
+  131,
+  114,
+  115,
+  62,
+  121,
+  122,
+  123,
+  124,
+  125,
+  114,
+  115,
+  240,
+  126,
+  118,
+  119,
+  117,
+  127,
+  132,
+  133,
+  134,
+  135,
+  136,
+  137,
+  104,
+  105,
+  142,
+  143,
+  144,
+  145,
+  146,
+  147,
+  116,
+  114,
+  152,
+  153,
+  154,
+  155,
+  156,
+  157,
+  95,
+  0,
+  162,
+  163,
+  164,
+  165,
+  166,
+  167,
+  0,
+  0,
+  0,
+  173,
+  174,
+  175,
+  176,
+  177,
+  178,
+  0,
+  0,
+  183,
+  184,
+  185,
+  186,
+  187,
+  188,
+  0,
+  0,
+  193,
+  194,
+  195,
+  196,
+  197,
+  198,
+  0,
+  0,
+  203,
+  204,
+  205,
+  206,
+  207,
+  208,
+  242,
+  0,
+  0,
+  213,
+  214,
+  215,
+  216,
+  217,
+  218,
+  0,
+  1,
+  2,
+  0,
+  223,
+  224,
+  225,
+  226,
+  227,
+  228,
+  3,
+  0,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  0,
+  233,
+  234,
+  235,
+  1,
+  2,
+  0,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  4,
+  5,
+  24,
+  7,
+  8,
+  25,
+  26,
+  27,
+  28,
+  1,
+  2,
+  128,
+  138,
+  140,
+  0,
+  129,
+  139,
+  141,
+  3,
+  0,
+  4,
+  5,
+  24,
+  7,
+  8,
+  25,
+  26,
+  27,
+  28,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  0,
+  0,
+  0,
+  148,
+  168,
+  104,
+  105,
+  149,
+  169,
+  0,
+  106,
+  107,
+  108,
+  109,
+  110,
+  111,
+  112,
+  113,
+  95,
+  0,
+  0,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  52,
+  53,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  130,
+  61,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  106,
+  107,
+  108,
+  109,
+  110,
+  111,
+  112,
+  113,
+  150,
+  158,
+  160,
+  170,
+  151,
+  159,
+  161,
+  171,
+  179,
+  181,
+  189,
+  191,
+  180,
+  182,
+  190,
+  192,
+  199,
+  201,
+  209,
+  211,
+  200,
+  202,
+  210,
+  212,
+  219,
+  221,
+  229,
+  231,
+  220,
+  222,
+  230,
+  232,
+  168,
+  0,
+  0,
+  0,
+  169,
+  236,
+  237,
+  238,
+  239,
+  114,
+  115,
+  0,
+  172,
+  114,
+  115,
+  0,
+  241};
 
 static const yytype_int16 yycheck[] = {
-  2,   7,   16,  17,  6,  17, 18, 19, 20, 21,  16, 17, 172, 20, 3,  4,  0,   24,  30,  31, 32, 33, 34,  35,
-  3,   4,   38,  39,  40, 41, 42, 43, 18, 16,  46, 47, 48,  49, 50, 51, 5,   -1,  54,  55, 56, 57, 58,  59,
-  -1,  -1,  -1,  63,  64, 65, 66, 67, 68, -1,  -1, 71, 72,  73, 74, 75, 76,  -1,  -1,  79, 80, 81, 82,  83,
-  84,  -1,  -1,  87,  88, 89, 90, 91, 92, 241, -1, -1, 96,  97, 98, 99, 100, 101, -1,  5,  6,  -1, 106, 107,
-  108, 109, 110, 111, 14, -1, 16, 17, 18, 19,  20, 21, 22,  23, 24, -1, 114, 115, 116, 5,  6,  -1, 8,   9,
-  10,  11,  12,  13,  14, 15, 16, 17, 18, 19,  20, 21, 22,  23, 24, 5,  6,   20,  20,  20, -1, 24, 24,  24,
-  14,  -1,  16,  17,  18, 19, 20, 21, 22, 23,  24, 8,  9,   10, 11, 12, 13,  14,  15,  -1, -1, -1, 20,  20,
-  3,   4,   24,  24,  -1, 8,  9,  10, 11, 12,  13, 14, 15,  5,  -1, -1, 8,   9,   10,  11, 12, 13, 14,  15,
-  8,   9,   10,  11,  12, 13, 14, 15, 8,  9,   10, 11, 12,  13, 14, 15, 8,   9,   10,  11, 12, 13, 14,  15,
-  8,   9,   10,  11,  12, 13, 14, 15, 8,  9,   10, 11, 12,  13, 14, 15, 8,   9,   10,  11, 12, 13, 14,  15,
-  8,   9,   10,  11,  12, 13, 14, 15, 8,  9,   10, 11, 12,  13, 14, 15, 8,   9,   10,  11, 12, 13, 14,  15,
-  8,   9,   10,  11,  12, 13, 14, 15, 8,  9,   10, 11, 12,  13, 14, 15, 20,  20,  20,  20, 24, 24, 24,  24,
-  20,  20,  20,  20,  24, 24, 24, 24, 20, 20,  20, 20, 24,  24, 24, 24, 20,  20,  20,  20, 24, 24, 24,  24,
-  20,  -1,  -1,  -1,  24, 21, 22, 23, 24, 16,  17, -1, 19,  16, 17, -1, 19};
+  2,
+  7,
+  16,
+  17,
+  6,
+  17,
+  18,
+  19,
+  20,
+  21,
+  16,
+  17,
+  172,
+  20,
+  3,
+  4,
+  0,
+  24,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  3,
+  4,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  18,
+  16,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  5,
+  -1,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  -1,
+  -1,
+  -1,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  -1,
+  -1,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  -1,
+  -1,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  -1,
+  -1,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  241,
+  -1,
+  -1,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  -1,
+  5,
+  6,
+  -1,
+  106,
+  107,
+  108,
+  109,
+  110,
+  111,
+  14,
+  -1,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  -1,
+  114,
+  115,
+  116,
+  5,
+  6,
+  -1,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  5,
+  6,
+  20,
+  20,
+  20,
+  -1,
+  24,
+  24,
+  24,
+  14,
+  -1,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  -1,
+  -1,
+  -1,
+  20,
+  20,
+  3,
+  4,
+  24,
+  24,
+  -1,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  5,
+  -1,
+  -1,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  20,
+  20,
+  20,
+  20,
+  24,
+  24,
+  24,
+  24,
+  20,
+  20,
+  20,
+  20,
+  24,
+  24,
+  24,
+  24,
+  20,
+  20,
+  20,
+  20,
+  24,
+  24,
+  24,
+  24,
+  20,
+  20,
+  20,
+  20,
+  24,
+  24,
+  24,
+  24,
+  20,
+  -1,
+  -1,
+  -1,
+  24,
+  21,
+  22,
+  23,
+  24,
+  16,
+  17,
+  -1,
+  19,
+  16,
+  17,
+  -1,
+  19};
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] = {
-  0,  5,  6,  14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 8,  9,  10, 11, 12, 13, 14, 15, 18,
-  21, 22, 23, 24, 28, 8,  9,  10, 11, 12, 13, 14, 15, 8,  9,  10, 11, 12, 13, 14, 15, 8,  9,  10, 11,
-  12, 13, 14, 15, 8,  9,  10, 11, 12, 13, 14, 15, 28, 8,  9,  10, 11, 12, 13, 14, 15, 8,  9,  10, 11,
-  12, 13, 14, 15, 8,  9,  10, 11, 12, 13, 14, 15, 8,  9,  10, 11, 12, 13, 14, 15, 5,  8,  9,  10, 11,
-  12, 13, 14, 15, 3,  4,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 0,  3,  4,  27, 27, 27, 27, 27,
-  27, 20, 24, 20, 24, 14, 7,  27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 27, 27, 27, 27, 27, 27, 20, 24,
-  20, 24, 27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 19, 27, 27,
-  27, 27, 27, 27, 20, 24, 20, 24, 27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 27, 27, 27, 27, 27, 27, 20,
-  24, 20, 24, 27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 27, 27, 27, 27, 27, 27, 20, 24, 20, 24, 27, 27,
-  27, 27, 27, 27, 20, 24, 20, 24, 28, 28, 28, 21, 22, 23, 24, 29, 19, 29};
+  0,
+  5,
+  6,
+  14,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  28,
+  29,
+  30,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  18,
+  21,
+  22,
+  23,
+  24,
+  28,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  28,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  5,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  3,
+  4,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  0,
+  3,
+  4,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  14,
+  7,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  19,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  27,
+  27,
+  27,
+  27,
+  27,
+  27,
+  20,
+  24,
+  20,
+  24,
+  28,
+  28,
+  28,
+  21,
+  22,
+  23,
+  24,
+  29,
+  19,
+  29};
 
 #define yyerrok (yyerrstatus = 0)
 #define yyclearin (yychar = YYEMPTY)
@@ -1042,14 +3630,16 @@ static const yytype_uint8 yystos[] = {
 
 #define YYBACKUP(Token, Value) \
   do \
-    if (yychar == YYEMPTY && yylen == 1) { \
+    if (yychar == YYEMPTY && yylen == 1) \
+    { \
       yychar = (Token); \
       yylval = (Value); \
       yytoken = YYTRANSLATE(yychar); \
       YYPOPSTACK(1); \
       goto yybackup; \
     } \
-    else { \
+    else \
+    { \
       yyerror(&yylloc, data, YY_("syntax error: cannot back up")); \
       YYERROR; \
     } \
@@ -1066,13 +3656,15 @@ static const yytype_uint8 yystos[] = {
 #ifndef YYLLOC_DEFAULT
 #  define YYLLOC_DEFAULT(Current, Rhs, N) \
     do \
-      if (YYID(N)) { \
+      if (YYID(N)) \
+      { \
         (Current).first_line = YYRHSLOC(Rhs, 1).first_line; \
         (Current).first_column = YYRHSLOC(Rhs, 1).first_column; \
         (Current).last_line = YYRHSLOC(Rhs, N).last_line; \
         (Current).last_column = YYRHSLOC(Rhs, N).last_column; \
       } \
-      else { \
+      else \
+      { \
         (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line; \
         (Current).first_column = (Current).last_column = YYRHSLOC(Rhs, 0).last_column; \
       } \
@@ -1109,14 +3701,17 @@ static const yytype_uint8 yystos[] = {
 #  endif
 
 #  define YYDPRINTF(Args) \
-    do { \
+    do \
+    { \
       if (yydebug) \
         YYFPRINTF Args; \
     } while (YYID(0))
 
 #  define YY_SYMBOL_PRINT(Title, Type, Value, Location) \
-    do { \
-      if (yydebug) { \
+    do \
+    { \
+      if (yydebug) \
+      { \
         YYFPRINTF(stderr, "%s ", Title); \
         yy_symbol_print(stderr, Type, Value, Location, data); \
         YYFPRINTF(stderr, "\n"); \
@@ -1152,7 +3747,8 @@ _VSCGParserData *data;
 #  else
   YYUSE(yyoutput);
 #  endif
-  switch (yytype) {
+  switch (yytype)
+  {
     default:
       break;
   }
@@ -1200,7 +3796,8 @@ yytype_int16 *yytop;
 #  endif
 {
   YYFPRINTF(stderr, "Stack now");
-  for (; yybottom <= yytop; yybottom++) {
+  for (; yybottom <= yytop; yybottom++)
+  {
     int yybot = *yybottom;
     YYFPRINTF(stderr, " %d", yybot);
   }
@@ -1208,7 +3805,8 @@ yytype_int16 *yytop;
 }
 
 #  define YY_STACK_PRINT(Bottom, Top) \
-    do { \
+    do \
+    { \
       if (yydebug) \
         yy_stack_print((Bottom), (Top)); \
     } while (YYID(0))
@@ -1231,7 +3829,8 @@ _VSCGParserData *data;
   unsigned long int yylno = yyrline[yyrule];
   YYFPRINTF(stderr, "Reducing stack by rule %d (line %lu):\n", yyrule - 1, yylno);
   /* The symbols being reduced.  */
-  for (yyi = 0; yyi < yynrhs; yyi++) {
+  for (yyi = 0; yyi < yynrhs; yyi++)
+  {
     YYFPRINTF(stderr, "   $%d = ", yyi + 1);
     yy_symbol_print(stderr,
                     yyrhs[yyprhs[yyrule] + yyi],
@@ -1243,7 +3842,8 @@ _VSCGParserData *data;
 }
 
 #  define YY_REDUCE_PRINT(Rule) \
-    do { \
+    do \
+    { \
       if (yydebug) \
         yy_reduce_print(yyvsp, yylsp, Rule, data); \
     } while (YYID(0))
@@ -1329,12 +3929,14 @@ const char *yysrc;
    would have been.  */
 static YYSIZE_T yytnamerr(char *yyres, const char *yystr)
 {
-  if (*yystr == '"') {
+  if (*yystr == '"')
+  {
     YYSIZE_T yyn = 0;
     char const *yyp = yystr;
 
     for (;;)
-      switch (*++yyp) {
+      switch (*++yyp)
+      {
         case '\'':
         case ',':
           goto do_not_strip_quotes;
@@ -1377,13 +3979,17 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
 
   if (!(YYPACT_NINF < yyn && yyn <= YYLAST))
     return 0;
-  else {
+  else
+  {
     int yytype = YYTRANSLATE(yychar);
     YYSIZE_T yysize0 = yytnamerr(0, yytname[yytype]);
     YYSIZE_T yysize = yysize0;
     YYSIZE_T yysize1;
     int yysize_overflow = 0;
-    enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
+    enum
+    {
+      YYERROR_VERBOSE_ARGS_MAXIMUM = 5
+    };
     char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
     int yyx;
 
@@ -1418,8 +4024,10 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
     yyfmt = yystpcpy(yyformat, yyunexpected);
 
     for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-      if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR) {
-        if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM) {
+      if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+      {
+        if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
+        {
           yycount = 1;
           yysize = yysize0;
           yyformat[sizeof yyunexpected - 1] = '\0';
@@ -1441,18 +4049,22 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
     if (yysize_overflow)
       return YYSIZE_MAXIMUM;
 
-    if (yyresult) {
+    if (yyresult)
+    {
       /* Avoid sprintf, as that infringes on the user's name space.
          Don't have undefined behavior even if the translation
          produced a string with the wrong number of "%s"s.  */
       char *yyp = yyresult;
       int yyi = 0;
-      while ((*yyp = *yyf) != '\0') {
-        if (*yyp == '%' && yyf[1] == 's' && yyi < yycount) {
+      while ((*yyp = *yyf) != '\0')
+      {
+        if (*yyp == '%' && yyf[1] == 's' && yyi < yycount)
+        {
           yyp += yytnamerr(yyp, yyarg[yyi++]);
           yyf += 2;
         }
-        else {
+        else
+        {
           yyp++;
           yyf++;
         }
@@ -1490,13 +4102,15 @@ _VSCGParserData *data;
     yymsg = "Deleting";
   YY_SYMBOL_PRINT(yymsg, yytype, yyvaluep, yylocationp);
 
-  switch (yytype) {
+  switch (yytype)
+  {
     case 3: /* "NUMBER" */
 
 /* Line 1000 of yacc.c  */
 #line 465 "hdPrman/virtualStructConditionalGrammar.yy"
     {
-      if ((yyvaluep->string)) {
+      if ((yyvaluep->string))
+      {
         free((yyvaluep->string));
       }
       (yyvaluep->string) = 0;
@@ -1504,13 +4118,14 @@ _VSCGParserData *data;
 
 /* Line 1000 of yacc.c  */
 #line 1764 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
-      break;
+    break;
     case 4: /* "STRING" */
 
 /* Line 1000 of yacc.c  */
 #line 465 "hdPrman/virtualStructConditionalGrammar.yy"
     {
-      if ((yyvaluep->string)) {
+      if ((yyvaluep->string))
+      {
         free((yyvaluep->string));
       }
       (yyvaluep->string) = 0;
@@ -1518,13 +4133,14 @@ _VSCGParserData *data;
 
 /* Line 1000 of yacc.c  */
 #line 1779 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
-      break;
+    break;
     case 5: /* "PARAM" */
 
 /* Line 1000 of yacc.c  */
 #line 465 "hdPrman/virtualStructConditionalGrammar.yy"
     {
-      if ((yyvaluep->string)) {
+      if ((yyvaluep->string))
+      {
         free((yyvaluep->string));
       }
       (yyvaluep->string) = 0;
@@ -1532,13 +4148,14 @@ _VSCGParserData *data;
 
 /* Line 1000 of yacc.c  */
 #line 1794 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
-      break;
+    break;
     case 27: /* "value" */
 
 /* Line 1000 of yacc.c  */
 #line 481 "hdPrman/virtualStructConditionalGrammar.yy"
     {
-      if ((yyvaluep->value)) {
+      if ((yyvaluep->value))
+      {
         delete (yyvaluep->value);
       }
       (yyvaluep->value) = 0;
@@ -1546,13 +4163,14 @@ _VSCGParserData *data;
 
 /* Line 1000 of yacc.c  */
 #line 1809 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
-      break;
+    break;
     case 29: /* "action" */
 
 /* Line 1000 of yacc.c  */
 #line 473 "hdPrman/virtualStructConditionalGrammar.yy"
     {
-      if ((yyvaluep->action)) {
+      if ((yyvaluep->action))
+      {
         delete (yyvaluep->action);
       }
       (yyvaluep->action) = 0;
@@ -1560,7 +4178,7 @@ _VSCGParserData *data;
 
 /* Line 1000 of yacc.c  */
 #line 1824 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
-      break;
+    break;
 
     default:
       break;
@@ -1706,7 +4324,8 @@ yynewstate:
 yysetstate:
   *yyssp = yystate;
 
-  if (yyss + yystacksize - 1 <= yyssp) {
+  if (yyss + yystacksize - 1 <= yyssp)
+  {
     /* Get the current used size of the three stacks, in elements.  */
     YYSIZE_T yysize = yyssp - yyss + 1;
 
@@ -1795,16 +4414,19 @@ yybackup:
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
-  if (yychar == YYEMPTY) {
+  if (yychar == YYEMPTY)
+  {
     YYDPRINTF((stderr, "Reading a token: "));
     yychar = YYLEX;
   }
 
-  if (yychar <= YYEOF) {
+  if (yychar <= YYEOF)
+  {
     yychar = yytoken = YYEOF;
     YYDPRINTF((stderr, "Now at end of input.\n"));
   }
-  else {
+  else
+  {
     yytoken = YYTRANSLATE(yychar);
     YY_SYMBOL_PRINT("Next token is", yytoken, &yylval, &yylloc);
   }
@@ -1815,7 +4437,8 @@ yybackup:
   if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
     goto yydefault;
   yyn = yytable[yyn];
-  if (yyn <= 0) {
+  if (yyn <= 0)
+  {
     if (yyn == 0 || yyn == YYTABLE_NINF)
       goto yyerrlab;
     yyn = -yyn;
@@ -1867,7 +4490,8 @@ yyreduce:
   /* Default location.  */
   YYLLOC_DEFAULT(yyloc, (yylsp - yylen), yylen);
   YY_REDUCE_PRINT(yyn);
-  switch (yyn) {
+  switch (yyn)
+  {
     case 2:
 
 /* Line 1455 of yacc.c  */
@@ -1876,7 +4500,8 @@ yyreduce:
       (yyval.value) = new _VSCGValueContainer(VtValue((yyvsp[(1) - (1)].string)));
       free((yyvsp[(1) - (1)].string));
       ;
-    } break;
+    }
+    break;
 
     case 3:
 
@@ -1886,7 +4511,8 @@ yyreduce:
       (yyval.value) = new _VSCGValueContainer(VtValue(atof((yyvsp[(1) - (1)].string))));
       free((yyvsp[(1) - (1)].string));
       ;
-    } break;
+    }
+    break;
 
     case 4:
 
@@ -1900,7 +4526,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 5:
 
@@ -1912,7 +4539,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 6:
 
@@ -1924,7 +4552,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 7:
 
@@ -1936,7 +4565,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 8:
 
@@ -1948,7 +4578,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 9:
 
@@ -1960,7 +4591,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 10:
 
@@ -1972,7 +4604,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 11:
 
@@ -1984,7 +4617,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 12:
 
@@ -1996,7 +4630,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 13:
 
@@ -2008,7 +4643,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 14:
 
@@ -2020,7 +4656,8 @@ yyreduce:
         new ConditionalParamCmpEqualTo(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 15:
 
@@ -2034,7 +4671,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 16:
 
@@ -2046,7 +4684,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 17:
 
@@ -2058,7 +4697,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 18:
 
@@ -2070,7 +4710,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 19:
 
@@ -2082,7 +4723,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 20:
 
@@ -2094,7 +4736,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 21:
 
@@ -2106,7 +4749,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 22:
 
@@ -2118,7 +4762,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 23:
 
@@ -2130,7 +4775,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 24:
 
@@ -2142,7 +4788,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 25:
 
@@ -2154,7 +4801,8 @@ yyreduce:
         new ConditionalParamCmpNotEqualTo(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 26:
 
@@ -2168,7 +4816,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 27:
 
@@ -2180,7 +4829,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 28:
 
@@ -2192,7 +4842,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 29:
 
@@ -2204,7 +4855,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 30:
 
@@ -2216,7 +4868,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 31:
 
@@ -2228,7 +4881,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 32:
 
@@ -2240,7 +4894,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 33:
 
@@ -2252,7 +4907,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 34:
 
@@ -2264,7 +4920,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 35:
 
@@ -2276,7 +4933,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 36:
 
@@ -2288,7 +4946,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThan(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 37:
 
@@ -2302,7 +4961,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 38:
 
@@ -2314,7 +4974,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 39:
 
@@ -2326,7 +4987,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 40:
 
@@ -2338,7 +5000,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 41:
 
@@ -2350,7 +5013,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 42:
 
@@ -2362,7 +5026,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 43:
 
@@ -2374,7 +5039,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 44:
 
@@ -2386,7 +5052,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 45:
 
@@ -2398,7 +5065,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 46:
 
@@ -2410,7 +5078,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 47:
 
@@ -2422,7 +5091,8 @@ yyreduce:
         new ConditionalParamCmpLessThan(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 48:
 
@@ -2436,7 +5106,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 49:
 
@@ -2448,7 +5119,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 50:
 
@@ -2460,7 +5132,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 51:
 
@@ -2472,7 +5145,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 52:
 
@@ -2484,7 +5158,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 53:
 
@@ -2496,7 +5171,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 54:
 
@@ -2508,7 +5184,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 55:
 
@@ -2520,7 +5197,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 56:
 
@@ -2532,7 +5210,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 57:
 
@@ -2544,7 +5223,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 58:
 
@@ -2556,7 +5236,8 @@ yyreduce:
         new ConditionalParamCmpGreaterThanOrEqualTo(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 59:
 
@@ -2570,7 +5251,8 @@ yyreduce:
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 60:
 
@@ -2582,7 +5264,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("and"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 61:
 
@@ -2594,7 +5277,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("or"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 62:
 
@@ -2606,7 +5290,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("is"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 63:
 
@@ -2618,7 +5303,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("if"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 64:
 
@@ -2630,7 +5316,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("else"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 65:
 
@@ -2642,7 +5329,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("connected"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 66:
 
@@ -2654,7 +5342,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("connect"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 67:
 
@@ -2666,7 +5355,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("ignore"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 68:
 
@@ -2678,7 +5368,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("copy"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 69:
 
@@ -2690,7 +5381,8 @@ yyreduce:
         new ConditionalParamCmpLessThanOrEqualTo(TfToken("set"), (yyvsp[(3) - (3)].value)->value));
       delete (yyvsp[(3) - (3)].value);
       ;
-    } break;
+    }
+    break;
 
     case 70:
 
@@ -2702,7 +5394,8 @@ yyreduce:
         new ConditionalParamIsConnected(TfToken((yyvsp[(1) - (3)].string))));
       free((yyvsp[(1) - (3)].string));
       ;
-    } break;
+    }
+    break;
 
     case 71:
 
@@ -2712,7 +5405,8 @@ yyreduce:
       /* PARAM named 'and', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("and")));
       ;
-    } break;
+    }
+    break;
 
     case 72:
 
@@ -2722,7 +5416,8 @@ yyreduce:
       /* PARAM named 'or', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("or")));
       ;
-    } break;
+    }
+    break;
 
     case 73:
 
@@ -2732,7 +5427,8 @@ yyreduce:
       /* PARAM named 'is', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("is")));
       ;
-    } break;
+    }
+    break;
 
     case 74:
 
@@ -2742,7 +5438,8 @@ yyreduce:
       /* PARAM named 'if', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("if")));
       ;
-    } break;
+    }
+    break;
 
     case 75:
 
@@ -2752,7 +5449,8 @@ yyreduce:
       /* PARAM named 'else', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("else")));
       ;
-    } break;
+    }
+    break;
 
     case 76:
 
@@ -2762,7 +5460,8 @@ yyreduce:
       /* PARAM named 'connected', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("connected")));
       ;
-    } break;
+    }
+    break;
 
     case 77:
 
@@ -2772,7 +5471,8 @@ yyreduce:
       /* PARAM named 'connect', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("connect")));
       ;
-    } break;
+    }
+    break;
 
     case 78:
 
@@ -2782,7 +5482,8 @@ yyreduce:
       /* PARAM named 'ignore', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("ignore")));
       ;
-    } break;
+    }
+    break;
 
     case 79:
 
@@ -2792,7 +5493,8 @@ yyreduce:
       /* PARAM named 'copy', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("copy")));
       ;
-    } break;
+    }
+    break;
 
     case 80:
 
@@ -2802,7 +5504,8 @@ yyreduce:
       /* PARAM named 'set', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsConnected(TfToken("set")));
       ;
-    } break;
+    }
+    break;
 
     case 81:
 
@@ -2814,7 +5517,8 @@ yyreduce:
         new ConditionalParamIsNotConnected(TfToken((yyvsp[(1) - (3)].string))));
       free((yyvsp[(1) - (3)].string));
       ;
-    } break;
+    }
+    break;
 
     case 82:
 
@@ -2824,7 +5528,8 @@ yyreduce:
       /* PARAM named 'and', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("and")));
       ;
-    } break;
+    }
+    break;
 
     case 83:
 
@@ -2834,7 +5539,8 @@ yyreduce:
       /* PARAM named 'or', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("or")));
       ;
-    } break;
+    }
+    break;
 
     case 84:
 
@@ -2844,7 +5550,8 @@ yyreduce:
       /* PARAM named 'is', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("is")));
       ;
-    } break;
+    }
+    break;
 
     case 85:
 
@@ -2854,7 +5561,8 @@ yyreduce:
       /* PARAM named 'if', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("if")));
       ;
-    } break;
+    }
+    break;
 
     case 86:
 
@@ -2864,7 +5572,8 @@ yyreduce:
       /* PARAM named 'else', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("else")));
       ;
-    } break;
+    }
+    break;
 
     case 87:
 
@@ -2874,7 +5583,8 @@ yyreduce:
       /* PARAM named 'connected', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("connected")));
       ;
-    } break;
+    }
+    break;
 
     case 88:
 
@@ -2884,7 +5594,8 @@ yyreduce:
       /* PARAM named 'connect', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("connect")));
       ;
-    } break;
+    }
+    break;
 
     case 89:
 
@@ -2894,7 +5605,8 @@ yyreduce:
       /* PARAM named 'ignore', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("ignore")));
       ;
-    } break;
+    }
+    break;
 
     case 90:
 
@@ -2904,7 +5616,8 @@ yyreduce:
       /* PARAM named 'copy', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("copy")));
       ;
-    } break;
+    }
+    break;
 
     case 91:
 
@@ -2914,7 +5627,8 @@ yyreduce:
       /* PARAM named 'set', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotConnected(TfToken("set")));
       ;
-    } break;
+    }
+    break;
 
     case 92:
 
@@ -2925,7 +5639,8 @@ yyreduce:
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken((yyvsp[(1) - (3)].string))));
       free((yyvsp[(1) - (3)].string));
       ;
-    } break;
+    }
+    break;
 
     case 93:
 
@@ -2935,7 +5650,8 @@ yyreduce:
       /* PARAM named 'and', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("and")));
       ;
-    } break;
+    }
+    break;
 
     case 94:
 
@@ -2945,7 +5661,8 @@ yyreduce:
       /* PARAM named 'or', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("or")));
       ;
-    } break;
+    }
+    break;
 
     case 95:
 
@@ -2955,7 +5672,8 @@ yyreduce:
       /* PARAM named 'is', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("is")));
       ;
-    } break;
+    }
+    break;
 
     case 96:
 
@@ -2965,7 +5683,8 @@ yyreduce:
       /* PARAM named 'if', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("if")));
       ;
-    } break;
+    }
+    break;
 
     case 97:
 
@@ -2975,7 +5694,8 @@ yyreduce:
       /* PARAM named 'else', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("else")));
       ;
-    } break;
+    }
+    break;
 
     case 98:
 
@@ -2985,7 +5705,8 @@ yyreduce:
       /* PARAM named 'connected', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("connected")));
       ;
-    } break;
+    }
+    break;
 
     case 99:
 
@@ -2995,7 +5716,8 @@ yyreduce:
       /* PARAM named 'connect', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("connect")));
       ;
-    } break;
+    }
+    break;
 
     case 100:
 
@@ -3005,7 +5727,8 @@ yyreduce:
       /* PARAM named 'ignore', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("ignore")));
       ;
-    } break;
+    }
+    break;
 
     case 101:
 
@@ -3015,7 +5738,8 @@ yyreduce:
       /* PARAM named 'copy', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("copy")));
       ;
-    } break;
+    }
+    break;
 
     case 102:
 
@@ -3025,7 +5749,8 @@ yyreduce:
       /* PARAM named 'set', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsSet(TfToken("set")));
       ;
-    } break;
+    }
+    break;
 
     case 103:
 
@@ -3037,7 +5762,8 @@ yyreduce:
         new ConditionalParamIsNotSet(TfToken((yyvsp[(1) - (3)].string))));
       free((yyvsp[(1) - (3)].string));
       ;
-    } break;
+    }
+    break;
 
     case 104:
 
@@ -3047,7 +5773,8 @@ yyreduce:
       /* PARAM named 'and', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("and")));
       ;
-    } break;
+    }
+    break;
 
     case 105:
 
@@ -3057,7 +5784,8 @@ yyreduce:
       /* PARAM named 'or', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("or")));
       ;
-    } break;
+    }
+    break;
 
     case 106:
 
@@ -3067,7 +5795,8 @@ yyreduce:
       /* PARAM named 'is', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("is")));
       ;
-    } break;
+    }
+    break;
 
     case 107:
 
@@ -3077,7 +5806,8 @@ yyreduce:
       /* PARAM named 'if', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("if")));
       ;
-    } break;
+    }
+    break;
 
     case 108:
 
@@ -3087,7 +5817,8 @@ yyreduce:
       /* PARAM named 'else', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("else")));
       ;
-    } break;
+    }
+    break;
 
     case 109:
 
@@ -3097,7 +5828,8 @@ yyreduce:
       /* PARAM named 'connected', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("connected")));
       ;
-    } break;
+    }
+    break;
 
     case 110:
 
@@ -3107,7 +5839,8 @@ yyreduce:
       /* PARAM named 'connect', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("connect")));
       ;
-    } break;
+    }
+    break;
 
     case 111:
 
@@ -3117,7 +5850,8 @@ yyreduce:
       /* PARAM named 'ignore', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("ignore")));
       ;
-    } break;
+    }
+    break;
 
     case 112:
 
@@ -3127,7 +5861,8 @@ yyreduce:
       /* PARAM named 'copy', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("copy")));
       ;
-    } break;
+    }
+    break;
 
     case 113:
 
@@ -3137,7 +5872,8 @@ yyreduce:
       /* PARAM named 'set', special case */
       (yyval.condition) = data->NewCondition(new ConditionalParamIsNotSet(TfToken("set")));
       ;
-    } break;
+    }
+    break;
 
     case 114:
 
@@ -3146,7 +5882,8 @@ yyreduce:
     {
       (yyval.condition) = (yyvsp[(2) - (3)].condition);
       ;
-    } break;
+    }
+    break;
 
     case 115:
 
@@ -3157,7 +5894,8 @@ yyreduce:
         new ConditionalAnd(data->ClaimCondition((yyvsp[(1) - (3)].condition)),
                            data->ClaimCondition((yyvsp[(3) - (3)].condition))));
       ;
-    } break;
+    }
+    break;
 
     case 116:
 
@@ -3169,7 +5907,8 @@ yyreduce:
         new ConditionalOr(data->ClaimCondition((yyvsp[(1) - (3)].condition)),
                           data->ClaimCondition((yyvsp[(3) - (3)].condition))));
       ;
-    } break;
+    }
+    break;
 
     case 117:
 
@@ -3183,7 +5922,8 @@ yyreduce:
       (yyval.action) = new _VSCGAction(_VSCGAction::CopyParam, VtValue(paramName));
 
       ;
-    } break;
+    }
+    break;
 
     case 118:
 
@@ -3193,7 +5933,8 @@ yyreduce:
       (yyval.action) = new _VSCGAction(_VSCGAction::Connect);
 
       ;
-    } break;
+    }
+    break;
 
     case 119:
 
@@ -3202,7 +5943,8 @@ yyreduce:
     {
       (yyval.action) = new _VSCGAction(_VSCGAction::Ignore);
       ;
-    } break;
+    }
+    break;
 
     case 120:
 
@@ -3214,7 +5956,8 @@ yyreduce:
       free((yyvsp[(2) - (2)].string));
       (yyval.action) = new _VSCGAction(_VSCGAction::SetConstant, VtValue(value));
       ;
-    } break;
+    }
+    break;
 
     case 121:
 
@@ -3224,7 +5967,8 @@ yyreduce:
       (yyval.action) = new _VSCGAction(_VSCGAction::SetConstant, VtValue(atof((yyvsp[(2) - (2)].string))));
       free((yyvsp[(2) - (2)].string));
       ;
-    } break;
+    }
+    break;
 
     case 122:
 
@@ -3235,7 +5979,8 @@ yyreduce:
       data->rootCondition = data->ClaimCondition((yyvsp[(3) - (5)].condition));
       data->fallbackAction = (yyvsp[(5) - (5)].action);
       ;
-    } break;
+    }
+    break;
 
     case 123:
 
@@ -3245,15 +5990,18 @@ yyreduce:
       data->action = (yyvsp[(1) - (3)].action);
       data->rootCondition = data->ClaimCondition((yyvsp[(3) - (3)].condition));
 
-      if ((yyvsp[(1) - (3)].action)->action == _VSCGAction::Ignore) {
+      if ((yyvsp[(1) - (3)].action)->action == _VSCGAction::Ignore)
+      {
         data->fallbackAction = new _VSCGAction(_VSCGAction::Connect);
       }
-      else {
+      else
+      {
         data->fallbackAction = new _VSCGAction(_VSCGAction::Ignore);
       }
 
       ;
-    } break;
+    }
+    break;
 
     case 124:
 
@@ -3268,7 +6016,8 @@ yyreduce:
       data->fallbackAction = (yyvsp[(4) - (4)].action);
 
       ;
-    } break;
+    }
+    break;
 
     case 125:
 
@@ -3277,7 +6026,8 @@ yyreduce:
     {
       data->action = (yyvsp[(1) - (1)].action);
       ;
-    } break;
+    }
+    break;
 
     case 126:
 
@@ -3288,7 +6038,8 @@ yyreduce:
       data->rootCondition = data->ClaimCondition((yyvsp[(1) - (1)].condition));
       data->fallbackAction = new _VSCGAction(_VSCGAction::Ignore);
       ;
-    } break;
+    }
+    break;
 
 /* Line 1455 of yacc.c  */
 #line 3612 "hdPrman/virtualStructConditionalGrammar.tab.cpp"
@@ -3323,14 +6074,16 @@ yyreduce:
 `------------------------------------*/
 yyerrlab:
   /* If not already recovering from an error, report this error.  */
-  if (!yyerrstatus) {
+  if (!yyerrstatus)
+  {
     ++yynerrs;
 #if !YYERROR_VERBOSE
     yyerror(&yylloc, data, YY_("syntax error"));
 #else
     {
       YYSIZE_T yysize = yysyntax_error(0, yystate, yychar);
-      if (yymsg_alloc < yysize && yymsg_alloc < YYSTACK_ALLOC_MAXIMUM) {
+      if (yymsg_alloc < yysize && yymsg_alloc < YYSTACK_ALLOC_MAXIMUM)
+      {
         YYSIZE_T yyalloc = 2 * yysize;
         if (!(yysize <= yyalloc && yyalloc <= YYSTACK_ALLOC_MAXIMUM))
           yyalloc = YYSTACK_ALLOC_MAXIMUM;
@@ -3339,17 +6092,20 @@ yyerrlab:
         yymsg = (char *)YYSTACK_ALLOC(yyalloc);
         if (yymsg)
           yymsg_alloc = yyalloc;
-        else {
+        else
+        {
           yymsg = yymsgbuf;
           yymsg_alloc = sizeof yymsgbuf;
         }
       }
 
-      if (0 < yysize && yysize <= yymsg_alloc) {
+      if (0 < yysize && yysize <= yymsg_alloc)
+      {
         (void)yysyntax_error(yymsg, yystate, yychar);
         yyerror(&yylloc, data, yymsg);
       }
-      else {
+      else
+      {
         yyerror(&yylloc, data, YY_("syntax error"));
         if (yysize != 0)
           goto yyexhaustedlab;
@@ -3360,16 +6116,19 @@ yyerrlab:
 
   yyerror_range[0] = yylloc;
 
-  if (yyerrstatus == 3) {
+  if (yyerrstatus == 3)
+  {
     /* If just tried and failed to reuse lookahead token after an
  error, discard it.  */
 
-    if (yychar <= YYEOF) {
+    if (yychar <= YYEOF)
+    {
       /* Return failure if at end of input.  */
       if (yychar == YYEOF)
         YYABORT;
     }
-    else {
+    else
+    {
       yydestruct("Error: discarding", yytoken, &yylval, &yylloc, data);
       yychar = YYEMPTY;
     }
@@ -3405,11 +6164,14 @@ yyerrorlab:
 yyerrlab1:
   yyerrstatus = 3; /* Each real token shifted decrements this.  */
 
-  for (;;) {
+  for (;;)
+  {
     yyn = yypact[yystate];
-    if (yyn != YYPACT_NINF) {
+    if (yyn != YYPACT_NINF)
+    {
       yyn += YYTERROR;
-      if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR) {
+      if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+      {
         yyn = yytable[yyn];
         if (0 < yyn)
           break;
@@ -3472,7 +6234,8 @@ yyreturn:
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK(yylen);
   YY_STACK_PRINT(yyss, yyssp);
-  while (yyssp != yyss) {
+  while (yyssp != yyss)
+  {
     yydestruct("Cleanup: popping", yystos[*yyssp], yyvsp, yylsp, data);
     YYPOPSTACK(1);
   }
@@ -3509,14 +6272,16 @@ MatfiltVstructConditionalEvaluator::Ptr MatfiltVstructConditionalEvaluator::Pars
   const std::string &inputExpr)
 {
   _VSCGParserData data;
-  if (virtualStructConditionalGrammarYylex_init(&data.yyscanner)) {
+  if (virtualStructConditionalGrammarYylex_init(&data.yyscanner))
+  {
     TF_CODING_ERROR("_VSCGParser: error initializing scanner");
     return nullptr;
   }
   YY_BUFFER_STATE bufferstate = virtualStructConditionalGrammarYy_scan_string(inputExpr.c_str(),
                                                                               data.yyscanner);
   MatfiltVstructConditionalEvaluator::Ptr result(new MatfiltVstructConditionalEvaluator);
-  if (virtualStructConditionalGrammarYyparse(&data) == 0) {
+  if (virtualStructConditionalGrammarYyparse(&data) == 0)
+  {
     // hintsAttr = data.getHints(prefix, secondaryPrefix);
 
     result->_impl = new MatfiltVstructConditionalEvaluatorImpl;
@@ -3529,10 +6294,12 @@ MatfiltVstructConditionalEvaluator::Ptr MatfiltVstructConditionalEvaluator::Pars
     data.action = nullptr;
     data.fallbackAction = nullptr;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("_VSCGParser: Error parsing '%s'", inputExpr.c_str());
   }
-  if (!data.parseError.empty()) {
+  if (!data.parseError.empty())
+  {
     TF_CODING_ERROR("_VSCGParser: Error parsing '%s': %s", inputExpr.c_str(), data.parseError.c_str());
   }
 
@@ -3550,14 +6317,16 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
                                                   const NdrTokenVec &shaderTypePriority,
                                                   HdMaterialNetwork2 &network) const
 {
-  if (!_impl) {
+  if (!_impl)
+  {
     TF_CODING_ERROR("MatfiltVstructConditionalEvaluator: No impl");
     return;
   }
 
   // Find node
   auto I = network.nodes.find(nodeId);
-  if (I == network.nodes.end()) {
+  if (I == network.nodes.end())
+  {
     TF_CODING_ERROR(
       "MatfiltVstructConditionalEvaluator: Cannot eval "
       "for node %s; not found in network",
@@ -3567,7 +6336,8 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
   HdMaterialNode2 &node = (*I).second;
 
   // if it's already connected explicitly, don't do anything
-  if (node.inputConnections.find(nodeInput) != node.inputConnections.end()) {
+  if (node.inputConnections.find(nodeInput) != node.inputConnections.end())
+  {
     return;
   }
 
@@ -3575,31 +6345,38 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
 
   // Get upstream node.
   auto I2 = network.nodes.find(upstreamNodeId);
-  if (I2 == network.nodes.end()) {
+  if (I2 == network.nodes.end())
+  {
     // No upstream node; silently ignore
     return;
   }
   const HdMaterialNode2 &upstreamNode = (*I2).second;
 
   // Decide action to perform.
-  if (_impl->condition) {
-    if (_impl->condition->Eval(upstreamNode, shaderTypePriority)) {
+  if (_impl->condition)
+  {
+    if (_impl->condition->Eval(upstreamNode, shaderTypePriority))
+    {
       chosenAction = _impl->action;
     }
-    else {
+    else
+    {
       chosenAction = _impl->fallbackAction;
     }
   }
-  else {
+  else
+  {
     chosenAction = _impl->action;
   }
-  if (!chosenAction) {
+  if (!chosenAction)
+  {
     TF_CODING_ERROR("MatfiltVstructConditionalEvaluator: NULL action");
     return;
   }
 
   // Execute action.
-  switch (chosenAction->action) {
+  switch (chosenAction->action)
+  {
     case _VSCGAction::Ignore:
       break;
     case _VSCGAction::Connect:
@@ -3609,22 +6386,27 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
       // convert the constant to the expected type
       auto &reg = SdrRegistry::GetInstance();
       SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority);
-      if (!sdrNode) {
+      if (!sdrNode)
+      {
         // TODO, warn
         break;
       }
       NdrPropertyConstPtr ndrProp = sdrNode->GetInput(nodeInput);
-      if (!ndrProp) {
+      if (!ndrProp)
+      {
         // TODO, warn
         break;
       }
       VtValue value = chosenAction->value;
       TfToken inputType = ndrProp->GetType();
-      if (value.IsHolding<std::string>()) {
-        if (inputType == SdrPropertyTypes->String) {
+      if (value.IsHolding<std::string>())
+      {
+        if (inputType == SdrPropertyTypes->String)
+        {
           node.parameters[nodeInput] = value;
         }
-        else {
+        else
+        {
           TF_CODING_ERROR(
             "MatfiltVstructConditionalEvaluator: "
             "Expected string but found %s\n",
@@ -3632,27 +6414,33 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
           break;
         }
       }
-      else if (value.IsHolding<double>()) {
+      else if (value.IsHolding<double>())
+      {
         // parser always stores numbers as double.
         double doubleValue = value.UncheckedGet<double>();
         VtValue resultValue;
-        if (inputType == SdrPropertyTypes->Int) {
+        if (inputType == SdrPropertyTypes->Int)
+        {
           resultValue = VtValue(static_cast<int>(doubleValue));
         }
-        else if (inputType == SdrPropertyTypes->Float) {
+        else if (inputType == SdrPropertyTypes->Float)
+        {
           resultValue = VtValue(static_cast<float>(doubleValue));
         }
-        if (!resultValue.IsEmpty()) {
+        if (!resultValue.IsEmpty())
+        {
           node.parameters[nodeInput] = resultValue;
         }
-        else {
+        else
+        {
           TF_CODING_ERROR(
             "MatfiltVstructConditionalEvaluator: "
             "Empty result");
         }
         break;
       }
-      else {
+      else
+      {
         TF_CODING_ERROR(
           "MatfiltVstructConditionalEvaluator: "
           "Unhandled type %s\n",
@@ -3662,7 +6450,8 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
       break;
     }
     case _VSCGAction::CopyParam: {
-      if (chosenAction->value.IsHolding<TfToken>()) {
+      if (chosenAction->value.IsHolding<TfToken>())
+      {
         const TfToken &copyParamName = chosenAction->value.UncheckedGet<TfToken>();
         // confirm that parameter types are equivalent
         // via Sdr
@@ -3670,7 +6459,8 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
         SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority);
         SdrShaderNodeConstPtr sdrUpstreamNode = reg.GetShaderNodeByIdentifier(upstreamNode.nodeTypeId,
                                                                               shaderTypePriority);
-        if (!sdrNode || !sdrUpstreamNode) {
+        if (!sdrNode || !sdrUpstreamNode)
+        {
           // TODO warn?
           break;
         }
@@ -3678,25 +6468,30 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
 
         NdrPropertyConstPtr ndrUpstreamProp = sdrUpstreamNode->GetInput(copyParamName);
 
-        if (!ndrProp || !ndrUpstreamProp) {
+        if (!ndrProp || !ndrUpstreamProp)
+        {
           // TODO warn?
           break;
         }
 
         // TODO, convert between int and float
-        if (ndrProp->GetType() == ndrUpstreamProp->GetType()) {
+        if (ndrProp->GetType() == ndrUpstreamProp->GetType())
+        {
           auto I = upstreamNode.parameters.find(copyParamName);
 
-          if (I != upstreamNode.parameters.end()) {
+          if (I != upstreamNode.parameters.end())
+          {
             // authored value
             node.parameters[nodeInput] = (*I).second;
           }
-          else {
+          else
+          {
             // use default
             node.parameters[nodeInput] = ndrUpstreamProp->GetDefaultValue();
           }
         }
-        else {
+        else
+        {
           // TODO warn?
         }
       }

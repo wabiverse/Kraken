@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class Sig> class TfFunctionRef;
+template<class Sig>
+class TfFunctionRef;
 
 /// \class TfFunctionRef
 ///
@@ -87,7 +88,9 @@ template<class Sig> class TfFunctionRef;
 /// allocation, and the cost to invoke the predicate in the implementation is
 /// just the cost of calling a function pointer.
 ///
-template<class Ret, class... Args> class TfFunctionRef<Ret(Args...)> {
+template<class Ret, class... Args>
+class TfFunctionRef<Ret(Args...)>
+{
  public:
   /// Construct with an lvalue callable \p fn.
   template<class Fn>
@@ -105,7 +108,8 @@ template<class Ret, class... Args> class TfFunctionRef<Ret(Args...)> {
   TfFunctionRef &operator=(TfFunctionRef const &rhs) noexcept = default;
 
   /// Assign from an lvalue callable \p fn.
-  template<class Fn> TfFunctionRef &operator=(Fn &fn) noexcept
+  template<class Fn>
+  TfFunctionRef &operator=(Fn &fn) noexcept
   {
     *this = TfFunctionRef(fn);
     return *this;
@@ -126,7 +130,8 @@ template<class Ret, class... Args> class TfFunctionRef<Ret(Args...)> {
   }
 
  private:
-  template<class Fn> static Ret _InvokeFn(void const *fn, Args... args)
+  template<class Fn>
+  static Ret _InvokeFn(void const *fn, Args... args)
   {
     using FnPtr = typename std::add_pointer<typename std::add_const<Fn>::type>::type;
     return (*static_cast<FnPtr>(fn))(std::forward<Args>(args)...);
@@ -137,7 +142,8 @@ template<class Ret, class... Args> class TfFunctionRef<Ret(Args...)> {
 };
 
 /// Swap \p lhs and \p rhs.  Equivalent to lhs.swap(rhs).
-template<class Sig> inline void swap(TfFunctionRef<Sig> &lhs, TfFunctionRef<Sig> &rhs)
+template<class Sig>
+inline void swap(TfFunctionRef<Sig> &lhs, TfFunctionRef<Sig> &rhs)
 {
   lhs.swap(rhs);
 }

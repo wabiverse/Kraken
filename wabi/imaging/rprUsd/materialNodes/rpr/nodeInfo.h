@@ -17,7 +17,8 @@ limitations under the License.
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/imaging/rprUsd/materialRegistry.h"
 
-namespace std {
+namespace std
+{
 
 WABI_NAMESPACE_USING
 
@@ -40,10 +41,13 @@ inline std::string to_string(TfToken const &v)
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T> struct ToRprUsdMaterialNodeInputType;
+template<typename T>
+struct ToRprUsdMaterialNodeInputType;
 
 #define DEFINE_TYPE_CONVERSION(c_type, material_type) \
-  template<> struct ToRprUsdMaterialNodeInputType<c_type> { \
+  template<> \
+  struct ToRprUsdMaterialNodeInputType<c_type> \
+  { \
     static constexpr RprUsdMaterialNodeInput::Type value = RprUsdMaterialNodeInput::k##material_type; \
   };
 
@@ -54,8 +58,10 @@ DEFINE_TYPE_CONVERSION(GfVec2f, Vector2);
 DEFINE_TYPE_CONVERSION(GfVec3f, Color3);
 DEFINE_TYPE_CONVERSION(TfToken, Token);
 
-struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput {
-  RprUsd_RprNodeInput(RprUsdMaterialNodeInput::Type type) : RprUsdMaterialNodeInput(type)
+struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput
+{
+  RprUsd_RprNodeInput(RprUsdMaterialNodeInput::Type type)
+    : RprUsdMaterialNodeInput(type)
   {}
   const char *GetName() const override
   {
@@ -111,11 +117,13 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput {
       value(VtValue(defaultValue)),
       valueString(std::to_string(defaultValue))
   {
-    if (!uiName) {
+    if (!uiName)
+    {
       this->uiName = name.GetString();
       this->uiName[0] = ::toupper(this->uiName[0]);
     }
-    else {
+    else
+    {
       this->uiName = uiName;
     }
   }
@@ -133,8 +141,10 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput {
   std::vector<TfToken> tokenValues;
 };
 
-struct RprUsd_RprNodeOutput : public RprUsdMaterialNodeElement {
-  RprUsd_RprNodeOutput(RprUsdMaterialNodeElement::Type type) : RprUsdMaterialNodeElement(type)
+struct RprUsd_RprNodeOutput : public RprUsdMaterialNodeElement
+{
+  RprUsd_RprNodeOutput(RprUsdMaterialNodeElement::Type type)
+    : RprUsdMaterialNodeElement(type)
   {}
   const char *GetName() const override
   {
@@ -154,7 +164,8 @@ struct RprUsd_RprNodeOutput : public RprUsdMaterialNodeElement {
   std::string docString;
 };
 
-struct RprUsd_RprNodeInfo : public RprUsdMaterialNodeInfo {
+struct RprUsd_RprNodeInfo : public RprUsdMaterialNodeInfo
+{
   const char *GetName() const override
   {
     return GetCStr(name);

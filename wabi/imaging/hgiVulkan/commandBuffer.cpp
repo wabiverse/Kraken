@@ -89,7 +89,8 @@ HgiVulkanCommandBuffer::~HgiVulkanCommandBuffer()
 
 void HgiVulkanCommandBuffer::BeginCommandBuffer(uint8_t inflightId)
 {
-  if (!_isInFlight) {
+  if (!_isInFlight)
+  {
 
     VkCommandBufferBeginInfo beginInfo = {VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -108,7 +109,8 @@ bool HgiVulkanCommandBuffer::IsInFlight() const
 
 void HgiVulkanCommandBuffer::EndCommandBuffer()
 {
-  if (_isInFlight) {
+  if (_isInFlight)
+  {
     TF_VERIFY(vkEndCommandBuffer(_vkCommandBuffer) == VK_SUCCESS);
 
     _isSubmitted = true;
@@ -119,13 +121,15 @@ bool HgiVulkanCommandBuffer::ResetIfConsumedByGPU()
 {
   // Command buffer is already available (previously reset).
   // We do not have to test the fence or reset the cmd buffer.
-  if (!_isInFlight) {
+  if (!_isInFlight)
+  {
     return false;
   }
 
   // The command buffer is still recording. We should not test its fence until
   // we have submitted the command buffer to the queue (vulkan requirement).
-  if (!_isSubmitted) {
+  if (!_isSubmitted)
+  {
     return false;
   }
 
@@ -133,7 +137,8 @@ bool HgiVulkanCommandBuffer::ResetIfConsumedByGPU()
 
   // Check the fence to see if the GPU has consumed the command buffer.
   // We cannnot reuse a command buffer until the GPU is finished with it.
-  if (vkGetFenceStatus(vkDevice, _vkFence) == VK_NOT_READY) {
+  if (vkGetFenceStatus(vkDevice, _vkFence) == VK_NOT_READY)
+  {
     return false;
   }
 
@@ -191,7 +196,8 @@ HgiVulkanDevice *HgiVulkanCommandBuffer::GetDevice() const
 
 void HgiVulkanCommandBuffer::MemoryBarrier(HgiMemoryBarrier barrier)
 {
-  if (!_vkCommandBuffer) {
+  if (!_vkCommandBuffer)
+  {
     return;
   }
 
@@ -229,7 +235,8 @@ void HgiVulkanCommandBuffer::AddCompletedHandler(HgiVulkanCompletedHandler const
 
 void HgiVulkanCommandBuffer::RunAndClearCompletedHandlers()
 {
-  for (HgiVulkanCompletedHandler &fn : _completedHandlers) {
+  for (HgiVulkanCompletedHandler &fn : _completedHandlers)
+  {
     fn();
   }
   _completedHandlers.clear();

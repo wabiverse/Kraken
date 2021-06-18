@@ -45,7 +45,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdMeshReprDescTokens, HD_API, HD_MESH_REPR_DESC_TOKENS)
 ///
 /// Descriptor to configure the drawItem(s) for a repr
 ///
-struct HdMeshReprDesc {
+struct HdMeshReprDesc
+{
   HdMeshReprDesc(HdMeshGeomStyle geomStyle = HdMeshGeomStyleInvalid,
                  HdCullStyle cullStyle = HdCullStyleDontCare,
                  TfToken shadingTerminal = HdMeshReprDescTokens->surfaceShader,
@@ -97,7 +98,8 @@ struct HdMeshReprDesc {
 
 /// Hydra Schema for a subdivision surface or poly-mesh object.
 ///
-class HdMesh : public HdRprim {
+class HdMesh : public HdRprim
+{
  public:
   HD_API
   virtual ~HdMesh();

@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Translates USD mesh to Draco mesh.
 ///
-class UsdDracoExportTranslator {
+class UsdDracoExportTranslator
+{
  public:
   /// Translates USD mesh to Draco mesh and returns true on success.
   static bool Translate(const UsdGeomMesh &usdMesh,

@@ -50,7 +50,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> struct GfIsGfQuat<class GfQuatd> {
+template<>
+struct GfIsGfQuat<class GfQuatd>
+{
   static const bool value = true;
 };
 
@@ -63,7 +65,8 @@ double GfDot(const GfQuatd &q1, const GfQuatd &q2);
 /// Basic type: a quaternion, a complex number with a real coefficient and
 /// three imaginary coefficients, stored as a 3-vector.
 ///
-class GfQuatd {
+class GfQuatd
+{
  public:
   typedef double ScalarType;
   typedef GfVec3d ImaginaryType;
@@ -79,15 +82,21 @@ class GfQuatd {
   /// \p realVal are -1, 0, or 1.  Other values are legal but are likely to
   /// be meaningless.
   ///
-  explicit GfQuatd(double realVal) : _imaginary(0), _real(realVal)
+  explicit GfQuatd(double realVal)
+    : _imaginary(0),
+      _real(realVal)
   {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuatd(double real, double i, double j, double k) : _imaginary(i, j, k), _real(real)
+  GfQuatd(double real, double i, double j, double k)
+    : _imaginary(i, j, k),
+      _real(real)
   {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuatd(double real, const GfVec3d &imaginary) : _imaginary(imaginary), _real(real)
+  GfQuatd(double real, const GfVec3d &imaginary)
+    : _imaginary(imaginary),
+      _real(real)
   {}
 
   /// Implicitly convert from GfQuatf.

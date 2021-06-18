@@ -58,7 +58,8 @@ class SdfTimeCode;
 /// GetReferenceLayerOffset() methods (the latter is the referenceLayerOffset
 /// property in Python) of the SdfPrimSpec class.
 ///
-class SdfLayerOffset : public boost::totally_ordered<SdfLayerOffset> {
+class SdfLayerOffset : public boost::totally_ordered<SdfLayerOffset>
+{
  public:
   /// \name Constructors
   /// @{
@@ -119,7 +120,8 @@ class SdfLayerOffset : public boost::totally_ordered<SdfLayerOffset> {
   size_t GetHash() const;
 
   /// Hash functor for hash maps and sets.
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(const SdfLayerOffset &offset) const
     {
       return offset.GetHash();

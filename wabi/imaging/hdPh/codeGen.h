@@ -47,7 +47,8 @@ using HdPh_GeometricShaderPtr = std::shared_ptr<class HdPh_GeometricShader>;
 /// A utility class to compose glsl shader sources and compile them
 /// upon request of HdShaderSpec.
 ///
-class HdPh_CodeGen {
+class HdPh_CodeGen
+{
  public:
   typedef size_t ID;
 

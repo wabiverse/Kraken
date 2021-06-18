@@ -50,7 +50,8 @@ UsdGeomMesh::~UsdGeomMesh()
 /* static */
 UsdGeomMesh UsdGeomMesh::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomMesh();
   }
@@ -61,7 +62,8 @@ UsdGeomMesh UsdGeomMesh::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomMesh UsdGeomMesh::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Mesh");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomMesh();
   }
@@ -283,7 +285,8 @@ UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValu
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -346,8 +349,10 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
   // Sum of the vertex counts should be equal to the number of vertex indices.
   size_t vertCountsSum = std::accumulate(faceVertexCounts.cbegin(), faceVertexCounts.cend(), 0);
 
-  if (vertCountsSum != faceVertexIndices.size()) {
-    if (reason) {
+  if (vertCountsSum != faceVertexIndices.size())
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf(
         "Sum of faceVertexCounts [%zu] != "
         "size of faceVertexIndices [%zu].",
@@ -358,9 +363,12 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
   }
 
   // Make sure all verts are within the range of the point count.
-  for (int vertexIndex : faceVertexIndices) {
-    if (ARCH_UNLIKELY(vertexIndex < 0 || (size_t)vertexIndex >= numPoints)) {
-      if (reason) {
+  for (int vertexIndex : faceVertexIndices)
+  {
+    if (ARCH_UNLIKELY(vertexIndex < 0 || (size_t)vertexIndex >= numPoints))
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Out of range face vertex index %d: "
           "Vertex must be in the range [0,%zu).",

@@ -43,21 +43,26 @@ namespace mx = MaterialX;
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
-
-template<typename R> static bool _Read(UsdStagePtr stage, R &&reader)
+namespace
 {
-  try {
+
+template<typename R>
+static bool _Read(UsdStagePtr stage, R &&reader)
+{
+  try
+  {
     auto doc = mx::createDocument();
     reader(doc);
     UsdMtlxRead(doc, stage);
     return true;
   }
-  catch (mx::ExceptionFoundCycle &x) {
+  catch (mx::ExceptionFoundCycle &x)
+  {
     TF_RUNTIME_ERROR("MaterialX cycle found: %s\n", x.what());
     return false;
   }
-  catch (mx::Exception &x) {
+  catch (mx::Exception &x)
+  {
     TF_RUNTIME_ERROR("MaterialX error: %s\n", x.what());
     return false;
   }
@@ -96,7 +101,8 @@ bool UsdMtlxFileFormat::CanRead(const std::string &filePath) const
   //        proper test described above is implemented because the
   //        actual filename extension shouldn't matter.
   const auto extension = TfGetExtension(filePath);
-  if (extension != this->GetFormatId()) {
+  if (extension != this->GetFormatId())
+  {
     return false;
   }
 
@@ -108,7 +114,8 @@ bool UsdMtlxFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, b
   TRACE_FUNCTION();
 
   auto stage = UsdStage::CreateInMemory();
-  if (!_Read(stage, [&resolvedPath](mx::DocumentPtr d) { mx::readFromXmlFile(d, resolvedPath); })) {
+  if (!_Read(stage, [&resolvedPath](mx::DocumentPtr d) { mx::readFromXmlFile(d, resolvedPath); }))
+  {
     return false;
   }
 
@@ -129,7 +136,8 @@ bool UsdMtlxFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) 
   TRACE_FUNCTION();
 
   auto stage = UsdStage::CreateInMemory();
-  if (!_Read(stage, [&str](mx::DocumentPtr d) { mx::readFromXmlString(d, str); })) {
+  if (!_Read(stage, [&str](mx::DocumentPtr d) { mx::readFromXmlString(d, str); }))
+  {
     return false;
   }
 

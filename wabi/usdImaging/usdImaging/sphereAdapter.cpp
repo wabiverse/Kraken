@@ -70,7 +70,8 @@ void UsdImagingSphereAdapter::TrackVariability(UsdPrim const &prim,
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
   // Check DirtyPoints before doing variability checks, to see if we can skip.
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->radius,
                HdChangeTracker::DirtyPoints,
@@ -84,7 +85,8 @@ HdDirtyBits UsdImagingSphereAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                            SdfPath const &cachePath,
                                                            TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->radius) {
+  if (propertyName == UsdGeomTokens->radius)
+  {
     return HdChangeTracker::DirtyPoints;
   }
 
@@ -103,7 +105,8 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
   UsdGeomSphere sphere(prim);
 
   double radius = 1.0;
-  if (!sphere.GetRadiusAttr().Get(&radius, time)) {
+  if (!sphere.GetRadiusAttr().Get(&radius, time))
+  {
     TF_WARN("Could not evaluate double-valued radius attribute on prim %s", prim.GetPath().GetText());
   }
 
@@ -116,7 +119,8 @@ VtValue UsdImagingSphereAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode 
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitSphereMeshPoints();
   GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
-  for (GfVec3f &pt : points) {
+  for (GfVec3f &pt : points)
+  {
     pt = scale.Transform(pt);
   }
 

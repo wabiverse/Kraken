@@ -45,7 +45,8 @@ class HgiMetal;
 ///
 /// Represents a Metal GPU texture resource.
 ///
-class HgiMetalTexture final : public HgiTexture {
+class HgiMetalTexture final : public HgiTexture
+{
  public:
   HGIMETAL_API
   ~HgiMetalTexture() override;

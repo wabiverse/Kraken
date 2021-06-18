@@ -76,7 +76,8 @@ class HdMeshTopology;
 ///   Offset / Count pairs        ||            Prev / Next Pairs
 ///      per vertex               ||           Per Vertex, Per Face.
 ///
-class Hd_VertexAdjacency final {
+class Hd_VertexAdjacency final
+{
  public:
   HD_API
   Hd_VertexAdjacency();
@@ -139,7 +140,8 @@ class Hd_VertexAdjacency final {
 /// output; but other computations can depend on this to ensure
 /// BuildAdjacencyTable is called.
 ///
-class Hd_AdjacencyBuilderComputation : public HdNullBufferSource {
+class Hd_AdjacencyBuilderComputation : public HdNullBufferSource
+{
  public:
   HD_API
   Hd_AdjacencyBuilderComputation(Hd_VertexAdjacency *adjacency, HdMeshTopology const *topology);
@@ -161,7 +163,8 @@ class Hd_AdjacencyBuilderComputation : public HdNullBufferSource {
 /// a resource registry buffer. This computation should be dependent on an
 /// Hd_AdjacencyBuilderComputation.
 ///
-class Hd_AdjacencyBufferSource : public HdComputedBufferSource {
+class Hd_AdjacencyBufferSource : public HdComputedBufferSource
+{
  public:
   HD_API
   Hd_AdjacencyBufferSource(Hd_VertexAdjacency const *adjacency,

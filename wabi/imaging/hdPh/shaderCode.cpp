@@ -44,7 +44,7 @@ size_t HdPhShaderCode::ComputeHash(HdPhShaderCodeSharedPtrVector const &shaders)
 {
   size_t hash = 0;
 
-  TF_FOR_ALL(it, shaders)
+  TF_FOR_ALL (it, shaders)
   {
     boost::hash_combine(hash, (*it)->ComputeHash());
   }
@@ -120,7 +120,8 @@ void HdPhShaderCode::ResourceContext::AddComputation(HdBufferArrayRangeSharedPtr
   _registry->AddComputation(range, computation, queue);
 }
 
-HdPhShaderCode::ResourceContext::ResourceContext(HdPhResourceRegistry *const registry) : _registry(registry)
+HdPhShaderCode::ResourceContext::ResourceContext(HdPhResourceRegistry *const registry)
+  : _registry(registry)
 {}
 
 WABI_NAMESPACE_END

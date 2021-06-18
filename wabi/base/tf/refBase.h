@@ -34,8 +34,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T> class TfRefPtr;
-template<class T> class TfWeakPtr;
+template<class T>
+class TfRefPtr;
+template<class T>
+class TfWeakPtr;
 
 /// \class TfRefBase
 /// \ingroup group_tf_Memory
@@ -68,16 +70,19 @@ template<class T> class TfWeakPtr;
 /// To disable the cost of the "unique changed" system, derive
 /// from TfSimpleRefBase instead.
 ///
-class TfRefBase {
+class TfRefBase
+{
  public:
   typedef void (*UniqueChangedFuncPtr)(TfRefBase const *, bool);
-  struct UniqueChangedListener {
+  struct UniqueChangedListener
+  {
     void (*lock)();
     UniqueChangedFuncPtr func;
     void (*unlock)();
   };
 
-  TfRefBase() : _shouldInvokeUniqueChangedListener(false)
+  TfRefBase()
+    : _shouldInvokeUniqueChangedListener(false)
   {}
 
   /// Return the current reference count of this object.
@@ -115,11 +120,13 @@ class TfRefBase {
   bool _shouldInvokeUniqueChangedListener;
 
   static UniqueChangedListener _uniqueChangedListener;
-  template<typename T> friend class TfRefPtr;
+  template<typename T>
+  friend class TfRefPtr;
   friend struct Tf_RefPtr_UniqueChangedCounter;
   friend struct Tf_RefPtr_Counter;
 
-  template<typename T> friend TfRefPtr<T> TfCreateRefPtrFromProtectedWeakPtr(TfWeakPtr<T> const &);
+  template<typename T>
+  friend TfRefPtr<T> TfCreateRefPtrFromProtectedWeakPtr(TfWeakPtr<T> const &);
 };
 
 /// \class TfSimpleRefBase
@@ -131,7 +138,8 @@ class TfRefBase {
 /// Derive from this class if you don't plan on wrapping your
 /// reference-counted object via boost::python.
 ///
-class TfSimpleRefBase : public TfRefBase {
+class TfSimpleRefBase : public TfRefBase
+{
  public:
   TF_API virtual ~TfSimpleRefBase();
 };

@@ -61,7 +61,8 @@ class SdfAssetPath;
 ///
 /// \deprecated This schema will be replaced in a future release.
 ///
-class UsdRiPxrEnvDayLight : public UsdLuxLight {
+class UsdRiPxrEnvDayLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -77,13 +78,15 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight {
   /// Equivalent to UsdRiPxrEnvDayLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrEnvDayLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdRiPxrEnvDayLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdRiPxrEnvDayLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrEnvDayLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrEnvDayLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdRiPxrEnvDayLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

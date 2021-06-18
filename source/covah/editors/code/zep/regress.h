@@ -2,10 +2,12 @@
 
 #include "zep/mcommon/animation/timer.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepEditor;
-class ZepRegressExCommand : public ZepExCommand {
+class ZepRegressExCommand : public ZepExCommand
+{
  public:
   ZepRegressExCommand(ZepEditor &editor);
 

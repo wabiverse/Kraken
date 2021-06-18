@@ -26,9 +26,13 @@
 
 #include "ANCHOR_api.h"
 
-class ANCHOR_DisplayManager {
+class ANCHOR_DisplayManager
+{
  public:
-  enum { kMainDisplay = 0 };
+  enum
+  {
+    kMainDisplay = 0
+  };
   /**
    * Constructor. */
   ANCHOR_DisplayManager(void);

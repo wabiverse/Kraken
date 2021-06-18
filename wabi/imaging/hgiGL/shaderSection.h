@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Base class for OpenGL code sections. The generator holds these
 ///
-class HgiGLShaderSection : public HgiShaderSection {
+class HgiGLShaderSection : public HgiShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLShaderSection(const std::string &identifier,
@@ -85,7 +86,8 @@ class HgiGLShaderSection : public HgiShaderSection {
 /// A ShaderSection for defining macros.
 /// Accepts raw strings and dumps it to the global scope under includes
 ///
-class HgiGLMacroShaderSection final : public HgiGLShaderSection {
+class HgiGLMacroShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLMacroShaderSection(const std::string &macroDeclaration, const std::string &macroComment);
@@ -109,7 +111,8 @@ class HgiGLMacroShaderSection final : public HgiGLShaderSection {
 /// Declares a member in global scope, for declaring instances of structs, constant
 /// params etc - it's quite flexible in it's writing capabilities
 ///
-class HgiGLMemberShaderSection final : public HgiGLShaderSection {
+class HgiGLMemberShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLMemberShaderSection(const std::string &identifier,
@@ -139,7 +142,8 @@ class HgiGLMemberShaderSection final : public HgiGLShaderSection {
 ///
 /// For writing out uniform blocks, defines them in the global member declerations.
 ///
-class HgiGLBlockShaderSection final : public HgiGLShaderSection {
+class HgiGLBlockShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLBlockShaderSection(const std::string &identifier,
@@ -161,7 +165,8 @@ class HgiGLBlockShaderSection final : public HgiGLShaderSection {
 ///
 /// Declares OpenGL textures, and their cross language function
 ///
-class HgiGLTextureShaderSection final : public HgiGLShaderSection {
+class HgiGLTextureShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLTextureShaderSection(const std::string &identifier,
@@ -199,7 +204,8 @@ class HgiGLTextureShaderSection final : public HgiGLShaderSection {
 ///
 /// Declares OpenGL buffers, and their cross language function
 ///
-class HgiGLBufferShaderSection final : public HgiGLShaderSection {
+class HgiGLBufferShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLBufferShaderSection(const std::string &identifier,
@@ -228,7 +234,8 @@ class HgiGLBufferShaderSection final : public HgiGLShaderSection {
 ///
 /// Declares reserved OpenGL shader inputs, and their cross language function
 ///
-class HgiGLKeywordShaderSection final : public HgiGLShaderSection {
+class HgiGLKeywordShaderSection final : public HgiGLShaderSection
+{
  public:
   HGIGL_API
   explicit HgiGLKeywordShaderSection(const std::string &identifier,

@@ -40,7 +40,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct HdCyclesTokensType {
+struct HdCyclesTokensType
+{
 
   HDCYCLES_API
   HdCyclesTokensType();

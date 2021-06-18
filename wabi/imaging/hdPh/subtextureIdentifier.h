@@ -42,7 +42,8 @@ class HdPhDynamicUvTextureImplementation;
 /// file that can contain several textures (e.g., frames in a movie or
 /// grids in an OpenVDB file).
 ///
-class HdPhSubtextureIdentifier {
+class HdPhSubtextureIdentifier
+{
  public:
   using ID = size_t;
 
@@ -68,7 +69,8 @@ size_t hash_value(const HdPhSubtextureIdentifier &subId);
 /// Base class for information identifying a grid in a volume field
 /// file. Parallels FieldBase in usdVol.
 ///
-class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier {
+class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier
+{
  public:
   /// Get field name.
   ///
@@ -113,7 +115,8 @@ class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier {
 /// (flipVertically = false) which have opposite conventions for the
 /// vertical orientation.
 ///
-class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier {
+class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier
+{
  public:
   /// C'tor takes bool whether flipping vertically, whether to pre-multiply
   /// by alpha, and the texture's source color space
@@ -179,7 +182,8 @@ class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier {
 /// HdPhRenderBuffer::Sync/Allocate and the texture is filled by using
 /// it as render target in various render passes.
 ///
-class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier {
+class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier
+{
  public:
   HDPH_API
   HdPhDynamicUvSubtextureIdentifier();
@@ -206,7 +210,8 @@ class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier {
 /// Specifies whether a Ptex texture should be loaded with pre-multiplied alpha
 /// values.
 ///
-class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier {
+class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier
+{
  public:
   /// C'tor takes bool whether to pre-multiply by alpha
   HDPH_API
@@ -238,7 +243,8 @@ class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier {
 /// Specifies whether a Udim texture should be loaded with pre-multiplied alpha
 /// values and the color space in which the texture is encoded.
 ///
-class HdPhUdimSubtextureIdentifier final : public HdPhSubtextureIdentifier {
+class HdPhUdimSubtextureIdentifier final : public HdPhSubtextureIdentifier
+{
  public:
   /// C'tor takes bool whether to pre-multiply by alpha and the texture's
   /// source color space

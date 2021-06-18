@@ -60,7 +60,8 @@
 #define YYTOKENTYPE
 /* Put the tokens into the symbol table, so that GDB and other debuggers
    know about them.  */
-enum yytokentype {
+enum yytokentype
+{
   TOK_NL = 258,
   TOK_MAGIC = 259,
   TOK_SYNTAX_ERROR = 260,

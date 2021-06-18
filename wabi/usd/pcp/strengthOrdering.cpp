@@ -39,7 +39,7 @@ static int _OriginIsStronger(const PcpNodeRef &node, const PcpNodeRef &a, const 
   if (node == b)
     return 1;
 
-  TF_FOR_ALL(child, Pcp_GetChildrenRange(node))
+  TF_FOR_ALL (child, Pcp_GetChildrenRange(node))
   {
     int result = _OriginIsStronger(*child, a, b);
     if (result != 0)
@@ -55,7 +55,8 @@ static std::pair<PcpNodeRef, size_t> _GetOriginRootNode(const PcpNodeRef &node)
 {
   std::pair<PcpNodeRef, size_t> result(node, 0);
 
-  while (result.first.GetOriginNode() != result.first.GetParentNode()) {
+  while (result.first.GetOriginNode() != result.first.GetParentNode())
+  {
     result.first = result.first.GetOriginNode();
     ++result.second;
   }
@@ -65,14 +66,18 @@ static std::pair<PcpNodeRef, size_t> _GetOriginRootNode(const PcpNodeRef &node)
 // Return true if node a is a descendent of node b or vice-versa.
 static bool _OriginsAreNestedArcs(const PcpNodeRef &a, const PcpNodeRef &b)
 {
-  for (PcpNodeRef n = a; n; n = n.GetParentNode()) {
-    if (n == b) {
+  for (PcpNodeRef n = a; n; n = n.GetParentNode())
+  {
+    if (n == b)
+    {
       return true;
     }
   }
 
-  for (PcpNodeRef n = b; n; n = n.GetParentNode()) {
-    if (n == a) {
+  for (PcpNodeRef n = b; n; n = n.GetParentNode())
+  {
+    if (n == a)
+    {
       return true;
     }
   }
@@ -82,12 +87,14 @@ static bool _OriginsAreNestedArcs(const PcpNodeRef &a, const PcpNodeRef &b)
 
 int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
 {
-  if (a.GetParentNode() != b.GetParentNode()) {
+  if (a.GetParentNode() != b.GetParentNode())
+  {
     TF_CODING_ERROR("Nodes are not siblings");
     return 0;
   }
 
-  if (a == b) {
+  if (a == b)
+  {
     return 0;
   }
 
@@ -100,7 +107,8 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
 
   // Specializes arcs need special handling because of how specializes
   // nodes throughout the graph are copied to the root.
-  if (PcpIsSpecializeArc(a.GetArcType())) {
+  if (PcpIsSpecializeArc(a.GetArcType()))
+  {
     const PcpNodeRef aOrigin = a.GetOriginNode();
     const PcpNodeRef bOrigin = b.GetOriginNode();
 
@@ -113,15 +121,18 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
     // implied node will be the one whose site is *not* the same as its
     // origin; the copied node is the one whose site is the same as its
     // origin.
-    if (aOrigin == bOrigin && aOrigin != a.GetParentNode() && bOrigin != b.GetParentNode()) {
+    if (aOrigin == bOrigin && aOrigin != a.GetParentNode() && bOrigin != b.GetParentNode())
+    {
 
       TF_VERIFY(a.GetParentNode() == a.GetRootNode() && b.GetParentNode() == b.GetRootNode());
 
-      if (a.GetSite() == aOrigin.GetSite()) {
+      if (a.GetSite() == aOrigin.GetSite())
+      {
         // a was copied from its origin, so it's weaker than b.
         return 1;
       }
-      else if (b.GetSite() == bOrigin.GetSite()) {
+      else if (b.GetSite() == bOrigin.GetSite())
+      {
         // b was copied from its origin, so it's weaker than a.
         return -1;
       }
@@ -139,7 +150,8 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
     // graph, there must be a specializes arc somewhere between the two.
     // Specializes means that opinions for the source of the arc must be
     // weaker than the target, regardless of the namespace depth.
-    if (!_OriginsAreNestedArcs(aOriginRoot.first, bOriginRoot.first)) {
+    if (!_OriginsAreNestedArcs(aOriginRoot.first, bOriginRoot.first))
+    {
       if (a.GetNamespaceDepth() > b.GetNamespaceDepth())
         return -1;
       if (a.GetNamespaceDepth() < b.GetNamespaceDepth())
@@ -154,15 +166,19 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
     //
     // To avoid this, we use the origin root node -- the node for the
     // actual authored opinion -- to determine strength.
-    if (aOrigin != bOrigin) {
-      if (aOriginRoot.first == bOriginRoot.first) {
+    if (aOrigin != bOrigin)
+    {
+      if (aOriginRoot.first == bOriginRoot.first)
+      {
         // If both sibling nodes have the same origin root, the
         // node with the longest chain of origins represents the
         // most local opinion, which should be strongest.
-        if (aOriginRoot.second > bOriginRoot.second) {
+        if (aOriginRoot.second > bOriginRoot.second)
+        {
           return -1;
         }
-        else if (bOriginRoot.second > aOriginRoot.second) {
+        else if (bOriginRoot.second > aOriginRoot.second)
+        {
           return 1;
         }
 
@@ -170,20 +186,24 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
                   "Should not have sibling specializes nodes with same "
                   "origin root and distance to origin root.");
       }
-      else {
+      else
+      {
         // Otherwise, stronger origin root is stronger.
         int result = _OriginIsStronger(a.GetRootNode(), aOriginRoot.first, bOriginRoot.first);
-        if (result < 0) {
+        if (result < 0)
+        {
           return -1;
         }
-        else if (result > 0) {
+        else if (result > 0)
+        {
           return 1;
         }
         TF_VERIFY(false, "Did not find either origin");
       }
     }
   }
-  else {
+  else
+  {
     // Origin namespace depth.
     // Higher values (deeper opinions) are stronger.
     if (a.GetNamespaceDepth() > b.GetNamespaceDepth())
@@ -196,14 +216,17 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
     const PcpNodeRef aOrigin = a.GetOriginNode();
     const PcpNodeRef bOrigin = b.GetOriginNode();
 
-    if (aOrigin != bOrigin) {
+    if (aOrigin != bOrigin)
+    {
       // Walk the entire expression tree in strength order
       // to find which of a or b's origin comes first.
       int result = _OriginIsStronger(a.GetRootNode(), aOrigin, bOrigin);
-      if (result < 0) {
+      if (result < 0)
+      {
         return -1;
       }
-      else if (result > 0) {
+      else if (result > 0)
+      {
         return 1;
       }
       TF_VERIFY(false, "Did not find either origin");
@@ -225,7 +248,8 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
 static PcpNodeRefVector _CollectNodesFromNodeToRoot(PcpNodeRef node)
 {
   PcpNodeRefVector nodes;
-  for (; node; node = node.GetParentNode()) {
+  for (; node; node = node.GetParentNode())
+  {
     nodes.push_back(node);
   }
 
@@ -240,7 +264,8 @@ static int _CompareNodeStrength(const PcpNodeRef &a,
   // std::mismatch iterates through every nodes in aNodes. So, ensure that
   // there are enough corresponding elements in bNodes, flipping the
   // arguments and return value if necessary.
-  if (bNodes.size() < aNodes.size()) {
+  if (bNodes.size() < aNodes.size())
+  {
     return -_CompareNodeStrength(b, bNodes, a, aNodes);
   }
 
@@ -256,7 +281,8 @@ static int _CompareNodeStrength(const PcpNodeRef &a,
   // paths did not diverge, i.e., aNodes must be a subset of bNodes.
   // In that case, node \p a must be above node \p b in the graph, so it
   // must be stronger.
-  if (nodesUnderCommonParent.first == aNodes.rend()) {
+  if (nodesUnderCommonParent.first == aNodes.rend())
+  {
 #ifdef PCP_DIAGNOSTIC_VALIDATION
     TF_VERIFY(std::find(bNodes.begin(), bNodes.end(), a) != bNodes.end());
 #endif
@@ -271,12 +297,14 @@ static int _CompareNodeStrength(const PcpNodeRef &a,
 
 int PcpCompareNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
 {
-  if (a.GetRootNode() != b.GetRootNode()) {
+  if (a.GetRootNode() != b.GetRootNode())
+  {
     TF_CODING_ERROR("Nodes are not part of the same prim index");
     return 0;
   }
 
-  if (a == b) {
+  if (a == b)
+  {
     return 0;
   }
 

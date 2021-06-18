@@ -67,7 +67,8 @@ WABI_NAMESPACE_BEGIN
 /// Some methods in this library may allow for a "family" to be provided. A
 /// family is simply a generic grouping which is optional.
 ///
-class NdrRegistry : public TfWeakBase {
+class NdrRegistry : public TfWeakBase
+{
  public:
   using DiscoveryPluginRefPtrVec = NdrDiscoveryPluginRefPtrVector;
 
@@ -298,7 +299,8 @@ class NdrRegistry : public TfWeakBase {
 
   typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor> TypeToParserPluginMap;
   typedef std::pair<NdrIdentifier, TfToken> NodeMapKey;
-  struct NodeMapKeyHashFunctor {
+  struct NodeMapKeyHashFunctor
+  {
     size_t operator()(const NodeMapKey &x) const
     {
       return NdrIdentifierHashFunctor()(x.first) ^ TfToken::HashFunctor()(x.second);

@@ -49,7 +49,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-enum class UsdApolloDrawMode {
+enum class UsdApolloDrawMode
+{
   DRAW_POINTS,
   DRAW_WIREFRAME,
   DRAW_WIREFRAME_ON_SURFACE,
@@ -63,7 +64,8 @@ enum class UsdApolloDrawMode {
 /**
  * Note: some assumptions are made about the order of
  * these enums, so please be careful when updating them. */
-enum class UsdApolloCullStyle {
+enum class UsdApolloCullStyle
+{
   CULL_STYLE_NO_OPINION,
   CULL_STYLE_NOTHING,
   CULL_STYLE_BACK,
@@ -77,7 +79,8 @@ enum class UsdApolloCullStyle {
  * @class UsdApolloRenderParams
  * Used as an arguments class for various methods
  * in UsdApolloEngine. */
-class UsdApolloRenderParams {
+class UsdApolloRenderParams
+{
  public:
   typedef std::vector<GfVec4d> ClipPlanesVector;
 

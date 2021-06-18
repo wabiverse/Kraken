@@ -22,7 +22,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput {
+class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput
+{
  public:
   RprUsd_MtlxNodeElement(MaterialX::ValueElementPtr element, RprUsdMaterialNodeElement::Type type);
   ~RprUsd_MtlxNodeElement() override = default;
@@ -81,7 +82,8 @@ class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput {
 /// In the future, obviously, we would like to be able to process custom
 /// nodes that are implemented as MaterialX implementation graphs.
 ///
-class RprUsd_MtlxNodeInfo : public RprUsdMaterialNodeInfo {
+class RprUsd_MtlxNodeInfo : public RprUsdMaterialNodeInfo
+{
  public:
   RprUsd_MtlxNodeInfo(MaterialX::DocumentPtr const &mtlxDoc,
                       MaterialX::NodeDefPtr const &mtlxNodeDef,

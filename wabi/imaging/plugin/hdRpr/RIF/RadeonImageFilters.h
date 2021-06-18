@@ -296,16 +296,20 @@ typedef long long int rif_longlong;
 typedef int64_t rif_int64;
 typedef uint64_t rif_uint64;
 typedef int rif_bool;
-typedef struct rif_context_t {
+typedef struct rif_context_t
+{
   void *_;
 } * rif_context;
-typedef struct rif_command_queue_t {
+typedef struct rif_command_queue_t
+{
   void *_;
 } * rif_command_queue;
-typedef struct rif_image_t {
+typedef struct rif_image_t
+{
   void *_;
 } * rif_image;
-typedef struct rif_image_filter_t {
+typedef struct rif_image_filter_t
+{
   void *_;
 } * rif_image_filter;
 typedef rif_uint rif_backend_api_type;
@@ -324,7 +328,8 @@ typedef rif_uint rif_compute_type;
 
 typedef void *rif_exec_command_queue_callback(void *);
 
-struct _rif_image_desc {
+struct _rif_image_desc
+{
   rif_uint image_width;
   rif_uint image_height;
   rif_uint image_depth;

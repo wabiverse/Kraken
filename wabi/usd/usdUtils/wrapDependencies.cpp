@@ -40,7 +40,8 @@ namespace bp = boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bp::tuple _ExtractExternalReferences(const std::string &filePath)
 {
@@ -63,7 +64,8 @@ static bp::tuple _ComputeAllDependencies(const SdfAssetPath &assetPath)
 
   UsdUtilsComputeAllDependencies(assetPath, &layers, &assets, &unresolvedPaths);
   bp::list layersList;
-  for (auto &l : layers) {
+  for (auto &l : layers)
+  {
     layersList.append(_LayerRefToObj(l));
   }
   return bp::make_tuple(layersList, assets, unresolvedPaths);

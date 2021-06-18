@@ -112,7 +112,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdMediaTokens->rightHanded
 /// as the value.
 ///
-class UsdMediaSpatialAudio : public UsdGeomXformable {
+class UsdMediaSpatialAudio : public UsdGeomXformable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -128,13 +129,15 @@ class UsdMediaSpatialAudio : public UsdGeomXformable {
   /// Equivalent to UsdMediaSpatialAudio::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdMediaSpatialAudio(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim)
+  explicit UsdMediaSpatialAudio(const UsdPrim &prim = UsdPrim())
+    : UsdGeomXformable(prim)
   {}
 
   /// Construct a UsdMediaSpatialAudio on the prim held by \p schemaObj .
   /// Should be preferred over UsdMediaSpatialAudio(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdMediaSpatialAudio(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj)
+  explicit UsdMediaSpatialAudio(const UsdSchemaBase &schemaObj)
+    : UsdGeomXformable(schemaObj)
   {}
 
   /// Destructor.

@@ -3,12 +3,14 @@
 #include "buffer.h"
 #include <array>
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepTabWindow;
 
 // A region inside the text for selections
-struct SelectRegion {
+struct SelectRegion
+{
   // For vertical select, we will have a list of spans...
   GlyphIterator start;
   GlyphIterator end;
@@ -18,11 +20,21 @@ struct SelectRegion {
 
 using ZepFontHandle = uint32_t;
 
-enum class ZepTextType { UI, Text, Heading1, Heading2, Heading3, Count };
+enum class ZepTextType
+{
+  UI,
+  Text,
+  Heading1,
+  Heading2,
+  Heading3,
+  Count
+};
 
-class ZepFont {
+class ZepFont
+{
  public:
-  ZepFont(ZepDisplay &display) : m_display(display)
+  ZepFont(ZepDisplay &display)
+    : m_display(display)
   {}
 
   // Implemented in API specific ways
@@ -52,7 +64,8 @@ class ZepFont {
 };
 
 // Display interface
-class ZepDisplay {
+class ZepDisplay
+{
  public:
   virtual ~ZepDisplay(){};
   ZepDisplay(const NVec2f &pixelScale);
@@ -90,9 +103,11 @@ class ZepDisplay {
   NVec2f m_pixelScale;
 };
 
-class ZepFontNull : public ZepFont {
+class ZepFontNull : public ZepFont
+{
  public:
-  ZepFontNull(ZepDisplay &display) : ZepFont(display)
+  ZepFontNull(ZepDisplay &display)
+    : ZepFont(display)
   {}
 
   virtual void SetPixelHeight(int val) override
@@ -109,9 +124,11 @@ class ZepFontNull : public ZepFont {
 // A NULL renderer, used for testing
 // Discards all drawing, and returns text fixed_size of 1 pixel per char, 10 height!
 // This is the only work you need to do to make a new renderer type for the editor
-class ZepDisplayNull : public ZepDisplay {
+class ZepDisplayNull : public ZepDisplay
+{
  public:
-  ZepDisplayNull(const NVec2f &pixelScale) : ZepDisplay(pixelScale)
+  ZepDisplayNull(const NVec2f &pixelScale)
+    : ZepDisplay(pixelScale)
   {}
 
   virtual void DrawLine(const NVec2f &start,
@@ -147,8 +164,10 @@ class ZepDisplayNull : public ZepDisplay {
 
   virtual ZepFont &GetFont(ZepTextType type) override
   {
-    if (m_fonts[(int)type] == nullptr) {
-      if (m_spDefaultFont == nullptr) {
+    if (m_fonts[(int)type] == nullptr)
+    {
+      if (m_spDefaultFont == nullptr)
+      {
         m_spDefaultFont = std::make_shared<ZepFontNull>(*this);
       }
       return *m_spDefaultFont;

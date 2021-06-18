@@ -41,7 +41,8 @@ class UsdShadeShader;
 /// This class contains a set of utility functions used for populating the
 /// shader registry with shaders definitions specified using UsdShade schemas.
 ///
-class UsdShadeShaderDefUtils {
+class UsdShadeShaderDefUtils
+{
  public:
   /// Given a shader's \p identifier token, computes the corresponding
   /// SdrShaderNode's family name, implementation name and shader version

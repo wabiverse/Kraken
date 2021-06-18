@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 
 int GlfGetNumElements(GLenum format)
 {
-  switch (format) {
+  switch (format)
+  {
     case GL_DEPTH_COMPONENT:
     case GL_COLOR_INDEX:
     case GL_ALPHA:
@@ -62,7 +63,8 @@ int GlfGetNumElements(GLenum format)
 
 int GlfGetElementSize(GLenum type)
 {
-  switch (type) {
+  switch (type)
+  {
     case GL_UNSIGNED_BYTE:
     case GL_BYTE:
       return sizeof(GLubyte);
@@ -83,15 +85,18 @@ int GlfGetElementSize(GLenum type)
 
 HioFormat GlfGetHioFormat(GLenum glFormat, GLenum glType, bool isSRGB)
 {
-  switch (glFormat) {
+  switch (glFormat)
+  {
     case GL_DEPTH_COMPONENT:
     case GL_COLOR_INDEX:
     case GL_ALPHA:
     case GL_LUMINANCE:
     case GL_RED:
-      switch (glType) {
+      switch (glType)
+      {
         case GL_UNSIGNED_BYTE:
-          if (isSRGB) {
+          if (isSRGB)
+          {
             return HioFormatUNorm8srgb;
           }
           return HioFormatUNorm8;
@@ -114,9 +119,11 @@ HioFormat GlfGetHioFormat(GLenum glFormat, GLenum glType, bool isSRGB)
       }
     case GL_LUMINANCE_ALPHA:
     case GL_RG:
-      switch (glType) {
+      switch (glType)
+      {
         case GL_UNSIGNED_BYTE:
-          if (isSRGB) {
+          if (isSRGB)
+          {
             return HioFormatUNorm8Vec2srgb;
           }
           return HioFormatUNorm8Vec2;
@@ -138,9 +145,11 @@ HioFormat GlfGetHioFormat(GLenum glFormat, GLenum glType, bool isSRGB)
           return HioFormatDouble64Vec2;
       }
     case GL_RGB:
-      switch (glType) {
+      switch (glType)
+      {
         case GL_UNSIGNED_BYTE:
-          if (isSRGB) {
+          if (isSRGB)
+          {
             return HioFormatUNorm8Vec3srgb;
           }
           return HioFormatUNorm8Vec3;
@@ -162,9 +171,11 @@ HioFormat GlfGetHioFormat(GLenum glFormat, GLenum glType, bool isSRGB)
           return HioFormatDouble64Vec3;
       }
     case GL_RGBA:
-      switch (glType) {
+      switch (glType)
+      {
         case GL_UNSIGNED_BYTE:
-          if (isSRGB) {
+          if (isSRGB)
+          {
             return HioFormatUNorm8Vec4srgb;
           }
           return HioFormatUNorm8Vec4;
@@ -207,50 +218,59 @@ bool GlfCheckGLFrameBufferStatus(GLuint target, std::string *reason)
 {
   GLenum status = glCheckFramebufferStatus(target);
 
-  switch (status) {
+  switch (status)
+  {
     case GL_FRAMEBUFFER_COMPLETE:
       return true;
     case GL_FRAMEBUFFER_UNSUPPORTED:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer unsupported";
       }
       return false;
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete attachment";
       }
       return false;
     case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete missing attachment";
       }
       return false;
 #if defined(GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT)
     case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete dimensions";
       }
       return false;
 #endif
 #if defined(GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT)
     case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete formats";
       }
       return false;
 #endif
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete draw buffer";
       }
       return false;
     case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-      if (reason) {
+      if (reason)
+      {
         *reason = "Framebuffer incomplete read buffer";
       }
       return false;
     default:
-      if (reason) {
+      if (reason)
+      {
         *reason = TfStringPrintf("Framebuffer error 0x%x", (unsigned int)(status));
       }
       return false;

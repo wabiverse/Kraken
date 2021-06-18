@@ -56,7 +56,8 @@ typedef boost::intrusive_ptr<const Usd_PrimData> Usd_PrimDataConstIPtr;
 // Private helper class that holds a reference to prim data.  UsdObject (and by
 // inheritance its subclasses) hold an instance of this class.  It lets
 // UsdObject detect prim expiry, and provides access to cached prim data.
-class Usd_PrimDataHandle {
+class Usd_PrimDataHandle
+{
  public:
   // smart ptr element_type typedef.
   typedef Usd_PrimDataConstIPtr::element_type element_type;
@@ -65,16 +66,20 @@ class Usd_PrimDataHandle {
   Usd_PrimDataHandle()
   {}
   // Convert/construct a handle from a prim data intrusive ptr.
-  Usd_PrimDataHandle(const Usd_PrimDataIPtr &primData) : _p(primData)
+  Usd_PrimDataHandle(const Usd_PrimDataIPtr &primData)
+    : _p(primData)
   {}
   // Convert/construct a handle from a prim data intrusive ptr.
-  Usd_PrimDataHandle(const Usd_PrimDataConstIPtr &primData) : _p(primData)
+  Usd_PrimDataHandle(const Usd_PrimDataConstIPtr &primData)
+    : _p(primData)
   {}
   // Convert/construct a handle from a prim data raw ptr.
-  Usd_PrimDataHandle(Usd_PrimDataPtr primData) : _p(Usd_PrimDataConstIPtr(primData))
+  Usd_PrimDataHandle(Usd_PrimDataPtr primData)
+    : _p(Usd_PrimDataConstIPtr(primData))
   {}
   // Convert/construct a handle from a prim data raw ptr.
-  Usd_PrimDataHandle(Usd_PrimDataConstPtr primData) : _p(Usd_PrimDataConstIPtr(primData))
+  Usd_PrimDataHandle(Usd_PrimDataConstPtr primData)
+    : _p(Usd_PrimDataConstIPtr(primData))
   {}
 
   // Reset this handle to null.

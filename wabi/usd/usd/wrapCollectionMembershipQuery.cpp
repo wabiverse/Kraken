@@ -32,7 +32,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bool _WrapIsPathIncluded_1(const UsdCollectionMembershipQuery &query, const SdfPath &path)
 {

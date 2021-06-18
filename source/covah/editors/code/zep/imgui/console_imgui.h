@@ -2,9 +2,11 @@
 
 #include "zep.h"
 
-namespace ANCHOR {
+namespace ANCHOR
+{
 
-struct ZepConsole : Zep::IZepComponent {
+struct ZepConsole : Zep::IZepComponent
+{
   std::function<bool(const std::string &)> Callback;
   Zep::ZepEditor_ANCHOR zepEditor;
   bool pendingScroll = true;
@@ -12,7 +14,8 @@ struct ZepConsole : Zep::IZepComponent {
   // Intercept messages from the editor command line and relay them
   virtual void Notify(std::shared_ptr<Zep::ZepMessage> message)
   {
-    if (message->messageId == Zep::Msg::HandleCommand) {
+    if (message->messageId == Zep::Msg::HandleCommand)
+    {
       message->handled = Callback(message->str);
       return;
     }
@@ -25,7 +28,8 @@ struct ZepConsole : Zep::IZepComponent {
     return (Zep::ZepEditor &)zepEditor;
   }
 
-  ZepConsole(Zep::ZepPath &p) : zepEditor(p, Zep::NVec2f(1, 1))
+  ZepConsole(Zep::ZepPath &p)
+    : zepEditor(p, Zep::NVec2f(1, 1))
   {
     zepEditor.RegisterCallback(this);
     auto pBuffer = zepEditor.GetEmptyBuffer("Log");
@@ -64,7 +68,8 @@ struct ZepConsole : Zep::IZepComponent {
     if (!ANCHOR::Begin(title,
                        p_open,
                        ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize |
-                         ANCHOR_WindowFlags_NoScrollbar)) {
+                         ANCHOR_WindowFlags_NoScrollbar))
+    {
       ANCHOR::PopStyleVar(1);
       ANCHOR::PopStyleColor(1);
       ANCHOR::End();
@@ -78,13 +83,15 @@ struct ZepConsole : Zep::IZepComponent {
     zepEditor.Display();
     zepEditor.HandleInput();
 
-    if (pendingScroll) {
+    if (pendingScroll)
+    {
       zepEditor.GetActiveTabWindow()->GetActiveWindow()->MoveCursorY(
         zepEditor.GetActiveTabWindow()->GetActiveWindow()->GetMaxDisplayLines() - 2);
       pendingScroll = false;
     }
 
-    if (blend < 1.0f) {
+    if (blend < 1.0f)
+    {
       // TODO: This looks like a hack: investigate why it is needed for the drop down console.
       // I think the intention here is to ensure the mode is reset while it is dropping down. I
       // don't recall.

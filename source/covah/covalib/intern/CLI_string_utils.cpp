@@ -57,19 +57,24 @@ size_t CLI_split_name_num(char *left, int *nr, const char *name, const char deli
   memcpy(left, name, (name_len + 1) * sizeof(char));
 
   /* name doesn't end with a delimiter "foo." */
-  if ((name_len > 1 && name[name_len - 1] == delim) == 0) {
+  if ((name_len > 1 && name[name_len - 1] == delim) == 0)
+  {
     size_t a = name_len;
-    while (a--) {
-      if (name[a] == delim) {
+    while (a--)
+    {
+      if (name[a] == delim)
+      {
         left[a] = '\0'; /* truncate left part here */
         *nr = atol(name + a + 1);
         /* casting down to an int, can overflow for large numbers */
-        if (*nr < 0) {
+        if (*nr < 0)
+        {
           *nr = 0;
         }
         return a;
       }
-      if (isdigit(name[a]) == 0) {
+      if (isdigit(name[a]) == 0)
+      {
         /* non-numeric suffix - give up */
         break;
       }
@@ -101,22 +106,272 @@ char *CLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t
 /* Note: last two values (0xfe and 0xff) are forbidden in utf-8,
  * so they are considered 1 byte length too. */
 static const size_t utf8_skip_data[256] = {
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 1, 1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  5,
+  5,
+  5,
+  5,
+  6,
+  6,
+  1,
+  1,
 };
 
 #define CLI_STR_UTF8_CPY(dst, src, maxncpy) \
   { \
     size_t utf8_size; \
-    while (*src != '\0' && (utf8_size = utf8_skip_data[*src]) < maxncpy) { \
+    while (*src != '\0' && (utf8_size = utf8_skip_data[*src]) < maxncpy) \
+    { \
       maxncpy -= utf8_size; \
-      switch (utf8_size) { \
+      switch (utf8_size) \
+      { \
         case 6: \
           *dst++ = *src++; \
           ATTR_FALLTHROUGH; \
@@ -171,8 +426,10 @@ size_t CLI_strnlen(const char *s, const size_t maxlen)
 {
   size_t len;
 
-  for (len = 0; len < maxlen; len++, s++) {
-    if (!*s) {
+  for (len = 0; len < maxlen; len++, s++)
+  {
+    if (!*s)
+    {
       break;
     }
   }
@@ -198,10 +455,12 @@ size_t CLI_vsnprintf(char *__restrict buffer, size_t maxncpy, const char *__rest
 
   n = (size_t)vsnprintf(buffer, maxncpy, format, arg);
 
-  if (n != -1 && n < maxncpy) {
+  if (n != -1 && n < maxncpy)
+  {
     buffer[n] = '\0';
   }
-  else {
+  else
+  {
     buffer[maxncpy - 1] = '\0';
   }
 
@@ -229,10 +488,12 @@ size_t CLI_vsnprintf_rlen(char *__restrict buffer,
 
   n = (size_t)vsnprintf(buffer, maxncpy, format, arg);
 
-  if (n != -1 && n < maxncpy) {
+  if (n != -1 && n < maxncpy)
+  {
     /* pass */
   }
-  else {
+  else
+  {
     n = maxncpy - 1;
   }
   buffer[n] = '\0';
@@ -301,27 +562,32 @@ bool CLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        char *name,
                        size_t name_len)
 {
-  if (name[0] == '\0') {
+  if (name[0] == '\0')
+  {
     CLI_strncpy(name, defname, name_len);
   }
 
-  if (unique_check(arg, name)) {
+  if (unique_check(arg, name))
+  {
     char numstr[16];
     char *tempname = (char *)alloca(name_len);
     char *left = (char *)alloca(name_len);
     int number;
     size_t len = CLI_split_name_num(left, &number, name, delim);
-    do {
+    do
+    {
       /* add 1 to account for \0 */
       const size_t numlen = CLI_snprintf(numstr, sizeof(numstr), "%c%03d", delim, ++number) + 1;
 
       /* highly unlikely the string only has enough room for the number
        * but support anyway */
-      if ((len == 0) || (numlen >= name_len)) {
+      if ((len == 0) || (numlen >= name_len))
+      {
         /* number is know not to be utf-8 */
         CLI_strncpy(tempname, numstr, name_len);
       }
-      else {
+      else
+      {
         char *tempname_buf;
         tempname_buf = tempname + CLI_strncpy_utf8_rlen(tempname, left, name_len - numlen);
         memcpy(tempname_buf, numstr, numlen);
@@ -342,8 +608,10 @@ std::string CLI_str_CapSpaceAmmender(std::string str)
 {
   std::string ret;
 
-  for (int i = 0; i < str.length(); i++) {
-    if (str[i] >= 'A' && str[i] <= 'Z') {
+  for (int i = 0; i < str.length(); i++)
+  {
+    if (str[i] >= 'A' && str[i] <= 'Z')
+    {
       str[i] = str[i] + 32;
       if (i != 0)
         ret += " ";
@@ -351,11 +619,14 @@ std::string CLI_str_CapSpaceAmmender(std::string str)
       ret += toupper(str[i]);
     }
 
-    else {
-      if (i == 0) {
+    else
+    {
+      if (i == 0)
+      {
         ret += toupper(str[i]);
       }
-      else {
+      else
+      {
         ret += str[i];
       }
     }
@@ -370,18 +641,23 @@ std::string CLI_str_UpperCamel(std::string str)
 
   bool active = true;
 
-  for (int i = 0; i < str.length(); i++) {
+  for (int i = 0; i < str.length(); i++)
+  {
 
-    if (std::isalpha(str[i])) {
-      if (active) {
+    if (std::isalpha(str[i]))
+    {
+      if (active)
+      {
         ret += std::toupper(str[i]);
         active = false;
       }
-      else {
+      else
+      {
         ret += std::tolower(str[i]);
       }
     }
-    else if (str[i] == ' ') {
+    else if (str[i] == ' ')
+    {
       active = true;
     }
   }

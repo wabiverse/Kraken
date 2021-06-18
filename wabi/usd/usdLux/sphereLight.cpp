@@ -57,7 +57,8 @@ UsdLuxSphereLight::~UsdLuxSphereLight()
 /* static */
 UsdLuxSphereLight UsdLuxSphereLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxSphereLight();
   }
@@ -68,7 +69,8 @@ UsdLuxSphereLight UsdLuxSphereLight::Get(const UsdStagePtr &stage, const SdfPath
 UsdLuxSphereLight UsdLuxSphereLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SphereLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxSphereLight();
   }
@@ -137,7 +139,8 @@ UsdAttribute UsdLuxSphereLight::CreateTreatAsPointAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

@@ -39,8 +39,10 @@ Hd_CompExtCompInputSource::Hd_CompExtCompInputSource(const TfToken &name,
 bool Hd_CompExtCompInputSource::Resolve()
 {
   bool sourceValid = _source->IsValid();
-  if (sourceValid) {
-    if (!_source->IsResolved()) {
+  if (sourceValid)
+  {
+    if (!_source->IsResolved())
+    {
       return false;
     }
   }
@@ -48,7 +50,8 @@ bool Hd_CompExtCompInputSource::Resolve()
   if (!_TryLock())
     return false;
 
-  if (!sourceValid || _source->HasResolveError()) {
+  if (!sourceValid || _source->HasResolveError())
+  {
     _SetResolveError();
     return true;
   }

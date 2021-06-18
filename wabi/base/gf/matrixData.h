@@ -39,7 +39,9 @@ WABI_NAMESPACE_BEGIN
 /// \class GfMatrixData
 ///
 /// A class template used by GfMatrixXX to store values.
-template<class T, int Rows, int Columns> class GfMatrixData {
+template<class T, int Rows, int Columns>
+class GfMatrixData
+{
  public:
   /// Return a pointer to a \a row of data.
   T *operator[](int row)

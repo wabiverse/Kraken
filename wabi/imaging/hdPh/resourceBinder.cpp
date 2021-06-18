@@ -53,14 +53,22 @@ TF_DEFINE_PRIVATE_TOKENS(
     _int,
     "int"))(vec2)(vec3)(vec4)(dvec2)(dvec3)(dvec4)(ivec2)(ivec3)(ivec4)(constantPrimvars)(primitiveParam)(topologyVisibility));
 
-namespace {
-struct BindingLocator {
-  BindingLocator() : uniformLocation(0), uboLocation(0), ssboLocation(0), attribLocation(0), textureUnit(0)
+namespace
+{
+struct BindingLocator
+{
+  BindingLocator()
+    : uniformLocation(0),
+      uboLocation(0),
+      ssboLocation(0),
+      attribLocation(0),
+      textureUnit(0)
   {}
 
   HdBinding GetBinding(HdBinding::Type type, TfToken const &debugName)
   {
-    switch (type) {
+    switch (type)
+    {
       case HdBinding::UNIFORM:
         return HdBinding(HdBinding::UNIFORM, uniformLocation++);
         break;
@@ -107,10 +115,12 @@ static inline GLboolean _ShouldBeNormalized(HdType type)
 // packed vectors.  Handle that here.
 static inline int _GetNumComponents(HdType type)
 {
-  if (type == HdTypeInt32_2_10_10_10_REV) {
+  if (type == HdTypeInt32_2_10_10_10_REV)
+  {
     return 4;
   }
-  else {
+  else
+  {
     return HdGetComponentCount(type);
   }
 }
@@ -119,16 +129,20 @@ static inline int _GetNumComponents(HdType type)
 static HdType _AdjustHdType(HdType type, std::string const &swizzle)
 {
   size_t numChannels = swizzle.size();
-  if (numChannels == 4) {
+  if (numChannels == 4)
+  {
     return HdTypeFloatVec4;
   }
-  else if (numChannels == 3) {
+  else if (numChannels == 3)
+  {
     return HdTypeFloatVec3;
   }
-  else if (numChannels == 2) {
+  else if (numChannels == 2)
+  {
     return HdTypeFloatVec2;
   }
-  else if (numChannels == 1) {
+  else if (numChannels == 1)
+  {
     return HdTypeFloat;
   }
 
@@ -152,7 +166,8 @@ static TfTokenVector _GetInstancerFilterNames(HdPhDrawItem const *drawItem)
   ;
 
   HdPhShaderCodeSharedPtr materialShader = drawItem->GetMaterialShader();
-  if (materialShader) {
+  if (materialShader)
+  {
     TfTokenVector const &names = materialShader->GetPrimvarNames();
     filterNames.insert(filterNames.end(), names.begin(), names.end());
   }
@@ -184,24 +199,30 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
 
   HdBinding::Type arrayBufferBindingType = HdBinding::SSBO;
-  if (bindlessUniformEnabled) {
+  if (bindlessUniformEnabled)
+  {
     arrayBufferBindingType = HdBinding::BINDLESS_UNIFORM;  // EXT
   }
 
   HdBinding::Type structBufferBindingType = HdBinding::UBO;  // 3.1
-  if (bindlessUniformEnabled) {
+  if (bindlessUniformEnabled)
+  {
     structBufferBindingType = HdBinding::BINDLESS_UNIFORM;  // EXT
   }
-  else if (ssboEnabled) {
+  else if (ssboEnabled)
+  {
     structBufferBindingType = HdBinding::SSBO;  // 4.3
   }
 
   HdBinding::Type drawingCoordBindingType = HdBinding::UNIFORM;
-  if (indirect) {
-    if (instanceDraw) {
+  if (indirect)
+  {
+    if (instanceDraw)
+    {
       drawingCoordBindingType = HdBinding::DRAW_INDEX_INSTANCE;
     }
-    else {
+    else
+    {
       drawingCoordBindingType = HdBinding::DRAW_INDEX;
     }
   }
@@ -225,12 +246,13 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   // constant primvar (per-object)
   HdBinding constantPrimvarBinding = locator.GetBinding(structBufferBindingType, _tokens->constantPrimvars);
 
-  if (HdBufferArrayRangeSharedPtr constantBar_ = drawItem->GetConstantPrimvarRange()) {
+  if (HdBufferArrayRangeSharedPtr constantBar_ = drawItem->GetConstantPrimvarRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr constantBar = std::static_pointer_cast<HdPhBufferArrayRange>(constantBar_);
 
     MetaData::StructBlock sblock(_tokens->constantPrimvars);
-    TF_FOR_ALL(it, constantBar->GetResources())
+    TF_FOR_ALL (it, constantBar->GetResources())
     {
       HdTupleType valueType = it->second->GetTupleType();
       TfToken glType = HdPhGLConversions::GetGLSLTypename(valueType.type);
@@ -258,17 +280,20 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   // instance primvar (per-instance)
   int instancerNumLevels = drawItem->GetInstancePrimvarNumLevels();
   metaDataOut->instancerNumLevels = instancerNumLevels;
-  for (int i = 0; i < instancerNumLevels; ++i) {
-    if (HdBufferArrayRangeSharedPtr instanceBar_ = drawItem->GetInstancePrimvarRange(i)) {
+  for (int i = 0; i < instancerNumLevels; ++i)
+  {
+    if (HdBufferArrayRangeSharedPtr instanceBar_ = drawItem->GetInstancePrimvarRange(i))
+    {
 
       HdPhBufferArrayRangeSharedPtr instanceBar = std::static_pointer_cast<HdPhBufferArrayRange>(
         instanceBar_);
 
-      TF_FOR_ALL(it, instanceBar->GetResources())
+      TF_FOR_ALL (it, instanceBar->GetResources())
       {
         TfToken const &name = it->first;
         // skip instance primvars that are not used in this batch.
-        if (std::find(filterNames.begin(), filterNames.end(), name) == filterNames.end()) {
+        if (std::find(filterNames.begin(), filterNames.end(), name) == filterNames.end())
+        {
           continue;
         }
 
@@ -289,11 +314,12 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
 
   // vertex primvar (per-vertex)
   // always assigned to VertexAttribute.
-  if (HdBufferArrayRangeSharedPtr vertexBar_ = drawItem->GetVertexPrimvarRange()) {
+  if (HdBufferArrayRangeSharedPtr vertexBar_ = drawItem->GetVertexPrimvarRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr vertexBar = std::static_pointer_cast<HdPhBufferArrayRange>(vertexBar_);
 
-    TF_FOR_ALL(it, vertexBar->GetResources())
+    TF_FOR_ALL (it, vertexBar->GetResources())
     {
       TfToken const &name = it->first;
       TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
@@ -303,7 +329,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       HdTupleType valueType = it->second->GetTupleType();
       // Special case: VBOs have intrinsic support for packed types,
       // so expand them out to their target type for the shader binding.
-      if (valueType.type == HdTypeInt32_2_10_10_10_REV) {
+      if (valueType.type == HdTypeInt32_2_10_10_10_REV)
+      {
         valueType.type = HdTypeFloatVec4;
       }
       TfToken glType = HdPhGLConversions::GetGLSLTypename(valueType.type);
@@ -313,11 +340,13 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   }
 
   // varying primvar
-  if (HdBufferArrayRangeSharedPtr varyingBar_ = drawItem->GetVaryingPrimvarRange()) {
+  if (HdBufferArrayRangeSharedPtr varyingBar_ = drawItem->GetVaryingPrimvarRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr varyingBar = std::static_pointer_cast<HdPhBufferArrayRange>(varyingBar_);
 
-    for (const auto &resource : varyingBar->GetResources()) {
+    for (const auto &resource : varyingBar->GetResources())
+    {
       TfToken const &name = resource.first;
       TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
       HdBinding varyingPrimvarBinding = locator.GetBinding(arrayBufferBindingType, name);
@@ -331,22 +360,25 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   }
 
   // index buffer
-  if (HdBufferArrayRangeSharedPtr topologyBar_ = drawItem->GetTopologyRange()) {
+  if (HdBufferArrayRangeSharedPtr topologyBar_ = drawItem->GetTopologyRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr topologyBar = std::static_pointer_cast<HdPhBufferArrayRange>(topologyBar_);
 
-    TF_FOR_ALL(it, topologyBar->GetResources())
+    TF_FOR_ALL (it, topologyBar->GetResources())
     {
       // Don't need to sanitize the name, since topology resources are
       // created internally.
       TfToken const &name = it->first;
       HdPhBufferResourceSharedPtr const &resource = it->second;
 
-      if (name == HdTokens->indices) {
+      if (name == HdTokens->indices)
+      {
         // IBO. no need for codegen
         _bindingMap[name] = HdBinding(HdBinding::INDEX_ATTR, 0);
       }
-      else {
+      else
+      {
         // We expect the following additional topology based info:
         // - primitive parameter (for all tris, quads and patches)
         // - edge indices (for all tris, quads and patches)
@@ -366,19 +398,24 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           /*type=*/glType,
           /*binding=*/binding);
 
-        if (name == HdTokens->primitiveParam) {
+        if (name == HdTokens->primitiveParam)
+        {
           metaDataOut->primitiveParamBinding = bindingDecl;
         }
-        else if (name == HdTokens->edgeIndices) {
+        else if (name == HdTokens->edgeIndices)
+        {
           metaDataOut->edgeIndexBinding = bindingDecl;
         }
-        else if (_TokenContainsString(name, HdPhTokens->fvarIndices.GetString())) {
+        else if (_TokenContainsString(name, HdPhTokens->fvarIndices.GetString()))
+        {
           metaDataOut->fvarIndicesBindings.push_back(bindingDecl);
         }
-        else if (_TokenContainsString(name, HdPhTokens->fvarPatchParam.GetString())) {
+        else if (_TokenContainsString(name, HdPhTokens->fvarPatchParam.GetString()))
+        {
           metaDataOut->fvarPatchParamBindings.push_back(bindingDecl);
         }
-        else {
+        else
+        {
           TF_WARN("Unexpected topological resource '%s'\n", name.GetText());
         }
       }
@@ -389,12 +426,13 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   HdBinding topologyVisibilityBinding = locator.GetBinding(structBufferBindingType,
                                                            /*debugName*/ _tokens->topologyVisibility);
 
-  if (HdBufferArrayRangeSharedPtr topVisBar_ = drawItem->GetTopologyVisibilityRange()) {
+  if (HdBufferArrayRangeSharedPtr topVisBar_ = drawItem->GetTopologyVisibilityRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr topVisBar = std::static_pointer_cast<HdPhBufferArrayRange>(topVisBar_);
 
     MetaData::StructBlock sblock(_tokens->topologyVisibility);
-    TF_FOR_ALL(it, topVisBar->GetResources())
+    TF_FOR_ALL (it, topVisBar->GetResources())
     {
       HdTupleType valueType = it->second->GetTupleType();
       TfToken glType = HdPhGLConversions::GetGLSLTypename(valueType.type);
@@ -414,11 +452,12 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   _bindingMap[_tokens->topologyVisibility] = topologyVisibilityBinding;
 
   // element primvar (per-face, per-line)
-  if (HdBufferArrayRangeSharedPtr elementBar_ = drawItem->GetElementPrimvarRange()) {
+  if (HdBufferArrayRangeSharedPtr elementBar_ = drawItem->GetElementPrimvarRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr elementBar = std::static_pointer_cast<HdPhBufferArrayRange>(elementBar_);
 
-    TF_FOR_ALL(it, elementBar->GetResources())
+    TF_FOR_ALL (it, elementBar->GetResources())
     {
       TfToken const &name = it->first;
       TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
@@ -432,13 +471,14 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   }
 
   // facevarying primvar (per-face-vertex)
-  if (HdBufferArrayRangeSharedPtr fvarBar_ = drawItem->GetFaceVaryingPrimvarRange()) {
+  if (HdBufferArrayRangeSharedPtr fvarBar_ = drawItem->GetFaceVaryingPrimvarRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr fvarBar = std::static_pointer_cast<HdPhBufferArrayRange>(fvarBar_);
 
     TopologyToPrimvarVector const &fvarTopoToPvMap = drawItem->GetFvarTopologyToPrimvarVector();
 
-    TF_FOR_ALL(it, fvarBar->GetResources())
+    TF_FOR_ALL (it, fvarBar->GetResources())
     {
       TfToken const &name = it->first;
       TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
@@ -450,9 +490,11 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
 
       // Fine if no channel is found, might be unrefined primvar
       int fvarChannel = 0;
-      for (size_t i = 0; i < fvarTopoToPvMap.size(); ++i) {
+      for (size_t i = 0; i < fvarTopoToPvMap.size(); ++i)
+      {
         if (std::find(fvarTopoToPvMap[i].second.begin(), fvarTopoToPvMap[i].second.end(), name) !=
-            fvarTopoToPvMap[i].second.end()) {
+            fvarTopoToPvMap[i].second.end())
+        {
           fvarChannel = i;
         }
       }
@@ -490,15 +532,18 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
     /*type=*/_tokens->ivec2,
     /*binding=*/drawingCoord2Binding);
 
-  if (instancerNumLevels > 0) {
+  if (instancerNumLevels > 0)
+  {
     HdBinding drawingCoordIBinding = indirect ? HdBinding(HdBinding::DRAW_INDEX_INSTANCE_ARRAY,
                                                           locator.attribLocation) :
                                                 HdBinding(HdBinding::UNIFORM_ARRAY, locator.uniformLocation);
-    if (indirect) {
+    if (indirect)
+    {
       // each vertex attribute takes 1 location
       locator.attribLocation += instancerNumLevels;
     }
-    else {
+    else
+    {
       // int[N] may consume more than 1 location
       locator.uniformLocation += instancerNumLevels;
     }
@@ -510,7 +555,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   }
 
   // instance index indirection buffer
-  if (HdBufferArrayRangeSharedPtr instanceIndexBar_ = drawItem->GetInstanceIndexRange()) {
+  if (HdBufferArrayRangeSharedPtr instanceIndexBar_ = drawItem->GetInstanceIndexRange())
+  {
 
     HdPhBufferArrayRangeSharedPtr instanceIndexBar = std::static_pointer_cast<HdPhBufferArrayRange>(
       instanceIndexBar_);
@@ -520,7 +566,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
     HdPhBufferResourceSharedPtr culledInstanceIndices = instanceIndexBar->GetResource(
       HdInstancerTokens->culledInstanceIndices);
 
-    if (instanceIndices) {
+    if (instanceIndices)
+    {
       HdBinding instanceIndexArrayBinding = locator.GetBinding(arrayBufferBindingType,
                                                                HdInstancerTokens->instanceIndices);
       _bindingMap[HdInstancerTokens->instanceIndices] = instanceIndexArrayBinding;
@@ -531,7 +578,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
         /*type=*/glType,
         /*binding=*/instanceIndexArrayBinding);
     }
-    if (culledInstanceIndices) {
+    if (culledInstanceIndices)
+    {
       HdBinding culledInstanceIndexArrayBinding = locator.GetBinding(
         arrayBufferBindingType, HdInstancerTokens->culledInstanceIndices);
       _bindingMap[HdInstancerTokens->culledInstanceIndices] = culledInstanceIndexArrayBinding;
@@ -545,25 +593,27 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   }
 
   // indirect dispatch
-  if (indirect) {
+  if (indirect)
+  {
     HdBinding dispatchBinding(HdBinding::DISPATCH, /*location=(not used)*/ 0);
     _bindingMap[HdTokens->drawDispatch] = dispatchBinding;
   }
 
   // shader parameter bindings
-  TF_FOR_ALL(shader, shaders)
+  TF_FOR_ALL (shader, shaders)
   {
 
     // uniform block
     HdBufferArrayRangeSharedPtr const &shaderBar_ = (*shader)->GetShaderData();
     HdPhBufferArrayRangeSharedPtr shaderBar = std::static_pointer_cast<HdPhBufferArrayRange>(shaderBar_);
-    if (shaderBar) {
+    if (shaderBar)
+    {
       HdBinding shaderParamBinding = locator.GetBinding(structBufferBindingType, HdTokens->materialParams);
 
       // for fallback values and bindless textures
       // XXX: name of sblock must be unique for each shaders.
       MetaData::StructBlock sblock(HdTokens->materialParams);
-      TF_FOR_ALL(it, shaderBar->GetResources())
+      TF_FOR_ALL (it, shaderBar->GetResources())
       {
         TfToken const &name = it->first;
         TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
@@ -580,7 +630,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       metaDataOut->shaderData.insert(std::make_pair(shaderParamBinding, sblock));
 
       // XXX:hack  we want to generalize materialParams to other shaders.
-      if ((*shader) == drawItem->GetMaterialShader()) {
+      if ((*shader) == drawItem->GetMaterialShader())
+      {
         // shader parameters are interleaved into single struct.
         _bindingMap[HdTokens->materialParams] = shaderParamBinding;
       }
@@ -588,7 +639,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
 
     HdPh_MaterialParamVector params = (*shader)->GetParams();
     // for primvar and texture accessors
-    for (HdPh_MaterialParam const &param : params) {
+    for (HdPh_MaterialParam const &param : params)
+    {
       const bool isMaterialShader = ((*shader) == drawItem->GetMaterialShader());
 
       // renderpass texture should be bindfull (for now)
@@ -599,13 +651,16 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       TfToken const &name = param.name;
       TfToken glName = HdPhGLConversions::GetGLSLIdentifier(name);
 
-      if (param.IsFallback()) {
+      if (param.IsFallback())
+      {
         metaDataOut->shaderParameterBinding[HdBinding(HdBinding::FALLBACK, shaderFallbackLocation++)] =
           MetaData::ShaderParameterAccessor(glName,
                                             /*type=*/glType);
       }
-      else if (param.IsTexture()) {
-        if (param.textureType == HdTextureType::Ptex) {
+      else if (param.IsTexture())
+      {
+        if (param.textureType == HdTextureType::Ptex)
+        {
           // ptex texture
           HdBinding texelBinding = bindless ? HdBinding(HdBinding::BINDLESS_TEXTURE_PTEX_TEXEL,
                                                         bindlessTextureLocation++) :
@@ -637,7 +692,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           // used for non-bindless
           _bindingMap[layoutName] = layoutBinding;
         }
-        else if (param.textureType == HdTextureType::Udim) {
+        else if (param.textureType == HdTextureType::Udim)
+        {
           // Texture Array for UDIM
           HdBinding textureBinding = bindless ? HdBinding(HdBinding::BINDLESS_TEXTURE_UDIM_ARRAY,
                                                           bindlessTextureLocation++) :
@@ -670,7 +726,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           // used for non-bindless
           _bindingMap[layoutName] = layoutBinding;
         }
-        else if (param.textureType == HdTextureType::Uv) {
+        else if (param.textureType == HdTextureType::Uv)
+        {
           // 2d texture
           HdBinding textureBinding = bindless ?
                                        HdBinding(HdBinding::BINDLESS_TEXTURE_2D, bindlessTextureLocation++) :
@@ -687,7 +744,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
             /*processTextureFallbackValue=*/isMaterialShader);
           _bindingMap[name] = textureBinding;  // used for non-bindless
         }
-        else if (param.textureType == HdTextureType::Field) {
+        else if (param.textureType == HdTextureType::Field)
+        {
           // 3d texture
           HdBinding textureBinding =
             bindless ? HdBinding(HdBinding::BINDLESS_TEXTURE_FIELD, bindlessTextureLocation++) :
@@ -703,11 +761,13 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           _bindingMap[name] = textureBinding;  // used for non-bindless
         }
       }
-      else if (param.IsPrimvarRedirect() || param.IsFieldRedirect()) {
+      else if (param.IsPrimvarRedirect() || param.IsFieldRedirect())
+      {
         TfTokenVector const &samplePrimvars = param.samplerCoords;
         TfTokenVector glNames;
         glNames.reserve(samplePrimvars.size());
-        for (auto const &pv : samplePrimvars) {
+        for (auto const &pv : samplePrimvars)
+        {
           glNames.push_back(HdPhGLConversions::GetGLSLIdentifier(pv));
         }
 
@@ -721,7 +781,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           /*swizzle=*/glSwizzle,
           /*inPrimvars=*/glNames);
       }
-      else if (param.IsTransform2d()) {
+      else if (param.IsTransform2d())
+      {
         HdBinding binding = HdBinding(HdBinding::TRANSFORM_2D, shaderTransform2dLocation++);
         metaDataOut->shaderParameterBinding[binding] = MetaData::ShaderParameterAccessor(
           /*name=*/glName,
@@ -729,12 +790,14 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           /*swizzle=*/glSwizzle,
           /*inPrimvars=*/param.samplerCoords);
       }
-      else if (param.IsAdditionalPrimvar()) {
+      else if (param.IsAdditionalPrimvar())
+      {
         // Additional primvars is used so certain primvars survive
         // primvar filtering. We can ignore them here, because primvars
         // found on the drawItem are already processed further above.
       }
-      else {
+      else
+      {
         TF_CODING_ERROR("Can't resolve %s", param.name.GetText());
       }
     }
@@ -743,9 +806,10 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
   // Add custom bindings.
   // Don't need to sanitize the name used, since these are internally
   // generated.
-  TF_FOR_ALL(it, customBindings)
+  TF_FOR_ALL (it, customBindings)
   {
-    if (it->IsInterleavedBufferArray()) {
+    if (it->IsInterleavedBufferArray())
+    {
       // Interleaved resource, only need a single binding point
       HdBinding binding = locator.GetBinding(it->GetBindingType(), it->GetName());
       MetaData::StructBlock sblock(it->GetName());
@@ -753,7 +817,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       HdBufferArrayRangeSharedPtr bar_ = it->GetBar();
       HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
 
-      for (auto const &nameRes : bar->GetResources()) {
+      for (auto const &nameRes : bar->GetResources())
+      {
         HdTupleType valueType = nameRes.second->GetTupleType();
         TfToken glType = HdPhGLConversions::GetGLSLTypename(valueType.type);
         sblock.entries.emplace_back(nameRes.first, glType, nameRes.second->GetOffset(), valueType.count);
@@ -761,17 +826,20 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
       metaDataOut->customInterleavedBindings.insert(std::make_pair(binding, sblock));
       _bindingMap[it->GetName()] = binding;
     }
-    else {
+    else
+    {
       // Non interleaved resource
       typedef MetaData::BindingDeclaration BindingDeclaration;
-      if (it->IsBufferArray()) {
+      if (it->IsBufferArray())
+      {
         // The BAR was provided, so we will record the name, dataType,
         // binding type and binding location.
 
         HdBufferArrayRangeSharedPtr bar_ = it->GetBar();
         HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
 
-        for (auto const &nameRes : bar->GetResources()) {
+        for (auto const &nameRes : bar->GetResources())
+        {
           HdBinding binding = locator.GetBinding(it->GetBindingType(), nameRes.first);
           BindingDeclaration b(
             nameRes.first, HdPhGLConversions::GetGLSLTypename(nameRes.second->GetTupleType().type), binding);
@@ -779,7 +847,8 @@ void HdPh_ResourceBinder::ResolveBindings(HdPhDrawItem const *drawItem,
           _bindingMap[nameRes.first] = binding;
         }
       }
-      else {
+      else
+      {
         HdBinding binding = locator.GetBinding(it->GetBindingType(), it->GetName());
         BindingDeclaration b(it->GetName(), HdPhGLConversions::GetGLSLTypename(it->GetDataType()), binding);
 
@@ -804,7 +873,8 @@ void HdPh_ResourceBinder::ResolveComputeBindings(HdBufferSpecVector const &readW
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!TF_VERIFY(metaDataOut)) {
+  if (!TF_VERIFY(metaDataOut))
+  {
     return;
   }
 
@@ -820,7 +890,8 @@ void HdPh_ResourceBinder::ResolveComputeBindings(HdBufferSpecVector const &readW
   _bindingMap.clear();
 
   // read-write per prim data
-  for (HdBufferSpec const &spec : readWriteBufferSpecs) {
+  for (HdBufferSpec const &spec : readWriteBufferSpecs)
+  {
     HdBinding binding = locator.GetBinding(bindingType, spec.name);
     _bindingMap[spec.name] = binding;
     metaDataOut->computeReadWriteData[binding] = MetaData::Primvar(
@@ -828,7 +899,8 @@ void HdPh_ResourceBinder::ResolveComputeBindings(HdBufferSpecVector const &readW
   }
 
   // read-only per prim data
-  for (HdBufferSpec const &spec : readOnlyBufferSpecs) {
+  for (HdBufferSpec const &spec : readOnlyBufferSpecs)
+  {
     HdBinding binding = locator.GetBinding(bindingType, spec.name);
     _bindingMap[spec.name] = binding;
     metaDataOut->computeReadOnlyData[binding] = MetaData::Primvar(
@@ -860,7 +932,8 @@ void HdPh_ResourceBinder::BindBuffer(TfToken const &name,
   HdTupleType tupleType = buffer->GetTupleType();
 
   void const *offsetPtr = reinterpret_cast<const void *>(static_cast<intptr_t>(offset));
-  switch (type) {
+  switch (type)
+  {
     case HdBinding::VERTEX_ATTR:
       glBindBuffer(GL_ARRAY_BUFFER, buffer->GetHandle()->GetRawResource());
       glVertexAttribPointer(loc,
@@ -895,7 +968,8 @@ void HdPh_ResourceBinder::BindBuffer(TfToken const &name,
       glBindBuffer(GL_ARRAY_BUFFER, buffer->GetHandle()->GetRawResource());
       // instancerNumLevels is represented by the tuple size.
       // We unroll this to an array of int[1] attributes.
-      for (size_t i = 0; i < buffer->GetTupleType().count; ++i) {
+      for (size_t i = 0; i < buffer->GetTupleType().count; ++i)
+      {
         offsetPtr = reinterpret_cast<const void *>(offset + i * sizeof(int));
         glVertexAttribIPointer(loc, 1, GL_INT, buffer->GetStride(), offsetPtr);
         // set the divisor to uint-max so that the same base value is used
@@ -912,7 +986,8 @@ void HdPh_ResourceBinder::BindBuffer(TfToken const &name,
     case HdBinding::BINDLESS_UNIFORM:
       // at least in nvidia driver 346.59, this query call doesn't show
       // any pipeline stall.
-      if (!glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource())) {
+      if (!glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource()))
+      {
         glMakeNamedBufferResidentNV(buffer->GetHandle()->GetRawResource(), GL_READ_WRITE);
       }
       glUniformui64NV(loc, buffer->GetGPUAddress());
@@ -923,7 +998,8 @@ void HdPh_ResourceBinder::BindBuffer(TfToken const &name,
     case HdBinding::BINDLESS_SSBO_RANGE:
       // at least in nvidia driver 346.59, this query call doesn't show
       // any pipeline stall.
-      if (!glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource())) {
+      if (!glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource()))
+      {
         glMakeNamedBufferResidentNV(buffer->GetHandle()->GetRawResource(), GL_READ_WRITE);
       }
       glUniformui64NV(loc, buffer->GetGPUAddress() + offset);
@@ -961,7 +1037,8 @@ void HdPh_ResourceBinder::UnbindBuffer(TfToken const &name,
   HdBinding::Type type = binding.GetType();
   int loc = binding.GetLocation();
 
-  switch (type) {
+  switch (type)
+  {
     case HdBinding::VERTEX_ATTR:
       glDisableVertexAttribArray(loc);
       break;
@@ -974,7 +1051,8 @@ void HdPh_ResourceBinder::UnbindBuffer(TfToken const &name,
       break;
     case HdBinding::DRAW_INDEX_INSTANCE_ARRAY:
       // instancerNumLevels is represented by the tuple size.
-      for (size_t i = 0; i < buffer->GetTupleType().count; ++i) {
+      for (size_t i = 0; i < buffer->GetTupleType().count; ++i)
+      {
         glDisableVertexAttribArray(loc);
         glVertexAttribDivisor(loc, 0);
         ++loc;
@@ -984,7 +1062,8 @@ void HdPh_ResourceBinder::UnbindBuffer(TfToken const &name,
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
       break;
     case HdBinding::BINDLESS_UNIFORM:
-      if (glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource())) {
+      if (glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource()))
+      {
         glMakeNamedBufferNonResidentNV(buffer->GetHandle()->GetRawResource());
       }
       break;
@@ -992,7 +1071,8 @@ void HdPh_ResourceBinder::UnbindBuffer(TfToken const &name,
       glBindBufferBase(GL_SHADER_STORAGE_BUFFER, loc, 0);
       break;
     case HdBinding::BINDLESS_SSBO_RANGE:
-      if (glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource())) {
+      if (glIsNamedBufferResidentNV(buffer->GetHandle()->GetRawResource()))
+      {
         glMakeNamedBufferNonResidentNV(buffer->GetHandle()->GetRawResource());
       }
       break;
@@ -1053,9 +1133,10 @@ void HdPh_ResourceBinder::BindInstanceBufferArray(HdPhBufferArrayRangeSharedPtr 
   if (!bar)
     return;
 
-  TF_FOR_ALL(it, bar->GetResources())
+  TF_FOR_ALL (it, bar->GetResources())
   {
-    if (HasBinding(it->first, level)) {
+    if (HasBinding(it->first, level))
+    {
       BindBuffer(it->first, it->second, it->second->GetOffset(), level);
     }
   }
@@ -1067,9 +1148,10 @@ void HdPh_ResourceBinder::UnbindInstanceBufferArray(HdPhBufferArrayRangeSharedPt
   if (!bar)
     return;
 
-  TF_FOR_ALL(it, bar->GetResources())
+  TF_FOR_ALL (it, bar->GetResources())
   {
-    if (HasBinding(it->first, level)) {
+    if (HasBinding(it->first, level))
+    {
       UnbindBuffer(it->first, it->second, level);
     }
   }
@@ -1086,7 +1168,7 @@ void HdPh_ResourceBinder::BindBufferArray(HdPhBufferArrayRangeSharedPtr const &b
   if (!bar)
     return;
 
-  TF_FOR_ALL(it, bar->GetResources())
+  TF_FOR_ALL (it, bar->GetResources())
   {
     BindBuffer(it->first, it->second);
   }
@@ -1094,22 +1176,26 @@ void HdPh_ResourceBinder::BindBufferArray(HdPhBufferArrayRangeSharedPtr const &b
 
 void HdPh_ResourceBinder::Bind(HdBindingRequest const &req) const
 {
-  if (req.IsTypeless()) {
+  if (req.IsTypeless())
+  {
     return;
   }
-  else if (req.IsResource()) {
+  else if (req.IsResource())
+  {
     HdBufferResourceSharedPtr res_ = req.GetResource();
     HdPhBufferResourceSharedPtr res = std::static_pointer_cast<HdPhBufferResource>(res_);
 
     BindBuffer(req.GetName(), res, req.GetByteOffset());
   }
-  else if (req.IsInterleavedBufferArray()) {
+  else if (req.IsInterleavedBufferArray())
+  {
     // note: interleaved buffer needs only 1 binding
     HdBufferArrayRangeSharedPtr bar_ = req.GetBar();
     HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
     BindBuffer(req.GetName(), bar->GetResource(), req.GetByteOffset());
   }
-  else if (req.IsBufferArray()) {
+  else if (req.IsBufferArray())
+  {
     HdBufferArrayRangeSharedPtr bar_ = req.GetBar();
     HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
     BindBufferArray(bar);
@@ -1118,23 +1204,27 @@ void HdPh_ResourceBinder::Bind(HdBindingRequest const &req) const
 
 void HdPh_ResourceBinder::Unbind(HdBindingRequest const &req) const
 {
-  if (req.IsTypeless()) {
+  if (req.IsTypeless())
+  {
     return;
   }
-  else if (req.IsResource()) {
+  else if (req.IsResource())
+  {
     HdBufferResourceSharedPtr res_ = req.GetResource();
     HdPhBufferResourceSharedPtr res = std::static_pointer_cast<HdPhBufferResource>(res_);
 
     UnbindBuffer(req.GetName(), res);
   }
-  else if (req.IsInterleavedBufferArray()) {
+  else if (req.IsInterleavedBufferArray())
+  {
     // note: interleaved buffer needs only 1 binding
     HdBufferArrayRangeSharedPtr bar_ = req.GetBar();
     HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
 
     UnbindBuffer(req.GetName(), bar->GetResource());
   }
-  else if (req.IsBufferArray()) {
+  else if (req.IsBufferArray())
+  {
     HdBufferArrayRangeSharedPtr bar_ = req.GetBar();
     HdPhBufferArrayRangeSharedPtr bar = std::static_pointer_cast<HdPhBufferArrayRange>(bar_);
 
@@ -1147,7 +1237,7 @@ void HdPh_ResourceBinder::UnbindBufferArray(HdPhBufferArrayRangeSharedPtr const 
   if (!bar)
     return;
 
-  TF_FOR_ALL(it, bar->GetResources())
+  TF_FOR_ALL (it, bar->GetResources())
   {
     UnbindBuffer(it->first, it->second);
   }
@@ -1162,19 +1252,24 @@ void HdPh_ResourceBinder::BindUniformi(TfToken const &name, int count, const int
   TF_VERIFY(uniformLocation.IsValid());
   TF_VERIFY(uniformLocation.GetType() == HdBinding::UNIFORM);
 
-  if (count == 1) {
+  if (count == 1)
+  {
     glUniform1iv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 2) {
+  else if (count == 2)
+  {
     glUniform2iv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 3) {
+  else if (count == 3)
+  {
     glUniform3iv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 4) {
+  else if (count == 4)
+  {
     glUniform4iv(uniformLocation.GetLocation(), 1, value);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid count %d.\n", count);
   }
 }
@@ -1200,19 +1295,24 @@ void HdPh_ResourceBinder::BindUniformui(TfToken const &name, int count, const un
   TF_VERIFY(uniformLocation.IsValid());
   TF_VERIFY(uniformLocation.GetType() == HdBinding::UNIFORM);
 
-  if (count == 1) {
+  if (count == 1)
+  {
     glUniform1uiv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 2) {
+  else if (count == 2)
+  {
     glUniform2uiv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 3) {
+  else if (count == 3)
+  {
     glUniform3uiv(uniformLocation.GetLocation(), 1, value);
   }
-  else if (count == 4) {
+  else if (count == 4)
+  {
     glUniform4uiv(uniformLocation.GetLocation(), 1, value);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid count %d.", count);
   }
 }
@@ -1229,22 +1329,28 @@ void HdPh_ResourceBinder::BindUniformf(TfToken const &name, int count, const flo
     return;
   GLint location = uniformLocation.GetLocation();
 
-  if (count == 1) {
+  if (count == 1)
+  {
     glUniform1fv(location, 1, value);
   }
-  else if (count == 2) {
+  else if (count == 2)
+  {
     glUniform2fv(location, 1, value);
   }
-  else if (count == 3) {
+  else if (count == 3)
+  {
     glUniform3fv(location, 1, value);
   }
-  else if (count == 4) {
+  else if (count == 4)
+  {
     glUniform4fv(location, 1, value);
   }
-  else if (count == 16) {
+  else if (count == 16)
+  {
     glUniformMatrix4fv(location, 1, /*transpose=*/false, value);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid count %d.", count);
   }
 }
@@ -1255,19 +1361,23 @@ void HdPh_ResourceBinder::IntrospectBindings(HgiShaderProgramHandle const &hgiPr
 
   GLuint program = hgiProgram->GetRawResource();
 
-  if (ARCH_UNLIKELY(!caps.shadingLanguage420pack)) {
+  if (ARCH_UNLIKELY(!caps.shadingLanguage420pack))
+  {
     GLint numUBO = 0;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUBO);
 
     const int MAX_NAME = 256;
     int length = 0;
     char name[MAX_NAME + 1];
-    for (int i = 0; i < numUBO; ++i) {
+    for (int i = 0; i < numUBO; ++i)
+    {
       glGetActiveUniformBlockName(program, i, MAX_NAME, &length, name);
       // note: ubo_ prefix is added in HdCodeGen::_EmitDeclaration()
-      if (strstr(name, "ubo_") == name) {
+      if (strstr(name, "ubo_") == name)
+      {
         HdBinding binding;
-        if (TfMapLookup(_bindingMap, NameAndLevel(TfToken(name + 4)), &binding)) {
+        if (TfMapLookup(_bindingMap, NameAndLevel(TfToken(name + 4)), &binding))
+        {
           // set uniform block binding.
           glUniformBlockBinding(program, i, binding.GetLocation());
         }
@@ -1275,19 +1385,23 @@ void HdPh_ResourceBinder::IntrospectBindings(HgiShaderProgramHandle const &hgiPr
     }
   }
 
-  if (ARCH_UNLIKELY(!caps.explicitUniformLocation)) {
-    for (auto &it : _bindingMap) {
+  if (ARCH_UNLIKELY(!caps.explicitUniformLocation))
+  {
+    for (auto &it : _bindingMap)
+    {
       HdBinding binding = it.second;
       HdBinding::Type type = binding.GetType();
       std::string name = it.first.name;
       int level = it.first.level;
-      if (level >= 0) {
+      if (level >= 0)
+      {
         // follow nested instancing naming convention.
         std::stringstream n;
         n << name << "_" << level;
         name = n.str();
       }
-      if (type == HdBinding::UNIFORM || type == HdBinding::UNIFORM_ARRAY) {
+      if (type == HdBinding::UNIFORM || type == HdBinding::UNIFORM_ARRAY)
+      {
         GLint loc = glGetUniformLocation(program, name.c_str());
         // update location in resource binder.
         // some uniforms may be optimized out.
@@ -1298,8 +1412,10 @@ void HdPh_ResourceBinder::IntrospectBindings(HgiShaderProgramHandle const &hgiPr
     }
   }
 
-  if (ARCH_UNLIKELY(!caps.shadingLanguage420pack)) {
-    for (auto &it : _bindingMap) {
+  if (ARCH_UNLIKELY(!caps.shadingLanguage420pack))
+  {
+    for (auto &it : _bindingMap)
+    {
       HdBinding binding = it.second;
       HdBinding::Type type = binding.GetType();
       std::string name = it.first.name;
@@ -1307,26 +1423,33 @@ void HdPh_ResourceBinder::IntrospectBindings(HgiShaderProgramHandle const &hgiPr
 
       // note: sampler prefix is added in
       // HdCodeGen::_GenerateShaderParameters
-      if (type == HdBinding::TEXTURE_2D) {
+      if (type == HdBinding::TEXTURE_2D)
+      {
         textureName = "sampler2d_" + name;
       }
-      else if (type == HdBinding::TEXTURE_FIELD) {
+      else if (type == HdBinding::TEXTURE_FIELD)
+      {
         textureName = "sampler3d_" + name;
       }
-      else if (type == HdBinding::TEXTURE_PTEX_TEXEL) {
+      else if (type == HdBinding::TEXTURE_PTEX_TEXEL)
+      {
         textureName = "sampler2darray_" + name;
       }
-      else if (type == HdBinding::TEXTURE_PTEX_LAYOUT) {
+      else if (type == HdBinding::TEXTURE_PTEX_LAYOUT)
+      {
         textureName = "isampler1darray_" + name;
       }
-      else if (type == HdBinding::TEXTURE_UDIM_ARRAY) {
+      else if (type == HdBinding::TEXTURE_UDIM_ARRAY)
+      {
         textureName = "sampler2dArray_" + name;
       }
-      else if (type == HdBinding::TEXTURE_UDIM_LAYOUT) {
+      else if (type == HdBinding::TEXTURE_UDIM_LAYOUT)
+      {
         textureName = "sampler1d_" + name;
       }
 
-      if (!textureName.empty()) {
+      if (!textureName.empty())
+      {
         GLint loc = glGetUniformLocation(program, textureName.c_str());
         glProgramUniform1i(program, loc, binding.GetTextureUnit());
         if (loc < 0)
@@ -1358,12 +1481,12 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   boost::hash_combine(hash, edgeIndexBinding.binding.GetValue());
   boost::hash_combine(hash, edgeIndexBinding.dataType);
 
-  TF_FOR_ALL(binDecl, fvarIndicesBindings)
+  TF_FOR_ALL (binDecl, fvarIndicesBindings)
   {
     boost::hash_combine(hash, binDecl->binding.GetValue());
     boost::hash_combine(hash, binDecl->dataType);
   }
-  TF_FOR_ALL(binDecl, fvarPatchParamBindings)
+  TF_FOR_ALL (binDecl, fvarPatchParamBindings)
   {
     boost::hash_combine(hash, binDecl->binding.GetValue());
     boost::hash_combine(hash, binDecl->dataType);
@@ -1372,7 +1495,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   // separators are inserted to distinguish primvars have a same layout
   // but different interpolation.
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(binDecl, customBindings)
+  TF_FOR_ALL (binDecl, customBindings)
   {
     boost::hash_combine(hash, binDecl->name.Hash());
     boost::hash_combine(hash, binDecl->dataType);
@@ -1381,10 +1504,10 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   }
 
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(blockIt, customInterleavedBindings)
+  TF_FOR_ALL (blockIt, customInterleavedBindings)
   {
     boost::hash_combine(hash, (int)blockIt->first.GetType());  // binding
-    TF_FOR_ALL(it, blockIt->second.entries)
+    TF_FOR_ALL (it, blockIt->second.entries)
     {
       StructEntry const &entry = *it;
       boost::hash_combine(hash, entry.name.Hash());
@@ -1395,10 +1518,10 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   }
 
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(blockIt, constantData)
+  TF_FOR_ALL (blockIt, constantData)
   {
     boost::hash_combine(hash, (int)blockIt->first.GetType());  // binding
-    TF_FOR_ALL(it, blockIt->second.entries)
+    TF_FOR_ALL (it, blockIt->second.entries)
     {
       StructEntry const &entry = *it;
       boost::hash_combine(hash, entry.name.Hash());
@@ -1409,10 +1532,10 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   }
 
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(blockIt, topologyVisibilityData)
+  TF_FOR_ALL (blockIt, topologyVisibilityData)
   {
     boost::hash_combine(hash, (int)blockIt->first.GetType());  // binding
-    TF_FOR_ALL(it, blockIt->second.entries)
+    TF_FOR_ALL (it, blockIt->second.entries)
     {
       StructEntry const &entry = *it;
       boost::hash_combine(hash, entry.name.Hash());
@@ -1423,7 +1546,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
   }
 
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, instanceData)
+  TF_FOR_ALL (it, instanceData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     NestedPrimvar const &primvar = it->second;
@@ -1432,7 +1555,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     boost::hash_combine(hash, primvar.level);
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, vertexData)
+  TF_FOR_ALL (it, vertexData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     Primvar const &primvar = it->second;
@@ -1440,7 +1563,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     boost::hash_combine(hash, primvar.dataType);
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, varyingData)
+  TF_FOR_ALL (it, varyingData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     Primvar const &primvar = it->second;
@@ -1448,7 +1571,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     boost::hash_combine(hash, primvar.dataType);
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, elementData)
+  TF_FOR_ALL (it, elementData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     Primvar const &primvar = it->second;
@@ -1456,7 +1579,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     boost::hash_combine(hash, primvar.dataType);
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, fvarData)
+  TF_FOR_ALL (it, fvarData)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     FvarPrimvar const &primvar = it->second;
@@ -1465,10 +1588,10 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     boost::hash_combine(hash, primvar.channel);
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(blockIt, shaderData)
+  TF_FOR_ALL (blockIt, shaderData)
   {
     boost::hash_combine(hash, (int)blockIt->first.GetType());  // binding
-    TF_FOR_ALL(it, blockIt->second.entries)
+    TF_FOR_ALL (it, blockIt->second.entries)
     {
       StructEntry const &entry = *it;
       boost::hash_combine(hash, entry.name.Hash());
@@ -1478,7 +1601,7 @@ HdPh_ResourceBinder::MetaData::ID HdPh_ResourceBinder::MetaData::ComputeHash() c
     }
   }
   boost::hash_combine(hash, 0);  // separator
-  TF_FOR_ALL(it, shaderParameterBinding)
+  TF_FOR_ALL (it, shaderParameterBinding)
   {
     boost::hash_combine(hash, (int)it->first.GetType());  // binding
     ShaderParameterAccessor const &entry = it->second;

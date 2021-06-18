@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 /// Usage of GfSize3 is similar to that of GfVec3i, except that all
 /// mathematical operations are componentwise (including multiplication).
 ///
-class GfSize3 {
+class GfSize3
+{
  public:
   /// Default constructor initializes components to zero
   GfSize3()

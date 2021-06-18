@@ -76,7 +76,8 @@ inline PcpPrimIndex const *Pcp_ToIndex(PcpPrimIndex const *index)
   return index;
 }
 
-template<class T> inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
+template<class T>
+inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
 {
   return obj->GetOriginatingIndex();
 }
@@ -100,13 +101,15 @@ template<class T> inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
 /// Indicates that the prim index currently being constructed has been
 /// updated.
 #define PCP_INDEXING_UPDATE(indexer, node, ...) \
-  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) { \
+  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) \
+  { \
     Pcp_IndexingUpdate(Pcp_ToIndex(indexer), node, TfStringPrintf(__VA_ARGS__)); \
   }
 
 /// Annotates the current phase of prim indexing with the given message.
 #define PCP_INDEXING_MSG(indexer, ...) \
-  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) { \
+  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) \
+  { \
     Pcp_IndexingMsg(Pcp_ToIndex(indexer), __VA_ARGS__); \
   }
 
@@ -114,7 +117,8 @@ template<class T> inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
 
 /// Opens a scope indicating the construction of the prim index
 /// \p index for \p site.
-class Pcp_PrimIndexingDebug {
+class Pcp_PrimIndexingDebug
+{
  public:
   Pcp_PrimIndexingDebug(PcpPrimIndex const *index,
                         PcpPrimIndex const *originatingIndex,
@@ -122,7 +126,8 @@ class Pcp_PrimIndexingDebug {
     : _index(nullptr),
       _originatingIndex(nullptr)
   {
-    if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) {
+    if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)))
+    {
       _index = index;
       _originatingIndex = originatingIndex;
       _PushIndex(site);
@@ -134,7 +139,8 @@ class Pcp_PrimIndexingDebug {
 
   inline ~Pcp_PrimIndexingDebug()
   {
-    if (ARCH_UNLIKELY(_index)) {
+    if (ARCH_UNLIKELY(_index))
+    {
       _PopIndex();
     }
   }
@@ -150,20 +156,24 @@ class Pcp_PrimIndexingDebug {
 // Implementation details; private helper objects and functions for debugging
 // output. Use the macros above instead.
 
-class Pcp_IndexingPhaseScope {
+class Pcp_IndexingPhaseScope
+{
  public:
-  Pcp_IndexingPhaseScope() : _index(nullptr)
+  Pcp_IndexingPhaseScope()
+    : _index(nullptr)
   {}
   Pcp_IndexingPhaseScope(PcpPrimIndex const *index, const PcpNodeRef &node, std::string &&msg);
   Pcp_IndexingPhaseScope(Pcp_IndexingPhaseScope const &) = delete;
-  Pcp_IndexingPhaseScope(Pcp_IndexingPhaseScope &&other) : _index(other._index)
+  Pcp_IndexingPhaseScope(Pcp_IndexingPhaseScope &&other)
+    : _index(other._index)
   {
     other._index = nullptr;
   }
   Pcp_IndexingPhaseScope &operator=(Pcp_IndexingPhaseScope const &) = delete;
   inline Pcp_IndexingPhaseScope &operator=(Pcp_IndexingPhaseScope &&other)
   {
-    if (&other != this) {
+    if (&other != this)
+    {
       _index = other._index;
       other._index = nullptr;
     }
@@ -171,7 +181,8 @@ class Pcp_IndexingPhaseScope {
   }
   inline ~Pcp_IndexingPhaseScope()
   {
-    if (ARCH_UNLIKELY(_index)) {
+    if (ARCH_UNLIKELY(_index))
+    {
       _EndScope();
     }
   }

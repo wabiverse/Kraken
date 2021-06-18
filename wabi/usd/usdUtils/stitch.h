@@ -81,7 +81,8 @@ void UsdUtilsStitchInfo(const SdfSpecHandle &strongObj, const SdfSpecHandle &wea
 
 /// Status enum returned by UsdUtilsStitchValueFn describing the
 /// desired value stitching behavior.
-enum class UsdUtilsStitchValueStatus {
+enum class UsdUtilsStitchValueStatus
+{
   NoStitchedValue,  ///< Don't stitch values for this field.
   UseDefaultValue,  ///< Use the default stitching behavior for this field.
   UseSuppliedValue  ///< Use the value supplied in stitchedValue.

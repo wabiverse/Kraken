@@ -51,7 +51,8 @@ struct HgiBufferCpuToGpuOp;
 ///
 /// Interleaved memory manager (base class).
 ///
-class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
+class HdPhInterleavedMemoryManager : public HdAggregationStrategy
+{
  public:
   /// Copy new data from CPU into staging buffer.
   /// This reduces the amount of GPU copy commands we emit by first writing
@@ -68,7 +69,8 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
 
   // BufferFlushListEntry lets use accumulate writes into the same GPU buffer
   // into CPU staging buffers before flushing to GPU.
-  class _BufferFlushListEntry {
+  class _BufferFlushListEntry
+  {
    public:
     _BufferFlushListEntry(HgiBufferHandle const &buf, uint64_t start, uint64_t end);
 
@@ -80,7 +82,8 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
   using _BufferFlushMap = std::unordered_map<class HgiBuffer *, _BufferFlushListEntry>;
 
   /// specialized buffer array range
-  class _StripedInterleavedBufferRange : public HdPhBufferArrayRange {
+  class _StripedInterleavedBufferRange : public HdPhBufferArrayRange
+  {
    public:
     /// Constructor.
     _StripedInterleavedBufferRange(HdPhResourceRegistry *resourceRegistry)
@@ -203,7 +206,10 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
     const void *_GetAggregation() const override;
 
    private:
-    enum { NOT_ALLOCATED = -1 };
+    enum
+    {
+      NOT_ALLOCATED = -1
+    };
     _StripedInterleavedBuffer *_stripedBuffer;
     int _index;
     size_t _numElements;
@@ -214,7 +220,8 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
   using _StripedInterleavedBufferRangePtr = std::weak_ptr<_StripedInterleavedBufferRange>;
 
   /// striped buffer
-  class _StripedInterleavedBuffer : public HdBufferArray {
+  class _StripedInterleavedBuffer : public HdBufferArray
+  {
    public:
     /// Constructor.
     HDPH_API
@@ -323,7 +330,8 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
     }
   };
 
-  HdPhInterleavedMemoryManager(HdPhResourceRegistry *resourceRegistry) : _resourceRegistry(resourceRegistry)
+  HdPhInterleavedMemoryManager(HdPhResourceRegistry *resourceRegistry)
+    : _resourceRegistry(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArrayRange
@@ -340,7 +348,8 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy {
   _BufferFlushMap _queuedBuffers;
 };
 
-class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager {
+class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager
+{
  public:
   HdPhInterleavedUBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdPhInterleavedMemoryManager(resourceRegistry)
@@ -359,7 +368,8 @@ class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager {
                                              HdBufferArrayUsageHint usageHint) const;
 };
 
-class HdPhInterleavedSSBOMemoryManager : public HdPhInterleavedMemoryManager {
+class HdPhInterleavedSSBOMemoryManager : public HdPhInterleavedMemoryManager
+{
  public:
   HdPhInterleavedSSBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdPhInterleavedMemoryManager(resourceRegistry)

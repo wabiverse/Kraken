@@ -58,7 +58,8 @@ const float HdPhVolume::defaultStepSize = 1.0f;
 const float HdPhVolume::defaultStepSizeLighting = 10.0f;
 const float HdPhVolume::defaultMaxTextureMemoryPerField = 128.0f;
 
-HdPhVolume::HdPhVolume(SdfPath const &id) : HdVolume(id)
+HdPhVolume::HdPhVolume(SdfPath const &id)
+  : HdVolume(id)
 {}
 
 HdPhVolume::~HdPhVolume() = default;
@@ -90,7 +91,8 @@ HdDirtyBits HdPhVolume::_PropagateDirtyBits(HdDirtyBits bits) const
 void HdPhVolume::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
 {
   // All representations point to _volumeRepr.
-  if (!_volumeRepr) {
+  if (!_volumeRepr)
+  {
     _volumeRepr = std::make_shared<HdRepr>();
     _volumeRepr->AddDrawItem(std::make_unique<HdPhDrawItem>(&_sharedData));
     *dirtyBits |= HdChangeTracker::NewRepr;
@@ -98,7 +100,8 @@ void HdPhVolume::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
 
   _ReprVector::iterator it = std::find_if(_reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
   bool isNew = it == _reprs.end();
-  if (isNew) {
+  if (isNew)
+  {
     // add new repr
     it = _reprs.insert(_reprs.end(), std::make_pair(reprToken, _volumeRepr));
   }
@@ -109,7 +112,8 @@ void HdPhVolume::Sync(HdSceneDelegate *delegate,
                       HdDirtyBits *dirtyBits,
                       TfToken const &reprToken)
 {
-  if (*dirtyBits & HdChangeTracker::DirtyMaterialId) {
+  if (*dirtyBits & HdChangeTracker::DirtyMaterialId)
+  {
     HdPhSetMaterialId(delegate, renderParam, this);
     SetMaterialTag(HdPhMaterialTagTokens->volume);
   }
@@ -139,20 +143,23 @@ void HdPhVolume::_UpdateRepr(HdSceneDelegate *sceneDelegate,
 
   HdReprSharedPtr const &curRepr = _volumeRepr;
 
-  if (TfDebug::IsEnabled(HD_RPRIM_UPDATED)) {
+  if (TfDebug::IsEnabled(HD_RPRIM_UPDATED))
+  {
     HdChangeTracker::DumpDirtyBits(*dirtyBits);
   }
 
   HdPhDrawItem *const drawItem = static_cast<HdPhDrawItem *>(curRepr->GetDrawItem(0));
 
-  if (HdChangeTracker::IsDirty(*dirtyBits)) {
+  if (HdChangeTracker::IsDirty(*dirtyBits))
+  {
     _UpdateDrawItem(sceneDelegate, renderParam, drawItem, dirtyBits);
   }
 
   *dirtyBits &= ~HdChangeTracker::NewRepr;
 }
 
-namespace {
+namespace
+{
 
 // Fallback volume shader created from shaders/fallbackVolume.glslfx
 HdPhShaderCodeSharedPtr _MakeFallbackVolumeShader()
@@ -179,7 +186,8 @@ HdPhShaderCodeSharedPtr _MakeFallbackVolumeShader()
 
 HdPhShaderCodeSharedPtr _ComputeVolumeShader(const HdPhMaterial *const material)
 {
-  if (material) {
+  if (material)
+  {
     // Use the shader from the HdPhMaterial as volume shader.
     //
     // Note that rprims should query the material whether they want
@@ -193,7 +201,8 @@ HdPhShaderCodeSharedPtr _ComputeVolumeShader(const HdPhMaterial *const material)
     // for a shader once we switched over to HdMaterialNetworkMap's.
     return material->GetShaderCode();
   }
-  else {
+  else
+  {
     // Instantiate fallback volume shader only once
     //
     // Note that the default HdPhMaterial provides a fallback surface
@@ -212,7 +221,8 @@ HdPhShaderCodeSharedPtr _ComputeVolumeShader(const HdPhMaterial *const material)
 // prim to the targeted field prims. The information identifiying the field
 // prim is inserted under the key NAME.
 //
-class _NameToFieldDescriptor {
+class _NameToFieldDescriptor
+{
  public:
   // Get information from scene delegate and create map.
   //
@@ -221,13 +231,16 @@ class _NameToFieldDescriptor {
   _NameToFieldDescriptor(HdSceneDelegate *const sceneDelegate, const SdfPath &id)
     : _descriptors(sceneDelegate->GetVolumeFieldDescriptors(id))
   {
-    for (const HdVolumeFieldDescriptor &desc : _descriptors) {
+    for (const HdVolumeFieldDescriptor &desc : _descriptors)
+    {
       if (dynamic_cast<HdPhField *>(
-            sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId))) {
+            sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId)))
+      {
 
         _nameToDescriptor.insert({desc.fieldName, &desc});
       }
-      else {
+      else
+      {
         HF_VALIDATION_WARN(
           id, "Volume has field relationship to non-field prim %s.", desc.fieldId.GetText());
       }
@@ -242,7 +255,8 @@ class _NameToFieldDescriptor {
   const HdVolumeFieldDescriptor *GetDescriptor(const TfToken &name) const
   {
     const auto it = _nameToDescriptor.find(name);
-    if (it == _nameToDescriptor.end()) {
+    if (it == _nameToDescriptor.end())
+    {
       return nullptr;
     }
     return it->second;
@@ -288,16 +302,20 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
   // Make a copy of the original params
   HdPh_MaterialParamVector params = volumeShader->GetParams();
 
-  for (const auto &param : params) {
+  for (const auto &param : params)
+  {
     // Scan original parameters...
-    if (param.IsFieldRedirect() || param.IsPrimvarRedirect() || param.IsFallback()) {
+    if (param.IsFieldRedirect() || param.IsPrimvarRedirect() || param.IsFallback())
+    {
       // Add fallback values for parameters
       HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
 
-      if (param.IsFieldRedirect()) {
+      if (param.IsFieldRedirect())
+      {
         // Determine the name of the field the field reader requests.
         TfTokenVector const &names = param.samplerCoords;
-        if (!names.empty()) {
+        if (!names.empty())
+        {
           fieldNames.insert(names[0]);
         }
       }
@@ -319,11 +337,13 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
   //   the path to the texture
   // - a HdPhShader::NamedTextureHandle initialized with a null-handle.
   //
-  for (const auto &fieldName : fieldNames) {
+  for (const auto &fieldName : fieldNames)
+  {
     // See whether we have the the field in the volume field
     // descriptors given to us by the scene delegate.
     const HdVolumeFieldDescriptor *const desc = _nameToFieldDescriptor.GetDescriptor(fieldName);
-    if (!desc) {
+    if (!desc)
+    {
       // Invalid field prim, skip.
       continue;
     }
@@ -361,7 +381,8 @@ HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDe
   // If there is a field, we postpone giving buffer sources for
   // the volume bounding box until after the textures have been
   // committed.
-  if (!hasField) {
+  if (!hasField)
+  {
     HdPh_VolumeShader::GetBufferSourcesForBBoxAndSampleDistance({GfBBox3d(authoredExtents), 1.0f},
                                                                 &bufferSources);
   }
@@ -390,9 +411,12 @@ VtValue _ComputeBBoxVertices(GfRange3d const &range)
 
   int i = 0;
 
-  for (const double x : {min[0], max[0]}) {
-    for (const double y : {min[1], max[1]}) {
-      for (const double z : {min[2], max[2]}) {
+  for (const double x : {min[0], max[0]})
+  {
+    for (const double y : {min[1], max[1]})
+    {
+      for (const double z : {min[2], max[2]})
+      {
         result[i] = GfVec3f(x, y, z);
         i++;
       }
@@ -438,7 +462,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   /* VISIBILITY */
   _UpdateVisibility(sceneDelegate, dirtyBits);
 
-  if (HdPhShouldPopulateConstantPrimvars(dirtyBits, GetId())) {
+  if (HdPhShouldPopulateConstantPrimvars(dirtyBits, GetId()))
+  {
     /* CONSTANT PRIMVARS, TRANSFORM AND EXTENT */
     const HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(
       this, drawItem, sceneDelegate, HdInterpolationConstant);
@@ -446,7 +471,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
       this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
   }
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyMaterialId) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyMaterialId)
+  {
     /* MATERIAL SHADER (may affect subsequent primvar population) */
 
     // Note that the creation of the HdPh_VolumeShader and the
@@ -478,12 +504,14 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   HdPh_VolumeShaderSharedPtr const materialShader = std::dynamic_pointer_cast<HdPh_VolumeShader>(
     drawItem->GetMaterialShader());
 
-  if (!materialShader) {
+  if (!materialShader)
+  {
     TF_CODING_ERROR("Expected valid volume shader for draw item.");
     return;
   }
 
-  if ((*dirtyBits) & (HdChangeTracker::DirtyVolumeField | HdChangeTracker::DirtyMaterialId)) {
+  if ((*dirtyBits) & (HdChangeTracker::DirtyVolumeField | HdChangeTracker::DirtyMaterialId))
+  {
     /* FIELD TEXTURES */
 
     // (Re-)Allocate the textures associated with the field prims.
@@ -491,11 +519,13 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   }
 
   /* VERTICES */
-  if ((*dirtyBits) & _shaderAndBBoxComputationDirtyBitsMask) {
+  if ((*dirtyBits) & _shaderAndBBoxComputationDirtyBitsMask)
+  {
     // Any change to the bounding box requires us to recompute
     // the vertices
     //
-    if (!HdPhIsValidBAR(drawItem->GetVertexPrimvarRange())) {
+    if (!HdPhIsValidBAR(drawItem->GetVertexPrimvarRange()))
+    {
       static const HdBufferSpecVector bufferSpecs{
         HdBufferSpec(HdTokens->points, HdTupleType{HdTypeFloatVec3, 1})};
 
@@ -510,7 +540,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
 
     // If HdPh_VolumeShader is not in charge of filling the points bar
     // from the volume bounding box computed from the fields, ...
-    if (!materialShader->GetFillsPointsBar()) {
+    if (!materialShader->GetFillsPointsBar())
+    {
       // ... fill the points from the authored extents.
       resourceRegistry->AddSource(drawItem->GetVertexPrimvarRange(),
                                   std::make_shared<HdVtBufferSource>(
@@ -518,7 +549,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if ((*dirtyBits) & HdChangeTracker::NewRepr) {
+  if ((*dirtyBits) & HdChangeTracker::NewRepr)
+  {
     // Bounding box topology and geometric shader key only need to
     // be initialized the first time we make the draw item.
 
@@ -535,7 +567,8 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
 
       HdBufferSourceSharedPtrVector sources = {source};
 
-      if (!HdPhIsValidBAR(drawItem->GetTopologyRange())) {
+      if (!HdPhIsValidBAR(drawItem->GetTopologyRange()))
+      {
         HdBufferSpecVector bufferSpecs;
         HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 

@@ -49,7 +49,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _Repr(GfFrustum const &self)
 {
@@ -65,7 +66,8 @@ static std::string _Repr(GfFrustum const &self)
   kwargs.push_back("window = " + TfPyRepr(self.GetWindow()));
   kwargs.push_back("nearFar = " + TfPyRepr(self.GetNearFar()));
   kwargs.push_back("projectionType = " + TfPyRepr(self.GetProjectionType()));
-  if (self.GetViewDistance() != 5.0) {
+  if (self.GetViewDistance() != 5.0)
+  {
     kwargs.push_back("viewDistance = " + TfPyRepr(self.GetViewDistance()));
   }
   return prefix + TfStringJoin(kwargs, seperator.c_str()) + ")";

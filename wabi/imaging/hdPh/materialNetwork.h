@@ -39,7 +39,8 @@ using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 ///
 /// Helps HdPhMaterial process a Hydra material network into shader source code
 /// and parameters values.
-class HdPhMaterialNetwork final {
+class HdPhMaterialNetwork final
+{
  public:
   HDPH_API
   HdPhMaterialNetwork();
@@ -70,7 +71,8 @@ class HdPhMaterialNetwork final {
   HdPh_MaterialParamVector const &GetMaterialParams() const;
 
   // Information necessary to allocate a texture.
-  struct TextureDescriptor {
+  struct TextureDescriptor
+  {
     // Name by which the texture will be accessed, i.e., the name
     // of the accesor for thexture will be HdGet_name(...).
     // It is generated from the input name the corresponding texture

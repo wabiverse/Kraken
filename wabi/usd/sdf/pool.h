@@ -43,11 +43,14 @@ WABI_NAMESPACE_BEGIN
 // A helper struct for thread_local that uses nullptr initialization as a
 // sentinel to prevent guard variable use from being invoked after first
 // initialization.
-template<class T> struct Sdf_FastThreadLocalBase {
+template<class T>
+struct Sdf_FastThreadLocalBase
+{
   static T &Get()
   {
     static thread_local T *theTPtr = nullptr;
-    if (ARCH_LIKELY(theTPtr)) {
+    if (ARCH_LIKELY(theTPtr))
+    {
       return *theTPtr;
     }
     static thread_local T theT;
@@ -71,7 +74,9 @@ template<class T> struct Sdf_FastThreadLocalBase {
 // individual allocations.  When freed, allocations are placed on a thread-local
 // free list, and eventually shared back for use by other threads when the free
 // list gets large.
-template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan = 16384> class Sdf_Pool {
+template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan = 16384>
+class Sdf_Pool
+{
   static_assert(ElemSize >= sizeof(uint32_t), "ElemSize must be at least sizeof(uint32_t)");
 
  public:
@@ -87,11 +92,14 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
   friend struct Handle;
   // A Handle refers to an item in the pool.  It just wraps around a uint32_t
   // that represents the item's index and the item's region.
-  struct Handle {
+  struct Handle
+  {
     constexpr Handle() noexcept = default;
-    constexpr Handle(std::nullptr_t) noexcept : value(0)
+    constexpr Handle(std::nullptr_t) noexcept
+      : value(0)
     {}
-    Handle(unsigned region, uint32_t index) : value((index << RegionBits) | region)
+    Handle(unsigned region, uint32_t index)
+      : value((index << RegionBits) | region)
     {}
     Handle &operator=(Handle const &) = default;
     Handle &operator=(std::nullptr_t)
@@ -134,7 +142,8 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
 
  private:
   // We maintain per-thread free lists of pool items.
-  struct _FreeList {
+  struct _FreeList
+  {
     inline void Pop()
     {
       char *p = head.GetPtr();
@@ -158,7 +167,8 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
   // from when their free lists are empty.  When both the free list and the
   // pool span are exhausted, a thread will look for a shared free list, or
   // will obtain a new chunk of pool space to use.
-  struct _PoolSpan {
+  struct _PoolSpan
+  {
     size_t size() const
     {
       return endIndex - beginIndex;
@@ -176,7 +186,8 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
     uint32_t endIndex;
   };
 
-  struct _PerThreadData {
+  struct _PerThreadData
+  {
     // Local free-list of elems returned to the pool.
     _FreeList freeList;
     // Contiguous range of reserved but as-yet-unalloc'd space.
@@ -187,11 +198,13 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
   // is a pool-global structure that is used to reserve new spans of pool data
   // by threads when needed.  See the Reserve() member, and the _ReserveSpan()
   // function that does most of the state manipulation.
-  struct _RegionState {
+  struct _RegionState
+  {
     static constexpr uint32_t LockedState = ~0;
 
     _RegionState() = default;
-    constexpr _RegionState(unsigned region, uint32_t index) : _state((index << RegionBits) | region)
+    constexpr _RegionState(unsigned region, uint32_t index)
+      : _state((index << RegionBits) | region)
     {}
 
     // Make a new state that reserves up to \p num elements.  There must be
@@ -253,14 +266,17 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
   // do this unless you really have to, it has to do a bit of a search.
   static inline Handle _GetHandle(char const *ptr)
   {
-    if (ptr) {
-      for (unsigned region = 1; region != NumRegions + 1; ++region) {
+    if (ptr)
+    {
+      for (unsigned region = 1; region != NumRegions + 1; ++region)
+      {
         char const *start = _regionStarts[region];
         ptrdiff_t diff = ptr - start;
         // Indexes start at 1 to avoid hash collisions when combining
         // multiple pool indexes in a single hash, so strictly greater
         // than 0 rather than greater-equal is appropriate here.
-        if (ARCH_LIKELY(start && (diff > 0) && (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize)))) {
+        if (ARCH_LIKELY(start && (diff > 0) && (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize))))
+        {
           return Handle(region, static_cast<uint32_t>(diff / ElemSize));
         }
       }

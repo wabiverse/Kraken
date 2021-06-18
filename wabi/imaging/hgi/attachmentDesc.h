@@ -64,7 +64,8 @@ WABI_NAMESPACE_BEGIN
 /// <li> ***BlendOp:
 ///   The blending operation.</li>
 ///
-struct HgiAttachmentDesc {
+struct HgiAttachmentDesc
+{
   HgiAttachmentDesc()
     : format(HgiFormatInvalid),
       usage(0),

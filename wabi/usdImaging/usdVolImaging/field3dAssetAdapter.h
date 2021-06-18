@@ -45,11 +45,13 @@ class UsdPrim;
 ///
 /// Adapter class for fields of type Field3DAsset
 ///
-class UsdImagingField3DAssetAdapter : public UsdImagingFieldAdapter {
+class UsdImagingField3DAssetAdapter : public UsdImagingFieldAdapter
+{
  public:
   using BaseAdapter = UsdImagingFieldAdapter;
 
-  UsdImagingField3DAssetAdapter() : UsdImagingFieldAdapter()
+  UsdImagingField3DAssetAdapter()
+    : UsdImagingFieldAdapter()
   {}
 
   USDVOLIMAGING_API

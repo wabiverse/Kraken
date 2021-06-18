@@ -81,7 +81,9 @@ WABI_NAMESPACE_BEGIN
 /// This is modelled after std::span (C++20), but does not currently include
 /// any specialization for static extents.
 ///
-template<typename T> class TfSpan {
+template<typename T>
+class TfSpan
+{
  public:
   using element_type = T;
   using value_type = typename std::remove_cv<T>::type;
@@ -100,13 +102,16 @@ template<typename T> class TfSpan {
   /// Construct a span over the range of [ptr, ptr+count).
   /// In debug builds, a runtime assertion will fail if \p count > 0 and
   /// \p ptr is null. The behavior is otherwise undefined for invalid ranges.
-  TfSpan(pointer ptr, index_type count) : _data(ptr), _size(count)
+  TfSpan(pointer ptr, index_type count)
+    : _data(ptr),
+      _size(count)
   {
     TF_DEV_AXIOM(count == 0 || ptr);
   }
 
   /// Construct a span over the range [first, last).
-  TfSpan(pointer first, pointer last) : TfSpan(first, index_type(last - first))
+  TfSpan(pointer first, pointer last)
+    : TfSpan(first, index_type(last - first))
   {
     TF_DEV_AXIOM(last >= first);
   }
@@ -234,10 +239,12 @@ template<typename T> class TfSpan {
   TfSpan<T> subspan(difference_type offset, difference_type count = -1) const
   {
     TF_DEV_AXIOM(offset >= 0 && (index_type)offset < _size);
-    if (count == -1) {
+    if (count == -1)
+    {
       return TfSpan<T>(_data + offset, _size - offset);
     }
-    else {
+    else
+    {
       TF_DEV_AXIOM(count >= 0);
       TF_DEV_AXIOM(((index_type)offset + (index_type)count) <= _size);
       return TfSpan<T>(_data + offset, count);
@@ -263,7 +270,8 @@ template<typename T> class TfSpan {
 };
 
 /// Helper for constructing a non-const TfSpan from a container.
-template<typename Container> TfSpan<typename Container::value_type> TfMakeSpan(Container &cont)
+template<typename Container>
+TfSpan<typename Container::value_type> TfMakeSpan(Container &cont)
 {
   return TfSpan<typename Container::value_type>(cont);
 }

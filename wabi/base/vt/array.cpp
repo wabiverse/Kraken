@@ -38,7 +38,8 @@ TF_DEFINE_ENV_SETTING(VT_LOG_STACK_ON_ARRAY_DETACH_COPY,
 void Vt_ArrayBase::_DetachCopyHook(char const *funcName) const
 {
   static bool log = TfGetEnvSetting(VT_LOG_STACK_ON_ARRAY_DETACH_COPY);
-  if (ARCH_UNLIKELY(log)) {
+  if (ARCH_UNLIKELY(log))
+  {
     TfLogStackTrace(TfStringPrintf("Detach/copy VtArray (%s)", funcName));
   }
 }

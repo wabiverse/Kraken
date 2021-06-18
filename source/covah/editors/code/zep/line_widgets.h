@@ -2,9 +2,11 @@
 
 #include "zep/editor.h"
 
-namespace Zep {
+namespace Zep
+{
 
-struct IWidget {
+struct IWidget
+{
   virtual NVec2f GetSize() const = 0;  // Required size of the widget
   virtual void MouseDown(const NVec2f &pos, ZepMouseButton button) = 0;
   virtual void MouseUp(const NVec2f &pos, ZepMouseButton button) = 0;
@@ -16,7 +18,8 @@ struct IWidget {
 };
 
 using fnWidgetValueChanged = std::function<void(IWidget *pWidget)>;
-class FloatSlider : public IWidget {
+class FloatSlider : public IWidget
+{
  public:
   FloatSlider(ZepEditor &editor, uint32_t dimension, fnWidgetValueChanged fnChanged = nullptr)
     : m_editor(editor),
@@ -47,7 +50,8 @@ class FloatSlider : public IWidget {
   fnWidgetValueChanged m_fnChanged = nullptr;
 };
 
-class ColorPicker : public IWidget {
+class ColorPicker : public IWidget
+{
  public:
   ColorPicker(ZepEditor &editor, fnWidgetValueChanged fnChanged = nullptr)
     : m_editor(editor),

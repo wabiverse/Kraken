@@ -35,8 +35,10 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
-namespace internal {
-namespace GLApi {
+namespace internal
+{
+namespace GLApi
+{
 
 bool GARCH_GL_VERSION_1_0 = false;
 bool GARCH_GL_VERSION_1_1 = false;
@@ -3169,7 +3171,8 @@ static bool loadLibrary()
 
 static void unloadLibrary()
 {
-  if (libHandle != NULL) {
+  if (libHandle != NULL)
+  {
     ArchLibraryClose(libHandle);
     libHandle = NULL;
   }
@@ -3182,7 +3185,8 @@ static void *loadFunction(const char *name)
 
 #if !defined(ARCH_OS_DARWIN)
   result = libGetProcAddress(name);
-  if (result == NULL) {
+  if (result == NULL)
+  {
     result = ArchLibraryGetSymbolAddress(libHandle, name);
   }
 #else
@@ -3194,8 +3198,10 @@ static void *loadFunction(const char *name)
 
 static bool hasExt(const char *ext, const std::vector<const char *> &extensions)
 {
-  for (size_t i = 0; i < extensions.size(); ++i) {
-    if (strcmp(ext, extensions[i]) == 0) {
+  for (size_t i = 0; i < extensions.size(); ++i)
+  {
+    if (strcmp(ext, extensions[i]) == 0)
+    {
       return true;
     }
   }
@@ -3212,15 +3218,18 @@ static bool loadSymbols()
 
   // direct version query is supported only for versions 3.x and greater
   const char *versionStr = (const char *)glGetString(GL_VERSION);
-  if (versionStr && versionStr[0] == '1' && versionStr[1] == '.') {
+  if (versionStr && versionStr[0] == '1' && versionStr[1] == '.')
+  {
     major = 1;
     minor = versionStr[2] - '0';
   }
-  else if (versionStr && versionStr[0] == '2' && versionStr[1] == '.') {
+  else if (versionStr && versionStr[0] == '2' && versionStr[1] == '.')
+  {
     major = 2;
     minor = versionStr[2] - '0';
   }
-  else {
+  else
+  {
     glGetIntegerv(GL_MAJOR_VERSION, &major);
     glGetIntegerv(GL_MINOR_VERSION, &minor);
   }
@@ -3229,15 +3238,18 @@ static bool loadSymbols()
   std::vector<char> extensionsBuffer;  // used when parsing extensions string
 
   // direct extension query is supported only for versions 3.x and greater
-  if (major >= 3) {
+  if (major >= 3)
+  {
     GLint numExtensions = 0;
     glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
     extensions.resize(numExtensions);
-    for (size_t i = 0; i < extensions.size(); ++i) {
+    for (size_t i = 0; i < extensions.size(); ++i)
+    {
       extensions[i] = (const char *)glGetStringi(GL_EXTENSIONS, (GLuint)i);
     }
   }
-  else if (major > 0) {
+  else if (major > 0)
+  {
     const char *extStr = (const char *)glGetString(GL_EXTENSIONS);
     const size_t extStrLen = strlen(extStr);
 
@@ -3246,12 +3258,15 @@ static bool loadSymbols()
 
     // identify and terminate substrings
     bool inSubstring = false;
-    for (size_t i = 0; i < extStrLen; ++i) {
-      if (extensionsBuffer[i] == ' ') {
+    for (size_t i = 0; i < extStrLen; ++i)
+    {
+      if (extensionsBuffer[i] == ' ')
+      {
         extensionsBuffer[i] = '\0';
         inSubstring = false;
       }
-      else if (!inSubstring) {
+      else if (!inSubstring)
+      {
         extensions.push_back(&extensionsBuffer[i]);
         inSubstring = true;
       }
@@ -6821,7 +6836,8 @@ static bool loadSymbols()
 const GLubyte *gluErrorString(GLenum error)
 {
   const char *result = NULL;
-  switch (error) {
+  switch (error)
+  {
     case GL_NO_ERROR:
       result = "no error";
       break;
@@ -6855,7 +6871,8 @@ const GLubyte *gluErrorString(GLenum error)
 bool GarchGLApiLoad()
 {
   static bool initialized = false;
-  if (initialized) {
+  if (initialized)
+  {
     return true;
   }
   initialized = true;

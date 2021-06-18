@@ -64,9 +64,11 @@ void TfPyInitialize()
   static std::recursive_mutex mutex;
   std::lock_guard<std::recursive_mutex> lock(mutex);
 
-  if (!Py_IsInitialized()) {
+  if (!Py_IsInitialized())
+  {
 
-    if (!ArchIsMainThread() && !PyEval_ThreadsInitialized()) {
+    if (!ArchIsMainThread() && !PyEval_ThreadsInitialized())
+    {
       // Python claims that PyEval_InitThreads "should be called in the
       // main thread before creating a second thread or engaging in any
       // other thread operations."  So we'll issue a warning here.
@@ -170,7 +172,8 @@ boost::python::handle<> TfPyRunString(const std::string &cmd,
 {
   TfPyInitialize();
   TfPyLock pyLock;
-  try {
+  try
+  {
     handle<> mainModule(borrowed(PyImport_AddModule("__main__")));
     handle<> defaultGlobalsHandle(borrowed(PyModule_GetDict(mainModule.get())));
 
@@ -181,7 +184,8 @@ boost::python::handle<> TfPyRunString(const std::string &cmd,
     // to globals from main module if no locals/globals passed in.
     return handle<>(PyRun_String(cmd.c_str(), start, pyGlobals, pyLocals));
   }
-  catch (error_already_set const &) {
+  catch (error_already_set const &)
+  {
     TfPyConvertPythonExceptionToTfErrors();
     PyErr_Clear();
   }
@@ -194,14 +198,16 @@ boost::python::handle<> TfPyRunFile(const std::string &filename,
                                     object const &locals)
 {
   FILE *f = ArchOpenFile(filename.c_str(), "r");
-  if (!f) {
+  if (!f)
+  {
     TF_CODING_ERROR("Could not open file '%s'!", filename.c_str());
     return handle<>();
   }
 
   TfPyInitialize();
   TfPyLock pyLock;
-  try {
+  try
+  {
     handle<> mainModule(borrowed(PyImport_AddModule("__main__")));
     handle<> defaultGlobalsHandle(borrowed(PyModule_GetDict(mainModule.get())));
 
@@ -212,7 +218,8 @@ boost::python::handle<> TfPyRunFile(const std::string &filename,
 
     return handle<>(PyRun_FileEx(f, filename.c_str(), start, pyGlobals, pyLocals, 1 /* close file */));
   }
-  catch (error_already_set const &) {
+  catch (error_already_set const &)
+  {
     TfPyConvertPythonExceptionToTfErrors();
     PyErr_Clear();
   }

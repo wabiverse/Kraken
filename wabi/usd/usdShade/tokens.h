@@ -59,7 +59,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdShadeTokens->allPurpose);
 /// \endcode
-struct UsdShadeTokensType {
+struct UsdShadeTokensType
+{
   USDSHADE_API UsdShadeTokensType();
   /// \brief ""
   ///

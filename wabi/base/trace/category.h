@@ -58,17 +58,22 @@ using TraceCategoryId = uint32_t;
 /// category Ids which can be used to filter them. This class also provides a
 /// way to associate TraceCategoryId values with human readable names.
 ///
-class TraceCategory {
+class TraceCategory
+{
  public:
   /// Computes an id for the given a string literal \p str.
-  template<int N> static constexpr TraceCategoryId CreateTraceCategoryId(const char (&str)[N])
+  template<int N>
+  static constexpr TraceCategoryId CreateTraceCategoryId(const char (&str)[N])
   {
     return TraceStringHash::Hash(str);
   }
 
   /// Default category if none are explicitly specified when creating a
   /// TraceEvent.
-  enum : TraceCategoryId { Default = 0 };
+  enum : TraceCategoryId
+  {
+    Default = 0
+  };
 
   /// Associates the \p id with \p name. These associates are not necessarily
   /// unique.

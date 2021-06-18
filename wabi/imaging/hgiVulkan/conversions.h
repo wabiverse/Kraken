@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Converts from Hgi types to Vulkan types.
 ///
-class HgiVulkanConversions final {
+class HgiVulkanConversions final
+{
  public:
   HGIVULKAN_API
   static VkFormat GetFormat(HgiFormat inFormat);

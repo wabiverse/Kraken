@@ -29,35 +29,40 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> HdCyclesEnvValue<bool>::HdCyclesEnvValue(const char *a_envName, bool a_default)
+template<>
+HdCyclesEnvValue<bool>::HdCyclesEnvValue(const char *a_envName, bool a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvBool(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<> HdCyclesEnvValue<int>::HdCyclesEnvValue(const char *a_envName, int a_default)
+template<>
+HdCyclesEnvValue<int>::HdCyclesEnvValue(const char *a_envName, int a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvInt(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<> HdCyclesEnvValue<double>::HdCyclesEnvValue(const char *a_envName, double a_default)
+template<>
+HdCyclesEnvValue<double>::HdCyclesEnvValue(const char *a_envName, double a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvDouble(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<> HdCyclesEnvValue<float>::HdCyclesEnvValue(const char *a_envName, float a_default)
+template<>
+HdCyclesEnvValue<float>::HdCyclesEnvValue(const char *a_envName, float a_default)
 {
   envName = std::string(a_envName);
   value = static_cast<float>(TfGetenvDouble(envName, static_cast<double>(a_default)));
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<> HdCyclesEnvValue<std::string>::HdCyclesEnvValue(const char *a_envName, std::string a_default)
+template<>
+HdCyclesEnvValue<std::string>::HdCyclesEnvValue(const char *a_envName, std::string a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenv(envName, a_default);

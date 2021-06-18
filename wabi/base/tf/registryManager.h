@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// See \ref page_tf_RegistryManager for a detailed description.
 ///
-class TfRegistryManager {
+class TfRegistryManager
+{
   TfRegistryManager(const TfRegistryManager &) = delete;
   TfRegistryManager &operator=(const TfRegistryManager &) = delete;
 
@@ -64,7 +65,8 @@ class TfRegistryManager {
   /// this call is made, when new code is dynamically loaded then any
   /// \c TF_REGISTRY_FUNCTION() functions of type \c T in the new code
   /// will automatically be run when the code is loaded.
-  template<class T> void SubscribeTo()
+  template<class T>
+  void SubscribeTo()
   {
     _SubscribeTo(typeid(T));
   }
@@ -73,7 +75,8 @@ class TfRegistryManager {
   ///
   /// After this call, newly added code will no longer have \c
   /// TF_REGISTRY_FUNCTION() functions of type \c T run.
-  template<class T> void UnsubscribeFrom()
+  template<class T>
+  void UnsubscribeFrom()
   {
     _UnsubscribeFrom(typeid(T));
   }
@@ -123,8 +126,10 @@ class TfRegistryManager {
 TF_API void Tf_RegistryInitCtor(char const *name);
 TF_API void Tf_RegistryInitDtor(char const *name);
 
-namespace {
-struct Tf_RegistryStaticInit {
+namespace
+{
+struct Tf_RegistryStaticInit
+{
   Tf_RegistryStaticInit()
   {
     Tf_RegistryInitCtor(TF_PP_STRINGIZE(MFB_ALT_PACKAGE_NAME));
@@ -139,7 +144,8 @@ struct Tf_RegistryStaticInit {
 // Private class used to indicate the library has finished registering
 // functions, to indicate that the library is being unloaded and to
 // add functions to the registry.
-class Tf_RegistryInit {
+class Tf_RegistryInit
+{
  public:
   TF_API static void Add(const char *libName,
                          TfRegistryManager::RegistrationFunctionType func,

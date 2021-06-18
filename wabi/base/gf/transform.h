@@ -73,7 +73,8 @@ class GfMatrix4d;
 /// \li \em O is the matrix that rotates to \em pivotOrientation
 /// \li \em S is the \em scale matrix
 ///
-class GfTransform {
+class GfTransform
+{
 
  public:
   /// The default constructor sets the component values to the

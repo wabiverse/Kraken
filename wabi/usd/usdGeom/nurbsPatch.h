@@ -107,7 +107,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomNurbsPatch : public UsdGeomPointBased {
+class UsdGeomNurbsPatch : public UsdGeomPointBased
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -123,13 +124,15 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased {
   /// Equivalent to UsdGeomNurbsPatch::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomNurbsPatch(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim)
+  explicit UsdGeomNurbsPatch(const UsdPrim &prim = UsdPrim())
+    : UsdGeomPointBased(prim)
   {}
 
   /// Construct a UsdGeomNurbsPatch on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomNurbsPatch(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomNurbsPatch(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj)
+  explicit UsdGeomNurbsPatch(const UsdSchemaBase &schemaObj)
+    : UsdGeomPointBased(schemaObj)
   {}
 
   /// Destructor.

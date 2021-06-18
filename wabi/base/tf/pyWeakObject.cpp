@@ -30,7 +30,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Tf_PyWeakObjectRegistry {
+struct Tf_PyWeakObjectRegistry
+{
   typedef Tf_PyWeakObjectRegistry This;
 
   /// Return the singleton instance.
@@ -72,7 +73,8 @@ void Tf_PyWeakObjectRegistry::Remove(PyObject *obj)
 // A deleter instance is passed to PyWeakref_NewRef as the callback object
 // so that when the python object we have the weak ref to dies, we can
 // delete the corresponding weak object.
-struct Tf_PyWeakObjectDeleter {
+struct Tf_PyWeakObjectDeleter
+{
   static int WrapIfNecessary();
   explicit Tf_PyWeakObjectDeleter(Tf_PyWeakObjectPtr const &self);
   void Deleted(PyObject * /* weakRef */);
@@ -83,14 +85,16 @@ struct Tf_PyWeakObjectDeleter {
 
 int Tf_PyWeakObjectDeleter::WrapIfNecessary()
 {
-  if (TfPyIsNone(TfPyGetClassObject<Tf_PyWeakObjectDeleter>())) {
+  if (TfPyIsNone(TfPyGetClassObject<Tf_PyWeakObjectDeleter>()))
+  {
     boost::python::class_<Tf_PyWeakObjectDeleter>("Tf_PyWeakObject__Deleter", boost::python::no_init)
       .def("__call__", &Tf_PyWeakObjectDeleter::Deleted);
   }
   return 1;
 }
 
-Tf_PyWeakObjectDeleter::Tf_PyWeakObjectDeleter(Tf_PyWeakObjectPtr const &self) : _self(self)
+Tf_PyWeakObjectDeleter::Tf_PyWeakObjectDeleter(Tf_PyWeakObjectPtr const &self)
+  : _self(self)
 {
   static int ensureWrapped = WrapIfNecessary();
   (void)ensureWrapped;
@@ -108,7 +112,8 @@ Tf_PyWeakObjectPtr Tf_PyWeakObject::GetOrCreate(boost::python::object const &obj
     return p;
   // Otherwise, make sure we can create a python weak reference to the
   // object.
-  if (PyObject *weakRef = PyWeakref_NewRef(obj.ptr(), NULL)) {
+  if (PyObject *weakRef = PyWeakref_NewRef(obj.ptr(), NULL))
+  {
     Py_DECREF(weakRef);
     return TfCreateWeakPtr(new Tf_PyWeakObject(obj));
   }

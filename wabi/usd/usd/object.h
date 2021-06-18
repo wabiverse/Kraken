@@ -45,7 +45,8 @@ TF_DECLARE_WEAK_PTRS(UsdStage);
 ///
 /// Enum values to represent the various Usd object types.
 ///
-enum UsdObjType {
+enum UsdObjType
+{
   // Value order matters in this enum.
   UsdTypeObject,
   UsdTypePrim,
@@ -56,26 +57,41 @@ enum UsdObjType {
   Usd_NumObjTypes
 };
 
-namespace _Detail {
+namespace _Detail
+{
 
 // A metafunction that takes a UsdObject class like UsdObject, UsdPrim,
 // UsdProperty, etc, and gives its corresponding UsdObjType, e.g. UsdTypeObject,
 // UsdTypePrim, UsdTypeProperty, etc.  Usage: GetObjType<UsdPrim>::Value.
-template<UsdObjType Type> struct Const {
+template<UsdObjType Type>
+struct Const
+{
   static const UsdObjType Value = Type;
 };
-template<class T> struct GetObjType {
+template<class T>
+struct GetObjType
+{
   static_assert(std::is_base_of<UsdObject, T>::value, "Type T must be a subclass of UsdObject.");
 };
-template<> struct GetObjType<UsdObject> : Const<UsdTypeObject> {
+template<>
+struct GetObjType<UsdObject> : Const<UsdTypeObject>
+{
 };
-template<> struct GetObjType<UsdPrim> : Const<UsdTypePrim> {
+template<>
+struct GetObjType<UsdPrim> : Const<UsdTypePrim>
+{
 };
-template<> struct GetObjType<UsdProperty> : Const<UsdTypeProperty> {
+template<>
+struct GetObjType<UsdProperty> : Const<UsdTypeProperty>
+{
 };
-template<> struct GetObjType<UsdAttribute> : Const<UsdTypeAttribute> {
+template<>
+struct GetObjType<UsdAttribute> : Const<UsdTypeAttribute>
+{
 };
-template<> struct GetObjType<UsdRelationship> : Const<UsdTypeRelationship> {
+template<>
+struct GetObjType<UsdRelationship> : Const<UsdTypeRelationship>
+{
 };
 
 }  // namespace _Detail
@@ -127,10 +143,12 @@ inline bool UsdIsConcrete(UsdObjType type)
 /// message describing the namespace location of the dereferenced object on its
 /// owning UsdStage.
 ///
-class UsdObject {
+class UsdObject
+{
  public:
   /// Default constructor produces an invalid object.
-  UsdObject() : _type(UsdTypeObject)
+  UsdObject()
+    : _type(UsdTypeObject)
   {}
 
   // --------------------------------------------------------------------- //
@@ -195,10 +213,12 @@ class UsdObject {
   SdfPath GetPath() const
   {
     // Allow getting expired object paths.
-    if (!_proxyPrimPath.IsEmpty()) {
+    if (!_proxyPrimPath.IsEmpty())
+    {
       return _type == UsdTypePrim ? _proxyPrimPath : _proxyPrimPath.AppendProperty(_propName);
     }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_prim)) {
+    else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
+    {
       return _type == UsdTypePrim ? p->GetPath() : p->GetPath().AppendProperty(_propName);
     }
     return SdfPath();
@@ -209,10 +229,12 @@ class UsdObject {
   const SdfPath &GetPrimPath() const
   {
     // Allow getting expired object paths.
-    if (!_proxyPrimPath.IsEmpty()) {
+    if (!_proxyPrimPath.IsEmpty())
+    {
       return _proxyPrimPath;
     }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_prim)) {
+    else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
+    {
       return p->GetPath();
     }
     return SdfPath::EmptyPath();
@@ -235,7 +257,8 @@ class UsdObject {
   /// Convert this UsdObject to another object type \p T if possible.  Return
   /// an invalid \p T instance if this object's dynamic type is not
   /// convertible to \p T or if this object is invalid.
-  template<class T> T As() const
+  template<class T>
+  T As() const
   {
     // compile-time type assertion provided by invoking Is<T>().
     return Is<T>() ? T(_type, _prim, _proxyPrimPath, _propName) : T();
@@ -246,7 +269,8 @@ class UsdObject {
   /// \code
   /// bool(obj.As<T>())
   /// \endcode
-  template<class T> bool Is() const
+  template<class T>
+  bool Is() const
   {
     static_assert(std::is_base_of<UsdObject, T>::value, "Provided type T must derive from or be UsdObject");
     return UsdIsConvertible(_type, _Detail::GetObjType<T>::Value);
@@ -283,7 +307,8 @@ class UsdObject {
   /// such as UsdReferences, UsdInherits, UsdVariantSets, etc.
   ///
   /// \sa \ref Usd_OM_Metadata
-  template<typename T> bool GetMetadata(const TfToken &key, T *value) const;
+  template<typename T>
+  bool GetMetadata(const TfToken &key, T *value) const;
   /// \overload
   ///
   /// Type-erased access
@@ -296,7 +321,8 @@ class UsdObject {
   /// for \p key.
   ///
   /// \sa \ref Usd_OM_Metadata
-  template<typename T> bool SetMetadata(const TfToken &key, const T &value) const;
+  template<typename T>
+  bool SetMetadata(const TfToken &key, const T &value) const;
   /// \overload
   USD_API
   bool SetMetadata(const TfToken &key, const VtValue &value) const;
@@ -340,7 +366,8 @@ class UsdObject {
   /// in subdictionaries.
   ///
   /// \sa \ref Usd_Dictionary_Type
-  template<class T> bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
+  template<class T>
+  bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
   /// \overload
   USD_API
   bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, VtValue *value) const;
@@ -638,11 +665,15 @@ class UsdObject {
   bool _SetMetadataImpl(const TfToken &key, const VtValue &value, const TfToken &keyPath = TfToken()) const;
 
  protected:
-  template<class Derived> struct _Null {
+  template<class Derived>
+  struct _Null
+  {
   };
 
   // Private constructor for null dervied types.
-  template<class Derived> explicit UsdObject(_Null<Derived>) : _type(_Detail::GetObjType<Derived>::Value)
+  template<class Derived>
+  explicit UsdObject(_Null<Derived>)
+    : _type(_Detail::GetObjType<Derived>::Value)
   {}
 
   // Private constructor for UsdPrim.
@@ -712,12 +743,14 @@ class UsdObject {
   TfToken _propName;
 };
 
-template<typename T> inline bool UsdObject::GetMetadata(const TfToken &key, T *value) const
+template<typename T>
+inline bool UsdObject::GetMetadata(const TfToken &key, T *value) const
 {
   return _GetMetadataImpl(key, value);
 }
 
-template<typename T> inline bool UsdObject::SetMetadata(const TfToken &key, const T &value) const
+template<typename T>
+inline bool UsdObject::SetMetadata(const TfToken &key, const T &value) const
 {
   return _SetMetadataImpl(key, value);
 }

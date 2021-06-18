@@ -40,7 +40,8 @@ typedef std::vector<class HdVolume const *> HdVolumePtrConstVector;
 ///
 /// Hd schema for a renderable volume primitive.
 ///
-class HdVolume : public HdRprim {
+class HdVolume : public HdRprim
+{
  public:
   HD_API
   HdVolume(SdfPath const &id);

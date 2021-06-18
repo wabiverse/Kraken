@@ -60,7 +60,8 @@ using HdxRenderSetupTaskSharedPtr = std::shared_ptr<class HdxRenderSetupTask>;
 /// setup task you run before the render task, you can change the render
 /// parameters without incurring a hydra sync or rebuilding any resources.
 ///
-class HdxRenderTask : public HdxTask {
+class HdxRenderTask : public HdxTask
+{
  public:
   HDX_API
   HdxRenderTask(HdSceneDelegate *delegate, SdfPath const &id);

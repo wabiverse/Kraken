@@ -26,7 +26,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdCyclesRenderDelegate;
 
-class HdCyclesRenderPassState : public HdRenderPassState {
+class HdCyclesRenderPassState : public HdRenderPassState
+{
  public:
   explicit HdCyclesRenderPassState(const HdCyclesRenderDelegate *renderDelegate);
 

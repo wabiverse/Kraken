@@ -46,7 +46,8 @@ class Pcp_MutedLayers;
 ///
 /// A registry of layer stacks.
 ///
-class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase {
+class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
+{
  public:
   /// Create a new Pcp_LayerStackRegistry.
   static Pcp_LayerStackRegistryRefPtr New(const std::string &fileFormatTarget = std::string(),
@@ -137,7 +138,8 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase {
 ///
 /// Helper for maintaining and querying a collection of muted layers.
 ///
-class Pcp_MutedLayers {
+class Pcp_MutedLayers
+{
  public:
   const std::vector<std::string> &GetMutedLayers() const;
   void MuteAndUnmuteLayers(const SdfLayerHandle &anchorLayer,

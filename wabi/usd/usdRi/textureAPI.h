@@ -65,7 +65,8 @@ class SdfAssetPath;
 /// RiTextureAPI is an API schema that provides an interface
 /// to add Renderman-specific attributes to adjust textures.
 ///
-class UsdRiTextureAPI : public UsdAPISchemaBase {
+class UsdRiTextureAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdRiTextureAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiTextureAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiTextureAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiTextureAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiTextureAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiTextureAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiTextureAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiTextureAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

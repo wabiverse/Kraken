@@ -191,7 +191,8 @@ bool UsdGeomLinearUnitsAre(double authoredUnits, double standardUnits, double ep
 /// Container class for static double-precision symbols representing common
 /// units of measure expressed in meters.
 /// \sa UsdGeomLinearUnits_group
-class UsdGeomLinearUnits {
+class UsdGeomLinearUnits
+{
  public:
   static constexpr double nanometers = 1e-9;
   static constexpr double micrometers = 1e-6;

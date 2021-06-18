@@ -50,7 +50,8 @@ TF_DECLARE_WEAK_PTRS(PlugPlugin);
 /// providing methods for finding registered formats either by format
 /// identifier or file extension.
 ///
-class Sdf_FileFormatRegistry : boost::noncopyable {
+class Sdf_FileFormatRegistry : boost::noncopyable
+{
  public:
   /// Constructor.
   Sdf_FileFormatRegistry();
@@ -80,7 +81,8 @@ class Sdf_FileFormatRegistry : boost::noncopyable {
   /// null format ref ptr. After the file format is requested, the plugin is
   /// loaded, and the file format is instantiated.
   ///
-  class _Info {
+  class _Info
+  {
    public:
     _Info(const TfToken &formatId, const TfType &type, const TfToken &target, const PlugPluginPtr &plugin)
       : formatId(formatId),

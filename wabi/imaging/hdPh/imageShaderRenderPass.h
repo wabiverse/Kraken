@@ -48,7 +48,8 @@ class Hgi;
 /// The benefit of using RenderPassShader is that it participates in codegen.
 /// This means your full-screen shader can use buffers created by other tasks.
 ///
-class HdPh_ImageShaderRenderPass final : public HdRenderPass {
+class HdPh_ImageShaderRenderPass final : public HdRenderPass
+{
  public:
   HDPH_API
   HdPh_ImageShaderRenderPass(HdRenderIndex *index, HdRprimCollection const &collection);

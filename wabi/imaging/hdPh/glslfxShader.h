@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 using HioGlslfxSharedPtr = std::shared_ptr<class HioGlslfx>;
 
 // XXX: DOCS!
-class HdPhGLSLFXShader final : public HdPhSurfaceShader {
+class HdPhGLSLFXShader final : public HdPhSurfaceShader
+{
  public:
   HDPH_API
   HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx);

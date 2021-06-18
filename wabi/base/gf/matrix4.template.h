@@ -46,13 +46,15 @@
 {
   % block forwardDeclarations %
 }
-class GfQuat {
+class GfQuat
+{
   {
     SCL[0]
   }
 };
 class GfRotation;
-class GfMatrix3 {
+class GfMatrix3
+{
   {
     SCL[0]
   }

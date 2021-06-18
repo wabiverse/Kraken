@@ -43,7 +43,8 @@ class Pcp_MutedLayers;
 /// request to keep them alive until the client can decide what to do
 /// with them.
 ///
-class PcpLayerPrefetchRequest {
+class PcpLayerPrefetchRequest
+{
  public:
   /// Enqueue a request to pre-fetch of the sublayers of \a layer.
   /// This recursively includes any nested sublayers. Arguments in \a args

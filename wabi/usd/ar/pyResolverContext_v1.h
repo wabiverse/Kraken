@@ -60,17 +60,21 @@ WABI_NAMESPACE_BEGIN
 /// in C++ and vice versa. This typically would be called in the
 /// source file where the Python wrapping for the context object
 /// is defined.
-template<class Context> void ArWrapResolverContextForPython();
+template<class Context>
+void ArWrapResolverContextForPython();
 
 #  ifndef doxygen
 // Private helper functions for converting ArResolverContext
 // objects to and from Python.
 
-template<class Context> bool Ar_ConvertResolverContextFromPython(PyObject *obj, ArResolverContext *context)
+template<class Context>
+bool Ar_ConvertResolverContextFromPython(PyObject *obj, ArResolverContext *context)
 {
   boost::python::extract<const Context &> x(obj);
-  if (x.check()) {
-    if (context) {
+  if (x.check())
+  {
+    if (context)
+    {
       *context = ArResolverContext(x());
     }
     return true;
@@ -81,8 +85,10 @@ template<class Context> bool Ar_ConvertResolverContextFromPython(PyObject *obj, 
 template<class Context>
 bool Ar_ConvertResolverContextToPython(const ArResolverContext &context, TfPyObjWrapper *obj)
 {
-  if (const Context *contextObj = context.Get<Context>()) {
-    if (obj) {
+  if (const Context *contextObj = context.Get<Context>())
+  {
+    if (obj)
+    {
       TfPyLock lock;
       *obj = boost::python::object(*contextObj);
     }
@@ -107,7 +113,8 @@ ArResolverContext Ar_ConvertResolverContextFromPython(PyObject *pyObj);
 AR_API
 TfPyObjWrapper Ar_ConvertResolverContextToPython(const ArResolverContext &context);
 
-template<class Context> void ArWrapResolverContextForPython()
+template<class Context>
+void ArWrapResolverContextForPython()
 {
   Ar_RegisterResolverContextPythonConversion(Ar_ConvertResolverContextFromPython<Context>,
                                              Ar_ConvertResolverContextToPython<Context>);

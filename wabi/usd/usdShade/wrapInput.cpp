@@ -41,7 +41,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bool _Set(const UsdShadeInput &self, object val, const UsdTimeCode &time)
 {
@@ -69,10 +70,12 @@ static object _GetConnectedSource(const UsdShadeInput &self)
   TfToken sourceName;
   UsdShadeAttributeType sourceType;
 
-  if (self.GetConnectedSource(&source, &sourceName, &sourceType)) {
+  if (self.GetConnectedSource(&source, &sourceName, &sourceType))
+  {
     return boost::python::make_tuple(source, sourceName, sourceType);
   }
-  else {
+  else
+  {
     return object();
   }
 }

@@ -37,12 +37,14 @@ WABI_NAMESPACE_BEGIN
 bool TfSetenv(const std::string &name, const std::string &value)
 {
 #ifdef WITH_PYTHON
-  if (TfPyIsInitialized()) {
+  if (TfPyIsInitialized())
+  {
     return TfPySetenv(name, value);
   }
 #endif  // WITH_PYTHON
 
-  if (ArchSetEnv(name.c_str(), value.c_str(), /* overwrite */ true)) {
+  if (ArchSetEnv(name.c_str(), value.c_str(), /* overwrite */ true))
+  {
     return true;
   }
 
@@ -53,12 +55,14 @@ bool TfSetenv(const std::string &name, const std::string &value)
 bool TfUnsetenv(const std::string &name)
 {
 #ifdef WITH_PYTHON
-  if (TfPyIsInitialized()) {
+  if (TfPyIsInitialized())
+  {
     return TfPyUnsetenv(name);
   }
 #endif  // WITH_PYTHON
 
-  if (ArchRemoveEnv(name.c_str())) {
+  if (ArchRemoveEnv(name.c_str()))
+  {
     return true;
   }
 

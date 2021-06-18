@@ -41,7 +41,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-struct TfTokenPairToPythonConverter {
+struct TfTokenPairToPythonConverter
+{
   static PyObject *convert(const std::pair<TfToken, TfToken> &pair)
   {
     return incref(make_tuple(pair.first, pair.second).ptr());
@@ -50,7 +51,8 @@ struct TfTokenPairToPythonConverter {
 
 // Boost treats a const ptr differently than a non-const ptr, so a custom
 // converter is needed to deal with the const-ness
-struct SdrShaderPropertyConstPtrToPythonConverter {
+struct SdrShaderPropertyConstPtrToPythonConverter
+{
   static PyObject *convert(SdrShaderPropertyConstPtr shaderProperty)
   {
     object shaderPropertyObject(ptr(shaderProperty));

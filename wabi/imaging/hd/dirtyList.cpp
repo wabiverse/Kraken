@@ -61,7 +61,8 @@ bool HdDirtyList::ApplyEdit(HdRprimCollection const &col)
   // when repr changes, don't reuse the dirty list, since the required
   // DirtyBits may change.
   if (col.GetName() != _collection.GetName() || col.GetReprSelector() != _collection.GetReprSelector() ||
-      col.IsForcedRepr() != _collection.IsForcedRepr()) {
+      col.IsForcedRepr() != _collection.IsForcedRepr())
+  {
     return false;
   }
 
@@ -121,7 +122,8 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
   // Nothing to do.
   // This could happen in progressive rendering or in multi-viewer scenarios.
   // XXX: This could be caught earlier and avoid Sync altogether.
-  if (_sceneStateVersion == currentSceneStateVersion) {
+  if (_sceneStateVersion == currentSceneStateVersion)
+  {
     TF_DEBUG(HD_DIRTY_LIST)
       .Msg("DirtyList(%p): Scene State the same %d\n", (void *)this, _sceneStateVersion);
 
@@ -141,7 +143,8 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
   unsigned int currentRenderTagVersion = changeTracker.GetRenderTagVersion();
   unsigned int currentVaryingStateVersion = changeTracker.GetVaryingStateVersion();
 
-  if ((_rprimIndexVersion != currentRprimIndexVersion) || (_renderTagVersion != currentRenderTagVersion)) {
+  if ((_rprimIndexVersion != currentRprimIndexVersion) || (_renderTagVersion != currentRenderTagVersion))
+  {
     TF_DEBUG(HD_DIRTY_LIST)
       .Msg(
         "DirtyList(%p): Filter Changed:\n"
@@ -162,7 +165,8 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
     // Need to invalidate the cache varying state
     _varyingStateVersion = currentVaryingStateVersion - 1;
   }
-  else if (_varyingStateVersion != currentVaryingStateVersion) {
+  else if (_varyingStateVersion != currentVaryingStateVersion)
+  {
     TF_DEBUG(HD_DIRTY_LIST)
       .Msg(
         "DirtyList(%p): varying state changed "

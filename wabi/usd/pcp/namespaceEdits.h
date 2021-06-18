@@ -48,11 +48,13 @@ TF_DECLARE_WEAK_AND_REF_PTRS(Pcp_LayerStackRegistry);
 SDF_DECLARE_HANDLES(SdfSpec);
 
 /// Sites that must respond to a namespace edit.
-struct PcpNamespaceEdits {
+struct PcpNamespaceEdits
+{
 
   /// Types of namespace edits that a given layer stack site could need
   /// to perform to respond to a namespace edit.
-  enum EditType {
+  enum EditType
+  {
     EditPath,         ///< Must namespace edit spec
     EditInherit,      ///< Must fixup inherits
     EditSpecializes,  ///< Must fixup specializes
@@ -69,7 +71,8 @@ struct PcpNamespaceEdits {
   }
 
   /// Cache site that must respond to a namespace edit.
-  struct CacheSite {
+  struct CacheSite
+  {
     size_t cacheIndex;  ///< Index of cache of site.
     SdfPath oldPath;    ///< Old path of site.
     SdfPath newPath;    ///< New path of site.
@@ -78,7 +81,8 @@ struct PcpNamespaceEdits {
 
   /// Layer stack site that must respond to a namespace edit.  All
   /// of the specs at the site will respond the same way.
-  struct LayerStackSite {
+  struct LayerStackSite
+  {
     size_t cacheIndex;            ///< Index of cache of site.
     EditType type;                ///< Type of edit.
     PcpLayerStackPtr layerStack;  ///< Layer stack needing fix.

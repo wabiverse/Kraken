@@ -66,7 +66,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   std::vector<VkPipelineShaderStageCreateInfo> stages;
   stages.reserve(sfv.size());
 
-  for (HgiShaderFunctionHandle const &sf : sfv) {
+  for (HgiShaderFunctionHandle const &sf : sfv)
+  {
     HgiVulkanShaderFunction const *s = static_cast<HgiVulkanShaderFunction const *>(sf.Get());
 
     descriptorSetInfos.push_back(s->GetDescriptorSetInfo());
@@ -92,8 +93,10 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   std::vector<VkVertexInputBindingDescription> vertBufs;
   std::vector<VkVertexInputAttributeDescription> vertAttrs;
 
-  for (HgiVertexBufferDesc const &vbo : desc.vertexBuffers) {
-    for (HgiVertexAttributeDesc const &va : vbo.vertexAttributes) {
+  for (HgiVertexBufferDesc const &vbo : desc.vertexBuffers)
+  {
+    for (HgiVertexAttributeDesc const &va : vbo.vertexAttributes)
+    {
       VkVertexInputAttributeDescription ad;
       ad.binding = vbo.bindingIndex;
       ad.location = va.shaderBindLocation;
@@ -186,10 +189,12 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
 
   depthStencilState.stencilTestEnable = desc.depthState.stencilTestEnabled;
 
-  if (desc.depthState.stencilTestEnabled) {
+  if (desc.depthState.stencilTestEnabled)
+  {
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
   }
-  else {
+  else
+  {
     depthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
     depthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
     depthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
@@ -207,7 +212,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   // Per attachment configuration of how output color blends with destination.
   //
   std::vector<VkPipelineColorBlendAttachmentState> colorAttachState;
-  for (HgiAttachmentDesc const &attach : desc.colorAttachmentDescs) {
+  for (HgiAttachmentDesc const &attach : desc.colorAttachmentDescs)
+  {
     VkPipelineColorBlendAttachmentState ca = {VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO};
 
     ca.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
@@ -252,7 +258,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   //
   bool usePushConstants = desc.shaderConstantsDesc.byteSize > 0;
   VkPushConstantRange pcRanges;
-  if (usePushConstants) {
+  if (usePushConstants)
+  {
     TF_VERIFY(desc.shaderConstantsDesc.byteSize % 4 == 0, "Push constants not multipes of 4");
     pcRanges.offset = 0;
     pcRanges.size = desc.shaderConstantsDesc.byteSize;
@@ -272,7 +279,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
             VK_SUCCESS);
 
   // Debug label
-  if (!desc.debugName.empty()) {
+  if (!desc.debugName.empty())
+  {
     std::string debugLabel = "PipelineLayout " + desc.debugName;
     HgiVulkanSetDebugName(
       device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
@@ -300,7 +308,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
                                       &_vkPipeline) == VK_SUCCESS);
 
   // Debug label
-  if (!desc.debugName.empty()) {
+  if (!desc.debugName.empty())
+  {
     std::string debugLabel = "Pipeline " + desc.debugName;
     HgiVulkanSetDebugName(device, (uint64_t)_vkPipeline, VK_OBJECT_TYPE_PIPELINE, debugLabel.c_str());
   }
@@ -308,7 +317,8 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
 
 HgiVulkanGraphicsPipeline::~HgiVulkanGraphicsPipeline()
 {
-  for (HgiVulkan_Framebuffer const &fb : _framebuffers) {
+  for (HgiVulkan_Framebuffer const &fb : _framebuffers)
+  {
     vkDestroyFramebuffer(_device->GetVulkanDevice(), fb.vkFramebuffer, HgiVulkanAllocator());
   }
 
@@ -318,7 +328,8 @@ HgiVulkanGraphicsPipeline::~HgiVulkanGraphicsPipeline()
 
   vkDestroyPipeline(_device->GetVulkanDevice(), _vkPipeline, HgiVulkanAllocator());
 
-  for (VkDescriptorSetLayout layout : _vkDescriptorSetLayouts) {
+  for (VkDescriptorSetLayout layout : _vkDescriptorSetLayouts)
+  {
     vkDestroyDescriptorSetLayout(_device->GetVulkanDevice(), layout, HgiVulkanAllocator());
   }
 }
@@ -341,9 +352,12 @@ VkRenderPass HgiVulkanGraphicsPipeline::GetVulkanRenderPass() const
 VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmdsDesc const &gfxDesc,
                                                                   GfVec2i *dimensions)
 {
-  for (HgiVulkan_Framebuffer const &fb : _framebuffers) {
-    if (fb.desc == gfxDesc) {
-      if (dimensions) {
+  for (HgiVulkan_Framebuffer const &fb : _framebuffers)
+  {
+    if (fb.desc == gfxDesc)
+    {
+      if (dimensions)
+      {
         *dimensions = fb.dimensions;
       }
       return fb.vkFramebuffer;
@@ -357,7 +371,8 @@ VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmd
   // for multiple differently sized attachments that are compatible with
   // the pipeline. E.g. a blur pyramid where attachment config is the same,
   // but the sizes shrink.
-  if (_framebuffers.size() > 32) {
+  if (_framebuffers.size() > 32)
+  {
     auto fbIt = _framebuffers.begin();
     vkDestroyFramebuffer(_device->GetVulkanDevice(), fbIt->vkFramebuffer, HgiVulkanAllocator());
     _framebuffers.erase(fbIt);
@@ -370,18 +385,21 @@ VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmd
   std::vector<HgiTextureHandle> textures;
   textures.insert(textures.end(), gfxDesc.colorTextures.begin(), gfxDesc.colorTextures.end());
 
-  if (gfxDesc.depthTexture) {
+  if (gfxDesc.depthTexture)
+  {
     textures.push_back(gfxDesc.depthTexture);
   }
 
   textures.insert(textures.end(), gfxDesc.colorResolveTextures.begin(), gfxDesc.colorResolveTextures.end());
 
-  if (gfxDesc.depthResolveTexture) {
+  if (gfxDesc.depthResolveTexture)
+  {
     textures.push_back(gfxDesc.depthResolveTexture);
   }
 
   std::vector<VkImageView> views;
-  for (HgiTextureHandle const &texHandle : textures) {
+  for (HgiTextureHandle const &texHandle : textures)
+  {
     HgiVulkanTexture *tex = static_cast<HgiVulkanTexture *>(texHandle.Get());
     views.push_back(tex->GetImageView());
     framebuffer.dimensions[0] = tex->GetDescriptor().dimensions[0];
@@ -401,7 +419,8 @@ VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmd
             VK_SUCCESS);
 
   // Debug label
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     std::string debugLabel = "Framebuffer " + _descriptor.debugName;
     HgiVulkanSetDebugName(
       _device, (uint64_t)framebuffer.vkFramebuffer, VK_OBJECT_TYPE_FRAMEBUFFER, debugLabel.c_str());
@@ -411,7 +430,8 @@ VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmd
 
   _framebuffers.push_back(std::move(framebuffer));
 
-  if (dimensions) {
+  if (dimensions)
+  {
     *dimensions = framebuffer.dimensions;
   }
   return framebuffer.vkFramebuffer;
@@ -488,7 +508,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
 {
   HgiSampleCount samples = _descriptor.multiSampleState.sampleCount;
 
-  if (!_descriptor.colorResolveAttachmentDescs.empty()) {
+  if (!_descriptor.colorResolveAttachmentDescs.empty())
+  {
     TF_VERIFY(_descriptor.colorAttachmentDescs.size() == _descriptor.colorResolveAttachmentDescs.size(),
               "Count mismatch between color and resolve attachments");
     TF_VERIFY(samples > HgiSampleCount1, "Pipeline sample count must be greater than one to use resolve");
@@ -503,7 +524,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
   VkAttachmentReference2 vkDepthResolveReference = {VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2};
 
   // Process color attachments
-  for (HgiAttachmentDesc const &desc : _descriptor.colorAttachmentDescs) {
+  for (HgiAttachmentDesc const &desc : _descriptor.colorAttachmentDescs)
+  {
     uint32_t slot = (uint32_t)vkDescriptions.size();
     VkClearValue vkClear;
     VkAttachmentDescription2 vkDesc;
@@ -516,7 +538,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
 
   // Process depth attachment
   bool hasDepth = _descriptor.depthAttachmentDesc.format != HgiFormatInvalid;
-  if (hasDepth) {
+  if (hasDepth)
+  {
     HgiAttachmentDesc const &desc = _descriptor.depthAttachmentDesc;
     uint32_t slot = (uint32_t)vkDescriptions.size();
     VkClearValue vkClear;
@@ -528,7 +551,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
   }
 
   // Process color resolve attachments
-  for (HgiAttachmentDesc const &desc : _descriptor.colorResolveAttachmentDescs) {
+  for (HgiAttachmentDesc const &desc : _descriptor.colorResolveAttachmentDescs)
+  {
     uint32_t slot = (uint32_t)vkDescriptions.size();
     VkClearValue vkClear;
     VkAttachmentDescription2 vkDesc;
@@ -541,7 +565,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
 
   // Process depth resolve attachment
   bool hasDepthResolve = _descriptor.depthResolveAttachmentDesc.format != HgiFormatInvalid;
-  if (hasDepthResolve) {
+  if (hasDepthResolve)
+  {
     HgiAttachmentDesc const &desc = _descriptor.depthResolveAttachmentDesc;
     uint32_t slot = (uint32_t)vkDescriptions.size();
     VkClearValue vkClear;
@@ -568,7 +593,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
   subpassDesc.pResolveAttachments = vkColorResolveReferences.data();
   subpassDesc.pDepthStencilAttachment = hasDepth ? &vkDepthReference : nullptr;
 
-  if (hasDepthResolve) {
+  if (hasDepthResolve)
+  {
     VkSubpassDescriptionDepthStencilResolveKHR depthResolve = {
       VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR};
     depthResolve.pDepthStencilResolveAttachment = &vkDepthResolveReference;
@@ -636,7 +662,8 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
             VK_SUCCESS);
 
   // Debug label
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     std::string debugLabel = "RenderPass " + _descriptor.debugName;
     HgiVulkanSetDebugName(_device, (uint64_t)_vkRenderPass, VK_OBJECT_TYPE_RENDER_PASS, debugLabel.c_str());
   }

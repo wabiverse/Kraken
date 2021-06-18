@@ -18,7 +18,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprField : public HdField {
+class HdRprField : public HdField
+{
  public:
   HdRprField(SdfPath const &id);
   ~HdRprField() override = default;

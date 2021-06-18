@@ -61,7 +61,8 @@ class TfDiagnosticMgr;
 /// For a description of how to post an error, warning or a status message see
 /// \c TF_ERROR(), \c TF_WARN and \c TF_STATUS also in the C++ API reference.
 ///
-class TfDiagnosticBase {
+class TfDiagnosticBase
+{
  public:
   /// Return the call context where the message was issued.
   const TfCallContext &GetContext() const
@@ -108,7 +109,8 @@ class TfDiagnosticBase {
   {
     if (_commentary.empty())
       _commentary = s;
-    else {
+    else
+    {
       _commentary += "\n";
       _commentary += s;
     }
@@ -162,7 +164,8 @@ class TfDiagnosticBase {
   /// then a const pointer to a copy of myInfo in the above example is
   /// returned by GetInfo<T>().  If the type T doesn't match the held type
   /// then GetInfo() returns NULL.
-  template<typename T> const T *GetInfo() const
+  template<typename T>
+  const T *GetInfo() const
   {
     return boost::any_cast<T>(&_info);
   }

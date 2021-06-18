@@ -42,7 +42,8 @@ typedef uint16_t uint16;
 typedef uint8_t uint8;
 #endif
 
-class SpookyHash {
+class SpookyHash
+{
  public:
   //
   // SpookyHash: hash a single message in one call, produce 128-bit output

@@ -95,14 +95,16 @@ SdfPrimSpecHandle SdfPrimSpec::_New(const SdfPrimSpecHandle &parentPrim,
 {
   SdfPrimSpec *parentPrimPtr = get_pointer(parentPrim);
 
-  if (!parentPrimPtr) {
+  if (!parentPrimPtr)
+  {
     TF_CODING_ERROR(
       "Cannot create prim '%s' because the parent prim is "
       "NULL",
       name.GetText());
     return TfNullPtr;
   }
-  if (!SdfPrimSpec::IsValidName(name)) {
+  if (!SdfPrimSpec::IsValidName(name))
+  {
     TF_RUNTIME_ERROR(
       "Cannot create prim '%s' because '%s' is not a valid "
       "name",
@@ -125,12 +127,14 @@ SdfPrimSpecHandle SdfPrimSpec::_New(const SdfPrimSpecHandle &parentPrim,
   // "over" and the type is not specified.
   bool inert = (spec == SdfSpecifierOver) && type.IsEmpty();
 
-  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(layer, childPath, SdfSpecTypePrim, inert)) {
+  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(layer, childPath, SdfSpecTypePrim, inert))
+  {
     return TfNullPtr;
   }
 
   layer->SetField(childPath, SdfFieldKeys->Specifier, spec);
-  if (!type.IsEmpty()) {
+  if (!type.IsEmpty())
+  {
     layer->SetField(childPath, SdfFieldKeys->TypeName, type);
   }
 
@@ -139,11 +143,13 @@ SdfPrimSpecHandle SdfPrimSpec::_New(const SdfPrimSpecHandle &parentPrim,
 
 bool SdfPrimSpec::_ValidateEdit(const TfToken &key) const
 {
-  if (_IsPseudoRoot()) {
+  if (_IsPseudoRoot())
+  {
     TF_CODING_ERROR("Cannot edit %s on a pseudo-root", key.GetText());
     return false;
   }
-  else {
+  else
+  {
     return true;
   }
 }
@@ -164,8 +170,10 @@ TfToken SdfPrimSpec::GetNameToken() const
 
 bool SdfPrimSpec::CanSetName(const std::string &newName, std::string *whyNot) const
 {
-  if (_IsPseudoRoot()) {
-    if (whyNot) {
+  if (_IsPseudoRoot())
+  {
+    if (whyNot)
+    {
       *whyNot = "The pseudo-root cannot be renamed";
     }
     return false;
@@ -180,11 +188,13 @@ bool SdfPrimSpec::SetName(const std::string &name, bool validate)
 
   const TfToken newName(name);
   const TfToken oldName = GetNameToken();
-  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::Rename(*this, newName)) {
+  if (!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::Rename(*this, newName))
+  {
     return false;
   }
 
-  if (newName == oldName) {
+  if (newName == oldName)
+  {
     // Nothing to do; just early out.
     return true;
   }
@@ -192,9 +202,11 @@ bool SdfPrimSpec::SetName(const std::string &name, bool validate)
   // Also update any references to this prim in the parent spec's
   // name children order.
   const SdfPath parentPath = GetPath().GetParentPath();
-  if (SdfPrimSpecHandle parentPrim = GetLayer()->GetPrimAtPath(parentPath)) {
+  if (SdfPrimSpecHandle parentPrim = GetLayer()->GetPrimAtPath(parentPath))
+  {
     SdfNameChildrenOrderProxy ordering = parentPrim->GetNameChildrenOrder();
-    if (!ordering.empty()) {
+    if (!ordering.empty())
+    {
       // If an entry for newName already exists in the reorder list,
       // make sure we remove it first before attempting to fixup the
       // oldName entry. This takes care of two issues:
@@ -258,7 +270,8 @@ bool SdfPrimSpec::InsertNameChild(const SdfPrimSpecHandle &child, int index)
 
 bool SdfPrimSpec::RemoveNameChild(const SdfPrimSpecHandle &child)
 {
-  if (child->GetLayer() != GetLayer() || child->GetPath().GetParentPath() != GetPath()) {
+  if (child->GetLayer() != GetLayer() || child->GetPath().GetParentPath() != GetPath())
+  {
     TF_CODING_ERROR(
       "Cannot remove child prim '%s' from parent '%s' "
       "because it is not a child of that prim",
@@ -316,7 +329,8 @@ SdfPrimSpec::PropertySpecView SdfPrimSpec::GetProperties() const
 
 void SdfPrimSpec::SetProperties(const SdfPropertySpecHandleVector &propertySpecs)
 {
-  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     return;
   }
 
@@ -325,7 +339,8 @@ void SdfPrimSpec::SetProperties(const SdfPropertySpecHandleVector &propertySpecs
 
 bool SdfPrimSpec::InsertProperty(const SdfPropertySpecHandle &property, int index)
 {
-  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     return false;
   }
 
@@ -334,11 +349,13 @@ bool SdfPrimSpec::InsertProperty(const SdfPropertySpecHandle &property, int inde
 
 void SdfPrimSpec::RemoveProperty(const SdfPropertySpecHandle &property)
 {
-  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (!_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     return;
   }
 
-  if (property->GetLayer() != GetLayer() || property->GetPath().GetParentPath() != GetPath()) {
+  if (property->GetLayer() != GetLayer() || property->GetPath().GetParentPath() != GetPath())
+  {
     TF_CODING_ERROR(
       "Cannot remove property '%s' from prim '%s' because it "
       "does not belong to that prim",
@@ -372,35 +389,40 @@ bool SdfPrimSpec::HasPropertyOrder() const
 
 void SdfPrimSpec::SetPropertyOrder(const std::vector<TfToken> &names)
 {
-  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     GetPropertyOrder() = names;
   }
 }
 
 void SdfPrimSpec::InsertInPropertyOrder(const TfToken &name, int index)
 {
-  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     GetPropertyOrder().Insert(index, name);
   }
 }
 
 void SdfPrimSpec::RemoveFromPropertyOrder(const TfToken &name)
 {
-  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     GetPropertyOrder().Remove(name);
   }
 }
 
 void SdfPrimSpec::RemoveFromPropertyOrderByIndex(int index)
 {
-  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     GetPropertyOrder().Erase(index);
   }
 }
 
 void SdfPrimSpec::ApplyPropertyOrder(std::vector<TfToken> *vec) const
 {
-  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->PropertyChildren))
+  {
     GetPropertyOrder().ApplyEditsToList(vec);
   }
 }
@@ -411,7 +433,8 @@ void SdfPrimSpec::ApplyPropertyOrder(std::vector<TfToken> *vec) const
 
 SdfSpecHandle SdfPrimSpec::GetObjectAtPath(const SdfPath &path) const
 {
-  if (path.IsEmpty()) {
+  if (path.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot get object at the empty path");
     return TfNullPtr;
   }
@@ -421,7 +444,8 @@ SdfSpecHandle SdfPrimSpec::GetObjectAtPath(const SdfPath &path) const
 
 SdfPrimSpecHandle SdfPrimSpec::GetPrimAtPath(const SdfPath &path) const
 {
-  if (path.IsEmpty()) {
+  if (path.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot get prim at the empty path");
     return TfNullPtr;
   }
@@ -431,7 +455,8 @@ SdfPrimSpecHandle SdfPrimSpec::GetPrimAtPath(const SdfPath &path) const
 
 SdfPropertySpecHandle SdfPrimSpec::GetPropertyAtPath(const SdfPath &path) const
 {
-  if (path.IsEmpty()) {
+  if (path.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot get property at the empty path");
     return TfNullPtr;
   }
@@ -441,7 +466,8 @@ SdfPropertySpecHandle SdfPrimSpec::GetPropertyAtPath(const SdfPath &path) const
 
 SdfAttributeSpecHandle SdfPrimSpec::GetAttributeAtPath(const SdfPath &path) const
 {
-  if (path.IsEmpty()) {
+  if (path.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot get attribute at the empty path");
     return TfNullPtr;
   }
@@ -451,7 +477,8 @@ SdfAttributeSpecHandle SdfPrimSpec::GetAttributeAtPath(const SdfPath &path) cons
 
 SdfRelationshipSpecHandle SdfPrimSpec::GetRelationshipAtPath(const SdfPath &path) const
 {
-  if (path.IsEmpty()) {
+  if (path.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot get relationship at the empty path");
     return TfNullPtr;
   }
@@ -500,11 +527,14 @@ SDF_DEFINE_DICTIONARY_GET_SET(GetAssetInfo, SetAssetInfo, SdfFieldKeys->AssetInf
 
 void SdfPrimSpec::SetTypeName(const std::string &value)
 {
-  if (value.empty() && GetSpecifier() != SdfSpecifierOver) {
+  if (value.empty() && GetSpecifier() != SdfSpecifierOver)
+  {
     TF_CODING_ERROR("Cannot set empty type name on prim '%s'", GetPath().GetText());
   }
-  else {
-    if (_ValidateEdit(SdfFieldKeys->TypeName)) {
+  else
+  {
+    if (_ValidateEdit(SdfFieldKeys->TypeName))
+    {
       SetField(SdfFieldKeys->TypeName, TfToken(value));
     }
   }
@@ -526,7 +556,8 @@ bool SdfPrimSpec::HasInheritPaths() const
 
 void SdfPrimSpec::ClearInheritPathList()
 {
-  if (_ValidateEdit(SdfFieldKeys->InheritPaths)) {
+  if (_ValidateEdit(SdfFieldKeys->InheritPaths))
+  {
     GetInheritPathList().ClearEdits();
   }
 }
@@ -547,7 +578,8 @@ bool SdfPrimSpec::HasSpecializes() const
 
 void SdfPrimSpec::ClearSpecializesList()
 {
-  if (_ValidateEdit(SdfFieldKeys->Specializes)) {
+  if (_ValidateEdit(SdfFieldKeys->Specializes))
+  {
     GetSpecializesList().ClearEdits();
   }
 }
@@ -568,7 +600,8 @@ bool SdfPrimSpec::HasPayloads() const
 
 void SdfPrimSpec::ClearPayloadList()
 {
-  if (_ValidateEdit(SdfFieldKeys->Payload)) {
+  if (_ValidateEdit(SdfFieldKeys->Payload))
+  {
     GetPayloadList().ClearEdits();
   }
 }
@@ -589,7 +622,8 @@ bool SdfPrimSpec::HasReferences() const
 
 void SdfPrimSpec::ClearReferenceList()
 {
-  if (_ValidateEdit(SdfFieldKeys->References)) {
+  if (_ValidateEdit(SdfFieldKeys->References))
+  {
     GetReferenceList().ClearEdits();
   }
 }
@@ -615,7 +649,8 @@ std::vector<std::string> SdfPrimSpec::GetVariantNames(const std::string &name) c
   std::vector<std::string> variantNames;
 
   // Neither the pseudo root nor variants can have variant sets.
-  if (_IsPseudoRoot() || !GetPath().IsPrimPath()) {
+  if (_IsPseudoRoot() || !GetPath().IsPrimPath())
+  {
     return std::vector<std::string>();
   }
   SdfPath variantSetPath = GetPath().AppendVariantSelection(name, "");
@@ -623,7 +658,7 @@ std::vector<std::string> SdfPrimSpec::GetVariantNames(const std::string &name) c
     variantSetPath, SdfChildrenKeys->VariantChildren);
 
   variantNames.reserve(variantNameTokens.size());
-  TF_FOR_ALL(i, variantNameTokens)
+  TF_FOR_ALL (i, variantNameTokens)
   {
     variantNames.push_back(i->GetString());
   }
@@ -640,30 +675,37 @@ SdfVariantSetsProxy SdfPrimSpec::GetVariantSets() const
 
 void SdfPrimSpec::RemoveVariantSet(const std::string &name)
 {
-  if (_ValidateEdit(SdfChildrenKeys->VariantSetChildren)) {
+  if (_ValidateEdit(SdfChildrenKeys->VariantSetChildren))
+  {
     GetVariantSets().erase(name);
   }
 }
 
 SdfVariantSelectionProxy SdfPrimSpec::GetVariantSelections() const
 {
-  if (!_IsPseudoRoot()) {
+  if (!_IsPseudoRoot())
+  {
     return SdfVariantSelectionProxy(SdfCreateHandle(this), SdfFieldKeys->VariantSelection);
   }
-  else {
+  else
+  {
     return SdfVariantSelectionProxy();
   }
 }
 
 void SdfPrimSpec::SetVariantSelection(const std::string &variantSetName, const std::string &variantName)
 {
-  if (_ValidateEdit(SdfFieldKeys->VariantSelection)) {
+  if (_ValidateEdit(SdfFieldKeys->VariantSelection))
+  {
     SdfVariantSelectionProxy proxy = GetVariantSelections();
-    if (proxy) {
-      if (variantName.empty()) {
+    if (proxy)
+    {
+      if (variantName.empty())
+      {
         proxy.erase(variantSetName);
       }
-      else {
+      else
+      {
         SdfChangeBlock block;
         proxy[variantSetName] = variantName;
       }
@@ -673,9 +715,11 @@ void SdfPrimSpec::SetVariantSelection(const std::string &variantSetName, const s
 
 void SdfPrimSpec::BlockVariantSelection(const std::string &variantSetName)
 {
-  if (_ValidateEdit(SdfFieldKeys->VariantSelection)) {
+  if (_ValidateEdit(SdfFieldKeys->VariantSelection))
+  {
     SdfVariantSelectionProxy proxy = GetVariantSelections();
-    if (proxy) {
+    if (proxy)
+    {
       SdfChangeBlock block;
       proxy[variantSetName] = std::string();
     }
@@ -688,17 +732,20 @@ void SdfPrimSpec::BlockVariantSelection(const std::string &variantSetName)
 
 SdfRelocatesMapProxy SdfPrimSpec::GetRelocates() const
 {
-  if (!_IsPseudoRoot()) {
+  if (!_IsPseudoRoot())
+  {
     return SdfRelocatesMapProxy(SdfCreateHandle(this), SdfFieldKeys->Relocates);
   }
-  else {
+  else
+  {
     return SdfRelocatesMapProxy();
   }
 }
 
 void SdfPrimSpec::SetRelocates(const SdfRelocatesMap &newMap)
 {
-  if (_ValidateEdit(SdfFieldKeys->Relocates)) {
+  if (_ValidateEdit(SdfFieldKeys->Relocates))
+  {
     GetRelocates() = newMap;
   }
 }
@@ -710,7 +757,8 @@ bool SdfPrimSpec::HasRelocates() const
 
 void SdfPrimSpec::ClearRelocates()
 {
-  if (_ValidateEdit(SdfFieldKeys->Relocates)) {
+  if (_ValidateEdit(SdfFieldKeys->Relocates))
+  {
     ClearField(SdfFieldKeys->Relocates);
   }
 }
@@ -724,7 +772,8 @@ static bool _FindOrCreateVariantSpec(SdfLayer *layer, const SdfPath &vsPath)
   SdfVariantSetSpecHandle varSetSpec;
 
   SdfPrimSpecHandle primSpec = layer->GetPrimAtPath(vsPath.GetParentPath());
-  if (!TF_VERIFY(primSpec)) {
+  if (!TF_VERIFY(primSpec))
+  {
     return false;
   }
 
@@ -732,16 +781,18 @@ static bool _FindOrCreateVariantSpec(SdfLayer *layer, const SdfPath &vsPath)
 
   // Try to find existing variant set.
   const SdfVariantSetsProxy &variantSets = primSpec->GetVariantSets();
-  TF_FOR_ALL(varSetIt, variantSets)
+  TF_FOR_ALL (varSetIt, variantSets)
   {
-    if (varSetIt->first == varSel.first) {
+    if (varSetIt->first == varSel.first)
+    {
       varSetSpec = varSetIt->second;
       break;
     }
   }
 
   // Create a new variant set spec and add it to the variant set list.
-  if (!varSetSpec) {
+  if (!varSetSpec)
+  {
     if ((varSetSpec = SdfVariantSetSpec::New(primSpec, varSel.first)))
       primSpec->GetVariantSetNameList().Add(varSel.first);
   }
@@ -749,14 +800,16 @@ static bool _FindOrCreateVariantSpec(SdfLayer *layer, const SdfPath &vsPath)
   if (!TF_VERIFY(varSetSpec,
                  "Failed to create variant set for '%s' in @%s@",
                  vsPath.GetText(),
-                 layer->GetIdentifier().c_str())) {
+                 layer->GetIdentifier().c_str()))
+  {
     return false;
   }
 
   // Now try to find an existing variant with the requested name.
-  TF_FOR_ALL(it, varSetSpec->GetVariants())
+  TF_FOR_ALL (it, varSetSpec->GetVariants())
   {
-    if ((*it)->GetName() == varSel.second) {
+    if ((*it)->GetName() == varSel.second)
+    {
       return true;
     }
   }
@@ -767,7 +820,8 @@ static bool _FindOrCreateVariantSpec(SdfLayer *layer, const SdfPath &vsPath)
 static bool _IsValidPath(const SdfPath &path)
 {
   // Can't use SdfCreatePrimInLayer with non-prim, non-variant paths.
-  if (!path.IsAbsoluteRootOrPrimPath() && !path.IsPrimVariantSelectionPath()) {
+  if (!path.IsAbsoluteRootOrPrimPath() && !path.IsPrimVariantSelectionPath())
+  {
     return false;
   }
 
@@ -779,12 +833,15 @@ static bool _IsValidPath(const SdfPath &path)
   // prim paths.
   //
   // XXX: Perhaps these conditions should be encoded in SdfPath itself?
-  if (path.ContainsPrimVariantSelection()) {
+  if (path.ContainsPrimVariantSelection())
+  {
     for (SdfPath p = path.MakeAbsolutePath(SdfPath::AbsoluteRootPath()); p != SdfPath::AbsoluteRootPath();
-         p = p.GetParentPath()) {
+         p = p.GetParentPath())
+    {
 
       const pair<string, string> varSel = p.GetVariantSelection();
-      if (!varSel.first.empty() && varSel.second.empty()) {
+      if (!varSel.first.empty() && varSel.second.empty())
+      {
         return false;
       }
     }
@@ -793,23 +850,28 @@ static bool _IsValidPath(const SdfPath &path)
   return true;
 }
 
-namespace {
+namespace
+{
 
 // This structure exists so that we can support relative paths to
 // SdfCreatePrimInLayer/SdfJustCreatePrimInLayer without doing any path copies
 // or refcount operations in the common case where we are given an absolute
 // path.
-struct _AbsPathHelper {
+struct _AbsPathHelper
+{
   // Construct with \p inPath.  If \p inPath is an absolute path, then
   // GetAbsPath() returns \p inPath.  Otherwise \p inPath is made absolute by
   // MakeAbsolutePath(SdfPath::AbsoluteRootPath()), stored in a member
   // variable and returned by GetAbsPath().
-  explicit _AbsPathHelper(SdfPath const &inPath) : _inPath(inPath)
+  explicit _AbsPathHelper(SdfPath const &inPath)
+    : _inPath(inPath)
   {
-    if (ARCH_LIKELY(_inPath.IsAbsolutePath())) {
+    if (ARCH_LIKELY(_inPath.IsAbsolutePath()))
+    {
       _absPath = &_inPath;
     }
-    else {
+    else
+    {
       _tmpPath = _inPath.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
       _absPath = &_tmpPath;
     }
@@ -835,7 +897,8 @@ struct _AbsPathHelper {
 bool Sdf_UncheckedCreatePrimInLayer(SdfLayer *layerPtr, const SdfPath &primPath)
 {
   // If a prim already exists then just return it.
-  if (layerPtr->HasSpec(primPath)) {
+  if (layerPtr->HasSpec(primPath))
+  {
     return true;
   }
 
@@ -844,25 +907,31 @@ bool Sdf_UncheckedCreatePrimInLayer(SdfLayer *layerPtr, const SdfPath &primPath)
 
   bool maybeVariantSelPaths = primPath.ContainsPrimVariantSelection();
   SdfPath path = primPath;
-  do {
+  do
+  {
     ancestors.emplace_back(std::move(path));
     path = ancestors.back().GetParentPath();
   } while (!layerPtr->HasSpec(path));
 
   // Create each prim from root-most to the prim at primPath.
-  while (!ancestors.empty()) {
+  while (!ancestors.empty())
+  {
     SdfPath ancPath = std::move(ancestors.back());
     ancestors.pop_back();
-    if (maybeVariantSelPaths && ancPath.IsPrimVariantSelectionPath()) {
+    if (maybeVariantSelPaths && ancPath.IsPrimVariantSelectionPath())
+    {
       // Variant selection case.
-      if (!_FindOrCreateVariantSpec(layerPtr, ancPath)) {
+      if (!_FindOrCreateVariantSpec(layerPtr, ancPath))
+      {
         return false;
       }
     }
-    else {
+    else
+    {
       // Ordinary prim child case.
       if (ARCH_UNLIKELY(!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(
-            layerPtr, ancPath, SdfSpecTypePrim, /*inert=*/true))) {
+            layerPtr, ancPath, SdfSpecTypePrim, /*inert=*/true)))
+      {
         TF_RUNTIME_ERROR(
           "Failed to create prim at path '%s' in "
           "layer @%s@",
@@ -879,7 +948,8 @@ static inline bool Sdf_CanCreatePrimInLayer(SdfLayer *layer, _AbsPathHelper cons
 {
   SdfPath const &path = absPath.GetAbsPath();
 
-  if (ARCH_UNLIKELY(!_IsValidPath(path))) {
+  if (ARCH_UNLIKELY(!_IsValidPath(path)))
+  {
     TF_CODING_ERROR(
       "Cannot create prim at path '%s' because it is not a "
       "valid prim or prim variant selection path",
@@ -887,7 +957,8 @@ static inline bool Sdf_CanCreatePrimInLayer(SdfLayer *layer, _AbsPathHelper cons
     return false;
   }
 
-  if (ARCH_UNLIKELY(!layer)) {
+  if (ARCH_UNLIKELY(!layer))
+  {
     TF_CODING_ERROR(
       "Cannot create prim at path '%s' in null or expired "
       "layer",
@@ -902,10 +973,12 @@ SdfPrimSpecHandle SdfCreatePrimInLayer(const SdfLayerHandle &layer, const SdfPat
 {
   const _AbsPathHelper abs(primPath);
   SdfLayer *layerPtr = get_pointer(layer);
-  if (Sdf_CanCreatePrimInLayer(layerPtr, abs)) {
+  if (Sdf_CanCreatePrimInLayer(layerPtr, abs))
+  {
     SdfChangeBlock changeBlock;
     SdfPath const &absPath = abs.GetAbsPath();
-    if (Sdf_UncheckedCreatePrimInLayer(layerPtr, absPath)) {
+    if (Sdf_UncheckedCreatePrimInLayer(layerPtr, absPath))
+    {
       return layer->GetPrimAtPath(absPath);
     }
   }
@@ -916,7 +989,8 @@ bool SdfJustCreatePrimInLayer(const SdfLayerHandle &layer, const SdfPath &primPa
 {
   const _AbsPathHelper abs(primPath);
   SdfLayer *layerPtr = get_pointer(layer);
-  if (Sdf_CanCreatePrimInLayer(layerPtr, abs)) {
+  if (Sdf_CanCreatePrimInLayer(layerPtr, abs))
+  {
     SdfChangeBlock changeBlock;
     return Sdf_UncheckedCreatePrimInLayer(layerPtr, abs.GetAbsPath());
   }

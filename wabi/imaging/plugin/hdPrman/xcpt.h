@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// Xcpt messages from prman appropriately and to intercept severe errors
 /// rather than accept prman's default exit behavior.
 
-class HdPrman_Xcpt : public RixXcpt::XcptHandler {
+class HdPrman_Xcpt : public RixXcpt::XcptHandler
+{
  public:
   HDPRMAN_API virtual void HandleXcpt(int code, int severity, const char *msg);
   HDPRMAN_API virtual void HandleExitRequest(int code);

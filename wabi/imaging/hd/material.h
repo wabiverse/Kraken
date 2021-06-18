@@ -34,10 +34,12 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Hydra Schema for a material object.
 ///
-class HdMaterial : public HdSprim {
+class HdMaterial : public HdSprim
+{
  public:
   // change tracking for HdMaterial prim
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     // XXX: Got to skip varying and force sync bits for now
     DirtyParams = 1 << 2,
@@ -78,7 +80,8 @@ class HdMaterial : public HdSprim {
 /// A guideline to remember this terminology is that inputs
 /// are always upstream of outputs in the dataflow.
 ///
-struct HdMaterialRelationship {
+struct HdMaterialRelationship
+{
   SdfPath inputId;
   TfToken inputName;
   SdfPath outputId;
@@ -95,7 +98,8 @@ size_t hash_value(const HdMaterialRelationship &rel);
 ///
 /// Describes a material node which is made of a path, an identifier and
 /// a list of parameters.
-struct HdMaterialNode {
+struct HdMaterialNode
+{
   SdfPath path;
   TfToken identifier;
   std::map<TfToken, VtValue> parameters;
@@ -111,7 +115,8 @@ size_t hash_value(const HdMaterialNode &node);
 ///
 /// Describes a material network composed of nodes, primvars, and relationships
 /// between the nodes and terminals of those nodes.
-struct HdMaterialNetwork {
+struct HdMaterialNetwork
+{
   std::vector<HdMaterialRelationship> relationships;
   std::vector<HdMaterialNode> nodes;
   TfTokenVector primvars;
@@ -120,7 +125,8 @@ struct HdMaterialNetwork {
 /// \struct HdMaterialNetworkMap
 ///
 /// Describes a map from network type to network.
-struct HdMaterialNetworkMap {
+struct HdMaterialNetworkMap
+{
   std::map<TfToken, HdMaterialNetwork> map;
   std::vector<SdfPath> terminals;
 };
@@ -138,7 +144,8 @@ struct HdMaterialNetworkMap {
 ///
 /// Describes a single connection to an upsream node and output port
 /// Replacement for HdRelationship.
-struct HdMaterialConnection2 {
+struct HdMaterialConnection2
+{
   SdfPath upstreamNode;
   TfToken upstreamOutputName;
 
@@ -154,7 +161,8 @@ struct HdMaterialConnection2 {
 /// A node contains a (shader) type identifier, parameter values, and
 /// connections to upstream nodes. A single input (mapped by TfToken) may have
 /// multiple upstream connections to describe connected array elements.
-struct HdMaterialNode2 {
+struct HdMaterialNode2
+{
   TfToken nodeTypeId;
   std::map<TfToken, VtValue> parameters;
   std::map<TfToken, std::vector<HdMaterialConnection2>> inputConnections;
@@ -171,7 +179,8 @@ struct HdMaterialNode2 {
 /// Container of nodes and top-level terminal connections. This is the mutable
 /// representation of a shading network sent to filtering functions by a
 /// MatfiltFilterChain.
-struct HdMaterialNetwork2 {
+struct HdMaterialNetwork2
+{
   std::map<SdfPath, HdMaterialNode2> nodes;
   std::map<TfToken, HdMaterialConnection2> terminals;
   TfTokenVector primvars;

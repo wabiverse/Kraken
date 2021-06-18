@@ -44,7 +44,8 @@ TF_DECLARE_REF_PTRS(GlfSimpleLightingContext);
 // Not strictly necessary here.
 // But without it, would require users of the class to include it anyway
 
-class HdxDrawTargetTask : public HdTask {
+class HdxDrawTargetTask : public HdTask
+{
  public:
   HDX_API
   HdxDrawTargetTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -119,7 +120,8 @@ class HdxDrawTargetTask : public HdTask {
   HdxDrawTargetTask &operator=(const HdxDrawTargetTask &) = delete;
 };
 
-struct HdxDrawTargetTaskParams {
+struct HdxDrawTargetTaskParams
+{
   HdxDrawTargetTaskParams()
     : overrideColor(0.0),
       wireframeColor(0.0),

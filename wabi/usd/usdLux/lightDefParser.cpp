@@ -87,28 +87,34 @@ NdrNodeUniquePtr UsdLux_LightDefParserPlugin::Parse(const NdrNodeDiscoveryResult
   SdfLayerRefPtr layer = SdfLayer::CreateAnonymous(".usd");
   SdfPrimSpec::New(layer, primPath.GetName(), SdfSpecifierDef, discoveryResult.identifier);
   UsdStageRefPtr stage = UsdStage::Open(layer, nullptr);
-  if (!stage) {
+  if (!stage)
+  {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   UsdPrim prim = stage->GetPrimAtPath(primPath);
-  if (!prim) {
+  if (!prim)
+  {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   UsdShadeConnectableAPI connectable(prim);
-  if (!connectable) {
+  if (!connectable)
+  {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   TfToken context;
-  if (prim.IsA<UsdLuxLight>()) {
+  if (prim.IsA<UsdLuxLight>())
+  {
     context = SdrNodeContext->Light;
   }
-  else if (prim.IsA<UsdLuxLightFilter>()) {
+  else if (prim.IsA<UsdLuxLightFilter>())
+  {
     context = SdrNodeContext->LightFilter;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR(
       "Cannot parse a USD shader node for schema type '%s'; "
       "schema type '%s' is not a light or light filter.",

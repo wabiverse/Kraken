@@ -51,7 +51,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 std::vector<UsdSkelBinding> _ComputeSkelBindings(const UsdSkelCache &self,
                                                  const UsdSkelRoot &skelRoot,

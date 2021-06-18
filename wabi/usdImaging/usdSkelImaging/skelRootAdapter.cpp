@@ -72,7 +72,8 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
                                                 UsdImagingIndexProxy *index,
                                                 const UsdImagingInstancerContext *instancerContext)
 {
-  if (!TF_VERIFY(prim.IsA<UsdSkelRoot>())) {
+  if (!TF_VERIFY(prim.IsA<UsdSkelRoot>()))
+  {
     return {};
   }
 
@@ -84,16 +85,19 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
   skelCache.Populate(skelRoot, predicate);
 
   std::vector<UsdSkelBinding> bindings;
-  if (!skelCache.ComputeSkelBindings(skelRoot, &bindings, predicate)) {
+  if (!skelCache.ComputeSkelBindings(skelRoot, &bindings, predicate))
+  {
     return {};
   }
-  if (bindings.empty()) {
+  if (bindings.empty())
+  {
     return {};
   }
 
   // Use the skeleton adapter to inject hydra computation prims for each
   // target of a skeleton.
-  for (const auto &binding : bindings) {
+  for (const auto &binding : bindings)
+  {
     const UsdSkelSkeleton &skel = binding.GetSkeleton();
 
     UsdImagingPrimAdapterSharedPtr adapter = _GetPrimAdapter(skel.GetPrim(),
@@ -108,9 +112,11 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
     VtArray<UsdSkelSkinningQuery> skinningQueries;
     skinningQueries.reserve(binding.GetSkinningTargets().size());
 
-    for (const auto &skinningQuery : binding.GetSkinningTargets()) {
+    for (const auto &skinningQuery : binding.GetSkinningTargets())
+    {
 
-      if (!skinningQuery.HasBlendShapes() && !skinningQuery.HasJointInfluences()) {
+      if (!skinningQuery.HasBlendShapes() && !skinningQuery.HasJointInfluences())
+      {
         continue;
       }
 
@@ -120,14 +126,16 @@ SdfPath UsdSkelImagingSkelRootAdapter::Populate(const UsdPrim &prim,
       // hijacking all processing to go via it.
       UsdImagingPrimAdapterSharedPtr skinnedPrimAdapter = _GetPrimAdapter(skinnedPrim,
                                                                           /*ignoreInstancing*/ true);
-      if (!skinnedPrimAdapter) {
+      if (!skinnedPrimAdapter)
+      {
         // This prim is technically considered skinnable,
         // but an adapter may not be registered for the prim type.
         continue;
       }
 
       UsdImagingInstancerContext hijackContext;
-      if (instancerContext) {
+      if (instancerContext)
+      {
         hijackContext = *instancerContext;
       }
       hijackContext.instancerAdapter = skelAdapter;

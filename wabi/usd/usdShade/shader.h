@@ -82,7 +82,8 @@ class SdfAssetPath;
 /// input parameters are encapsulated in the property schema UsdShadeInput.
 ///
 ///
-class UsdShadeShader : public UsdTyped {
+class UsdShadeShader : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -98,13 +99,15 @@ class UsdShadeShader : public UsdTyped {
   /// Equivalent to UsdShadeShader::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeShader(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdShadeShader(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdShadeShader on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeShader(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeShader(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdShadeShader(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

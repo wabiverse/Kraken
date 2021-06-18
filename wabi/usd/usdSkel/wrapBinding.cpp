@@ -47,13 +47,15 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 UsdSkelBinding *_New(const UsdSkelSkeleton &skel, const boost::python::list &skinningQueries)
 {
   const size_t numQueries = len(skinningQueries);
   VtArray<UsdSkelSkinningQuery> skinningQueriesArray(numQueries);
-  for (size_t i = 0; i < numQueries; ++i) {
+  for (size_t i = 0; i < numQueries; ++i)
+  {
     skinningQueriesArray[i] = extract<const UsdSkelSkinningQuery &>(skinningQueries[i]);
   }
   return new UsdSkelBinding(skel, skinningQueriesArray);

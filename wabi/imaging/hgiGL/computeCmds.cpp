@@ -41,7 +41,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLComputeCmds::HgiGLComputeCmds(HgiGLDevice *device) : HgiComputeCmds(), _pushStack(0)
+HgiGLComputeCmds::HgiGLComputeCmds(HgiGLDevice *device)
+  : HgiComputeCmds(),
+    _pushStack(0)
 {}
 
 HgiGLComputeCmds::~HgiGLComputeCmds() = default;
@@ -71,7 +73,8 @@ void HgiGLComputeCmds::Dispatch(int dimX, int dimY)
 
 void HgiGLComputeCmds::PushDebugGroup(const char *label)
 {
-  if (HgiGLDebugEnabled()) {
+  if (HgiGLDebugEnabled())
+  {
     _pushStack++;
     _ops.push_back(HgiGLOps::PushDebugGroup(label));
   }
@@ -79,7 +82,8 @@ void HgiGLComputeCmds::PushDebugGroup(const char *label)
 
 void HgiGLComputeCmds::PopDebugGroup()
 {
-  if (HgiGLDebugEnabled()) {
+  if (HgiGLDebugEnabled())
+  {
     _pushStack--;
     _ops.push_back(HgiGLOps::PopDebugGroup());
   }
@@ -92,7 +96,8 @@ void HgiGLComputeCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 
 bool HgiGLComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
-  if (_ops.empty()) {
+  if (_ops.empty())
+  {
     return false;
   }
 

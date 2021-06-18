@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPhPtexMipmapTextureLoader final {
+class HdPhPtexMipmapTextureLoader final
+{
  public:
   HDPH_API
   HdPhPtexMipmapTextureLoader(PtexTexture *ptex,
@@ -106,7 +107,8 @@ class HdPhPtexMipmapTextureLoader final {
    */
 
  private:
-  struct Block {
+  struct Block
+  {
     int index;  // ptex index
     int nMipmaps;
     uint16_t u, v;           // top-left texel offset

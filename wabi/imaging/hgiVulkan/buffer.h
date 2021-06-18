@@ -46,7 +46,8 @@ class HgiVulkanDevice;
 ///
 /// Vulkan implementation of HgiBuffer
 ///
-class HgiVulkanBuffer final : public HgiBuffer {
+class HgiVulkanBuffer final : public HgiBuffer
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanBuffer() override;

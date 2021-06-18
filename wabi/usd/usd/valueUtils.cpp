@@ -46,9 +46,11 @@ void Usd_MergeTimeSamples(std::vector<double> *const timeSamples,
 }
 
 // Apply the offset to the value if it's holding the templated type.
-template<class T> static bool _TryApplyLayerOffsetToValue(VtValue *value, const SdfLayerOffset &offset)
+template<class T>
+static bool _TryApplyLayerOffsetToValue(VtValue *value, const SdfLayerOffset &offset)
 {
-  if (value->IsHolding<T>()) {
+  if (value->IsHolding<T>())
+  {
     T v;
     value->UncheckedSwap(v);
     Usd_ApplyLayerOffsetToValue(&v, offset);

@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// Hydra implementation of the HdExtComputationContext public interface.
 /// The class provides additional internal API for setting up the context.
 ///
-class Hd_ExtComputationContextInternal final : public HdExtComputationContext {
+class Hd_ExtComputationContextInternal final : public HdExtComputationContext
+{
  public:
   Hd_ExtComputationContextInternal();
   virtual ~Hd_ExtComputationContextInternal();

@@ -61,7 +61,8 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapt
 ///
 /// Base class for all PrimAdapters.
 ///
-class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrimAdapter> {
+class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrimAdapter>
+{
  public:
   // ---------------------------------------------------------------------- //
   /// \name Initialization
@@ -541,14 +542,16 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
  protected:
   using Keys = UsdImagingPrimvarDescCache::Key;
 
-  template<typename T> T _Get(UsdPrim const &prim, TfToken const &attrToken, UsdTimeCode time) const
+  template<typename T>
+  T _Get(UsdPrim const &prim, TfToken const &attrToken, UsdTimeCode time) const
   {
     T value;
     prim.GetAttribute(attrToken).Get<T>(&value, time);
     return value;
   }
 
-  template<typename T> void _GetPtr(UsdPrim const &prim, TfToken const &key, UsdTimeCode time, T *out) const
+  template<typename T>
+  void _GetPtr(UsdPrim const &prim, TfToken const &key, UsdTimeCode time, T *out) const
   {
     prim.GetAttribute(key).Get<T>(out, time);
   }
@@ -737,12 +740,15 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   UsdImagingDelegate *_delegate;
 };
 
-class UsdImagingPrimAdapterFactoryBase : public TfType::FactoryBase {
+class UsdImagingPrimAdapterFactoryBase : public TfType::FactoryBase
+{
  public:
   virtual UsdImagingPrimAdapterSharedPtr New() const = 0;
 };
 
-template<class T> class UsdImagingPrimAdapterFactory : public UsdImagingPrimAdapterFactoryBase {
+template<class T>
+class UsdImagingPrimAdapterFactory : public UsdImagingPrimAdapterFactoryBase
+{
  public:
   virtual UsdImagingPrimAdapterSharedPtr New() const
   {

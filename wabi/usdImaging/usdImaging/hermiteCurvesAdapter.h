@@ -41,11 +41,13 @@ WABI_NAMESPACE_BEGIN
 /// the points as linearly interpolated BasisCurves, ignoring tangents,
 /// widths, and normals.
 ///
-class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter {
+class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingHermiteCurvesAdapter() : UsdImagingGprimAdapter()
+  UsdImagingHermiteCurvesAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   virtual ~UsdImagingHermiteCurvesAdapter();

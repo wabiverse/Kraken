@@ -45,7 +45,8 @@ void ArnoldUsdReadCreases(AtNode *node,
 /// since this is not supported in Arnold. To do so, it might initialize
 /// a remapping table on demand, so that the same data can be reused
 /// for multiple primvars.
-class ArnoldUsdCurvesData {
+class ArnoldUsdCurvesData
+{
  public:
   /// Constructor for ArnoldUsdCurvesData.
   ///
@@ -64,20 +65,24 @@ class ArnoldUsdCurvesData {
   /// @param value VtValue holding the radius values.
   static void SetRadiusFromValue(AtNode *node, const VtValue &value);
 
-  template<typename T> inline bool RemapCurvesVertexPrimvar(VtValue &value)
+  template<typename T>
+  inline bool RemapCurvesVertexPrimvar(VtValue &value)
   {
-    if (!value.IsHolding<VtArray<T>>()) {
+    if (!value.IsHolding<VtArray<T>>())
+    {
       return false;
     }
     InitVertexCounts();
     const auto numVertexCounts = _arnoldVertexCounts.size();
 
-    if (Ai_unlikely(_vertexCounts.size() != numVertexCounts)) {
+    if (Ai_unlikely(_vertexCounts.size() != numVertexCounts))
+    {
       return true;
     }
 
     const auto &original = value.UncheckedGet<VtArray<T>>();
-    if (_numPerVertex == static_cast<int>(original.size())) {
+    if (_numPerVertex == static_cast<int>(original.size()))
+    {
       // The input value size already matches what we're targeting. There's no
       // need to do any remapping
       return true;
@@ -88,7 +93,8 @@ class ArnoldUsdCurvesData {
     // We use the first and the last item for each curve and using the CanInterpolate type.
     // - Interpolate values if we can interpolate the type.
     // - Look for the closest one if we can't interpolate the type.
-    for (auto curve = decltype(numVertexCounts){0}; curve < numVertexCounts; curve += 1) {
+    for (auto curve = decltype(numVertexCounts){0}; curve < numVertexCounts; curve += 1)
+    {
       const auto originalVertexCount = _vertexCounts[curve];
       const auto arnoldVertexCount = _arnoldVertexCounts[curve];
       const auto arnoldVertexCountMinusOne = arnoldVertexCount - 1;
@@ -97,8 +103,10 @@ class ArnoldUsdCurvesData {
       remappedP[arnoldVertexCountMinusOne] = originalP[originalVertexCountMinusOne];
 
       // The original vertex count should always be more than the
-      if (arnoldVertexCount > 2) {
-        for (auto i = 1; i < arnoldVertexCountMinusOne; i += 1) {
+      if (arnoldVertexCount > 2)
+      {
+        for (auto i = 1; i < arnoldVertexCountMinusOne; i += 1)
+        {
           // Convert i to a range of 0..1.
           const auto arnoldVertex = static_cast<float>(i) / static_cast<float>(arnoldVertexCountMinusOne);
           const auto originalVertex = arnoldVertex * static_cast<float>(originalVertexCountMinusOne);
@@ -124,7 +132,8 @@ class ArnoldUsdCurvesData {
   /// @param value VtValue holding the USD vertex primvar, if remapping is successful, @param value
   /// will be changed.
   /// @return True if remapping was successful, false otherwise.
-  template<typename T0, typename T1, typename... T> inline bool RemapCurvesVertexPrimvar(VtValue &value)
+  template<typename T0, typename T1, typename... T>
+  inline bool RemapCurvesVertexPrimvar(VtValue &value)
   {
     return RemapCurvesVertexPrimvar<T0>(value) || RemapCurvesVertexPrimvar<T1, T...>(value);
   }
@@ -136,32 +145,44 @@ class ArnoldUsdCurvesData {
   int _vstep;                       ///< Number of vertices needed to increase segment count by one.
   int _numPerVertex;                ///< Number of per vertex values.
 
-  template<typename T0, typename... T> struct IsAny : std::false_type {
+  template<typename T0, typename... T>
+  struct IsAny : std::false_type
+  {
   };
 
-  template<typename T0, typename T1> struct IsAny<T0, T1> : std::is_same<T0, T1> {
+  template<typename T0, typename T1>
+  struct IsAny<T0, T1> : std::is_same<T0, T1>
+  {
   };
 
   template<typename T0, typename T1, typename... T>
   struct IsAny<T0, T1, T...>
-    : std::integral_constant<bool, std::is_same<T0, T1>::value || IsAny<T0, T...>::value> {
+    : std::integral_constant<bool, std::is_same<T0, T1>::value || IsAny<T0, T...>::value>
+  {
   };
 
-  template<typename T> using CanInterpolate = IsAny<T, float, double, GfHalf, GfVec2f, GfVec3f, GfVec4f>;
+  template<typename T>
+  using CanInterpolate = IsAny<T, float, double, GfHalf, GfVec2f, GfVec3f, GfVec4f>;
 
-  template<typename T, bool interpolate = CanInterpolate<T>::value> struct RemapVertexPrimvar {
+  template<typename T, bool interpolate = CanInterpolate<T>::value>
+  struct RemapVertexPrimvar
+  {
     static inline void fn(T &, const T *, float)
     {}
   };
 
-  template<typename T> struct RemapVertexPrimvar<T, false> {
+  template<typename T>
+  struct RemapVertexPrimvar<T, false>
+  {
     static inline void fn(T &remapped, const T *original, float originalVertex)
     {
       remapped = original[static_cast<int>(floorf(originalVertex))];
     }
   };
 
-  template<typename T> struct RemapVertexPrimvar<T, true> {
+  template<typename T>
+  struct RemapVertexPrimvar<T, true>
+  {
     static inline void fn(T &remapped, const T *original, float originalVertex)
     {
       float originalVertexFloor = 0;

@@ -117,13 +117,15 @@ using SdfShouldCopyValueFn = std::function<bool(SdfSpecType specType,
 /// To accommodate this, consumers may provide a callback that applies a
 /// scene description edit in \p valueToCopy via an SdfCopySpecsValueEdit
 /// object.
-class SdfCopySpecsValueEdit {
+class SdfCopySpecsValueEdit
+{
  public:
   /// Callback to apply a scene description edit to the specified layer and
   /// spec path.
   using EditFunction = std::function<void(const SdfLayerHandle &, const SdfPath &)>;
 
-  explicit SdfCopySpecsValueEdit(const EditFunction &edit) : _edit(edit)
+  explicit SdfCopySpecsValueEdit(const EditFunction &edit)
+    : _edit(edit)
   {}
   const EditFunction &GetEditFunction() const
   {

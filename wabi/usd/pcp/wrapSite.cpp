@@ -31,7 +31,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _PcpSiteStr(const PcpSite &x)
 {

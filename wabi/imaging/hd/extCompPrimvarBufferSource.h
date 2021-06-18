@@ -40,7 +40,8 @@ using HdExtCompCpuComputationSharedPtr = std::shared_ptr<HdExtCompCpuComputation
 
 /// Hd Buffer Source that binds a primvar to a Ext Computation output.
 /// This buffer source is compatible with being bound to a Bar.
-class HdExtCompPrimvarBufferSource final : public HdBufferSource {
+class HdExtCompPrimvarBufferSource final : public HdBufferSource
+{
  public:
   /// Constructs a new primvar buffer source called primvarName and
   /// binds it to the output called sourceOutputName from the
@@ -92,7 +93,8 @@ class HdExtCompPrimvarBufferSource final : public HdBufferSource {
 
  private:
   // TfHash support.
-  template<class HashState> friend void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &);
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &);
 
   TfToken _primvarName;
   HdExtCompCpuComputationSharedPtr _source;

@@ -61,7 +61,8 @@ bool ArchFreeVirtualMemory(void *start, size_t /*numBytes*/)
 
 #else  // not ARCH_OS_WINDOWS, assume POSIX (mmap, mprotect)
 
-template<class T> static inline T *RoundToPageAddr(T *addr)
+template<class T>
+static inline T *RoundToPageAddr(T *addr)
 {
   static uint64_t PAGEMASK = ~(static_cast<uint64_t>(ArchGetPageSize()) - 1);
   return reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(addr) & PAGEMASK);

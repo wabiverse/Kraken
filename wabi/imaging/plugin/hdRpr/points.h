@@ -20,7 +20,8 @@ limitations under the License.
 
 #include "wabi/base/gf/matrix4f.h"
 
-namespace rpr {
+namespace rpr
+{
 class Shape;
 }
 
@@ -28,7 +29,8 @@ WABI_NAMESPACE_BEGIN
 
 class RprUsdMaterial;
 
-class HdRprPoints : public HdPoints {
+class HdRprPoints : public HdPoints
+{
  public:
   HdRprPoints(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL);
 

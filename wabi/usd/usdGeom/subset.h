@@ -81,7 +81,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomSubset : public UsdTyped {
+class UsdGeomSubset : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -97,13 +98,15 @@ class UsdGeomSubset : public UsdTyped {
   /// Equivalent to UsdGeomSubset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomSubset(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdGeomSubset(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdGeomSubset on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomSubset(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomSubset(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdGeomSubset(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

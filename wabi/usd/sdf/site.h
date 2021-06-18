@@ -40,11 +40,14 @@ WABI_NAMESPACE_BEGIN
 /// opinions may possibly be found. It is simply a pair of layer and path
 /// within that layer.
 ///
-class SdfSite : public boost::totally_ordered<SdfSite> {
+class SdfSite : public boost::totally_ordered<SdfSite>
+{
  public:
   SdfSite()
   {}
-  SdfSite(const SdfLayerHandle &layer_, const SdfPath &path_) : layer(layer_), path(path_)
+  SdfSite(const SdfLayerHandle &layer_, const SdfPath &path_)
+    : layer(layer_),
+      path(path_)
   {}
 
   bool operator==(const SdfSite &other) const

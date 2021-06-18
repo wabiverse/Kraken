@@ -25,7 +25,8 @@
 
 #include <render/attribute.h>
 
-namespace ccl {
+namespace ccl
+{
 class PointCloud;
 }
 
@@ -34,7 +35,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Blackbird Attribute to be resolved
 ///
-class HdBbAttributeSource : public HdBufferSource {
+class HdBbAttributeSource : public HdBufferSource
+{
  public:
   // unfortunately AttributeSet has to be passed to support Geometry::attributes and
   // Mesh::subd_attributes
@@ -124,7 +126,8 @@ using HdBbAttributeSourceSharedPtr = std::shared_ptr<HdBbAttributeSource>;
 ///
 /// Cycles PointCloud
 ///
-class HdCyclesPointCloudAttributeSource : public HdBbAttributeSource {
+class HdCyclesPointCloudAttributeSource : public HdBbAttributeSource
+{
  public:
   HdCyclesPointCloudAttributeSource(TfToken name,
                                     const TfToken &role,

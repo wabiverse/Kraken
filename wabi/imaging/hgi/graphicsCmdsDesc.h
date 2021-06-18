@@ -64,7 +64,8 @@ WABI_NAMESPACE_BEGIN
 ///   Render target height (in pixels)</li>
 /// </ul>
 ///
-struct HgiGraphicsCmdsDesc {
+struct HgiGraphicsCmdsDesc
+{
   HgiGraphicsCmdsDesc()
     : colorAttachmentDescs(),
       depthAttachmentDesc(),

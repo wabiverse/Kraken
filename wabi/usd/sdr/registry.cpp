@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_INSTANTIATE_SINGLETON(SdrRegistry);
 
-namespace {
+namespace
+{
 SdrShaderNodeConstPtr NdrNodeToShaderNode(NdrNodeConstPtr node)
 {
   return dynamic_cast<SdrShaderNodeConstPtr>(node);
@@ -57,7 +58,8 @@ SdrShaderNodePtrVec NdrNodeVecToShaderNodeVec(NdrNodeConstPtrVec nodeVec)
 }
 }  // namespace
 
-SdrRegistry::SdrRegistry() : NdrRegistry()
+SdrRegistry::SdrRegistry()
+  : NdrRegistry()
 {
   // Track plugin discovery cost of base class
   TRACE_FUNCTION();

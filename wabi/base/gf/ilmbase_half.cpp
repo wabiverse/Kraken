@@ -55,7 +55,8 @@ using namespace std;
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_half {
+namespace wabi_half
+{
 
 //-------------------------------------------------------------
 // Lookup tables for half-to-float and float-to-half conversion
@@ -67,10 +68,10 @@ GF_API const half::uif half::_toFloat[1 << 16] =
 #include "wabi/base/gf/ilmbase_eLut.h"
 
     //-----------------------------------------------
-    // Overflow handler for float-to-half conversion;
-    // generates a hardware floating-point overflow,
-    // which may be trapped by the operating system.
-    //-----------------------------------------------
+  // Overflow handler for float-to-half conversion;
+  // generates a hardware floating-point overflow,
+  // which may be trapped by the operating system.
+  //-----------------------------------------------
 
   GF_API float half::overflow()
 {
@@ -107,8 +108,10 @@ GF_API short half::convert(int i)
   // Now reassemble s, e and m into a half:
   //
 
-  if (e <= 0) {
-    if (e < -10) {
+  if (e <= 0)
+  {
+    if (e < -10)
+    {
       //
       // E is less than -10.  The absolute value of f is
       // less than WABI_HALF_MIN (f may be a small normalized
@@ -155,8 +158,10 @@ GF_API short half::convert(int i)
 
     return s | m;
   }
-  else if (e == 0xff - (127 - 15)) {
-    if (m == 0) {
+  else if (e == 0xff - (127 - 15))
+  {
+    if (m == 0)
+    {
       //
       // F is an infinity; convert f to a half
       // infinity with the same sign as f.
@@ -164,7 +169,8 @@ GF_API short half::convert(int i)
 
       return s | 0x7c00;
     }
-    else {
+    else
+    {
       //
       // F is a NAN; we produce a half NAN that preserves
       // the sign bit and the 10 leftmost bits of the
@@ -178,7 +184,8 @@ GF_API short half::convert(int i)
       return s | 0x7c00 | m | (m == 0);
     }
   }
-  else {
+  else
+  {
     //
     // E is greater than zero.  F is a normalized float.
     // We try to convert f to a normalized half.
@@ -191,7 +198,8 @@ GF_API short half::convert(int i)
 
     m = m + 0x00000fff + ((m >> 13) & 1);
 
-    if (m & 0x00800000) {
+    if (m & 0x00800000)
+    {
       m = 0;   // overflow in significand,
       e += 1;  // adjust exponent
     }
@@ -200,7 +208,8 @@ GF_API short half::convert(int i)
     // Handle exponent overflow
     //
 
-    if (e > 30) {
+    if (e > 30)
+    {
       overflow();         // Cause a hardware floating point overflow;
       return s | 0x7c00;  // if this returns, the half becomes an
     }                     // infinity with the same sign as f.
@@ -240,7 +249,8 @@ GF_API void printBits(ostream &os, half h)
 {
   unsigned short b = h.bits();
 
-  for (int i = 15; i >= 0; i--) {
+  for (int i = 15; i >= 0; i--)
+  {
     os << (((b >> i) & 1) ? '1' : '0');
 
     if (i == 15 || i == 10)
@@ -253,7 +263,8 @@ GF_API void printBits(ostream &os, float f)
   half::uif x;
   x.f = f;
 
-  for (int i = 31; i >= 0; i--) {
+  for (int i = 31; i >= 0; i--)
+  {
     os << (((x.i >> i) & 1) ? '1' : '0');
 
     if (i == 31 || i == 23)
@@ -265,7 +276,8 @@ GF_API void printBits(char c[19], half h)
 {
   unsigned short b = h.bits();
 
-  for (int i = 15, j = 0; i >= 0; i--, j++) {
+  for (int i = 15, j = 0; i >= 0; i--, j++)
+  {
     c[j] = (((b >> i) & 1) ? '1' : '0');
 
     if (i == 15 || i == 10)
@@ -280,7 +292,8 @@ GF_API void printBits(char c[35], float f)
   half::uif x;
   x.f = f;
 
-  for (int i = 31, j = 0; i >= 0; i--, j++) {
+  for (int i = 31, j = 0; i >= 0; i--, j++)
+  {
     c[j] = (((x.i >> i) & 1) ? '1' : '0');
 
     if (i == 31 || i == 23)

@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 ///     HdWrapLegacyNoOpinionFallbackRepeat</li>
 /// </ul>
 ///
-enum HdWrap {
+enum HdWrap
+{
   HdWrapClamp,
   HdWrapRepeat,
   HdWrapBlack,
@@ -81,7 +82,8 @@ enum HdWrap {
 ///     weighted averages from the nearest mipmaps</li>
 /// </ul>
 ///
-enum HdMinFilter {
+enum HdMinFilter
+{
   HdMinFilterNearest,
   HdMinFilterLinear,
   HdMinFilterNearestMipmapNearest,
@@ -100,7 +102,8 @@ enum HdMinFilter {
 ///     pixel</li>
 /// </ul>
 ///
-enum HdMagFilter {
+enum HdMagFilter
+{
   HdMagFilterNearest,
   HdMagFilterLinear,
 };
@@ -109,7 +112,8 @@ enum HdMagFilter {
 ///
 /// Collection of standard parameters such as wrap modes to sample a texture.
 ///
-class HdSamplerParameters {
+class HdSamplerParameters
+{
  public:
   HdWrap wrapS;
   HdWrap wrapT;
@@ -148,11 +152,13 @@ inline float HdConvertFixedToFloat(int v, int b)
 /// XXX We expect this type to move again as we continue work on
 /// refactoring the GL dependencies.
 ///
-struct HdVec4f_2_10_10_10_REV {
+struct HdVec4f_2_10_10_10_REV
+{
   HdVec4f_2_10_10_10_REV()
   {}
 
-  template<typename Vec3Type> HdVec4f_2_10_10_10_REV(Vec3Type const &value)
+  template<typename Vec3Type>
+  HdVec4f_2_10_10_10_REV(Vec3Type const &value)
   {
     x = HdConvertFloatToFixed(value[0], 10);
     y = HdConvertFloatToFixed(value[1], 10);
@@ -169,7 +175,8 @@ struct HdVec4f_2_10_10_10_REV {
     w = other->w;
   }
 
-  template<typename Vec3Type> Vec3Type GetAsVec() const
+  template<typename Vec3Type>
+  Vec3Type GetAsVec() const
   {
     return Vec3Type(
       HdConvertFixedToFloat(x, 10), HdConvertFixedToFloat(y, 10), HdConvertFixedToFloat(z, 10));
@@ -251,7 +258,8 @@ struct HdVec4f_2_10_10_10_REV {
 /// For more background, see the OpenGL discussion on data types:
 /// - https://www.khronos.org/opengl/wiki/OpenGL_Type
 ///
-enum HdType {
+enum HdType
+{
   HdTypeInvalid = -1,
 
   /// Corresponds to GL_BOOL
@@ -319,7 +327,8 @@ enum HdType {
 /// HdTupleType represents zero, one, or more values of the same HdType.
 /// It can be used to represent fixed-size array types, as well as single
 /// values.  See HdType for more discussion about arrays.
-struct HdTupleType {
+struct HdTupleType
+{
   HdType type;
   size_t count;
 
@@ -338,7 +347,8 @@ struct HdTupleType {
 };
 
 // Support TfHash.
-template<class HashState> void TfHashAppend(HashState &h, HdTupleType const &tt)
+template<class HashState>
+void TfHashAppend(HashState &h, HdTupleType const &tt)
 {
   h.Append(tt.type, tt.count);
 }
@@ -385,7 +395,8 @@ size_t HdDataSizeOfTupleType(HdTupleType);
 ///
 /// For reference, see:
 ///   https://www.khronos.org/registry/vulkan/specs/1.1/html/vkspec.html#VkFormat
-enum HdFormat {
+enum HdFormat
+{
   HdFormatInvalid = -1,
 
   // UNorm8 - a 1-byte value representing a float between 0 and 1.

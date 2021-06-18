@@ -62,7 +62,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Usd_CrateFile {
+namespace Usd_CrateFile
+{
 
 using std::make_pair;
 using std::map;
@@ -79,7 +80,8 @@ using ArWritableAssetSharedPtr = std::shared_ptr<ArWritableAsset>;
 
 // Trait indicating trivially copyable types, a hack since gcc doesn't yet
 // implement is_trivially_copyable correctly.
-template<class T> struct _IsBitwiseReadWrite;
+template<class T>
+struct _IsBitwiseReadWrite;
 
 enum class TypeEnum : int32_t;
 
@@ -90,13 +92,15 @@ enum class TypeEnum : int32_t;
 // (zero vectors, identity matrices, etc).  For values that aren't stored
 // inline, the 6 data bytes are the offset from the start of the file to the
 // value's location.
-struct ValueRep {
+struct ValueRep
+{
 
   friend class CrateFile;
 
   ValueRep() = default;
 
-  explicit constexpr ValueRep(uint64_t data) : data(data)
+  explicit constexpr ValueRep(uint64_t data)
+    : data(data)
   {}
 
   constexpr ValueRep(TypeEnum t, bool isInlined, bool isArray, uint64_t payload)
@@ -187,13 +191,18 @@ struct ValueRep {
 
   uint64_t data;
 };
-template<> struct _IsBitwiseReadWrite<ValueRep> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<ValueRep> : std::true_type
+{
 };
 
-struct TimeSamples {
+struct TimeSamples
+{
   typedef Usd_Shared<vector<double>> SharedTimes;
 
-  TimeSamples() : valueRep(0), valuesFileOffset(0)
+  TimeSamples()
+    : valueRep(0),
+      valuesFileOffset(0)
   {}
 
   bool IsInMemory() const
@@ -250,7 +259,8 @@ struct TimeSamples {
 };
 
 // Value type enum.
-enum class TypeEnum {
+enum class TypeEnum
+{
   Invalid = 0,
 #define xx(ENUMNAME, ENUMVALUE, _unused1, _unused2) ENUMNAME = ENUMVALUE,
 
@@ -263,10 +273,13 @@ enum class TypeEnum {
 // Index base class.  Used to index various tables.  Deriving adds some
 // type-safety so we don't accidentally use one kind of index with the wrong
 // kind of table.
-struct Index {
-  Index() : value(~0)
+struct Index
+{
+  Index()
+    : value(~0)
   {}
-  explicit Index(uint32_t value) : value(value)
+  explicit Index(uint32_t value)
+    : value(value)
   {}
   bool operator==(const Index &other) const
   {
@@ -287,27 +300,36 @@ inline size_t hash_value(const Index &i)
 std::ostream &operator<<(std::ostream &os, const Index &i);
 
 // Various specific indexes.
-struct FieldIndex : Index {
+struct FieldIndex : Index
+{
   using Index::Index;
 };
-struct FieldSetIndex : Index {
+struct FieldSetIndex : Index
+{
   using Index::Index;
 };
-struct PathIndex : Index {
+struct PathIndex : Index
+{
   using Index::Index;
 };
-struct StringIndex : Index {
+struct StringIndex : Index
+{
   using Index::Index;
 };
-struct TokenIndex : Index {
+struct TokenIndex : Index
+{
   using Index::Index;
 };
 
 constexpr size_t _SectionNameMaxLength = 15;
 
 // Compile time constant section names, enforces max length.
-struct _SectionName {
-  template<size_t N> constexpr _SectionName(char const (&a)[N]) : _p(a), _size(N - 1)
+struct _SectionName
+{
+  template<size_t N>
+  constexpr _SectionName(char const (&a)[N])
+    : _p(a),
+      _size(N - 1)
   {
     static_assert(N <= _SectionNameMaxLength, "Section name cannot exceed _SectionNameMaxLength");
   }
@@ -337,14 +359,17 @@ struct _SectionName {
   const size_t _size;
 };
 
-struct _Hasher {
-  template<class T> inline size_t operator()(const T &val) const
+struct _Hasher
+{
+  template<class T>
+  inline size_t operator()(const T &val) const
   {
     return boost::hash<T>()(val);
   }
 };
 
-class CrateFile {
+class CrateFile
+{
  public:
   struct Version;
 
@@ -352,7 +377,8 @@ class CrateFile {
   // A move-only helper struct to represent a range of data in a FILE*, with
   // optional "ownership" of that FILE* (i.e. responsibility to fclose upon
   // destruction).
-  struct _FileRange {
+  struct _FileRange
+  {
     _FileRange() = default;
     _FileRange(FILE *file, int64_t startOffset, int64_t length, bool hasOwnership)
       : file(file),
@@ -371,7 +397,8 @@ class CrateFile {
     }
     _FileRange &operator=(_FileRange &&other)
     {
-      if (this != &other) {
+      if (this != &other)
+      {
         file = other.file;
         startOffset = other.startOffset;
         length = other.length;
@@ -405,11 +432,13 @@ class CrateFile {
   // particular, we need to support the case where a client gets a VtArray out
   // of a .usdc file, then destroys the layer object, and even mutates the
   // file on disk, and the fetched array has to behave correctly.
-  struct _FileMapping {
+  struct _FileMapping
+  {
 
     // This is a foreign data source for VtArray that refers into a
     // memory-mapped region, and shares in the lifetime of the mapping.
-    struct ZeroCopySource : public Vt_ArrayForeignDataSource {
+    struct ZeroCopySource : public Vt_ArrayForeignDataSource
+    {
       explicit ZeroCopySource(CrateFile::_FileMapping *m, void *addr, size_t numBytes);
 
       // XXX --------------------------------
@@ -470,7 +499,8 @@ class CrateFile {
     };
     friend struct ZeroCopySource;
 
-    _FileMapping() : _refCount(0){};
+    _FileMapping()
+      : _refCount(0){};
 
     explicit _FileMapping(ArchMutableFileMapping mapping, int64_t offset = 0, int64_t length = -1)
       : _refCount(0),
@@ -515,7 +545,8 @@ class CrateFile {
     }
     friend inline void intrusive_ptr_release(_FileMapping const *m)
     {
-      if (m->_refCount.fetch_sub(1, std::memory_order_release) == 1) {
+      if (m->_refCount.fetch_sub(1, std::memory_order_release) == 1)
+      {
         std::atomic_thread_fence(std::memory_order_acquire);
         delete m;
       }
@@ -533,7 +564,8 @@ class CrateFile {
 
   // _BootStrap structure.  Appears at start of file, houses version, file
   // identifier string and offset to _TableOfContents.
-  struct _BootStrap {
+  struct _BootStrap
+  {
     _BootStrap();
     explicit _BootStrap(Version const &);
     uint8_t ident[8];    // "PXR-USDC"
@@ -542,7 +574,8 @@ class CrateFile {
     int64_t _reserved[8];
   };
 
-  struct _Section {
+  struct _Section
+  {
     _Section()
     {
       memset(this, 0, sizeof(*this));
@@ -552,7 +585,8 @@ class CrateFile {
     int64_t start, size;
   };
 
-  struct _TableOfContents {
+  struct _TableOfContents
+  {
     _Section const *GetSection(_SectionName) const;
     int64_t GetMinimumSectionStart() const;
     vector<_Section> sections;
@@ -564,7 +598,8 @@ class CrateFile {
 
   typedef std::pair<TfToken, VtValue> FieldValuePair;
 
-  struct Field {
+  struct Field
+  {
     // This padding field accounts for a bug in an earlier implementation,
     // where both this class and its first member derived an empty base
     // class.  The standard requires that those not have the same address so
@@ -580,7 +615,9 @@ class CrateFile {
 
     Field()
     {}
-    Field(TokenIndex ti, ValueRep v) : tokenIndex(ti), valueRep(v)
+    Field(TokenIndex ti, ValueRep v)
+      : tokenIndex(ti),
+        valueRep(v)
     {}
     bool operator==(const Field &other) const
     {
@@ -599,7 +636,8 @@ class CrateFile {
 
   struct Spec_0_0_1;
 
-  struct Spec {
+  struct Spec
+  {
     Spec()
     {}
     Spec(PathIndex pi, SdfSpecType type, FieldSetIndex fsi)
@@ -630,7 +668,8 @@ class CrateFile {
     SdfSpecType specType;
   };
 
-  struct Spec_0_0_1 {
+  struct Spec_0_0_1
+  {
     // This padding field accounts for a bug in this earlier implementation,
     // where both this class and its first member derived an empty base
     // class.  The standard requires that those not have the same address so
@@ -685,7 +724,8 @@ class CrateFile {
   static std::unique_ptr<CrateFile> Open(string const &assetPath);
 
   // Helper for saving to a file.
-  struct Packer {
+  struct Packer
+  {
     // Move ctor/assign.
     Packer(Packer &&);
     Packer &operator=(Packer &&);
@@ -713,7 +753,8 @@ class CrateFile {
     Packer &operator=(Packer const &) = delete;
 
     friend class CrateFile;
-    explicit Packer(CrateFile *crate) : _crate(crate)
+    explicit Packer(CrateFile *crate)
+      : _crate(crate)
     {}
     CrateFile *_crate;
   };
@@ -732,7 +773,8 @@ class CrateFile {
   inline Field const &GetField(FieldIndex i) const
   {
 #ifdef WITH_SAFETY_OVER_SPEED
-    if (ARCH_LIKELY(i.value < _fields.size())) {
+    if (ARCH_LIKELY(i.value < _fields.size()))
+    {
       return _fields[i.value];
     }
     return _GetEmptyField();
@@ -760,7 +802,8 @@ class CrateFile {
   inline SdfPath const &GetPath(PathIndex i) const
   {
 #ifdef WITH_SAFETY_OVER_SPEED
-    if (ARCH_LIKELY(i.value < _paths.size())) {
+    if (ARCH_LIKELY(i.value < _paths.size()))
+    {
       return _paths[i.value];
     }
     return SdfPath::EmptyPath();
@@ -806,7 +849,8 @@ class CrateFile {
   inline TfToken const &GetToken(TokenIndex i) const
   {
 #ifdef WITH_SAFETY_OVER_SPEED
-    if (ARCH_LIKELY(i.value < _tokens.size())) {
+    if (ARCH_LIKELY(i.value < _tokens.size()))
+    {
       return _tokens[i.value];
     }
     return _GetEmptyToken();
@@ -823,7 +867,8 @@ class CrateFile {
   inline std::string const &GetString(StringIndex i) const
   {
 #ifdef WITH_SAFETY_OVER_SPEED
-    if (ARCH_LIKELY(i.value < _strings.size())) {
+    if (ARCH_LIKELY(i.value < _strings.size()))
+    {
       return GetToken(_strings[i.value]).GetString();
     }
     return _GetEmptyString();
@@ -854,7 +899,8 @@ class CrateFile {
   // not the number of samples.
   inline void MakeTimeSampleValuesMutable(TimeSamples &ts) const
   {
-    if (!ts.IsInMemory()) {
+    if (!ts.IsInMemory())
+    {
       _MakeTimeSampleValuesMutableImpl(ts);
     }
   }
@@ -895,9 +941,11 @@ class CrateFile {
   class _Writer;
   class _BufferedOutput;
   class _ReaderBase;
-  template<class ByteStream> class _Reader;
+  template<class ByteStream>
+  class _Reader;
 
-  template<class ByteStream> _Reader<ByteStream> _MakeReader(ByteStream src) const;
+  template<class ByteStream>
+  _Reader<ByteStream> _MakeReader(ByteStream src) const;
 
   template<class Fn>
   void _WriteSection(_Writer &w, _SectionName name, _TableOfContents &toc, Fn writeFn) const;
@@ -916,9 +964,11 @@ class CrateFile {
   void _WritePaths(_Writer &w);
   void _WriteSpecs(_Writer &w);
 
-  template<class Iter> Iter _WritePathTree(_Writer &w, Iter cur, Iter end);
+  template<class Iter>
+  Iter _WritePathTree(_Writer &w, Iter cur, Iter end);
 
-  template<class Container> void _WriteCompressedPathData(_Writer &w, Container const &pathData);
+  template<class Container>
+  void _WriteCompressedPathData(_Writer &w, Container const &pathData);
 
   template<class Iter>
   Iter _BuildCompressedPathDataRecursive(size_t &curIndex,
@@ -930,22 +980,33 @@ class CrateFile {
 
   inline void _WriteTokens(_Writer &w);
 
-  template<class Reader> void _ReadStructuralSections(Reader src, int64_t fileSize);
+  template<class Reader>
+  void _ReadStructuralSections(Reader src, int64_t fileSize);
 
-  template<class ByteStream> static _BootStrap _ReadBootStrap(ByteStream src, int64_t fileSize);
+  template<class ByteStream>
+  static _BootStrap _ReadBootStrap(ByteStream src, int64_t fileSize);
 
-  template<class Reader> _TableOfContents _ReadTOC(Reader src, _BootStrap const &b) const;
+  template<class Reader>
+  _TableOfContents _ReadTOC(Reader src, _BootStrap const &b) const;
 
-  template<class Reader> void _PrefetchStructuralSections(Reader src) const;
-  template<class Reader> void _ReadFieldSets(Reader src);
-  template<class Reader> void _ReadFields(Reader src);
-  template<class Reader> void _ReadSpecs(Reader src);
-  template<class Reader> void _ReadStrings(Reader src);
-  template<class Reader> void _ReadTokens(Reader src);
-  template<class Reader> void _ReadPaths(Reader src);
+  template<class Reader>
+  void _PrefetchStructuralSections(Reader src) const;
+  template<class Reader>
+  void _ReadFieldSets(Reader src);
+  template<class Reader>
+  void _ReadFields(Reader src);
+  template<class Reader>
+  void _ReadSpecs(Reader src);
+  template<class Reader>
+  void _ReadStrings(Reader src);
+  template<class Reader>
+  void _ReadTokens(Reader src);
+  template<class Reader>
+  void _ReadPaths(Reader src);
   template<class Header, class Reader>
   void _ReadPathsImpl(Reader reader, WorkDispatcher &dispatcher, SdfPath parentPath = SdfPath());
-  template<class Reader> void _ReadCompressedPaths(Reader reader, WorkDispatcher &dispatcher);
+  template<class Reader>
+  void _ReadCompressedPaths(Reader reader, WorkDispatcher &dispatcher);
   void _BuildDecompressedPathsImpl(std::vector<uint32_t> const &pathIndexes,
                                    std::vector<int32_t> const &elementTokenIndexes,
                                    std::vector<int32_t> const &jumps,
@@ -966,28 +1027,41 @@ class CrateFile {
 
   // Base class, to have a pointer type.
   struct _ValueHandlerBase;
-  template<class, class = void> struct _ScalarValueHandlerBase;
-  template<class, class = void> struct _ArrayValueHandlerBase;
-  template<class> struct _ValueHandler;
+  template<class, class = void>
+  struct _ScalarValueHandlerBase;
+  template<class, class = void>
+  struct _ArrayValueHandlerBase;
+  template<class>
+  struct _ValueHandler;
 
   friend struct _ValueHandlerBase;
-  template<class, class> friend struct _ScalarValueHandlerBase;
-  template<class, class> friend struct _ArrayValueHandlerBase;
-  template<class> friend struct _ValueHandler;
+  template<class, class>
+  friend struct _ScalarValueHandlerBase;
+  template<class, class>
+  friend struct _ArrayValueHandlerBase;
+  template<class>
+  friend struct _ValueHandler;
 
-  template<class T> inline _ValueHandler<T> &_GetValueHandler();
-  template<class T> inline _ValueHandler<T> const &_GetValueHandler() const;
+  template<class T>
+  inline _ValueHandler<T> &_GetValueHandler();
+  template<class T>
+  inline _ValueHandler<T> const &_GetValueHandler() const;
 
-  template<class T> inline ValueRep _PackValue(T const &v);
-  template<class T> inline ValueRep _PackValue(VtArray<T> const &v);
+  template<class T>
+  inline ValueRep _PackValue(T const &v);
+  template<class T>
+  inline ValueRep _PackValue(VtArray<T> const &v);
   ValueRep _PackValue(VtValue const &v);
 
-  template<class T> void _UnpackValue(ValueRep rep, T *out) const;
-  template<class T> void _UnpackValue(ValueRep rep, VtArray<T> *out) const;
+  template<class T>
+  void _UnpackValue(ValueRep rep, T *out) const;
+  template<class T>
+  void _UnpackValue(ValueRep rep, VtArray<T> *out) const;
   void _UnpackValue(ValueRep rep, VtValue *result) const;
 
   // Functions that populate the value read/write functions.
-  template<class T> void _DoTypeRegistration();
+  template<class T>
+  void _DoTypeRegistration();
   void _DoAllTypeRegistrations();
   void _DeleteValueHandlers();
   void _ClearValueHandlerDedupTables();
@@ -1017,7 +1091,8 @@ class CrateFile {
   // have fields that we may not know how to write until we've looked at other
   // specs (e.g. SdfPayload version upgrades) or spces with time samples that
   // we write time-by-time so that time-sampled data is collocated by time.
-  struct _DeferredSpec {
+  struct _DeferredSpec
+  {
     _DeferredSpec() = default;
     _DeferredSpec(PathIndex p,
                   SdfSpecType t,
@@ -1107,19 +1182,29 @@ class CrateFile {
                         // ArAsset::Read()s.
 };
 
-template<> struct _IsBitwiseReadWrite<CrateFile::_BootStrap> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<CrateFile::_BootStrap> : std::true_type
+{
 };
 
-template<> struct _IsBitwiseReadWrite<CrateFile::_Section> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<CrateFile::_Section> : std::true_type
+{
 };
 
-template<> struct _IsBitwiseReadWrite<CrateFile::Field> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<CrateFile::Field> : std::true_type
+{
 };
 
-template<> struct _IsBitwiseReadWrite<CrateFile::Spec> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<CrateFile::Spec> : std::true_type
+{
 };
 
-template<> struct _IsBitwiseReadWrite<CrateFile::Spec_0_0_1> : std::true_type {
+template<>
+struct _IsBitwiseReadWrite<CrateFile::Spec_0_0_1> : std::true_type
+{
 };
 
 }  // namespace Usd_CrateFile

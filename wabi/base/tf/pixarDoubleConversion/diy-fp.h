@@ -38,20 +38,26 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 // This "Do It Yourself Floating Point" class implements a floating-point number
 // with a uint64 significand and an int exponent. Normalized DiyFp numbers will
 // have the most significant bit of the significand set.
 // Multiplication and Subtraction do not normalize their results.
 // DiyFp are not designed to contain special doubles (NaN and Infinity).
-class DiyFp {
+class DiyFp
+{
  public:
   static const int kSignificandSize = 64;
 
-  DiyFp() : f_(0), e_(0)
+  DiyFp()
+    : f_(0),
+      e_(0)
   {}
-  DiyFp(uint64_t significand, int exponent) : f_(significand), e_(exponent)
+  DiyFp(uint64_t significand, int exponent)
+    : f_(significand),
+      e_(exponent)
   {}
 
   // this = this - other.
@@ -95,11 +101,13 @@ class DiyFp {
     // This method is mainly called for normalizing boundaries. In general
     // boundaries need to be shifted by 10 bits. We thus optimize for this case.
     const uint64_t k10MSBits = UINT64_2PART_C(0xFFC00000, 00000000);
-    while ((significand & k10MSBits) == 0) {
+    while ((significand & k10MSBits) == 0)
+    {
       significand <<= 10;
       exponent -= 10;
     }
-    while ((significand & kUint64MSB) == 0) {
+    while ((significand & kUint64MSB) == 0)
+    {
       significand <<= 1;
       exponent--;
     }

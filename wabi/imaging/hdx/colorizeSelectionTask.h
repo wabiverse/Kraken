@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Input parameters for HdxColorizeSelectionTask
 ///
-struct HdxColorizeSelectionTaskParams {
+struct HdxColorizeSelectionTaskParams
+{
   HdxColorizeSelectionTaskParams()
     : enableSelection(false),
       selectionColor(0),
@@ -68,7 +69,8 @@ struct HdxColorizeSelectionTaskParams {
 /// If enableOutline is true then instead of overlaying the ID buffer as is, an
 /// outline with thickness of outlineRadius pixels around the areas with IDs
 /// will be overlaid. Otherwise, the ID buffer will be overlaid as is.
-class HdxColorizeSelectionTask : public HdxTask {
+class HdxColorizeSelectionTask : public HdxTask
+{
  public:
   HDX_API
   HdxColorizeSelectionTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -109,7 +111,8 @@ class HdxColorizeSelectionTask : public HdxTask {
 
   // This struct must match ParameterBuffer in outline.glslfx.
   // Be careful to remember the std430 rules.
-  struct _ParameterBuffer {
+  struct _ParameterBuffer
+  {
     // Size of a colorIn texel - to iterate adjacent texels.
     GfVec2f texelSize;
     // Draws outline when enabled, or color overlay when disabled.

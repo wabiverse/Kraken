@@ -46,7 +46,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for translating Hydra Openvdb Asset to Arnold Volume.
-class HdArnoldOpenvdbAsset : public HdField {
+class HdArnoldOpenvdbAsset : public HdField
+{
  public:
   /// Constructor for HdArnoldOpenvdbAsset
   ///

@@ -5,7 +5,8 @@
 
 #include "Platform.h"
 
-struct SHA1_CTX {
+struct SHA1_CTX
+{
   uint32_t state[5];
   uint32_t count[2];
   uint8_t buffer[64];

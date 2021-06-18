@@ -47,11 +47,13 @@ UsdPrimRange UsdPrimRange::Stage(const UsdStagePtr &stage, const Usd_PrimFlagsPr
 
 void UsdPrimRange::iterator::PruneChildren()
 {
-  if (base() == _range->_end) {
+  if (base() == _range->_end)
+  {
     TF_CODING_ERROR("Iterator past-the-end");
     return;
   }
-  if (_isPost) {
+  if (_isPost)
+  {
     TF_CODING_ERROR(
       "Cannot prune children during post-visit because the"
       "children have already been processed. "
@@ -66,32 +68,43 @@ void UsdPrimRange::iterator::increment()
 {
   base_type &base = base_reference();
   base_type end = _range->_end;
-  if (ARCH_UNLIKELY(_isPost)) {
+  if (ARCH_UNLIKELY(_isPost))
+  {
     _isPost = false;
-    if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate)) {
-      if (_depth) {
+    if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate))
+    {
+      if (_depth)
+      {
         --_depth;
         _isPost = true;
       }
-      else {
+      else
+      {
         base = end;
         _proxyPrimPath = SdfPath();
       }
     }
   }
-  else if (!_pruneChildrenFlag && Usd_MoveToChild(base, _proxyPrimPath, end, _range->_predicate)) {
+  else if (!_pruneChildrenFlag && Usd_MoveToChild(base, _proxyPrimPath, end, _range->_predicate))
+  {
     ++_depth;
   }
-  else {
-    if (_range->_postOrder) {
+  else
+  {
+    if (_range->_postOrder)
+    {
       _isPost = true;
     }
-    else {
-      while (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate)) {
-        if (_depth) {
+    else
+    {
+      while (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate))
+      {
+        if (_depth)
+        {
           --_depth;
         }
-        else {
+        else
+        {
           base = end;
           _proxyPrimPath = SdfPath();
           break;

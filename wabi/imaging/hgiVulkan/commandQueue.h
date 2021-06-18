@@ -53,10 +53,12 @@ class HgiVulkanDevice;
 /// The CommandQueue manages command buffers and their submission to the
 /// GPU device queue.
 ///
-class HgiVulkanCommandQueue final {
+class HgiVulkanCommandQueue final
+{
  public:
   // Holds one thread's command pool and list of command buffers .
-  struct HgiVulkan_CommandPool {
+  struct HgiVulkan_CommandPool
+  {
     VkCommandPool vkCommandPool = nullptr;
     std::vector<HgiVulkanCommandBuffer *> commandBuffers;
   };

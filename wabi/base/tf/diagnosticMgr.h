@@ -66,7 +66,8 @@ class TfErrorMark;
 /// \ingroup group_tf_Diagnostic
 ///
 /// Singleton class through which all errors and diagnostics pass.
-class TfDiagnosticMgr : public TfWeakBase {
+class TfDiagnosticMgr : public TfWeakBase
+{
  public:
   typedef TfDiagnosticMgr This;
 
@@ -123,7 +124,8 @@ class TfDiagnosticMgr : public TfWeakBase {
   ///
   /// For a more complete list, see diagnostic.h
   ///
-  class Delegate {
+  class Delegate
+  {
    public:
     TF_API
     virtual ~Delegate() = 0;
@@ -287,7 +289,8 @@ class TfDiagnosticMgr : public TfWeakBase {
   // Public, but *only* meant to be used by the TF_ERROR() macro.
   //
   /// \private
-  class ErrorHelper {
+  class ErrorHelper
+  {
    public:
     ErrorHelper(TfCallContext const &context, TfEnum errorCode, const char *errorCodeString)
       : _context(context),
@@ -316,7 +319,8 @@ class TfDiagnosticMgr : public TfWeakBase {
     const char *_errorCodeString;
   };
 
-  struct WarningHelper {
+  struct WarningHelper
+  {
     WarningHelper(TfCallContext const &context, TfEnum warningCode, const char *warningCodeString)
       : _context(context),
         _warningCode(warningCode),
@@ -344,7 +348,8 @@ class TfDiagnosticMgr : public TfWeakBase {
     const char *_warningCodeString;
   };
 
-  struct StatusHelper {
+  struct StatusHelper
+  {
     StatusHelper(TfCallContext const &context, TfEnum statusCode, const char *statusCodeString)
       : _context(context),
         _statusCode(statusCode),
@@ -372,8 +377,11 @@ class TfDiagnosticMgr : public TfWeakBase {
     const char *_statusCodeString;
   };
 
-  struct FatalHelper {
-    FatalHelper(TfCallContext const &context, TfEnum statusCode) : _context(context), _statusCode(statusCode)
+  struct FatalHelper
+  {
+    FatalHelper(TfCallContext const &context, TfEnum statusCode)
+      : _context(context),
+        _statusCode(statusCode)
     {}
 
     void Post(const std::string &str) const
@@ -445,7 +453,8 @@ class TfDiagnosticMgr : public TfWeakBase {
   tbb::enumerable_thread_specific<ErrorList> _errorList;
 
   // Thread-specific diagnostic log text for pending errors.
-  struct _LogText {
+  struct _LogText
+  {
     void AppendAndPublish(ErrorIterator i, ErrorIterator end);
     void RebuildAndPublish(ErrorIterator i, ErrorIterator end);
 

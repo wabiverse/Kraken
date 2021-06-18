@@ -16,7 +16,8 @@ limitations under the License.
 
 #include "wabi/imaging/rprUsd/api.h"
 
-namespace rpr {
+namespace rpr
+{
 class Context;
 }
 

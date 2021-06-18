@@ -34,7 +34,8 @@
 #include <wabi/imaging/hd/timeSampleArray.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Camera;
 }
 
@@ -47,7 +48,8 @@ class HdCyclesRenderDelegate;
  * @brief Cycles Camera Sprim mapped to Cycles Camera
  *
  */
-class HdCyclesCamera final : public HdCamera {
+class HdCyclesCamera final : public HdCamera
+{
  public:
   /**
    * @brief Construct a new HdCycles Camera object

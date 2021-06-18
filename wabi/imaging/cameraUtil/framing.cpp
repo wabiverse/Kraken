@@ -34,7 +34,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-CameraUtilFraming::CameraUtilFraming() : pixelAspectRatio(1.0f)
+CameraUtilFraming::CameraUtilFraming()
+  : pixelAspectRatio(1.0f)
 {}
 
 CameraUtilFraming::CameraUtilFraming(const GfRange2f &displayWindow,
@@ -67,14 +68,16 @@ bool CameraUtilFraming::operator!=(const CameraUtilFraming &other) const
   return !(*this == other);
 }
 
-template<typename T> static GfVec2f _ComputeCenter(const T &window)
+template<typename T>
+static GfVec2f _ComputeCenter(const T &window)
 {
   return GfVec2f(window.GetMin()) + 0.5 * GfVec2f(window.GetSize());
 }
 
 static double _SafeDiv(const double a, const double b)
 {
-  if (b == 0.0) {
+  if (b == 0.0)
+  {
     return 1.0;
   }
   return a / b;

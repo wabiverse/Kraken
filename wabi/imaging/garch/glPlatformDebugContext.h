@@ -48,7 +48,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GarchGLPlatformDebugContext);
 ///
 /// Platform specific context (e.g. X11/GLX) which supports debug output.
 ///
-class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase {
+class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase
+{
  public:
   static GarchGLPlatformDebugContextRefPtr New(int majorVersion,
                                                int minorVersion,

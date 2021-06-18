@@ -50,14 +50,20 @@ constexpr bool Tf_IsPow2(uintptr_t val)
 /// The bits may be set and retrieved as any integral type.  The pointer value
 /// and the bits value may be set and retrieved independently.
 ///
-template<class T> class TfPointerAndBits {
+template<class T>
+class TfPointerAndBits
+{
   // Microsoft Visual Studio doesn't like alignof(<abstract-type>).
   // We'll assume that such an object has a pointer in it (the vtbl
   // pointer) and use void* for alignment in that case.
-  template<typename U, bool = false> struct _AlignOf {
+  template<typename U, bool = false>
+  struct _AlignOf
+  {
     static constexpr uintptr_t value = alignof(U);
   };
-  template<typename U> struct _AlignOf<U, true> {
+  template<typename U>
+  struct _AlignOf<U, true>
+  {
     static constexpr uintptr_t value = alignof(void *);
   };
 
@@ -77,13 +83,15 @@ template<class T> class TfPointerAndBits {
  public:
   /// Constructor.  Pointer is initialized to null, bits are initialized to
   /// zero.
-  constexpr TfPointerAndBits() noexcept : _ptrAndBits(0)
+  constexpr TfPointerAndBits() noexcept
+    : _ptrAndBits(0)
   {
     static_assert(_SupportsAtLeastOneBit(), "T's alignment does not support any bits");
   }
 
   /// Constructor.  Set the pointer to \a p, and the bits to \a bits.
-  constexpr explicit TfPointerAndBits(T *p, uintptr_t bits = 0) noexcept : _ptrAndBits(_Combine(p, bits))
+  constexpr explicit TfPointerAndBits(T *p, uintptr_t bits = 0) noexcept
+    : _ptrAndBits(_Combine(p, bits))
   {
     static_assert(_SupportsAtLeastOneBit(), "T's alignment does not support any bits");
   }
@@ -118,7 +126,8 @@ template<class T> class TfPointerAndBits {
   }
 
   /// Retrieve the stored bits as the integral type \a Integral.
-  template<class Integral> constexpr Integral BitsAs() const noexcept
+  template<class Integral>
+  constexpr Integral BitsAs() const noexcept
   {
     ARCH_PRAGMA_PUSH
     ARCH_PRAGMA_FORCING_TO_BOOL
@@ -127,7 +136,8 @@ template<class T> class TfPointerAndBits {
   }
 
   /// Set the stored bits.  No static range checking is performed.
-  template<class Integral> void SetBits(Integral val) noexcept
+  template<class Integral>
+  void SetBits(Integral val) noexcept
   {
     _SetBits(static_cast<uintptr_t>(val));
   }
@@ -139,7 +149,8 @@ template<class T> class TfPointerAndBits {
   }
 
   /// Set the pointer value to \a ptr and the bits to \a val.
-  template<class Integral> void Set(T *ptr, Integral val) noexcept
+  template<class Integral>
+  void Set(T *ptr, Integral val) noexcept
   {
     _ptrAndBits = _Combine(ptr, val);
   }

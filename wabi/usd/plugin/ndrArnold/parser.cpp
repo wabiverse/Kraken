@@ -58,13 +58,15 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
     (binary));
 // clang-format on
 
-namespace {
+namespace
+{
 
 // We have to subclass SdrShaderProperty, because it tries to read the SdfType
 // from a token, and it doesn't support all the parameter types arnold does,
 // like the 4 component color. Besides this, we also guarantee that the default
 // value will match the SdfType, as the SdfType comes from the default value.
-class ArnoldShaderProperty : public SdrShaderProperty {
+class ArnoldShaderProperty : public SdrShaderProperty
+{
  public:
   ArnoldShaderProperty(const TfToken &name,
                        const SdfValueTypeName &typeName,
@@ -109,27 +111,33 @@ NdrNodeUniquePtr NdrArnoldParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   // All shader names should be prefixed with `arnold:` but we double-check,
   // similarly to the render delegate, as older versions of Hydra did not validate
   // the node ids against the shader registry.
-  if (TfStringStartsWith(discoveryResult.identifier.GetText(), _tokens->arnoldPrefix)) {
+  if (TfStringStartsWith(discoveryResult.identifier.GetText(), _tokens->arnoldPrefix))
+  {
     prim = shaderDefs->GetPrimAtPath(
       SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText() + _tokens->arnoldPrefix.size())));
   }
-  else {
+  else
+  {
     prim = shaderDefs->GetPrimAtPath(SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText())));
   }
-  if (!prim) {
+  if (!prim)
+  {
     return nullptr;
   }
   NdrPropertyUniquePtrVec properties;
   const auto props = prim.GetAuthoredProperties();
   properties.reserve(props.size());
-  for (const auto &property : props) {
+  for (const auto &property : props)
+  {
     const auto &propertyName = property.GetName();
     // In case `info:id` is set on the nodes.
-    if (TfStringContains(propertyName.GetString(), ":")) {
+    if (TfStringContains(propertyName.GetString(), ":"))
+    {
       continue;
     }
     const auto propertyStack = property.GetPropertyStack();
-    if (propertyStack.empty()) {
+    if (propertyStack.empty())
+    {
       continue;
     }
     const auto attr = prim.GetAttribute(propertyName);
@@ -142,12 +150,12 @@ NdrNodeUniquePtr NdrArnoldParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     properties.emplace_back(
       SdrShaderPropertyUniquePtr(new ArnoldShaderProperty(propertyName,                         // name
                                                           propertyStack.back()->GetTypeName(),  // type
-                                                          v,              // defaultValue
-                                                          false,          // isOutput
-                                                          0,              // arraySize
-                                                          NdrTokenMap(),  // metadata
-                                                          NdrTokenMap(),  // hints
-                                                          NdrOptionVec()  // options
+                                                          v,                                    // defaultValue
+                                                          false,                                // isOutput
+                                                          0,                                    // arraySize
+                                                          NdrTokenMap(),                        // metadata
+                                                          NdrTokenMap(),                        // hints
+                                                          NdrOptionVec()                        // options
                                                           )));
   }
   return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,     // identifier

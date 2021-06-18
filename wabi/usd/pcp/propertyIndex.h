@@ -46,7 +46,8 @@ class PcpCache;
 /// Private helper structure containing information about a property in the
 /// property stack.
 ///
-struct Pcp_PropertyInfo {
+struct Pcp_PropertyInfo
+{
   Pcp_PropertyInfo()
   {}
   Pcp_PropertyInfo(const SdfPropertySpecHandle &prop, const PcpNodeRef &node)
@@ -64,7 +65,8 @@ struct Pcp_PropertyInfo {
 /// contribute opinions to a specific property, under composition
 /// semantics.
 ///
-class PcpPropertyIndex {
+class PcpPropertyIndex
+{
  public:
   /// Construct an empty property index.
   PCP_API

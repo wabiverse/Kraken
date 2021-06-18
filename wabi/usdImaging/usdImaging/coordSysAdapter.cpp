@@ -52,14 +52,17 @@ SdfPath UsdImagingCoordSysAdapter::Populate(UsdPrim const &usdPrim,
                                             UsdImagingInstancerContext const *instancerContext)
 {
   UsdImaging_CoordSysBindingStrategy::value_type bindings = _GetCoordSysBindings(usdPrim);
-  if (bindings.idVecPtr) {
+  if (bindings.idVecPtr)
+  {
     SdfPathVector const &idVec = *(bindings.idVecPtr);
     std::vector<UsdShadeCoordSysAPI::Binding> const &bindingVec = *(bindings.usdBindingVecPtr);
     TF_VERIFY(idVec.size() == bindingVec.size());
-    for (size_t i = 0, n = idVec.size(); i < n; ++i) {
+    for (size_t i = 0, n = idVec.size(); i < n; ++i)
+    {
       // Verify that target path exists
       TF_VERIFY(_GetPrim(bindingVec[i].coordSysPrimPath));
-      if (!index->IsPopulated(idVec[i])) {
+      if (!index->IsPopulated(idVec[i]))
+      {
         index->InsertSprim(HdPrimTypeTokens->coordSys,
                            idVec[i],
                            _GetPrim(bindingVec[i].coordSysPrimPath),
@@ -104,7 +107,8 @@ HdDirtyBits UsdImagingCoordSysAdapter::ProcessPropertyChange(UsdPrim const &prim
                                                              SdfPath const &cachePath,
                                                              TfToken const &propertyName)
 {
-  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName)) {
+  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName))
+  {
     return HdChangeTracker::DirtyTransform;
   }
   return HdChangeTracker::Clean;

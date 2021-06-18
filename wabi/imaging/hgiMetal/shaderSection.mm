@@ -65,14 +65,17 @@ void HgiMetalShaderSection::WriteAttributesWithIndex(std::ostream &ss) const
 {
   const HgiShaderSectionAttributeVector &attributes = GetAttributes();
 
-  for (size_t i = 0; i < attributes.size(); i++) {
-    if (i > 0) {
+  for (size_t i = 0; i < attributes.size(); i++)
+  {
+    if (i > 0)
+    {
       ss << " ";
     }
 
     const HgiShaderSectionAttribute &a = attributes[i];
     ss << "[[" << a.identifier;
-    if (!a.index.empty()) {
+    if (!a.index.empty())
+    {
       ss << "(" << a.index << ")";
     }
     ss << "]]";
@@ -232,7 +235,8 @@ void HgiMetalStructTypeDeclarationShaderSection::WriteDeclaration(std::ostream &
   ss << " ";
   WriteIdentifier(ss);
   ss << "{\n";
-  for (HgiMetalShaderSection *member : _members) {
+  for (HgiMetalShaderSection *member : _members)
+  {
     member->WriteParameter(ss);
     member->WriteAttributesWithIndex(ss);
     ss << ";\n";
@@ -283,7 +287,8 @@ void HgiMetalArgumentBufferInputShaderSection::WriteParameter(std::ostream &ss) 
 {
   WriteType(ss);
   ss << " ";
-  if (_isPointer) {
+  if (_isPointer)
+  {
     ss << "*";
   }
   WriteIdentifier(ss);
@@ -291,7 +296,8 @@ void HgiMetalArgumentBufferInputShaderSection::WriteParameter(std::ostream &ss) 
 
 bool HgiMetalArgumentBufferInputShaderSection::VisitEntryPointParameterDeclarations(std::ostream &ss)
 {
-  if (!_addressSpace.empty()) {
+  if (!_addressSpace.empty())
+  {
     ss << _addressSpace << " ";
   }
 
@@ -305,8 +311,10 @@ bool HgiMetalArgumentBufferInputShaderSection::VisitEntryPointFunctionExecutions
   const std::string &scopeInstanceName)
 {
   const auto &structDeclMembers = GetStructTypeDeclaration()->GetMembers();
-  for (size_t i = 0; i < structDeclMembers.size(); ++i) {
-    if (i > 0) {
+  for (size_t i = 0; i < structDeclMembers.size(); ++i)
+  {
+    if (i > 0)
+    {
       ss << "\n";
     }
     HgiShaderSection *member = structDeclMembers[i];
@@ -387,8 +395,10 @@ bool HgiMetalStageOutputShaderSection::VisitEntryPointFunctionExecutions(
   WriteDeclaration(ss);
   ss << "\n";
   const auto &structTypeDeclMembers = GetStructTypeDeclaration()->GetMembers();
-  for (size_t i = 0; i < structTypeDeclMembers.size(); ++i) {
-    if (i > 0) {
+  for (size_t i = 0; i < structTypeDeclMembers.size(); ++i)
+  {
+    if (i > 0)
+    {
       ss << "\n";
     }
     HgiShaderSection *member = structTypeDeclMembers[i];

@@ -41,17 +41,23 @@ WABI_NAMESPACE_BEGIN
 /// A class for introspecting the underlying qualities of .usdc 'crate' files,
 /// for diagnostic purposes.
 ///
-class UsdCrateInfo {
+class UsdCrateInfo
+{
  public:
-  struct Section {
+  struct Section
+  {
     Section() = default;
-    Section(std::string const &name, int64_t start, int64_t size) : name(name), start(start), size(size)
+    Section(std::string const &name, int64_t start, int64_t size)
+      : name(name),
+        start(start),
+        size(size)
     {}
     std::string name;
     int64_t start = -1, size = -1;
   };
 
-  struct SummaryStats {
+  struct SummaryStats
+  {
     size_t numSpecs = 0;
     size_t numUniquePaths = 0;
     size_t numUniqueTokens = 0;

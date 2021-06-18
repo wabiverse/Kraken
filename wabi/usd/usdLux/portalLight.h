@@ -62,7 +62,8 @@ class SdfAssetPath;
 /// of a dome light.  Transmits light in the -Z direction.
 /// The rectangle is 1 unit in length.
 ///
-class UsdLuxPortalLight : public UsdLuxLight {
+class UsdLuxPortalLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -78,13 +79,15 @@ class UsdLuxPortalLight : public UsdLuxLight {
   /// Equivalent to UsdLuxPortalLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxPortalLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxPortalLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxPortalLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxPortalLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxPortalLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxPortalLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

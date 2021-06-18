@@ -26,7 +26,8 @@
 
 #include "ANCHOR_api.h"
 
-class ANCHOR_IEventConsumer {
+class ANCHOR_IEventConsumer
+{
  public:
   /**
    * Destructor. */
@@ -48,7 +49,8 @@ typedef int (*ANCHOR_EventCallbackProcPtr)(ANCHOR_EventHandle event, ANCHOR_User
 ANCHOR_EventConsumerHandle ANCHOR_CreateEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
                                                       ANCHOR_UserPtr userdata);
 
-class ANCHOR_CallbackEventConsumer : public ANCHOR_IEventConsumer {
+class ANCHOR_CallbackEventConsumer : public ANCHOR_IEventConsumer
+{
  public:
   /**
    * Constructor.

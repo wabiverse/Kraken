@@ -57,11 +57,13 @@
 WABI_NAMESPACE_BEGIN
 
 // Converter from vector<string> to python list.
-template<typename ContainerType> struct TfPySequenceToPython {
+template<typename ContainerType>
+struct TfPySequenceToPython
+{
   static PyObject *convert(ContainerType const &c)
   {
     boost::python::list result;
-    TF_FOR_ALL(i, c)
+    TF_FOR_ALL (i, c)
     {
       result.append(*i);
     }
@@ -69,28 +71,36 @@ template<typename ContainerType> struct TfPySequenceToPython {
   }
 };
 
-template<typename ContainerType> struct TfPyMapToPythonDict {
+template<typename ContainerType>
+struct TfPyMapToPythonDict
+{
   static PyObject *convert(ContainerType const &c)
   {
     return boost::python::incref(TfPyCopyMapToDictionary(c).ptr());
   }
 };
 
-namespace TfPyContainerConversions {
+namespace TfPyContainerConversions
+{
 
-template<typename ContainerType> struct to_tuple {
+template<typename ContainerType>
+struct to_tuple
+{
   static PyObject *convert(ContainerType const &a)
   {
     boost::python::list result;
     typedef typename ContainerType::const_iterator const_iter;
-    for (const_iter p = a.begin(); p != a.end(); p++) {
+    for (const_iter p = a.begin(); p != a.end(); p++)
+    {
       result.append(boost::python::object(*p));
     }
     return boost::python::incref(boost::python::tuple(result).ptr());
   }
 };
 
-template<typename First, typename Second> struct to_tuple<std::pair<First, Second>> {
+template<typename First, typename Second>
+struct to_tuple<std::pair<First, Second>>
+{
   static PyObject *convert(std::pair<First, Second> const &a)
   {
     boost::python::tuple result = boost::python::make_tuple(a.first, a.second);
@@ -98,46 +108,56 @@ template<typename First, typename Second> struct to_tuple<std::pair<First, Secon
   }
 };
 
-struct default_policy {
+struct default_policy
+{
   static bool check_convertibility_per_element()
   {
     return false;
   }
 
-  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType>
+  static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return true;
   }
 
-  template<typename ContainerType> static void assert_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType>
+  static void assert_size(boost::type<ContainerType>, std::size_t sz)
   {}
 
-  template<typename ContainerType> static void reserve(ContainerType &a, std::size_t sz)
+  template<typename ContainerType>
+  static void reserve(ContainerType &a, std::size_t sz)
   {}
 };
 
-struct fixed_size_policy {
+struct fixed_size_policy
+{
   static bool check_convertibility_per_element()
   {
     return true;
   }
 
-  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType>
+  static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return ContainerType::size() == sz;
   }
 
-  template<typename ContainerType> static void assert_size(boost::type<ContainerType>, std::size_t sz)
+  template<typename ContainerType>
+  static void assert_size(boost::type<ContainerType>, std::size_t sz)
   {
-    if (!check_size(boost::type<ContainerType>(), sz)) {
+    if (!check_size(boost::type<ContainerType>(), sz))
+    {
       PyErr_SetString(PyExc_RuntimeError, "Insufficient elements for fixed-size array.");
       boost::python::throw_error_already_set();
     }
   }
 
-  template<typename ContainerType> static void reserve(ContainerType &a, std::size_t sz)
+  template<typename ContainerType>
+  static void reserve(ContainerType &a, std::size_t sz)
   {
-    if (sz > ContainerType::size()) {
+    if (sz > ContainerType::size())
+    {
       PyErr_SetString(PyExc_RuntimeError, "Too many elements for fixed-size array.");
       boost::python::throw_error_already_set();
     }
@@ -151,8 +171,10 @@ struct fixed_size_policy {
   }
 };
 
-struct variable_capacity_policy : default_policy {
-  template<typename ContainerType> static void reserve(ContainerType &a, std::size_t sz)
+struct variable_capacity_policy : default_policy
+{
+  template<typename ContainerType>
+  static void reserve(ContainerType &a, std::size_t sz)
   {
     a.reserve(sz);
   }
@@ -165,21 +187,25 @@ struct variable_capacity_policy : default_policy {
   }
 };
 
-struct variable_capacity_all_items_convertible_policy : variable_capacity_policy {
+struct variable_capacity_all_items_convertible_policy : variable_capacity_policy
+{
   static bool check_convertibility_per_element()
   {
     return true;
   }
 };
 
-struct fixed_capacity_policy : variable_capacity_policy {
-  template<typename ContainerType> static bool check_size(boost::type<ContainerType>, std::size_t sz)
+struct fixed_capacity_policy : variable_capacity_policy
+{
+  template<typename ContainerType>
+  static bool check_size(boost::type<ContainerType>, std::size_t sz)
   {
     return ContainerType::max_size() >= sz;
   }
 };
 
-struct linked_list_policy : default_policy {
+struct linked_list_policy : default_policy
+{
   template<typename ContainerType, typename ValueType>
   static void set_value(ContainerType &a, std::size_t i, ValueType const &v)
   {
@@ -187,7 +213,8 @@ struct linked_list_policy : default_policy {
   }
 };
 
-struct set_policy : default_policy {
+struct set_policy : default_policy
+{
   template<typename ContainerType, typename ValueType>
   static void set_value(ContainerType &a, std::size_t i, ValueType const &v)
   {
@@ -195,7 +222,9 @@ struct set_policy : default_policy {
   }
 };
 
-template<typename ContainerType, typename ConversionPolicy> struct from_python_sequence {
+template<typename ContainerType, typename ConversionPolicy>
+struct from_python_sequence
+{
   typedef typename ContainerType::value_type container_element_type;
 
   from_python_sequence()
@@ -215,13 +244,16 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
            PyObject_HasAttrString(obj_ptr, "__len__") && PyObject_HasAttrString(obj_ptr, "__getitem__"))))
       return 0;
     boost::python::handle<> obj_iter(boost::python::allow_null(PyObject_GetIter(obj_ptr)));
-    if (!obj_iter.get()) {  // must be convertible to an iterator
+    if (!obj_iter.get())
+    {  // must be convertible to an iterator
       PyErr_Clear();
       return 0;
     }
-    if (ConversionPolicy::check_convertibility_per_element()) {
+    if (ConversionPolicy::check_convertibility_per_element())
+    {
       Py_ssize_t obj_size = PyObject_Length(obj_ptr);
-      if (obj_size < 0) {  // must be a measurable sequence
+      if (obj_size < 0)
+      {  // must be a measurable sequence
         PyErr_Clear();
         return 0;
       }
@@ -241,9 +273,11 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
   // Internal Compiler Error.
   static bool all_elements_convertible(boost::python::handle<> &obj_iter, bool is_range, std::size_t &i)
   {
-    for (;; i++) {
+    for (;; i++)
+    {
       boost::python::handle<> py_elem_hdl(boost::python::allow_null(PyIter_Next(obj_iter.get())));
-      if (PyErr_Occurred()) {
+      if (PyErr_Occurred())
+      {
         PyErr_Clear();
         return false;
       }
@@ -268,7 +302,8 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
     data->convertible = storage;
     ContainerType &result = *((ContainerType *)storage);
     std::size_t i = 0;
-    for (;; i++) {
+    for (;; i++)
+    {
       boost::python::handle<> py_elem_hdl(boost::python::allow_null(PyIter_Next(obj_iter.get())));
       if (PyErr_Occurred())
         boost::python::throw_error_already_set();
@@ -282,7 +317,9 @@ template<typename ContainerType, typename ConversionPolicy> struct from_python_s
   }
 };
 
-template<typename PairType> struct from_python_tuple_pair {
+template<typename PairType>
+struct from_python_tuple_pair
+{
   typedef typename PairType::first_type first_type;
   typedef typename PairType::second_type second_type;
 
@@ -294,12 +331,14 @@ template<typename PairType> struct from_python_tuple_pair {
 
   static void *convertible(PyObject *obj_ptr)
   {
-    if (!PyTuple_Check(obj_ptr) || PyTuple_Size(obj_ptr) != 2) {
+    if (!PyTuple_Check(obj_ptr) || PyTuple_Size(obj_ptr) != 2)
+    {
       return 0;
     }
     boost::python::extract<first_type> e1(PyTuple_GetItem(obj_ptr, 0));
     boost::python::extract<second_type> e2(PyTuple_GetItem(obj_ptr, 1));
-    if (!e1.check() || !e2.check()) {
+    if (!e1.check() || !e2.check())
+    {
       return 0;
     }
     return obj_ptr;
@@ -315,7 +354,9 @@ template<typename PairType> struct from_python_tuple_pair {
   }
 };
 
-template<typename ContainerType> struct to_tuple_mapping {
+template<typename ContainerType>
+struct to_tuple_mapping
+{
   to_tuple_mapping()
   {
     boost::python::to_python_converter<ContainerType, to_tuple<ContainerType>>();
@@ -323,42 +364,53 @@ template<typename ContainerType> struct to_tuple_mapping {
 };
 
 template<typename ContainerType, typename ConversionPolicy>
-struct tuple_mapping : to_tuple_mapping<ContainerType> {
+struct tuple_mapping : to_tuple_mapping<ContainerType>
+{
   tuple_mapping()
   {
     from_python_sequence<ContainerType, ConversionPolicy>();
   }
 };
 
-template<typename ContainerType> struct tuple_mapping_fixed_size {
+template<typename ContainerType>
+struct tuple_mapping_fixed_size
+{
   tuple_mapping_fixed_size()
   {
     tuple_mapping<ContainerType, fixed_size_policy>();
   }
 };
 
-template<typename ContainerType> struct tuple_mapping_fixed_capacity {
+template<typename ContainerType>
+struct tuple_mapping_fixed_capacity
+{
   tuple_mapping_fixed_capacity()
   {
     tuple_mapping<ContainerType, fixed_capacity_policy>();
   }
 };
 
-template<typename ContainerType> struct tuple_mapping_variable_capacity {
+template<typename ContainerType>
+struct tuple_mapping_variable_capacity
+{
   tuple_mapping_variable_capacity()
   {
     tuple_mapping<ContainerType, variable_capacity_policy>();
   }
 };
 
-template<typename ContainerType> struct tuple_mapping_set {
+template<typename ContainerType>
+struct tuple_mapping_set
+{
   tuple_mapping_set()
   {
     tuple_mapping<ContainerType, set_policy>();
   }
 };
 
-template<typename ContainerType> struct tuple_mapping_pair {
+template<typename ContainerType>
+struct tuple_mapping_pair
+{
   tuple_mapping_pair()
   {
     boost::python::to_python_converter<ContainerType, to_tuple<ContainerType>>();
@@ -368,7 +420,8 @@ template<typename ContainerType> struct tuple_mapping_pair {
 
 }  // namespace TfPyContainerConversions
 
-template<class T> void TfPyRegisterStlSequencesFromPython()
+template<class T>
+void TfPyRegisterStlSequencesFromPython()
 {
   using namespace TfPyContainerConversions;
   from_python_sequence<std::vector<T>, variable_capacity_all_items_convertible_policy>();

@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// OpenGL implementation of HgiComputePipeline.
 ///
-class HgiGLComputePipeline final : public HgiComputePipeline {
+class HgiGLComputePipeline final : public HgiComputePipeline
+{
  public:
   HGIGL_API
   ~HgiGLComputePipeline() override;

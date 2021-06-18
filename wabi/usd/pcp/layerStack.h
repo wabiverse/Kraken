@@ -62,7 +62,8 @@ class PcpLifeboat;
 ///
 /// PcpLayerStacks are constructed and managed by a Pcp_LayerStackRegistry.
 ///
-class PcpLayerStack : public TfRefBase, public TfWeakBase {
+class PcpLayerStack : public TfRefBase, public TfWeakBase
+{
   PcpLayerStack(const PcpLayerStack &) = delete;
   PcpLayerStack &operator=(const PcpLayerStack &) = delete;
 
@@ -265,7 +266,8 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase {
   SdfLayerTreeHandle _layerTree;
 
   /// Tracks information used to compute sublayer asset paths.
-  struct _SublayerSourceInfo {
+  struct _SublayerSourceInfo
+  {
     _SublayerSourceInfo(const SdfLayerHandle &layer_,
                         const std::string &authoredSublayerPath_,
                         const std::string &computedSublayerPath_)

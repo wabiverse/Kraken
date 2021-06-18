@@ -56,7 +56,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(UsdMtlxTokens, USD_MTLX_TOKENS);
 
-namespace {
+namespace
+{
 
 using DocumentCache = std::map<std::string, mx::DocumentPtr>;
 
@@ -70,10 +71,12 @@ static DocumentCache &_GetCache()
 static void _CopyContent(mx::ElementPtr dst, const mx::ConstElementPtr &source)
 {
   dst->setSourceUri(source->getSourceUri());
-  for (auto &&name : source->getAttributeNames()) {
+  for (auto &&name : source->getAttributeNames())
+  {
     dst->setAttribute(name, source->getAttribute(name));
   }
-  for (auto &&child : source->getChildren()) {
+  for (auto &&child : source->getChildren())
+  {
     _CopyContent(dst->addChildOfCategory(child->getCategory(), child->getName()), child);
   }
 }
@@ -84,54 +87,67 @@ VtValue _GetUsdValue(const std::string &valueString, const std::string &type)
   static const std::string geomname("geomname");
 
 #define CAST(Type, Cast) \
-  if (value->isA<Type>()) { \
+  if (value->isA<Type>()) \
+  { \
     return VtValue(static_cast<Cast>(value->asA<Type>())); \
   }
 #define CASTV(Type, Cast) \
-  if (value->isA<Type>()) { \
+  if (value->isA<Type>()) \
+  { \
     auto &&vec = value->asA<Type>(); \
     Cast result; \
-    for (size_t i = 0, n = vec.numElements(); i != n; ++i) { \
+    for (size_t i = 0, n = vec.numElements(); i != n; ++i) \
+    { \
       result[i] = static_cast<Cast::ScalarType>(vec[i]); \
     } \
     return VtValue(result); \
   }
 #define CASTM(Type, Cast) \
-  if (value->isA<Type>()) { \
+  if (value->isA<Type>()) \
+  { \
     auto &&mtx = value->asA<Type>(); \
     Cast result; \
-    for (size_t j = 0, n = mtx.numRows(); j != n; ++j) { \
-      for (size_t i = 0, m = mtx.numColumns(); i != m; ++i) { \
+    for (size_t j = 0, n = mtx.numRows(); j != n; ++j) \
+    { \
+      for (size_t i = 0, m = mtx.numColumns(); i != m; ++i) \
+      { \
         result.GetArray()[i + j * m] = static_cast<Cast::ScalarType>(mtx[j][i]); \
       } \
     } \
     return VtValue(result); \
   }
 #define CASTA(Type, Cast) \
-  if (value->isA<std::vector<Type>>()) { \
+  if (value->isA<std::vector<Type>>()) \
+  { \
     auto &&vec = value->asA<std::vector<Type>>(); \
     VtArray<Cast> result; \
     result.reserve(vec.size()); \
-    for (auto &&v : vec) { \
+    for (auto &&v : vec) \
+    { \
       result.push_back(static_cast<Cast>(v)); \
     } \
     return VtValue(result); \
   }
 
-  if (valueString.empty()) {
+  if (valueString.empty())
+  {
     return VtValue();
   }
 
   // Get the value.
-  if (auto value = mx::Value::createValueFromStrings(valueString, type)) {
+  if (auto value = mx::Value::createValueFromStrings(valueString, type))
+  {
     CAST(bool, bool)
     CAST(int, int)
     CAST(float, float)
-    if (value->isA<std::string>()) {
-      if (type == filename) {
+    if (value->isA<std::string>())
+    {
+      if (type == filename)
+      {
         return VtValue(SdfAssetPath(value->asA<std::string>()));
       }
-      if (type == geomname) {
+      if (type == geomname)
+      {
         // XXX -- Check string is a valid path, maybe do some
         //        translations.  Also this result must be used
         //        as a relationship target;  SdfPath is not a
@@ -209,14 +225,17 @@ mx::ConstDocumentPtr UsdMtlxGetDocumentFromString(const std::string &mtlxXml)
   // Look up in the cache, inserting a null document if missing.
   auto insertResult = _GetCache().emplace(hashStr, nullptr);
   auto &document = insertResult.first->second;
-  if (insertResult.second) {
+  if (insertResult.second)
+  {
     // cache miss
-    try {
+    try
+    {
       auto doc = mx::createDocument();
       mx::readFromXmlString(doc, mtlxXml);
       document = doc;
     }
-    catch (mx::Exception &x) {
+    catch (mx::Exception &x)
+    {
       TF_DEBUG(NDR_PARSING).Msg("MaterialX error reading source XML: %s", x.what());
     }
   }
@@ -229,17 +248,21 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
   // Look up in the cache, inserting a null document if missing.
   auto insertResult = _GetCache().emplace(resolvedUri, nullptr);
   auto &document = insertResult.first->second;
-  if (!insertResult.second) {
+  if (!insertResult.second)
+  {
     // Cache hit.
     return document;
   }
 
   // Read the file or the standard library files.
-  if (resolvedUri.empty()) {
+  if (resolvedUri.empty())
+  {
     document = mx::createDocument();
     for (auto &&fileResult :
-         NdrFsHelpersDiscoverNodes(UsdMtlxStandardLibraryPaths(), UsdMtlxStandardFileExtensions(), false)) {
-      try {
+         NdrFsHelpersDiscoverNodes(UsdMtlxStandardLibraryPaths(), UsdMtlxStandardFileExtensions(), false))
+    {
+      try
+      {
         // Read the file.
         auto doc = mx::createDocument();
         mx::readFromXmlFile(doc, fileResult.resolvedUri);
@@ -248,27 +271,32 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
         // the root so we can find the source later.  We
         // can't use the source URI on the document element
         // because we won't be copying that.
-        for (auto &&element : doc->getChildren()) {
+        for (auto &&element : doc->getChildren())
+        {
           element->setSourceUri(fileResult.resolvedUri);
         }
 
         // Merge into library.
         _CopyContent(document, doc);
       }
-      catch (mx::Exception &x) {
+      catch (mx::Exception &x)
+      {
         TF_DEBUG(NDR_PARSING)
           .Msg("MaterialX error reading '%s': %s", fileResult.resolvedUri.c_str(), x.what());
         continue;
       }
     }
   }
-  else {
-    try {
+  else
+  {
+    try
+    {
       mx::DocumentPtr doc = mx::createDocument();
       mx::readFromXmlFile(doc, resolvedUri);
       document = doc;
     }
-    catch (mx::Exception &x) {
+    catch (mx::Exception &x)
+    {
       TF_DEBUG(NDR_PARSING).Msg("MaterialX error reading '%s': %s", resolvedUri.c_str(), x.what());
     }
   }
@@ -285,26 +313,33 @@ NdrVersion UsdMtlxGetVersion(const mx::ConstInterfaceElementPtr &mtlx, bool *imp
 
   // Get the version, if any, otherwise use the invalid version.
   std::string versionString = mtlx->getVersionString();
-  if (versionString.empty()) {
+  if (versionString.empty())
+  {
     // No version specified.  Use the default.
   }
-  else {
-    if (auto tmp = NdrVersion(versionString)) {
+  else
+  {
+    if (auto tmp = NdrVersion(versionString))
+    {
       version = tmp;
     }
-    else {
+    else
+    {
       // Invalid version.  Use the default instead of failing.
     }
   }
 
   // Check for explicitly default/not default.
-  if (implicitDefault) {
+  if (implicitDefault)
+  {
     const bool isdefault = mtlx->getDefaultVersion();
-    if (isdefault) {
+    if (isdefault)
+    {
       *implicitDefault = false;
       version = version.GetAsDefault();
     }
-    else {
+    else
+    {
       // No opinion means implicitly a (potential) default.
       *implicitDefault = true;
     }
@@ -316,9 +351,11 @@ NdrVersion UsdMtlxGetVersion(const mx::ConstInterfaceElementPtr &mtlx, bool *imp
 
 const std::string &UsdMtlxGetSourceURI(const mx::ConstElementPtr &element)
 {
-  for (auto scan = element; scan; scan = scan->getParent()) {
+  for (auto scan = element; scan; scan = scan->getParent())
+  {
     const auto &uri = scan->getSourceUri();
-    if (!uri.empty()) {
+    if (!uri.empty())
+    {
       return uri;
     }
   }
@@ -381,7 +418,8 @@ VtValue UsdMtlxGetUsdValue(const mx::ConstElementPtr &mtlx, bool getDefaultValue
   static const std::string valueAttr = mx::ValueElement::VALUE_ATTRIBUTE;
 
   // Bail if no element.
-  if (!mtlx) {
+  if (!mtlx)
+  {
     return VtValue();
   }
 
@@ -397,14 +435,17 @@ std::vector<VtValue> UsdMtlxGetPackedUsdValues(const std::string &values, const 
   std::vector<VtValue> result;
 
   // It's impossible to parse packed arrays.  This is a MaterialX bug.
-  if (TfStringEndsWith(type, "array")) {
+  if (TfStringEndsWith(type, "array"))
+  {
     return result;
   }
 
   // Split on commas and convert each value separately.
-  for (auto element : TfStringSplit(values, ",")) {
+  for (auto element : TfStringSplit(values, ","))
+  {
     auto typeErased = _GetUsdValue(TfStringTrim(element), type);
-    if (typeErased.IsEmpty()) {
+    if (typeErased.IsEmpty())
+    {
       result.clear();
       break;
     }

@@ -77,7 +77,8 @@ bool UsdAbcAlembicFileFormat::CanRead(const string &filePath) const
 {
   // XXX: Add more verification of file header magic
   auto extension = TfGetExtension(filePath);
-  if (extension.empty()) {
+  if (extension.empty())
+  {
     return false;
   }
 
@@ -90,7 +91,8 @@ bool UsdAbcAlembicFileFormat::Read(SdfLayer *layer, const string &resolvedPath, 
 
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
   UsdAbc_AlembicDataRefPtr abcData = TfStatic_cast<UsdAbc_AlembicDataRefPtr>(data);
-  if (!abcData->Open(resolvedPath)) {
+  if (!abcData->Open(resolvedPath))
+  {
     return false;
   }
 

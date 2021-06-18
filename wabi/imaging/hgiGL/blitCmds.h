@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// OpenGL implementation of HgiBlitCmds.
 ///
-class HgiGLBlitCmds final : public HgiBlitCmds {
+class HgiGLBlitCmds final : public HgiBlitCmds
+{
  public:
   HGIGL_API
   ~HgiGLBlitCmds() override;

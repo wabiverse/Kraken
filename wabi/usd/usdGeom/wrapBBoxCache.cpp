@@ -40,7 +40,8 @@ static object _ComputePointInstanceWorldBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceWorldBounds(instancer, ids.data(), ids.size(), boxes.data())) {
+  if (!self.ComputePointInstanceWorldBounds(instancer, ids.data(), ids.size(), boxes.data()))
+  {
     return object();
   }
   boost::python::list ret;
@@ -58,7 +59,8 @@ static object _ComputePointInstanceRelativeBounds(UsdGeomBBoxCache &self,
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
   if (!self.ComputePointInstanceRelativeBounds(
-        instancer, ids.data(), ids.size(), relativeToAncestorPrim, boxes.data())) {
+        instancer, ids.data(), ids.size(), relativeToAncestorPrim, boxes.data()))
+  {
     return object();
   }
   boost::python::list ret;
@@ -74,7 +76,8 @@ static object _ComputePointInstanceLocalBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceLocalBounds(instancer, ids.data(), ids.size(), boxes.data())) {
+  if (!self.ComputePointInstanceLocalBounds(instancer, ids.data(), ids.size(), boxes.data()))
+  {
     return object();
   }
   boost::python::list ret;
@@ -90,7 +93,8 @@ static object _ComputePointInstanceUntransformedBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceUntransformedBounds(instancer, ids.data(), ids.size(), boxes.data())) {
+  if (!self.ComputePointInstanceUntransformedBounds(instancer, ids.data(), ids.size(), boxes.data()))
+  {
     return object();
   }
   boost::python::list ret;

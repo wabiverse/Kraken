@@ -61,15 +61,19 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
                                                               std::string *reason,
                                                               ConnectableNodeTypes nodeType)
 {
-  if (!input.IsDefined()) {
-    if (reason) {
+  if (!input.IsDefined())
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf("Invalid input: %s", input.GetAttr().GetPath().GetText());
     }
     return false;
   }
 
-  if (!source) {
-    if (reason) {
+  if (!source)
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf("Invalid source: %s", source.GetPath().GetText());
     }
     return false;
@@ -81,8 +85,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
     const SdfPath inputPrimPath = input.GetPrim().GetPath();
     const SdfPath sourcePrimPath = source.GetPrim().GetPath();
 
-    if (!UsdShadeConnectableAPI(source.GetPrim()).IsContainer()) {
-      if (reason) {
+    if (!UsdShadeConnectableAPI(source.GetPrim()).IsContainer())
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Encapsulation check failed - "
           "prim '%s' owning the input source '%s' is not a "
@@ -92,8 +98,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
       }
       return false;
     }
-    if (inputPrimPath.GetParentPath() != sourcePrimPath) {
-      if (reason) {
+    if (inputPrimPath.GetParentPath() != sourcePrimPath)
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Encapsulation check failed - "
           "input source prim '%s' is not the closest ancestor "
@@ -117,10 +125,13 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
     const SdfPath inputPrimPath = input.GetPrim().GetPath();
     const SdfPath sourcePrimPath = source.GetPrim().GetPath();
 
-    switch (nodeType) {
+    switch (nodeType)
+    {
       case ConnectableNodeTypes::DerivedContainerNodes:
-        if (!UsdShadeConnectableAPI(input.GetPrim()).IsContainer()) {
-          if (reason) {
+        if (!UsdShadeConnectableAPI(input.GetPrim()).IsContainer())
+        {
+          if (reason)
+          {
             *reason = TfStringPrintf(
               "Encapsulation check failed - "
               "For input's prim type '%s', prim owning the "
@@ -130,8 +141,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
           }
           return false;
         }
-        if (sourcePrimPath.GetParentPath() != inputPrimPath) {
-          if (reason) {
+        if (sourcePrimPath.GetParentPath() != inputPrimPath)
+        {
+          if (reason)
+          {
             *reason = TfStringPrintf(
               "Encapsulation check failed - "
               "For input's prim type '%s', Output source's "
@@ -148,8 +161,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
 
       case ConnectableNodeTypes::BasicNodes:
       default:
-        if (!UsdShadeConnectableAPI(input.GetPrim().GetParent()).IsContainer()) {
-          if (reason) {
+        if (!UsdShadeConnectableAPI(input.GetPrim().GetParent()).IsContainer())
+        {
+          if (reason)
+          {
             *reason = TfStringPrintf(
               "Encapsulation check failed - "
               "For input's prim type '%s', Immediate ancestor"
@@ -161,8 +176,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
           }
           return false;
         }
-        if (inputPrimPath.GetParentPath() != sourcePrimPath.GetParentPath()) {
-          if (reason) {
+        if (inputPrimPath.GetParentPath() != sourcePrimPath.GetParentPath())
+        {
+          if (reason)
+          {
             *reason = TfStringPrintf(
               "Encapsulation check failed - "
               "For input's prim type '%s', Input's prim '%s' "
@@ -180,30 +197,40 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
   };
 
   TfToken inputConnectability = input.GetConnectability();
-  if (inputConnectability == UsdShadeTokens->full) {
-    if (UsdShadeInput::IsInput(source)) {
-      if (encapsulationCheckForInputSources(reason)) {
+  if (inputConnectability == UsdShadeTokens->full)
+  {
+    if (UsdShadeInput::IsInput(source))
+    {
+      if (encapsulationCheckForInputSources(reason))
+      {
         return true;
       }
       return false;
     }
     /* source is an output - allow connection */
-    if (encapsulationCheckForOutputSources(reason)) {
+    if (encapsulationCheckForOutputSources(reason))
+    {
       return true;
     }
     return false;
   }
-  else if (inputConnectability == UsdShadeTokens->interfaceOnly) {
-    if (UsdShadeInput::IsInput(source)) {
+  else if (inputConnectability == UsdShadeTokens->interfaceOnly)
+  {
+    if (UsdShadeInput::IsInput(source))
+    {
       TfToken sourceConnectability = UsdShadeInput(source).GetConnectability();
-      if (sourceConnectability == UsdShadeTokens->interfaceOnly) {
-        if (encapsulationCheckForInputSources(reason)) {
+      if (sourceConnectability == UsdShadeTokens->interfaceOnly)
+      {
+        if (encapsulationCheckForInputSources(reason))
+        {
           return true;
         }
         return false;
       }
-      else {
-        if (reason) {
+      else
+      {
+        if (reason)
+        {
           *reason =
             "Input connectability is 'interfaceOnly' and "
             "source does not have 'interfaceOnly' connectability.";
@@ -211,8 +238,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
         return false;
       }
     }
-    else {
-      if (reason) {
+    else
+    {
+      if (reason)
+      {
         *reason =
           "Input connectability is 'interfaceOnly' but "
           "source is not an input";
@@ -220,8 +249,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
       }
     }
   }
-  else {
-    if (reason) {
+  else
+  {
+    if (reason)
+    {
       *reason = "Input connectability is unspecified";
     }
     return false;
@@ -236,14 +267,18 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
 {
   // Nodegraphs allow connections to their outputs, but only from
   // internal nodes.
-  if (!output.IsDefined()) {
-    if (reason) {
+  if (!output.IsDefined())
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf("Invalid output");
     }
     return false;
   }
-  if (!source) {
-    if (reason) {
+  if (!source)
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf("Invalid source");
     }
     return false;
@@ -252,10 +287,13 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
   const SdfPath sourcePrimPath = source.GetPrim().GetPath();
   const SdfPath outputPrimPath = output.GetPrim().GetPath();
 
-  if (UsdShadeInput::IsInput(source)) {
+  if (UsdShadeInput::IsInput(source))
+  {
     // passthrough usage is not allowed for DerivedContainerNodes
-    if (nodeType == ConnectableNodeTypes::DerivedContainerNodes) {
-      if (reason) {
+    if (nodeType == ConnectableNodeTypes::DerivedContainerNodes)
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Encapsulation check failed - "
           "passthrough usage is not allowed for output prim '%s' "
@@ -267,8 +305,10 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
     }
     // output can connect to an input of the same container as a
     // passthrough.
-    if (sourcePrimPath != outputPrimPath) {
-      if (reason) {
+    if (sourcePrimPath != outputPrimPath)
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Encapsulation check failed - output "
           "'%s' and input source '%s' must be encapsulated by "
@@ -280,11 +320,14 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
     }
     return true;
   }
-  else {  // Source is an output
+  else
+  {  // Source is an output
     // output can connect to other node's output directly encapsulated by
     // it.
-    if (sourcePrimPath.GetParentPath() != outputPrimPath) {
-      if (reason) {
+    if (sourcePrimPath.GetParentPath() != outputPrimPath)
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Encapsulation check failed - prim "
           "owning the output '%s' is not an immediate descendent "
@@ -304,7 +347,8 @@ bool UsdShadeConnectableAPIBehavior::CanConnectOutputToSource(const UsdShadeOutp
 {
   // Most outputs have their value defined by the node definition, and do
   // not allow connections to override that.
-  if (reason) {
+  if (reason)
+  {
     *reason = "Outputs for this prim type are not connectable";
   }
   return false;
@@ -320,17 +364,20 @@ bool UsdShadeConnectableAPIBehavior::IsContainer() const
 // UsdShadeConnectableAPIBehavior registry
 //
 
-namespace {
+namespace
+{
 
 // This registry is closely modeled after the one in UsdGeomBoundableComputeExtent.
-class _BehaviorRegistry : public TfWeakBase {
+class _BehaviorRegistry : public TfWeakBase
+{
  public:
   static _BehaviorRegistry &GetInstance()
   {
     return TfSingleton<_BehaviorRegistry>::GetInstance();
   }
 
-  _BehaviorRegistry() : _initialized(false)
+  _BehaviorRegistry()
+    : _initialized(false)
   {
     // Calling SubscribeTo may cause functions to be registered
     // while we're still in the c'tor, so make sure to call
@@ -355,7 +402,8 @@ class _BehaviorRegistry : public TfWeakBase {
       didInsert = _registry.emplace(connectablePrimType, behavior).second;
     }
 
-    if (!didInsert) {
+    if (!didInsert)
+    {
       TF_CODING_ERROR(
         "UsdShade Connectable behavior already registered for "
         "prim type '%s'",
@@ -376,7 +424,8 @@ class _BehaviorRegistry : public TfWeakBase {
 
     // Get the actual schema type from the prim definition.
     const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
-    if (!primSchemaType) {
+    if (!primSchemaType)
+    {
       TF_CODING_ERROR("Could not find prim type '%s' for prim %s",
                       prim.GetTypeName().GetText(),
                       UsdDescribe(prim).c_str());
@@ -384,7 +433,8 @@ class _BehaviorRegistry : public TfWeakBase {
     }
 
     std::shared_ptr<UsdShadeConnectableAPIBehavior> behavior;
-    if (_FindBehaviorForType(primSchemaType, &behavior)) {
+    if (_FindBehaviorForType(primSchemaType, &behavior))
+    {
       return behavior.get();
     }
 
@@ -392,16 +442,20 @@ class _BehaviorRegistry : public TfWeakBase {
     primSchemaType.GetAllAncestorTypes(&primSchemaTypeAndBases);
 
     auto i = primSchemaTypeAndBases.cbegin();
-    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i) {
+    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
+    {
       const TfType &type = *i;
-      if (_FindBehaviorForType(type, &behavior)) {
+      if (_FindBehaviorForType(type, &behavior))
+      {
         break;
       }
 
-      if (_LoadPluginForType(type)) {
+      if (_LoadPluginForType(type))
+      {
         // If we loaded the plugin for this type, a new function may
         // have been registered so look again.
-        if (_FindBehaviorForType(type, &behavior)) {
+        if (_FindBehaviorForType(type, &behavior))
+        {
           break;
         }
       }
@@ -412,7 +466,8 @@ class _BehaviorRegistry : public TfWeakBase {
     // also be nullptr if no function was found; we cache this
     // as well to avoid looking it up again.
     _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
-    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it) {
+    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
+    {
       _registry.emplace(*it, behavior);
     }
 
@@ -423,7 +478,8 @@ class _BehaviorRegistry : public TfWeakBase {
   // Wait until initialization of the singleton is completed.
   void _WaitUntilInitialized()
   {
-    while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire))) {
+    while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire)))
+    {
       std::this_thread::yield();
     }
   }
@@ -436,12 +492,14 @@ class _BehaviorRegistry : public TfWeakBase {
     const JsValue implementsUsdShadeConnectableAPIBehavior = plugReg.GetDataFromPluginMetaData(
       type, "implementsUsdShadeConnectableAPIBehavior");
     if (!implementsUsdShadeConnectableAPIBehavior.Is<bool>() ||
-        !implementsUsdShadeConnectableAPIBehavior.Get<bool>()) {
+        !implementsUsdShadeConnectableAPIBehavior.Get<bool>())
+    {
       return false;
     }
 
     const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
-    if (!pluginForType) {
+    if (!pluginForType)
+    {
       TF_CODING_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
       return false;
     }
@@ -482,7 +540,8 @@ TF_INSTANTIATE_SINGLETON(_BehaviorRegistry);
 void UsdShadeRegisterConnectableAPIBehavior(const TfType &connectablePrimType,
                                             const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior)
 {
-  if (!behavior || connectablePrimType.IsUnknown()) {
+  if (!behavior || connectablePrimType.IsUnknown())
+  {
     TF_CODING_ERROR("Invalid behavior registration for prim type '%s'",
                     connectablePrimType.GetTypeName().c_str());
     return;
@@ -513,7 +572,8 @@ bool UsdShadeConnectableAPI::CanConnect(const UsdShadeInput &input, const UsdAtt
   // validation in USD.
   std::string reason;
   if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(
-        input.GetPrim())) {
+        input.GetPrim()))
+  {
     return behavior->CanConnectInputToSource(input, source, &reason);
   }
   return false;
@@ -526,7 +586,8 @@ bool UsdShadeConnectableAPI::CanConnect(const UsdShadeOutput &output, const UsdA
   // validation in USD.
   std::string reason;
   if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(
-        output.GetPrim())) {
+        output.GetPrim()))
+  {
     return behavior->CanConnectOutputToSource(output, source, &reason);
   }
   return false;
@@ -540,7 +601,8 @@ bool UsdShadeConnectableAPI::HasConnectableAPI(const TfType &schemaType)
 
 bool UsdShadeConnectableAPI::IsContainer() const
 {
-  if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(GetPrim())) {
+  if (UsdShadeConnectableAPIBehavior *behavior = _BehaviorRegistry::GetInstance().GetBehavior(GetPrim()))
+  {
     return behavior->IsContainer();
   }
   return false;

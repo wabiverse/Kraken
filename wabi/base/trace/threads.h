@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This class represents an identifier for a thread.
 ///
-class TraceThreadId {
+class TraceThreadId
+{
  public:
   /// Constructor which creates an identifier based on std::thread_id. .
   /// It is either"Main Thread" if this id is marked as the main thread or

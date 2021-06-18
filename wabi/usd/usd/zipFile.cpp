@@ -41,19 +41,23 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // Metafunction that determines if a T instance can be read/written by simple
 // bitwise copy.
 //
 // XXX: This could be std::is_trivially_copyable, but that isn't implemented in
 //      older versions of gcc.
-template<class T> struct _IsBitwiseReadWrite {
+template<class T>
+struct _IsBitwiseReadWrite
+{
   static const bool value = std::is_enum<T>::value || std::is_arithmetic<T>::value ||
                             std::is_trivial<T>::value;
 };
 
-struct _InputStream {
+struct _InputStream
+{
   _InputStream(const char *buffer, size_t size, size_t offset = 0)
     : _cur(buffer + offset),
       _size(size),
@@ -65,7 +69,8 @@ struct _InputStream {
     return _size - (_cur - _buffer);
   }
 
-  template<class T> void Read(T *dest)
+  template<class T>
+  void Read(T *dest)
   {
     static_assert(_IsBitwiseReadWrite<T>::value, "Cannot memcpy to non-trivially-copyable type");
     memcpy(reinterpret_cast<char *>(dest), _cur, sizeof(T));
@@ -99,11 +104,14 @@ struct _InputStream {
   const char *_buffer;
 };
 
-struct _OutputStream {
-  _OutputStream(FILE *f) : _f(f)
+struct _OutputStream
+{
+  _OutputStream(FILE *f)
+    : _f(f)
   {}
 
-  template<class T> inline void Write(const T &value)
+  template<class T>
+  inline void Write(const T &value)
   {
     static_assert(_IsBitwiseReadWrite<T>::value, "Cannot fwrite non-trivially-copyable type");
     fwrite(&value, sizeof(T), 1, _f);
@@ -128,10 +136,12 @@ struct _OutputStream {
 // Local file header for each file in the zip archive.
 //
 // See section 4.3.7 in zip file specification for more details.
-struct _LocalFileHeader {
+struct _LocalFileHeader
+{
   static const uint32_t Signature = 0x04034b50;
 
-  struct Fixed {
+  struct Fixed
+  {
     uint32_t signature;
     uint16_t versionForExtract;
     uint16_t bits;
@@ -176,7 +186,8 @@ _LocalFileHeader _ReadLocalFileHeader(_InputStream &src)
   // If the source does not have enough bytes to accommodate the
   // fixed-sized portion of the header, bail out so we don't try to
   // read off the end of the source.
-  if (src.RemainingSize() < _LocalFileHeader::FixedSize) {
+  if (src.RemainingSize() < _LocalFileHeader::FixedSize)
+  {
     return _LocalFileHeader();
   }
 
@@ -185,7 +196,8 @@ _LocalFileHeader _ReadLocalFileHeader(_InputStream &src)
   // If signature is not the expected value, reset the source back to
   // its original position and bail.
   src.Read(&h.f.signature);
-  if (!h.IsValid()) {
+  if (!h.IsValid())
+  {
     src.Advance(-sizeof(decltype(h.f.signature)));
     return _LocalFileHeader();
   }
@@ -201,21 +213,24 @@ _LocalFileHeader _ReadLocalFileHeader(_InputStream &src)
   src.Read(&h.f.filenameLength);
   src.Read(&h.f.extraFieldLength);
 
-  if (src.RemainingSize() < h.f.filenameLength) {
+  if (src.RemainingSize() < h.f.filenameLength)
+  {
     return _LocalFileHeader();
   }
 
   h.filenameStart = src.TellMemoryAddress();
   src.Advance(h.f.filenameLength);
 
-  if (src.RemainingSize() < h.f.extraFieldLength) {
+  if (src.RemainingSize() < h.f.extraFieldLength)
+  {
     return _LocalFileHeader();
   }
 
   h.extraFieldStart = src.TellMemoryAddress();
   src.Advance(h.f.extraFieldLength);
 
-  if (src.RemainingSize() < h.f.compressedSize) {
+  if (src.RemainingSize() < h.f.compressedSize)
+  {
     return _LocalFileHeader();
   }
 
@@ -250,10 +265,12 @@ void _WriteLocalFileHeader(_OutputStream &out, const _LocalFileHeader &h)
 // are stored after the data for the last file.
 //
 // See section 4.3.12 in zip file specification for more details.
-struct _CentralDirectoryHeader {
+struct _CentralDirectoryHeader
+{
   static const uint32_t Signature = 0x02014b50;
 
-  struct Fixed {
+  struct Fixed
+  {
     uint32_t signature;
     uint16_t versionMadeBy;
     uint16_t versionForExtract;
@@ -326,10 +343,12 @@ void _WriteCentralDirectoryHeader(_OutputStream &out, const _CentralDirectoryHea
 
 // End of central directory record for zip archive. This header is stored
 // after the last central directory header.
-struct _EndOfCentralDirectoryRecord {
+struct _EndOfCentralDirectoryRecord
+{
   static const uint32_t Signature = 0x06054b50;
 
-  struct Fixed {
+  struct Fixed
+  {
     uint32_t signature;
     uint16_t diskNumber;
     uint16_t diskNumberForCentralDir;
@@ -382,7 +401,8 @@ void _WriteEndOfCentralDirectoryRecord(_OutputStream &out, const _EndOfCentralDi
 // is complicated by the requirement that each entry in the 'extra' field
 // be preceded by a 4 byte header.
 
-struct _ExtraFieldHeader {
+struct _ExtraFieldHeader
+{
   uint16_t headerId;
   uint16_t dataSize;
 };
@@ -398,10 +418,12 @@ constexpr size_t _PaddingBufferSize = _HeaderSize + _DataAlignment;
 uint16_t _ComputeExtraFieldPaddingSize(size_t offset)
 {
   uint16_t requiredPadding = _DataAlignment - (offset % _DataAlignment);
-  if (requiredPadding == _DataAlignment) {
+  if (requiredPadding == _DataAlignment)
+  {
     requiredPadding = 0;
   }
-  else if (requiredPadding < _HeaderSize) {
+  else if (requiredPadding < _HeaderSize)
+  {
     // If the amount of padding needed is too small to contain the header,
     // bump the size up while maintaining the required alignment.
     requiredPadding += _DataAlignment;
@@ -413,7 +435,8 @@ uint16_t _ComputeExtraFieldPaddingSize(size_t offset)
 // padding bytes. For convenience, returns extraFieldBuffer.
 const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSize], uint16_t numPaddingBytes)
 {
-  if (numPaddingBytes == 0) {
+  if (numPaddingBytes == 0)
+  {
     return nullptr;
   }
 
@@ -434,7 +457,8 @@ const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSiz
 
 // ------------------------------------------------------------
 
-class UsdZipFile::_Impl {
+class UsdZipFile::_Impl
+{
  public:
   _Impl(std::shared_ptr<const char> &&buffer_, size_t size_)
     : storage(std::move(buffer_)),
@@ -453,7 +477,8 @@ class UsdZipFile::_Impl {
 UsdZipFile UsdZipFile::Open(const std::string &filePath)
 {
   std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(ArResolvedPath(filePath));
-  if (!asset) {
+  if (!asset)
+  {
     return UsdZipFile();
   }
 
@@ -462,13 +487,15 @@ UsdZipFile UsdZipFile::Open(const std::string &filePath)
 
 UsdZipFile UsdZipFile::Open(const std::shared_ptr<ArAsset> &asset)
 {
-  if (!asset) {
+  if (!asset)
+  {
     TF_CODING_ERROR("Invalid asset");
     return UsdZipFile();
   }
 
   std::shared_ptr<const char> buffer = asset->GetBuffer();
-  if (!buffer) {
+  if (!buffer)
+  {
     TF_RUNTIME_ERROR("Could not retrieve buffer from asset");
     return UsdZipFile();
   }
@@ -476,7 +503,8 @@ UsdZipFile UsdZipFile::Open(const std::shared_ptr<ArAsset> &asset)
   return UsdZipFile(std::shared_ptr<_Impl>(new _Impl(std::move(buffer), asset->GetSize())));
 }
 
-UsdZipFile::UsdZipFile(std::shared_ptr<_Impl> &&impl) : _impl(std::move(impl))
+UsdZipFile::UsdZipFile(std::shared_ptr<_Impl> &&impl)
+  : _impl(std::move(impl))
 {}
 
 UsdZipFile::UsdZipFile()
@@ -491,7 +519,8 @@ void UsdZipFile::DumpContents() const
   printf("    ------\t      ----\t    ------\t----\n");
 
   size_t n = 0;
-  for (auto it = begin(), e = end(); it != e; ++it, ++n) {
+  for (auto it = begin(), e = end(); it != e; ++it, ++n)
+  {
     const FileInfo info = it.GetFileInfo();
     printf("%10zu\t%10zu\t%10zu\t%s\n", info.dataOffset, info.size, info.uncompressedSize, it->c_str());
   }
@@ -515,13 +544,18 @@ UsdZipFile::Iterator UsdZipFile::end() const
   return Iterator();
 }
 
-UsdZipFile::Iterator::Iterator() : _impl(nullptr), _offset(0)
+UsdZipFile::Iterator::Iterator()
+  : _impl(nullptr),
+    _offset(0)
 {}
 
-UsdZipFile::Iterator::Iterator(const _Impl *impl) : _impl(impl), _offset(0)
+UsdZipFile::Iterator::Iterator(const _Impl *impl)
+  : _impl(impl),
+    _offset(0)
 {
   _InputStream src(_impl->buffer, _impl->size, _offset);
-  if (!_ReadLocalFileHeader(src).IsValid()) {
+  if (!_ReadLocalFileHeader(src).IsValid())
+  {
     *this = Iterator();
   }
 }
@@ -548,10 +582,12 @@ UsdZipFile::Iterator &UsdZipFile::Iterator::operator++()
 
   size_t newOffset = src.Tell();
   const _LocalFileHeader newHeader = _ReadLocalFileHeader(src);
-  if (newHeader.IsValid()) {
+  if (newHeader.IsValid())
+  {
     _offset = newOffset;
   }
-  else {
+  else
+  {
     *this = Iterator();
   }
   return *this;
@@ -597,7 +633,8 @@ UsdZipFile::FileInfo UsdZipFile::Iterator::GetFileInfo() const
 
 // ------------------------------------------------------------
 
-namespace {
+namespace
+{
 // Compute last modified date and time for given file in MS-DOS format.
 std::pair<uint16_t, uint16_t> _ModTimeAndDate(const std::string &filename)
 {
@@ -656,9 +693,11 @@ std::string _ZipFilePath(const std::string &filePath)
 
 }  // end anonymous namespace
 
-class UsdZipFileWriter::_Impl {
+class UsdZipFileWriter::_Impl
+{
  public:
-  _Impl(TfSafeOutputFile &&out) : outputFile(std::move(out))
+  _Impl(TfSafeOutputFile &&out)
+    : outputFile(std::move(out))
   {}
 
   TfSafeOutputFile outputFile;
@@ -675,7 +714,8 @@ UsdZipFileWriter UsdZipFileWriter::CreateNew(const std::string &filePath)
 {
   TfErrorMark mark;
   TfSafeOutputFile outputFile = TfSafeOutputFile::Replace(filePath);
-  if (!mark.IsClean()) {
+  if (!mark.IsClean())
+  {
     return UsdZipFileWriter();
   }
 
@@ -685,15 +725,18 @@ UsdZipFileWriter UsdZipFileWriter::CreateNew(const std::string &filePath)
 UsdZipFileWriter::UsdZipFileWriter()
 {}
 
-UsdZipFileWriter::UsdZipFileWriter(std::unique_ptr<_Impl> &&impl) : _impl(std::move(impl))
+UsdZipFileWriter::UsdZipFileWriter(std::unique_ptr<_Impl> &&impl)
+  : _impl(std::move(impl))
 {}
 
-UsdZipFileWriter::UsdZipFileWriter(UsdZipFileWriter &&rhs) : _impl(std::move(rhs._impl))
+UsdZipFileWriter::UsdZipFileWriter(UsdZipFileWriter &&rhs)
+  : _impl(std::move(rhs._impl))
 {}
 
 UsdZipFileWriter &UsdZipFileWriter::operator=(UsdZipFileWriter &&rhs)
 {
-  if (this != &rhs) {
+  if (this != &rhs)
+  {
     _impl = std::move(rhs._impl);
   }
   return *this;
@@ -701,14 +744,16 @@ UsdZipFileWriter &UsdZipFileWriter::operator=(UsdZipFileWriter &&rhs)
 
 UsdZipFileWriter::~UsdZipFileWriter()
 {
-  if (_impl) {
+  if (_impl)
+  {
     Save();
   }
 }
 
 std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::string &filePathInArchiveIn)
 {
-  if (!_impl) {
+  if (!_impl)
+  {
     TF_CODING_ERROR("File is not open for writing");
     return std::string();
   }
@@ -724,7 +769,8 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::st
   if (std::find_if(
         _impl->addedFiles.begin(), _impl->addedFiles.end(), [&zipFilePath](const _Impl::_Record &r) {
           return std::get<0>(r) == zipFilePath;
-        }) != _impl->addedFiles.end()) {
+        }) != _impl->addedFiles.end())
+  {
     return zipFilePath;
   }
 
@@ -732,7 +778,8 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::st
 
   std::string err;
   ArchConstFileMapping mapping = ArchMapFileReadOnly(filePath, &err);
-  if (!mapping) {
+  if (!mapping)
+  {
     TF_RUNTIME_ERROR("Failed to map '%s': %s", filePath.c_str(), err.c_str());
     return std::string();
   }
@@ -768,7 +815,8 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::st
 
 bool UsdZipFileWriter::Save()
 {
-  if (!_impl) {
+  if (!_impl)
+  {
     TF_CODING_ERROR("File is not open for writing");
     return false;
   }
@@ -778,7 +826,8 @@ bool UsdZipFileWriter::Save()
   // Write central directory headers for each file added to the zip archive.
   const long centralDirectoryStart = outStream.Tell();
 
-  for (const _Impl::_Record &record : _impl->addedFiles) {
+  for (const _Impl::_Record &record : _impl->addedFiles)
+  {
     const std::string &fileToZip = std::get<0>(record);
     const _LocalFileHeader::Fixed &localHeader = std::get<1>(record);
     uint32_t offset = std::get<2>(record);
@@ -837,7 +886,8 @@ bool UsdZipFileWriter::Save()
 
 void UsdZipFileWriter::Discard()
 {
-  if (!_impl) {
+  if (!_impl)
+  {
     TF_CODING_ERROR("File is not open for writing");
     return;
   }

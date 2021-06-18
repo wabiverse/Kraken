@@ -58,7 +58,8 @@ WABI_NAMESPACE_BEGIN
 ///    The location of the attribute in the shader. layout(location = X)</li>
 /// </ul>
 ///
-struct HgiVertexAttributeDesc {
+struct HgiVertexAttributeDesc
+{
   HGI_API
   HgiVertexAttributeDesc();
 
@@ -87,7 +88,8 @@ inline bool operator!=(const HgiVertexAttributeDesc &lhs, const HgiVertexAttribu
 ///   The byte size of a vertex (distance between two vertices).</li>
 /// </ul>
 ///
-struct HgiVertexBufferDesc {
+struct HgiVertexBufferDesc
+{
   HGI_API
   HgiVertexBufferDesc();
 
@@ -114,7 +116,8 @@ inline bool operator!=(const HgiVertexBufferDesc &lhs, const HgiVertexBufferDesc
 ///   The number of samples for each fragment. Must match attachments</li>
 /// </ul>
 ///
-struct HgiMultiSampleState {
+struct HgiMultiSampleState
+{
   HGI_API
   HgiMultiSampleState();
 
@@ -145,7 +148,8 @@ bool operator!=(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs);
 ///   When false all primitives are discarded before rasterization stage.</li>
 /// </ul>
 ///
-struct HgiRasterizationState {
+struct HgiRasterizationState
+{
   HGI_API
   HgiRasterizationState();
 
@@ -179,7 +183,8 @@ bool operator!=(const HgiRasterizationState &lhs, const HgiRasterizationState &r
 ///   Enables the stencil test.</li>
 /// </ul>
 ///
-struct HgiDepthStencilState {
+struct HgiDepthStencilState
+{
   HGI_API
   HgiDepthStencilState();
 
@@ -206,7 +211,8 @@ bool operator!=(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs
 ///    What shader stage(s) the constants will be used in.</li>
 /// </ul>
 ///
-struct HgiGraphicsShaderConstantsDesc {
+struct HgiGraphicsShaderConstantsDesc
+{
   HGI_API
   HgiGraphicsShaderConstantsDesc();
 
@@ -252,7 +258,8 @@ bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShad
 ///   Describes the shader uniforms.</li>
 /// </ul>
 ///
-struct HgiGraphicsPipelineDesc {
+struct HgiGraphicsPipelineDesc
+{
   HGI_API
   HgiGraphicsPipelineDesc();
 
@@ -286,7 +293,8 @@ bool operator!=(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
 /// To the client (HdPh) pipeline resources are referred to via
 /// opaque, stateless handles (HgiPipelineHandle).
 ///
-class HgiGraphicsPipeline {
+class HgiGraphicsPipeline
+{
  public:
   HGI_API
   virtual ~HgiGraphicsPipeline();

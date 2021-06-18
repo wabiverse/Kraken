@@ -46,7 +46,8 @@ class TfDiagnosticMgr;
 /// including coding errors (Tf.RaiseCodingError), run time errors
 /// (Tf.RaiseRuntimeError), fatal errors (Tf.Fatal).
 ///
-class TfError : public TfDiagnosticBase {
+class TfError : public TfDiagnosticBase
+{
 
  public:
   /// Return the error code posted.

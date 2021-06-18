@@ -78,7 +78,8 @@ size_t GlfTexture::GetMemoryRequested() const
 
 void GlfTexture::SetMemoryRequested(size_t targetMemory)
 {
-  if (_memoryRequested != targetMemory) {
+  if (_memoryRequested != targetMemory)
+  {
     _memoryRequested = targetMemory;
     _OnMemoryRequestedDirty();
   }

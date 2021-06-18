@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Tags for non-hierarchial subdiv surfaces.
 ///
-class PxOsdSubdivTags {
+class PxOsdSubdivTags
+{
 
  public:
   PxOsdSubdivTags() = default;

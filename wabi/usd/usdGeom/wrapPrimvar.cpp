@@ -39,7 +39,8 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static tuple _GetDeclarationInfo(const UsdGeomPrimvar &self)
 {
@@ -123,11 +124,13 @@ static object __getattribute__(object selfObj, const char *name)
         strcmp(name, "NameContainsNamespaces") == 0 || strcmp(name, "GetBaseName") == 0 ||
         strcmp(name, "GetNamespace") == 0 || strcmp(name, "SplitName") == 0)) ||
       // prim and attr are both invalid, let almost nothing through.
-      strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0) {
+      strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0)
+  {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   }
-  else {
+  else
+  {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed invalid attribute as a primvar"));
   }

@@ -40,7 +40,8 @@ void ED_view3d_run(bool *show)
 
   flags |= ANCHOR_WindowFlags_MenuBar;
 
-  if (!ANCHOR::Begin("View3D", show, flags)) {
+  if (!ANCHOR::Begin("View3D", show, flags))
+  {
     /** Optimization. Early out if Viewport isn't displayed. */
     ANCHOR::End();
     return;
@@ -54,12 +55,14 @@ void ED_view3d_run(bool *show)
     static auto version = PFN_vkEnumerateInstanceVersion(
       vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
 
-    if (ARCH_UNLIKELY(version == nullptr)) {
+    if (ARCH_UNLIKELY(version == nullptr))
+    {
       /** Backwards compatibility & no patch. */
       vulkan_v = TfStringPrintf(
         "%d.%d", VK_VERSION_MAJOR(VK_API_VERSION_1_0), VK_VERSION_MINOR(VK_API_VERSION_1_0));
     }
-    else {
+    else
+    {
       /** Vulkan Version. */
       static uint32_t instance_version;
       version(&instance_version);
@@ -71,8 +74,10 @@ void ED_view3d_run(bool *show)
   });
 
   /** Display version in UI. */
-  if (ANCHOR::BeginMenuBar()) {
-    if (ANCHOR::BeginMenu("Hydra on Vulkan")) {
+  if (ANCHOR::BeginMenuBar())
+  {
+    if (ANCHOR::BeginMenu("Hydra on Vulkan"))
+    {
       ANCHOR::MenuItem(TfStringify("Vulkan v" + vulkan_v).c_str());
       ANCHOR::EndMenu();
     }

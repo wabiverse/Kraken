@@ -36,8 +36,10 @@ WABI_NAMESPACE_BEGIN
 extern const AtNodeMethods *HdArnoldDriverMainMtd;
 extern const AtNodeMethods *HdArnoldDriverAOVMtd;
 
-namespace {
-struct NodeDefinition {
+namespace
+{
+struct NodeDefinition
+{
   int type;
   uint8_t outputType;
   const AtString &name;
@@ -58,14 +60,16 @@ const auto builtInNodes = []() -> const BuiltInNodes & {
 
 void hdArnoldInstallNodes()
 {
-  for (const auto &it : builtInNodes()) {
+  for (const auto &it : builtInNodes())
+  {
     AiNodeEntryInstall(it.type, it.outputType, it.name, "<built-in>", it.methods, AI_VERSION);
   }
 }
 
 void hdArnoldUninstallNodes()
 {
-  for (const auto &it : builtInNodes()) {
+  for (const auto &it : builtInNodes())
+  {
     AiNodeEntryUninstall(it.name);
   }
 }

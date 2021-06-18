@@ -58,7 +58,8 @@ WABI_NAMESPACE_BEGIN
 ///    origin.
 ///  - Ambient occlusion.
 ///
-class HdEmbreeRenderer final {
+class HdEmbreeRenderer final
+{
  public:
   /// Renderer constructor.
   HdEmbreeRenderer();

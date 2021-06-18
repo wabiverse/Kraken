@@ -61,7 +61,8 @@ RAPIDJSON_NAMESPACE_BEGIN
 /*! \ingroup RAPIDJSON_ERRORS
     \see GenericReader::Parse, GenericReader::GetParseErrorCode
 */
-enum ParseErrorCode {
+enum ParseErrorCode
+{
   kParseErrorNone = 0,  //!< No error.
 
   kParseErrorDocumentEmpty,            //!< The document is empty.
@@ -103,13 +104,18 @@ enum ParseErrorCode {
     \endcode
     \see GenericReader::Parse, GenericDocument::Parse
 */
-struct ParseResult {
+struct ParseResult
+{
  public:
   //! Default constructor, no error.
-  ParseResult() : code_(kParseErrorNone), offset_(0)
+  ParseResult()
+    : code_(kParseErrorNone),
+      offset_(0)
   {}
   //! Constructor to set an error.
-  ParseResult(ParseErrorCode code, size_t offset) : code_(code), offset_(offset)
+  ParseResult(ParseErrorCode code, size_t offset)
+    : code_(code),
+      offset_(offset)
   {}
 
   //! Get the error code.

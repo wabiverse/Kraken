@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// SetCurrentValues().
 ///
 ///
-class TraceCounterAccumulator : private TraceCollection::Visitor {
+class TraceCounterAccumulator : private TraceCollection::Visitor
+{
  public:
   using CounterValues = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
   using CounterValuesMap = std::unordered_map<TfToken, CounterValues, TfToken::HashFunctor>;
@@ -95,7 +96,8 @@ class TraceCounterAccumulator : private TraceCollection::Visitor {
   virtual bool AcceptsCategory(TraceCategoryId) override;
   virtual void OnEvent(const TraceThreadId &, const TfToken &, const TraceEvent &) override;
 
-  struct _CounterValue {
+  struct _CounterValue
+  {
     double value;
     bool isDelta;
   };

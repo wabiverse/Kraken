@@ -42,7 +42,8 @@ void ArnoldUsdReadCreases(AtNode *node,
   const auto cornerIndicesCount = static_cast<uint32_t>(cornerIndices.size());
   // Number of crease segment that we'll need to generate the arnold weights.
   uint32_t creaseSegmentCount = 0;
-  for (auto creaseLength : creaseLengths) {
+  for (auto creaseLength : creaseLengths)
+  {
     // The number of segments will always be one less than the number of points defining the edge.
     creaseSegmentCount += std::max(0, creaseLength - 1);
   }
@@ -58,7 +59,8 @@ void ArnoldUsdReadCreases(AtNode *node,
 
   // Corners are creases with duplicated indices.
   uint32_t ii = 0;
-  for (auto cornerIndex : cornerIndices) {
+  for (auto cornerIndex : cornerIndices)
+  {
     creaseIdxs[ii * 2] = cornerIndex;
     creaseIdxs[ii * 2 + 1] = cornerIndex;
     creaseSharpness[ii] = cornerWeights[ii];
@@ -69,8 +71,10 @@ void ArnoldUsdReadCreases(AtNode *node,
   uint32_t jj = 0;
   // Indexing into the crease weights array.
   uint32_t ll = 0;
-  for (auto creaseLength : creaseLengths) {
-    for (auto k = decltype(creaseLength){1}; k < creaseLength; ++k, ++ii) {
+  for (auto creaseLength : creaseLengths)
+  {
+    for (auto k = decltype(creaseLength){1}; k < creaseLength; ++k, ++ii)
+    {
       creaseIdxs[ii * 2] = creaseIndices[jj + k - 1];
       creaseIdxs[ii * 2 + 1] = creaseIndices[jj + k];
       creaseSharpness[ii] = creaseWeights[ll];
@@ -104,7 +108,8 @@ void ArnoldUsdCurvesData::InitVertexCounts()
 
   const auto numVertexCounts = _vertexCounts.size();
   _arnoldVertexCounts.resize(numVertexCounts);
-  for (auto i = decltype(numVertexCounts){0}; i < numVertexCounts; i += 1) {
+  for (auto i = decltype(numVertexCounts){0}; i < numVertexCounts; i += 1)
+  {
     const auto numSegments = (_vertexCounts[i] - _vmin) / _vstep + 1;
     _arnoldVertexCounts[i] = numSegments + 1;
     _numPerVertex += numSegments + 1;
@@ -120,14 +125,16 @@ void ArnoldUsdCurvesData::InitVertexCounts()
 void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
 {
   AtArray *arr = nullptr;
-  if (value.IsHolding<VtFloatArray>()) {
+  if (value.IsHolding<VtFloatArray>())
+  {
     const auto &values = value.UncheckedGet<VtFloatArray>();
     arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
     auto *out = static_cast<float *>(AiArrayMap(arr));
     std::transform(values.begin(), values.end(), out, [](const float w) -> float { return w * 0.5f; });
     AiArrayUnmap(arr);
   }
-  else if (value.IsHolding<VtDoubleArray>()) {
+  else if (value.IsHolding<VtDoubleArray>())
+  {
     const auto &values = value.UncheckedGet<VtDoubleArray>();
     arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
     auto *out = static_cast<float *>(AiArrayMap(arr));
@@ -136,7 +143,8 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
     });
     AiArrayUnmap(arr);
   }
-  else if (value.IsHolding<VtHalfArray>()) {
+  else if (value.IsHolding<VtHalfArray>())
+  {
     const auto &values = value.UncheckedGet<VtHalfArray>();
     arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
     auto *out = static_cast<float *>(AiArrayMap(arr));
@@ -145,16 +153,20 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
     });
     AiArrayUnmap(arr);
   }
-  else if (value.IsHolding<float>()) {
+  else if (value.IsHolding<float>())
+  {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, value.UncheckedGet<float>() / 2.0f);
   }
-  else if (value.IsHolding<double>()) {
+  else if (value.IsHolding<double>())
+  {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, static_cast<float>(value.UncheckedGet<double>() / 2.0));
   }
-  else if (value.IsHolding<GfHalf>()) {
+  else if (value.IsHolding<GfHalf>())
+  {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, static_cast<float>(value.UncheckedGet<GfHalf>()) / 2.0f);
   }
-  else {
+  else
+  {
     return;
   }
 

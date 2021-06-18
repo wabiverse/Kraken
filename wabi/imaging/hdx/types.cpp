@@ -45,7 +45,8 @@ std::ostream &operator<<(std::ostream &out, const HdxShaderInputs &pv)
 {
   out << pv.parameters << " " << pv.textures << " " << pv.textureFallbackValues << " ";
 
-  for (const TfToken &attribute : pv.attributes) {
+  for (const TfToken &attribute : pv.attributes)
+  {
     out << attribute;
   }
   return out;

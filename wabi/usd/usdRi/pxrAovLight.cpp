@@ -57,7 +57,8 @@ UsdRiPxrAovLight::~UsdRiPxrAovLight()
 /* static */
 UsdRiPxrAovLight UsdRiPxrAovLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrAovLight();
   }
@@ -68,7 +69,8 @@ UsdRiPxrAovLight UsdRiPxrAovLight::Get(const UsdStagePtr &stage, const SdfPath &
 UsdRiPxrAovLight UsdRiPxrAovLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiAovLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrAovLight();
   }
@@ -228,7 +230,8 @@ UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

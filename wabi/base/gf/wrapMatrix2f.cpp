@@ -61,7 +61,8 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 ////////////////////////////////////////////////////////////////////////
 // Python buffer protocol support.
@@ -70,7 +71,8 @@ namespace {
 // Python's getreadbuf interface function.
 static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
 {
-  if (segment != 0) {
+  if (segment != 0)
+  {
     // Always one-segment.
     PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
     return -1;
@@ -109,13 +111,15 @@ static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **pt
 // Python's getbuffer interface function.
 static int getbuffer(PyObject *self, Py_buffer *view, int flags)
 {
-  if (view == NULL) {
+  if (view == NULL)
+  {
     PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
     return -1;
   }
 
   // We don't support fortran order.
-  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
+  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
+  {
     PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
     return -1;
   }
@@ -127,26 +131,32 @@ static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   view->len = sizeof(GfMatrix2f);
   view->readonly = 0;
   view->itemsize = sizeof(float);
-  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
+  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
+  {
     view->format = Gf_GetPyBufferFmtFor<float>();
   }
-  else {
+  else
+  {
     view->format = NULL;
   }
-  if ((flags & PyBUF_ND) == PyBUF_ND) {
+  if ((flags & PyBUF_ND) == PyBUF_ND)
+  {
     view->ndim = 2;
     static Py_ssize_t shape[] = {2, 2};
     view->shape = shape;
   }
-  else {
+  else
+  {
     view->ndim = 0;
     view->shape = NULL;
   }
-  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
+  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
+  {
     static Py_ssize_t strides[] = {2 * sizeof(float), sizeof(float)};
     view->strides = strides;
   }
-  else {
+  else
+  {
     view->strides = NULL;
   }
   view->suboffsets = NULL;
@@ -204,7 +214,8 @@ static int __len__(GfMatrix2f const &self)
 static float __getitem__float(GfMatrix2f const &self, tuple index)
 {
   int i1 = 0, i2 = 0;
-  if (len(index) == 2) {
+  if (len(index) == 2)
+  {
     i1 = normalizeIndex(extract<int>(index[0]));
     i2 = normalizeIndex(extract<int>(index[1]));
   }
@@ -222,7 +233,8 @@ static GfVec2f __getitem__vector(GfMatrix2f const &self, int index)
 static void __setitem__float(GfMatrix2f &self, tuple index, float value)
 {
   int i1 = 0, i2 = 0;
-  if (len(index) == 2) {
+  if (len(index) == 2)
+  {
     i1 = normalizeIndex(extract<int>(index[0]));
     i2 = normalizeIndex(extract<int>(index[1]));
   }
@@ -273,7 +285,8 @@ static GfMatrix2f *__init__()
 // This adds support for python's builtin pickling library
 // This is used by our Shake plugins which need to pickle entire classes
 // (including code), which we don't support in pxml.
-struct GfMatrix2f_Pickle_Suite : boost::python::pickle_suite {
+struct GfMatrix2f_Pickle_Suite : boost::python::pickle_suite
+{
   static boost::python::tuple getinitargs(const GfMatrix2f &m)
   {
     return boost::python::make_tuple(m[0][0], m[0][1], m[1][0], m[1][1]);

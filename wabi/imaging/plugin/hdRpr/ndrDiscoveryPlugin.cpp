@@ -20,14 +20,16 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Enumerates materials from RprUsdMaterialRegistry.
 ///
-class HdRprNdrDiscoveryPlugin final : public NdrDiscoveryPlugin {
+class HdRprNdrDiscoveryPlugin final : public NdrDiscoveryPlugin
+{
  public:
   NdrNodeDiscoveryResultVec DiscoverNodes(const Context &ctx) override
   {
     static TfToken rpr("rpr", TfToken::Immortal);
 
     NdrNodeDiscoveryResultVec ret;
-    for (auto &nodeDesc : RprUsdMaterialRegistry::GetInstance().GetRegisteredNodes()) {
+    for (auto &nodeDesc : RprUsdMaterialRegistry::GetInstance().GetRegisteredNodes())
+    {
       if (!nodeDesc.info)
         continue;
 

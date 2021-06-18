@@ -25,7 +25,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (rpr));
 ///
 /// This does the minimal amount of work so Hydra will let us have our shaders.
 ///
-class HdRprNdrParserPlugin final : public NdrParserPlugin {
+class HdRprNdrParserPlugin final : public NdrParserPlugin
+{
  public:
   NdrNodeUniquePtr Parse(const NdrNodeDiscoveryResult &discoveryResult) override
   {

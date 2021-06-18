@@ -46,7 +46,8 @@ class HgiVulkanDevice;
 ///
 /// Represents a Vulkan GPU texture resource.
 ///
-class HgiVulkanTexture final : public HgiTexture {
+class HgiVulkanTexture final : public HgiTexture
+{
  public:
   static const uint32_t NO_PENDING_WRITES = 0;
 

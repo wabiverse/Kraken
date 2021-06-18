@@ -43,8 +43,13 @@ typedef TfHashMap<TfToken, VtValue, TfToken::HashFunctor> HdAovSettingsMap;
 /// channel. Note that in hydra API, this data is split between
 /// HdRenderPassAovBinding and HdRenderBufferDescriptor. This class is
 /// provided for use in higher level application-facing API.
-struct HdAovDescriptor {
-  HdAovDescriptor() : format(HdFormatInvalid), multiSampled(false), clearValue(), aovSettings()
+struct HdAovDescriptor
+{
+  HdAovDescriptor()
+    : format(HdFormatInvalid),
+      multiSampled(false),
+      clearValue(),
+      aovSettings()
   {}
   HdAovDescriptor(HdFormat f, bool ms, VtValue const &c)
     : format(f),
@@ -83,7 +88,8 @@ typedef std::vector<HdAovDescriptor> HdAovDescriptorList;
 /// \struct HdRenderBufferDescriptor
 ///
 /// Describes the allocation structure of a render buffer bprim.
-struct HdRenderBufferDescriptor {
+struct HdRenderBufferDescriptor
+{
   /// The width, height, and depth of the allocated render buffer.
   GfVec3i dimensions;
 
@@ -111,9 +117,11 @@ struct HdRenderBufferDescriptor {
 
 class HdRenderBuffer;
 
-struct HdRenderPassAovBinding {
+struct HdRenderPassAovBinding
+{
 
-  HdRenderPassAovBinding() : renderBuffer(nullptr)
+  HdRenderPassAovBinding()
+    : renderBuffer(nullptr)
   {}
 
   /// The identifier of the renderer output to be consumed. This should take
@@ -168,7 +176,8 @@ bool HdAovHasDepthSemantic(TfToken const &aovName);
 ///
 /// Represents an AOV token which has been parsed to extract the prefix
 /// (in the case of "primvars:"/"lpe:"/etc.).
-struct HdParsedAovToken {
+struct HdParsedAovToken
+{
   HD_API
   HdParsedAovToken();
   HD_API

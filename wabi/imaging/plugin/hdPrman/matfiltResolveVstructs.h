@@ -49,7 +49,8 @@ class MatfiltVstructConditionalEvaluatorImpl;
 /// Parses and evaluates a single expression of "virtual struct conditional
 /// grammar". This is used internally by MatfiltResolveVstructs but is
 /// available to facilitate unit testing.
-class MatfiltVstructConditionalEvaluator {
+class MatfiltVstructConditionalEvaluator
+{
  public:
   typedef std::shared_ptr<MatfiltVstructConditionalEvaluator> Ptr;
 

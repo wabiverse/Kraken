@@ -53,7 +53,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T> constexpr bool Tf_IsOstreamable()
+template<class T>
+constexpr bool Tf_IsOstreamable()
 {
   return boost::has_left_shift<std::ostream &, /* << */ T, /* -> */ std::ostream &>::value;
 }
@@ -77,7 +78,8 @@ WABI_NAMESPACE_END
 
 // These operator<< overloads need to go in the std namespace for
 // Koenig lookup to work.
-namespace std {
+namespace std
+{
 
 /// Output an STL vector using [ ] as delimiters.
 /// \ingroup group_tf_DebuggingOutput

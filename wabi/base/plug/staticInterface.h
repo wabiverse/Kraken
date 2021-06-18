@@ -43,7 +43,8 @@
 WABI_NAMESPACE_BEGIN
 
 // Base class for common stuff.
-class Plug_StaticInterfaceBase {
+class Plug_StaticInterfaceBase
+{
  public:
   /// Returns \c true if we've tried to initialize the interface pointer,
   /// even if we failed.  This will not attempt to load the plugin or
@@ -163,7 +164,9 @@ class Plug_StaticInterfaceBase {
 /// as a local variable, as a member of a class or structure, or as a function
 /// parameter.
 ///
-template<class Interface> class PlugStaticInterface : private Plug_StaticInterfaceBase {
+template<class Interface>
+class PlugStaticInterface : private Plug_StaticInterfaceBase
+{
  public:
   static_assert(std::is_abstract<Interface>::value, "Interface type must be abstract.");
 
@@ -210,7 +213,8 @@ template<class Interface> class PlugStaticInterface : private Plug_StaticInterfa
  private:
   Interface *_GetPtr() const
   {
-    if (!_initialized) {
+    if (!_initialized)
+    {
       _LoadAndInstantiate(typeid(Interface));
     }
 

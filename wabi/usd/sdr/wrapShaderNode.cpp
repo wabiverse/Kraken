@@ -47,7 +47,8 @@ WABI_NAMESPACE_USING
 
 // Boost treats a const ptr differently than a non-const ptr, so a custom
 // converter is needed to deal with the const-ness
-struct SdrShaderNodeConstPtrToPythonConverter {
+struct SdrShaderNodeConstPtrToPythonConverter
+{
   static PyObject *convert(SdrShaderNodeConstPtr shaderNode)
   {
     object shaderNodeObject(ptr(shaderNode));

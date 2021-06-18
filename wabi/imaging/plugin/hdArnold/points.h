@@ -30,7 +30,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class to handle point primitives.
-class HdArnoldPoints : public HdArnoldRprim<HdPoints> {
+class HdArnoldPoints : public HdArnoldRprim<HdPoints>
+{
  public:
 #if WABI_VERSION >= 2102
   /// Constructor for HdArnoldPoints.

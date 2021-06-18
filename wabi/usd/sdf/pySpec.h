@@ -86,10 +86,14 @@
 #include <string>
 #include <type_traits>
 
-namespace boost {
-namespace python {
+namespace boost
+{
+namespace python
+{
 
-template<typename T> struct pointee<WABI_NS::SdfHandle<T>> {
+template<typename T>
+struct pointee<WABI_NS::SdfHandle<T>>
+{
   typedef T type;
 };
 }  // namespace python
@@ -99,18 +103,23 @@ WABI_NAMESPACE_BEGIN
 
 class SdfSpec;
 
-namespace Sdf_PySpecDetail {
+namespace Sdf_PySpecDetail
+{
 
 namespace bp = boost::python;
 
 SDF_API bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
 
-template<typename CTOR> struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>> {
+template<typename CTOR>
+struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
+{
  public:
-  NewVisitor(const std::string &doc = std::string()) : _doc(doc)
+  NewVisitor(const std::string &doc = std::string())
+    : _doc(doc)
   {}
 
-  template<typename CLS> void visit(CLS &c) const
+  template<typename CLS>
+  void visit(CLS &c) const
   {
     // If there's already a __new__ method, look through the staticmethod to
     // get the underlying function, replace __new__ with that, then add the
@@ -132,7 +141,8 @@ template<typename CTOR> struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>> {
     c.def("__init__", bp::raw_function(_DummyInit));
   }
 
-  template<class CLS, class Options> void visit(CLS &c, char const *name, Options &options) const
+  template<class CLS, class Options>
+  void visit(CLS &c, char const *name, Options &options) const
   {
     // If there's already a __new__ method, look through the staticmethod to
     // get the underlying function, replace __new__ with that, then add the
@@ -165,17 +175,21 @@ template<typename CTOR> struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>> {
   friend class bp::def_visitor_access;
 };
 
-template<typename SIG> struct CtorBase {
+template<typename SIG>
+struct CtorBase
+{
  public:
   typedef SIG Sig;
   static Sig *_func;
 
   static void SetFunc(Sig *func)
   {
-    if (!_func) {
+    if (!_func)
+    {
       _func = func;
     }
-    else {
+    else
+    {
       // CODE_COVERAGE_OFF
       TF_CODING_ERROR(
         "Ctor with signature '%s' is already registered.  "
@@ -186,9 +200,11 @@ template<typename SIG> struct CtorBase {
   }
 };
 
-template<typename SIG> SIG *CtorBase<SIG>::_func = 0;
+template<typename SIG>
+SIG *CtorBase<SIG>::_func = 0;
 
-template<typename SIG> struct NewCtor;
+template<typename SIG>
+struct NewCtor;
 
 }  // namespace Sdf_PySpecDetail
 
@@ -202,7 +218,8 @@ Sdf_PySpecDetail::NewVisitor<typename Sdf_PySpecDetail::NewCtor<T>> SdfMakePySpe
   return Sdf_PySpecDetail::NewVisitor<Sdf_PySpecDetail::NewCtor<T>>(doc);
 }
 
-namespace Sdf_PySpecDetail {
+namespace Sdf_PySpecDetail
+{
 
 // Create the repr for a spec using Sdf.Find().
 SDF_API std::string _SpecRepr(const bp::object &, const SdfSpec *);
@@ -213,7 +230,9 @@ typedef PyObject *(*_HolderCreator)(const SdfSpec &);
 SDF_API void _RegisterHolderCreator(const std::type_info &, _HolderCreator);
 SDF_API PyObject *_CreateHolder(const std::type_info &, const SdfSpec &);
 
-template<class _SpecType> struct _ConstHandleToPython {
+template<class _SpecType>
+struct _ConstHandleToPython
+{
   typedef _SpecType SpecType;
   typedef SdfHandle<SpecType> Handle;
   typedef SdfHandle<const SpecType> ConstHandle;
@@ -228,7 +247,9 @@ template<class _SpecType> struct _ConstHandleToPython {
 };
 
 // Register and perform python conversions of SdfHandles to holders.
-template<class _SpecType, class _Held, class _Holder> struct _HandleToPython {
+template<class _SpecType, class _Held, class _Holder>
+struct _HandleToPython
+{
  public:
   typedef _SpecType SpecType;
   typedef _Holder Holder;
@@ -261,12 +282,14 @@ template<class _SpecType, class _Held, class _Holder> struct _HandleToPython {
     // without playing games.
     bp::converter::registration *r = const_cast<bp::converter::registration *>(
       bp::converter::registry::query(bp::type_id<T>()));
-    if (r) {
+    if (r)
+    {
       bp::converter::to_python_function_t old = r->m_to_python;
       r->m_to_python = f;
       return old;
     }
-    else {
+    else
+    {
       // CODE_COVERAGE_OFF Can only happen if there's a bug.
       TF_CODING_ERROR("No python registration for '%s'!", ArchGetDemangled(typeid(Handle)).c_str());
       return 0;
@@ -286,7 +309,9 @@ template<class _SpecType, class _Held, class _Holder> struct _HandleToPython {
 template<class SpecType, class Held, class Holder>
 bp::converter::to_python_function_t _HandleToPython<SpecType, Held, Holder>::_originalConverter = 0;
 
-template<class _SpecType> struct _HandleFromPython {
+template<class _SpecType>
+struct _HandleFromPython
+{
   typedef _SpecType SpecType;
   typedef SdfHandle<SpecType> Handle;
 
@@ -310,7 +335,8 @@ template<class _SpecType> struct _HandleFromPython {
     // Deal with the "None" case.
     if (data->convertible == source)
       new (storage) Handle();
-    else {
+    else
+    {
       new (storage) Handle(*static_cast<SpecType *>(data->convertible));
     }
     data->convertible = storage;
@@ -318,9 +344,13 @@ template<class _SpecType> struct _HandleFromPython {
 };
 
 // Visitor for def().
-template<bool Abstract> struct SpecVisitor : bp::def_visitor<SpecVisitor<Abstract>> {
+template<bool Abstract>
+struct SpecVisitor : bp::def_visitor<SpecVisitor<Abstract>>
+{
 
-  template<typename CLS> struct _Helper {
+  template<typename CLS>
+  struct _Helper
+  {
     typedef typename CLS::wrapped_type SpecType;
     typedef typename CLS::metadata::held_type HeldType;
     typedef typename CLS::metadata::held_type_arg HeldArgType;
@@ -380,10 +410,12 @@ template<bool Abstract> struct SpecVisitor : bp::def_visitor<SpecVisitor<Abstrac
   };
 
  public:
-  SpecVisitor(bool addRepr = true) : _addRepr(addRepr)
+  SpecVisitor(bool addRepr = true)
+    : _addRepr(addRepr)
   {}
 
-  template<typename CLS> void visit(CLS &c) const
+  template<typename CLS>
+  void visit(CLS &c) const
   {
     typedef typename CLS::wrapped_type SpecType;
     typedef typename CLS::metadata::held_type HeldType;
@@ -413,7 +445,8 @@ template<bool Abstract> struct SpecVisitor : bp::def_visitor<SpecVisitor<Abstrac
     _HandleToPython<SpecType, HeldArgType, HolderType>::Register();
 
     // Add __repr__.
-    if (_addRepr) {
+    if (_addRepr)
+    {
       c.def("__repr__", &_Helper<CLS>::Repr);
     }
   }
@@ -444,11 +477,14 @@ inline Sdf_PySpecDetail::SpecVisitor<true> SdfPyAbstractSpecNoRepr()
   return Sdf_PySpecDetail::SpecVisitor<true>(false);
 }
 
-namespace Sdf_PySpecDetail {
+namespace Sdf_PySpecDetail
+{
 
 // This generates multi-argument specializations for NewCtor.
 
-template<typename R, typename... Args> struct NewCtor<R(Args...)> : CtorBase<R(Args...)> {
+template<typename R, typename... Args>
+struct NewCtor<R(Args...)> : CtorBase<R(Args...)>
+{
   typedef CtorBase<R(Args...)> Base;
   typedef typename Base::Sig Sig;
   NewCtor(Sig *func)
@@ -456,7 +492,8 @@ template<typename R, typename... Args> struct NewCtor<R(Args...)> : CtorBase<R(A
     Base::SetFunc(func);
   }
 
-  template<class CLS> static bp::object __new__(bp::object &cls, Args... args)
+  template<class CLS>
+  static bp::object __new__(bp::object &cls, Args... args)
   {
     typedef typename CLS::metadata::held_type HeldType;
     TfErrorMark m;

@@ -55,15 +55,20 @@ WABI_NAMESPACE_BEGIN
 /// class holds a lock to a mutex in HdInstanceRegistry. This lock will
 /// be held until the instance of this interface class is destroyed.
 ///
-template<typename VALUE> class HdInstance {
+template<typename VALUE>
+class HdInstance
+{
  public:
   typedef uint64_t KeyType;
   typedef VALUE ValueType;
 
   typedef KeyType ID;
 
-  struct ValueHolder {
-    ValueHolder(ValueType const &value = ValueType()) : value(value), recycleCounter(0)
+  struct ValueHolder
+  {
+    ValueHolder(ValueType const &value = ValueType())
+      : value(value),
+        recycleCounter(0)
     {}
     void ResetRecycleCounter()
     {
@@ -148,7 +153,9 @@ template<typename VALUE> class HdInstance {
 /// if the shared_ptr is unique (use_count==1). Note that Key is not
 /// involved to determine the lifetime of entries.
 ///
-template<typename VALUE> class HdInstanceRegistry {
+template<typename VALUE>
+class HdInstanceRegistry
+{
  public:
   typedef HdInstance<VALUE> InstanceType;
 
@@ -195,7 +202,8 @@ template<typename VALUE> class HdInstanceRegistry {
   void Invalidate();
 
  private:
-  template<typename T> static bool _IsUnique(std::shared_ptr<T> const &value)
+  template<typename T>
+  static bool _IsUnique(std::shared_ptr<T> const &value)
   {
     return value.unique();
   }
@@ -220,7 +228,8 @@ HdInstance<VALUE> HdInstanceRegistry<VALUE>::GetInstance(typename HdInstance<VAL
   typename InstanceType::RegistryLock lock(_registryMutex);
 
   typename InstanceType::Dictionary::iterator it = _dictionary.find(key);
-  if (it == _dictionary.end()) {
+  if (it == _dictionary.end())
+  {
     // not found. create new one
     it = _dictionary.insert(std::make_pair(key, typename InstanceType::ValueHolder())).first;
   }
@@ -241,36 +250,43 @@ HdInstance<VALUE> HdInstanceRegistry<VALUE>::FindInstance(typename HdInstance<VA
   typename InstanceType::RegistryLock lock(_registryMutex);
 
   typename InstanceType::Dictionary::iterator it = _dictionary.find(key);
-  if (it == _dictionary.end()) {
+  if (it == _dictionary.end())
+  {
     *found = false;
     return InstanceType(key, VALUE(), std::move(lock), nullptr);
   }
-  else {
+  else
+  {
     *found = true;
     it->second.ResetRecycleCounter();
     return InstanceType(key, it->second.value, std::move(lock), &_dictionary);
   }
 }
 
-template<typename VALUE> size_t HdInstanceRegistry<VALUE>::GarbageCollect(int recycleCount)
+template<typename VALUE>
+size_t HdInstanceRegistry<VALUE>::GarbageCollect(int recycleCount)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
   // Skip garbage collection entirely when then the recycleCount is < 0
-  if (recycleCount < 0) {
+  if (recycleCount < 0)
+  {
     return _dictionary.size();
   }
 
   size_t inUseCount = 0;
-  for (typename InstanceType::Dictionary::iterator it = _dictionary.begin(); it != _dictionary.end();) {
+  for (typename InstanceType::Dictionary::iterator it = _dictionary.begin(); it != _dictionary.end();)
+  {
 
     // erase instance which isn't referred from anyone
     bool isUnique = _IsUnique(it->second.value);
-    if (isUnique && (++it->second.recycleCounter > recycleCount)) {
+    if (isUnique && (++it->second.recycleCounter > recycleCount))
+    {
       it = _dictionary.unsafe_erase(it);
     }
-    else {
+    else
+    {
       ++it;
       ++inUseCount;
     }
@@ -278,7 +294,8 @@ template<typename VALUE> size_t HdInstanceRegistry<VALUE>::GarbageCollect(int re
   return inUseCount;
 }
 
-template<typename VALUE> void HdInstanceRegistry<VALUE>::Invalidate()
+template<typename VALUE>
+void HdInstanceRegistry<VALUE>::Invalidate()
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();

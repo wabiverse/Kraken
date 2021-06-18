@@ -58,7 +58,8 @@ bool UsdImagingVolumeAdapter::_GatherVolumeData(UsdPrim const &prim, UsdVolVolum
 {
   UsdVolVolume volume(prim);
 
-  if (volume) {
+  if (volume)
+  {
     // Gather all relationships in the "field" namespace to figure out
     // which field primitives make up this volume.
     UsdVolVolume::FieldMap fields = volume.GetFieldPaths();
@@ -108,18 +109,22 @@ HdVolumeFieldDescriptorVector UsdImagingVolumeAdapter::GetVolumeFieldDescriptors
   std::map<TfToken, SdfPath> fieldMap;
 
   // Build HdVolumeFieldDescriptors for all our fields.
-  if (_GatherVolumeData(usdPrim, &fieldMap)) {
-    for (auto it = fieldMap.begin(); it != fieldMap.end(); ++it) {
+  if (_GatherVolumeData(usdPrim, &fieldMap))
+  {
+    for (auto it = fieldMap.begin(); it != fieldMap.end(); ++it)
+    {
       UsdPrim fieldUsdPrim(_GetPrim(it->second));
       UsdVolFieldBase fieldPrim(fieldUsdPrim);
 
-      if (fieldPrim) {
+      if (fieldPrim)
+      {
         TfToken fieldPrimType;
         UsdImagingPrimAdapterSharedPtr adapter = _GetPrimAdapter(fieldUsdPrim);
         UsdImagingFieldAdapter *fieldAdapter;
 
         fieldAdapter = dynamic_cast<UsdImagingFieldAdapter *>(adapter.get());
-        if (TF_VERIFY(fieldAdapter)) {
+        if (TF_VERIFY(fieldAdapter))
+        {
           fieldPrimType = fieldAdapter->GetPrimTypeToken();
           // XXX(UsdImagingPaths): Using usdPath directly
           // as cachePath here -- we should do the correct

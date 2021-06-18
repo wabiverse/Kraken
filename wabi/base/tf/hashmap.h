@@ -69,7 +69,8 @@ template<class Key,
          class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
          class Alloc = std::allocator<std::pair<const Key, Mapped>>>
-class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Alloc> {
+class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Alloc>
+{
   typedef std::unordered_map<Key, Mapped, HashFn, EqualKey, Alloc> _Base;
 
  public:
@@ -89,7 +90,8 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
   typedef typename _Base::allocator_type allocator_type;
   // No local_iterator nor any methods using them.
 
-  TfHashMap() : _Base()
+  TfHashMap()
+    : _Base()
   {}
   explicit TfHashMap(size_type n,
                      const hasher &hf = hasher(),
@@ -97,7 +99,8 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
                      const allocator_type &alloc = allocator_type())
     : _Base(n, hf, eql, alloc)
   {}
-  explicit TfHashMap(const allocator_type &alloc) : _Base(alloc)
+  explicit TfHashMap(const allocator_type &alloc)
+    : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashMap(InputIterator first,
@@ -108,7 +111,8 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
             const allocator_type &alloc = allocator_type())
     : _Base(first, last, n, hf, eql, alloc)
   {}
-  TfHashMap(const TfHashMap &other) : _Base(other)
+  TfHashMap(const TfHashMap &other)
+    : _Base(other)
   {}
 
   TfHashMap &operator=(const TfHashMap &rhs)
@@ -171,7 +175,8 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
   {
     return _Base::insert(hint, v);
   }
-  template<class InputIterator> void insert(InputIterator first, InputIterator last)
+  template<class InputIterator>
+  void insert(InputIterator first, InputIterator last)
   {
     _Base::insert(first, last);
   }
@@ -203,7 +208,8 @@ template<class Key,
          class HashFn = std::hash<Key>,
          class EqualKey = std::equal_to<Key>,
          class Alloc = std::allocator<std::pair<const Key, Mapped>>>
-class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, EqualKey, Alloc> {
+class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, EqualKey, Alloc>
+{
   typedef std::unordered_multimap<Key, Mapped, HashFn, EqualKey, Alloc> _Base;
 
  public:
@@ -223,7 +229,8 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
   typedef typename _Base::allocator_type allocator_type;
   // No local_iterator nor any methods using them.
 
-  TfHashMultiMap() : _Base()
+  TfHashMultiMap()
+    : _Base()
   {}
   explicit TfHashMultiMap(size_type n,
                           const hasher &hf = hasher(),
@@ -231,7 +238,8 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
                           const allocator_type &alloc = allocator_type())
     : _Base(n, hf, eql, alloc)
   {}
-  explicit TfHashMultiMap(const allocator_type &alloc) : _Base(alloc)
+  explicit TfHashMultiMap(const allocator_type &alloc)
+    : _Base(alloc)
   {}
   template<class InputIterator>
   TfHashMultiMap(InputIterator first,
@@ -242,7 +250,8 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
                  const allocator_type &alloc = allocator_type())
     : _Base(first, last, n, hf, eql, alloc)
   {}
-  TfHashMultiMap(const TfHashMultiMap &other) : _Base(other)
+  TfHashMultiMap(const TfHashMultiMap &other)
+    : _Base(other)
   {}
 
   TfHashMultiMap &operator=(const TfHashMultiMap &rhs)
@@ -305,7 +314,8 @@ class TfHashMultiMap : private std::unordered_multimap<Key, Mapped, HashFn, Equa
   {
     return _Base::insert(hint, v);
   }
-  template<class InputIterator> void insert(InputIterator first, InputIterator last)
+  template<class InputIterator>
+  void insert(InputIterator first, InputIterator last)
   {
     _Base::insert(first, last);
   }
@@ -339,7 +349,8 @@ template<class Key,
          class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
          class Alloc = __gnu_cxx::allocator<Mapped>>
-class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc> {
+class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>
+{
 
   using _Base = __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>;
 
@@ -360,7 +371,8 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
   typedef typename _Base::allocator_type allocator_type;
   // No local_iterator nor any methods using them.
 
-  TfHashMap() : _Base()
+  TfHashMap()
+    : _Base()
   {}
 
   explicit TfHashMap(size_type n,
@@ -370,7 +382,8 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
     : _Base(n, hf, eql, alloc)
   {}
 
-  explicit TfHashMap(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
+  explicit TfHashMap(const allocator_type &alloc)
+    : _Base(0, hasher(), key_equal(), alloc)
   {}
 
   template<class InputIterator>
@@ -383,7 +396,8 @@ class TfHashMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, All
     : _Base(first, last, n, hf, eql, alloc)
   {}
 
-  TfHashMap(const TfHashMap &other) : _Base(other)
+  TfHashMap(const TfHashMap &other)
+    : _Base(other)
   {}
 
   TfHashMap &operator=(const TfHashMap &rhs)
@@ -519,7 +533,8 @@ template<class Key,
          class HashFn = __gnu_cxx::hash<Key>,
          class EqualKey = __gnu_cxx::equal_to<Key>,
          class Alloc = __gnu_cxx::allocator<Mapped>>
-class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc> {
+class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>
+{
 
   using _Base = __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey, Alloc>;
 
@@ -540,7 +555,8 @@ class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey
   typedef typename _Base::allocator_type allocator_type;
   // No local_iterator nor any methods using them.
 
-  TfHashMultiMap() : _Base()
+  TfHashMultiMap()
+    : _Base()
   {}
   explicit TfHashMultiMap(size_type n,
                           const hasher &hf = hasher(),
@@ -548,7 +564,8 @@ class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey
                           const allocator_type &alloc = allocator_type())
     : _Base(n, hf, eql, alloc)
   {}
-  explicit TfHashMultiMap(const allocator_type &alloc) : _Base(0, hasher(), key_equal(), alloc)
+  explicit TfHashMultiMap(const allocator_type &alloc)
+    : _Base(0, hasher(), key_equal(), alloc)
   {}
   template<class InputIterator>
   TfHashMultiMap(InputIterator first,
@@ -559,7 +576,8 @@ class TfHashMultiMap : private __gnu_cxx::hash_map<Key, Mapped, HashFn, EqualKey
                  const allocator_type &alloc = allocator_type())
     : _Base(first, last, n, hf, eql, alloc)
   {}
-  TfHashMultiMap(const TfHashMultiMap &other) : _Base(other)
+  TfHashMultiMap(const TfHashMultiMap &other)
+    : _Base(other)
   {}
 
   TfHashMultiMap &operator=(const TfHashMultiMap &rhs)

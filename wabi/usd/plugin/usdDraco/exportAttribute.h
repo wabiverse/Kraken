@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 /// to generalize generic attributes of different types T and, e.g., store them
 /// in one STL container.
 ///
-class UsdDracoExportAttributeInterface {
+class UsdDracoExportAttributeInterface
+{
  public:
   virtual const UsdDracoAttributeDescriptor &GetDescriptor() const = 0;
   virtual void GetFromMesh(const UsdGeomMesh &usdMesh, size_t numPositions) = 0;
@@ -59,7 +60,9 @@ class UsdDracoExportAttributeInterface {
 ///
 /// Helps to read and write mesh attributes while exporting USD meshes to Draco.
 ///
-template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttributeInterface {
+template<class T>
+class UsdDracoExportAttribute : public UsdDracoExportAttributeInterface
+{
  public:
   UsdDracoExportAttribute(const UsdDracoAttributeDescriptor &descriptor);
   const UsdDracoAttributeDescriptor &GetDescriptor() const override;
@@ -87,7 +90,8 @@ template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttribute
   bool HasPointAttribute() const;
 
  private:
-  template<class S> static void _MakeRange(VtArray<S> *array, size_t size);
+  template<class S>
+  static void _MakeRange(VtArray<S> *array, size_t size);
   void _SetAttributeValue(draco::AttributeValueIndex avi, size_t index);
 
   // Specialization for arithmetic types.
@@ -148,7 +152,8 @@ UsdDracoExportAttribute<T>::UsdDracoExportAttribute(const UsdDracoAttributeDescr
     _usePositionIndex(false)
 {}
 
-template<class T> const UsdDracoAttributeDescriptor &UsdDracoExportAttribute<T>::GetDescriptor() const
+template<class T>
+const UsdDracoAttributeDescriptor &UsdDracoExportAttribute<T>::GetDescriptor() const
 {
   return _descriptor;
 }
@@ -158,7 +163,8 @@ void UsdDracoExportAttribute<T>::GetFromMesh(const UsdGeomMesh &usdMesh, size_t 
 {
   if (_descriptor.GetStatus() != UsdDracoAttributeDescriptor::VALID)
     return;
-  if (_descriptor.GetIsPrimvar()) {
+  if (_descriptor.GetIsPrimvar())
+  {
     // Get data from a primvar.
     const UsdGeomPrimvarsAPI api = UsdGeomPrimvarsAPI(usdMesh.GetPrim());
     UsdGeomPrimvar primvar = api.GetPrimvar(_descriptor.GetName());
@@ -175,7 +181,8 @@ void UsdDracoExportAttribute<T>::GetFromMesh(const UsdGeomMesh &usdMesh, size_t 
     if (_indices.empty() && _usePositionIndex && _values.size() == numPositions)
       _MakeRange(&_indices, numPositions);
   }
-  else {
+  else
+  {
     // Get data from an attribute.
     UsdAttribute attribute = usdMesh.GetPrim().GetAttribute(_descriptor.GetName());
     if (attribute)
@@ -183,7 +190,8 @@ void UsdDracoExportAttribute<T>::GetFromMesh(const UsdGeomMesh &usdMesh, size_t 
   }
 }
 
-template<class T> void UsdDracoExportAttribute<T>::SetToMesh(draco::Mesh *dracoMesh)
+template<class T>
+void UsdDracoExportAttribute<T>::SetToMesh(draco::Mesh *dracoMesh)
 {
   // Optional attributes like normals may not be present.
   if (_values.empty())
@@ -211,7 +219,8 @@ template<class T> void UsdDracoExportAttribute<T>::SetToMesh(draco::Mesh *dracoM
   dracoMesh->AddAttributeMetadata(attributeId, _descriptor.ToMetadata());
 }
 
-template<class T> void UsdDracoExportAttribute<T>::GetFromRange(size_t size)
+template<class T>
+void UsdDracoExportAttribute<T>::GetFromRange(size_t size)
 {
   _MakeRange(&_values, size);
 }
@@ -221,7 +230,8 @@ template<class S>
 void UsdDracoExportAttribute<T>::_MakeRange(VtArray<S> *array, size_t size)
 {
   (*array).resize(size);
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; i++)
+  {
     (*array)[i] = static_cast<S>(i);
   }
 }
@@ -252,7 +262,8 @@ inline void UsdDracoExportAttribute<T>::SetPointMapEntry(draco::PointIndex point
   SetPointMapEntry(pointIndex, entryIndex);
 }
 
-template<class T> void UsdDracoExportAttribute<T>::Clear()
+template<class T>
+void UsdDracoExportAttribute<T>::Clear()
 {
   _values.clear();
   _indices.clear();
@@ -260,22 +271,26 @@ template<class T> void UsdDracoExportAttribute<T>::Clear()
   _pointAttribute = nullptr;
 }
 
-template<class T> size_t UsdDracoExportAttribute<T>::GetNumValues() const
+template<class T>
+size_t UsdDracoExportAttribute<T>::GetNumValues() const
 {
   return _values.size();
 }
 
-template<class T> size_t UsdDracoExportAttribute<T>::GetNumIndices() const
+template<class T>
+size_t UsdDracoExportAttribute<T>::GetNumIndices() const
 {
   return _indices.size();
 }
 
-template<class T> bool UsdDracoExportAttribute<T>::UsesPositionIndex() const
+template<class T>
+bool UsdDracoExportAttribute<T>::UsesPositionIndex() const
 {
   return _usePositionIndex;
 }
 
-template<class T> inline bool UsdDracoExportAttribute<T>::HasPointAttribute() const
+template<class T>
+inline bool UsdDracoExportAttribute<T>::HasPointAttribute() const
 {
   return _pointAttribute != nullptr;
 }

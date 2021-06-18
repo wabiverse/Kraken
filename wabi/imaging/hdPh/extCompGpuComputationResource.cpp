@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 static size_t _Hash(HdBufferSpecVector const &specs)
 {
   size_t result = 0;
-  for (HdBufferSpec const &spec : specs) {
+  for (HdBufferSpec const &spec : specs)
+  {
     boost::hash_combine(result, spec.Hash());
   }
   return result;
@@ -58,8 +59,10 @@ bool HdPhExtCompGpuComputationResource::Resolve()
   // sources already and Resolved. They go to an internal buffer range that
   // was allocated in AllocateInternalRange
   HdBufferSpecVector inputBufferSpecs;
-  for (HdBufferArrayRangeSharedPtr const &input : _inputs) {
-    if (TF_VERIFY(input)) {
+  for (HdBufferArrayRangeSharedPtr const &input : _inputs)
+  {
+    if (TF_VERIFY(input))
+    {
       input->GetBufferSpecs(&inputBufferSpecs);
     }
   }
@@ -86,7 +89,8 @@ bool HdPhExtCompGpuComputationResource::Resolve()
   // we are going to have to recompile it here.
   // We save the kernel for future runs to not have to incur the
   // compilation cost each time.
-  if (!_computeProgram || _shaderSourceHash != shaderSourceHash) {
+  if (!_computeProgram || _shaderSourceHash != shaderSourceHash)
+  {
     HdPhShaderCodeSharedPtrVector shaders;
     shaders.push_back(_kernel);
     HdPh_CodeGen codeGen(shaders);
@@ -102,13 +106,16 @@ bool HdPhExtCompGpuComputationResource::Resolve()
       // ask registry to see if there's already compiled program
       HdInstance<HdPhGLSLProgramSharedPtr> programInstance = _registry->RegisterGLSLProgram(registryID);
 
-      if (programInstance.IsFirstInstance()) {
+      if (programInstance.IsFirstInstance())
+      {
         HdPhGLSLProgramSharedPtr glslProgram = codeGen.CompileComputeProgram(_registry.get());
-        if (!TF_VERIFY(glslProgram)) {
+        if (!TF_VERIFY(glslProgram))
+        {
           return false;
         }
 
-        if (!glslProgram->Link()) {
+        if (!glslProgram->Link())
+        {
           std::string const &logString = glslProgram->GetProgram()->GetCompileErrors();
           TF_WARN("Failed to link compute shader: %s", logString.c_str());
           return false;
@@ -125,7 +132,8 @@ bool HdPhExtCompGpuComputationResource::Resolve()
       _computeProgram = programInstance.GetValue();
     }
 
-    if (!TF_VERIFY(_computeProgram)) {
+    if (!TF_VERIFY(_computeProgram))
+    {
       return false;
     }
 

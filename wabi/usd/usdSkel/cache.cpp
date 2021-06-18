@@ -45,7 +45,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-UsdSkelCache::UsdSkelCache() : _impl(new UsdSkel_CacheImpl)
+UsdSkelCache::UsdSkelCache()
+  : _impl(new UsdSkel_CacheImpl)
 {}
 
 void UsdSkelCache::Clear()
@@ -82,9 +83,11 @@ UsdSkelSkinningQuery UsdSkelCache::GetSkinningQuery(const UsdPrim &prim) const
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).GetSkinningQuery(prim);
 }
 
-namespace {
+namespace
+{
 
-struct _CompareSkels {
+struct _CompareSkels
+{
   bool operator()(const UsdSkelSkeleton &a, const UsdSkelSkeleton &b) const
   {
     return a.GetPrim() < b.GetPrim();
@@ -99,12 +102,14 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
 {
   TRACE_FUNCTION();
 
-  if (!skelRoot) {
+  if (!skelRoot)
+  {
     TF_CODING_ERROR("'skelRoot' is invalid.");
     return false;
   }
 
-  if (!bindings) {
+  if (!bindings)
+  {
     TF_CODING_ERROR("'bindings' pointer is null.");
     return false;
   }
@@ -124,10 +129,13 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
   std::vector<UsdSkelSkeleton> skelStack(1);
 
   const auto range = UsdPrimRange::PreAndPostVisit(skelRoot.GetPrim(), predicate);
-  for (auto it = range.begin(); it != range.end(); ++it) {
+  for (auto it = range.begin(); it != range.end(); ++it)
+  {
 
-    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
-      if (!it.IsPostVisit()) {
+    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>()))
+    {
+      if (!it.IsPostVisit())
+      {
         TF_DEBUG(USDSKEL_CACHE)
           .Msg(
             "[UsdSkelCache]  Pruning traversal at <%s> "
@@ -139,11 +147,14 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
       continue;
     }
 
-    if (it.IsPostVisit()) {
-      if (TF_VERIFY(!skelStack.empty())) {
+    if (it.IsPostVisit())
+    {
+      if (TF_VERIFY(!skelStack.empty()))
+      {
         skelStack.pop_back();
       }
-      else {
+      else
+      {
         return false;
       }
       continue;
@@ -152,10 +163,12 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
     const UsdSkelBindingAPI binding(*it);
 
     UsdSkelSkeleton skel;
-    if (!binding.GetSkeleton(&skel)) {
+    if (!binding.GetSkeleton(&skel))
+    {
       skel = skelStack.back();
     }
-    else {
+    else
+    {
       TF_DEBUG(USDSKEL_CACHE)
         .Msg(
           "[UsdSkelCache]  Found skel binding at <%s> "
@@ -164,8 +177,10 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
           skel.GetPrim().GetPath().GetText());
     }
 
-    if (skel && skel.GetPrim().IsActive()) {
-      if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it)) {
+    if (skel && skel.GetPrim().IsActive())
+    {
+      if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it))
+      {
         TF_DEBUG(USDSKEL_CACHE)
           .Msg(
             "[UsdSkelCache]  Found skinnable prim <%s>, bound to "
@@ -183,7 +198,8 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
   }
 
   bindings->reserve(bindingMap.size());
-  for (const auto &pair : bindingMap) {
+  for (const auto &pair : bindingMap)
+  {
     bindings->emplace_back(pair.first, pair.second);
   }
   return true;
@@ -196,17 +212,20 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
 {
   TRACE_FUNCTION();
 
-  if (!skelRoot) {
+  if (!skelRoot)
+  {
     TF_CODING_ERROR("'skelRoot' is invalid.");
     return false;
   }
 
-  if (!skel) {
+  if (!skel)
+  {
     TF_CODING_ERROR("'skel' is invalid.");
     return false;
   }
 
-  if (!binding) {
+  if (!binding)
+  {
     TF_CODING_ERROR("'binding' pointer is null.");
     return false;
   }
@@ -220,10 +239,13 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
   VtArray<UsdSkelSkinningQuery> skinningQueries;
 
   const auto range = UsdPrimRange::PreAndPostVisit(skelRoot.GetPrim(), predicate);
-  for (auto it = range.begin(); it != range.end(); ++it) {
+  for (auto it = range.begin(); it != range.end(); ++it)
+  {
 
-    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
-      if (!it.IsPostVisit()) {
+    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>()))
+    {
+      if (!it.IsPostVisit())
+      {
         TF_DEBUG(USDSKEL_CACHE)
           .Msg(
             "[UsdSkelCache]  Pruning traversal at <%s> "
@@ -235,11 +257,14 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
       continue;
     }
 
-    if (it.IsPostVisit()) {
-      if (TF_VERIFY(!skelStack.empty())) {
+    if (it.IsPostVisit())
+    {
+      if (TF_VERIFY(!skelStack.empty()))
+      {
         skelStack.pop_back();
       }
-      else {
+      else
+      {
         return false;
       }
       continue;
@@ -248,10 +273,12 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
     const UsdSkelBindingAPI binding(*it);
 
     UsdSkelSkeleton boundSkel;
-    if (!binding.GetSkeleton(&boundSkel)) {
+    if (!binding.GetSkeleton(&boundSkel))
+    {
       boundSkel = skelStack.back();
     }
-    else {
+    else
+    {
       TF_DEBUG(USDSKEL_CACHE)
         .Msg(
           "[UsdSkelCache]  Found skel binding at <%s> "
@@ -260,8 +287,10 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
           boundSkel.GetPrim().GetPath().GetText());
     }
 
-    if (boundSkel.GetPrim() == skel.GetPrim()) {
-      if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it)) {
+    if (boundSkel.GetPrim() == skel.GetPrim())
+    {
+      if (const UsdSkelSkinningQuery query = GetSkinningQuery(*it))
+      {
         TF_DEBUG(USDSKEL_CACHE).Msg("[UsdSkelCache]  Found skinnable prim <%s>\n", it->GetPath().GetText());
 
         skinningQueries.push_back(query);

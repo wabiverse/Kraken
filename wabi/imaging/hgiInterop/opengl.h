@@ -37,7 +37,8 @@ class VtValue;
 ///
 /// Provides GL/GL interop.
 ///
-class HgiInteropOpenGL final {
+class HgiInteropOpenGL final
+{
  public:
   HGIINTEROP_API
   HgiInteropOpenGL();

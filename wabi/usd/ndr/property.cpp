@@ -75,7 +75,8 @@ bool NdrProperty::IsConnectable() const
 bool NdrProperty::CanConnectTo(const NdrProperty &other) const
 {
   // Outputs cannot connect to outputs and vice versa
-  if (_isOutput == other.IsOutput()) {
+  if (_isOutput == other.IsOutput())
+  {
     return false;
   }
 

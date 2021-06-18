@@ -41,7 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 VtValue _Reduce(SdfVariantSelectionMap &stronger, const SdfVariantSelectionMap &weaker)
 {
@@ -56,12 +57,15 @@ VtValue _Reduce(const VtDictionary &stronger, const VtDictionary &weaker)
 }
 
 // "Fix" a list op to only use composable features.
-template<typename T> SdfListOp<T> _FixListOp(SdfListOp<T> op)
+template<typename T>
+SdfListOp<T> _FixListOp(SdfListOp<T> op)
 {
   std::vector<T> items;
   items = op.GetAppendedItems();
-  for (const T &item : op.GetAddedItems()) {
-    if (std::find(items.begin(), items.end(), item) == items.end()) {
+  for (const T &item : op.GetAddedItems())
+  {
+    if (std::find(items.begin(), items.end(), item) == items.end())
+    {
       items.push_back(item);
     }
   }
@@ -71,10 +75,12 @@ template<typename T> SdfListOp<T> _FixListOp(SdfListOp<T> op)
   return op;
 }
 
-template<typename T> VtValue _Reduce(const SdfListOp<T> &stronger, const SdfListOp<T> &weaker)
+template<typename T>
+VtValue _Reduce(const SdfListOp<T> &stronger, const SdfListOp<T> &weaker)
 {
   boost::optional<SdfListOp<T>> r = stronger.ApplyOperations(weaker);
-  if (r) {
+  if (r)
+  {
     return VtValue(*r);
   }
   // List ops that use added or reordered items cannot, in general, be
@@ -82,7 +88,8 @@ template<typename T> VtValue _Reduce(const SdfListOp<T> &stronger, const SdfList
   // best-effort approximation by discarding reorders and converting
   // adds to appends.
   r = _FixListOp(stronger).ApplyOperations(_FixListOp(weaker));
-  if (r) {
+  if (r)
+  {
     return VtValue(*r);
   }
   // The approximation used should always be composable,
@@ -101,18 +108,21 @@ static bool _MergeValue(const TfToken &field,
                         const SdfPath &dstPath,
                         boost::optional<VtValue> *valueToCopy)
 {
-  if (!fallback.IsHolding<T>()) {
+  if (!fallback.IsHolding<T>())
+  {
     return false;
   }
 
   T srcValue, dstValue;
   if (!TF_VERIFY(srcLayer->HasField(srcPath, field, &srcValue)) ||
-      !TF_VERIFY(dstLayer->HasField(dstPath, field, &dstValue))) {
+      !TF_VERIFY(dstLayer->HasField(dstPath, field, &dstValue)))
+  {
     return false;
   }
 
   VtValue mergedValue = _Reduce(srcValue, dstValue);
-  if (!mergedValue.IsEmpty()) {
+  if (!mergedValue.IsEmpty())
+  {
     (*valueToCopy) = VtValue();
     (*valueToCopy)->Swap(mergedValue);
     return true;
@@ -134,7 +144,8 @@ static bool _MergeValueFn(SdfSpecType specType,
 {
   TF_VERIFY(srcPath == dstPath);
 
-  if (stitchFn) {
+  if (stitchFn)
+  {
     VtValue value;
 
     // Note that the source layer corresponds to the weaker layer and
@@ -143,10 +154,12 @@ static bool _MergeValueFn(SdfSpecType specType,
     using Status = UsdUtilsStitchValueStatus;
     const Status status = stitchFn(field, srcPath, dstLayer, fieldInDst, srcLayer, fieldInSrc, &value);
 
-    if (status == Status::NoStitchedValue) {
+    if (status == Status::NoStitchedValue)
+    {
       return false;
     }
-    else if (status == Status::UseSuppliedValue) {
+    else if (status == Status::UseSuppliedValue)
+    {
       (*valueToCopy) = VtValue();
       (*valueToCopy)->Swap(value);
       return true;
@@ -156,18 +169,21 @@ static bool _MergeValueFn(SdfSpecType specType,
 
   // Field does not exist in source; don't copy this over, since that will
   // clear the value in the destination.
-  if (!fieldInSrc) {
+  if (!fieldInSrc)
+  {
     return false;
   }
 
   // Field does not exist in destination; just copy whatever's in the
   // source over.
-  if (!fieldInDst) {
+  if (!fieldInDst)
+  {
     return true;
   }
 
   // Merge specific fields together.
-  if (field == SdfFieldKeys->Specifier) {
+  if (field == SdfFieldKeys->Specifier)
+  {
     SdfSpecifier srcSpecifier, dstSpecifier;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcSpecifier));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstSpecifier));
@@ -176,20 +192,25 @@ static bool _MergeValueFn(SdfSpecType specType,
     *valueToCopy = VtValue(srcSpecifier == SdfSpecifierOver ? dstSpecifier : srcSpecifier);
     return true;
   }
-  else if (field == SdfFieldKeys->TimeSamples) {
+  else if (field == SdfFieldKeys->TimeSamples)
+  {
     SdfTimeSampleMap edits;
-    for (const double time : srcLayer->ListTimeSamplesForPath(srcPath)) {
-      if (!dstLayer->QueryTimeSample(dstPath, time)) {
+    for (const double time : srcLayer->ListTimeSamplesForPath(srcPath))
+    {
+      if (!dstLayer->QueryTimeSample(dstPath, time))
+      {
         VtValue srcSample;
         srcLayer->QueryTimeSample(srcPath, time, &srcSample);
         edits[time].Swap(srcSample);
       }
     }
 
-    if (!edits.empty()) {
+    if (!edits.empty())
+    {
       *valueToCopy = VtValue(
         SdfCopySpecsValueEdit([edits](const SdfLayerHandle &layer, const SdfPath &path) {
-          for (const auto &entry : edits) {
+          for (const auto &entry : edits)
+          {
             layer->SetTimeSample(path, entry.first, entry.second);
           }
         }));
@@ -197,14 +218,16 @@ static bool _MergeValueFn(SdfSpecType specType,
     }
     return false;
   }
-  else if (field == SdfFieldKeys->StartTimeCode) {
+  else if (field == SdfFieldKeys->StartTimeCode)
+  {
     double srcStartCode, dstStartCode;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcStartCode));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstStartCode));
     *valueToCopy = VtValue(std::min(srcStartCode, dstStartCode));
     return true;
   }
-  else if (field == SdfFieldKeys->EndTimeCode) {
+  else if (field == SdfFieldKeys->EndTimeCode)
+  {
     double srcEndCode, dstEndCode;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcEndCode));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstEndCode));
@@ -214,33 +237,39 @@ static bool _MergeValueFn(SdfSpecType specType,
 
   // Validate that certain fields match between both layers,
   // but leave the stronger value in place.
-  if (field == SdfFieldKeys->FramesPerSecond) {
+  if (field == SdfFieldKeys->FramesPerSecond)
+  {
     double srcFPS, dstFPS;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcFPS));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstFPS));
-    if (srcFPS != dstFPS) {
+    if (srcFPS != dstFPS)
+    {
       TF_WARN("Mismatched framesPerSecond values in @%s@ and @%s@",
               srcLayer->GetIdentifier().c_str(),
               dstLayer->GetIdentifier().c_str());
     }
     return false;
   }
-  else if (field == SdfFieldKeys->TimeCodesPerSecond) {
+  else if (field == SdfFieldKeys->TimeCodesPerSecond)
+  {
     double srcTPS, dstTPS;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcTPS));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstTPS));
-    if (srcTPS != dstTPS) {
+    if (srcTPS != dstTPS)
+    {
       TF_WARN("Mismatched timeCodesPerSecond values in @%s@ and @%s@",
               srcLayer->GetIdentifier().c_str(),
               dstLayer->GetIdentifier().c_str());
     }
     return false;
   }
-  else if (field == SdfFieldKeys->FramePrecision) {
+  else if (field == SdfFieldKeys->FramePrecision)
+  {
     double srcPrecision, dstPrecision;
     TF_VERIFY(srcLayer->HasField(srcPath, field, &srcPrecision));
     TF_VERIFY(dstLayer->HasField(dstPath, field, &dstPrecision));
-    if (srcPrecision != dstPrecision) {
+    if (srcPrecision != dstPrecision)
+    {
       TF_WARN("Mismatched framePrecision values in @%s@ and @%s@",
               srcLayer->GetIdentifier().c_str(),
               dstLayer->GetIdentifier().c_str());
@@ -291,26 +320,31 @@ static bool _MergeChildren(const TfToken &field,
                            boost::optional<VtValue> *finalSrcValue,
                            boost::optional<VtValue> *finalDstValue)
 {
-  if (!fallback.IsHolding<T>()) {
+  if (!fallback.IsHolding<T>())
+  {
     return false;
   }
 
   T srcChildren, dstChildren;
   if (!TF_VERIFY(srcLayer->HasField(srcPath, field, &srcChildren)) ||
-      !TF_VERIFY(dstLayer->HasField(dstPath, field, &dstChildren))) {
+      !TF_VERIFY(dstLayer->HasField(dstPath, field, &dstChildren)))
+  {
     return false;
   }
 
   T finalSrcChildren(dstChildren.size());
   T finalDstChildren(dstChildren);
 
-  for (const auto &srcChild : srcChildren) {
+  for (const auto &srcChild : srcChildren)
+  {
     auto dstChildIt = std::find(finalDstChildren.begin(), finalDstChildren.end(), srcChild);
-    if (dstChildIt == finalDstChildren.end()) {
+    if (dstChildIt == finalDstChildren.end())
+    {
       finalSrcChildren.push_back(srcChild);
       finalDstChildren.push_back(srcChild);
     }
-    else {
+    else
+    {
       const size_t idx = std::distance(finalDstChildren.begin(), dstChildIt);
       finalSrcChildren[idx] = srcChild;
     }
@@ -331,13 +365,15 @@ static bool _MergeChildrenFn(const TfToken &childrenField,
                              boost::optional<VtValue> *finalSrcChildren,
                              boost::optional<VtValue> *finalDstChildren)
 {
-  if (!childrenInSrc) {
+  if (!childrenInSrc)
+  {
     // Children on the destination spec are never cleared if the
     // source spec does not have any children of the same type.
     return false;
   }
 
-  if (!childrenInDst) {
+  if (!childrenInDst)
+  {
     // No children of the given type exist in the destination.
     // Copy all of the children from the source over.
     return true;
@@ -349,7 +385,8 @@ static bool _MergeChildrenFn(const TfToken &childrenField,
   if (_MergeChildren<std::vector<TfToken>>(
         childrenField, fallback, srcLayer, srcPath, dstLayer, dstPath, finalSrcChildren, finalDstChildren) ||
       _MergeChildren<std::vector<SdfPath>>(
-        childrenField, fallback, srcLayer, srcPath, dstLayer, dstPath, finalSrcChildren, finalDstChildren)) {
+        childrenField, fallback, srcLayer, srcPath, dstLayer, dstPath, finalSrcChildren, finalDstChildren))
+  {
     return true;
   }
 

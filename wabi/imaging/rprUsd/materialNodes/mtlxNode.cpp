@@ -20,45 +20,55 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 void ParseMtlxBoolValue(std::string const &valueString, VtValue *value)
 {
-  if (valueString == "true") {
+  if (valueString == "true")
+  {
     *value = true;
   }
-  else if (valueString == "false") {
+  else if (valueString == "false")
+  {
     *value = false;
   }
-  else {
+  else
+  {
     TF_RUNTIME_ERROR("Invalid Mtlx boolean value: %s", valueString.c_str());
   }
 }
 
 void ParseMtlxFloatValue(std::string const &valueString, VtValue *value)
 {
-  try {
+  try
+  {
     *value = std::stof(valueString);
   }
-  catch (std::logic_error &e) {
+  catch (std::logic_error &e)
+  {
     TF_RUNTIME_ERROR("Invalid Mtlx float value: %s - %s", valueString.c_str(), e.what());
   }
 }
 
 void ParseMtlxIntValue(std::string const &valueString, VtValue *value)
 {
-  try {
+  try
+  {
     *value = std::stoi(valueString);
   }
-  catch (std::logic_error &e) {
+  catch (std::logic_error &e)
+  {
     TF_RUNTIME_ERROR("Invalid Mtlx int value: %s - %s", valueString.c_str(), e.what());
   }
 }
 
-template<typename VecType> void ParseMtlxVecValue(std::string const &valueString, VtValue *value)
+template<typename VecType>
+void ParseMtlxVecValue(std::string const &valueString, VtValue *value)
 {
   auto tokens = TfStringTokenize(valueString, ", \t");
-  if (tokens.size() != VecType::dimension) {
+  if (tokens.size() != VecType::dimension)
+  {
     TF_RUNTIME_ERROR("Invalid Mtlx value: %s - expected %zu components, got %zu",
                      valueString.c_str(),
                      VecType::dimension,
@@ -66,14 +76,17 @@ template<typename VecType> void ParseMtlxVecValue(std::string const &valueString
     return;
   }
 
-  try {
+  try
+  {
     VecType vec;
-    for (size_t i = 0; i < tokens.size(); ++i) {
+    for (size_t i = 0; i < tokens.size(); ++i)
+    {
       vec.data()[i] = std::stof(tokens[i]);
     }
     *value = vec;
   }
-  catch (std::logic_error &e) {
+  catch (std::logic_error &e)
+  {
     TF_RUNTIME_ERROR("Invalid Mtlx value: %s - %s", valueString.c_str(), e.what());
   }
 }
@@ -81,29 +94,36 @@ template<typename VecType> void ParseMtlxVecValue(std::string const &valueString
 VtValue ParseMtlxValue(RprUsd_MtlxNodeElement const &input)
 {
   VtValue ret;
-  if (auto valueString = input.GetValueString()) {
-    if (input.GetType() == RprUsdMaterialNodeElement::kBoolean) {
+  if (auto valueString = input.GetValueString())
+  {
+    if (input.GetType() == RprUsdMaterialNodeElement::kBoolean)
+    {
       ParseMtlxBoolValue(valueString, &ret);
     }
-    else if (input.GetType() == RprUsdMaterialNodeElement::kInteger) {
+    else if (input.GetType() == RprUsdMaterialNodeElement::kInteger)
+    {
       ParseMtlxIntValue(valueString, &ret);
     }
     else if (input.GetType() == RprUsdMaterialNodeElement::kFloat ||
-             input.GetType() == RprUsdMaterialNodeElement::kAngle) {
+             input.GetType() == RprUsdMaterialNodeElement::kAngle)
+    {
       ParseMtlxFloatValue(valueString, &ret);
     }
     else if (input.GetType() == RprUsdMaterialNodeElement::kVector3 ||
-             input.GetType() == RprUsdMaterialNodeElement::kColor3) {
+             input.GetType() == RprUsdMaterialNodeElement::kColor3)
+    {
       ParseMtlxVecValue<GfVec3f>(valueString, &ret);
     }
-    else if (input.GetType() == RprUsdMaterialNodeElement::kVector2) {
+    else if (input.GetType() == RprUsdMaterialNodeElement::kVector2)
+    {
       ParseMtlxVecValue<GfVec2f>(valueString, &ret);
     }
   }
   return ret;
 }
 
-struct TokenParameterMapping {
+struct TokenParameterMapping
+{
   rpr::MaterialNodeInput rprInput;
   std::vector<uint32_t> values;
 };
@@ -118,27 +138,33 @@ bool GetTokenParameterMapping(TfToken const &inputId,
 
   bool isValid = true;
 
-  if (ToRpr(inputId, &out_mappings->rprInput)) {
+  if (ToRpr(inputId, &out_mappings->rprInput))
+  {
     out_mappings->values.reserve(tokenValues.size());
-    for (size_t i = 0; i < tokenValues.size(); ++i) {
+    for (size_t i = 0; i < tokenValues.size(); ++i)
+    {
       uint32_t value;
-      if (!ToRpr(tokenValues[i], &value)) {
+      if (!ToRpr(tokenValues[i], &value))
+      {
         isValid = false;
         break;
       }
 
       out_mappings->values.push_back(value);
 
-      if (tokenValues[i] == defaultValue) {
+      if (tokenValues[i] == defaultValue)
+      {
         *out_defaultIndex = i;
       }
     }
   }
-  else {
+  else
+  {
     isValid = false;
   }
 
-  if (*out_defaultIndex == -1) {
+  if (*out_defaultIndex == -1)
+  {
     TF_RUNTIME_ERROR("Invalid .mtlx definition: no default value");
     isValid = false;
   }
@@ -148,12 +174,14 @@ bool GetTokenParameterMapping(TfToken const &inputId,
 
 VtValue RemapTokenInput(VtValue const &input, TokenParameterMapping const &mapping)
 {
-  if (!input.IsHolding<int>()) {
+  if (!input.IsHolding<int>())
+  {
     return VtValue();
   }
 
   int idx = input.UncheckedGet<int>();
-  if (idx < 0 || size_t(idx) >= mapping.values.size()) {
+  if (idx < 0 || size_t(idx) >= mapping.values.size())
+  {
     return VtValue();
   }
 
@@ -166,7 +194,8 @@ VtValue RemapTokenInput(VtValue const &input, TokenParameterMapping const &mappi
 // RprUsd_MtlxNodeInfo
 //------------------------------------------------------------------------------
 
-namespace {
+namespace
+{
 
 RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::TypedElementPtr const &element)
 {
@@ -188,7 +217,8 @@ RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::Typed
   if (it == s_mapping.end())
     return RprUsdMaterialNodeElement::kInvalid;
 
-  if (it->second == RprUsdMaterialNodeElement::kString) {
+  if (it->second == RprUsdMaterialNodeElement::kString)
+  {
     // If enum attribute is specified, we have kToken type
     auto &enumAttr = element->getAttribute(MaterialX::ValueElement::ENUM_ATTRIBUTE);
     if (!enumAttr.empty())
@@ -200,10 +230,12 @@ RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::Typed
 
 RprUsdMaterialNodeInput::Type RprUsd_GetMaterialNodeElementType(MaterialX::InputPtr const &input)
 {
-  if (input->getDefaultGeomPropString() == "Nworld") {
+  if (input->getDefaultGeomPropString() == "Nworld")
+  {
     return RprUsdMaterialNodeElement::kNormal;
   }
-  else {
+  else
+  {
     return RprUsd_GetMaterialNodeElementType(MaterialX::TypedElementPtr(input));
   }
 }
@@ -220,18 +252,22 @@ RprUsd_MtlxNodeInfo::RprUsd_MtlxNodeInfo(MaterialX::DocumentPtr const &mtlxDoc,
 
   auto mtlxInputs = m_mtlxNodeDef->getInputs();
   m_mtlxInputs.reserve(mtlxInputs.size());
-  for (auto &input : mtlxInputs) {
+  for (auto &input : mtlxInputs)
+  {
     auto inputType = RprUsd_GetMaterialNodeElementType(input);
-    if (inputType != RprUsdMaterialNodeElement::kInvalid) {
+    if (inputType != RprUsdMaterialNodeElement::kInvalid)
+    {
       m_mtlxInputs.emplace_back(std::move(input), inputType);
     }
   }
 
   auto mtlxOutputs = m_mtlxNodeDef->getOutputs();
   m_mtlxOutputs.reserve(mtlxOutputs.size());
-  for (auto &output : mtlxOutputs) {
+  for (auto &output : mtlxOutputs)
+  {
     auto outputType = RprUsd_GetMaterialNodeElementType(output);
-    if (outputType != RprUsdMaterialNodeElement::kInvalid) {
+    if (outputType != RprUsdMaterialNodeElement::kInvalid)
+    {
       m_mtlxOutputs.emplace_back(std::move(output), outputType);
     }
   }
@@ -243,33 +279,40 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
 
   // Check if node definition matches to the one of rpr native nodes
   auto &nodeDefName = m_mtlxNodeDef->getNodeString();
-  if (TfStringStartsWith(nodeDefName, kRprPrefix)) {
+  if (TfStringStartsWith(nodeDefName, kRprPrefix))
+  {
     TfToken rprNodeId(nodeDefName.substr(kRprPrefix.size()));
 
     rpr::MaterialNodeType rprNodeType;
-    if (ToRpr(rprNodeId, &rprNodeType, false)) {
+    if (ToRpr(rprNodeId, &rprNodeType, false))
+    {
       std::vector<std::pair<TfToken, VtValue>> rprNodeDefaultParameters;
 
       // Token parameter has strict list of possible values.
       // Houdini converts such paramaters to int type.
       // We build lookup table for such parameters to workaround this behavior
       std::map<TfToken, TokenParameterMapping> tokenParamMappings;
-      for (auto &input : m_mtlxInputs) {
-        if (input.GetType() == RprUsdMaterialNodeElement::kToken) {
+      for (auto &input : m_mtlxInputs)
+      {
+        if (input.GetType() == RprUsdMaterialNodeElement::kToken)
+        {
           TfToken inputId(input.GetName());
 
           int defaultIndex;
           TokenParameterMapping mapping;
           if (GetTokenParameterMapping(
-                inputId, input.GetValueString(), input.GetTokenValues(), &defaultIndex, &mapping)) {
+                inputId, input.GetValueString(), input.GetTokenValues(), &defaultIndex, &mapping))
+          {
 
             tokenParamMappings[inputId] = mapping;
             rprNodeDefaultParameters.emplace_back(inputId, VtValue(defaultIndex));
           }
         }
-        else {
+        else
+        {
           auto value = ParseMtlxValue(input);
-          if (!value.IsEmpty()) {
+          if (!value.IsEmpty())
+          {
             rprNodeDefaultParameters.emplace_back(TfToken(input.GetName()), std::move(value));
           }
         }
@@ -278,7 +321,8 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
       return [rprNodeType, rprNodeDefaultParameters, tokenParamMappings](
                RprUsd_MaterialBuilderContext *context,
                std::map<TfToken, VtValue> const &parameters) -> RprUsd_MaterialNode * {
-        class RprUsd_MtlxNode : public RprUsd_BaseRuntimeNode {
+        class RprUsd_MtlxNode : public RprUsd_BaseRuntimeNode
+        {
          public:
           RprUsd_MtlxNode(rpr::MaterialNodeType type,
                           RprUsd_MaterialBuilderContext *ctx,
@@ -290,11 +334,13 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
           bool SetInput(TfToken const &inputId, VtValue const &value) override
           {
             auto tokenParamIt = m_tokenParamMappings.find(inputId);
-            if (tokenParamIt != m_tokenParamMappings.end()) {
+            if (tokenParamIt != m_tokenParamMappings.end())
+            {
               auto &mapping = tokenParamIt->second;
 
               auto remappedValue = RemapTokenInput(value, mapping);
-              if (remappedValue.IsEmpty()) {
+              if (remappedValue.IsEmpty())
+              {
                 TF_RUNTIME_ERROR(
                   "Failed to remap token parameter %s - %s", inputId.GetText(), value.GetTypeName().c_str());
                 return false;
@@ -313,21 +359,26 @@ RprUsdMaterialNodeFactoryFnc RprUsd_MtlxNodeInfo::GetFactory() const
         auto rprNode = new RprUsd_MtlxNode(rprNodeType, context, tokenParamMappings);
 
         bool validInput = true;
-        for (auto &entry : rprNodeDefaultParameters) {
+        for (auto &entry : rprNodeDefaultParameters)
+        {
           auto it = parameters.find(entry.first);
-          if (it != parameters.end()) {
+          if (it != parameters.end())
+          {
             validInput = rprNode->SetInput(entry.first, it->second);
           }
-          else {
+          else
+          {
             validInput = rprNode->SetInput(entry.first, entry.second);
           }
 
-          if (!validInput) {
+          if (!validInput)
+          {
             break;
           }
         }
 
-        if (!validInput) {
+        if (!validInput)
+        {
           delete rprNode;
           return nullptr;
         }
@@ -346,10 +397,12 @@ RprUsd_MtlxNodeElement::RprUsd_MtlxNodeElement(MaterialX::ValueElementPtr elemen
   : RprUsdMaterialNodeInput(type),
     m_mtlx(std::move(element))
 {
-  if (m_type == kToken) {
+  if (m_type == kToken)
+  {
     auto &enumValues = m_mtlx->getAttribute(MaterialX::ValueElement::ENUM_ATTRIBUTE);
     auto values = TfStringTokenize(enumValues, ",");
-    for (auto &value : values) {
+    for (auto &value : values)
+    {
       m_tokenValues.emplace_back(value, TfToken::Immortal);
     }
   }

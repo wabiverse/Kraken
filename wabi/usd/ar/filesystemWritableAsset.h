@@ -51,7 +51,8 @@ WABI_NAMESPACE_BEGIN
 /// has been opened for replacement, data will be written to a temporary
 /// file which will be renamed over the destination file when this object
 /// is destroyed. See documentation for TfSafeOutputFile for more details.
-class ArFilesystemWritableAsset : public ArWritableAsset {
+class ArFilesystemWritableAsset : public ArWritableAsset
+{
  public:
   /// Constructs a new ArFilesystemWritableAsset for the file at
   /// \p resolvedPath with the given \p writeMode. Returns a null pointer

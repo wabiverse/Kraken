@@ -45,7 +45,8 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // We return primInfo by unrolling it into a single tuple.  This allows
 // python clients to extract the information 40% faster than if we were

@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(UsdAbc_AlembicContextFlagNames, USDABC_ALEMBIC_CONTEXT_FLAG_NAMES);
 
-namespace UsdAbc_AlembicUtil {
+namespace UsdAbc_AlembicUtil
+{
 
 using namespace ::Alembic::Abc;
 
@@ -58,10 +59,12 @@ TF_DEFINE_PUBLIC_TOKENS(UsdAbcCustomMetadata, USD_ABC_CUSTOM_METADATA);
 
 std::string UsdAbc_AlembicType::Stringify() const
 {
-  if (extent == 1) {
+  if (extent == 1)
+  {
     return TfStringPrintf("%s%s", PODName(pod), array ? "[]" : "");
   }
-  else {
+  else
+  {
     return TfStringPrintf("%s[%d]%s", PODName(pod), extent, array ? "[]" : "");
   }
 }
@@ -73,16 +76,20 @@ bool UsdAbc_AlembicType::operator==(const UsdAbc_AlembicType &rhs) const
 
 bool UsdAbc_AlembicType::operator<(const UsdAbc_AlembicType &rhs) const
 {
-  if (pod < rhs.pod) {
+  if (pod < rhs.pod)
+  {
     return true;
   }
-  if (rhs.pod < pod) {
+  if (rhs.pod < pod)
+  {
     return false;
   }
-  if (extent < rhs.extent) {
+  if (extent < rhs.extent)
+  {
     return true;
   }
-  if (rhs.extent < extent) {
+  if (rhs.extent < extent)
+  {
     return false;
   }
   return array < rhs.array;
@@ -102,7 +109,9 @@ std::string UsdAbc_FormatAlembicVersion(int32_t n)
 // POD property to/from Usd.
 //
 
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODScalar {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODScalar
+{
   bool operator()(const ICompoundProperty &parent,
                   const std::string &name,
                   const ISampleSelector &iss,
@@ -125,7 +134,9 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODScal
   }
 };
 
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODArray {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODArray
+{
   bool operator()(const ICompoundProperty &parent,
                   const std::string &name,
                   const ISampleSelector &iss,
@@ -163,7 +174,8 @@ _SampleForAlembic::_Holder::~_Holder()
 
 bool _SampleForAlembic::_Holder::Error(std::string *message) const
 {
-  if (message) {
+  if (message)
+  {
     message->clear();
   }
   return false;
@@ -179,14 +191,16 @@ _SampleForAlembic::_EmptyHolder::~_EmptyHolder()
   // Do nothing
 }
 
-_SampleForAlembic::_ErrorHolder::_ErrorHolder(const std::string &message) : _message(message)
+_SampleForAlembic::_ErrorHolder::_ErrorHolder(const std::string &message)
+  : _message(message)
 {
   // Do nothing
 }
 
 bool _SampleForAlembic::_ErrorHolder::Error(std::string *message) const
 {
-  if (message) {
+  if (message)
+  {
     *message = _message;
   }
   return true;
@@ -222,8 +236,10 @@ UsdAbc_AlembicDataConversion::UsdAbc_AlembicDataConversion()
 
 SdfValueTypeName UsdAbc_AlembicDataConversion::FindConverter(const UsdAbc_AlembicType &alembicType) const
 {
-  for (const auto &c : _typeConverters) {
-    if (c.abcType == alembicType) {
+  for (const auto &c : _typeConverters)
+  {
+    if (c.abcType == alembicType)
+    {
       return c.usdType;
     }
   }
@@ -234,8 +250,10 @@ const UsdAbc_AlembicDataConversion::ToUsdConverter &UsdAbc_AlembicDataConversion
   const UsdAbc_AlembicType &alembicType,
   const SdfValueTypeName &usdType) const
 {
-  for (const auto &c : _typeConverters) {
-    if (c.usdType == usdType && c.abcType == alembicType) {
+  for (const auto &c : _typeConverters)
+  {
+    if (c.usdType == usdType && c.abcType == alembicType)
+    {
       return c.toUsdFn;
     }
   }
@@ -245,8 +263,10 @@ const UsdAbc_AlembicDataConversion::ToUsdConverter &UsdAbc_AlembicDataConversion
 
 UsdAbc_AlembicType UsdAbc_AlembicDataConversion::FindConverter(const SdfValueTypeName &usdType) const
 {
-  for (const auto &c : _typeConverters) {
-    if (c.usdType == usdType) {
+  for (const auto &c : _typeConverters)
+  {
+    if (c.usdType == usdType)
+    {
       return c.abcType;
     }
   }
@@ -256,8 +276,10 @@ UsdAbc_AlembicType UsdAbc_AlembicDataConversion::FindConverter(const SdfValueTyp
 const UsdAbc_AlembicDataConversion::FromUsdConverter &UsdAbc_AlembicDataConversion::GetConverter(
   const SdfValueTypeName &usdType) const
 {
-  for (const auto &c : _typeConverters) {
-    if (c.usdType == usdType) {
+  for (const auto &c : _typeConverters)
+  {
+    if (c.usdType == usdType)
+    {
       return c.fromUsdFn;
     }
   }

@@ -55,7 +55,8 @@ using HdBufferArrayRangeSharedPtrVector = std::vector<HdBufferArrayRangeSharedPt
 ///
 /// \see HdPhExtCompGpuComputation
 /// \see HdPhExtCompGpuComputationBufferSource
-class HdPhExtCompGpuComputationResource final {
+class HdPhExtCompGpuComputationResource final
+{
  public:
   /// Creates a GPU computation resource that can bind resources matching
   /// the layout of the compute kernel.

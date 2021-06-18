@@ -39,11 +39,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc) : HgiSampler(desc), _samplerId(0)
+HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc)
+  : HgiSampler(desc),
+    _samplerId(0)
 {
   glCreateSamplers(1, &_samplerId);
 
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     HgiGLObjectLabel(GL_SAMPLER, _samplerId, _descriptor.debugName);
   }
 

@@ -47,12 +47,14 @@ class RprUsdMaterial;
 struct HdRprApiVolume;
 struct HdRprApiEnvironmentLight;
 
-template<typename T, typename... Args> std::unique_ptr<T> make_unique(Args &&...args)
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args &&...args)
 {
   return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-enum HdRprVisibilityFlag {
+enum HdRprVisibilityFlag
+{
   kVisiblePrimary = 1 << 0,
   kVisibleShadow = 1 << 1,
   kVisibleReflection = 1 << 2,
@@ -66,7 +68,8 @@ enum HdRprVisibilityFlag {
 };
 const uint32_t kInvisible = 0u;
 
-class HdRprApi final {
+class HdRprApi final
+{
  public:
   HdRprApi(HdRprDelegate *delegate);
   ~HdRprApi();
@@ -100,7 +103,8 @@ class HdRprApi final {
   RprUsdMaterial *CreateGeometryLightMaterial(GfVec3f const &emissionColor);
   void ReleaseGeometryLightMaterial(RprUsdMaterial *material);
 
-  struct VolumeMaterialParameters {
+  struct VolumeMaterialParameters
+  {
     GfVec3f scatteringColor = GfVec3f(1.0f);
     GfVec3f transmissionColor = GfVec3f(1.0f);
     GfVec3f emissionColor = GfVec3f(1.0f);
@@ -191,7 +195,8 @@ class HdRprApi final {
                       std::condition_variable *presentedConditionVariable,
                       bool *presentedCondition);
 
-  struct RenderStats {
+  struct RenderStats
+  {
     double percentDone;
     double averageRenderTimePerSample;
     double averageResolveTimePerSample;

@@ -37,7 +37,8 @@ HdCyclesObjectSource::HdCyclesObjectSource(ccl::Object *object, const SdfPath &i
 
 HdCyclesObjectSource::~HdCyclesObjectSource()
 {
-  if (!m_isReference) {
+  if (!m_isReference)
+  {
     assert(m_object != nullptr);
     delete m_object->geometry;
     delete m_object;
@@ -46,7 +47,8 @@ HdCyclesObjectSource::~HdCyclesObjectSource()
 
 bool HdCyclesObjectSource::Resolve()
 {
-  if (!_TryLock()) {
+  if (!_TryLock())
+  {
     return false;
   }
 
@@ -81,11 +83,14 @@ size_t HdCyclesObjectSource::ResolvePendingSources()
 {
   size_t num_resolved_sources = 0;
 
-  for (auto &source : m_pending_properties) {
-    if (!source.second->IsValid()) {
+  for (auto &source : m_pending_properties)
+  {
+    if (!source.second->IsValid())
+    {
       continue;
     }
-    if (source.second->IsResolved()) {
+    if (source.second->IsResolved())
+    {
       continue;
     }
     source.second->Resolve();
@@ -93,11 +98,14 @@ size_t HdCyclesObjectSource::ResolvePendingSources()
   }
 
   // resolve pending sources
-  for (auto &source : m_pending_attributes) {
-    if (!source.second->IsValid()) {
+  for (auto &source : m_pending_attributes)
+  {
+    if (!source.second->IsValid())
+    {
       continue;
     }
-    if (source.second->IsResolved()) {
+    if (source.second->IsResolved())
+    {
       continue;
     }
     source.second->Resolve();

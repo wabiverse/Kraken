@@ -36,7 +36,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhExtComputation::HdPhExtComputation(SdfPath const &id) : HdExtComputation(id), _inputRange()
+HdPhExtComputation::HdPhExtComputation(SdfPath const &id)
+  : HdExtComputation(id),
+    _inputRange()
 {}
 
 HdPhExtComputation::~HdPhExtComputation() = default;
@@ -55,7 +57,8 @@ static uint64_t _ComputeSharedComputationInputId(uint64_t baseId,
                                                  HdBufferSourceSharedPtrVector const &sources)
 {
   size_t inputId = baseId;
-  for (HdBufferSourceSharedPtr const &bufferSource : sources) {
+  for (HdBufferSourceSharedPtr const &bufferSource : sources)
+  {
     size_t sourceId = bufferSource->ComputeHash();
     inputId = ArchHash64((const char *)&sourceId, sizeof(sourceId), inputId);
   }
@@ -92,11 +95,13 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
   // GPU computation or when aggregating inputs for a downstream computation.
   // Note: For CPU computations, we pull the inputs when we create the
   // HdExtCompCpuComputation, which happens during Rprim sync.
-  if (GetGpuKernelSource().empty() && !IsInputAggregation()) {
+  if (GetGpuKernelSource().empty() && !IsInputAggregation())
+  {
     return;
   }
 
-  if (!(*dirtyBits & DirtySceneInput)) {
+  if (!(*dirtyBits & DirtySceneInput))
+  {
     // No scene inputs to sync. All other computation dirty bits (barring
     // DirtyCompInput) are sync'd in HdExtComputation::_Sync.
     return;
@@ -107,15 +112,18 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
     renderIndex.GetResourceRegistry());
 
   HdBufferSourceSharedPtrVector inputs;
-  for (TfToken const &inputName : GetSceneInputNames()) {
+  for (TfToken const &inputName : GetSceneInputNames())
+  {
     VtValue inputValue = sceneDelegate->GetExtComputationInput(GetId(), inputName);
     size_t arraySize = inputValue.IsArrayValued() ? inputValue.GetArraySize() : 1;
     HdBufferSourceSharedPtr inputSource = std::make_shared<HdVtBufferSource>(
       inputName, inputValue, arraySize);
-    if (inputSource->IsValid()) {
+    if (inputSource->IsValid())
+    {
       inputs.push_back(inputSource);
     }
-    else {
+    else
+    {
       TF_WARN("Unsupported type %s for source %s in extComputation %s.",
               inputValue.GetType().GetTypeName().c_str(),
               inputName.GetText(),
@@ -126,14 +134,17 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
   // Store the current range to know if garbage collection  is necessary.
   HdBufferArrayRangeSharedPtr const prevRange = _inputRange;
 
-  if (!inputs.empty()) {
-    if (_IsEnabledSharedExtComputationData() && IsInputAggregation()) {
+  if (!inputs.empty())
+  {
+    if (_IsEnabledSharedExtComputationData() && IsInputAggregation())
+    {
       uint64_t inputId = _ComputeSharedComputationInputId(0, inputs);
 
       HdInstance<HdBufferArrayRangeSharedPtr> barInstance =
         resourceRegistry->RegisterExtComputationDataRange(inputId);
 
-      if (barInstance.IsFirstInstance()) {
+      if (barInstance.IsFirstInstance())
+      {
         // Allocate the first buffer range for this input key
         _inputRange = _AllocateComputationDataRange(std::move(inputs), resourceRegistry);
         barInstance.SetValue(_inputRange);
@@ -143,7 +154,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
                GetId().GetText(),
                (void *)_inputRange.get());
       }
-      else {
+      else
+      {
         // Share the existing buffer range for this input key
         _inputRange = barInstance.GetValue();
 
@@ -153,7 +165,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
                (void *)_inputRange.get());
       }
     }
-    else {
+    else
+    {
       // We're not sharing.
 
       // We don't yet have the ability to track dirtiness per scene input.
@@ -163,7 +176,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
       // using the Update*BufferArrayRange flavor of methods in
       // HdPhResourceRegistry and handle allocation/upload manually.
 
-      if (!_inputRange || !_inputRange->IsValid()) {
+      if (!_inputRange || !_inputRange->IsValid())
+      {
         // Allocate a new BAR if we haven't already.
         _inputRange = _AllocateComputationDataRange(std::move(inputs), resourceRegistry);
         TF_DEBUG(HD_SHARED_EXT_COMPUTATION_DATA)
@@ -171,7 +185,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
                GetId().GetText(),
                (void *)_inputRange.get());
       }
-      else {
+      else
+      {
         HdBufferSpecVector inputSpecs;
         HdBufferSpec::GetBufferSpecs(inputs, &inputSpecs);
         HdBufferSpecVector barSpecs;
@@ -179,7 +194,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
 
         bool useExistingRange = HdBufferSpec::IsSubset(/*subset*/ inputSpecs,
                                                        /*superset*/ barSpecs);
-        if (useExistingRange) {
+        if (useExistingRange)
+        {
           resourceRegistry->AddSources(_inputRange, std::move(inputs));
 
           TF_DEBUG(HD_SHARED_EXT_COMPUTATION_DATA)
@@ -189,7 +205,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
               GetId().GetText(),
               (void *)_inputRange.get());
         }
-        else {
+        else
+        {
           _inputRange = _AllocateComputationDataRange(std::move(inputs), resourceRegistry);
           TF_DEBUG(HD_SHARED_EXT_COMPUTATION_DATA)
             .Msg(
@@ -201,7 +218,8 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
 
-    if (prevRange && (prevRange != _inputRange)) {
+    if (prevRange && (prevRange != _inputRange))
+    {
       // Make sure that we also release any stale input range data
       HdPhMarkGarbageCollectionNeeded(renderParam);
     }

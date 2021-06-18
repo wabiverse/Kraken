@@ -50,7 +50,8 @@ using VkClearValueVector = std::vector<VkClearValue>;
 ///
 /// Vulkan implementation of HgiGraphicsPipeline.
 ///
-class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline {
+class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanGraphicsPipeline() override;
@@ -96,7 +97,8 @@ class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline {
 
   void _CreateRenderPass();
 
-  struct HgiVulkan_Framebuffer {
+  struct HgiVulkan_Framebuffer
+  {
     GfVec2i dimensions;
     HgiGraphicsCmdsDesc desc;
     VkFramebuffer vkFramebuffer;

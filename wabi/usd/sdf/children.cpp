@@ -37,7 +37,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class ChildPolicy> Sdf_Children<ChildPolicy>::Sdf_Children() : _childNamesValid(false)
+template<class ChildPolicy>
+Sdf_Children<ChildPolicy>::Sdf_Children()
+  : _childNamesValid(false)
 {}
 
 template<class ChildPolicy>
@@ -61,7 +63,8 @@ Sdf_Children<ChildPolicy>::Sdf_Children(const SdfLayerHandle &layer,
     _childNamesValid(false)
 {}
 
-template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::GetSize() const
+template<class ChildPolicy>
+size_t Sdf_Children<ChildPolicy>::GetSize() const
 {
   _UpdateChildNames();
 
@@ -71,7 +74,8 @@ template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::GetSize() const
 template<class ChildPolicy>
 typename Sdf_Children<ChildPolicy>::ValueType Sdf_Children<ChildPolicy>::GetChild(size_t index) const
 {
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return ValueType();
   }
 
@@ -82,15 +86,18 @@ typename Sdf_Children<ChildPolicy>::ValueType Sdf_Children<ChildPolicy>::GetChil
   return TfDynamic_cast<ValueType>(_layer->GetObjectAtPath(childPath));
 }
 
-template<class ChildPolicy> bool Sdf_Children<ChildPolicy>::IsValid() const
+template<class ChildPolicy>
+bool Sdf_Children<ChildPolicy>::IsValid() const
 {
   // XXX: Should we also check for the existence of the spec?
   return _layer && !_parentPath.IsEmpty();
 }
 
-template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::Find(const KeyType &key) const
+template<class ChildPolicy>
+size_t Sdf_Children<ChildPolicy>::Find(const KeyType &key) const
 {
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return 0;
   }
 
@@ -98,8 +105,10 @@ template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::Find(const KeyType
 
   const FieldType expectedKey(_keyPolicy.Canonicalize(key));
   size_t i = 0;
-  for (i = 0; i < _childNames.size(); i++) {
-    if (_childNames[i] == expectedKey) {
+  for (i = 0; i < _childNames.size(); i++)
+  {
+    if (_childNames[i] == expectedKey)
+    {
       break;
     }
   }
@@ -109,19 +118,22 @@ template<class ChildPolicy> size_t Sdf_Children<ChildPolicy>::Find(const KeyType
 template<class ChildPolicy>
 typename Sdf_Children<ChildPolicy>::KeyType Sdf_Children<ChildPolicy>::FindKey(const ValueType &x) const
 {
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return KeyType();
   }
 
   // If the value is invalid or does not belong to this layer,
   // then return a default-constructed key.
-  if (!x || x->GetLayer() != _layer) {
+  if (!x || x->GetLayer() != _layer)
+  {
     return KeyType();
   }
 
   // If the value's path is not a child path of the parent path,
   // then return a default-constructed key.
-  if (ChildPolicy::GetParentPath(x->GetPath()) != _parentPath) {
+  if (ChildPolicy::GetParentPath(x->GetPath()) != _parentPath)
+  {
     return KeyType();
   }
 
@@ -141,7 +153,8 @@ bool Sdf_Children<ChildPolicy>::Copy(const std::vector<ValueType> &values, const
 {
   _childNamesValid = false;
 
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return false;
   }
 
@@ -153,7 +166,8 @@ bool Sdf_Children<ChildPolicy>::Insert(const ValueType &value, size_t index, con
 {
   _childNamesValid = false;
 
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return false;
   }
 
@@ -165,7 +179,8 @@ bool Sdf_Children<ChildPolicy>::Erase(const KeyType &key, const std::string &typ
 {
   _childNamesValid = false;
 
-  if (!TF_VERIFY(IsValid())) {
+  if (!TF_VERIFY(IsValid()))
+  {
     return false;
   }
 
@@ -174,17 +189,21 @@ bool Sdf_Children<ChildPolicy>::Erase(const KeyType &key, const std::string &typ
   return Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(_layer, _parentPath, expectedKey);
 }
 
-template<class ChildPolicy> void Sdf_Children<ChildPolicy>::_UpdateChildNames() const
+template<class ChildPolicy>
+void Sdf_Children<ChildPolicy>::_UpdateChildNames() const
 {
-  if (_childNamesValid) {
+  if (_childNamesValid)
+  {
     return;
   }
   _childNamesValid = true;
 
-  if (_layer) {
+  if (_layer)
+  {
     _childNames = _layer->GetFieldAs<std::vector<FieldType>>(_parentPath, _childrenKey);
   }
-  else {
+  else
+  {
     _childNames.clear();
   }
 }

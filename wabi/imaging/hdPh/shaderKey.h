@@ -35,7 +35,8 @@ WABI_NAMESPACE_BEGIN
 
 // Abstract interface for geometric shader keys that may be used to
 // construct a geometric shader.
-struct HdPh_ShaderKey {
+struct HdPh_ShaderKey
+{
   typedef size_t ID;
 
   HDPH_API

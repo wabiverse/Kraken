@@ -30,7 +30,8 @@ WABI_NAMESPACE_BEGIN
 
 using namespace Usd_CrateFile;
 
-struct UsdCrateInfo::_Impl {
+struct UsdCrateInfo::_Impl
+{
   std::unique_ptr<CrateFile> crateFile;
 };
 
@@ -38,7 +39,8 @@ struct UsdCrateInfo::_Impl {
 UsdCrateInfo UsdCrateInfo::Open(std::string const &fileName)
 {
   UsdCrateInfo result;
-  if (auto newCrate = CrateFile::Open(fileName)) {
+  if (auto newCrate = CrateFile::Open(fileName))
+  {
     result._impl.reset(new _Impl);
     result._impl->crateFile = std::move(newCrate);
   }
@@ -48,10 +50,12 @@ UsdCrateInfo UsdCrateInfo::Open(std::string const &fileName)
 UsdCrateInfo::SummaryStats UsdCrateInfo::GetSummaryStats() const
 {
   SummaryStats stats;
-  if (!*this) {
+  if (!*this)
+  {
     TF_CODING_ERROR("Invalid UsdCrateInfo object");
   }
-  else {
+  else
+  {
     stats.numSpecs = _impl->crateFile->GetSpecs().size();
     stats.numUniquePaths = _impl->crateFile->GetPaths().size();
     stats.numUniqueTokens = _impl->crateFile->GetTokens().size();
@@ -65,12 +69,15 @@ UsdCrateInfo::SummaryStats UsdCrateInfo::GetSummaryStats() const
 vector<UsdCrateInfo::Section> UsdCrateInfo::GetSections() const
 {
   vector<Section> result;
-  if (!*this) {
+  if (!*this)
+  {
     TF_CODING_ERROR("Invalid UsdCrateInfo object");
   }
-  else {
+  else
+  {
     auto secs = _impl->crateFile->GetSectionsNameStartSize();
-    for (auto const &s : secs) {
+    for (auto const &s : secs)
+    {
       result.emplace_back(std::get<0>(s), std::get<1>(s), std::get<2>(s));
     }
   }
@@ -79,7 +86,8 @@ vector<UsdCrateInfo::Section> UsdCrateInfo::GetSections() const
 
 TfToken UsdCrateInfo::GetFileVersion() const
 {
-  if (!*this) {
+  if (!*this)
+  {
     TF_CODING_ERROR("Invalid UsdCrateInfo object");
     return TfToken();
   }

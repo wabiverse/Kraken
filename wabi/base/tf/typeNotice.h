@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// \class TfTypeWasDeclaredNotice
 ///
 /// TfNotice sent after a TfType is declared.
-class TfTypeWasDeclaredNotice : public TfNotice {
+class TfTypeWasDeclaredNotice : public TfNotice
+{
  public:
   TfTypeWasDeclaredNotice(TfType t);
   virtual ~TfTypeWasDeclaredNotice();

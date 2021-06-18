@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Enum for specifying one of the list editing operation types.
 ///
-enum SdfListOpType {
+enum SdfListOpType
+{
   SdfListOpTypeExplicit,
   SdfListOpTypeAdded,
   SdfListOpTypeDeleted,
@@ -58,7 +59,9 @@ enum SdfListOpType {
 /// Trait classes for specializing behaviors of SdfListOp for a given item
 /// type.
 ///
-template<class T> struct Sdf_ListOpTraits {
+template<class T>
+struct Sdf_ListOpTraits
+{
   typedef std::less<T> ItemComparator;
 };
 
@@ -69,7 +72,9 @@ template<class T> struct Sdf_ListOpTraits {
 /// SdfListOp is a value type representing an operation that edits a list.
 /// It may add or remove items, reorder them, or replace the list entirely.
 ///
-template<typename T> class SdfListOp {
+template<typename T>
+class SdfListOp
+{
  public:
   typedef T ItemType;
   typedef std::vector<ItemType> ItemVector;
@@ -97,11 +102,13 @@ template<typename T> class SdfListOp {
   /// or ordered keys.
   bool HasKeys() const
   {
-    if (IsExplicit()) {
+    if (IsExplicit())
+    {
       return true;
     }
     if (_addedItems.size() != 0 || _prependedItems.size() != 0 || _appendedItems.size() != 0 ||
-        _deletedItems.size() != 0) {
+        _deletedItems.size() != 0)
+    {
       return true;
     }
     return _orderedItems.size() != 0;
@@ -267,7 +274,8 @@ template<typename T> class SdfListOp {
 };
 
 // ADL swap.
-template<class T> void swap(SdfListOp<T> &x, SdfListOp<T> &y)
+template<class T>
+void swap(SdfListOp<T> &x, SdfListOp<T> &y)
 {
   x.Swap(y);
 }
@@ -279,7 +287,8 @@ SDF_API void SdfApplyListOrdering(std::vector<ItemType> *v, const std::vector<It
 
 // Ostream output methods for list values (useful for debugging and required
 // for storing a list value in a VtValue).
-template<typename T> SDF_API std::ostream &operator<<(std::ostream &, const SdfListOp<T> &);
+template<typename T>
+SDF_API std::ostream &operator<<(std::ostream &, const SdfListOp<T> &);
 
 // Concrete, instantiated listop types.
 typedef class SdfListOp<int> SdfIntListOp;

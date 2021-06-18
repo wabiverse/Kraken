@@ -40,14 +40,17 @@ CameraUtilScreenWindowParameters::CameraUtilScreenWindowParameters(const GfCamer
                   +camera.GetVerticalAperture() + 2 * camera.GetVerticalApertureOffset()),
     _fieldOfView(camera.GetFieldOfView(fitDirection))
 {
-  if (camera.GetProjection() == GfCamera::Perspective) {
+  if (camera.GetProjection() == GfCamera::Perspective)
+  {
     const double denom = (fitDirection == GfCamera::FOVHorizontal) ? camera.GetHorizontalAperture() :
                                                                      camera.GetVerticalAperture();
-    if (denom != 0.0) {
+    if (denom != 0.0)
+    {
       _screenWindow /= denom;
     }
   }
-  else {
+  else
+  {
     _screenWindow *= GfCamera::APERTURE_UNIT / 2.0;
   }
 

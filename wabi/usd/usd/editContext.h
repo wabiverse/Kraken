@@ -63,7 +63,8 @@ TF_DECLARE_WEAK_PTRS(UsdStage);
 /// to either query or mutate it.  Using this class with a stage in such a way
 /// that it modifies the stage's EditTarget constitutes a mutation.
 ///
-class UsdEditContext {
+class UsdEditContext
+{
   UsdEditContext(UsdEditContext const &) = delete;
   UsdEditContext &operator=(UsdEditContext const &) = delete;
 

@@ -40,10 +40,12 @@ WABI_NAMESPACE_BEGIN
 /// UsdPayloads provides an interface to authoring and introspecting payloads.
 /// Payloads behave the same as Usd references except that payloads can be
 /// optionally loaded.
-class UsdPayloads {
+class UsdPayloads
+{
   friend class UsdPrim;
 
-  explicit UsdPayloads(const UsdPrim &prim) : _prim(prim)
+  explicit UsdPayloads(const UsdPrim &prim)
+    : _prim(prim)
   {}
 
  public:

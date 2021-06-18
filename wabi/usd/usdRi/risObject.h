@@ -66,7 +66,8 @@ class SdfAssetPath;
 ///
 /// Represents a ris object with connectable parameters.
 ///
-class UsdRiRisObject : public UsdShadeShader {
+class UsdRiRisObject : public UsdShadeShader
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -82,13 +83,15 @@ class UsdRiRisObject : public UsdShadeShader {
   /// Equivalent to UsdRiRisObject::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRisObject(const UsdPrim &prim = UsdPrim()) : UsdShadeShader(prim)
+  explicit UsdRiRisObject(const UsdPrim &prim = UsdPrim())
+    : UsdShadeShader(prim)
   {}
 
   /// Construct a UsdRiRisObject on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRisObject(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRisObject(const UsdSchemaBase &schemaObj) : UsdShadeShader(schemaObj)
+  explicit UsdRiRisObject(const UsdSchemaBase &schemaObj)
+    : UsdShadeShader(schemaObj)
   {}
 
   /// Destructor.

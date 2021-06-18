@@ -35,7 +35,8 @@ bool HdRprIsValidPrimvarSize(size_t primvarSize,
                              size_t uniformInterpolationSize,
                              size_t vertexInterpolationSize);
 
-struct HdRprGeometrySettings {
+struct HdRprGeometrySettings
+{
   int id = -1;
   int subdivisionLevel = 0;
   uint32_t visibilityMask = 0;
@@ -56,7 +57,8 @@ inline void HdRprParseGeometrySettings(
   HdRprGeometrySettings *geomSettings)
 {
   auto constantPrimvarDescIt = primvarDescsPerInterpolation.find(HdInterpolationConstant);
-  if (constantPrimvarDescIt == primvarDescsPerInterpolation.end()) {
+  if (constantPrimvarDescIt == primvarDescsPerInterpolation.end())
+  {
     return;
   }
 
@@ -70,7 +72,8 @@ bool HdRprGetConstantPrimvar(TfToken const &name,
                              T *out_value)
 {
   auto value = sceneDelegate->Get(id, name);
-  if (value.IsHolding<T>()) {
+  if (value.IsHolding<T>())
+  {
     *out_value = value.UncheckedGet<T>();
     return true;
   }
@@ -96,20 +99,25 @@ bool HdRprSamplePrimvar(SdfPath const &id,
 
   size_t authoredSampleCount = sceneDelegate->SamplePrimvar(
     id, key, maxSampleCount, sampleTimes.data(), sampleVtValues.data());
-  if (!authoredSampleCount) {
+  if (!authoredSampleCount)
+  {
     return false;
   }
 
-  if (authoredSampleCount < maxSampleCount) {
+  if (authoredSampleCount < maxSampleCount)
+  {
     sampleTimes.resize(authoredSampleCount);
     sampleVtValues.resize(authoredSampleCount);
   }
 
-  if (sampleTimes.size() > 1) {
+  if (sampleTimes.size() > 1)
+  {
     float baselineTimeStep = sampleTimes[1] - sampleTimes[0];
-    for (size_t i = 1; i < sampleTimes.size() - 1; ++i) {
+    for (size_t i = 1; i < sampleTimes.size() - 1; ++i)
+    {
       float timeStep = sampleTimes[i + 1] - sampleTimes[i];
-      if (std::abs(baselineTimeStep - timeStep) > 1e-6f) {
+      if (std::abs(baselineTimeStep - timeStep) > 1e-6f)
+      {
         // Definitely an issue but we can at least use such data with the current API, so just log
         // a warning
         TF_WARN("[%s] RPR does not support non-linear in time sub-frame primvar samples", id.GetText());
@@ -122,20 +130,25 @@ bool HdRprSamplePrimvar(SdfPath const &id,
 
   auto &sampleValues = *sampleValuesPtr;
   sampleValues.resize(sampleVtValues.size());
-  for (size_t i = 0; i < sampleVtValues.size(); ++i) {
-    if (sampleVtValues[i].IsHolding<T>()) {
+  for (size_t i = 0; i < sampleVtValues.size(); ++i)
+  {
+    if (sampleVtValues[i].IsHolding<T>())
+    {
       sampleValues[i] = sampleVtValues[i].UncheckedGet<T>();
 
-      if (i == 0) {
+      if (i == 0)
+      {
         baselineSize = sampleValues[i].size();
       }
-      else if (baselineSize != sampleValues[i].size()) {
+      else if (baselineSize != sampleValues[i].size())
+      {
         TF_RUNTIME_ERROR(
           "[%s] RPR does not support non-uniform sub-frame samples - %s", id.GetText(), key.GetText());
         return false;
       }
     }
-    else {
+    else
+    {
       TF_RUNTIME_ERROR("[%s] Failed to sample %s primvar data: unexpected underlying type - %s",
                        id.GetText(),
                        key.GetText(),
@@ -158,10 +171,14 @@ bool HdRprSamplePrimvar(
   HdInterpolation *interpolation)
 {
 
-  for (auto &primvarDescsEntry : primvarDescsPerInterpolation) {
-    for (auto &pv : primvarDescsEntry.second) {
-      if (pv.name == key) {
-        if (!HdRprSamplePrimvar(id, key, sceneDelegate, maxSampleCount, sampleValues)) {
+  for (auto &primvarDescsEntry : primvarDescsPerInterpolation)
+  {
+    for (auto &pv : primvarDescsEntry.second)
+    {
+      if (pv.name == key)
+      {
+        if (!HdRprSamplePrimvar(id, key, sceneDelegate, maxSampleCount, sampleValues))
+        {
           return false;
         }
 
@@ -179,13 +196,16 @@ inline void HdRprGetPrimvarIndices(HdInterpolation interpolation,
                                    VtIntArray *out_indices)
 {
   out_indices->clear();
-  if (interpolation == HdInterpolationFaceVarying) {
+  if (interpolation == HdInterpolationFaceVarying)
+  {
     out_indices->reserve(faceIndices.size());
-    for (int i = 0; i < faceIndices.size(); ++i) {
+    for (int i = 0; i < faceIndices.size(); ++i)
+    {
       out_indices->push_back(i);
     }
   }
-  else if (interpolation == HdInterpolationConstant) {
+  else if (interpolation == HdInterpolationConstant)
+  {
     *out_indices = VtIntArray(faceIndices.size(), 0);
   }
 }

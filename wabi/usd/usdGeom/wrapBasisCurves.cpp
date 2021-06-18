@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -131,7 +133,8 @@ void wrapUsdGeomBasisCurves()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static TfToken _ComputeInterpolationForSize(const UsdGeomBasisCurves &curvesSchema,
                                             size_t n,

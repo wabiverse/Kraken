@@ -35,9 +35,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GarchWGLContextState::_Detail {
+class GarchWGLContextState::_Detail
+{
  public:
-  _Detail(HDC hdc, HGLRC hglrc) : hdc(hdc), hglrc(hglrc)
+  _Detail(HDC hdc, HGLRC hglrc)
+    : hdc(hdc),
+      hglrc(hglrc)
   {}
 
   HDC hdc;
@@ -54,7 +57,8 @@ GarchWGLContextState::GarchWGLContextState()
   // Do nothing
 }
 
-GarchWGLContextState::GarchWGLContextState(NullState) : _detail(std::make_shared<_Detail>(HDC(0), HGLRC(0)))
+GarchWGLContextState::GarchWGLContextState(NullState)
+  : _detail(std::make_shared<_Detail>(HDC(0), HGLRC(0)))
 {
   // Do nothing
 }

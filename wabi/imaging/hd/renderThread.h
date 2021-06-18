@@ -142,7 +142,8 @@ WABI_NAMESPACE_BEGIN
 /// The render callback should use IsStopRequested() as a cancellation
 /// mechanism.
 ///
-class HdRenderThread {
+class HdRenderThread
+{
  public:
   HD_API
   HdRenderThread();
@@ -300,7 +301,8 @@ class HdRenderThread {
 
   // The state enumeration of the render thread state machine; see
   // \ref HdRenderThread_StateMachine for details.
-  enum State {
+  enum State
+  {
     // Initial constructed state. Render thread is not running.
     StateInitial,
     // Render thread is running and ready for scene edits. No rendering

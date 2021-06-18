@@ -47,7 +47,8 @@ class HgiMetalComputePipeline;
 ///
 /// Metal implementation of HgiGraphicsEncoder.
 ///
-class HgiMetalComputeCmds final : public HgiComputeCmds {
+class HgiMetalComputeCmds final : public HgiComputeCmds
+{
  public:
   HGIMETAL_API
   ~HgiMetalComputeCmds() override;

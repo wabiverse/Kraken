@@ -51,7 +51,8 @@
 WABI_NAMESPACE_BEGIN
 
 constexpr unsigned int HD_ARNOLD_MAX_PRIMVAR_SAMPLES = 3;
-template<typename T> using HdArnoldSampledType = HdTimeSampleArray<T, HD_ARNOLD_MAX_PRIMVAR_SAMPLES>;
+template<typename T>
+using HdArnoldSampledType = HdTimeSampleArray<T, HD_ARNOLD_MAX_PRIMVAR_SAMPLES>;
 using HdArnoldSampledPrimvarType = HdArnoldSampledType<VtValue>;
 using HdArnoldSampledMatrixType = HdArnoldSampledType<GfMatrix4d>;
 using HdArnoldSampledMatrixArrayType = HdArnoldSampledType<VtMatrix4dArray>;
@@ -295,7 +296,8 @@ AtArray *HdArnoldGenerateIdxs(unsigned int numIdxs,
                               const size_t *vertexCountSum = nullptr);
 
 /// Struct storing the cached primvars.
-struct HdArnoldPrimvar {
+struct HdArnoldPrimvar
+{
   VtValue value;                  ///< Copy-On-Write Value of the primvar.
   TfToken role;                   ///< Role of the primvar.
   HdInterpolation interpolation;  ///< Type of interpolation used for the value.
@@ -314,7 +316,8 @@ struct HdArnoldPrimvar {
 
   bool NeedsUpdate()
   {
-    if (dirtied) {
+    if (dirtied)
+    {
       dirtied = false;
       return true;
     }

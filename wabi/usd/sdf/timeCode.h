@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 /// value but is used to indicate that this value should be resolved by any
 /// time based value resolution.
 ///
-class SdfTimeCode {
+class SdfTimeCode
+{
  public:
   /// \name Constructors
   /// @{
@@ -50,7 +51,8 @@ class SdfTimeCode {
   /// Construct a time code with the given time.
   /// A default constructed SdfTimeCode has a time of 0.0.
   /// A double value can implicitly cast to SdfTimeCode.
-  constexpr SdfTimeCode(double time = 0.0) noexcept : _time(time){};
+  constexpr SdfTimeCode(double time = 0.0) noexcept
+    : _time(time){};
 
   /// @}
 
@@ -112,7 +114,8 @@ class SdfTimeCode {
   }
 
   /// \class Hash
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(const SdfTimeCode &ap) const
     {
       return ap.GetHash();

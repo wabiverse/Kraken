@@ -47,7 +47,8 @@ using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 /// inherited of this interface so that client (drawItem) can be agnostic about
 /// the implementation detail of aggregation.
 ///
-class HdBufferArrayRange {
+class HdBufferArrayRange
+{
  public:
   HD_API
   HdBufferArrayRange();
@@ -134,10 +135,12 @@ std::ostream &operator<<(std::ostream &out, const HdBufferArrayRange &self);
 ///
 /// A resizable container of HdBufferArrayRanges.
 ///
-class HdBufferArrayRangeContainer {
+class HdBufferArrayRangeContainer
+{
  public:
   /// Constructor
-  HdBufferArrayRangeContainer(int size) : _ranges(size)
+  HdBufferArrayRangeContainer(int size)
+    : _ranges(size)
   {}
 
   /// Set \p range into the container at \p index.

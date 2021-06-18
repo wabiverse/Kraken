@@ -38,9 +38,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
-enum BignumDtoaMode {
+enum BignumDtoaMode
+{
   // Return the shortest correct representation.
   // For example the output of 0.299999999999999988897 is (the less accurate but
   // correct) 0.3.

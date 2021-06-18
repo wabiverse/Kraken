@@ -69,7 +69,8 @@ WABI_NAMESPACE_BEGIN
 /// For example, this is how Csd performs namespace edits.
 ///
 
-class SdfChangeBlock {
+class SdfChangeBlock
+{
  public:
   SDF_API
   SdfChangeBlock();

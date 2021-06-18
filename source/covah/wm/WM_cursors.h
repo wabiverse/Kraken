@@ -28,7 +28,8 @@
 extern "C" {
 #endif
 
-typedef enum eWmCursorType {
+typedef enum eWmCursorType
+{
   WM_CURSOR_DEFAULT = 1,
   WM_CURSOR_TEXT_EDIT,
   WM_CURSOR_WAIT,

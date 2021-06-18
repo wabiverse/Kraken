@@ -146,7 +146,8 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 /* This is the main processing body of the algorithm. It operates
  * on each full 32-bits of input. */
 #define DOBLOCK(h1, k1) \
-  do { \
+  do \
+  { \
     k1 *= C1; \
     k1 = ROTL32(k1, 15); \
     k1 *= C2; \
@@ -159,13 +160,16 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 /* Append unaligned bytes to carry, forcing hash churn if we have 4 bytes */
 /* cnt=bytes to process, h1=name of h1 var, c=carry, n=bytes in c, ptr/len=payload */
 #define DOBYTES(cnt, h1, c, n, ptr, len) \
-  do { \
+  do \
+  { \
     int _i = cnt; \
-    while (_i--) { \
+    while (_i--) \
+    { \
       c = c >> 8 | *ptr++ << 24; \
       n++; \
       len--; \
-      if (n == 4) { \
+      if (n == 4) \
+      { \
         DOBLOCK(h1, c); \
         n = 0; \
       } \
@@ -192,13 +196,15 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
 
   /* Consume any carry bytes */
   int i = (4 - n) & 3;
-  if (i && i <= len) {
+  if (i && i <= len)
+  {
     DOBYTES(i, h1, c, n, ptr, len);
   }
 
   /* Process 32-bit chunks */
   end = ptr + len / 4 * 4;
-  for (; ptr < end; ptr += 4) {
+  for (; ptr < end; ptr += 4)
+  {
     uint32_t k1 = READ_UINT32(ptr);
     DOBLOCK(h1, k1);
   }
@@ -208,21 +214,25 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
 
   /* Consume enough so that the next data byte is word aligned */
   int i = -(long)ptr & 3;
-  if (i && i <= len) {
+  if (i && i <= len)
+  {
     DOBYTES(i, h1, c, n, ptr, len);
   }
 
   /* We're now aligned. Process in aligned blocks. Specialise for each possible carry count */
   end = ptr + len / 4 * 4;
-  switch (n) { /* how many bytes in c */
-    case 0:    /* c=[----]  w=[3210]  b=[3210]=w            c'=[----] */
-      for (; ptr < end; ptr += 4) {
+  switch (n)
+  {         /* how many bytes in c */
+    case 0: /* c=[----]  w=[3210]  b=[3210]=w            c'=[----] */
+      for (; ptr < end; ptr += 4)
+      {
         uint32_t k1 = READ_UINT32(ptr);
         DOBLOCK(h1, k1);
       }
       break;
     case 1: /* c=[0---]  w=[4321]  b=[3210]=c>>24|w<<8   c'=[4---] */
-      for (; ptr < end; ptr += 4) {
+      for (; ptr < end; ptr += 4)
+      {
         uint32_t k1 = c >> 24;
         c = READ_UINT32(ptr);
         k1 |= c << 8;
@@ -230,7 +240,8 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
       }
       break;
     case 2: /* c=[10--]  w=[5432]  b=[3210]=c>>16|w<<16  c'=[54--] */
-      for (; ptr < end; ptr += 4) {
+      for (; ptr < end; ptr += 4)
+      {
         uint32_t k1 = c >> 16;
         c = READ_UINT32(ptr);
         k1 |= c << 16;
@@ -238,7 +249,8 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
       }
       break;
     case 3: /* c=[210-]  w=[6543]  b=[3210]=c>>8|w<<24   c'=[654-] */
-      for (; ptr < end; ptr += 4) {
+      for (; ptr < end; ptr += 4)
+      {
         uint32_t k1 = c >> 8;
         c = READ_UINT32(ptr);
         k1 |= c << 24;
@@ -265,7 +277,8 @@ uint32_t PMurHash32_Result(uint32_t h, uint32_t carry, uint32_t total_length)
 {
   uint32_t k1;
   int n = carry & 3;
-  if (n) {
+  if (n)
+  {
     k1 = carry >> (4 - n) * 8;
     k1 *= C1;
     k1 = ROTL32(k1, 15);

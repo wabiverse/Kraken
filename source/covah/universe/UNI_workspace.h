@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahWorkspace : public UsdUIWorkspace, public CovahObject {
+struct CovahWorkspace : public UsdUIWorkspace, public CovahObject
+{
 
   SdfPath path;
 

@@ -57,7 +57,8 @@ UsdVolField3DAsset::~UsdVolField3DAsset()
 /* static */
 UsdVolField3DAsset UsdVolField3DAsset::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolField3DAsset();
   }
@@ -68,7 +69,8 @@ UsdVolField3DAsset UsdVolField3DAsset::Get(const UsdStagePtr &stage, const SdfPa
 UsdVolField3DAsset UsdVolField3DAsset::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Field3DAsset");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolField3DAsset();
   }
@@ -139,7 +141,8 @@ UsdAttribute UsdVolField3DAsset::CreateFieldPurposeAttr(VtValue const &defaultVa
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

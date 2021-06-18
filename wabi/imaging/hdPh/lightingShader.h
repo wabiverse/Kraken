@@ -37,7 +37,8 @@ using HdPhLightingShaderSharedPtr = std::shared_ptr<class HdPhLightingShader>;
 ///
 /// A lighting shader base class.
 ///
-class HdPhLightingShader : public HdPhShaderCode {
+class HdPhLightingShader : public HdPhShaderCode
+{
  public:
   HDPH_API
   HdPhLightingShader();

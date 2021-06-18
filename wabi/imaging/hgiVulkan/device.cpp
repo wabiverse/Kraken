@@ -52,8 +52,10 @@ static uint32_t _GetGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice)
   std::vector<VkQueueFamilyProperties> queues(queueCount);
   vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, queues.data());
 
-  for (uint32_t i = 0; i < queueCount; i++) {
-    if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+  for (uint32_t i = 0; i < queueCount; i++)
+  {
+    if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+    {
       return i;
     }
   }
@@ -95,7 +97,8 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   TF_VERIFY(vkEnumeratePhysicalDevices(
               instance->GetVulkanInstance(), &physicalDeviceCount, physicalDevices) == VK_SUCCESS);
 
-  for (uint32_t i = 0; i < physicalDeviceCount; i++) {
+  for (uint32_t i = 0; i < physicalDeviceCount; i++)
+  {
     VkPhysicalDeviceProperties props;
     vkGetPhysicalDeviceProperties(physicalDevices[i], &props);
 
@@ -105,7 +108,8 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
       continue;
 
     // Assume we always want a presentation capable device for now.
-    if (!_SupportsPresentation(physicalDevices[i], familyIndex)) {
+    if (!_SupportsPresentation(physicalDevices[i], familyIndex))
+    {
       continue;
     }
 
@@ -115,18 +119,21 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
     // Try to find a discrete device. Until we find a discrete device,
     // store the first non-discrete device as fallback in case we never
     // find a discrete device at all.
-    if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+    if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+    {
       _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
       break;
     }
-    else if (!_vkPhysicalDevice) {
+    else if (!_vkPhysicalDevice)
+    {
       _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
     }
   }
 
-  if (!_vkPhysicalDevice) {
+  if (!_vkPhysicalDevice)
+  {
     TF_CODING_ERROR("VULKAN_ERROR: Unable to determine physical device");
     return;
   }
@@ -161,7 +168,8 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   // improve performance on some GPUs.
   bool dedicatedAllocations = false;
   if (_IsSupportedExtension(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) &&
-      _IsSupportedExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME)) {
+      _IsSupportedExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME))
+  {
     dedicatedAllocations = true;
     extensions.push_back(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
     extensions.push_back(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
@@ -169,20 +177,23 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
 
   // Allow OpenGL interop - Note requires two extensions in HgiVulkanInstance.
   if (_IsSupportedExtension(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME) &&
-      _IsSupportedExtension(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME)) {
+      _IsSupportedExtension(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME))
+  {
     extensions.push_back(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
     extensions.push_back(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME);
   }
 
   // Memory budget query extension
   bool supportsMemExtension = false;
-  if (_IsSupportedExtension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
+  if (_IsSupportedExtension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
+  {
     supportsMemExtension = true;
     extensions.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
   }
 
   // Resolve depth during render pass resolve extension
-  if (_IsSupportedExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) {
+  if (_IsSupportedExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME))
+  {
     extensions.push_back(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
     extensions.push_back(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
     extensions.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
@@ -191,10 +202,12 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
 
   // Allows the same layout in structs between c++ and glsl (share structs).
   // This means instead of 'std430' you can now use 'scalar'.
-  if (_IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)) {
+  if (_IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME))
+  {
     extensions.push_back(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME);
   }
-  else {
+  else
+  {
     TF_WARN(
       "Unsupported VK_EXT_scalar_block_layout."
       "Update gfx driver?");
@@ -258,11 +271,13 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   allocatorInfo.instance = instance->GetVulkanInstance();
   allocatorInfo.physicalDevice = _vkPhysicalDevice;
   allocatorInfo.device = _vkDevice;
-  if (dedicatedAllocations) {
+  if (dedicatedAllocations)
+  {
     allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
   }
 
-  if (supportsMemExtension) {
+  if (supportsMemExtension)
+  {
     allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
   }
 
@@ -335,8 +350,10 @@ void HgiVulkanDevice::WaitForIdle()
 
 bool HgiVulkanDevice::_IsSupportedExtension(const char *extensionName) const
 {
-  for (VkExtensionProperties const &ext : _vkExtensions) {
-    if (!strcmp(extensionName, ext.extensionName)) {
+  for (VkExtensionProperties const &ext : _vkExtensions)
+  {
+    if (!strcmp(extensionName, ext.extensionName))
+    {
       return true;
     }
   }

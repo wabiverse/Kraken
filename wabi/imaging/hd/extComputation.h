@@ -57,7 +57,8 @@ WABI_NAMESPACE_BEGIN
 /// ExtComputations use a pull model, so processing is only triggered if
 /// a downstream computation or prim pulls on one the computations outputs.
 ///
-class HdExtComputation : public HdSprim {
+class HdExtComputation : public HdSprim
+{
  public:
   /// Construct a new ExtComputation identified by id.
   HD_API
@@ -69,7 +70,8 @@ class HdExtComputation : public HdSprim {
   ///
   /// Change tracking
   ///
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     DirtyInputDesc = 1 << 0,     ///< The list of inputs or input
                                  ///  bindings changed

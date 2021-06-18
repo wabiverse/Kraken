@@ -148,7 +148,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdCyclesAovTokens,
 ///
 /// Issues errors messages to specified ostream
 ///
-class HdCyclesDiagnosticDelegate : public TfDiagnosticMgr::Delegate {
+class HdCyclesDiagnosticDelegate : public TfDiagnosticMgr::Delegate
+{
  public:
   explicit HdCyclesDiagnosticDelegate(std::ostream &os);
   ~HdCyclesDiagnosticDelegate() override;
@@ -176,7 +177,8 @@ class HdCyclesDiagnosticDelegate : public TfDiagnosticMgr::Delegate {
  * renderpasses.
  *
  */
-class HdCyclesRenderDelegate : public HdRenderDelegate {
+class HdCyclesRenderDelegate : public HdRenderDelegate
+{
  public:
   /**
    * @brief Render delegate constructor.
@@ -259,7 +261,8 @@ class HdCyclesRenderDelegate : public HdRenderDelegate {
   ///
   /// Auto add/remove cycles diagnostic delegate
   ///
-  class HdCyclesDiagnosticDelegateHolder {
+  class HdCyclesDiagnosticDelegateHolder
+  {
    public:
     HdCyclesDiagnosticDelegateHolder();
     ~HdCyclesDiagnosticDelegateHolder();

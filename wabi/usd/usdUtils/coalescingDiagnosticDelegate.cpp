@@ -39,10 +39,12 @@ WABI_NAMESPACE_BEGIN
 // Hash implementation which allows us to coalesce warnings
 // and statuses based on their file name, line number and
 // function name.
-namespace {
+namespace
+{
 using _CoalescedItem = UsdUtilsCoalescingDiagnosticDelegateSharedItem;
 
-struct _CoalescedItemHash {
+struct _CoalescedItemHash
+{
   std::size_t operator()(const _CoalescedItem &i) const
   {
     std::size_t hashVal = 0;
@@ -53,7 +55,8 @@ struct _CoalescedItemHash {
   }
 };
 
-struct _CoalescedItemEqualTo {
+struct _CoalescedItemEqualTo
+{
   bool operator()(const _CoalescedItem &i1, const _CoalescedItem &i2) const
   {
     return i1.sourceLineNumber == i2.sourceLineNumber && i1.sourceFunction == i2.sourceFunction &&
@@ -110,8 +113,10 @@ UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate:
   size_t vectorIndex = 0;
 
   TfDiagnosticBase *handle;
-  while (!_diagnostics.empty()) {
-    if (_diagnostics.try_pop(handle)) {
+  while (!_diagnostics.empty())
+  {
+    if (_diagnostics.try_pop(handle))
+    {
       UsdUtilsCoalescingDiagnosticDelegateSharedItem sharedItem{
         handle->GetSourceLineNumber(),
         handle->GetSourceFunction(),
@@ -122,14 +127,16 @@ UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate:
                                                                     handle->GetCommentary()};
 
       auto lookup = existence.find(sharedItem);
-      if (lookup == existence.end()) {
+      if (lookup == existence.end())
+      {
         existence.insert(std::make_pair(sharedItem, vectorIndex));
         UsdUtilsCoalescingDiagnosticDelegateItem vItem{sharedItem, {unsharedItem}};
 
         result.push_back(vItem);
         vectorIndex += 1;
       }
-      else {
+      else
+      {
         result[lookup->second].unsharedItems.push_back(unsharedItem);
       }
 
@@ -146,8 +153,10 @@ std::vector<std::unique_ptr<TfDiagnosticBase>> UsdUtilsCoalescingDiagnosticDeleg
   std::vector<std::unique_ptr<TfDiagnosticBase>> items;
 
   TfDiagnosticBase *handle;
-  while (!_diagnostics.empty()) {
-    if (_diagnostics.try_pop(handle)) {
+  while (!_diagnostics.empty())
+  {
+    if (_diagnostics.try_pop(handle))
+    {
       items.push_back(std::unique_ptr<TfDiagnosticBase>(new TfDiagnosticBase(*handle)));
       delete handle;
     }
@@ -158,7 +167,8 @@ std::vector<std::unique_ptr<TfDiagnosticBase>> UsdUtilsCoalescingDiagnosticDeleg
 
 void UsdUtilsCoalescingDiagnosticDelegate::DumpCoalescedDiagnostics(std::ostream &o)
 {
-  for (auto const &item : TakeCoalescedDiagnostics()) {
+  for (auto const &item : TakeCoalescedDiagnostics())
+  {
     o << item.unsharedItems.size() << " ";
     o << "Diagnostic Notification(s) in ";
     o << item.sharedItem.sourceFunction;
@@ -170,7 +180,8 @@ void UsdUtilsCoalescingDiagnosticDelegate::DumpCoalescedDiagnostics(std::ostream
 
 void UsdUtilsCoalescingDiagnosticDelegate::DumpUncoalescedDiagnostics(std::ostream &o)
 {
-  for (auto const &item : TakeUncoalescedDiagnostics()) {
+  for (auto const &item : TakeUncoalescedDiagnostics())
+  {
     o << "Diagnostic Notification in ";
     o << item->GetSourceFunction();
     o << " at line " << item->GetSourceLineNumber();

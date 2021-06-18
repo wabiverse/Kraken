@@ -60,7 +60,8 @@ WABI_NAMESPACE_BEGIN
 /// internally between copies.  \a TfTemplateString is thread-safe.  It may be
 /// read freely by multiple threads concurrently.
 ///
-class TfTemplateString {
+class TfTemplateString
+{
  public:
   typedef std::map<std::string, std::string> Mapping;
 
@@ -106,8 +107,12 @@ class TfTemplateString {
   std::vector<std::string> GetParseErrors() const;
 
  private:
-  struct _PlaceHolder {
-    _PlaceHolder(const std::string &n, size_t p, size_t l) : name(n), pos(p), len(l)
+  struct _PlaceHolder
+  {
+    _PlaceHolder(const std::string &n, size_t p, size_t l)
+      : name(n),
+        pos(p),
+        len(l)
     {}
     std::string name;
     size_t pos;
@@ -131,11 +136,13 @@ class TfTemplateString {
   void _EmitParseErrors() const;
 
   // Structure side-allocated and shared between copies.
-  struct _Data {
+  struct _Data
+  {
     _Data(_Data const &) = delete;
     _Data &operator=(_Data const &) = delete;
 
-    _Data() : parsed(false)
+    _Data()
+      : parsed(false)
     {}
 
     std::string template_;

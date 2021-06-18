@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 
 /// Represents the raw data of a node, and some other bits of metadata, that
 /// were determined via a `NdrDiscoveryPlugin`.
-struct NdrNodeDiscoveryResult {
+struct NdrNodeDiscoveryResult
+{
   /// Constructor.
   NdrNodeDiscoveryResult(const NdrIdentifier &identifier,
                          const NdrVersion &version,

@@ -40,9 +40,11 @@ WABI_NAMESPACE_BEGIN
 /// triggered by this notice to the end of an application iteration.  This, of
 /// course, is good practice in general.
 ///
-class TfPyModuleWasLoaded : public TfNotice {
+class TfPyModuleWasLoaded : public TfNotice
+{
  public:
-  explicit TfPyModuleWasLoaded(std::string const &name) : _name(name)
+  explicit TfPyModuleWasLoaded(std::string const &name)
+    : _name(name)
   {}
 
   TF_API

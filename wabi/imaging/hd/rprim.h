@@ -64,7 +64,8 @@ using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 /// The render engine state for a given rprim from the scene graph. All data
 /// access (aside from local caches) is delegated to the HdSceneDelegate.
 ///
-class HdRprim {
+class HdRprim
+{
  public:
   HD_API
   HdRprim(SdfPath const &id);
@@ -320,8 +321,10 @@ class HdRprim {
   typedef std::vector<std::pair<TfToken, HdReprSharedPtr>> _ReprVector;
   _ReprVector _reprs;
 
-  struct _ReprComparator {
-    _ReprComparator(TfToken const &name) : _name(name)
+  struct _ReprComparator
+  {
+    _ReprComparator(TfToken const &name)
+      : _name(name)
     {}
     bool operator()(const std::pair<TfToken, HdReprSharedPtr> &e) const
     {
@@ -337,14 +340,16 @@ class HdRprim {
   //
   // N : # of descriptors for the repr.
   //
-  template<typename DESC_TYPE, int N = 1> struct _ReprDescConfigs {
+  template<typename DESC_TYPE, int N = 1>
+  struct _ReprDescConfigs
+  {
     typedef std::array<DESC_TYPE, N> DescArray;
     static const int MAX_DESCS = N;
 
     DescArray Find(TfToken const &reprToken) const
     {
       // linear search, we expect only a handful reprs configured.
-      TF_FOR_ALL(it, _configs)
+      TF_FOR_ALL (it, _configs)
       {
         if (it->first == reprToken)
           return it->second;
@@ -354,8 +359,10 @@ class HdRprim {
     }
     void AddOrUpdate(TfToken const &reprToken, DescArray descs)
     {
-      for (auto &config : _configs) {
-        if (config.first == reprToken) {
+      for (auto &config : _configs)
+      {
+        if (config.first == reprToken)
+        {
           // Overrwrite the existing entry.
           config.second = descs;
           return;

@@ -63,7 +63,8 @@ NdrNodeDiscoveryResultVec NdrArnoldDiscoveryPlugin::DiscoverNodes(const Context 
 {
   NdrNodeDiscoveryResultVec ret;
   auto shaderDefs = NdrArnoldGetShaderDefs();
-  for (const UsdPrim &prim : shaderDefs->Traverse()) {
+  for (const UsdPrim &prim : shaderDefs->Traverse())
+  {
     const auto shaderName = prim.GetName();
     TfToken filename("<built-in>");
     prim.GetMetadata(_tokens->filename, &filename);

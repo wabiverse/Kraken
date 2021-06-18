@@ -52,7 +52,8 @@ class SdfPath;
 ///
 /// (More detailed description of variants to follow)
 ///
-class UsdVariantSet {
+class UsdVariantSet
+{
  public:
   /// Author a variant spec for \a variantName in this VariantSet at the
   /// stage's current EditTarget, in the position specified by
@@ -219,7 +220,8 @@ class UsdVariantSet {
 /// the facility for authoring a VariantSet \em selection for any of those
 /// VariantSets.
 ///
-class UsdVariantSets {
+class UsdVariantSets
+{
  public:
   /// Find an existing, or create a new VariantSet on the originating UsdPrim,
   /// named \p variantSetName.
@@ -280,7 +282,8 @@ class UsdVariantSets {
   SdfVariantSelectionMap GetAllVariantSelections() const;
 
  private:
-  explicit UsdVariantSets(const UsdPrim &prim) : _prim(prim)
+  explicit UsdVariantSets(const UsdPrim &prim)
+    : _prim(prim)
   {
     /* NOTHING */
   }

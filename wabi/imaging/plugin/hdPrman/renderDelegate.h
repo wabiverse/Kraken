@@ -62,7 +62,8 @@ TF_DEFINE_PRIVATE_TOKENS(
 
 TF_DECLARE_PUBLIC_TOKENS(HdPrmanIntegratorTokens, HDPRMAN_API, HDPRMAN_INTEGRATOR_TOKENS);
 
-class HdPrmanRenderDelegate : public HdRenderDelegate {
+class HdPrmanRenderDelegate : public HdRenderDelegate
+{
  public:
   HDPRMAN_API HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context);
   HDPRMAN_API HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,

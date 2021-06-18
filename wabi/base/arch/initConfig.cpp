@@ -42,7 +42,8 @@ void Arch_SetAppLaunchTime();
 void Arch_ValidateAssumptions();
 void Arch_InitTickTimer();
 
-namespace {
+namespace
+{
 
 ARCH_CONSTRUCTOR(Arch_InitConfig, 2, void)
 {

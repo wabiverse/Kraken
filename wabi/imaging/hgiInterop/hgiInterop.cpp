@@ -57,10 +57,12 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 /**
  * ----------------------------------------- Check Metal -> OpenGL first. ----- */
 #if defined(WITH_METAL)
-  if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL) {
+  if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL)
+  {
     /**
      * Transfer Metal textures to OpenGL application. */
-    if (!_metalToOpenGL) {
+    if (!_metalToOpenGL)
+    {
       _metalToOpenGL = std::make_unique<HgiInteropMetal>(srcHgi);
     }
     _metalToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
@@ -71,10 +73,12 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 /**
  * ------------------------------------ Otherwise check Vulkan -> OpenGL. ----- */
 #if defined(WITH_VULKAN)
-  if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL) {
+  if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL)
+  {
     /**
      * Transfer Vulkan textures to OpenGL application. */
-    if (!_vulkanToOpenGL) {
+    if (!_vulkanToOpenGL)
+    {
       _vulkanToOpenGL = std::make_unique<HgiInteropVulkan>(srcHgi);
     }
     _vulkanToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
@@ -84,10 +88,12 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 
   /**
    * ---------------------------------------- Otherwise fallback to OpenGL. ----- */
-  if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL) {
+  if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL)
+  {
     /**
      * Transfer OpenGL textures to OpenGL application. */
-    if (!_openGLToOpenGL) {
+    if (!_openGLToOpenGL)
+    {
       _openGLToOpenGL = std::make_unique<HgiInteropOpenGL>();
     }
     _openGLToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);

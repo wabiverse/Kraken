@@ -40,7 +40,8 @@ class SdfReference;
 ///
 /// Key policy for \c std::string names.
 ///
-class SdfNameKeyPolicy {
+class SdfNameKeyPolicy
+{
  public:
   typedef std::string value_type;
 
@@ -59,7 +60,8 @@ class SdfNameKeyPolicy {
 ///
 /// Key policy for \c TfToken names.
 ///
-class SdfNameTokenKeyPolicy {
+class SdfNameTokenKeyPolicy
+{
  public:
   typedef TfToken value_type;
 
@@ -78,13 +80,15 @@ class SdfNameTokenKeyPolicy {
 ///
 /// Key policy for \c SdfPath; converts all SdfPaths to absolute.
 ///
-class SdfPathKeyPolicy {
+class SdfPathKeyPolicy
+{
  public:
   typedef SdfPath value_type;
 
   SdfPathKeyPolicy()
   {}
-  explicit SdfPathKeyPolicy(const SdfSpecHandle &owner) : _owner(owner)
+  explicit SdfPathKeyPolicy(const SdfSpecHandle &owner)
+    : _owner(owner)
   {}
 
   value_type Canonicalize(const value_type &x) const
@@ -94,14 +98,15 @@ class SdfPathKeyPolicy {
 
   std::vector<value_type> Canonicalize(const std::vector<value_type> &x) const
   {
-    if (x.empty()) {
+    if (x.empty())
+    {
       return x;
     }
 
     const SdfPath anchor = _GetAnchor();
 
     std::vector<value_type> result = x;
-    TF_FOR_ALL(it, result)
+    TF_FOR_ALL (it, result)
     {
       *it = _Canonicalize(*it, anchor);
     }
@@ -126,7 +131,9 @@ class SdfPathKeyPolicy {
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<> struct Vt_DefaultValueFactory<SdfPathKeyPolicy> {
+template<>
+struct Vt_DefaultValueFactory<SdfPathKeyPolicy>
+{
   static Vt_DefaultValueHolder Invoke()
   {
     TF_AXIOM(false && "Failed VtValue::Get<SdfPathKeyPolicy> not allowed");
@@ -138,7 +145,8 @@ template<> struct Vt_DefaultValueFactory<SdfPathKeyPolicy> {
 ///
 /// List editor type policy for \c SdfPayload.
 ///
-class SdfPayloadTypePolicy {
+class SdfPayloadTypePolicy
+{
  public:
   typedef SdfPayload value_type;
 
@@ -154,7 +162,9 @@ class SdfPayloadTypePolicy {
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<> struct Vt_DefaultValueFactory<SdfPayloadTypePolicy> {
+template<>
+struct Vt_DefaultValueFactory<SdfPayloadTypePolicy>
+{
   static Vt_DefaultValueHolder Invoke()
   {
     TF_AXIOM(false && "Failed VtValue::Get<SdfPayloadTypePolicy> not allowed");
@@ -166,7 +176,8 @@ template<> struct Vt_DefaultValueFactory<SdfPayloadTypePolicy> {
 ///
 /// List editor type policy for \c SdfReference.
 ///
-class SdfReferenceTypePolicy {
+class SdfReferenceTypePolicy
+{
  public:
   typedef SdfReference value_type;
 
@@ -182,7 +193,9 @@ class SdfReferenceTypePolicy {
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<> struct Vt_DefaultValueFactory<SdfReferenceTypePolicy> {
+template<>
+struct Vt_DefaultValueFactory<SdfReferenceTypePolicy>
+{
   static Vt_DefaultValueHolder Invoke()
   {
     TF_AXIOM(false && "Failed VtValue::Get<SdfReferenceTypePolicy> not allowed");
@@ -194,7 +207,8 @@ template<> struct Vt_DefaultValueFactory<SdfReferenceTypePolicy> {
 ///
 /// List editor type policy for sublayers.
 ///
-class SdfSubLayerTypePolicy {
+class SdfSubLayerTypePolicy
+{
  public:
   typedef std::string value_type;
 
@@ -214,7 +228,8 @@ class SdfSubLayerTypePolicy {
 /// Map edit proxy value policy for relocates maps.  This absolutizes all
 /// paths.
 ///
-class SdfRelocatesMapProxyValuePolicy {
+class SdfRelocatesMapProxyValuePolicy
+{
  public:
   typedef std::map<SdfPath, SdfPath> Type;
   typedef Type::key_type key_type;
@@ -235,15 +250,19 @@ class SdfRelocatesMapProxyValuePolicy {
 ///
 /// Predicate for viewing properties.
 ///
-class SdfGenericSpecViewPredicate {
+class SdfGenericSpecViewPredicate
+{
  public:
-  SdfGenericSpecViewPredicate(SdfSpecType type) : _type(type)
+  SdfGenericSpecViewPredicate(SdfSpecType type)
+    : _type(type)
   {}
 
-  template<class T> bool operator()(const SdfHandle<T> &x) const
+  template<class T>
+  bool operator()(const SdfHandle<T> &x) const
   {
     // XXX: x is sometimes null. why?
-    if (x) {
+    if (x)
+    {
       return x->GetSpecType() == _type;
     }
     return false;
@@ -257,7 +276,8 @@ class SdfGenericSpecViewPredicate {
 ///
 /// Predicate for viewing attributes.
 ///
-class SdfAttributeViewPredicate : public SdfGenericSpecViewPredicate {
+class SdfAttributeViewPredicate : public SdfGenericSpecViewPredicate
+{
  public:
   SDF_API
   SdfAttributeViewPredicate();
@@ -267,7 +287,8 @@ class SdfAttributeViewPredicate : public SdfGenericSpecViewPredicate {
 ///
 /// Predicate for viewing relationships.
 ///
-class SdfRelationshipViewPredicate : public SdfGenericSpecViewPredicate {
+class SdfRelationshipViewPredicate : public SdfGenericSpecViewPredicate
+{
  public:
   SDF_API
   SdfRelationshipViewPredicate();

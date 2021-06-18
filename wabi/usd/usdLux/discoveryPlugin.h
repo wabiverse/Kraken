@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 /// Discovers nodes for corresponding concrete light and light filter types that
 /// come from derived UsdLuxLight and UsdLuxLightFilter schema classes.
 ///
-class UsdLux_DiscoveryPlugin : public NdrDiscoveryPlugin {
+class UsdLux_DiscoveryPlugin : public NdrDiscoveryPlugin
+{
  public:
   USDLUX_API
   UsdLux_DiscoveryPlugin() = default;

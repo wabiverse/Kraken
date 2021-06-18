@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This class contains methods to read and write TraceCollection.
 ///
-class TraceSerialization {
+class TraceSerialization
+{
  public:
   /// Writes \p col to \p ostr.
   /// Returns true if the write was successful, false otherwise.

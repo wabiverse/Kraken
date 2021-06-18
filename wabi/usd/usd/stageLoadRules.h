@@ -53,13 +53,15 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Remove redundant rules that do not change the effective load state with
 /// UsdStageLoadRules::Minimize().
-class UsdStageLoadRules {
+class UsdStageLoadRules
+{
  public:
   /// \enum Rule
   ///
   /// These values are paired with paths to govern payload inclusion on
   /// UsdStages.
-  enum Rule {
+  enum Rule
+  {
     /// Include payloads on the specified prim and all descendants.
     AllRule,
     /// Include payloads on the specified prim but no descendants.

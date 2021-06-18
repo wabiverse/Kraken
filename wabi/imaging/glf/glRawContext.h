@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 
 typedef std::shared_ptr<class GlfGLRawContext> GlfGLRawContextSharedPtr;
 
-class GlfGLRawContext : public GlfGLContext {
+class GlfGLRawContext : public GlfGLContext
+{
  public:
   /// Returns a new object with the current context.
   GLF_API

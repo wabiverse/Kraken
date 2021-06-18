@@ -31,7 +31,8 @@ WABI_NAMESPACE_BEGIN
 
 void WM_main(const cContext &C)
 {
-  while (1) {
+  while (1)
+  {
 
     /**
      * Process events from anchor, handle window events. */

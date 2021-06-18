@@ -29,7 +29,8 @@
 #include "ANCHOR_event_manager.h"
 #include "ANCHOR_window_manager.h"
 
-class ANCHOR_ISystem {
+class ANCHOR_ISystem
+{
  public:
   /**
    * Creates the one and only system.
@@ -183,7 +184,8 @@ class ANCHOR_ISystem {
   static ANCHOR_ISystem *m_system;
 };
 
-class ANCHOR_System : public ANCHOR_ISystem {
+class ANCHOR_System : public ANCHOR_ISystem
+{
  protected:
   /**
    * Constructor.

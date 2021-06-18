@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 /// \class Usd_CrateData
 ///
-class Usd_CrateData : public SdfAbstractData {
+class Usd_CrateData : public SdfAbstractData
+{
  public:
   Usd_CrateData();
   virtual ~Usd_CrateData();

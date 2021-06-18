@@ -46,7 +46,8 @@ void HdPhInstancer::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
   SdfPath const &instancerId = GetId();
 
   _UpdateInstancer(sceneDelegate, dirtyBits);
-  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, instancerId)) {
+  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, instancerId))
+  {
     _SyncPrimvars(sceneDelegate, dirtyBits);
   }
 }
@@ -64,18 +65,22 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
   // is varying.
   _instancePrimvarNumElements = 0;
 
-  for (HdPrimvarDescriptor const &primvar : primvars) {
+  for (HdPrimvarDescriptor const &primvar : primvars)
+  {
     VtValue value = sceneDelegate->Get(instancerId, primvar.name);
-    if (!value.IsEmpty()) {
+    if (!value.IsEmpty())
+    {
       HdBufferSourceSharedPtr source;
       if (primvar.name == HdInstancerTokens->instanceTransform &&
-          TF_VERIFY(value.IsHolding<VtArray<GfMatrix4d>>())) {
+          TF_VERIFY(value.IsHolding<VtArray<GfMatrix4d>>()))
+      {
         // Explicitly invoke the c'tor taking a
         // VtArray<GfMatrix4d> to ensure we properly convert to
         // the appropriate floating-point matrix type.
         source.reset(new HdVtBufferSource(primvar.name, value.UncheckedGet<VtArray<GfMatrix4d>>()));
       }
-      else {
+      else
+      {
         source.reset(new HdVtBufferSource(primvar.name, value));
       }
 
@@ -83,17 +88,20 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
       // empty arrays from the client. Once UsdImaging can fulfill
       // this contract efficiently, this check should emit a coding
       // error.
-      if (source->GetNumElements() == 0) {
+      if (source->GetNumElements() == 0)
+      {
         continue;
       }
 
       // Latch onto the first numElements we see.
       size_t numElements = source->GetNumElements();
-      if (_instancePrimvarNumElements == 0) {
+      if (_instancePrimvarNumElements == 0)
+      {
         _instancePrimvarNumElements = numElements;
       }
 
-      if (numElements != _instancePrimvarNumElements) {
+      if (numElements != _instancePrimvarNumElements)
+      {
         // This primvar buffer is in a bad state; we can't have
         // different numbers of instances per primvar.  Trim to the
         // lower value.  Note: later on, we also trim the instance
@@ -115,11 +123,13 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
     }
   }
 
-  if (!HdPhCanSkipBARAllocationOrUpdate(sources, _instancePrimvarRange, *dirtyBits)) {
+  if (!HdPhCanSkipBARAllocationOrUpdate(sources, _instancePrimvarRange, *dirtyBits))
+  {
     // XXX: This should be based off the DirtyPrimvarDesc bit.
     bool hasDirtyPrimvarDesc = (*dirtyBits & HdChangeTracker::DirtyPrimvar);
     HdBufferSpecVector removedSpecs;
-    if (hasDirtyPrimvarDesc) {
+    if (hasDirtyPrimvarDesc)
+    {
       TfTokenVector internallyGeneratedPrimvars;  // none
       removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(
         _instancePrimvarRange, primvars, internallyGeneratedPrimvars, instancerId);
@@ -138,7 +148,8 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
     TF_VERIFY(_instancePrimvarRange->IsValid());
 
     // schedule to sync gpu
-    if (!sources.empty()) {
+    if (!sources.empty())
+    {
       resourceRegistry->AddSources(_instancePrimvarRange, std::move(sources));
     }
   }
@@ -152,8 +163,10 @@ void HdPhInstancer::_GetInstanceIndices(SdfPath const &prototypeId,
 
   // quick sanity check
   // instance indices should not exceed the size of instance primvars.
-  for (auto it = instanceIndices.cbegin(); it != instanceIndices.cend(); ++it) {
-    if (*it >= (int)_instancePrimvarNumElements) {
+  for (auto it = instanceIndices.cbegin(); it != instanceIndices.cend(); ++it)
+  {
+    if (*it >= (int)_instancePrimvarNumElements)
+    {
       TF_WARN(
         "Instance index exceeds the element count of instance "
         "primvars (%d >= %zu) for <%s>",
@@ -170,7 +183,8 @@ void HdPhInstancer::_GetInstanceIndices(SdfPath const &prototypeId,
 
   instanceIndicesArray->push_back(instanceIndices);
 
-  if (TfDebug::IsEnabled(HD_INSTANCER_UPDATED)) {
+  if (TfDebug::IsEnabled(HD_INSTANCER_UPDATED))
+  {
     std::stringstream ss;
     ss << instanceIndices;
     TF_DEBUG(HD_INSTANCER_UPDATED)
@@ -184,9 +198,11 @@ void HdPhInstancer::_GetInstanceIndices(SdfPath const &prototypeId,
   }
 
   // backtrace the instancer hierarchy to gather all instance indices.
-  if (!GetParentId().IsEmpty()) {
+  if (!GetParentId().IsEmpty())
+  {
     HdInstancer *parentInstancer = GetDelegate()->GetRenderIndex().GetInstancer(GetParentId());
-    if (TF_VERIFY(parentInstancer)) {
+    if (TF_VERIFY(parentInstancer))
+    {
       static_cast<HdPhInstancer *>(parentInstancer)->_GetInstanceIndices(instancerId, instanceIndicesArray);
     }
   }
@@ -202,7 +218,8 @@ VtIntArray HdPhInstancer::GetInstanceIndices(SdfPath const &prototypeId)
   _GetInstanceIndices(prototypeId, &instanceIndicesArray);
   int instancerNumLevels = (int)instanceIndicesArray.size();
 
-  if (!TF_VERIFY(instancerNumLevels > 0)) {
+  if (!TF_VERIFY(instancerNumLevels > 0))
+  {
     return VtIntArray();
   }
 
@@ -214,28 +231,34 @@ VtIntArray HdPhInstancer::GetInstanceIndices(SdfPath const &prototypeId)
   //              <4>,0,5,7,  <5>,1,5,7,  <6>,0,3,8, ...]
 
   size_t nTotal = 1;
-  for (int i = 0; i < instancerNumLevels; ++i) {
+  for (int i = 0; i < instancerNumLevels; ++i)
+  {
     nTotal *= instanceIndicesArray[i].size();
   }
   int instanceIndexWidth = 1 + instancerNumLevels;
 
   VtIntArray instanceIndices(nTotal * instanceIndexWidth);
   std::vector<int> currents(instancerNumLevels);
-  for (size_t j = 0; j < nTotal; ++j) {
+  for (size_t j = 0; j < nTotal; ++j)
+  {
     instanceIndices[j * instanceIndexWidth] = j;  // global idx
-    for (int i = 0; i < instancerNumLevels; ++i) {
+    for (int i = 0; i < instancerNumLevels; ++i)
+    {
       instanceIndices[j * instanceIndexWidth + i + 1] = instanceIndicesArray[i].cdata()[currents[i]];
     }
     ++currents[0];
-    for (int i = 0; i < instancerNumLevels - 1; ++i) {
-      if (static_cast<size_t>(currents[i]) >= instanceIndicesArray[i].size()) {
+    for (int i = 0; i < instancerNumLevels - 1; ++i)
+    {
+      if (static_cast<size_t>(currents[i]) >= instanceIndicesArray[i].size())
+      {
         ++currents[i + 1];
         currents[i] = 0;
       }
     }
   }
 
-  if (TfDebug::IsEnabled(HD_INSTANCER_UPDATED)) {
+  if (TfDebug::IsEnabled(HD_INSTANCER_UPDATED))
+  {
     std::stringstream ss;
     ss << instanceIndices;
     TF_DEBUG(HD_INSTANCER_UPDATED)

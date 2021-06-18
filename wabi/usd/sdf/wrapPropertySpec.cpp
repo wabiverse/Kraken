@@ -39,7 +39,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static void _WrapSetName(SdfPropertySpec &self, const std::string &newName)
 {

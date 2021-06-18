@@ -50,9 +50,11 @@ class UsdSkelCache;
 class UsdSkelRoot;
 
 /// Parameters for configuring UsdSkelBakeSkinning.
-struct UsdSkelBakeSkinningParms {
+struct UsdSkelBakeSkinningParms
+{
   /// Flags for identifying different deformation paths.
-  enum DeformationFlags {
+  enum DeformationFlags
+  {
     DeformPointsWithLBS = 1 << 0,
     DeformNormalsWithLBS = 1 << 1,
     DeformXformWithLBS = 1 << 2,

@@ -54,7 +54,8 @@ TF_DEFINE_PRIVATE_TOKENS(
     infoSourceAsset,
     "info:sourceAsset"))((infoImplementationSource, "info:implementationSource"))(sourceAsset)(karma));
 
-namespace {
+namespace
+{
 
 std::map<TfToken, VtValue> g_houdiniPrincipledShaderParameterDefaultValues = {
   {HoudiniPrincipledShaderTokens->basecolor, VtValue(0.2f)},
@@ -83,7 +84,8 @@ template<typename T>
 T GetParameter(TfToken const &name, std::map<TfToken, VtValue> const &parameters, T defaultValue = T())
 {
   auto parameterIt = parameters.find(name);
-  if (parameterIt != parameters.end() && parameterIt->second.IsHolding<T>()) {
+  if (parameterIt != parameters.end() && parameterIt->second.IsHolding<T>())
+  {
     return parameterIt->second.UncheckedGet<T>();
   }
 
@@ -92,29 +94,36 @@ T GetParameter(TfToken const &name, std::map<TfToken, VtValue> const &parameters
 
 TfToken ToUsdUVTextureWrapMode(std::string const &mode)
 {
-  if (mode == "streak") {
+  if (mode == "streak")
+  {
     return RprUsd_UsdUVTextureTokens->clamp;
   }
-  else if (mode == "decal") {
+  else if (mode == "decal")
+  {
     return RprUsd_UsdUVTextureTokens->black;
   }
-  else {
+  else
+  {
     return RprUsd_UsdUVTextureTokens->repeat;
   }
 }
 
 TfToken ToUsdUVTextureOutputId(int channel)
 {
-  if (channel == 1) {
+  if (channel == 1)
+  {
     return RprUsd_UsdUVTextureTokens->r;
   }
-  else if (channel == 2) {
+  else if (channel == 2)
+  {
     return RprUsd_UsdUVTextureTokens->g;
   }
-  else if (channel == 3) {
+  else if (channel == 3)
+  {
     return RprUsd_UsdUVTextureTokens->b;
   }
-  else {
+  else
+  {
     return TfToken();
   }
 }
@@ -144,87 +153,112 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
     TfToken textureOutputId;
 
     bool useTexture = false;
-    for (auto it = params.lower_bound(baseParameter); it != params.end(); ++it) {
+    for (auto it = params.lower_bound(baseParameter); it != params.end(); ++it)
+    {
       // check that this property corresponds to our base parameter
-      if (it->first.GetString().compare(0, baseParameter.size(), baseParameter.GetText())) {
+      if (it->first.GetString().compare(0, baseParameter.size(), baseParameter.GetText()))
+      {
         break;
       }
 
       // skip paramName
       auto propertyName = it->first.GetText() + baseParameter.size();
 
-      if (*propertyName != '_') {
+      if (*propertyName != '_')
+      {
         continue;
       }
       ++propertyName;
 
-      if (std::strncmp(propertyName, "texture", sizeof("texture") - 1) == 0) {
+      if (std::strncmp(propertyName, "texture", sizeof("texture") - 1) == 0)
+      {
         auto texturePropertyName = propertyName + (sizeof("texture") - 1);
-        if (*texturePropertyName == '\0') {
-          if (it->second.IsHolding<SdfAssetPath>()) {
+        if (*texturePropertyName == '\0')
+        {
+          if (it->second.IsHolding<SdfAssetPath>())
+          {
             auto &assetPath = it->second.UncheckedGet<SdfAssetPath>();
 
             std::string const *filepath;
-            if (assetPath.GetResolvedPath().empty()) {
+            if (assetPath.GetResolvedPath().empty())
+            {
               filepath = &assetPath.GetAssetPath();
             }
-            else {
+            else
+            {
               filepath = &assetPath.GetResolvedPath();
             }
 
-            if (filepath->empty()) {
+            if (filepath->empty())
+            {
               return VtValue();
             }
 
             fileAsset = assetPath;
           }
         }
-        else if (std::strcmp(texturePropertyName, "Intensity") == 0) {
-          if (it->second.IsHolding<float>()) {
+        else if (std::strcmp(texturePropertyName, "Intensity") == 0)
+        {
+          if (it->second.IsHolding<float>())
+          {
             scale = it->second.UncheckedGet<float>();
           }
         }
-        else if (std::strcmp(texturePropertyName, "ColorSpace") == 0) {
-          if (it->second.IsHolding<std::string>()) {
+        else if (std::strcmp(texturePropertyName, "ColorSpace") == 0)
+        {
+          if (it->second.IsHolding<std::string>())
+          {
             forceLinearSpace = it->second.UncheckedGet<std::string>() == "linear";
           }
         }
-        else if (std::strcmp(texturePropertyName, "Wrap") == 0) {
-          if (it->second.IsHolding<std::string>()) {
+        else if (std::strcmp(texturePropertyName, "Wrap") == 0)
+        {
+          if (it->second.IsHolding<std::string>())
+          {
             wrapMode = it->second.UncheckedGet<std::string>();
           }
         }
       }
-      else if (std::strncmp(propertyName, "useTexture", sizeof("useTexture") - 1) == 0) {
+      else if (std::strncmp(propertyName, "useTexture", sizeof("useTexture") - 1) == 0)
+      {
         auto useTexturePropertyName = propertyName + sizeof("useTexture") - 1;
-        if (*useTexturePropertyName == '\0') {
-          if (it->second.IsHolding<int>()) {
+        if (*useTexturePropertyName == '\0')
+        {
+          if (it->second.IsHolding<int>())
+          {
             useTexture = static_cast<bool>(it->second.UncheckedGet<int>());
-            if (!useTexture) {
+            if (!useTexture)
+            {
               return VtValue();
             }
           }
         }
-        else if (std::strcmp(useTexturePropertyName, "Alpha") == 0) {
-          if (it->second.IsHolding<int>() && it->second.UncheckedGet<int>() == 1) {
+        else if (std::strcmp(useTexturePropertyName, "Alpha") == 0)
+        {
+          if (it->second.IsHolding<int>() && it->second.UncheckedGet<int>() == 1)
+          {
             useBaseColorTextureAlpha = true;
           }
         }
       }
-      else if (std::strcmp(propertyName, "monoChannel") == 0) {
-        if (it->second.IsHolding<int>()) {
+      else if (std::strcmp(propertyName, "monoChannel") == 0)
+      {
+        if (it->second.IsHolding<int>())
+        {
           textureOutputId = ToUsdUVTextureOutputId(it->second.UncheckedGet<int>());
         }
       }
     }
 
-    if (baseParameter == HoudiniPrincipledShaderTokens->baseNormal) {
+    if (baseParameter == HoudiniPrincipledShaderTokens->baseNormal)
+    {
       // baseNormal's texture enabled by baseBumpAndNormal_enable parameter unlike all other
       // textures by *_useTexture
       useTexture = true;
     }
 
-    if (!useTexture) {
+    if (!useTexture)
+    {
       return VtValue();
     }
 
@@ -234,11 +268,14 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
         baseParameter == HoudiniPrincipledShaderTokens->transmissionColor ||
         baseParameter == HoudiniPrincipledShaderTokens->subsurfaceColor ||
         baseParameter == HoudiniPrincipledShaderTokens->baseNormal ||
-        baseParameter == HoudiniPrincipledShaderTokens->coatNormal) {
-      if (textureOutputId.IsEmpty()) {
+        baseParameter == HoudiniPrincipledShaderTokens->coatNormal)
+    {
+      if (textureOutputId.IsEmpty())
+      {
         textureOutputId = RprUsd_UsdUVTextureTokens->rgba;
       }
-      if (baseParameter == HoudiniPrincipledShaderTokens->basecolor) {
+      if (baseParameter == HoudiniPrincipledShaderTokens->basecolor)
+      {
         uvTexture = &m_baseColorNode;
       }
     }
@@ -246,7 +283,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
     return GetTextureOutput(fileAsset, wrapMode, scale, 0.0f, forceLinearSpace, textureOutputId, uvTexture);
   };
 
-  struct ParameterValue {
+  struct ParameterValue
+  {
     VtValue value;
     bool isDefault;
 
@@ -262,17 +300,21 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
     param.value = getTextureValue(paramName);
 
     // Check for plain parameter
-    if (param.value.IsEmpty()) {
+    if (param.value.IsEmpty())
+    {
       auto parameterIt = params.find(paramName);
-      if (parameterIt != params.end()) {
+      if (parameterIt != params.end())
+      {
         param.value = parameterIt->second;
       }
     }
 
     // Check for default parameter
-    if (param.value.IsEmpty()) {
+    if (param.value.IsEmpty())
+    {
       auto parameterIt = g_houdiniPrincipledShaderParameterDefaultValues.find(paramName);
-      if (parameterIt != g_houdiniPrincipledShaderParameterDefaultValues.end()) {
+      if (parameterIt != g_houdiniPrincipledShaderParameterDefaultValues.end())
+      {
         param.value = parameterIt->second;
         param.isDefault = true;
       }
@@ -282,7 +324,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   };
 
   auto setInputs = [this](VtValue const &value, std::vector<rpr::MaterialNodeInput> const &rprInputs) {
-    for (auto rprInput : rprInputs) {
+    for (auto rprInput : rprInputs)
+    {
       SetRprInput(m_rprNode.get(), rprInput, value);
     }
   };
@@ -290,13 +333,15 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   auto populateParameter = [&](TfToken const &paramName,
                                std::vector<rpr::MaterialNodeInput> const &rprInputs) {
     auto param = getParameterValue(paramName);
-    if (!param.value.IsEmpty()) {
+    if (!param.value.IsEmpty())
+    {
       setInputs(param.value, rprInputs);
     }
   };
 
   auto basecolorParam = getParameterValue(HoudiniPrincipledShaderTokens->basecolor);
-  if (!basecolorParam.value.IsEmpty()) {
+  if (!basecolorParam.value.IsEmpty())
+  {
     auto albedoMultiplyNode = AddAuxiliaryNode(
       RprUsd_RprArithmeticNode::Create(RPR_MATERIAL_NODE_OP_MUL, m_ctx));
     albedoMultiplyNode->SetInput(
@@ -325,7 +370,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   populateParameter(HoudiniPrincipledShaderTokens->coatRoughness,
                     {RPR_MATERIAL_INPUT_UBER_COATING_ROUGHNESS});
   auto coatParam = getParameterValue(HoudiniPrincipledShaderTokens->coat);
-  if (!coatParam.value.IsEmpty()) {
+  if (!coatParam.value.IsEmpty())
+  {
     auto coatingWeightNode = AddAuxiliaryNode(
       RprUsd_RprArithmeticNode::Create(RPR_MATERIAL_NODE_OP_GREATER, m_ctx));
     coatingWeightNode->SetInput(0, coatParam.value);
@@ -336,7 +382,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   }
 
   auto subsurfaceParam = getParameterValue(HoudiniPrincipledShaderTokens->subsurface);
-  if (!subsurfaceParam.value.IsEmpty()) {
+  if (!subsurfaceParam.value.IsEmpty())
+  {
     SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_SSS_WEIGHT, subsurfaceParam.value);
     SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_BACKSCATTER_WEIGHT, subsurfaceParam.value);
   }
@@ -347,13 +394,15 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
 
   auto subsurfaceModel = GetParameter(
     HoudiniPrincipledShaderTokens->subsurfaceModel, params, std::string("full"));
-  if (subsurfaceModel == "full") {
+  if (subsurfaceModel == "full")
+  {
     RPR_ERROR_CHECK(m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_SSS_MULTISCATTER, 1u),
                     "Failed to set sss multiscatter input");
     RPR_ERROR_CHECK(m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_SSS_SCATTER_DIRECTION, 0, 0, 0, 0),
                     "Failed to set sss multiscatter input");
   }
-  else {
+  else
+  {
     RPR_ERROR_CHECK(m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_SSS_MULTISCATTER, 0u),
                     "Failed to set sss multiscatter input");
     populateParameter(HoudiniPrincipledShaderTokens->subsurfacePhase,
@@ -364,7 +413,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   populateParameter(HoudiniPrincipledShaderTokens->sheenTint, {RPR_MATERIAL_INPUT_UBER_SHEEN_TINT});
 
   auto emissionColorParam = getParameterValue(HoudiniPrincipledShaderTokens->emissionColor);
-  if (!emissionColorParam.value.IsEmpty()) {
+  if (!emissionColorParam.value.IsEmpty())
+  {
     auto emissiveWeightNode = AddAuxiliaryNode(
       RprUsd_RprArithmeticNode::Create(RPR_MATERIAL_NODE_OP_GREATER, m_ctx));
     emissiveWeightNode->SetInput(0, emissionColorParam.value);
@@ -381,14 +431,17 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
 
   m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_REFLECTION_WEIGHT, 1, 1, 1, 1);
 
-  if (GetParameter(HoudiniPrincipledShaderTokens->baseNormalEnable, params, 0)) {
+  if (GetParameter(HoudiniPrincipledShaderTokens->baseNormalEnable, params, 0))
+  {
     std::vector<rpr::MaterialNodeInput> rprInputs = {RPR_MATERIAL_INPUT_UBER_DIFFUSE_NORMAL,
                                                      RPR_MATERIAL_INPUT_UBER_REFLECTION_NORMAL,
                                                      RPR_MATERIAL_INPUT_UBER_REFRACTION_NORMAL};
 
-    if (GetParameter(HoudiniPrincipledShaderTokens->separateCoatNormals, params, 0)) {
+    if (GetParameter(HoudiniPrincipledShaderTokens->separateCoatNormals, params, 0))
+    {
       auto coatNormal = getTextureValue(HoudiniPrincipledShaderTokens->coatNormal, true);
-      if (!coatNormal.IsEmpty()) {
+      if (!coatNormal.IsEmpty())
+      {
         auto normalMapNode = AddAuxiliaryNode(
           std::make_unique<RprUsd_BaseRuntimeNode>(RPR_MATERIAL_NODE_NORMAL_MAP, m_ctx));
         normalMapNode->SetInput(RprUsdMaterialNodeInputTokens->color, coatNormal);
@@ -399,12 +452,14 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
           m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_COATING_NORMAL, normalMapNode->GetOutput(TfToken()));
       }
     }
-    else {
+    else
+    {
       rprInputs.push_back(RPR_MATERIAL_INPUT_UBER_COATING_NORMAL);
     }
 
     auto baseNormal = getTextureValue(HoudiniPrincipledShaderTokens->baseNormal, true);
-    if (!baseNormal.IsEmpty()) {
+    if (!baseNormal.IsEmpty())
+    {
       auto normalMapNode = AddAuxiliaryNode(
         std::make_unique<RprUsd_BaseRuntimeNode>(RPR_MATERIAL_NODE_NORMAL_MAP, m_ctx));
       normalMapNode->SetInput(RprUsdMaterialNodeInputTokens->color, baseNormal);
@@ -412,7 +467,8 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
         RprUsdMaterialNodeInputTokens->scale,
         VtValue(GetParameter(HoudiniPrincipledShaderTokens->baseNormalScale, params, 1.0f)));
       auto normalMap = normalMapNode->GetOutput(TfToken());
-      for (auto rprInput : rprInputs) {
+      for (auto rprInput : rprInputs)
+      {
         SetRprInput(m_rprNode.get(), rprInput, normalMap);
       }
     }
@@ -421,8 +477,10 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   bool hasTransparency = false;
 
   auto transparencyParam = getParameterValue(HoudiniPrincipledShaderTokens->transparency);
-  if (!transparencyParam.value.IsEmpty()) {
-    if (transparencyParam.IsAuthored()) {
+  if (!transparencyParam.value.IsEmpty())
+  {
+    if (transparencyParam.IsAuthored())
+    {
       hasTransparency = true;
     }
 
@@ -442,21 +500,26 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   populateParameter(HoudiniPrincipledShaderTokens->transmissionDistance,
                     {RPR_MATERIAL_INPUT_UBER_REFRACTION_ABSORPTION_DISTANCE});
 
-  if (useBaseColorTextureAlpha) {
+  if (useBaseColorTextureAlpha)
+  {
     VtValue opacity;
-    if (m_baseColorNode) {
+    if (m_baseColorNode)
+    {
       opacity = m_baseColorNode->GetOutput(RprUsd_UsdUVTextureTokens->a);
       hasTransparency = true;
     }
-    else {
+    else
+    {
       auto opacityParam = getParameterValue(HoudiniPrincipledShaderTokens->opacityColor);
-      if (opacityParam.IsAuthored()) {
+      if (opacityParam.IsAuthored())
+      {
         hasTransparency = true;
       }
       opacity = opacityParam.value;
     }
 
-    if (!opacity.IsEmpty()) {
+    if (!opacity.IsEmpty())
+    {
       auto transparencyNode = AddAuxiliaryNode(
         RprUsd_RprArithmeticNode::Create(RPR_MATERIAL_NODE_OP_MUL, m_ctx));
       transparencyNode->SetInput(0, opacity);
@@ -469,14 +532,16 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
       transparencyNode->SetInput(1, transparency);
       transparency = transparencyNode->GetOutput();
 
-      if (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_TRANSPARENCY, transparency) == RPR_SUCCESS) {
+      if (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_TRANSPARENCY, transparency) == RPR_SUCCESS)
+      {
         hasTransparency = true;
       }
     }
   }
 
   auto iorMode = RPR_UBER_MATERIAL_IOR_MODE_PBR;
-  if (!hasTransparency) {
+  if (!hasTransparency)
+  {
     iorMode = RPR_UBER_MATERIAL_IOR_MODE_METALNESS;
     populateParameter(
       HoudiniPrincipledShaderTokens->metallic,
@@ -488,17 +553,22 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
   RPR_ERROR_CHECK(m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_COATING_MODE, iorMode),
                   "Failed to set ior mode input");
 
-  if (dispParamsPtr) {
+  if (dispParamsPtr)
+  {
     auto &dispParams = *dispParamsPtr;
-    if (GetParameter(HoudiniPrincipledShaderTokens->displacementEnable, dispParams, 0)) {
+    if (GetParameter(HoudiniPrincipledShaderTokens->displacementEnable, dispParams, 0))
+    {
       auto dispType = GetParameter<std::string>(HoudiniPrincipledShaderTokens->displacementType, dispParams);
-      if (dispType == "vectordisp") {
+      if (dispType == "vectordisp")
+      {
         TF_RUNTIME_ERROR("Vector displacement unsupported");
       }
-      else {
+      else
+      {
         auto dispTexturePath = GetParameter<SdfAssetPath>(HoudiniPrincipledShaderTokens->displacementTexture,
                                                           dispParams);
-        if (!dispTexturePath.GetResolvedPath().empty()) {
+        if (!dispTexturePath.GetResolvedPath().empty())
+        {
           m_displacementOutput = GetTextureOutput(
             dispTexturePath,
             GetParameter<std::string>(HoudiniPrincipledShaderTokens->displacementWrap, dispParams),
@@ -517,10 +587,12 @@ RprUsd_HoudiniPrincipledNode::RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilde
 
 VtValue RprUsd_HoudiniPrincipledNode::GetOutput(TfToken const &outputId)
 {
-  if (outputId == HdMaterialTerminalTokens->displacement) {
+  if (outputId == HdMaterialTerminalTokens->displacement)
+  {
     return m_displacementOutput;
   }
-  else {
+  else
+  {
     return RprUsd_BaseRuntimeNode::GetOutput(outputId);
   }
 }
@@ -533,7 +605,8 @@ VtValue RprUsd_HoudiniPrincipledNode::GetTextureOutput(SdfAssetPath const &path,
                                                        TfToken const &outputId,
                                                        RprUsd_MaterialNode **out_uvTextureNode)
 {
-  if (path.GetResolvedPath().empty() && path.GetAssetPath().empty()) {
+  if (path.GetResolvedPath().empty() && path.GetAssetPath().empty())
+  {
     return VtValue();
   }
 
@@ -542,33 +615,40 @@ VtValue RprUsd_HoudiniPrincipledNode::GetTextureOutput(SdfAssetPath const &path,
     {RprUsd_UsdUVTextureTokens->wrapS, VtValue(ToUsdUVTextureWrapMode(wrapMode))},
   };
 
-  if (forceLinearSpace) {
+  if (forceLinearSpace)
+  {
     uvTextureParams.emplace(RprUsd_UsdUVTextureTokens->sourceColorSpace,
                             RprUsd_UsdUVTextureTokens->srgblinear);
   }
 
-  if (scale != 1.0f) {
+  if (scale != 1.0f)
+  {
     uvTextureParams.emplace(RprUsd_UsdUVTextureTokens->scale, VtValue(GfVec4f(scale)));
   }
 
-  if (bias != 0.0f) {
+  if (bias != 0.0f)
+  {
     uvTextureParams.emplace(RprUsd_UsdUVTextureTokens->bias, VtValue(GfVec4f(bias)));
   }
 
   RprUsd_MaterialNode *uvTexture;
-  try {
+  try
+  {
     uvTexture = AddAuxiliaryNode(std::make_unique<RprUsd_UsdUVTexture>(m_ctx, uvTextureParams));
   }
-  catch (RprUsd_NodeError &e) {
+  catch (RprUsd_NodeError &e)
+  {
     TF_RUNTIME_ERROR("Failed to create texture node: %s", e.what());
     return VtValue();
   }
 
-  if (out_uvTextureNode) {
+  if (out_uvTextureNode)
+  {
     *out_uvTextureNode = uvTexture;
   }
 
-  if (outputId.IsEmpty()) {
+  if (outputId.IsEmpty())
+  {
     // Output luminance
     auto output = uvTexture->GetOutput(RprUsd_UsdUVTextureTokens->rgba);
 
@@ -578,7 +658,8 @@ VtValue RprUsd_HoudiniPrincipledNode::GetTextureOutput(SdfAssetPath const &path,
     luminanceNode->SetInput(1, VtValue(GfVec4f(0.2126, 0.7152, 0.0722, 0.0)));
     return luminanceNode->GetOutput();
   }
-  else {
+  else
+  {
     return uvTexture->GetOutput(outputId);
   }
 }
@@ -589,28 +670,36 @@ bool IsHoudiniPrincipledShaderHydraNode(HdSceneDelegate *delegate, SdfPath const
   // If HdRprRenderDelegate uses some other network selector that is not
   // a `karma` one then Hydra will never feed us a definition of the principled shader.
   if (RprUsdMaterialRegistry::GetInstance().GetMaterialNetworkSelector() !=
-      HoudiniPrincipledShaderTokens->karma) {
+      HoudiniPrincipledShaderTokens->karma)
+  {
     return false;
   }
 
   auto implementationSource = delegate->Get(nodePath,
                                             HoudiniPrincipledShaderTokens->infoImplementationSource);
   if (implementationSource.IsHolding<TfToken>() &&
-      implementationSource.UncheckedGet<TfToken>() == HoudiniPrincipledShaderTokens->sourceAsset) {
+      implementationSource.UncheckedGet<TfToken>() == HoudiniPrincipledShaderTokens->sourceAsset)
+  {
     auto nodeAsset = delegate->Get(nodePath, HoudiniPrincipledShaderTokens->infoSourceAsset);
-    if (nodeAsset.IsHolding<SdfAssetPath>()) {
+    if (nodeAsset.IsHolding<SdfAssetPath>())
+    {
       auto &asset = nodeAsset.UncheckedGet<SdfAssetPath>();
-      if (!asset.GetAssetPath().empty()) {
+      if (!asset.GetAssetPath().empty())
+      {
         std::string principledShaderDef = "opdef:/Vop/principledshader::2.0?";
-        if (asset.GetAssetPath().compare(0, principledShaderDef.size(), principledShaderDef.c_str()) == 0) {
+        if (asset.GetAssetPath().compare(0, principledShaderDef.size(), principledShaderDef.c_str()) == 0)
+        {
           auto vexCodeType = asset.GetAssetPath().substr(principledShaderDef.size());
-          if (vexCodeType == "SurfaceVexCode") {
+          if (vexCodeType == "SurfaceVexCode")
+          {
             *isSurface = true;
           }
-          else if (vexCodeType == "DisplacementVexCode") {
+          else if (vexCodeType == "DisplacementVexCode")
+          {
             *isSurface = false;
           }
-          else {
+          else
+          {
             return false;
           }
           return true;

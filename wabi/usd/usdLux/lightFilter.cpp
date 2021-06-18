@@ -57,7 +57,8 @@ UsdLuxLightFilter::~UsdLuxLightFilter()
 /* static */
 UsdLuxLightFilter UsdLuxLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightFilter();
   }
@@ -68,7 +69,8 @@ UsdLuxLightFilter UsdLuxLightFilter::Get(const UsdStagePtr &stage, const SdfPath
 UsdLuxLightFilter UsdLuxLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("LightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightFilter();
   }
@@ -107,7 +109,8 @@ const TfType &UsdLuxLightFilter::_GetTfType() const
   return _GetStaticTfType();
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -149,7 +152,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-class UsdLuxLightFilter_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior {
+class UsdLuxLightFilter_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
+{
   bool CanConnectInputToSource(const UsdShadeInput &input,
                                const UsdAttribute &source,
                                std::string *reason) override

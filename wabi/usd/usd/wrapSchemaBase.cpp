@@ -59,11 +59,13 @@ static object __getattribute__(object selfObj, const char *name)
       strcmp(name, "GetSchemaClassPrimDefinition") == 0 || strcmp(name, "GetSchemaAttributeNames") == 0 ||
       strcmp(name, "GetSchemaType") == 0 || strcmp(name, "GetSchemaKind") == 0 ||
       strcmp(name, "IsAPISchema") == 0 || strcmp(name, "IsConcrete") == 0 || strcmp(name, "IsTyped") == 0 ||
-      strcmp(name, "IsAppliedAPISchema") == 0 || strcmp(name, "IsMultipleApplyAPISchema") == 0) {
+      strcmp(name, "IsAppliedAPISchema") == 0 || strcmp(name, "IsMultipleApplyAPISchema") == 0)
+  {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   }
-  else {
+  else
+  {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed schema on invalid prim"));
   }

@@ -29,7 +29,10 @@ using namespace std;
 
 WABI_NAMESPACE_BEGIN
 
-TfPatternMatcher::TfPatternMatcher() : _caseSensitive(false), _isGlob(false), _recompile(true)
+TfPatternMatcher::TfPatternMatcher()
+  : _caseSensitive(false),
+    _isGlob(false),
+    _recompile(true)
 {}
 
 TfPatternMatcher::TfPatternMatcher(const string &pattern, bool caseSensitive, bool isGlob)
@@ -58,15 +61,19 @@ bool TfPatternMatcher::IsValid() const
 
 bool TfPatternMatcher::Match(const string &query, string *errorMsg) const
 {
-  if (IsValid()) {
-    if (errorMsg) {
+  if (IsValid())
+  {
+    if (errorMsg)
+    {
       errorMsg->clear();
     }
 
     return _regex.Match(query);
   }
-  else {
-    if (errorMsg) {
+  else
+  {
+    if (errorMsg)
+    {
       *errorMsg = _regex.GetError();
     }
     return false;
@@ -75,7 +82,8 @@ bool TfPatternMatcher::Match(const string &query, string *errorMsg) const
 
 void TfPatternMatcher::SetIsCaseSensitive(bool sensitive)
 {
-  if (sensitive != _caseSensitive) {
+  if (sensitive != _caseSensitive)
+  {
     _recompile = true;
     _caseSensitive = sensitive;
   }
@@ -83,7 +91,8 @@ void TfPatternMatcher::SetIsCaseSensitive(bool sensitive)
 
 void TfPatternMatcher::SetIsGlobPattern(bool isGlob)
 {
-  if (isGlob != _isGlob) {
+  if (isGlob != _isGlob)
+  {
     _recompile = true;
     _isGlob = isGlob;
   }
@@ -91,7 +100,8 @@ void TfPatternMatcher::SetIsGlobPattern(bool isGlob)
 
 void TfPatternMatcher::SetPattern(const string &pattern)
 {
-  if (pattern != _pattern) {
+  if (pattern != _pattern)
+  {
     _recompile = true;
     _pattern = pattern;
   }
@@ -101,7 +111,8 @@ void TfPatternMatcher::SetPattern(const string &pattern)
 
 void TfPatternMatcher::_Compile() const
 {
-  if (_recompile) {
+  if (_recompile)
+  {
 
     _recompile = false;
 

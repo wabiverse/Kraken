@@ -83,7 +83,8 @@ class HdSamplerParameters;
 /// until the primvar refinement computation has fnished. It can assign one
 /// queue to primvar refinement and a following queue for normal computations.
 ///
-enum HdPhComputeQueue {
+enum HdPhComputeQueue
+{
   HdPhComputeQueueZero = 0,
   HdPhComputeQueueOne,
   HdPhComputeQueueTwo,
@@ -97,7 +98,8 @@ using HdPhComputationSharedPtrVector = std::vector<std::pair<HdComputationShared
 ///
 /// A central registry of all GPU resources.
 ///
-class HdPhResourceRegistry final : public HdResourceRegistry {
+class HdPhResourceRegistry final : public HdResourceRegistry
+{
  public:
   HF_MALLOC_TAG_NEW("new HdPhResourceRegistry");
 
@@ -503,8 +505,11 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
 
   // TODO: this is a transient structure. we'll revisit the BufferSource
   // interface later.
-  struct _PendingSource {
-    _PendingSource(HdBufferArrayRangeSharedPtr const &range) : range(range), sources()
+  struct _PendingSource
+  {
+    _PendingSource(HdBufferArrayRangeSharedPtr const &range)
+      : range(range),
+        sources()
     {}
 
     _PendingSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source)
@@ -527,7 +532,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry {
   _PendingSourceList _pendingSources;
   std::atomic_size_t _numBufferSourcesToResolve;
 
-  struct _PendingComputation {
+  struct _PendingComputation
+  {
     _PendingComputation(HdBufferArrayRangeSharedPtr const &range, HdComputationSharedPtr const &computation)
       : range(range),
         computation(computation)

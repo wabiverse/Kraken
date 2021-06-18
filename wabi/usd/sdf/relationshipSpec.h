@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 /// values that describe the relationship.  For example, point weights are
 /// commonly expressed as relational attributes.
 ///
-class SdfRelationshipSpec : public SdfPropertySpec {
+class SdfRelationshipSpec : public SdfPropertySpec
+{
   SDF_DECLARE_SPEC(SdfRelationshipSpec, SdfPropertySpec);
 
  public:

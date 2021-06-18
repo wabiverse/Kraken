@@ -52,7 +52,8 @@ class SdfPath;
 /// once created and they are passed by copy-in APIs.  To change a variant
 /// spec, you make a new one and replace the existing one.
 ///
-class SdfVariantSpec : public SdfSpec {
+class SdfVariantSpec : public SdfSpec
+{
   SDF_DECLARE_SPEC(SdfVariantSpec, SdfSpec);
 
  public:

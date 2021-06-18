@@ -301,10 +301,13 @@ ARCH_API
 std::string ArchMakeTmpSubdir(const std::string &tmpdir, const std::string &prefix);
 
 // Helper 'deleter' for use with std::unique_ptr for file mappings.
-struct Arch_Unmapper {
-  Arch_Unmapper() : _length(~0)
+struct Arch_Unmapper
+{
+  Arch_Unmapper()
+    : _length(~0)
   {}
-  explicit Arch_Unmapper(size_t length) : _length(length)
+  explicit Arch_Unmapper(size_t length)
+    : _length(length)
   {}
   ARCH_API void operator()(char *mapStart) const;
   ARCH_API void operator()(char const *mapStart) const;
@@ -360,7 +363,8 @@ ArchMutableFileMapping ArchMapFileReadWrite(FILE *file, std::string *errMsg = nu
 ARCH_API
 ArchMutableFileMapping ArchMapFileReadWrite(std::string const &path, std::string *errMsg = nullptr);
 
-enum ArchMemAdvice {
+enum ArchMemAdvice
+{
   ArchMemAdviceNormal,        // Treat range with default behavior.
   ArchMemAdviceWillNeed,      // OS may prefetch this range.
   ArchMemAdviceDontNeed,      // OS may free resources related to this range.
@@ -408,7 +412,8 @@ int64_t ArchPWrite(FILE *file, void const *bytes, size_t count, int64_t offset);
 ARCH_API
 std::string ArchReadLink(const char *path);
 
-enum ArchFileAdvice {
+enum ArchFileAdvice
+{
   ArchFileAdviceNormal,        // Treat range with default behavior.
   ArchFileAdviceWillNeed,      // OS may prefetch this range.
   ArchFileAdviceDontNeed,      // OS may free resources related to this range.

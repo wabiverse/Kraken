@@ -37,7 +37,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhTexture::HdPhTexture(SdfPath const &id) : HdTexture(id)
+HdPhTexture::HdPhTexture(SdfPath const &id)
+  : HdTexture(id)
 {}
 
 HdPhTexture::~HdPhTexture() = default;

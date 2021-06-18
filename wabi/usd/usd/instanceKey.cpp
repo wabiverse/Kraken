@@ -32,18 +32,22 @@
 
 WABI_NAMESPACE_BEGIN
 
-Usd_InstanceKey::Usd_InstanceKey() : _hash(_ComputeHash())
+Usd_InstanceKey::Usd_InstanceKey()
+  : _hash(_ComputeHash())
 {}
 
 static UsdStagePopulationMask _MakeMaskRelativeTo(SdfPath const &path, UsdStagePopulationMask const &mask)
 {
   SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
   std::vector<SdfPath> maskPaths = mask.GetPaths();
-  for (SdfPath &maskPath : maskPaths) {
-    if (maskPath.HasPrefix(path)) {
+  for (SdfPath &maskPath : maskPaths)
+  {
+    if (maskPath.HasPrefix(path))
+    {
       maskPath = maskPath.ReplacePrefix(path, absRoot);
     }
-    else {
+    else
+    {
       maskPath = SdfPath();
     }
   }
@@ -59,15 +63,19 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path, UsdStageL
   std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> elems = rules.GetRules();
 
   SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
-  for (auto &p : elems) {
-    if (p.first == path) {
+  for (auto &p : elems)
+  {
+    if (p.first == path)
+    {
       p.first = absRoot;
       p.second = rootRule;
     }
-    else if (p.first.HasPrefix(path)) {
+    else if (p.first.HasPrefix(path))
+    {
       p.first = p.first.ReplacePrefix(path, absRoot);
     }
-    else {
+    else
+    {
       p.first = SdfPath();
     }
   }
@@ -79,10 +87,12 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path, UsdStageL
               elems.end());
 
   // Ensure the first element is the root rule.
-  if (elems.empty() || elems.front().first != absRoot) {
+  if (elems.empty() || elems.front().first != absRoot)
+  {
     elems.emplace(elems.begin(), absRoot, rootRule);
   }
-  else {
+  else
+  {
     elems.front().second = rootRule;
   }
 
@@ -106,10 +116,12 @@ Usd_InstanceKey::Usd_InstanceKey(const PcpPrimIndex &instance,
   // want the resulting mask to be [/table].  The special cases where the mask
   // includes the whole subtree or excludes the whole subtree are easy to deal
   // with.
-  if (!mask) {
+  if (!mask)
+  {
     _mask = UsdStagePopulationMask::All();
   }
-  else {
+  else
+  {
     _mask = _MakeMaskRelativeTo(instance.GetPath(), *mask);
   }
 
@@ -129,7 +141,8 @@ bool Usd_InstanceKey::operator==(const Usd_InstanceKey &rhs) const
 size_t Usd_InstanceKey::_ComputeHash() const
 {
   size_t hash = hash_value(_pcpInstanceKey);
-  for (const Usd_ClipSetDefinition &clipDefs : _clipDefs) {
+  for (const Usd_ClipSetDefinition &clipDefs : _clipDefs)
+  {
     boost::hash_combine(hash, clipDefs.GetHash());
   }
   boost::hash_combine(hash, _mask);

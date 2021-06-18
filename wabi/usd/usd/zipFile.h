@@ -53,7 +53,8 @@ class ArAsset;
 ///   its central directory header, that file will still be found by this
 ///   class.
 ///
-class UsdZipFile {
+class UsdZipFile
+{
  private:
   class _Impl;
 
@@ -84,7 +85,8 @@ class UsdZipFile {
 
   /// \class FileInfo
   /// Information for a file in the zip archive.
-  class FileInfo {
+  class FileInfo
+  {
    public:
     /// Offset of the beginning of this file's data from the start of
     /// the zip archive.
@@ -110,16 +112,19 @@ class UsdZipFile {
 
   /// \class Iterator
   /// Iterator for traversing and inspecting the contents of the zip archive.
-  class Iterator {
+  class Iterator
+  {
    public:
     USD_API
     Iterator();
 
     // Proxy type for operator->(), needed since this iterator's value
     // is generated on the fly.
-    class _ArrowProxy {
+    class _ArrowProxy
+    {
      public:
-      explicit _ArrowProxy(const std::string &s) : _s(s)
+      explicit _ArrowProxy(const std::string &s)
+        : _s(s)
       {}
       const std::string *operator->() const
       {
@@ -220,7 +225,8 @@ class UsdZipFile {
 /// by this class should be valid zip files and readable by external zip
 /// libraries and utilities.
 ///
-class UsdZipFileWriter {
+class UsdZipFileWriter
+{
  public:
   /// Create a new file writer with \p filePath as the destination file path
   /// where the zip archive will be written. The zip file will not be written

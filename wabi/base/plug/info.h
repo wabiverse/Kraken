@@ -45,9 +45,11 @@ WABI_NAMESPACE_BEGIN
 class JsValue;
 
 /// Data describing the plugin itself.
-class Plug_RegistrationMetadata {
+class Plug_RegistrationMetadata
+{
  public:
-  enum Type {
+  enum Type
+  {
     UnknownType,
     LibraryType,
 #ifdef WITH_PYTHON
@@ -56,7 +58,8 @@ class Plug_RegistrationMetadata {
     ResourceType
   };
 
-  Plug_RegistrationMetadata() : type(UnknownType)
+  Plug_RegistrationMetadata()
+    : type(UnknownType)
   {}
   Plug_RegistrationMetadata(const JsValue &,
                             const std::string &valuePathname,
@@ -71,16 +74,19 @@ class Plug_RegistrationMetadata {
 };
 
 /// A task arena for reading plug info.
-class Plug_TaskArena {
+class Plug_TaskArena
+{
  public:
-  class Synchronous {
+  class Synchronous
+  {
   };  // For single-threaded debugging.
   Plug_TaskArena();
   Plug_TaskArena(Synchronous);
   ~Plug_TaskArena();
 
   /// Schedule \p fn to run.
-  template<class Fn> void Run(Fn const &fn);
+  template<class Fn>
+  void Run(Fn const &fn);
 
   /// Wait for all scheduled tasks to complete.
   void Wait();

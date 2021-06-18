@@ -45,7 +45,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 ///
 /// This is simply the layer the spec belongs to and the path to the spec.
 ///
-class Sdf_Identity : public boost::noncopyable {
+class Sdf_Identity : public boost::noncopyable
+{
  public:
   /// Returns the layer that this identity refers to.
   SDF_API
@@ -83,12 +84,14 @@ inline void intrusive_ptr_add_ref(WABI_NS::Sdf_Identity *p)
 }
 inline void intrusive_ptr_release(WABI_NS::Sdf_Identity *p)
 {
-  if (--p->_refCount == 0) {
+  if (--p->_refCount == 0)
+  {
     delete p;
   }
 }
 
-class Sdf_IdentityRegistry : public boost::noncopyable {
+class Sdf_IdentityRegistry : public boost::noncopyable
+{
  public:
   Sdf_IdentityRegistry(const SdfLayerHandle &layer);
   ~Sdf_IdentityRegistry();

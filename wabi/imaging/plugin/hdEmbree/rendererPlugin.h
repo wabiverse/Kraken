@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 /// prims (which translate scene data into drawable representations) and hydra
 /// renderpasses (which draw the scene to the framebuffer).
 ///
-class HdEmbreeRendererPlugin final : public HdRendererPlugin {
+class HdEmbreeRendererPlugin final : public HdRendererPlugin
+{
  public:
   HdEmbreeRendererPlugin() = default;
   virtual ~HdEmbreeRendererPlugin() = default;

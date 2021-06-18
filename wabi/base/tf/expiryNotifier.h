@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 /// resources devoted to that object can be discarded.  Accordingly, if
 /// \p func is non-NULL and a previous non-NULL notifier function has been
 /// set, a fatal error is issued.
-class Tf_ExpiryNotifier {
+class Tf_ExpiryNotifier
+{
  public:
   TF_API static void Invoke(void const *p);
   TF_API static void SetNotifier(void (*func)(void const *));

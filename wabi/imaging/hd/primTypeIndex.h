@@ -46,7 +46,9 @@ using HdSceneDelegatePtrVector = std::vector<HdSceneDelegate *>;
 /// This class is only used by the render index.
 /// It provides functionality to manage and store one class of prim
 /// such as a Sprim or Bprim.
-template<class PrimType> class Hd_PrimTypeIndex {
+template<class PrimType>
+class Hd_PrimTypeIndex
+{
  public:
   Hd_PrimTypeIndex();
   ~Hd_PrimTypeIndex();
@@ -157,19 +159,24 @@ template<class PrimType> class Hd_PrimTypeIndex {
   const HdSceneDelegatePtrVector &GetSceneDelegatesForDirtyPrims();
 
  private:
-  struct _PrimInfo {
+  struct _PrimInfo
+  {
     HdSceneDelegate *sceneDelegate;
     PrimType *prim;
   };
 
   typedef std::unordered_map<SdfPath, _PrimInfo, SdfPath::Hash> _PrimMap;
 
-  struct _PrimTypeEntry {
+  struct _PrimTypeEntry
+  {
     _PrimMap primMap;
     Hd_SortedIds primIds;  // Primarily for sub-tree searching
     PrimType *fallbackPrim;
 
-    _PrimTypeEntry() : primMap(), primIds(), fallbackPrim(nullptr)
+    _PrimTypeEntry()
+      : primMap(),
+        primIds(),
+        fallbackPrim(nullptr)
     {}
   };
 

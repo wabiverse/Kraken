@@ -62,7 +62,8 @@ class SdfAssetPath;
 /// Light emitted from one side of a circular disk.
 /// The disk is centered in the XY plane and emits light along the -Z axis.
 ///
-class UsdLuxDiskLight : public UsdLuxLight {
+class UsdLuxDiskLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -78,13 +79,15 @@ class UsdLuxDiskLight : public UsdLuxLight {
   /// Equivalent to UsdLuxDiskLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxDiskLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxDiskLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxDiskLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxDiskLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxDiskLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxDiskLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

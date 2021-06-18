@@ -50,7 +50,8 @@ UsdShadeMaterial::~UsdShadeMaterial()
 /* static */
 UsdShadeMaterial UsdShadeMaterial::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeMaterial();
   }
@@ -61,7 +62,8 @@ UsdShadeMaterial UsdShadeMaterial::Get(const UsdStagePtr &stage, const SdfPath &
 UsdShadeMaterial UsdShadeMaterial::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Material");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeMaterial();
   }
@@ -145,7 +147,8 @@ UsdAttribute UsdShadeMaterial::CreateVolumeAttr(VtValue const &defaultValue, boo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -221,7 +224,8 @@ std::pair<UsdStagePtr, UsdEditTarget> UsdShadeMaterial::GetEditContextForVariant
   UsdVariantSet materialVariant = prim.GetVariantSet(UsdShadeTokens->materialVariant);
   UsdEditTarget target = stage->GetEditTarget();
   if (materialVariant.AddVariant(materialVariation) &&
-      materialVariant.SetVariantSelection(materialVariation)) {
+      materialVariant.SetVariantSelection(materialVariation))
+  {
     target = materialVariant.GetVariantEditTarget(layer);
   }
 
@@ -253,7 +257,8 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
                                                    const std::vector<UsdPrim> &materials,
                                                    const TfToken &masterVariantSetName)
 {
-  if (!masterPrim) {
+  if (!masterPrim)
+  {
     TF_CODING_ERROR("MasterPrim is not a valid UsdPrim.");
     return false;
   }
@@ -263,17 +268,20 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
   std::vector<std::string> allMaterialVariants;
 
   // Error Checking!
-  if (materials.size() == 0) {
+  if (materials.size() == 0)
+  {
     TF_CODING_ERROR("No material prims specified on which to operate.");
     return false;
   }
-  TF_FOR_ALL(material, materials)
+  TF_FOR_ALL (material, materials)
   {
-    if (!*material) {
+    if (!*material)
+    {
       TF_CODING_ERROR("Unable to process invalid material: %s", material->GetDescription().c_str());
       return false;
     }
-    if (stage != material->GetStage()) {
+    if (stage != material->GetStage())
+    {
       TF_CODING_ERROR(
         "All material prims to be controlled by masterPrim "
         "%s must originate on the same UsdStage as "
@@ -285,7 +293,8 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
 
     std::vector<std::string> materialVariants =
       material->GetVariantSet(UsdShadeTokens->materialVariant).GetVariantNames();
-    if (materialVariants.size() == 0) {
+    if (materialVariants.size() == 0)
+    {
       TF_CODING_ERROR(
         "All Material prims to be switched by master "
         "materialVariant must actually possess a "
@@ -294,10 +303,12 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
       return false;
     }
 
-    if (allMaterialVariants.size() == 0) {
+    if (allMaterialVariants.size() == 0)
+    {
       allMaterialVariants.swap(materialVariants);
     }
-    else if (allMaterialVariants != materialVariants) {
+    else if (allMaterialVariants != materialVariants)
+    {
       TF_CODING_ERROR(
         "All Material prims to be switched by master "
         "materialVariant must possess the SAME material variants. "
@@ -308,9 +319,10 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
   }
 
   UsdVariantSet masterSet = masterPrim.GetVariantSet(masterSetName);
-  TF_FOR_ALL(varName, allMaterialVariants)
+  TF_FOR_ALL (varName, allMaterialVariants)
   {
-    if (!masterSet.AddVariant(*varName)) {
+    if (!masterSet.AddVariant(*varName))
+    {
       TF_RUNTIME_ERROR(
         "Unable to create Material variant %s on prim %s. "
         "Aborting master materialVariant creation.",
@@ -323,9 +335,10 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
     {
       UsdEditContext ctxt(masterSet.GetVariantEditContext());
 
-      TF_FOR_ALL(material, materials)
+      TF_FOR_ALL (material, materials)
       {
-        if (!*material) {
+        if (!*material)
+        {
           // Somehow, switching the variant caused this prim
           // to expire.
           TF_RUNTIME_ERROR(
@@ -339,16 +352,20 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
         }
 
         // Here's the heart of the whole thing
-        if (material->GetPath().HasPrefix(masterPrim.GetPath())) {
+        if (material->GetPath().HasPrefix(masterPrim.GetPath()))
+        {
           material->GetVariantSet(UsdShadeTokens->materialVariant).SetVariantSelection(*varName);
         }
-        else {
+        else
+        {
           SdfPath derivedPath = material->GetPrimPath().ReplacePrefix(_GetRootPath(*material),
                                                                       masterPrim.GetPath());
-          if (UsdPrim over = stage->OverridePrim(derivedPath)) {
+          if (UsdPrim over = stage->OverridePrim(derivedPath))
+          {
             over.GetVariantSet(UsdShadeTokens->materialVariant).SetVariantSelection(*varName);
           }
-          else {
+          else
+          {
             TF_RUNTIME_ERROR(
               "Unable to create over for Material prim "
               "%s, so cannot set its materialVariant",
@@ -367,9 +384,11 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
 
 static UsdShadeMaterial _GetMaterialAtPath(const UsdPrim &prim, const SdfPath &path)
 {
-  if (prim && !path.IsEmpty()) {
+  if (prim && !path.IsEmpty())
+  {
     auto material = UsdShadeMaterial(prim.GetStage()->GetPrimAtPath(path));
-    if (material) {
+    if (material)
+    {
       return material;
     }
   }
@@ -386,9 +405,11 @@ SdfPath UsdShadeMaterial::GetBaseMaterialPath() const
   SdfPath parentMaterialPath = FindBaseMaterialPathInPrimIndex(
     GetPrim().GetPrimIndex(), [this](const SdfPath &p) { return bool(_GetMaterialAtPath(GetPrim(), p)); });
 
-  if (parentMaterialPath != SdfPath::EmptyPath()) {
+  if (parentMaterialPath != SdfPath::EmptyPath())
+  {
     UsdPrim p = GetPrim().GetStage()->GetPrimAtPath(parentMaterialPath);
-    if (p.IsInstanceProxy()) {
+    if (p.IsInstanceProxy())
+    {
       // this looks like an instance but it's acting as the prototype path
       // Return the prototype path
       parentMaterialPath = p.GetPrimInPrototype().GetPath();
@@ -401,18 +422,22 @@ SdfPath UsdShadeMaterial::GetBaseMaterialPath() const
 SdfPath UsdShadeMaterial::FindBaseMaterialPathInPrimIndex(const PcpPrimIndex &primIndex,
                                                           const PathPredicate &pathIsMaterialPredicate)
 {
-  for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
-    if (PcpIsSpecializeArc(node.GetArcType())) {
+  for (const PcpNodeRef &node : primIndex.GetNodeRange())
+  {
+    if (PcpIsSpecializeArc(node.GetArcType()))
+    {
       // We only consider children of the prim's root node because any
       // specializes arc we care about that is authored inside referenced
       // scene description will "imply" up into the root layer stack.
       // This enables us to trim our search space, potentially
       // significantly.
-      if (node.GetParentNode() != node.GetRootNode()) {
+      if (node.GetParentNode() != node.GetRootNode())
+      {
         continue;
       }
 
-      if (node.GetMapToParent().MapSourceToTarget(SdfPath::AbsoluteRootPath()).IsEmpty()) {
+      if (node.GetMapToParent().MapSourceToTarget(SdfPath::AbsoluteRootPath()).IsEmpty())
+      {
         // Skip this child node because it crosses a reference arc.
         // (Reference mappings never map the absolute root path </>.)
         continue;
@@ -420,7 +445,8 @@ SdfPath UsdShadeMaterial::FindBaseMaterialPathInPrimIndex(const PcpPrimIndex &pr
 
       // stop at the first one that's a material
       const SdfPath &path = node.GetPath();
-      if (pathIsMaterialPredicate(path)) {
+      if (pathIsMaterialPredicate(path))
+      {
         return path;
       }
     }
@@ -431,7 +457,8 @@ SdfPath UsdShadeMaterial::FindBaseMaterialPathInPrimIndex(const PcpPrimIndex &pr
 void UsdShadeMaterial::SetBaseMaterialPath(const SdfPath &baseMaterialPath) const
 {
   UsdSpecializes specializes = GetPrim().GetSpecializes();
-  if (baseMaterialPath.IsEmpty()) {
+  if (baseMaterialPath.IsEmpty())
+  {
     specializes.ClearSpecializes();
     return;
   }
@@ -443,11 +470,13 @@ void UsdShadeMaterial::SetBaseMaterialPath(const SdfPath &baseMaterialPath) cons
 void UsdShadeMaterial::SetBaseMaterial(const UsdShadeMaterial &baseMaterial) const
 {
   UsdPrim basePrim = baseMaterial.GetPrim();
-  if (basePrim.IsValid()) {
+  if (basePrim.IsValid())
+  {
     SdfPath basePath = basePrim.GetPath();
     SetBaseMaterialPath(basePath);
   }
-  else {
+  else
+  {
     SetBaseMaterialPath(SdfPath());
   }
 }
@@ -474,14 +503,17 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
 {
   TRACE_FUNCTION();
   bool universalRenderContextComputed = false;
-  for (TfToken const &renderContext : contextVector) {
+  for (TfToken const &renderContext : contextVector)
+  {
 
     universalRenderContextComputed |= (renderContext == UsdShadeTokens->universalRenderContext);
 
     const TfToken outputName = _GetOutputName(baseName, renderContext);
     UsdShadeOutput output = GetOutput(outputName);
-    if (output) {
-      if (renderContext == UsdShadeTokens->universalRenderContext && !output.GetAttr().IsAuthored()) {
+    if (output)
+    {
+      if (renderContext == UsdShadeTokens->universalRenderContext && !output.GetAttr().IsAuthored())
+      {
         return {};
       }
 
@@ -495,7 +527,8 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
 
       // XXX To remove this limitation we need to change the APIs for the
       //     Compute*Source calls to forward multiple result attributes
-      if (valueAttrs.size() > 1) {
+      if (valueAttrs.size() > 1)
+      {
         TF_WARN(
           "Multiple connected sources for output %s:%s on material"
           " %s. Only the first will be consider as a terminal.",
@@ -506,16 +539,19 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
       // If we didn't find any connected attributes continue checking the
       // renderContexts, then as a fallback we will check the universal
       // context below
-      if (!valueAttrs.empty()) {
+      if (!valueAttrs.empty())
+      {
         return valueAttrs;
       }
     }
   }
 
-  if (!universalRenderContextComputed) {
+  if (!universalRenderContextComputed)
+  {
     const TfToken universalOutputName = _GetOutputName(baseName, UsdShadeTokens->universalRenderContext);
     UsdShadeOutput universalOutput = GetOutput(universalOutputName);
-    if (TF_VERIFY(universalOutput)) {
+    if (TF_VERIFY(universalOutput))
+    {
       return UsdShadeUtils::GetValueProducingAttributes(universalOutput,
                                                         /*shaderOutputsOnly*/ true);
     }
@@ -531,18 +567,22 @@ UsdShadeShader UsdShadeMaterial::_ComputeNamedOutputShader(const TfToken &baseNa
 {
   UsdShadeAttributeVector valueAttrs = _ComputeNamedOutputSources(baseName, contextVector);
 
-  if (valueAttrs.empty()) {
+  if (valueAttrs.empty())
+  {
     return UsdShadeShader();
   }
 
-  if (sourceName || sourceType) {
+  if (sourceName || sourceType)
+  {
     TfToken srcName;
     UsdShadeAttributeType srcType;
     std::tie(srcName, srcType) = UsdShadeUtils::GetBaseNameAndType(valueAttrs[0].GetName());
-    if (sourceName) {
+    if (sourceName)
+    {
       *sourceName = srcName;
     }
-    if (sourceType) {
+    if (sourceType)
+    {
       *sourceType = srcType;
     }
   }
@@ -556,20 +596,24 @@ std::vector<UsdShadeOutput> UsdShadeMaterial::_GetOutputsForTerminalName(const T
 
   UsdShadeOutput universalOutput = GetOutput(
     _GetOutputName(terminalName, UsdShadeTokens->universalRenderContext));
-  if (universalOutput) {
+  if (universalOutput)
+  {
     outputs.push_back(std::move(universalOutput));
   }
 
-  for (const UsdShadeOutput &output : GetOutputs()) {
+  for (const UsdShadeOutput &output : GetOutputs())
+  {
     // For an output to be considered specific to a renderContext, its base
     // name should be of the form "<renderContext>:...", so there must be
     // at least two components to the base name.
     const std::vector<std::string> baseNameComponents = SdfPath::TokenizeIdentifier(output.GetBaseName());
-    if (baseNameComponents.size() < 2u) {
+    if (baseNameComponents.size() < 2u)
+    {
       continue;
     }
 
-    if (baseNameComponents.back() == terminalName) {
+    if (baseNameComponents.back() == terminalName)
+    {
       outputs.push_back(output);
     }
   }
@@ -670,7 +714,8 @@ UsdShadeShader UsdShadeMaterial::ComputeVolumeSource(const TfTokenVector &contex
   return _ComputeNamedOutputShader(UsdShadeTokens->volume, contextVector, sourceName, sourceType);
 }
 
-class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::ConnectableAPIBehavior {
+class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::ConnectableAPIBehavior
+{
   bool CanConnectInputToSource(const UsdShadeInput &input,
                                const UsdAttribute &source,
                                std::string *reason) override

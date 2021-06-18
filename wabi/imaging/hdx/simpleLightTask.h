@@ -52,7 +52,8 @@ using HdxShadowMatrixComputationSharedPtr = std::shared_ptr<class HdxShadowMatri
 
 TF_DECLARE_REF_PTRS(GlfSimpleShadowArray);
 
-class HdxSimpleLightTask : public HdTask {
+class HdxSimpleLightTask : public HdTask
+{
  public:
   HDX_API
   HdxSimpleLightTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -110,7 +111,8 @@ class HdxSimpleLightTask : public HdTask {
   HdxSimpleLightTask &operator=(const HdxSimpleLightTask &) = delete;
 };
 
-struct HdxSimpleLightTaskParams {
+struct HdxSimpleLightTaskParams
+{
   HdxSimpleLightTaskParams()
     : cameraPath(),
       lightIncludePaths(1, SdfPath::AbsoluteRootPath()),
@@ -144,8 +146,14 @@ bool operator==(const HdxSimpleLightTaskParams &lhs, const HdxSimpleLightTaskPar
 HDX_API
 bool operator!=(const HdxSimpleLightTaskParams &lhs, const HdxSimpleLightTaskParams &rhs);
 
-struct HdxShadowParams {
-  HdxShadowParams() : shadowMatrix(), bias(0.0), blur(0.0), resolution(0), enabled(false)
+struct HdxShadowParams
+{
+  HdxShadowParams()
+    : shadowMatrix(),
+      bias(0.0),
+      blur(0.0),
+      resolution(0),
+      enabled(false)
   {}
 
   HdxShadowMatrixComputationSharedPtr shadowMatrix;

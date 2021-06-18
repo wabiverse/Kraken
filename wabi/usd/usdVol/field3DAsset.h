@@ -67,7 +67,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdVolTokens->rightHanded
 /// as the value.
 ///
-class UsdVolField3DAsset : public UsdVolFieldAsset {
+class UsdVolField3DAsset : public UsdVolFieldAsset
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -83,13 +84,15 @@ class UsdVolField3DAsset : public UsdVolFieldAsset {
   /// Equivalent to UsdVolField3DAsset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolField3DAsset(const UsdPrim &prim = UsdPrim()) : UsdVolFieldAsset(prim)
+  explicit UsdVolField3DAsset(const UsdPrim &prim = UsdPrim())
+    : UsdVolFieldAsset(prim)
   {}
 
   /// Construct a UsdVolField3DAsset on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolField3DAsset(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolField3DAsset(const UsdSchemaBase &schemaObj) : UsdVolFieldAsset(schemaObj)
+  explicit UsdVolField3DAsset(const UsdSchemaBase &schemaObj)
+    : UsdVolFieldAsset(schemaObj)
   {}
 
   /// Destructor.

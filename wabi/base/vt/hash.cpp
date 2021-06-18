@@ -31,7 +31,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Vt_HashDetail {
+namespace Vt_HashDetail
+{
 
 void _IssueUnimplementedHashError(std::type_info const &t)
 {

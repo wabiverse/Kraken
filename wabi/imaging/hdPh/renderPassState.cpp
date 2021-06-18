@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (renderPassState));
 
-HdPhRenderPassState::HdPhRenderPassState() : HdPhRenderPassState(std::make_shared<HdPhRenderPassShader>())
+HdPhRenderPassState::HdPhRenderPassState()
+  : HdPhRenderPassState(std::make_shared<HdPhRenderPassShader>())
 {}
 
 HdPhRenderPassState::HdPhRenderPassState(HdPhRenderPassShaderSharedPtr const &renderPassShader)
@@ -79,7 +80,8 @@ bool HdPhRenderPassState::_UseAlphaMask() const
 
 static GfVec4f _ComputeDataWindow(const CameraUtilFraming &framing, const GfVec4f &fallbackViewport)
 {
-  if (framing.IsValid()) {
+  if (framing.IsValid())
+  {
     const GfRect2i &dataWindow = framing.dataWindow;
     return GfVec4f(
       dataWindow.GetMinX(), dataWindow.GetMinY(), dataWindow.GetWidth(), dataWindow.GetHeight());
@@ -100,20 +102,22 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
     resourceRegistry);
 
   VtVec4fArray clipPlanes;
-  TF_FOR_ALL(it, GetClipPlanes())
+  TF_FOR_ALL (it, GetClipPlanes())
   {
     clipPlanes.push_back(GfVec4f(*it));
   }
   GLint glMaxClipPlanes;
   glGetIntegerv(GL_MAX_CLIP_PLANES, &glMaxClipPlanes);
   size_t maxClipPlanes = (size_t)glMaxClipPlanes;
-  if (clipPlanes.size() >= maxClipPlanes) {
+  if (clipPlanes.size() >= maxClipPlanes)
+  {
     clipPlanes.resize(maxClipPlanes);
   }
 
   // allocate bar if not exists
   if (!_renderPassStateBar || (_clipPlanesBufferSize != clipPlanes.size()) ||
-      _alphaThresholdCurrent != _alphaThreshold) {
+      _alphaThresholdCurrent != _alphaThreshold)
+  {
     HdBufferSpecVector bufferSpecs;
 
     // note: InterleavedMemoryManager computes the offsets in the packed
@@ -133,7 +137,8 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
     bufferSpecs.emplace_back(HdShaderTokens->pointSelectedSize, HdTupleType{HdTypeFloat, 1});
     bufferSpecs.emplace_back(HdShaderTokens->lightingBlendAmount, HdTupleType{HdTypeFloat, 1});
 
-    if (_UseAlphaMask()) {
+    if (_UseAlphaMask())
+    {
       bufferSpecs.emplace_back(HdShaderTokens->alphaThreshold, HdTupleType{HdTypeFloat, 1});
     }
     _alphaThresholdCurrent = _alphaThreshold;
@@ -141,7 +146,8 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
     bufferSpecs.emplace_back(HdShaderTokens->tessLevel, HdTupleType{HdTypeFloat, 1});
     bufferSpecs.emplace_back(HdShaderTokens->viewport, HdTupleType{HdTypeFloatVec4, 1});
 
-    if (clipPlanes.size() > 0) {
+    if (clipPlanes.size() > 0)
+    {
       bufferSpecs.emplace_back(HdShaderTokens->clipPlanes, HdTupleType{HdTypeFloatVec4, clipPlanes.size()});
     }
     _clipPlanesBufferSize = clipPlanes.size();
@@ -181,7 +187,8 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
     std::make_shared<HdVtBufferSource>(HdShaderTokens->pointSelectedSize, VtValue(_pointSelectedSize)),
     std::make_shared<HdVtBufferSource>(HdShaderTokens->lightingBlendAmount, VtValue(lightingBlendAmount))};
 
-  if (_UseAlphaMask()) {
+  if (_UseAlphaMask())
+  {
     sources.push_back(
       std::make_shared<HdVtBufferSource>(HdShaderTokens->alphaThreshold, VtValue(_alphaThreshold)));
   }
@@ -190,7 +197,8 @@ void HdPhRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceReg
   sources.push_back(std::make_shared<HdVtBufferSource>(HdShaderTokens->viewport,
                                                        VtValue(_ComputeDataWindow(_framing, _viewport))));
 
-  if (clipPlanes.size() > 0) {
+  if (clipPlanes.size() > 0)
+  {
     sources.push_back(std::make_shared<HdVtBufferSource>(
       HdShaderTokens->clipPlanes, VtValue(clipPlanes), clipPlanes.size()));
   }
@@ -218,10 +226,12 @@ bool HdPhRenderPassState::GetResolveAovMultiSample() const
 
 void HdPhRenderPassState::SetLightingShader(HdPhLightingShaderSharedPtr const &lightingShader)
 {
-  if (lightingShader) {
+  if (lightingShader)
+  {
     _lightingShader = lightingShader;
   }
-  else {
+  else
+  {
     _lightingShader = _fallbackLightingShader;
   }
 }
@@ -232,7 +242,8 @@ void HdPhRenderPassState::SetRenderPassShader(HdPhRenderPassShaderSharedPtr cons
     return;
 
   _renderPassShader = renderPassShader;
-  if (_renderPassStateBar) {
+  if (_renderPassStateBar)
+  {
 
     HdPhBufferArrayRangeSharedPtr _renderPassStateBar_ = std::static_pointer_cast<HdPhBufferArrayRange>(
       _renderPassStateBar);
@@ -260,11 +271,13 @@ HdPhShaderCodeSharedPtrVector HdPhRenderPassState::GetShaders() const
 // including disabling h/w culling altogether.
 // Disabling h/w culling is required to handle instancing wherein
 // instanceScale/instanceTransform can flip the xform handedness.
-namespace {
+namespace
+{
 
 void _SetGLCullState(HdCullStyle cullstyle)
 {
-  switch (cullstyle) {
+  switch (cullstyle)
+  {
     case HdCullStyleFront:
     case HdCullStyleFrontUnlessDoubleSided:
       glEnable(GL_CULL_FACE);
@@ -287,7 +300,8 @@ void _SetGLCullState(HdCullStyle cullstyle)
 void _SetColorMask(int drawBufferIndex, HdRenderPassState::ColorMask const &mask)
 {
   bool colorMask[4] = {true, true, true, true};
-  switch (mask) {
+  switch (mask)
+  {
     case HdPhRenderPassState::ColorMaskNone:
       colorMask[0] = colorMask[1] = colorMask[2] = colorMask[3] = false;
       break;
@@ -297,10 +311,12 @@ void _SetColorMask(int drawBufferIndex, HdRenderPassState::ColorMask const &mask
     default:;  // no-op
   }
 
-  if (drawBufferIndex == -1) {
+  if (drawBufferIndex == -1)
+  {
     glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
   }
-  else {
+  else
+  {
     glColorMaski((uint32_t)drawBufferIndex, colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
   }
 }
@@ -311,7 +327,8 @@ void HdPhRenderPassState::Bind()
 {
   GLF_GROUP_FUNCTION();
 
-  if (!glBlendColor) {
+  if (!glBlendColor)
+  {
     return;
   }
 
@@ -325,35 +342,42 @@ void HdPhRenderPassState::Bind()
   // which states to be altered at the comment in the header file
 
   // Apply polygon offset to whole pass.
-  if (!GetDepthBiasUseDefault()) {
-    if (GetDepthBiasEnabled()) {
+  if (!GetDepthBiasUseDefault())
+  {
+    if (GetDepthBiasEnabled())
+    {
       glEnable(GL_POLYGON_OFFSET_FILL);
       glPolygonOffset(_depthBiasSlopeFactor, _depthBiasConstantFactor);
     }
-    else {
+    else
+    {
       glDisable(GL_POLYGON_OFFSET_FILL);
     }
   }
 
-  if (GetEnableDepthTest()) {
+  if (GetEnableDepthTest())
+  {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(HdPhGLConversions::GetGlDepthFunc(_depthFunc));
     glDepthMask(GetEnableDepthMask());  // depth writes are enabled only
                                         // when the test is enabled.
   }
-  else {
+  else
+  {
     glDisable(GL_DEPTH_TEST);
   }
 
   // Stencil
-  if (GetStencilEnabled()) {
+  if (GetStencilEnabled())
+  {
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(HdPhGLConversions::GetGlStencilFunc(_stencilFunc), _stencilRef, _stencilMask);
     glStencilOp(HdPhGLConversions::GetGlStencilOp(_stencilFailOp),
                 HdPhGLConversions::GetGlStencilOp(_stencilZFailOp),
                 HdPhGLConversions::GetGlStencilOp(_stencilZPassOp));
   }
-  else {
+  else
+  {
     glDisable(GL_STENCIL_TEST);
   }
 
@@ -361,12 +385,14 @@ void HdPhRenderPassState::Bind()
   _SetGLCullState(_cullStyle);
 
   // Line width
-  if (_lineWidth > 0) {
+  if (_lineWidth > 0)
+  {
     glLineWidth(_lineWidth);
   }
 
   // Blending
-  if (_blendEnabled) {
+  if (_blendEnabled)
+  {
     glEnable(GL_BLEND);
     glBlendEquationSeparate(HdPhGLConversions::GetGlBlendOp(_blendColorOp),
                             HdPhGLConversions::GetGlBlendOp(_blendAlphaOp));
@@ -377,39 +403,49 @@ void HdPhRenderPassState::Bind()
     glBlendColor(
       _blendConstantColor[0], _blendConstantColor[1], _blendConstantColor[2], _blendConstantColor[3]);
   }
-  else {
+  else
+  {
     glDisable(GL_BLEND);
   }
 
-  if (_alphaToCoverageEnabled) {
+  if (_alphaToCoverageEnabled)
+  {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     glEnable(GL_SAMPLE_ALPHA_TO_ONE);
   }
-  else {
+  else
+  {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
 
   glEnable(GL_PROGRAM_POINT_SIZE);
   GLint glMaxClipPlanes;
   glGetIntegerv(GL_MAX_CLIP_PLANES, &glMaxClipPlanes);
-  for (size_t i = 0; i < GetClipPlanes().size(); ++i) {
-    if (i >= (size_t)glMaxClipPlanes) {
+  for (size_t i = 0; i < GetClipPlanes().size(); ++i)
+  {
+    if (i >= (size_t)glMaxClipPlanes)
+    {
       break;
     }
     glEnable(GL_CLIP_DISTANCE0 + i);
   }
 
-  if (_colorMaskUseDefault) {
+  if (_colorMaskUseDefault)
+  {
     // Enable color writes for all components for all attachments.
     _SetColorMask(-1, ColorMaskRGBA);
   }
-  else {
-    if (_colorMasks.size() == 1) {
+  else
+  {
+    if (_colorMasks.size() == 1)
+    {
       // Use the same color mask for all attachments.
       _SetColorMask(-1, _colorMasks[0]);
     }
-    else {
-      for (size_t i = 0; i < _colorMasks.size(); i++) {
+    else
+    {
+      for (size_t i = 0; i < _colorMasks.size(); i++)
+      {
         _SetColorMask(i, _colorMasks[i]);
       }
     }
@@ -421,7 +457,8 @@ void HdPhRenderPassState::Unbind()
   GLF_GROUP_FUNCTION();
   // restore back to the GL defaults
 
-  if (!glBlendColor) {
+  if (!glBlendColor)
+  {
     return;
   }
 
@@ -441,7 +478,8 @@ void HdPhRenderPassState::Unbind()
   glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);
   glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-  for (size_t i = 0; i < GetClipPlanes().size(); ++i) {
+  for (size_t i = 0; i < GetClipPlanes().size(); ++i)
+  {
     glDisable(GL_CLIP_DISTANCE0 + i);
   }
 
@@ -454,7 +492,8 @@ void HdPhRenderPassState::SetCameraFramingState(GfMatrix4d const &worldToViewMat
                                                 GfVec4d const &viewport,
                                                 ClipPlanesVector const &clipPlanes)
 {
-  if (_camera) {
+  if (_camera)
+  {
     // If a camera handle was set, reset it.
     _camera = nullptr;
   }
@@ -468,10 +507,12 @@ void HdPhRenderPassState::SetCameraFramingState(GfMatrix4d const &worldToViewMat
 size_t HdPhRenderPassState::GetShaderHash() const
 {
   size_t hash = 0;
-  if (_lightingShader) {
+  if (_lightingShader)
+  {
     boost::hash_combine(hash, _lightingShader->ComputeHash());
   }
-  if (_renderPassShader) {
+  if (_renderPassShader)
+  {
     boost::hash_combine(hash, _renderPassShader->ComputeHash());
   }
   boost::hash_combine(hash, GetClipPlanes().size());
@@ -482,7 +523,8 @@ size_t HdPhRenderPassState::GetShaderHash() const
 static HdRenderBuffer *_GetRenderBuffer(const HdRenderPassAovBinding &aov,
                                         const HdRenderIndex *const renderIndex)
 {
-  if (aov.renderBuffer) {
+  if (aov.renderBuffer)
+  {
     return aov.renderBuffer;
   }
 
@@ -493,34 +535,42 @@ static HdRenderBuffer *_GetRenderBuffer(const HdRenderPassAovBinding &aov,
 // Clear values are always vec4f in HgiGraphicsCmdDesc.
 static GfVec4f _ToVec4f(const VtValue &v)
 {
-  if (v.IsHolding<float>()) {
+  if (v.IsHolding<float>())
+  {
     const float depth = v.UncheckedGet<float>();
     return GfVec4f(depth, 0, 0, 0);
   }
-  if (v.IsHolding<double>()) {
+  if (v.IsHolding<double>())
+  {
     const double val = v.UncheckedGet<double>();
     return GfVec4f(val);
   }
-  if (v.IsHolding<GfVec2f>()) {
+  if (v.IsHolding<GfVec2f>())
+  {
     const GfVec2f val = v.UncheckedGet<GfVec2f>();
     return GfVec4f(val[0], val[1], 0.0, 1.0);
   }
-  if (v.IsHolding<GfVec2d>()) {
+  if (v.IsHolding<GfVec2d>())
+  {
     const GfVec2d val = v.UncheckedGet<GfVec2d>();
     return GfVec4f(val[0], val[1], 0.0, 1.0);
   }
-  if (v.IsHolding<GfVec3f>()) {
+  if (v.IsHolding<GfVec3f>())
+  {
     const GfVec3f val = v.UncheckedGet<GfVec3f>();
     return GfVec4f(val[0], val[1], val[2], 1.0);
   }
-  if (v.IsHolding<GfVec3d>()) {
+  if (v.IsHolding<GfVec3d>())
+  {
     const GfVec3d val = v.UncheckedGet<GfVec3d>();
     return GfVec4f(val[0], val[1], val[2], 1.0);
   }
-  if (v.IsHolding<GfVec4f>()) {
+  if (v.IsHolding<GfVec4f>())
+  {
     return v.UncheckedGet<GfVec4f>();
   }
-  if (v.IsHolding<GfVec4d>()) {
+  if (v.IsHolding<GfVec4d>())
+  {
     return GfVec4f(v.UncheckedGet<GfVec4d>());
   }
 
@@ -543,17 +593,20 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(const HdRenderInde
   // resized at any time, which will destroy and recreate the HgiTextureHandle
   // that backs the render buffer and was attached for graphics encoding.
 
-  for (const HdRenderPassAovBinding &aov : aovBindings) {
+  for (const HdRenderPassAovBinding &aov : aovBindings)
+  {
     HdRenderBuffer *const renderBuffer = _GetRenderBuffer(aov, renderIndex);
 
-    if (!TF_VERIFY(renderBuffer, "Invalid render buffer")) {
+    if (!TF_VERIFY(renderBuffer, "Invalid render buffer"))
+    {
       continue;
     }
 
     const bool multiSampled = useMultiSample && renderBuffer->IsMultiSampled();
     const VtValue rv = renderBuffer->GetResource(multiSampled);
 
-    if (!TF_VERIFY(rv.IsHolding<HgiTextureHandle>(), "Invalid render buffer texture")) {
+    if (!TF_VERIFY(rv.IsHolding<HgiTextureHandle>(), "Invalid render buffer texture"))
+    {
       continue;
     }
 
@@ -562,9 +615,11 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(const HdRenderInde
 
     // Get resolve texture target.
     HgiTextureHandle hgiResolveHandle;
-    if (multiSampled && resolveMultiSample) {
+    if (multiSampled && resolveMultiSample)
+    {
       VtValue resolveRes = renderBuffer->GetResource(/*ms*/ false);
-      if (!TF_VERIFY(resolveRes.IsHolding<HgiTextureHandle>())) {
+      if (!TF_VERIFY(resolveRes.IsHolding<HgiTextureHandle>()))
+      {
         continue;
       }
       hgiResolveHandle = resolveRes.UncheckedGet<HgiTextureHandle>();
@@ -589,7 +644,8 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(const HdRenderInde
     attachmentDesc.storeOp = (multiSampled && resolveMultiSample) ? HgiAttachmentStoreOpDontCare :
                                                                     HgiAttachmentStoreOpStore;
 
-    if (!aov.clearValue.IsEmpty()) {
+    if (!aov.clearValue.IsEmpty())
+    {
       attachmentDesc.clearValue = _ToVec4f(aov.clearValue);
     }
 
@@ -603,18 +659,22 @@ HgiGraphicsCmdsDesc HdPhRenderPassState::MakeGraphicsCmdsDesc(const HdRenderInde
     attachmentDesc.dstAlphaBlendFactor = HgiBlendFactor(_blendAlphaDstFactor);
     attachmentDesc.alphaBlendOp = HgiBlendOp(_blendAlphaOp);
 
-    if (HdAovHasDepthSemantic(aov.aovName)) {
+    if (HdAovHasDepthSemantic(aov.aovName))
+    {
       desc.depthAttachmentDesc = std::move(attachmentDesc);
       desc.depthTexture = hgiTexHandle;
-      if (hgiResolveHandle) {
+      if (hgiResolveHandle)
+      {
         desc.depthResolveTexture = hgiResolveHandle;
       }
     }
     else if (TF_VERIFY(desc.colorAttachmentDescs.size() < maxColorTex,
-                       "Too many aov bindings for color attachments")) {
+                       "Too many aov bindings for color attachments"))
+    {
       desc.colorAttachmentDescs.push_back(std::move(attachmentDesc));
       desc.colorTextures.push_back(hgiTexHandle);
-      if (hgiResolveHandle) {
+      if (hgiResolveHandle)
+      {
         desc.colorResolveTextures.push_back(hgiResolveHandle);
       }
     }

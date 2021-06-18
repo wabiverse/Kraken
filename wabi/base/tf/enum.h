@@ -136,16 +136,20 @@ WABI_NAMESPACE_BEGIN
 /// // Returns 5, sets found to \c true
 /// \endcode
 ///
-class TfEnum : boost::totally_ordered<TfEnum> {
+class TfEnum : boost::totally_ordered<TfEnum>
+{
  public:
   /// Default constructor assigns integer value zero.
-  TfEnum() : _typeInfo(&typeid(int)), _value(0)
+  TfEnum()
+    : _typeInfo(&typeid(int)),
+      _value(0)
   {}
 
   /// Initializes value to enum variable \c value of enum type \c T.
   template<class T>
-  TfEnum(T value, std::enable_if_t<std::is_enum<T>::value> * = 0) : _typeInfo(&typeid(T)),
-                                                                    _value(int(value))
+  TfEnum(T value, std::enable_if_t<std::is_enum<T>::value> * = 0)
+    : _typeInfo(&typeid(T)),
+      _value(int(value))
   {}
 
   /// Initializes value to integral value \p value with enum type \c ti.
@@ -153,7 +157,9 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   /// \warning This is only for use in extreme circumstances; there is no
   /// way for an implementation to guarantee that \p ti is really an enum
   /// type, and/or that \p value is a valid value for that enum type.
-  TfEnum(const std::type_info &ti, int value) : _typeInfo(&ti), _value(value)
+  TfEnum(const std::type_info &ti, int value)
+    : _typeInfo(&ti),
+      _value(value)
   {}
 
   /// True if \c *this and \c t have both the same type and value.
@@ -172,31 +178,36 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   }
 
   /// True if \c *this has been assigned with \c value.
-  template<class T> std::enable_if_t<std::is_enum<T>::value, bool> operator==(T value) const
+  template<class T>
+  std::enable_if_t<std::is_enum<T>::value, bool> operator==(T value) const
   {
     return int(value) == _value && IsA<T>();
   }
 
   /// False if \c *this has been assigned with \c value.
-  template<class T> std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T value) const
+  template<class T>
+  std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T value) const
   {
     return int(value) != _value || !IsA<T>();
   }
 
   /// Compare a literal enum value \a val of enum type \a T with TfEnum \a e.
-  template<class T> friend std::enable_if_t<std::is_enum<T>::value, bool> operator==(T val, TfEnum const &e)
+  template<class T>
+  friend std::enable_if_t<std::is_enum<T>::value, bool> operator==(T val, TfEnum const &e)
   {
     return e.operator==(val);
   }
 
   /// Compare a literal enum value \a val of enum type \a T with TfEnum \a e.
-  template<class T> friend std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T val, TfEnum const &e)
+  template<class T>
+  friend std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T val, TfEnum const &e)
   {
     return !(e == val);
   }
 
   /// True if \c *this has been assigned any enumerated value of type \c T.
-  template<class T> bool IsA() const
+  template<class T>
+  bool IsA() const
   {
     return TfSafeTypeCompare(*_typeInfo, typeid(T));
   }
@@ -231,7 +242,8 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   ///
   /// Note that if \c IsA<T>() succeeds, then \c GetValue<T>() will also
   /// succeed.
-  template<typename T> T GetValue() const
+  template<typename T>
+  T GetValue() const
   {
     if (!IsA<T>())
       _FatalGetValueError(typeid(T));
@@ -297,7 +309,8 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   /// containing "SPRING", "SUMMER", "AUTUMN", and "WINTER".
   ///
   /// If there are no such names registered, an empty vector is returned.
-  template<class T> static std::vector<std::string> GetAllNames()
+  template<class T>
+  static std::vector<std::string> GetAllNames()
   {
     return GetAllNames(typeid(T));
   }
@@ -315,7 +328,8 @@ class TfEnum : boost::totally_ordered<TfEnum> {
   /// If there is no such name registered, this returns -1. Since -1 can
   /// sometimes be a valid value, the \p foundIt flag pointer, if not \c
   /// NULL, is set to \c true if the name was found and \c false otherwise.
-  template<class T> static T GetValueFromName(const std::string &name, bool *foundIt = NULL)
+  template<class T>
+  static T GetValueFromName(const std::string &name, bool *foundIt = NULL)
   {
     TfEnum e = GetValueFromName(typeid(T), name, foundIt);
     return T(e.GetValueAsInt());
@@ -363,7 +377,8 @@ class TfEnum : boost::totally_ordered<TfEnum> {
     _AddName(val, valName, displayName);
   }
 
-  template<typename T> static TfEnum IntegralEnum(T value)
+  template<typename T>
+  static TfEnum IntegralEnum(T value)
   {
     TfEnum e;
     e._typeInfo = &typeid(T);
@@ -373,11 +388,15 @@ class TfEnum : boost::totally_ordered<TfEnum> {
 
  private:
   // Internal constructor for int values.
-  explicit TfEnum(int value) : _typeInfo(&typeid(int)), _value(value)
+  explicit TfEnum(int value)
+    : _typeInfo(&typeid(int)),
+      _value(value)
   {}
 
   // Internal constructor for size_t values.
-  explicit TfEnum(size_t value) : _typeInfo(&typeid(size_t)), _value(static_cast<int>(value))
+  explicit TfEnum(size_t value)
+    : _typeInfo(&typeid(size_t)),
+      _value(static_cast<int>(value))
   {}
 
   TF_API

@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdRenderTokens->adjustApertureHeight);
 /// \endcode
-struct UsdRenderTokensType {
+struct UsdRenderTokensType
+{
   USDRENDER_API UsdRenderTokensType();
   /// \brief "adjustApertureHeight"
   ///

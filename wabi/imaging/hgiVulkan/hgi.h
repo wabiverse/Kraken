@@ -58,7 +58,8 @@ bool HgiVulkanIsMaxFPSEnabled();
  * @class HgiVulkan
  *
  * Vulkan implementation of the Hydra Graphics Interface. */
-class HgiVulkan final : public Hgi {
+class HgiVulkan final : public Hgi
+{
  public:
   HGIVULKAN_API
   HgiVulkan();
@@ -169,7 +170,8 @@ class HgiVulkan final : public Hgi {
   /// Invalidates the resource handle and places the object in the garbage
   /// collector vector for future destruction.
   /// This is helpful to avoid destroying GPU resources still in-flight.
-  template<class T, class H> void TrashObject(H *handle, std::vector<T *> *collector)
+  template<class T, class H>
+  void TrashObject(H *handle, std::vector<T *> *collector)
   {
     T *object = static_cast<T *>(handle->Get());
     HgiVulkanDevice *device = object->GetDevice();

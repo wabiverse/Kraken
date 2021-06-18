@@ -62,7 +62,8 @@ class SdfAssetPath;
 /// Light emitted from a distant source along the -Z axis.
 /// Also known as a directional light.
 ///
-class UsdLuxDistantLight : public UsdLuxLight {
+class UsdLuxDistantLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -78,13 +79,15 @@ class UsdLuxDistantLight : public UsdLuxLight {
   /// Equivalent to UsdLuxDistantLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxDistantLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxDistantLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxDistantLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxDistantLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxDistantLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxDistantLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

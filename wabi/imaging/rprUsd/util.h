@@ -32,7 +32,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class RPRUSD_API RprUsdTextureData {
+class RPRUSD_API RprUsdTextureData
+{
  public:
   static std::shared_ptr<RprUsdTextureData> New(std::string const &filepath);
 
@@ -40,7 +41,8 @@ class RPRUSD_API RprUsdTextureData {
   int GetWidth() const;
   int GetHeight() const;
 
-  struct GLMetadata {
+  struct GLMetadata
+  {
     GLenum glFormat;
     GLenum glType;
     GLenum internalFormat;

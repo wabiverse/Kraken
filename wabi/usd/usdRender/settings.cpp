@@ -57,7 +57,8 @@ UsdRenderSettings::~UsdRenderSettings()
 /* static */
 UsdRenderSettings UsdRenderSettings::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettings();
   }
@@ -68,7 +69,8 @@ UsdRenderSettings UsdRenderSettings::Get(const UsdStagePtr &stage, const SdfPath
 UsdRenderSettings UsdRenderSettings::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RenderSettings");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettings();
   }
@@ -150,7 +152,8 @@ UsdRelationship UsdRenderSettings::CreateProductsRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -198,14 +201,17 @@ WABI_NAMESPACE_BEGIN
 
 UsdRenderSettings UsdRenderSettings::GetStageRenderSettings(const UsdStageWeakPtr &stage)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid UsdStage");
     return UsdRenderSettings();
   }
-  if (stage->HasAuthoredMetadata(UsdRenderTokens->renderSettingsPrimPath)) {
+  if (stage->HasAuthoredMetadata(UsdRenderTokens->renderSettingsPrimPath))
+  {
     std::string pathStr;
     stage->GetMetadata(UsdRenderTokens->renderSettingsPrimPath, &pathStr);
-    if (!pathStr.empty()) {
+    if (!pathStr.empty())
+    {
       SdfPath path(pathStr);
       return UsdRenderSettings(stage->GetPrimAtPath(path));
     }

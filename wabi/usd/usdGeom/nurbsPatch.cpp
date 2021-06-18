@@ -50,7 +50,8 @@ UsdGeomNurbsPatch::~UsdGeomNurbsPatch()
 /* static */
 UsdGeomNurbsPatch UsdGeomNurbsPatch::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsPatch();
   }
@@ -61,7 +62,8 @@ UsdGeomNurbsPatch UsdGeomNurbsPatch::Get(const UsdStagePtr &stage, const SdfPath
 UsdGeomNurbsPatch UsdGeomNurbsPatch::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("NurbsPatch");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsPatch();
   }
@@ -361,7 +363,8 @@ UsdAttribute UsdGeomNurbsPatch::CreateTrimCurvePointsAttr(VtValue const &default
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

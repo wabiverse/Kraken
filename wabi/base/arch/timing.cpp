@@ -72,12 +72,15 @@ void Arch_InitTickTimer()
 
   in = fopen("/proc/cpuinfo", "r");
 
-  if (in) {
+  if (in)
+  {
 
-    while (fgets(linebuffer, sizeof(linebuffer), in)) {
+    while (fgets(linebuffer, sizeof(linebuffer), in))
+    {
       char *colon;
 
-      if (strncmp(linebuffer, "bogomips", 8) == 0 && (colon = strchr(linebuffer, ':'))) {
+      if (strncmp(linebuffer, "bogomips", 8) == 0 && (colon = strchr(linebuffer, ':')))
+      {
 
         colon++;
 
@@ -93,10 +96,13 @@ void Arch_InitTickTimer()
     fclose(in);
   }
 
-  if (cpuHz == 0.0) {
+  if (cpuHz == 0.0)
+  {
     in = fopen("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
-    if (in) {
-      if (fgets(linebuffer, sizeof(linebuffer), in)) {
+    if (in)
+    {
+      if (fgets(linebuffer, sizeof(linebuffer), in))
+      {
         // We just read the cpuspeed in kHz.  Convert.
         //
         cpuHz = 1000 * atof(linebuffer);
@@ -108,18 +114,22 @@ void Arch_InitTickTimer()
   // If we could not find that file (the cpufreq driver is unavailable
   // for some reason, fall back to /proc/cpuinfo.
   //
-  if (cpuHz == 0.0) {
+  if (cpuHz == 0.0)
+  {
     in = fopen("/proc/cpuinfo", "r");
 
-    if (!in) {
+    if (!in)
+    {
       // Note: ARCH_ERROR will abort the program
       //
       ARCH_ERROR("Cannot open /proc/cpuinfo");
     }
 
-    while (fgets(linebuffer, sizeof(linebuffer), in)) {
+    while (fgets(linebuffer, sizeof(linebuffer), in))
+    {
       char *colon;
-      if (strncmp(linebuffer, "cpu MHz", 7) == 0 && (colon = strchr(linebuffer, ':'))) {
+      if (strncmp(linebuffer, "cpu MHz", 7) == 0 && (colon = strchr(linebuffer, ':')))
+      {
         colon++;
 
         // colon is pointing to a cpu speed in MHz.  Convert.
@@ -131,7 +141,8 @@ void Arch_InitTickTimer()
 
     fclose(in);
 
-    if (cpuHz == 0.0) {
+    if (cpuHz == 0.0)
+    {
       ARCH_ERROR("Could not find 'cpu MHz' in /proc/cpuinfo");
     }
   }
@@ -154,7 +165,8 @@ void Arch_InitTickTimer()
   const auto delay = (qpcFreq.QuadPart >> 4);  // 1/16th of a second.
   QueryPerformanceCounter(&qpcStart);
   const auto t1 = ArchGetTickTime();
-  do {
+  do
+  {
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     QueryPerformanceCounter(&qpcEnd);
   } while (qpcEnd.QuadPart - qpcStart.QuadPart < delay);

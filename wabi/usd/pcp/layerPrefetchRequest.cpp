@@ -33,9 +33,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-struct _Opener {
+struct _Opener
+{
   explicit _Opener(const Pcp_MutedLayers &mutedLayers, std::set<SdfLayerRefPtr> *retainedLayers)
     : _mutedLayers(mutedLayers),
       _retainedLayers(retainedLayers)
@@ -48,7 +50,7 @@ struct _Opener {
 
   void OpenSublayers(const SdfLayerRefPtr &layer, const SdfLayer::FileFormatArguments &layerArgs)
   {
-    TF_FOR_ALL(path, layer->GetSubLayerPaths())
+    TF_FOR_ALL (path, layer->GetSubLayerPaths())
     {
       _dispatcher.Run(&_Opener::_OpenSublayer, this, *path, layer, layerArgs);
     }
@@ -59,14 +61,16 @@ struct _Opener {
                      const SdfLayerRefPtr &anchorLayer,
                      const SdfLayer::FileFormatArguments &layerArgs)
   {
-    if (_mutedLayers.IsLayerMuted(anchorLayer, path)) {
+    if (_mutedLayers.IsLayerMuted(anchorLayer, path))
+    {
       return;
     }
 
     // Open this specific sublayer path.
     // The call to SdfLayer::FindOrOpenRelativeToLayer() may take some
     // time, potentially multiple seconds.
-    if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(anchorLayer, path, layerArgs)) {
+    if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(anchorLayer, path, layerArgs))
+    {
       // Retain this sublayer.
       bool didInsert;
       {
@@ -96,7 +100,8 @@ void PcpLayerPrefetchRequest::RequestSublayerStack(const SdfLayerRefPtr &layer,
 
 void PcpLayerPrefetchRequest::Run(const Pcp_MutedLayers &mutedLayers)
 {
-  if (!WorkHasConcurrency()) {
+  if (!WorkHasConcurrency())
+  {
     // Do not bother pre-fetching if we do not have extra threads
     // available.
     return;
@@ -113,8 +118,8 @@ void PcpLayerPrefetchRequest::Run(const Pcp_MutedLayers &mutedLayers)
   // Open all the sublayers in the request.
   WorkWithScopedParallelism([&]() {
     _Opener opener(mutedLayers, &_retainedLayers);
-    TF_FOR_ALL(req, requests)
-    opener.OpenSublayers(req->first, req->second);
+    TF_FOR_ALL (req, requests)
+      opener.OpenSublayers(req->first, req->second);
   });
 }
 

@@ -32,7 +32,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfPrimSpecHandleVector _GetPrimStack(const PcpPrimIndex &self)
 {
@@ -40,7 +41,7 @@ static SdfPrimSpecHandleVector _GetPrimStack(const PcpPrimIndex &self)
 
   SdfPrimSpecHandleVector primStack;
   primStack.reserve(std::distance(primRange.first, primRange.second));
-  TF_FOR_ALL(it, primRange)
+  TF_FOR_ALL (it, primRange)
   {
     primStack.push_back(SdfGetPrimAtPath(*it));
   }

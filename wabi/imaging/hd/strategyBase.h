@@ -44,7 +44,8 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 ///
 /// Aggregation strategy base class.
 ///
-class HdAggregationStrategy {
+class HdAggregationStrategy
+{
  public:
   /// Aggregation ID
   typedef size_t AggregationId;

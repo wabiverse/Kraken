@@ -57,7 +57,8 @@ UsdRiPxrEnvDayLight::~UsdRiPxrEnvDayLight()
 /* static */
 UsdRiPxrEnvDayLight UsdRiPxrEnvDayLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrEnvDayLight();
   }
@@ -68,7 +69,8 @@ UsdRiPxrEnvDayLight UsdRiPxrEnvDayLight::Get(const UsdStagePtr &stage, const Sdf
 UsdRiPxrEnvDayLight UsdRiPxrEnvDayLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiEnvDayLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrEnvDayLight();
   }
@@ -288,7 +290,8 @@ UsdAttribute UsdRiPxrEnvDayLight::CreateZoneAttr(VtValue const &defaultValue, bo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

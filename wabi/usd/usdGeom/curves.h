@@ -72,7 +72,8 @@ class SdfAssetPath;
 /// abstract type.
 ///
 ///
-class UsdGeomCurves : public UsdGeomPointBased {
+class UsdGeomCurves : public UsdGeomPointBased
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -88,13 +89,15 @@ class UsdGeomCurves : public UsdGeomPointBased {
   /// Equivalent to UsdGeomCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim)
+  explicit UsdGeomCurves(const UsdPrim &prim = UsdPrim())
+    : UsdGeomPointBased(prim)
   {}
 
   /// Construct a UsdGeomCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomCurves(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj)
+  explicit UsdGeomCurves(const UsdSchemaBase &schemaObj)
+    : UsdGeomPointBased(schemaObj)
   {}
 
   /// Destructor.

@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 /// As an optimization, the query that includes everything is
 /// treated as a special case and given the empty id, TfToken().
 ///
-class UsdImaging_CollectionCache : boost::noncopyable {
+class UsdImaging_CollectionCache : boost::noncopyable
+{
  public:
   /// Query is the MembershipQuery computed from a collection's state.
   typedef UsdCollectionAPI::MembershipQuery Query;

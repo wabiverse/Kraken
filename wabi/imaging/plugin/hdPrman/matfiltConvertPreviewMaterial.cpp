@@ -101,12 +101,15 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
 
   SdfPath pxrSurfacePath;
 
-  for (auto &nodeEntry : network.nodes) {
+  for (auto &nodeEntry : network.nodes)
+  {
     SdfPath const &nodePath = nodeEntry.first;
     HdMaterialNode2 &node = nodeEntry.second;
 
-    if (node.nodeTypeId == _tokens->UsdPreviewSurface) {
-      if (!pxrSurfacePath.IsEmpty()) {
+    if (node.nodeTypeId == _tokens->UsdPreviewSurface)
+    {
+      if (!pxrSurfacePath.IsEmpty())
+      {
         outputErrorMessages->push_back(
           TfStringPrintf("Found multiple UsdPreviewSurface "
                          "nodes in <%s>",
@@ -146,14 +149,18 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
         },
       };
     }
-    else if (node.nodeTypeId == _tokens->UsdUVTexture) {
+    else if (node.nodeTypeId == _tokens->UsdUVTexture)
+    {
       // Update texture nodes that use non-native texture formats
       // to read them via a Renderman texture plugin.
-      for (auto &param : node.parameters) {
-        if (param.first == _tokens->file && param.second.IsHolding<SdfAssetPath>()) {
+      for (auto &param : node.parameters)
+      {
+        if (param.first == _tokens->file && param.second.IsHolding<SdfAssetPath>())
+        {
           std::string path = param.second.Get<SdfAssetPath>().GetResolvedPath();
           std::string ext = ArGetResolver().GetExtension(path);
-          if (!ext.empty() && ext != "tex") {
+          if (!ext.empty() && ext != "tex")
+          {
             std::string pluginName = std::string("RtxHioImage") + ARCH_LIBRARY_SUFFIX;
             // Check for wrap mode. In Renderman, the
             // texture asset specifies its wrap mode, so we
@@ -178,7 +185,8 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
   }
 
   network.nodes.insert(nodesToAdd.begin(), nodesToAdd.end());
-  if (!pxrSurfacePath.IsEmpty()) {
+  if (!pxrSurfacePath.IsEmpty())
+  {
     // Use PxrSurface as sole terminal.  Displacement is not supported.
     network.terminals = {{HdMaterialTerminalTokens->surface, {pxrSurfacePath, TfToken()}}};
   }

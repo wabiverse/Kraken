@@ -35,7 +35,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // The python wrapping of ComputeInWorldSpace does not take an xform cache.
 static GfMatrix4d _ComputeInWorldSpace(const UsdGeomConstraintTarget &self,

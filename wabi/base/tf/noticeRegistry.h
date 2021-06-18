@@ -68,7 +68,8 @@ WABI_NAMESPACE_BEGIN
 /// registry, since multiple active traversals (either by different threads,
 /// or because of reentrancy) should be rare.
 ///
-class Tf_NoticeRegistry : boost::noncopyable {
+class Tf_NoticeRegistry : boost::noncopyable
+{
  public:
   TF_API
   void _BeginDelivery(const TfNotice &notice,
@@ -148,7 +149,8 @@ class Tf_NoticeRegistry : boost::noncopyable {
   // if nobody but us is traversing the registry).  Otherwise, we just mark
   // the item on the list as inactive.
 
-  class _DelivererContainer {
+  class _DelivererContainer
+  {
    public:
     typedef TfHashMap<const TfWeakBase *, _DelivererList, TfHash> _PerSenderTable;
 
@@ -157,7 +159,8 @@ class Tf_NoticeRegistry : boost::noncopyable {
     _PerSenderTable _perSenderTable;
 
     // Initialize _perSenderTable with zero buckets
-    _DelivererContainer() : _perSenderTable(0)
+    _DelivererContainer()
+      : _perSenderTable(0)
     {}
   };
 
@@ -192,10 +195,12 @@ class Tf_NoticeRegistry : boost::noncopyable {
   {
     _Lock lock(c->_mutex);
     _DelivererContainer::_PerSenderTable::iterator i = c->_perSenderTable.find(s);
-    if (i != c->_perSenderTable.end()) {
+    if (i != c->_perSenderTable.end())
+    {
       return _DelivererListEntry(&(i->second), i->second.begin());
     }
-    else {
+    else
+    {
       return _DelivererListEntry((_DelivererList *)0, _DelivererList::iterator());
     }
   }

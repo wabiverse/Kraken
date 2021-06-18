@@ -43,7 +43,8 @@ static void _GlTextureStorageND(const HgiTextureType textureType,
                                 const GfVec3i &dimensions,
                                 const GLsizei layerCount)
 {
-  switch (textureType) {
+  switch (textureType)
+  {
     case HgiTextureType1D:
       glTextureStorage1D(texture, levels, internalformat, dimensions[0]);
       break;
@@ -75,7 +76,8 @@ static void _GlTextureSubImageND(const HgiTextureType textureType,
                                  const GLenum type,
                                  const void *pixels)
 {
-  switch (textureType) {
+  switch (textureType)
+  {
     case HgiTextureType1D:
       glTextureSubImage1D(texture, level, offsets[0], dimensions[0], format, type, pixels);
       break;
@@ -128,7 +130,8 @@ static void _GlCompressedTextureSubImageND(const HgiTextureType textureType,
                                            const GLsizei imageSize,
                                            const void *pixels)
 {
-  switch (textureType) {
+  switch (textureType)
+  {
     case HgiTextureType2D:
       glCompressedTextureSubImage2D(
         texture, level, offsets[0], offsets[1], dimensions[0], dimensions[1], format, imageSize, pixels);
@@ -154,9 +157,11 @@ static void _GlCompressedTextureSubImageND(const HgiTextureType textureType,
 
 static bool _IsValidCompression(HgiTextureDesc const &desc)
 {
-  switch (desc.type) {
+  switch (desc.type)
+  {
     case HgiTextureType2D:
-      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0) {
+      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0)
+      {
         TF_CODING_ERROR(
           "Compressed texture with width or height "
           "not a multiple of 4");
@@ -164,7 +169,8 @@ static bool _IsValidCompression(HgiTextureDesc const &desc)
       }
       return true;
     case HgiTextureType3D:
-      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0 || desc.dimensions[2] % 4 != 0) {
+      if (desc.dimensions[0] % 4 != 0 || desc.dimensions[1] % 4 != 0 || desc.dimensions[2] % 4 != 0)
+      {
         TF_CODING_ERROR(
           "Compressed texture with width, height or depth"
           "not a multiple of 4");
@@ -179,49 +185,61 @@ static bool _IsValidCompression(HgiTextureDesc const &desc)
   }
 }
 
-HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _textureId(0)
+HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
+  : HgiTexture(desc),
+    _textureId(0)
 {
   GLenum glInternalFormat = 0;
   GLenum glFormat = 0;
   GLenum glPixelType = 0;
   const bool isCompressed = HgiIsCompressed(desc.format);
 
-  if (desc.usage & HgiTextureUsageBitsDepthTarget) {
+  if (desc.usage & HgiTextureUsageBitsDepthTarget)
+  {
     TF_VERIFY(desc.format == HgiFormatFloat32 || desc.format == HgiFormatFloat32UInt8);
 
-    if (desc.format == HgiFormatFloat32UInt8) {
+    if (desc.format == HgiFormatFloat32UInt8)
+    {
       glFormat = GL_DEPTH_STENCIL;
       glInternalFormat = GL_DEPTH32F_STENCIL8;
     }
-    else {
+    else
+    {
       glFormat = GL_DEPTH_COMPONENT;
       glInternalFormat = GL_DEPTH_COMPONENT32F;
     }
     glPixelType = GL_FLOAT;
   }
-  else {
+  else
+  {
     HgiGLConversions::GetFormat(desc.format, &glFormat, &glPixelType, &glInternalFormat);
   }
 
-  if (isCompressed && !_IsValidCompression(desc)) {
+  if (isCompressed && !_IsValidCompression(desc))
+  {
     return;
   }
 
-  if (desc.sampleCount == HgiSampleCount1) {
+  if (desc.sampleCount == HgiSampleCount1)
+  {
     glCreateTextures(HgiGLConversions::GetTextureType(desc.type), 1, &_textureId);
   }
-  else {
-    if (desc.type != HgiTextureType2D) {
+  else
+  {
+    if (desc.type != HgiTextureType2D)
+    {
       TF_CODING_ERROR("Only 2d multisample textures are supported");
     }
     glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &_textureId);
   }
 
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     HgiGLObjectLabel(GL_TEXTURE, _textureId, _descriptor.debugName);
   }
 
-  if (desc.sampleCount == HgiSampleCount1) {
+  if (desc.sampleCount == HgiSampleCount1)
+  {
     glTextureParameteri(_textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTextureParameteri(_textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTextureParameteri(_textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -240,17 +258,20 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
     _GlTextureStorageND(desc.type, _textureId, mips, glInternalFormat, desc.dimensions, desc.layerCount);
 
     // Upload texel data
-    if (desc.initialData && desc.pixelsByteSize > 0) {
+    if (desc.initialData && desc.pixelsByteSize > 0)
+    {
       // Upload each (available) mip
       const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
         desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
       const size_t mipLevels = std::min(mipInfos.size(), size_t(desc.mipLevels));
       const char *const initialData = reinterpret_cast<const char *>(desc.initialData);
 
-      for (size_t mip = 0; mip < mipLevels; mip++) {
+      for (size_t mip = 0; mip < mipLevels; mip++)
+      {
         const HgiMipInfo &mipInfo = mipInfos[mip];
 
-        if (isCompressed) {
+        if (isCompressed)
+        {
           _GlCompressedTextureSubImageND(desc.type,
                                          _textureId,
                                          mip,
@@ -260,7 +281,8 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
                                          mipInfo.byteSizePerLayer * desc.layerCount,
                                          initialData + mipInfo.byteOffset);
         }
-        else {
+        else
+        {
           _GlTextureSubImageND(desc.type,
                                _textureId,
                                mip,
@@ -274,7 +296,8 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc) : HgiTexture(desc), _text
       }
     }
   }
-  else {
+  else
+  {
     // Note: Setting sampler state values on multi-sample texture is invalid
     glTextureStorage2DMultisample(
       _textureId, desc.sampleCount, glInternalFormat, desc.dimensions[0], desc.dimensions[1], GL_TRUE);
@@ -303,17 +326,21 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
   HgiGLTexture *srcTexture = static_cast<HgiGLTexture *>(desc.sourceTexture.Get());
   GLenum glInternalFormat = 0;
 
-  if (srcTexture->GetDescriptor().usage & HgiTextureUsageBitsDepthTarget) {
+  if (srcTexture->GetDescriptor().usage & HgiTextureUsageBitsDepthTarget)
+  {
     TF_VERIFY(desc.format == HgiFormatFloat32 || desc.format == HgiFormatFloat32UInt8);
 
-    if (desc.format == HgiFormatFloat32UInt8) {
+    if (desc.format == HgiFormatFloat32UInt8)
+    {
       glInternalFormat = GL_DEPTH32F_STENCIL8;
     }
-    else {
+    else
+    {
       glInternalFormat = GL_DEPTH_COMPONENT32F;
     }
   }
-  else {
+  else
+  {
     GLenum glFormat = 0;
     GLenum glPixelType = 0;
     HgiGLConversions::GetFormat(desc.format, &glFormat, &glPixelType, &glInternalFormat);
@@ -334,7 +361,8 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
                 desc.sourceFirstLayer,
                 desc.layerCount);
 
-  if (!desc.debugName.empty()) {
+  if (!desc.debugName.empty())
+  {
     HgiGLObjectLabel(GL_TEXTURE, _textureId, desc.debugName);
   }
 
@@ -358,7 +386,8 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
 
 HgiGLTexture::~HgiGLTexture()
 {
-  if (_textureId > 0) {
+  if (_textureId > 0)
+  {
     glDeleteTextures(1, &_textureId);
     _textureId = 0;
   }

@@ -38,10 +38,15 @@ RAPIDJSON_NAMESPACE_BEGIN
     3. MemoryStream supports Peek4() for encoding detection. StringStream is specified with an
    encoding so it should not have Peek4(). \note implements Stream concept
 */
-struct MemoryStream {
+struct MemoryStream
+{
   typedef char Ch;  // byte
 
-  MemoryStream(const Ch *src, size_t size) : src_(src), begin_(src), end_(src + size), size_(size)
+  MemoryStream(const Ch *src, size_t size)
+    : src_(src),
+      begin_(src),
+      end_(src + size),
+      size_(size)
   {}
 
   Ch Peek() const

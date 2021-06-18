@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiCmds::HgiCmds() : _submitted(false)
+HgiCmds::HgiCmds()
+  : _submitted(false)
 {}
 
 HgiCmds::~HgiCmds() = default;

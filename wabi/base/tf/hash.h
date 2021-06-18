@@ -48,17 +48,26 @@ std::enable_if_t<std::is_integral<T>::value> TfHashAppend(HashState &h, T integr
 
 // Simple metafunction that returns an unsigned integral type given a size in
 // bytes.
-template<size_t Size> struct Tf_SizedUnsignedInt;
-template<> struct Tf_SizedUnsignedInt<1> {
+template<size_t Size>
+struct Tf_SizedUnsignedInt;
+template<>
+struct Tf_SizedUnsignedInt<1>
+{
   using type = uint8_t;
 };
-template<> struct Tf_SizedUnsignedInt<2> {
+template<>
+struct Tf_SizedUnsignedInt<2>
+{
   using type = uint16_t;
 };
-template<> struct Tf_SizedUnsignedInt<4> {
+template<>
+struct Tf_SizedUnsignedInt<4>
+{
   using type = uint32_t;
 };
-template<> struct Tf_SizedUnsignedInt<8> {
+template<>
+struct Tf_SizedUnsignedInt<8>
+{
   using type = uint64_t;
 };
 
@@ -76,34 +85,39 @@ std::enable_if_t<std::is_floating_point<T>::value> TfHashAppend(HashState &h, T 
   // We want both positive and negative zero to hash the same, so we have to
   // check against zero here.
   typename Tf_SizedUnsignedInt<sizeof(T)>::type intbuf = 0;
-  if (fp != static_cast<T>(0)) {
+  if (fp != static_cast<T>(0))
+  {
     memcpy(&intbuf, &fp, sizeof(T));
   }
   h.Append(intbuf);
 }
 
 // Support std::pair.
-template<class HashState, class T, class U> inline void TfHashAppend(HashState &h, std::pair<T, U> const &p)
+template<class HashState, class T, class U>
+inline void TfHashAppend(HashState &h, std::pair<T, U> const &p)
 {
   h.Append(p.first);
   h.Append(p.second);
 }
 
 // Support std::vector.
-template<class HashState, class T> inline void TfHashAppend(HashState &h, std::vector<T> const &vec)
+template<class HashState, class T>
+inline void TfHashAppend(HashState &h, std::vector<T> const &vec)
 {
   h.AppendContiguous(vec.data(), vec.size());
 }
 
 // Support for hashing std::string.
-template<class HashState> inline void TfHashAppend(HashState &h, const std::string &s)
+template<class HashState>
+inline void TfHashAppend(HashState &h, const std::string &s)
 {
   return h.AppendContiguous(s.c_str(), s.length());
 }
 
 // Support for hashing pointers, but we explicitly delete the version for
 // [const] char pointers.  See more below.
-template<class HashState, class T> inline void TfHashAppend(HashState &h, const T *ptr)
+template<class HashState, class T>
+inline void TfHashAppend(HashState &h, const T *ptr)
 {
   return h.Append(reinterpret_cast<uintptr_t>(ptr));
 }
@@ -114,13 +128,17 @@ template<class HashState, class T> inline void TfHashAppend(HashState &h, const 
 // TfHashAsCStr() to indicate the intent, or use TfHashCString.  If you
 // really want to hash the pointer then use static_cast<const void*>(ptr) or
 // TfHashCharPtr.
-template<class HashState> inline void TfHashAppend(HashState &h, char const *ptr) = delete;
-template<class HashState> inline void TfHashAppend(HashState &h, char *ptr) = delete;
+template<class HashState>
+inline void TfHashAppend(HashState &h, char const *ptr) = delete;
+template<class HashState>
+inline void TfHashAppend(HashState &h, char *ptr) = delete;
 
 /// A structure that wraps a char pointer, indicating intent that it should be
 /// hashed as a c-style null terminated string.  See TfhashAsCStr().
-struct TfCStrHashWrapper {
-  explicit TfCStrHashWrapper(char const *cstr) : cstr(cstr)
+struct TfCStrHashWrapper
+{
+  explicit TfCStrHashWrapper(char const *cstr)
+    : cstr(cstr)
   {}
   char const *cstr;
 };
@@ -137,7 +155,8 @@ inline TfCStrHashWrapper TfHashAsCStr(char const *cstr)
   return TfCStrHashWrapper(cstr);
 }
 
-template<class HashState> inline void TfHashAppend(HashState &h, TfCStrHashWrapper hcstr)
+template<class HashState>
+inline void TfHashAppend(HashState &h, TfCStrHashWrapper hcstr)
 {
   return h.AppendContiguous(hcstr.cstr, std::strlen(hcstr.cstr));
 }
@@ -180,22 +199,27 @@ inline auto Tf_HashImpl(HashState &h, T &&obj, int)
 
 // Implementation detail, CRTP base that provides the public interface for hash
 // state implementations.
-template<class Derived> class Tf_HashStateAPI {
+template<class Derived>
+class Tf_HashStateAPI
+{
  public:
   // Append several objects to the hash state.
-  template<class... Args> void Append(Args &&...args)
+  template<class... Args>
+  void Append(Args &&...args)
   {
     _AppendImpl(args...);
   }
 
   // Append contiguous objects to the hash state.
-  template<class T> void AppendContiguous(T const *elems, size_t numElems)
+  template<class T>
+  void AppendContiguous(T const *elems, size_t numElems)
   {
     this->_AsDerived()._AppendContiguous(elems, numElems);
   }
 
   // Append a range of objects to the hash state.
-  template<class Iter> void AppendRange(Iter f, Iter l)
+  template<class Iter>
+  void AppendRange(Iter f, Iter l)
   {
     this->_AsDerived()._AppendRange(f, l);
   }
@@ -207,7 +231,8 @@ template<class Derived> class Tf_HashStateAPI {
   }
 
  private:
-  template<class T, class... Args> void _AppendImpl(T &&obj, Args &&...rest)
+  template<class T, class... Args>
+  void _AppendImpl(T &&obj, Args &&...rest)
   {
     this->_AsDerived()._Append(std::forward<T>(obj));
     _AppendImpl(rest...);
@@ -229,24 +254,29 @@ template<class Derived> class Tf_HashStateAPI {
 };
 
 // Implementation detail, accumulates hashes.
-class Tf_HashState : public Tf_HashStateAPI<Tf_HashState> {
+class Tf_HashState : public Tf_HashStateAPI<Tf_HashState>
+{
  private:
   friend class Tf_HashStateAPI<Tf_HashState>;
 
   // Go thru Tf_HashImpl for non-integers.
-  template<class T> std::enable_if_t<!std::is_integral<std::decay_t<T>>::value> _Append(T &&obj)
+  template<class T>
+  std::enable_if_t<!std::is_integral<std::decay_t<T>>::value> _Append(T &&obj)
   {
     Tf_HashImpl(*this, std::forward<T>(obj), 0);
   }
 
   // Integers bottom out here.
-  template<class T> std::enable_if_t<std::is_integral<T>::value> _Append(T i)
+  template<class T>
+  std::enable_if_t<std::is_integral<T>::value> _Append(T i)
   {
-    if (!_didOne) {
+    if (!_didOne)
+    {
       _state = i;
       _didOne = true;
     }
-    else {
+    else
+    {
       _state = _Combine(_state, i);
     }
   }
@@ -262,15 +292,18 @@ class Tf_HashState : public Tf_HashStateAPI<Tf_HashState> {
   template<class T>
   std::enable_if_t<!std::is_integral<T>::value> _AppendContiguous(T const *elems, size_t numElems)
   {
-    while (numElems--) {
+    while (numElems--)
+    {
       Append(*elems++);
     }
   }
 
   // Append a range.
-  template<class Iter> void _AppendRange(Iter f, Iter l)
+  template<class Iter>
+  void _AppendRange(Iter f, Iter l)
   {
-    while (f != l) {
+    while (f != l)
+    {
       _Append(*f++);
     }
   }
@@ -432,7 +465,8 @@ class Tf_HashState : public Tf_HashStateAPI<Tf_HashState> {
 /// C-string use \c TfHashCString and if you want to hash a \c char* use
 /// \c TfHashCharPtr.
 ///
-class TfHash {
+class TfHash
+{
  public:
   /// Produce a hash code for \p obj.  See the class documentation for
   /// details.
@@ -446,7 +480,8 @@ class TfHash {
   }
 
   /// Produce a hash code by combining the hash codes of several objects.
-  template<class... Args> static size_t Combine(Args &&...args)
+  template<class... Args>
+  static size_t Combine(Args &&...args)
   {
     Tf_HashState h;
     _CombineImpl(h, args...);
@@ -461,24 +496,28 @@ class TfHash {
     _CombineImpl(h, rest...);
   }
 
-  template<class HashState> static void _CombineImpl(HashState &h)
+  template<class HashState>
+  static void _CombineImpl(HashState &h)
   {
     // base case does nothing
   }
 };
 
 /// A hash function object that hashes the address of a char pointer.
-struct TfHashCharPtr {
+struct TfHashCharPtr
+{
   size_t operator()(const char *ptr) const;
 };
 
 /// A hash function object that hashes null-terminated c-string content.
-struct TfHashCString {
+struct TfHashCString
+{
   size_t operator()(const char *ptr) const;
 };
 
 /// A function object that compares two c-strings for equality.
-struct TfEqualCString {
+struct TfEqualCString
+{
   bool operator()(const char *lhs, const char *rhs) const;
 };
 

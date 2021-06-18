@@ -78,7 +78,8 @@ class SdfAssetPath;
 /// - Catmull-Rom (UsdRiTokens->catmull_rom)
 ///
 ///
-class UsdRiSplineAPI : public UsdAPISchemaBase {
+class UsdRiSplineAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -94,13 +95,15 @@ class UsdRiSplineAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiSplineAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiSplineAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiSplineAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiSplineAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiSplineAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiSplineAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiSplineAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

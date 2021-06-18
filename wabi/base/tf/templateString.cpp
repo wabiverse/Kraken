@@ -36,7 +36,8 @@ using std::vector;
 WABI_NAMESPACE_BEGIN
 
 #define _ERROR(ptr, ...) \
-  if (ptr) { \
+  if (ptr) \
+  { \
     ptr->push_back(TfStringPrintf(__VA_ARGS__)); \
   }
 
@@ -49,10 +50,12 @@ static const char *const _IdentChars =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "0123456789_";
 
-TfTemplateString::TfTemplateString() : _data(new _Data)
+TfTemplateString::TfTemplateString()
+  : _data(new _Data)
 {}
 
-TfTemplateString::TfTemplateString(const string &template_) : _data(new _Data)
+TfTemplateString::TfTemplateString(const string &template_)
+  : _data(new _Data)
 {
   _data->template_ = template_;
 }
@@ -65,8 +68,8 @@ string TfTemplateString::Substitute(const Mapping &mapping) const
   vector<string> evalErrors;
   string result = _Evaluate(mapping, &evalErrors);
 
-  TF_FOR_ALL(it, evalErrors)
-  TF_CODING_ERROR("%s", it->c_str());
+  TF_FOR_ALL (it, evalErrors)
+    TF_CODING_ERROR("%s", it->c_str());
 
   return result;
 }
@@ -81,17 +84,18 @@ string TfTemplateString::SafeSubstitute(const Mapping &mapping) const
 void TfTemplateString::_EmitParseErrors() const
 {
   tbb::spin_mutex::scoped_lock lock(_data->mutex);
-  TF_FOR_ALL(it, _data->parseErrors)
-  TF_CODING_ERROR("%s", it->c_str());
+  TF_FOR_ALL (it, _data->parseErrors)
+    TF_CODING_ERROR("%s", it->c_str());
 }
 
 TfTemplateString::Mapping TfTemplateString::GetEmptyMapping() const
 {
   Mapping mapping;
-  if (IsValid()) {
+  if (IsValid())
+  {
     tbb::spin_mutex::scoped_lock lock(_data->mutex);
-    TF_FOR_ALL(it, _data->placeholders)
-    mapping.insert(make_pair(it->name, std::string()));
+    TF_FOR_ALL (it, _data->placeholders)
+      mapping.insert(make_pair(it->name, std::string()));
   }
   return mapping;
 }
@@ -123,49 +127,59 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
   if (nextpos >= _data->template_.length())
     return false;
 
-  if (_data->template_[nextpos] == _Sigil) {
+  if (_data->template_[nextpos] == _Sigil)
+  {
     // This is a $$ escape sequence.
     _data->placeholders.push_back(_PlaceHolder("$", *pos, 2));
     *pos = *pos + 2;
   }
-  else if (_data->template_[nextpos] == _OpenQuote) {
+  else if (_data->template_[nextpos] == _OpenQuote)
+  {
     // If the character after the sigil was the open quote character, look
     // for the matching close quote character.
     size_t endpos = _data->template_.find_first_not_of(string(_IdentChars) + _OpenQuote, nextpos);
 
-    if (endpos == string::npos) {
+    if (endpos == string::npos)
+    {
       _ERROR(errors,
              "Cannot find close quote for placeholder starting "
              "at pos %zu",
              *pos);
       *pos = nextpos;
     }
-    else if (_data->template_[endpos] != _CloseQuote) {
+    else if (_data->template_[endpos] != _CloseQuote)
+    {
       _ERROR(errors, "Invalid character '%c' in identifier at pos %zu", _data->template_[endpos], endpos);
       *pos = endpos;
     }
-    else {
+    else
+    {
       // len includes the sigil and quote characters.
       size_t len = endpos - *pos + 1;
       string name = _data->template_.substr(nextpos + 1, len - 3);
-      if (!name.empty()) {
+      if (!name.empty())
+      {
         _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
       }
-      else {
+      else
+      {
         _ERROR(errors, "Empty placeholder at pos %zu", *pos);
       }
       *pos = *pos + len;
     }
   }
-  else {
+  else
+  {
     // Find the next character not valid within an identifier.
     size_t endpos = _data->template_.find_first_not_of(_IdentChars, nextpos);
     size_t len = (endpos == string::npos ? _data->template_.length() : endpos) - *pos;
     string name = _data->template_.substr(nextpos, len - 1);
-    if (!name.empty()) {
+    if (!name.empty())
+    {
       _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
     }
-    else {
+    else
+    {
       // If we find what appears to be a place holder, but the next
       // character is not legal in a place holder, we just skip it.
     }
@@ -178,7 +192,8 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
 void TfTemplateString::_ParseTemplate() const
 {
   tbb::spin_mutex::scoped_lock lock(_data->mutex);
-  if (!_data->parsed) {
+  if (!_data->parsed)
+  {
     size_t pos = 0;
     while (_FindNextPlaceHolder(&pos, &_data->parseErrors))
       ;
@@ -193,21 +208,25 @@ string TfTemplateString::_Evaluate(const Mapping &mapping, vector<string> *error
 
   tbb::spin_mutex::scoped_lock lock(_data->mutex);
 
-  TF_FOR_ALL(it, _data->placeholders)
+  TF_FOR_ALL (it, _data->placeholders)
   {
     // Add template content between the end of the last placeholder (or
     // the start of the template) and the start of the next placeholder.
     result.insert(result.end(), _data->template_.begin() + pos, _data->template_.begin() + it->pos);
 
-    if (it->name[0] == _Sigil) {
+    if (it->name[0] == _Sigil)
+    {
       result.insert(result.end(), _Sigil);
     }
-    else {
+    else
+    {
       Mapping::const_iterator mit = mapping.find(it->name);
-      if (mit != mapping.end()) {
+      if (mit != mapping.end())
+      {
         result.insert(result.end(), mit->second.begin(), mit->second.end());
       }
-      else {
+      else
+      {
         // Insert the placeholder into the result.
         result.insert(
           result.end(), _data->template_.begin() + it->pos, _data->template_.begin() + it->pos + it->len);

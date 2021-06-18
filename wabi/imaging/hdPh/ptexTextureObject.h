@@ -56,7 +56,8 @@ using HgiTextureHandle = HgiHandle<class HgiTexture>;
 ///
 /// A Ptex texture.
 ///
-class HdPhPtexTextureObject final : public HdPhTextureObject {
+class HdPhPtexTextureObject final : public HdPhTextureObject
+{
  public:
   HDPH_API
   HdPhPtexTextureObject(const HdPhTextureIdentifier &textureId,
@@ -113,7 +114,9 @@ class HdPhPtexTextureObject final : public HdPhTextureObject {
   void _DestroyTextures();
 };
 
-template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Ptex> {
+template<>
+struct HdPh_TypedTextureObjectHelper<HdTextureType::Ptex>
+{
   using type = HdPhPtexTextureObject;
 };
 

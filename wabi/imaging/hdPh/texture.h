@@ -50,7 +50,8 @@ class HdRenderIndex;
 ///
 /// Implements no behaviors.
 ///
-class HdPhTexture : public HdTexture {
+class HdPhTexture : public HdTexture
+{
  public:
   HDPH_API
   HdPhTexture(SdfPath const &id);

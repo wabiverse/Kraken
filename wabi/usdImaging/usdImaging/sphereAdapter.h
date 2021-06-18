@@ -39,11 +39,13 @@ class UsdGeomSphere;
 ///
 /// Delegate support for UsdGeomSphere.
 ///
-class UsdImagingSphereAdapter : public UsdImagingGprimAdapter {
+class UsdImagingSphereAdapter : public UsdImagingGprimAdapter
+{
  public:
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingSphereAdapter() : UsdImagingGprimAdapter()
+  UsdImagingSphereAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   ~UsdImagingSphereAdapter() override;

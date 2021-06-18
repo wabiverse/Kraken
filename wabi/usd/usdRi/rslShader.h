@@ -64,7 +64,8 @@ class SdfAssetPath;
 /// schema will be removed in a future release.
 ///
 ///
-class UsdRiRslShader : public UsdShadeShader {
+class UsdRiRslShader : public UsdShadeShader
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -80,13 +81,15 @@ class UsdRiRslShader : public UsdShadeShader {
   /// Equivalent to UsdRiRslShader::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRslShader(const UsdPrim &prim = UsdPrim()) : UsdShadeShader(prim)
+  explicit UsdRiRslShader(const UsdPrim &prim = UsdPrim())
+    : UsdShadeShader(prim)
   {}
 
   /// Construct a UsdRiRslShader on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRslShader(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRslShader(const UsdSchemaBase &schemaObj) : UsdShadeShader(schemaObj)
+  explicit UsdRiRslShader(const UsdSchemaBase &schemaObj)
+    : UsdShadeShader(schemaObj)
   {}
 
   /// Destructor.

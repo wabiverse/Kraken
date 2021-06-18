@@ -45,10 +45,16 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Render buffers can be targeted by render passes.  They also contain
 /// mapping functionality for reading and writing buffer data.
-class HdRenderBuffer : public HdBprim {
+class HdRenderBuffer : public HdBprim
+{
  public:
   // change tracking for HdRenderBuffer
-  enum DirtyBits : HdDirtyBits { Clean = 0, DirtyDescription = 1 << 0, AllDirty = (DirtyDescription) };
+  enum DirtyBits : HdDirtyBits
+  {
+    Clean = 0,
+    DirtyDescription = 1 << 0,
+    AllDirty = (DirtyDescription)
+  };
 
   HD_API
   HdRenderBuffer(SdfPath const &id);

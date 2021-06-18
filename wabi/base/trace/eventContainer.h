@@ -49,11 +49,13 @@ WABI_NAMESPACE_BEGIN
 /// Holds TraceEvent instances. This container only allows appending events at
 /// the end and supports both forward and reverse iteration.
 ///
-class TraceEventContainer {
+class TraceEventContainer
+{
   // Intrusively doubly-linked list node that provides contiguous storage
   // for events.  Only appending events and iterating held events is
   // supported.
-  class _Node {
+  class _Node
+  {
    public:
     using const_iterator = const TraceEvent *;
 
@@ -118,8 +120,10 @@ class TraceEventContainer {
     ~_Node();
 
    private:
-    union {
-      struct {
+    union
+    {
+      struct
+      {
         TraceEvent *_end;
         TraceEvent *_sentinel;
         _Node *_prev;
@@ -136,7 +140,8 @@ class TraceEventContainer {
   /// \class const_iterator
   /// Bidirectional iterator of TraceEvents.
   ///
-  class const_iterator {
+  class const_iterator
+  {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = const TraceEvent;
@@ -191,13 +196,16 @@ class TraceEventContainer {
     }
 
    private:
-    const_iterator(const _Node *node, const TraceEvent *event) : _node(node), _event(event)
+    const_iterator(const _Node *node, const TraceEvent *event)
+      : _node(node),
+        _event(event)
     {}
 
     void Advance()
     {
       ++_event;
-      if (_event == _node->end() && _node->GetNextNode()) {
+      if (_event == _node->end() && _node->GetNextNode())
+      {
         _node = _node->GetNextNode();
         _event = _node->begin();
       }
@@ -205,7 +213,8 @@ class TraceEventContainer {
 
     void Reverse()
     {
-      if (_event == _node->begin()) {
+      if (_event == _node->begin())
+      {
         _node = _node->GetPrevNode();
         _event = _node->end();
       }
@@ -238,11 +247,13 @@ class TraceEventContainer {
 
   /// \name Subset of stl container interface.
   /// @{
-  template<class... Args> TraceEvent &emplace_back(Args &&...args)
+  template<class... Args>
+  TraceEvent &emplace_back(Args &&...args)
   {
     TraceEvent *event = new (_nextEvent++) TraceEvent(std::forward<Args>(args)...);
     _back->ClaimEventEntry();
-    if (_back->IsFull()) {
+    if (_back->IsFull())
+    {
       Allocate();
     }
     return *event;

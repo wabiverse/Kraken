@@ -69,7 +69,8 @@ WABI_NAMESPACE_BEGIN
 ///    What shader stage(s) the buffer will be used in.</li>
 /// </ul>
 ///
-struct HgiBufferBindDesc {
+struct HgiBufferBindDesc
+{
   HGI_API
   HgiBufferBindDesc();
 
@@ -109,7 +110,8 @@ inline bool operator!=(const HgiBufferBindDesc &lhs, const HgiBufferBindDesc &rh
 ///    What shader stage(s) the texture will be used in.</li>
 /// </ul>
 ///
-struct HgiTextureBindDesc {
+struct HgiTextureBindDesc
+{
   HGI_API
   HgiTextureBindDesc();
 
@@ -138,7 +140,8 @@ bool operator!=(const HgiTextureBindDesc &lhs, const HgiTextureBindDesc &rhs);
 ///   The textures to be bound.</li>
 /// </ul>
 ///
-struct HgiResourceBindingsDesc {
+struct HgiResourceBindingsDesc
+{
   HGI_API
   HgiResourceBindingsDesc();
 
@@ -159,7 +162,8 @@ bool operator!=(const HgiResourceBindingsDesc &lhs, const HgiResourceBindingsDes
 /// Represents a collection of buffers, texture and vertex attributes that will
 /// be used by an cmds object (and pipeline).
 ///
-class HgiResourceBindings {
+class HgiResourceBindings
+{
  public:
   HGI_API
   virtual ~HgiResourceBindings();

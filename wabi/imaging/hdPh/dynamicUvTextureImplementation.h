@@ -35,7 +35,8 @@ class HdPhDynamicUvTextureObject;
 /// Allows external clients to specify how a UV texture is loaded from, e.g.,
 /// a file and how it is committed to the GPU.
 ///
-class HdPhDynamicUvTextureImplementation {
+class HdPhDynamicUvTextureImplementation
+{
  public:
   /// Called during the load phase of the Phoenix texture system
   /// when a texture file is supposed to be loaded to the CPU.

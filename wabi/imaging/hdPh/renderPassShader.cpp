@@ -50,9 +50,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-struct _NamedTextureIdentifier {
+struct _NamedTextureIdentifier
+{
   TfToken name;
   HdPhTextureIdentifier id;
 };
@@ -73,9 +75,11 @@ _NamedTextureIdentifiers _GetNamedTextureIdentifiers(HdRenderPassAovBindingVecto
   _NamedTextureIdentifiers result;
   result.reserve(aovInputBindings.size());
 
-  for (const HdRenderPassAovBinding &aovBinding : aovInputBindings) {
+  for (const HdRenderPassAovBinding &aovBinding : aovInputBindings)
+  {
     if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
-          renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId))) {
+          renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId)))
+    {
       result.push_back(_NamedTextureIdentifier{_GetInputName(aovBinding.aovName),
                                                renderBuffer->GetTextureIdentifier(
                                                  /* multiSampled = */ false)});
@@ -90,19 +94,23 @@ _NamedTextureIdentifiers _GetNamedTextureIdentifiers(HdRenderPassAovBindingVecto
 bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextureHandles,
                       const _NamedTextureIdentifiers &namedTextureIdentifiers)
 {
-  if (namedTextureHandles.size() != namedTextureIdentifiers.size()) {
+  if (namedTextureHandles.size() != namedTextureIdentifiers.size())
+  {
     return false;
   }
 
-  for (size_t i = 0; i < namedTextureHandles.size(); i++) {
+  for (size_t i = 0; i < namedTextureHandles.size(); i++)
+  {
     const HdPhShaderCode::NamedTextureHandle namedTextureHandle = namedTextureHandles[i];
     const _NamedTextureIdentifier namedTextureIdentifier = namedTextureIdentifiers[i];
 
-    if (namedTextureHandle.name != namedTextureIdentifier.name) {
+    if (namedTextureHandle.name != namedTextureIdentifier.name)
+    {
       return false;
     }
     const HdPhTextureObjectSharedPtr &textureObject = namedTextureHandle.handle->GetTextureObject();
-    if (textureObject->GetTextureIdentifier() != namedTextureIdentifier.id) {
+    if (textureObject->GetTextureIdentifier() != namedTextureIdentifier.id)
+    {
       return false;
     }
   }
@@ -112,7 +120,8 @@ bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextu
 
 }  // namespace
 
-HdPhRenderPassShader::HdPhRenderPassShader() : HdPhRenderPassShader(HdPhPackageRenderPassShader())
+HdPhRenderPassShader::HdPhRenderPassShader()
+  : HdPhRenderPassShader(HdPhPackageRenderPassShader())
 {}
 
 HdPhRenderPassShader::HdPhRenderPassShader(TfToken const &glslfxFile)
@@ -141,12 +150,13 @@ HdPhRenderPassShader::ID HdPhRenderPassShader::ComputeHash() const
 
   // Custom buffer bindings may vary over time, requiring invalidation
   // of down stream clients.
-  TF_FOR_ALL(it, _customBuffers)
+  TF_FOR_ALL (it, _customBuffers)
   {
     boost::hash_combine(_hash, it->second.ComputeHash());
   }
 
-  for (const HdPhShaderCode::NamedTextureHandle &namedHandle : _namedTextureHandles) {
+  for (const HdPhShaderCode::NamedTextureHandle &namedHandle : _namedTextureHandles)
+  {
 
     // Use name and hash only - not the texture itself as this
     // does not affect the generated shader source.
@@ -173,7 +183,7 @@ void HdPhRenderPassShader::BindResources(const int program,
                                          HdPh_ResourceBinder const &binder,
                                          HdRenderPassState const &state)
 {
-  TF_FOR_ALL(it, _customBuffers)
+  TF_FOR_ALL (it, _customBuffers)
   {
     binder.Bind(it->second);
   }
@@ -190,7 +200,7 @@ void HdPhRenderPassShader::UnbindResources(const int program,
                                            HdPh_ResourceBinder const &binder,
                                            HdRenderPassState const &state)
 {
-  TF_FOR_ALL(it, _customBuffers)
+  TF_FOR_ALL (it, _customBuffers)
   {
     binder.Unbind(it->second);
   }
@@ -204,7 +214,8 @@ void HdPhRenderPassShader::AddBufferBinding(HdBindingRequest const &req)
 {
   auto it = _customBuffers.insert({req.GetName(), req});
   // Entry already existed and was equal to what we want to set it.
-  if (!it.second && it.first->second == req) {
+  if (!it.second && it.first->second == req)
+  {
     return;
   }
   it.first->second = req;
@@ -251,7 +262,7 @@ void HdPhRenderPassShader::AddBindings(HdBindingRequestVector *customBindings)
   //
 
   customBindings->reserve(customBindings->size() + _customBuffers.size() + 1);
-  TF_FOR_ALL(it, _customBuffers)
+  TF_FOR_ALL (it, _customBuffers)
   {
     customBindings->push_back(it->second);
   }
@@ -280,7 +291,8 @@ void HdPhRenderPassShader::UpdateAovInputTextures(HdRenderPassAovBindingVector c
   const _NamedTextureIdentifiers namedTextureIdentifiers = _GetNamedTextureIdentifiers(aovInputBindings,
                                                                                        renderIndex);
   // If the (named) texture handles are up-to-date, there is nothing to do.
-  if (_AreHandlesValid(_namedTextureHandles, namedTextureIdentifiers)) {
+  if (_AreHandlesValid(_namedTextureHandles, namedTextureIdentifiers))
+  {
     return;
   }
 
@@ -293,11 +305,13 @@ void HdPhRenderPassShader::UpdateAovInputTextures(HdRenderPassAovBindingVector c
 
   HdPhResourceRegistry *const resourceRegistry = dynamic_cast<HdPhResourceRegistry *>(
     renderIndex->GetResourceRegistry().get());
-  if (!TF_VERIFY(resourceRegistry)) {
+  if (!TF_VERIFY(resourceRegistry))
+  {
     return;
   }
 
-  for (const auto &namedTextureIdentifier : namedTextureIdentifiers) {
+  for (const auto &namedTextureIdentifier : namedTextureIdentifiers)
+  {
     static const HdSamplerParameters samplerParameters{
       HdWrapClamp, HdWrapClamp, HdWrapClamp, HdMinFilterNearest, HdMagFilterNearest};
 

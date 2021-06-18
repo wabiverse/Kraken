@@ -51,7 +51,8 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(SdfListOpType op,
   // list has no way to know if the target also exists in those
   // other lists, and so it cannot mangae lifetime on its own.
 
-  if (op == SdfListOpTypeOrdered || op == SdfListOpTypeDeleted) {
+  if (op == SdfListOpTypeOrdered || op == SdfListOpTypeDeleted)
+  {
     // These ops do not affect target spec lifetime, so there's
     // nothing to do.
     return;
@@ -72,7 +73,8 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(SdfListOpType op,
   {
     std::vector<SdfPath>::const_iterator oldItemTail = oldItems.begin(), newItemTail = newItems.begin();
     auto oldEnd = oldItems.end(), newEnd = newItems.end();
-    while (oldItemTail != oldEnd && newItemTail != newEnd && *oldItemTail == *newItemTail) {
+    while (oldItemTail != oldEnd && newItemTail != newEnd && *oldItemTail == *newItemTail)
+    {
       ++oldItemTail, ++newItemTail;
     }
     oldItemSet.insert(oldItemTail, oldEnd);
@@ -86,15 +88,17 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(SdfListOpType op,
                       newItemSet.begin(),
                       newItemSet.end(),
                       std::back_inserter(childrenToRemove));
-  TF_FOR_ALL(child, childrenToRemove)
+  TF_FOR_ALL (child, childrenToRemove)
   {
-    if (!Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(layer, propertyPath, *child)) {
+    if (!Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(layer, propertyPath, *child))
+    {
       // Some data backends procedurally generate the children specs based
       // on the listops as an optimization, so if we failed to remove a
       // child here, it could be that.  If no spec is present, then we
       // consider things to be okay and do not issue an error.
       const SdfPath specPath = ChildPolicy::GetChildPath(propertyPath, *child);
-      if (layer->HasSpec(specPath)) {
+      if (layer->HasSpec(specPath))
+      {
         TF_CODING_ERROR("Failed to remove spec at <%s>", specPath.GetText());
       }
     }
@@ -107,20 +111,23 @@ void Sdf_ConnectionListEditor<ChildPolicy>::_OnEditShared(SdfListOpType op,
                       oldItemSet.begin(),
                       oldItemSet.end(),
                       std::back_inserter(childrenToAdd));
-  TF_FOR_ALL(child, childrenToAdd)
+  TF_FOR_ALL (child, childrenToAdd)
   {
     const SdfPath specPath = ChildPolicy::GetChildPath(propertyPath, *child);
-    if (layer->HasSpec(specPath)) {
+    if (layer->HasSpec(specPath))
+    {
       continue;
     }
 
-    if (!Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(layer, specPath, specType)) {
+    if (!Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(layer, specPath, specType))
+    {
       TF_CODING_ERROR("Failed to create spec at <%s>", specPath.GetText());
     }
   }
 }
 
-template<class ChildPolicy> Sdf_ConnectionListEditor<ChildPolicy>::~Sdf_ConnectionListEditor() = default;
+template<class ChildPolicy>
+Sdf_ConnectionListEditor<ChildPolicy>::~Sdf_ConnectionListEditor() = default;
 
 ////////////////////////////////////////
 // Sdf_AttributeConnectionListEditor

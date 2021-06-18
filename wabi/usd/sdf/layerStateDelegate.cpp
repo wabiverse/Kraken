@@ -170,7 +170,8 @@ SdfSimpleLayerStateDelegateRefPtr SdfSimpleLayerStateDelegate::New()
   return TfCreateRefPtr(new SdfSimpleLayerStateDelegate);
 }
 
-SdfSimpleLayerStateDelegate::SdfSimpleLayerStateDelegate() : _dirty(false)
+SdfSimpleLayerStateDelegate::SdfSimpleLayerStateDelegate()
+  : _dirty(false)
 {}
 
 bool SdfSimpleLayerStateDelegate::_IsDirty()

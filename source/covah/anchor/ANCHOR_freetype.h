@@ -13,10 +13,11 @@ struct AnchorFontBuilderIO;
 // - The Light hinting mode generates fuzzier glyphs but better matches Microsoft's rasterizer.
 // You can set those flags globaly in AnchorFontAtlas::FontBuilderFlags
 // You can set those flags on a per font basis in AnchorFontConfig::FontBuilderFlags
-enum AnchorFreeTypeBuilderFlags {
+enum AnchorFreeTypeBuilderFlags
+{
   AnchorFreeTypeBuilderFlags_NoHinting =
-    1 << 0,  // Disable hinting. This generally generates 'blurrier' bitmap glyphs when the glyph
-             // are rendered in any of the anti-aliased modes.
+    1 << 0,                                        // Disable hinting. This generally generates 'blurrier' bitmap glyphs when the glyph
+                                                   // are rendered in any of the anti-aliased modes.
   AnchorFreeTypeBuilderFlags_NoAutoHint = 1 << 1,  // Disable auto-hinter.
   AnchorFreeTypeBuilderFlags_ForceAutoHint =
     1 << 2,  // Indicates that the auto-hinter is preferred over the font's native hinter.
@@ -27,16 +28,17 @@ enum AnchorFreeTypeBuilderFlags {
              // ClearType and Adobe's proprietary font renderer. This preserves inter-glyph
              // spacing in horizontal text.
   AnchorFreeTypeBuilderFlags_MonoHinting =
-    1 << 4,  // Strong hinting algorithm that should only be used for monochrome output.
+    1 << 4,                                     // Strong hinting algorithm that should only be used for monochrome output.
   AnchorFreeTypeBuilderFlags_Bold = 1 << 5,     // Styling: Should we artificially embolden the font?
   AnchorFreeTypeBuilderFlags_Oblique = 1 << 6,  // Styling: Should we slant the font, emulating italic style?
   AnchorFreeTypeBuilderFlags_Monochrome =
-    1 << 7,  // Disable anti-aliasing. Combine this with MonoHinting for best results!
+    1 << 7,                                       // Disable anti-aliasing. Combine this with MonoHinting for best results!
   AnchorFreeTypeBuilderFlags_LoadColor = 1 << 8,  // Enable FreeType color-layered glyphs
   AnchorFreeTypeBuilderFlags_Bitmap = 1 << 9      // Enable FreeType bitmap glyphs
 };
 
-namespace AnchorFreeType {
+namespace AnchorFreeType
+{
 // This is automatically assigned when using '#define ANCHOR_ENABLE_FREETYPE'.
 // If you need to dynamically select between multiple builders:
 // - you can manually assign this builder with 'atlas->FontBuilderIO =

@@ -30,7 +30,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate {
+class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
+{
  public:
   Hd_UnitTestNullRenderDelegate() = default;
   virtual ~Hd_UnitTestNullRenderDelegate() = default;

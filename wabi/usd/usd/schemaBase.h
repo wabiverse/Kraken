@@ -52,7 +52,8 @@ WABI_NAMESPACE_BEGIN
 /// arguments take them by <tt>const &</tt> if const access is sufficient,
 /// otherwise by non-const pointer.
 ///
-class UsdSchemaBase {
+class UsdSchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -146,10 +147,12 @@ class UsdSchemaBase {
   /// Shorthand for GetPrim()->GetPath().
   SdfPath GetPath() const
   {
-    if (!_proxyPrimPath.IsEmpty()) {
+    if (!_proxyPrimPath.IsEmpty())
+    {
       return _proxyPrimPath;
     }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_primData)) {
+    else if (Usd_PrimDataConstPtr p = get_pointer(_primData))
+    {
       return p->GetPath();
     }
     return SdfPath::EmptyPath();

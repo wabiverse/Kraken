@@ -32,7 +32,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiShaderFunctionTextureDesc::HgiShaderFunctionTextureDesc() : dimensions(2), format(HgiFormatInvalid)
+HgiShaderFunctionTextureDesc::HgiShaderFunctionTextureDesc()
+  : dimensions(2),
+    format(HgiFormatInvalid)
 {}
 
 HgiShaderFunctionBufferDesc::HgiShaderFunctionBufferDesc() = default;

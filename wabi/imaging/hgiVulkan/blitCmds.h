@@ -44,7 +44,8 @@ class HgiVulkanCommandBuffer;
 ///
 /// Vulkan implementation of HgiBlitCmds.
 ///
-class HgiVulkanBlitCmds final : public HgiBlitCmds {
+class HgiVulkanBlitCmds final : public HgiBlitCmds
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanBlitCmds() override;

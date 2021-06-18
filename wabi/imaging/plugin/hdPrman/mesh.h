@@ -35,7 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_Mesh final : public HdPrman_Gprim<HdMesh> {
+class HdPrman_Mesh final : public HdPrman_Gprim<HdMesh>
+{
  public:
   typedef HdPrman_Gprim<HdMesh> BASE;
   HF_MALLOC_TAG_NEW("new HdPrman_Mesh");

@@ -36,7 +36,8 @@ ANCHOR_EventManager::~ANCHOR_EventManager()
 {
   destroyEvents();
   ConsumerVector::iterator iter = m_consumers.begin();
-  while (iter != m_consumers.end()) {
+  while (iter != m_consumers.end())
+  {
     ANCHOR_IEventConsumer *consumer = *iter;
     delete consumer;
     iter = m_consumers.erase(iter);
@@ -52,8 +53,10 @@ AnchorU32 ANCHOR_EventManager::getNumEvents(eAnchorEventType type)
 {
   AnchorU32 numEvents = 0;
   EventStack::iterator p;
-  for (p = m_events.begin(); p != m_events.end(); ++p) {
-    if ((*p)->getType() == type) {
+  for (p = m_events.begin(); p != m_events.end(); ++p)
+  {
+    if ((*p)->getType() == type)
+    {
       numEvents++;
     }
   }
@@ -64,11 +67,13 @@ eAnchorStatus ANCHOR_EventManager::pushEvent(ANCHOR_IEvent *event)
 {
   eAnchorStatus success;
   ANCHOR_ASSERT(event);
-  if (m_events.size() < m_events.max_size()) {
+  if (m_events.size() < m_events.max_size())
+  {
     m_events.push_front(event);
     success = ANCHOR_SUCCESS;
   }
-  else {
+  else
+  {
     success = ANCHOR_ERROR;
   }
   return success;
@@ -78,7 +83,8 @@ void ANCHOR_EventManager::dispatchEvent(ANCHOR_IEvent *event)
 {
   ConsumerVector::iterator iter;
 
-  for (iter = m_consumers.begin(); iter != m_consumers.end(); ++iter) {
+  for (iter = m_consumers.begin(); iter != m_consumers.end(); ++iter)
+  {
     (*iter)->processEvent(event);
   }
 }
@@ -94,7 +100,8 @@ void ANCHOR_EventManager::dispatchEvent()
 
 void ANCHOR_EventManager::dispatchEvents()
 {
-  while (!m_events.empty()) {
+  while (!m_events.empty())
+  {
     dispatchEvent();
   }
 
@@ -110,13 +117,15 @@ eAnchorStatus ANCHOR_EventManager::addConsumer(ANCHOR_IEventConsumer *consumer)
    * Check to see whether the consumer is already in our list. */
   ConsumerVector::const_iterator iter = std::find(m_consumers.begin(), m_consumers.end(), consumer);
 
-  if (iter == m_consumers.end()) {
+  if (iter == m_consumers.end())
+  {
     /**
      * Add the consumer. */
     m_consumers.push_back(consumer);
     success = ANCHOR_SUCCESS;
   }
-  else {
+  else
+  {
     success = ANCHOR_ERROR;
   }
   return success;
@@ -131,13 +140,15 @@ eAnchorStatus ANCHOR_EventManager::removeConsumer(ANCHOR_IEventConsumer *consume
    * Check to see whether the consumer is in our list. */
   ConsumerVector::iterator iter = std::find(m_consumers.begin(), m_consumers.end(), consumer);
 
-  if (iter != m_consumers.end()) {
+  if (iter != m_consumers.end())
+  {
     /**
      * Remove the consumer. */
     m_consumers.erase(iter);
     success = ANCHOR_SUCCESS;
   }
-  else {
+  else
+  {
     success = ANCHOR_ERROR;
   }
   return success;
@@ -145,13 +156,15 @@ eAnchorStatus ANCHOR_EventManager::removeConsumer(ANCHOR_IEventConsumer *consume
 
 void ANCHOR_EventManager::destroyEvents()
 {
-  while (m_handled_events.empty() == false) {
+  while (m_handled_events.empty() == false)
+  {
     ANCHOR_ASSERT(m_handled_events[0]);
     delete m_handled_events[0];
     m_handled_events.pop_front();
   }
 
-  while (m_events.empty() == false) {
+  while (m_events.empty() == false)
+  {
     ANCHOR_ASSERT(m_events[0]);
     delete m_events[0];
     m_events.pop_front();

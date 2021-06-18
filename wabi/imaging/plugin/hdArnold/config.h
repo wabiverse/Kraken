@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Note: we are not following the coding conventions for the members, as we want
 /// to match the Arnold parameter names, which are snake_case.
-struct HdArnoldConfig {
+struct HdArnoldConfig
+{
   /// Return an instance of HdArnoldConfig.
   HDARNOLD_API
   static const HdArnoldConfig &GetInstance();

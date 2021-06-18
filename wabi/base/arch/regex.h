@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class ArchRegex {
+class ArchRegex
+{
  public:
   static constexpr unsigned int CASE_INSENSITIVE = 1u;
   static constexpr unsigned int GLOB = 2u;

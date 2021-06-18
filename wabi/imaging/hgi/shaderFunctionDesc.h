@@ -56,7 +56,8 @@ WABI_NAMESPACE_BEGIN
 ///   on the texture (e.g., GL) </li>
 /// </ul>
 ///
-struct HgiShaderFunctionTextureDesc {
+struct HgiShaderFunctionTextureDesc
+{
   HGI_API
   HgiShaderFunctionTextureDesc();
 
@@ -84,7 +85,8 @@ bool operator!=(const HgiShaderFunctionTextureDesc &lhs, const HgiShaderFunction
 ///   Type of the param within the shader file.</li>
 /// </ul>
 ///
-struct HgiShaderFunctionBufferDesc {
+struct HgiShaderFunctionBufferDesc
+{
   HGI_API
   HgiShaderFunctionBufferDesc();
 
@@ -117,7 +119,8 @@ bool operator!=(const HgiShaderFunctionBufferDesc &lhs, const HgiShaderFunctionB
 ///   Used in metal, to specify indicies of attributes.</li>
 /// </ul>
 ///
-struct HgiShaderFunctionParamDesc {
+struct HgiShaderFunctionParamDesc
+{
   HGI_API
   HgiShaderFunctionParamDesc();
 
@@ -159,7 +162,8 @@ bool operator!=(const HgiShaderFunctionParamDesc &lhs, const HgiShaderFunctionPa
 ///   List of descriptions of the outputs of the shader.</li>
 /// </ul>
 ///
-struct HgiShaderFunctionDesc {
+struct HgiShaderFunctionDesc
+{
   HGI_API
   HgiShaderFunctionDesc();
   std::string debugName;

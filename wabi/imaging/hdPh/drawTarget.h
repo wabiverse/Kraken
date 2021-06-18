@@ -53,7 +53,8 @@ using HdPhDrawTargetPtrVector = std::vector<class HdPhDrawTarget *>;
 /// \note This is a temporary API to aid transition to Phoenix, and is subject
 /// to major changes.
 ///
-class HdPhDrawTarget : public HdSprim {
+class HdPhDrawTarget : public HdSprim
+{
  public:
   HDPH_API
   HdPhDrawTarget(SdfPath const &id);
@@ -65,7 +66,8 @@ class HdPhDrawTarget : public HdSprim {
   /// When GetUsePhoenixTextureSystem() is true, "Legacy" dirty
   /// bits are ignored.
   ///
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     DirtyDTEnable = 1 << 0,
     DirtyDTCamera = 1 << 1,

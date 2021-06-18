@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Drawing batch that is executed immediately.
 ///
-class HdPh_ImmediateDrawBatch : public HdPh_DrawBatch {
+class HdPh_ImmediateDrawBatch : public HdPh_DrawBatch
+{
  public:
   HDPH_API
   HdPh_ImmediateDrawBatch(HdPhDrawItemInstance *drawItemInstance);

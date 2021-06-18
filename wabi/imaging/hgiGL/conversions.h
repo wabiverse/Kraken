@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Converts from Hgi types to GL types.
 ///
-class HgiGLConversions final {
+class HgiGLConversions final
+{
  public:
   HGIGL_API
   static void GetFormat(HgiFormat inFormat,

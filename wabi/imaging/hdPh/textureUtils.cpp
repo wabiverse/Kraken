@@ -30,21 +30,25 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-template<typename T> constexpr T _OpaqueAlpha()
+template<typename T>
+constexpr T _OpaqueAlpha()
 {
   return std::numeric_limits<T>::is_integer ? std::numeric_limits<T>::max() : T(1);
 }
 
-template<typename T> void _ConvertRGBToRGBA(const void *const src, const size_t numTexels, void *const dst)
+template<typename T>
+void _ConvertRGBToRGBA(const void *const src, const size_t numTexels, void *const dst)
 {
   TRACE_FUNCTION();
 
   const T *const typedSrc = reinterpret_cast<const T *>(src);
   T *const typedDst = reinterpret_cast<T *>(dst);
 
-  for (size_t i = 0; i < numTexels; i++) {
+  for (size_t i = 0; i < numTexels; i++)
+  {
     typedDst[4 * i + 0] = typedSrc[3 * i + 0];
     typedDst[4 * i + 1] = typedSrc[3 * i + 1];
     typedDst[4 * i + 2] = typedSrc[3 * i + 2];
@@ -52,25 +56,36 @@ template<typename T> void _ConvertRGBToRGBA(const void *const src, const size_t 
   }
 }
 
-enum _ColorSpaceTransform { _SRGBToLinear, _LinearToSRGB };
+enum _ColorSpaceTransform
+{
+  _SRGBToLinear,
+  _LinearToSRGB
+};
 
 // Convert a [0, 1] value between color spaces
-template<_ColorSpaceTransform colorSpaceTransform> float _ConvertColorSpace(const float in)
+template<_ColorSpaceTransform colorSpaceTransform>
+float _ConvertColorSpace(const float in)
 {
   float out = in;
-  if (colorSpaceTransform == _SRGBToLinear) {
-    if (in <= 0.04045) {
+  if (colorSpaceTransform == _SRGBToLinear)
+  {
+    if (in <= 0.04045)
+    {
       out = in / 12.92;
     }
-    else {
+    else
+    {
       out = pow((in + 0.055) / 1.055, 2.4);
     }
   }
-  else if (colorSpaceTransform == _LinearToSRGB) {
-    if (in <= 0.0031308) {
+  else if (colorSpaceTransform == _LinearToSRGB)
+  {
+    if (in <= 0.0031308)
+    {
       out = 12.92 * in;
     }
-    else {
+    else
+    {
       out = 1.055 * pow(in, 1.0 / 2.4) - 0.055;
     }
   }
@@ -92,13 +107,16 @@ void _PremultiplyAlpha(const void *const src, const size_t numTexels, void *cons
   // Perform all operations using floats.
   constexpr float max = static_cast<float>(std::numeric_limits<T>::max());
 
-  for (size_t i = 0; i < numTexels; i++) {
+  for (size_t i = 0; i < numTexels; i++)
+  {
     const float alpha = static_cast<float>(typedSrc[4 * i + 3]) / max;
 
-    for (size_t j = 0; j < 3; j++) {
+    for (size_t j = 0; j < 3; j++)
+    {
       float p = static_cast<float>(typedSrc[4 * i + j]);
 
-      if (isSRGB) {
+      if (isSRGB)
+      {
         // Convert value from sRGB to linear.
         p = max * _ConvertColorSpace<_SRGBToLinear>(p / max);
       }
@@ -106,7 +124,8 @@ void _PremultiplyAlpha(const void *const src, const size_t numTexels, void *cons
       // Pre-multiply RGB values with alpha in linear space.
       p *= alpha;
 
-      if (isSRGB) {
+      if (isSRGB)
+      {
         // Convert value from linear to sRGB.
         p = max * _ConvertColorSpace<_LinearToSRGB>(p / max);
       }
@@ -130,11 +149,13 @@ void _PremultiplyAlphaFloat(const void *const src, const size_t numTexels, void 
   const T *const typedSrc = reinterpret_cast<const T *>(src);
   T *const typedDst = reinterpret_cast<T *>(dst);
 
-  for (size_t i = 0; i < numTexels; i++) {
+  for (size_t i = 0; i < numTexels; i++)
+  {
     const T alpha = typedSrc[4 * i + 3];
 
     // Pre-multiply RGB values with alpha.
-    for (size_t j = 0; j < 3; j++) {
+    for (size_t j = 0; j < 3; j++)
+    {
       typedDst[4 * i + j] = typedSrc[4 * i + j] * alpha;
     }
     typedDst[4 * i + 3] = typedSrc[4 * i + 3];
@@ -147,7 +168,8 @@ std::pair<HgiFormat, HdPhTextureUtils::ConversionFunction> _GetHgiFormatAndConve
 {
   // Format dispatch, mostly we can just use the CPU buffer from
   // the texture data provided.
-  switch (hioFormat) {
+  switch (hioFormat)
+  {
 
     // UNorm 8.
     case HioFormatUNorm8:
@@ -345,17 +367,20 @@ std::vector<HioImageSharedPtr> HdPhTextureUtils::GetAllMipImages(
   unsigned int prevHeight = std::numeric_limits<unsigned int>::max();
 
   // Ignoring image->GetNumMipLevels() since it can be unreliable.
-  for (int mip = 0; mip < maxMipReads; ++mip) {
+  for (int mip = 0; mip < maxMipReads; ++mip)
+  {
     HioImageSharedPtr const image = HioImage::OpenForReading(
       filePath, /* subimage = */ 0, mip, sourceColorSpace);
 
-    if (!image) {
+    if (!image)
+    {
       break;
     }
 
     const unsigned int currHeight = image->GetWidth();
     const unsigned int currWidth = image->GetHeight();
-    if (!(currWidth < prevWidth || currHeight < prevHeight)) {
+    if (!(currWidth < prevWidth || currHeight < prevHeight))
+    {
       break;
     }
 
@@ -382,8 +407,10 @@ GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(const std::vector<Hi
   TRACE_FUNCTION();
 
   // Return full resolution of image if no target memory given.
-  if (targetMemory == 0) {
-    if (mipIndex) {
+  if (targetMemory == 0)
+  {
+    if (mipIndex)
+    {
       *mipIndex = 0;
     }
     return _GetDimensions(mips.front());
@@ -391,21 +418,25 @@ GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(const std::vector<Hi
 
   // Iterate through mips until one is found that fits into the target
   // memory.
-  for (size_t i = 0; i < mips.size(); i++) {
+  for (size_t i = 0; i < mips.size(); i++)
+  {
     HioImageSharedPtr const &image = mips[i];
     const GfVec3i dim = _GetDimensions(image);
     // The factor of 4/3 = 1 + 1/4 + 1/16 + ... accounts for all the
     // lower mipmaps.
     const size_t totalMem = HgiGetDataSize(targetFormat, dim) * tileCount * 4 / 3;
-    if (totalMem <= targetMemory) {
-      if (mipIndex) {
+    if (totalMem <= targetMemory)
+    {
+      if (mipIndex)
+      {
         *mipIndex = i;
       }
       return dim;
     }
   }
 
-  if (mipIndex) {
+  if (mipIndex)
+  {
     *mipIndex = mips.size() - 1;
   }
 
@@ -416,10 +447,12 @@ GfVec3i HdPhTextureUtils::ComputeDimensionsFromTargetMemory(const std::vector<Hi
 
   // Iterate through mip chain until one is found that fits into the
   // target memory.
-  for (const HgiMipInfo &mipInfo : mipInfos) {
+  for (const HgiMipInfo &mipInfo : mipInfos)
+  {
     // The factor of 4/3 = 1 + 1/4 + 1/16 + ... accounts for all the
     // lower mipmaps.
-    if (mipInfo.byteSizePerLayer * tileCount * 4 / 3 <= targetMemory) {
+    if (mipInfo.byteSizePerLayer * tileCount * 4 / 3 <= targetMemory)
+    {
       return mipInfo.dimensions;
     }
   }
@@ -450,22 +483,26 @@ bool HdPhTextureUtils::ReadAndConvertImage(HioImageSharedPtr const &image,
   spec.height = mipInfo.dimensions[1];
   spec.format = image->GetFormat();
   spec.flipped = flipped;
-  if (conversionFunction) {
+  if (conversionFunction)
+  {
     // This part is a bit tricky: the RGB to RGBA conversion
     // is in place. To make sure we do not write over data
     // that have not been read yet, we need to align the ends.
     const size_t hioSize = HioGetDataSize(image->GetFormat(), mipInfo.dimensions);
     spec.data = mipLayerStart + mipInfo.byteSizePerLayer - hioSize;
   }
-  else {
+  else
+  {
     spec.data = mipLayerStart;
   }
 
-  if (!image->Read(spec)) {
+  if (!image->Read(spec))
+  {
     return false;
   }
 
-  if (conversionFunction) {
+  if (conversionFunction)
+  {
     conversionFunction(spec.data, spec.width * spec.height, mipLayerStart);
   }
 

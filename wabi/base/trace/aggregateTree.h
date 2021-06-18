@@ -52,7 +52,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceEventTree);
 /// node.
 ///
 
-class TraceAggregateTree : public TfRefBase, public TfWeakBase {
+class TraceAggregateTree : public TfRefBase, public TfWeakBase
+{
  public:
   using This = TraceAggregateTree;
   using ThisPtr = TraceAggregateTreePtr;

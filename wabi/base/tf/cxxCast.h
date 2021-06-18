@@ -44,7 +44,8 @@ template<class Src, class Dst>
 using Tf_CopyVolatile =
   typename std::conditional<std::is_volatile<Src>::value, typename std::add_volatile<Dst>::type, Dst>::type;
 
-template<class Src, class Dst> using Tf_CopyCV = Tf_CopyConst<Src, Tf_CopyVolatile<Src, Dst>>;
+template<class Src, class Dst>
+using Tf_CopyCV = Tf_CopyConst<Src, Tf_CopyVolatile<Src, Dst>>;
 
 /// Return a pointer to the most-derived object.
 ///

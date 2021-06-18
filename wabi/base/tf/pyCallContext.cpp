@@ -34,8 +34,10 @@
 
 using namespace std;
 
-namespace {
-struct _Cache {
+namespace
+{
+struct _Cache
+{
   tbb::spin_mutex lock;
   set<string> data;
 };

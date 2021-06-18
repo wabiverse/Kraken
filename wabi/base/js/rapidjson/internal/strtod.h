@@ -21,7 +21,8 @@
 #include "pow10.h"
 
 RAPIDJSON_NAMESPACE_BEGIN
-namespace internal {
+namespace internal
+{
 
 inline double FastPath(double significand, int exp)
 {
@@ -35,7 +36,8 @@ inline double FastPath(double significand, int exp)
 
 inline double StrtodNormalPrecision(double d, int p)
 {
-  if (p < -308) {
+  if (p < -308)
+  {
     // Prevent expSum < -308, making Pow10(p) = 0
     d = FastPath(d, -308);
     d = FastPath(d, p + 308);
@@ -45,7 +47,8 @@ inline double StrtodNormalPrecision(double d, int p)
   return d;
 }
 
-template<typename T> inline T Min3(T a, T b, T c)
+template<typename T>
+inline T Min3(T a, T b, T c)
 {
   T m = a;
   if (m > b)
@@ -65,11 +68,13 @@ inline int CheckWithinHalfULP(double b, const BigInteger &d, int dExp)
   int dS_Exp2 = 0, dS_Exp5 = 0, bS_Exp2 = 0, bS_Exp5 = 0, hS_Exp2 = 0, hS_Exp5 = 0;
 
   // Adjust for decimal exponent
-  if (dExp >= 0) {
+  if (dExp >= 0)
+  {
     dS_Exp2 += dExp;
     dS_Exp5 += dExp;
   }
-  else {
+  else
+  {
     bS_Exp2 -= dExp;
     bS_Exp5 -= dExp;
     hS_Exp2 -= dExp;
@@ -79,7 +84,8 @@ inline int CheckWithinHalfULP(double b, const BigInteger &d, int dExp)
   // Adjust for binary exponent
   if (bExp >= 0)
     bS_Exp2 += bExp;
-  else {
+  else
+  {
     dS_Exp2 -= bExp;
     hS_Exp2 -= bExp;
   }
@@ -87,7 +93,8 @@ inline int CheckWithinHalfULP(double b, const BigInteger &d, int dExp)
   // Adjust for half ulp exponent
   if (hExp >= 0)
     hS_Exp2 += hExp;
-  else {
+  else
+  {
     dS_Exp2 -= hExp;
     bS_Exp2 -= hExp;
   }
@@ -117,13 +124,15 @@ inline bool StrtodFast(double d, int p, double *result)
 {
   // Use fast path for string-to-double conversion if possible
   // see http://www.exploringbinary.com/fast-path-decimal-to-floating-point-conversion/
-  if (p > 22 && p < 22 + 16) {
+  if (p > 22 && p < 22 + 16)
+  {
     // Fast Path Cases In Disguise
     d *= internal::Pow10(p - 22);
     p = 22;
   }
 
-  if (p >= -22 && p <= 22 && d <= 9007199254740991.0) {  // 2^53 - 1
+  if (p >= -22 && p <= 22 && d <= 9007199254740991.0)
+  {  // 2^53 - 1
     *result = FastPath(d, p);
     return true;
   }
@@ -136,7 +145,8 @@ inline bool StrtodDiyFp(const char *decimals, size_t length, size_t decimalPosit
 {
   uint64_t significand = 0;
   size_t i = 0;  // 2^64 - 1 = 18446744073709551615, 1844674407370955161 = 0x1999999999999999
-  for (; i < length; i++) {
+  for (; i < length; i++)
+  {
     if (significand > RAPIDJSON_UINT64_C2(0x19999999, 0x99999999) ||
         (significand == RAPIDJSON_UINT64_C2(0x19999999, 0x99999999) && decimals[i] > '5'))
       break;
@@ -159,7 +169,8 @@ inline bool StrtodDiyFp(const char *decimals, size_t length, size_t decimalPosit
 
   int actualExp;
   DiyFp cachedPower = GetCachedPower10(dExp, &actualExp);
-  if (actualExp != dExp) {
+  if (actualExp != dExp)
+  {
     static const DiyFp kPow10[] = {
       DiyFp(RAPIDJSON_UINT64_C2(0xa0000000, 00000000), -60),  // 10^1
       DiyFp(RAPIDJSON_UINT64_C2(0xc8000000, 00000000), -57),  // 10^2
@@ -186,7 +197,8 @@ inline bool StrtodDiyFp(const char *decimals, size_t length, size_t decimalPosit
 
   const unsigned effectiveSignificandSize = Double::EffectiveSignificandSize(64 + v.e);
   unsigned precisionSize = 64 - effectiveSignificandSize;
-  if (precisionSize + kUlpShift >= 64) {
+  if (precisionSize + kUlpShift >= 64)
+  {
     unsigned scaleExp = (precisionSize + kUlpShift) - 63;
     v.f >>= scaleExp;
     v.e += scaleExp;
@@ -197,9 +209,11 @@ inline bool StrtodDiyFp(const char *decimals, size_t length, size_t decimalPosit
   DiyFp rounded(v.f >> precisionSize, v.e + static_cast<int>(precisionSize));
   const uint64_t precisionBits = (v.f & ((uint64_t(1) << precisionSize) - 1)) * kUlp;
   const uint64_t halfWay = (uint64_t(1) << (precisionSize - 1)) * kUlp;
-  if (precisionBits >= halfWay + static_cast<unsigned>(error)) {
+  if (precisionBits >= halfWay + static_cast<unsigned>(error))
+  {
     rounded.f++;
-    if (rounded.f & (DiyFp::kDpHiddenBit << 1)) {  // rounding overflows mantissa (issue #340)
+    if (rounded.f & (DiyFp::kDpHiddenBit << 1))
+    {  // rounding overflows mantissa (issue #340)
       rounded.f >>= 1;
       rounded.e++;
     }
@@ -223,7 +237,8 @@ inline double StrtodBigInteger(double approx,
   int cmp = CheckWithinHalfULP(a.Value(), dInt, dExp);
   if (cmp < 0)
     return a.Value();  // within half ULP
-  else if (cmp == 0) {
+  else if (cmp == 0)
+  {
     // Round towards even
     if (a.Significand() & 1)
       return a.NextPositiveDouble();
@@ -249,14 +264,16 @@ inline double StrtodFullPrecision(double d,
     return result;
 
   // Trim leading zeros
-  while (*decimals == '0' && length > 1) {
+  while (*decimals == '0' && length > 1)
+  {
     length--;
     decimals++;
     decimalPosition--;
   }
 
   // Trim trailing zeros
-  while (decimals[length - 1] == '0' && length > 1) {
+  while (decimals[length - 1] == '0' && length > 1)
+  {
     length--;
     decimalPosition--;
     exp++;
@@ -264,7 +281,8 @@ inline double StrtodFullPrecision(double d,
 
   // Trim right-most digits
   const int kMaxDecimalDigit = 780;
-  if (static_cast<int>(length) > kMaxDecimalDigit) {
+  if (static_cast<int>(length) > kMaxDecimalDigit)
+  {
     int delta = (static_cast<int>(length) - kMaxDecimalDigit);
     exp += delta;
     decimalPosition -= static_cast<unsigned>(delta);

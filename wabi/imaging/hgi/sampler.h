@@ -61,7 +61,8 @@ WABI_NAMESPACE_BEGIN
 ///    Wrapping modes.</li>
 /// </ul>
 ///
-struct HgiSamplerDesc {
+struct HgiSamplerDesc
+{
   HgiSamplerDesc()
     : magFilter(HgiSamplerFilterNearest),
       minFilter(HgiSamplerFilterNearest),
@@ -93,7 +94,8 @@ bool operator!=(const HgiSamplerDesc &lhs, const HgiSamplerDesc &rhs);
 /// perform texture sampling operations.
 /// Samplers should be created via Hgi::CreateSampler.
 ///
-class HgiSampler {
+class HgiSampler
+{
  public:
   HGI_API
   virtual ~HgiSampler();

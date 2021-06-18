@@ -16,7 +16,8 @@ limitations under the License.
 
 #include "wabi/imaging/hd/material.h"
 
-namespace rpr {
+namespace rpr
+{
 class Context;
 }
 
@@ -26,13 +27,16 @@ WABI_NAMESPACE_BEGIN
 
 class RprUsdImageCache;
 
-struct RprUsd_MaterialNetwork {
-  struct Connection {
+struct RprUsd_MaterialNetwork
+{
+  struct Connection
+  {
     SdfPath upstreamNode;
     TfToken upstreamOutputName;
   };
 
-  struct Node {
+  struct Node
+  {
     TfToken nodeTypeId;
     std::map<TfToken, VtValue> parameters;
     std::map<TfToken, Connection> inputConnections;
@@ -42,7 +46,8 @@ struct RprUsd_MaterialNetwork {
   std::map<TfToken, Connection> terminals;
 };
 
-struct RprUsd_MaterialBuilderContext {
+struct RprUsd_MaterialBuilderContext
+{
   RprUsd_MaterialNetwork const *hdMaterialNetwork;
   SdfPath const *currentNodePath;
 
@@ -58,7 +63,8 @@ struct RprUsd_MaterialBuilderContext {
   RPRMtlxLoader *mtlxLoader;
 };
 
-class RprUsd_MaterialNode {
+class RprUsd_MaterialNode
+{
  public:
   virtual ~RprUsd_MaterialNode() = default;
 
@@ -67,9 +73,11 @@ class RprUsd_MaterialNode {
   virtual bool SetInput(TfToken const &inputId, VtValue const &value) = 0;
 };
 
-class RprUsd_NodeError : public std::exception {
+class RprUsd_NodeError : public std::exception
+{
  public:
-  RprUsd_NodeError(std::string errorMessage) : m_msg(std::move(errorMessage))
+  RprUsd_NodeError(std::string errorMessage)
+    : m_msg(std::move(errorMessage))
   {}
   ~RprUsd_NodeError() override = default;
 
@@ -84,7 +92,8 @@ class RprUsd_NodeError : public std::exception {
 
 /// Thrown when node is empty.
 /// There is no point to keep a node in memory when all it does is propagates inputs to outputs.
-class RprUsd_NodeEmpty : public std::exception {
+class RprUsd_NodeEmpty : public std::exception
+{
 };
 
 WABI_NAMESPACE_END

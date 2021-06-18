@@ -63,7 +63,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GlfTexture);
 /// A texture is typically defined by reading texture image data from an image
 /// file but a texture might also represent an attachment of a draw target.
 ///
-class GlfTexture : public TfRefBase, public TfWeakBase {
+class GlfTexture : public TfRefBase, public TfWeakBase
+{
  public:
   /// \class Binding
   ///
@@ -73,7 +74,8 @@ class GlfTexture : public TfRefBase, public TfWeakBase {
   /// "texels", but some textures might need multiple bindings, e.g. a
   /// ptexTexture will have an additional binding for the role "layout".
   ///
-  struct Binding {
+  struct Binding
+  {
     Binding(TfToken name, TfToken role, GLenum target, GLuint textureId, GLuint samplerId)
       : name(name),
         role(role),
@@ -167,7 +169,8 @@ class GlfTexture : public TfRefBase, public TfWeakBase {
   HioImage::ImageOriginLocation _originLocation;
 };
 
-class GlfTextureFactoryBase : public TfType::FactoryBase {
+class GlfTextureFactoryBase : public TfType::FactoryBase
+{
  public:
   virtual GlfTextureRefPtr New(const TfToken &texturePath,
                                HioImage::ImageOriginLocation originLocation) const = 0;

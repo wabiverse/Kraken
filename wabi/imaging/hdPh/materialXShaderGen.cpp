@@ -155,13 +155,15 @@ void HdPhMaterialXShaderGen::_EmitGlslfxHeader(mx::ShaderStage &mxStage) const
   }
 
   // insert primvar information if needed
-  if (!_mxHdPrimvarMap.empty()) {
+  if (!_mxHdPrimvarMap.empty())
+  {
     emitString(R"(    "attributes": {)"
                "\n",
                mxStage);
     std::string line;
     unsigned int i = 0;
-    for (auto primvarPair : _mxHdPrimvarMap) {
+    for (auto primvarPair : _mxHdPrimvarMap)
+    {
       line += "        \"" + primvarPair.first + "\": {\n";
       line += "            \"type\": \"" + primvarPair.second + "\"\n";
       line += "        }";
@@ -174,13 +176,15 @@ void HdPhMaterialXShaderGen::_EmitGlslfxHeader(mx::ShaderStage &mxStage) const
                mxStage);
   }
   // insert texture information if needed
-  if (!_mxHdTextureMap.empty()) {
+  if (!_mxHdTextureMap.empty())
+  {
     emitString(R"(    "textures": {)"
                "\n",
                mxStage);
     std::string line;
     unsigned int i = 0;
-    for (auto texturePair : _mxHdTextureMap) {
+    for (auto texturePair : _mxHdTextureMap)
+    {
       line += "        \"" + texturePair.second + "\": {\n        }";
       line += (i < _mxHdTextureMap.size() - 1) ? ",\n" : "\n";
       i++;
@@ -234,18 +238,21 @@ void HdPhMaterialXShaderGen::_EmitMxFunctions(const mx::ShaderGraph &mxGraph,
 
   // Add all constants
   const mx::VariableBlock &constants = mxStage.getConstantBlock();
-  if (!constants.empty()) {
+  if (!constants.empty())
+  {
     emitVariableDeclarations(
       constants, _syntax->getConstantQualifier(), mx::Syntax::SEMICOLON, mxContext, mxStage, false);
     emitLineBreak(mxStage);
   }
 
   // Add all uniforms
-  for (const auto &it : mxStage.getUniformBlocks()) {
+  for (const auto &it : mxStage.getUniformBlocks())
+  {
     const mx::VariableBlock &uniforms = *it.second;
 
     // Skip light uniforms as they are handled separately
-    if (!uniforms.empty() && uniforms.getName() != mx::HW::LIGHT_DATA) {
+    if (!uniforms.empty() && uniforms.getName() != mx::HW::LIGHT_DATA)
+    {
       emitComment("Uniform block: " + uniforms.getName(), mxStage);
       emitVariableDeclarations(uniforms, mx::EMPTY_STRING, mx::Syntax::SEMICOLON, mxContext, mxStage);
       emitLineBreak(mxStage);
@@ -259,7 +266,8 @@ void HdPhMaterialXShaderGen::_EmitMxFunctions(const mx::ShaderGraph &mxGraph,
                          mxContext.getOptions().hwWriteDepthMoments;
 
   // Add light data block if needed
-  if (lighting) {
+  if (lighting)
+  {
     const mx::VariableBlock &lightData = mxStage.getUniformBlock(mx::HW::LIGHT_DATA);
     emitLine("struct " + lightData.getName(), mxStage, false);
     emitScopeBegin(mxStage);
@@ -274,7 +282,8 @@ void HdPhMaterialXShaderGen::_EmitMxFunctions(const mx::ShaderGraph &mxGraph,
   // Add vertex data struct and the mxInit function which initializes mx
   // values with the Hd equivalents
   const mx::VariableBlock &vertexData = mxStage.getInputBlock(mx::HW::VERTEX_DATA);
-  if (!vertexData.empty()) {
+  if (!vertexData.empty())
+  {
 
     // add Mx VertexData
     emitComment("MaterialX's VertexData", mxStage);
@@ -300,36 +309,42 @@ void HdPhMaterialXShaderGen::_EmitMxFunctions(const mx::ShaderGraph &mxGraph,
   emitLineBreak(mxStage);
 
   // Emit lighting and shadowing code
-  if (lighting) {
+  if (lighting)
+  {
     emitSpecularEnvironment(mxContext, mxStage);
   }
-  if (shadowing) {
+  if (shadowing)
+  {
     emitInclude("pbrlib/" + mx::GlslShaderGenerator::TARGET + "/lib/mx_shadow.glsl", mxContext, mxStage);
   }
 
   // Emit directional albedo table code.
   if (mxContext.getOptions().hwDirectionalAlbedoMethod ==
         mx::HwDirectionalAlbedoMethod::DIRECTIONAL_ALBEDO_TABLE ||
-      mxContext.getOptions().hwWriteAlbedoTable) {
+      mxContext.getOptions().hwWriteAlbedoTable)
+  {
     emitInclude("pbrlib/" + mx::GlslShaderGenerator::TARGET + "/lib/mx_table.glsl", mxContext, mxStage);
     emitLineBreak(mxStage);
   }
 
   // Set the include file to use for uv transformations,
   // depending on the vertical flip flag.
-  if (mxContext.getOptions().fileTextureVerticalFlip) {
+  if (mxContext.getOptions().fileTextureVerticalFlip)
+  {
     _tokenSubstitutions[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] = "stdlib/" +
                                                                     mx::GlslShaderGenerator::TARGET +
                                                                     "/lib/mx_transform_uv_vflip.glsl";
   }
-  else {
+  else
+  {
     _tokenSubstitutions[mx::ShaderGenerator::T_FILE_TRANSFORM_UV] = "stdlib/" +
                                                                     mx::GlslShaderGenerator::TARGET +
                                                                     "/lib/mx_transform_uv.glsl";
   }
 
   // Emit uv transform code globally if needed.
-  if (mxContext.getOptions().hwAmbientOcclusion) {
+  if (mxContext.getOptions().hwAmbientOcclusion)
+  {
     emitInclude(ShaderGenerator::T_FILE_TRANSFORM_UV, mxContext, mxStage);
   }
 
@@ -352,66 +367,80 @@ void HdPhMaterialXShaderGen::_EmitMxSurfaceShader(const mx::ShaderGraph &mxGraph
   emitLine("mxInit(Peye, Neye)", mxStage);
 
   const mx::ShaderGraphOutputSocket *outputSocket = mxGraph.getOutputSocket();
-  if (mxGraph.hasClassification(mx::ShaderNode::Classification::CLOSURE)) {
+  if (mxGraph.hasClassification(mx::ShaderNode::Classification::CLOSURE))
+  {
     // Handle the case where the mxGraph is a direct closure.
     // We don't support rendering closures without attaching
     // to a surface shader, so just output black.
     emitLine(outputSocket->getVariable() + " = vec4(0.0, 0.0, 0.0, 1.0)", mxStage);
   }
-  else if (mxContext.getOptions().hwWriteDepthMoments) {
+  else if (mxContext.getOptions().hwWriteDepthMoments)
+  {
     emitLine(outputSocket->getVariable() + " = vec4(mx_compute_depth_moments(), 0.0, 1.0)", mxStage);
   }
-  else if (mxContext.getOptions().hwWriteAlbedoTable) {
+  else if (mxContext.getOptions().hwWriteAlbedoTable)
+  {
     emitLine(outputSocket->getVariable() + " = vec4(mx_ggx_directional_albedo_generate_table(), 0.0, 1.0)",
              mxStage);
   }
-  else {
+  else
+  {
     // Add all function calls
     emitFunctionCalls(mxGraph, mxContext, mxStage);
 
     // Emit final output
     std::string finalOutputReturn = "vec4 mxOut = ";
     const mx::ShaderOutput *outputConnection = outputSocket->getConnection();
-    if (outputConnection) {
+    if (outputConnection)
+    {
 
       std::string finalOutput = outputConnection->getVariable();
       const std::string &channels = outputSocket->getChannels();
-      if (!channels.empty()) {
+      if (!channels.empty())
+      {
         finalOutput = _syntax->getSwizzledVariable(
           finalOutput, outputConnection->getType(), channels, outputSocket->getType());
       }
 
-      if (mxGraph.hasClassification(mx::ShaderNode::Classification::SURFACE)) {
-        if (mxContext.getOptions().hwTransparency) {
+      if (mxGraph.hasClassification(mx::ShaderNode::Classification::SURFACE))
+      {
+        if (mxContext.getOptions().hwTransparency)
+        {
           emitLine("float outAlpha = clamp(1.0 - dot(" + finalOutput +
                      ".transparency, vec3(0.3333)), 0.0, 1.0)",
                    mxStage);
           emitLine(finalOutputReturn + "vec4(" + finalOutput + ".color, outAlpha)", mxStage);
         }
-        else {
+        else
+        {
           emitLine(finalOutputReturn + "vec4(" + finalOutput + ".color, 1.0)", mxStage);
         }
       }
-      else {
-        if (!outputSocket->getType()->isFloat4()) {
+      else
+      {
+        if (!outputSocket->getType()->isFloat4())
+        {
           toVec4(outputSocket->getType(), finalOutput);
         }
         emitLine(finalOutputReturn + "vec4(" + finalOutput + ".color, 1.0)", mxStage);
       }
     }
-    else {
+    else
+    {
       const std::string outputValue = outputSocket->getValue() ?
                                         _syntax->getValue(outputSocket->getType(),
                                                           *outputSocket->getValue()) :
                                         _syntax->getDefaultValue(outputSocket->getType());
-      if (!outputSocket->getType()->isFloat4()) {
+      if (!outputSocket->getType()->isFloat4())
+      {
         std::string finalOutput = outputSocket->getVariable() + "_tmp";
         emitLine(_syntax->getTypeName(outputSocket->getType()) + " " + finalOutput + " = " + outputValue,
                  mxStage);
         toVec4(outputSocket->getType(), finalOutput);
         emitLine(finalOutputReturn + finalOutput, mxStage);
       }
-      else {
+      else
+      {
         emitLine(finalOutputReturn + outputValue, mxStage);
       }
     }
@@ -456,9 +485,11 @@ void HdPhMaterialXShaderGen::_EmitMxInitFunction(mx::VariableBlock const &vertex
   emitLineBreak(mxStage);
 
   // Initialize MaterialX Texture samplers with HdGetSampler equivalents
-  if (!_mxHdTextureMap.empty()) {
+  if (!_mxHdTextureMap.empty())
+  {
     emitComment("Initialize Material Textures", mxStage);
-    for (auto texturePair : _mxHdTextureMap) {
+    for (auto texturePair : _mxHdTextureMap)
+    {
       emitLine(texturePair.first +
                  "_file = "
                  "HdGetSampler_" +
@@ -491,10 +522,12 @@ void HdPhMaterialXShaderGen::_EmitMxVertexDataDeclarations(mx::VariableBlock con
   // vd = mxVertexData(
   std::string line = mxVertexDataVariable + " = " + mxVertexDataName + "(";
 
-  for (size_t i = 0; i < block.size(); ++i) {
+  for (size_t i = 0; i < block.size(); ++i)
+  {
     line += _EmitMxVertexDataLine(block[i], separator);
     // remove the separator from the last data line
-    if (i == block.size() - 1) {
+    if (i == block.size() - 1)
+    {
       line = line.substr(0, line.size() - separator.size());
     }
   }
@@ -511,26 +544,31 @@ std::string HdPhMaterialXShaderGen::_EmitMxVertexDataLine(const mx::ShaderPort *
   // making sure to convert the Hd data (viewSpace) to Mx data (worldSpace)
   std::string hdVariableDef;
   const std::string mxVariableName = variable->getVariable();
-  if (mxVariableName.compare(mx::HW::T_POSITION_WORLD) == 0) {
+  if (mxVariableName.compare(mx::HW::T_POSITION_WORLD) == 0)
+  {
 
     // Convert to WorldSpace position
     hdVariableDef = "vec3(HdGet_worldToViewInverseMatrix() * Peye)" + separator;
   }
-  else if (mxVariableName.compare(mx::HW::T_NORMAL_WORLD) == 0) {
+  else if (mxVariableName.compare(mx::HW::T_NORMAL_WORLD) == 0)
+  {
 
     // Convert to WorldSpace normal (calculated in MxHdTangentString)
     hdVariableDef = "normalWorld" + separator;
   }
-  else if (mxVariableName.compare(mx::HW::T_TANGENT_WORLD) == 0) {
+  else if (mxVariableName.compare(mx::HW::T_TANGENT_WORLD) == 0)
+  {
 
     // Calculated in MxHdTangentString
     hdVariableDef = "tangentWorld" + separator;
   }
-  else if (mxVariableName.compare(mx::HW::T_POSITION_OBJECT) == 0) {
+  else if (mxVariableName.compare(mx::HW::T_POSITION_OBJECT) == 0)
+  {
 
     hdVariableDef = "HdGet_points()" + separator;
   }
-  else if (mxVariableName.compare(0, mx::HW::T_TEXCOORD.size(), mx::HW::T_TEXCOORD) == 0) {
+  else if (mxVariableName.compare(0, mx::HW::T_TEXCOORD.size(), mx::HW::T_TEXCOORD) == 0)
+  {
 
     // Wrap initialization inside #ifdef in case the object does not have
     // the st primvar
@@ -544,7 +582,8 @@ std::string HdPhMaterialXShaderGen::_EmitMxVertexDataLine(const mx::ShaderPort *
       _defaultTexcoordName.c_str(),
       _defaultTexcoordName.c_str());
   }
-  else if (mxVariableName.compare(0, mx::HW::T_IN_GEOMPROP.size(), mx::HW::T_IN_GEOMPROP) == 0) {
+  else if (mxVariableName.compare(0, mx::HW::T_IN_GEOMPROP.size(), mx::HW::T_IN_GEOMPROP) == 0)
+  {
     // Wrap initialization inside #ifdef in case the object does not have
     // the geomprop primvar
     // Note: variable name format: 'T_IN_GEOMPROP_geomPropName';
@@ -559,7 +598,8 @@ std::string HdPhMaterialXShaderGen::_EmitMxVertexDataLine(const mx::ShaderPort *
       geompropName.c_str(),
       geompropName.c_str());
   }
-  else {
+  else
+  {
     const std::string valueStr = variable->getValue() ?
                                    _syntax->getValue(variable->getType(), *variable->getValue(), true) :
                                    _syntax->getDefaultValue(variable->getType(), true);
@@ -586,15 +626,18 @@ void HdPhMaterialXShaderGen::emitVariableDeclarations(mx::VariableBlock const &b
     mx::HW::T_ALBEDO_TABLE  // BRDF texture
   };
 
-  for (size_t i = 0; i < block.size(); ++i) {
+  for (size_t i = 0; i < block.size(); ++i)
+  {
     emitLineBegin(stage);
 
     // Only declare the variables that we need to initialize with Hd Data
-    if (MxHdVariables.count(block[i]->getName())) {
+    if (MxHdVariables.count(block[i]->getName()))
+    {
       emitVariableDeclaration(block[i], mx::EMPTY_STRING, context, stage, false);
     }
     // Otherwise assign the value from MaterialX
-    else {
+    else
+    {
       emitVariableDeclaration(block[i], qualifier, context, stage, assignValue);
     }
     emitString(separator, stage);

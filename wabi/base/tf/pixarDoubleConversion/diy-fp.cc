@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 void DiyFp::Multiply(const DiyFp &other)
 {

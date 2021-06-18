@@ -48,7 +48,8 @@ class GfFrustum;
 /// Policy of how to conform a window to the given aspect ratio.
 /// An ASCII-art explanation is given in the corresponding .cpp file.
 ///
-enum CameraUtilConformWindowPolicy {
+enum CameraUtilConformWindowPolicy
+{
   /// Modify width
   CameraUtilMatchVertically,
   /// Modify height

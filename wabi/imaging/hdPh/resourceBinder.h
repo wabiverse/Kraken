@@ -136,12 +136,15 @@ TF_DECLARE_PUBLIC_TOKENS(HdPh_ResourceBindingSuffixTokens, HDPH_RESOURCE_BINDING
 /// layout (binding = paramsBuffer_Binding) buffer ParamsBuffer { ... };
 /// \endcode
 ///
-class HdPh_ResourceBinder {
+class HdPh_ResourceBinder
+{
  public:
   /// binding metadata for codegen
-  class MetaData {
+  class MetaData
+  {
    public:
-    MetaData() : instancerNumLevels(0)
+    MetaData()
+      : instancerNumLevels(0)
     {}
 
     typedef size_t ID;
@@ -151,7 +154,8 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for a primvar in interleaved buffer array (Constant, ShaderData)
-    struct StructEntry {
+    struct StructEntry
+    {
       StructEntry(TfToken const &name, TfToken const &dataType, int offset, int arraySize)
         : name(name),
           dataType(dataType),
@@ -169,8 +173,10 @@ class HdPh_ResourceBinder {
         return offset < other.offset;
       }
     };
-    struct StructBlock {
-      StructBlock(TfToken const &name) : blockName(name)
+    struct StructBlock
+    {
+      StructBlock(TfToken const &name)
+        : blockName(name)
       {}
       TfToken blockName;
       std::vector<StructEntry> entries;
@@ -179,10 +185,13 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for a primvar in non-interleaved buffer array (Vertex, Element, ...)
-    struct Primvar {
+    struct Primvar
+    {
       Primvar()
       {}
-      Primvar(TfToken const &name, TfToken const &dataType) : name(name), dataType(dataType)
+      Primvar(TfToken const &name, TfToken const &dataType)
+        : name(name),
+          dataType(dataType)
       {}
       TfToken name;
       TfToken dataType;
@@ -191,8 +200,10 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for a face-varying primvar in non-interleaved buffer array
-    struct FvarPrimvar : Primvar {
-      FvarPrimvar() : channel(0)
+    struct FvarPrimvar : Primvar
+    {
+      FvarPrimvar()
+        : channel(0)
       {}
       FvarPrimvar(TfToken const &name, TfToken const &dataType, int channel)
         : Primvar(name, dataType),
@@ -204,7 +215,8 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for instance primvars
-    struct NestedPrimvar {
+    struct NestedPrimvar
+    {
       NestedPrimvar()
       {}
       NestedPrimvar(TfToken const &name, TfToken const &dataType, int level)
@@ -220,7 +232,8 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for shader parameter accessors
-    struct ShaderParameterAccessor {
+    struct ShaderParameterAccessor
+    {
       ShaderParameterAccessor()
       {}
       ShaderParameterAccessor(TfToken const &name,
@@ -255,7 +268,8 @@ class HdPh_ResourceBinder {
 
     // -------------------------------------------------------------------
     // for specific buffer array (drawing coordinate, instance indices)
-    struct BindingDeclaration {
+    struct BindingDeclaration
+    {
       BindingDeclaration()
       {}
       BindingDeclaration(TfToken const &name, TfToken const &dataType, HdBinding binding)
@@ -419,8 +433,11 @@ class HdPh_ResourceBinder {
 
  private:
   // for batch execution
-  struct NameAndLevel {
-    NameAndLevel(TfToken const &n, int lv = -1) : name(n), level(lv)
+  struct NameAndLevel
+  {
+    NameAndLevel(TfToken const &n, int lv = -1)
+      : name(n),
+        level(lv)
     {}
     TfToken name;
     int level;

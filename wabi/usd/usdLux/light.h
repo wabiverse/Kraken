@@ -83,7 +83,8 @@ class SdfAssetPath;
 /// to best express the intent of the light setup.
 ///
 ///
-class UsdLuxLight : public UsdGeomXformable {
+class UsdLuxLight : public UsdGeomXformable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -99,13 +100,15 @@ class UsdLuxLight : public UsdGeomXformable {
   /// Equivalent to UsdLuxLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxLight(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim)
+  explicit UsdLuxLight(const UsdPrim &prim = UsdPrim())
+    : UsdGeomXformable(prim)
   {}
 
   /// Construct a UsdLuxLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxLight(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj)
+  explicit UsdLuxLight(const UsdSchemaBase &schemaObj)
+    : UsdGeomXformable(schemaObj)
   {}
 
   /// Destructor.

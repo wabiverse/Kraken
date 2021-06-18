@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 
 EShLanguage _GetShaderStage(HgiShaderStage stage)
 {
-  switch (stage) {
+  switch (stage)
+  {
     case HgiShaderStageVertex:
       return EShLangVertex;
     case HgiShaderStageTessellationControl:
@@ -79,15 +80,18 @@ bool HgiVulkanCompileGLSL(const char *name,
   // need to re-initialize in the process, but we have no such need currently.
   static bool glslangInitialized = glslang::InitializeProcess();
 
-  if (ARCH_UNLIKELY(!glslangInitialized)) {
+  if (ARCH_UNLIKELY(!glslangInitialized))
+  {
     TF_CODING_ERROR("Glslang not initialized in process.");
   }
 
   // Each thread that uses glslang compiler must initialize.
   // glslang::InitThread();
 
-  if (numShaderCodes == 0 || !spirvOUT) {
-    if (errors) {
+  if (numShaderCodes == 0 || !spirvOUT)
+  {
+    if (errors)
+    {
       errors->append("No shader to compile %s", name);
     }
     return false;
@@ -247,8 +251,10 @@ bool HgiVulkanCompileGLSL(const char *name,
                                         &preprocessedGLSL,
                                         noIncludes);
 
-  if (!preProcessOK) {
-    if (errors) {
+  if (!preProcessOK)
+  {
+    if (errors)
+    {
       errors->append("GLSL Preprocessing Failed for: ");
       errors->append(name);
       errors->append("\n");
@@ -264,8 +270,10 @@ bool HgiVulkanCompileGLSL(const char *name,
   const char *preprocessedCStr = preprocessedGLSL.c_str();
   shader.setStrings(&preprocessedCStr, 1);
 
-  if (!shader.parse(&DefaultTBuiltInResource, 100, false, messages)) {
-    if (errors) {
+  if (!shader.parse(&DefaultTBuiltInResource, 100, false, messages))
+  {
+    if (errors)
+    {
       errors->append("GLSL Parsing Failed for: ");
       errors->append(name);
       errors->append("\n");
@@ -278,8 +286,10 @@ bool HgiVulkanCompileGLSL(const char *name,
   glslang::TProgram program;
   program.addShader(&shader);
 
-  if (!program.link(messages)) {
-    if (errors) {
+  if (!program.link(messages))
+  {
+    if (errors)
+    {
       errors->append("GLSL linking failed for: ");
       errors->append(name);
       errors->append("\n");
@@ -301,8 +311,10 @@ bool HgiVulkanCompileGLSL(const char *name,
 
   glslang::GlslangToSpv(*program.getIntermediate(shaderType), *spirvOUT, &logger, &spvOptions);
 
-  if (logger.getAllMessages().length() > 0) {
-    if (errors) {
+  if (logger.getAllMessages().length() > 0)
+  {
+    if (errors)
+    {
       errors->append(logger.getAllMessages().c_str());
     }
   }
@@ -315,7 +327,8 @@ bool HgiVulkanCompileGLSL(const char *name,
 
 static bool _VerifyResults(SpvReflectShaderModule *module, SpvReflectResult const &result)
 {
-  if (!TF_VERIFY(result == SPV_REFLECT_RESULT_SUCCESS)) {
+  if (!TF_VERIFY(result == SPV_REFLECT_RESULT_SUCCESS))
+  {
     spvReflectDestroyShaderModule(module);
     return false;
   }
@@ -332,7 +345,8 @@ static VkDescriptorSetLayout _CreateDescriptorSetLayout(HgiVulkanDevice *device,
               device->GetVulkanDevice(), &createInfo, HgiVulkanAllocator(), &layout) == VK_SUCCESS);
 
   // Debug label
-  if (!debugName.empty()) {
+  if (!debugName.empty())
+  {
     std::string debugLabel = "DescriptorSetLayout " + debugName;
     HgiVulkanSetDebugName(
       device, (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debugLabel.c_str());
@@ -348,19 +362,22 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(std::vector<un
   SpvReflectShaderModule module = {};
   SpvReflectResult result = spvReflectCreateShaderModule(
     spirv.size() * sizeof(uint32_t), spirv.data(), &module);
-  if (!_VerifyResults(&module, result)) {
+  if (!_VerifyResults(&module, result))
+  {
     return HgiVulkanDescriptorSetInfoVector();
   }
 
   uint32_t count = 0;
   result = spvReflectEnumerateDescriptorSets(&module, &count, NULL);
-  if (!_VerifyResults(&module, result)) {
+  if (!_VerifyResults(&module, result))
+  {
     return HgiVulkanDescriptorSetInfoVector();
   }
 
   std::vector<SpvReflectDescriptorSet *> sets(count);
   result = spvReflectEnumerateDescriptorSets(&module, &count, sets.data());
-  if (!_VerifyResults(&module, result)) {
+  if (!_VerifyResults(&module, result))
+  {
     return HgiVulkanDescriptorSetInfoVector();
   }
 
@@ -368,12 +385,14 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(std::vector<un
   // for each descriptor set in this shader.
   std::vector<HgiVulkanDescriptorSetInfo> infos(sets.size());
 
-  for (size_t s = 0; s < sets.size(); s++) {
+  for (size_t s = 0; s < sets.size(); s++)
+  {
     SpvReflectDescriptorSet const &reflSet = *(sets[s]);
     HgiVulkanDescriptorSetInfo &info = infos[s];
     info.bindings.resize(reflSet.binding_count);
 
-    for (uint32_t b = 0; b < reflSet.binding_count; b++) {
+    for (uint32_t b = 0; b < reflSet.binding_count; b++)
+    {
       SpvReflectDescriptorBinding const &reflBinding = *(reflSet.bindings[b]);
 
       VkDescriptorSetLayoutBinding &layoutBinding = info.bindings[b];
@@ -381,7 +400,8 @@ HgiVulkanDescriptorSetInfoVector HgiVulkanGatherDescriptorSetInfo(std::vector<un
       layoutBinding.descriptorType = static_cast<VkDescriptorType>(reflBinding.descriptor_type);
       layoutBinding.descriptorCount = 1;
 
-      for (uint32_t d = 0; d < reflBinding.array.dims_count; d++) {
+      for (uint32_t d = 0; d < reflBinding.array.dims_count; d++)
+      {
         layoutBinding.descriptorCount *= reflBinding.array.dims[d];
       }
       layoutBinding.stageFlags = static_cast<VkShaderStageFlagBits>(module.shader_stage);
@@ -408,13 +428,16 @@ VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
   // textures bound than a fragment shader. We merge them all together to
   // create the descriptor set layout for that shader program.
 
-  for (HgiVulkanDescriptorSetInfoVector const &infoVec : infos) {
-    for (HgiVulkanDescriptorSetInfo const &info : infoVec) {
+  for (HgiVulkanDescriptorSetInfoVector const &infoVec : infos)
+  {
+    for (HgiVulkanDescriptorSetInfo const &info : infoVec)
+    {
 
       // Get the set (or create one)
       HgiVulkanDescriptorSetInfo &trg = mergedInfos[info.setNumber];
 
-      for (VkDescriptorSetLayoutBinding const &bi : info.bindings) {
+      for (VkDescriptorSetLayoutBinding const &bi : info.bindings)
+      {
 
         // If two shader modules have the same binding information for
         // a specific resource, we only want to insert it once.
@@ -422,15 +445,18 @@ VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
         // have a texture bound at the same binding index.
 
         VkDescriptorSetLayoutBinding *dst = nullptr;
-        for (VkDescriptorSetLayoutBinding &bind : trg.bindings) {
-          if (bind.binding == bi.binding) {
+        for (VkDescriptorSetLayoutBinding &bind : trg.bindings)
+        {
+          if (bind.binding == bi.binding)
+          {
             dst = &bind;
             break;
           }
         }
 
         // It is a new binding we haven't seen before. Add it
-        if (!dst) {
+        if (!dst)
+        {
           trg.setNumber = info.setNumber;
           trg.bindings.push_back(bi);
           dst = &trg.bindings.back();
@@ -444,7 +470,8 @@ VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
   }
 
   // Generate the VkDescriptorSetLayoutCreateInfos for the bindings we merged.
-  for (auto &pair : mergedInfos) {
+  for (auto &pair : mergedInfos)
+  {
     HgiVulkanDescriptorSetInfo &info = pair.second;
     info.createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     info.createInfo.bindingCount = info.bindings.size();
@@ -454,7 +481,8 @@ VkDescriptorSetLayoutVector HgiVulkanMakeDescriptorSetLayouts(
   // Create VkDescriptorSetLayouts out of the merge infos above.
   VkDescriptorSetLayoutVector layouts;
 
-  for (auto const &pair : mergedInfos) {
+  for (auto const &pair : mergedInfos)
+  {
     HgiVulkanDescriptorSetInfo const &info = pair.second;
     VkDescriptorSetLayout layout = _CreateDescriptorSetLayout(device, info.createInfo, debugName);
     layouts.push_back(layout);

@@ -181,16 +181,19 @@ static void covah_setup_args(int argc, const char **argv)
   /* clang-format on */
 
   CKE_ARGS::variables_map arg_vars;
-  try {
+  try
+  {
     CKE_ARGS::store(CKE_ARGS::parse_command_line(argc, (const char **)argv, options), arg_vars);
     CKE_ARGS::notify(arg_vars);
 
-    if (arg_vars.count("help")) {
+    if (arg_vars.count("help"))
+    {
       std::cout << options << "\n";
       exit(COVAH_SUCCESS);
     }
   }
-  catch (const CKE_ARGS::error &e) {
+  catch (const CKE_ARGS::error &e)
+  {
     fprintf(stderr, "%s\n", e.what());
     fprintf(stderr, "%s\n", TfStringify(options).c_str());
     exit(COVAH_ERROR);
@@ -209,14 +212,17 @@ static void CKE_CONVERT_STAGE_TO(std::string path, std::string extension)
 
 static ckeStatusCode covah_parse_args(int argc, const char **argv)
 {
-  if (load_stage.length() > 2) {
+  if (load_stage.length() > 2)
+  {
     G.main->stage_id = load_stage;
   }
-  if (G.server) {
+  if (G.server)
+  {
     // ServerStart(argc, argv);
     exit(COVAH_SUCCESS);
   }
-  if (convert_stage.length() > 2) {
+  if (convert_stage.length() > 2)
+  {
     CKE_CONVERT_STAGE_TO(convert_stage, convert_to);
     exit(COVAH_SUCCESS);
   }
@@ -235,7 +241,8 @@ void CKE_covah_main_init(const cContext &C, int argc, const char **argv)
 
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||
-      G.main->stage_id.string().find("startup.usda") != std::string::npos) {
+      G.main->stage_id.string().find("startup.usda") != std::string::npos)
+  {
     G.factory_startup = true;
   }
 
@@ -247,18 +254,21 @@ void CKE_covah_main_init(const cContext &C, int argc, const char **argv)
   /** @em Always */
   UNI_create_stage(C);
 
-  if (run_diagnostics) {
+  if (run_diagnostics)
+  {
     UNI_enable_all_debug_codes();
   }
 
-  if (G.factory_startup) {
+  if (G.factory_startup)
+  {
     /**
      * Create default Pixar stage. */
     UNI_set_defaults(C);
     UNI_author_default_scene(C);
     UNI_save_stage(C);
   }
-  else {
+  else
+  {
     /**
      * Open user's stage. */
     UNI_open_stage(C);
@@ -269,7 +279,8 @@ bool CKE_has_kill_signal(ckeStatusCode signal)
 {
   static ckeStatusCode kill_signal = COVAH_RUN;
 
-  if (ARCH_UNLIKELY(signal != COVAH_RUN)) {
+  if (ARCH_UNLIKELY(signal != COVAH_RUN))
+  {
     kill_signal = signal;
   }
 

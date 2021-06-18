@@ -40,67 +40,86 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
   auto setVisibilityFlag = [&sceneDelegate, &id, &geomSettings](TfToken const &primvarName,
                                                                 HdRprVisibilityFlag flag) {
     bool toggle;
-    if (!HdRprGetConstantPrimvar(primvarName, sceneDelegate, id, &toggle)) {
+    if (!HdRprGetConstantPrimvar(primvarName, sceneDelegate, id, &toggle))
+    {
       return;
     }
 
-    if (toggle) {
+    if (toggle)
+    {
       geomSettings->visibilityMask |= flag;
     }
-    else {
+    else
+    {
       geomSettings->visibilityMask &= ~flag;
     }
   };
 
-  for (auto &desc : constantPrimvarDescs) {
-    if (desc.name == HdRprGeometryPrimvarTokens->id) {
+  for (auto &desc : constantPrimvarDescs)
+  {
+    if (desc.name == HdRprGeometryPrimvarTokens->id)
+    {
       HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->id, sceneDelegate, id, &geomSettings->id);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->subdivisionLevel) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->subdivisionLevel)
+    {
       int subdivisionLevel;
       if (HdRprGetConstantPrimvar(
-            HdRprGeometryPrimvarTokens->subdivisionLevel, sceneDelegate, id, &subdivisionLevel)) {
+            HdRprGeometryPrimvarTokens->subdivisionLevel, sceneDelegate, id, &subdivisionLevel))
+      {
         geomSettings->subdivisionLevel = std::max(0, std::min(subdivisionLevel, 7));
       }
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->ignoreContour) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->ignoreContour)
+    {
       HdRprGetConstantPrimvar(
         HdRprGeometryPrimvarTokens->ignoreContour, sceneDelegate, id, &geomSettings->ignoreContour);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->cryptomatteName) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->cryptomatteName)
+    {
       HdRprGetConstantPrimvar(
         HdRprGeometryPrimvarTokens->cryptomatteName, sceneDelegate, id, &geomSettings->cryptomatteName);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->geomSamples) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->geomSamples)
+    {
       HdRprGetConstantPrimvar(
         HdRprGeometryPrimvarTokens->geomSamples, sceneDelegate, id, &geomSettings->numGeometrySamples);
       geomSettings->numGeometrySamples = std::max(1, geomSettings->numGeometrySamples);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityPrimary) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityPrimary)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityPrimary, kVisiblePrimary);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityShadow) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityShadow)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityShadow, kVisibleShadow);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityReflection) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityReflection)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityReflection, kVisibleReflection);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyReflection) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyReflection)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyReflection, kVisibleGlossyReflection);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityRefraction) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityRefraction)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityRefraction, kVisibleRefraction);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyRefraction) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyRefraction)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyRefraction, kVisibleGlossyRefraction);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityDiffuse) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityDiffuse)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityDiffuse, kVisibleDiffuse);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityTransparent) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityTransparent)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityTransparent, kVisibleTransparent);
     }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityLight) {
+    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityLight)
+    {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityLight, kVisibleLight);
     }
   }
@@ -111,7 +130,8 @@ void HdRprFillPrimvarDescsPerInterpolation(
   SdfPath const &id,
   std::map<HdInterpolation, HdPrimvarDescriptorVector> *primvarDescsPerInterpolation)
 {
-  if (!primvarDescsPerInterpolation->empty()) {
+  if (!primvarDescsPerInterpolation->empty())
+  {
     return;
   }
 
@@ -123,9 +143,11 @@ void HdRprFillPrimvarDescsPerInterpolation(
     HdInterpolationFaceVarying,
     HdInterpolationInstance,
   };
-  for (auto &interpolation : interpolations) {
+  for (auto &interpolation : interpolations)
+  {
     auto primvarDescs = sceneDelegate->GetPrimvarDescriptors(id, interpolation);
-    if (!primvarDescs.empty()) {
+    if (!primvarDescs.empty())
+    {
       primvarDescsPerInterpolation->emplace(interpolation, std::move(primvarDescs));
     }
   }
@@ -133,7 +155,8 @@ void HdRprFillPrimvarDescsPerInterpolation(
   // If primitive has no primvars,
   // insert dummy entry so that the next time user calls this function,
   // it will not rerun sceneDelegate->GetPrimvarDescriptors which is quite costly
-  if (primvarDescsPerInterpolation->empty()) {
+  if (primvarDescsPerInterpolation->empty())
+  {
     primvarDescsPerInterpolation->emplace(HdInterpolationCount, HdPrimvarDescriptorVector{});
   }
 }
@@ -143,10 +166,14 @@ bool HdRprIsPrimvarExists(
   std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation,
   HdInterpolation *interpolation)
 {
-  for (auto &entry : primvarDescsPerInterpolation) {
-    for (auto &pv : entry.second) {
-      if (pv.name == primvarName) {
-        if (interpolation) {
+  for (auto &entry : primvarDescsPerInterpolation)
+  {
+    for (auto &pv : entry.second)
+    {
+      if (pv.name == primvarName)
+      {
+        if (interpolation)
+        {
           *interpolation = entry.first;
         }
         return true;
@@ -161,7 +188,8 @@ bool HdRprIsValidPrimvarSize(size_t primvarSize,
                              size_t uniformInterpSize,
                              size_t vertexInterpSize)
 {
-  switch (primvarInterpolation) {
+  switch (primvarInterpolation)
+  {
     case HdInterpolationConstant:
       return primvarSize > 0;
     case HdInterpolationUniform:

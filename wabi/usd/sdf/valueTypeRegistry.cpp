@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 const Sdf_ValueTypePrivate::CoreType *GetEmptyCoreType()
 {
@@ -78,13 +79,15 @@ Sdf_ValueTypeImpl::Sdf_ValueTypeImpl()
   array = this;
 }
 
-namespace {
+namespace
+{
 
 //
 // Registry -- The implementation of the value type name registry.
 //
 
-class Registry : boost::noncopyable {
+class Registry : boost::noncopyable
+{
  public:
   typedef Sdf_ValueTypePrivate::CoreType CoreType;
 
@@ -180,7 +183,8 @@ class Registry : boost::noncopyable {
   // can be the core type for multiple roles but all types that have
   // the same TfType and role are aliases of each other.
   typedef std::pair<TfType, TfToken> CoreTypeKey;
-  struct CoreTypeKeyHash {
+  struct CoreTypeKeyHash
+  {
     size_t operator()(const CoreTypeKey &x) const
     {
       size_t hash = 0;
@@ -255,7 +259,8 @@ void Registry::AddType(const TfToken &name,
                 dimensions,
                 defaultValue,
                 defaultArrayValue,
-                defaultUnit)) {
+                defaultUnit))
+  {
     // Error already reported.
   }
 }
@@ -283,7 +288,8 @@ void Registry::AddType(const TfToken &name,
                 dimensions,
                 VtValue(),
                 VtValue(),
-                defaultUnit)) {
+                defaultUnit))
+  {
     // Error already reported.
   }
 }
@@ -302,21 +308,25 @@ bool Registry::_AddType(Sdf_ValueTypeImpl **scalar,
                         TfEnum defaultUnit)
 {
   // Preconditions.
-  if (!TF_VERIFY(!name.IsEmpty(), "Types must have names")) {
+  if (!TF_VERIFY(!name.IsEmpty(), "Types must have names"))
+  {
     return false;
   }
   if (!TF_VERIFY(!cppTypeName.empty() || !arrayCppTypeName.empty(),
                  "Type '%s' must have C++ names",
-                 name.GetText())) {
+                 name.GetText()))
+  {
     return false;
   }
   if (!TF_VERIFY(
-        !type.IsUnknown() || !arrayType.IsUnknown(), "Type '%s' must have a C++ type", name.GetText())) {
+        !type.IsUnknown() || !arrayType.IsUnknown(), "Type '%s' must have a C++ type", name.GetText()))
+  {
     return false;
   }
   const Sdf_ValueTypeImpl *existing = _FindType(name);
   if (!TF_VERIFY(
-        existing == Sdf_ValueTypePrivate::GetEmptyTypeName(), "Type '%s' already exists", name.GetText())) {
+        existing == Sdf_ValueTypePrivate::GetEmptyTypeName(), "Type '%s' already exists", name.GetText()))
+  {
     return false;
   }
   // Construct the array name.
@@ -324,7 +334,8 @@ bool Registry::_AddType(Sdf_ValueTypeImpl **scalar,
   existing = _FindType(arrayName);
   if (!TF_VERIFY(existing == Sdf_ValueTypePrivate::GetEmptyTypeName(),
                  "Type '%s' already exists",
-                 arrayName.GetText())) {
+                 arrayName.GetText()))
+  {
     return false;
   }
 
@@ -338,55 +349,66 @@ bool Registry::_AddType(Sdf_ValueTypeImpl **scalar,
 
   // Use the default dimensionless unit if the given default unit is
   // the default constructed TfEnum.
-  if (defaultUnit == TfEnum()) {
+  if (defaultUnit == TfEnum())
+  {
     defaultUnit = SdfDimensionlessUnitDefault;
   }
 
   // Get the core types.
   const CoreType *coreType = NULL, *coreArrayType = NULL;
-  if (!type.IsUnknown()) {
+  if (!type.IsUnknown())
+  {
     coreType = _AddCoreType(name, type, cppTypeName, role, dimensions, defaultValue, defaultUnit);
-    if (!coreType) {
+    if (!coreType)
+    {
       // Error already reported.
       return false;
     }
   }
-  if (!arrayType.IsUnknown()) {
+  if (!arrayType.IsUnknown())
+  {
     coreArrayType = _AddCoreType(
       arrayName, arrayType, arrayCppTypeName, role, dimensions, defaultArrayValue, defaultUnit);
-    if (!coreArrayType) {
+    if (!coreArrayType)
+    {
       // Error already reported.
       return false;
     }
   }
 
   // Add the scalar type.
-  if (coreType) {
+  if (coreType)
+  {
     *scalar = &_types[name];
     (*scalar)->type = coreType;
     (*scalar)->name = TfToken(name);
   }
-  else {
+  else
+  {
     *scalar = NULL;
   }
 
   // Add the array type.
-  if (coreArrayType) {
+  if (coreArrayType)
+  {
     *array = &_types[arrayName];
     (*array)->type = coreArrayType;
     (*array)->name = TfToken(arrayName);
   }
-  else {
+  else
+  {
     *array = NULL;
   }
 
   // Scalar/array references.
-  if (*scalar) {
+  if (*scalar)
+  {
     (*scalar)->scalar = *scalar;
     (*scalar)->array = *array ? *array : Sdf_ValueTypePrivate::GetEmptyTypeName();
     _allTypes.push_back(Sdf_ValueTypePrivate::MakeValueTypeName(*scalar));
   }
-  if (*array) {
+  if (*array)
+  {
     (*array)->scalar = *scalar ? *scalar : Sdf_ValueTypePrivate::GetEmptyTypeName();
     (*array)->array = *array;
     _allTypes.push_back(Sdf_ValueTypePrivate::MakeValueTypeName(*array));
@@ -401,7 +423,8 @@ const Sdf_ValueTypeImpl *Registry::FindOrCreateTypeName(const TfToken &name)
 
   // Look up by type.
   TypeMap::const_iterator i = _types.find(name);
-  if (i != _types.end()) {
+  if (i != _types.end())
+  {
     return &i->second;
   }
 
@@ -419,7 +442,8 @@ const Sdf_ValueTypeImpl *Registry::_FindOrCreateTypeName(const TfToken &name)
 {
   // Return any already saved temporary name.
   TemporaryNameMap::const_iterator i = _temporaryNames.find(name);
-  if (i != _temporaryNames.end()) {
+  if (i != _temporaryNames.end())
+  {
     return &i->second;
   }
 
@@ -440,17 +464,20 @@ const Registry::CoreType *Registry::_AddCoreType(const TfToken &name,
                                                  const VtValue &value,
                                                  TfEnum unit)
 {
-  if (!TF_VERIFY(!tfType.IsUnknown(), "Internal error: unknown TfType for '%s'", name.GetText())) {
+  if (!TF_VERIFY(!tfType.IsUnknown(), "Internal error: unknown TfType for '%s'", name.GetText()))
+  {
     return NULL;
   }
-  if (!TF_VERIFY(tfType != TfType::Find<void>(), "Internal error: TfType<void> for '%s'", name.GetText())) {
+  if (!TF_VERIFY(tfType != TfType::Find<void>(), "Internal error: TfType<void> for '%s'", name.GetText()))
+  {
     return NULL;
   }
 
   // Find or create the core type.
   const CoreTypeKey key(tfType, role);
   CoreType &coreType = _coreTypes[key];
-  if (coreType.type.IsUnknown()) {
+  if (coreType.type.IsUnknown())
+  {
     // Create.
     coreType.type = tfType;
     coreType.cppTypeName = cppTypeName;
@@ -459,35 +486,42 @@ const Registry::CoreType *Registry::_AddCoreType(const TfToken &name,
     coreType.value = value;
     coreType.unit = unit;
   }
-  else {
+  else
+  {
     // Found.  Preconditions.
     if (!TF_VERIFY(
-          coreType.type == tfType, "Internal error: unexpected core type for '%s'", name.GetText())) {
+          coreType.type == tfType, "Internal error: unexpected core type for '%s'", name.GetText()))
+    {
       return NULL;
     }
     if (!TF_VERIFY(
-          coreType.cppTypeName == cppTypeName, "Mismatched C++ name for core type '%s'", name.GetText())) {
+          coreType.cppTypeName == cppTypeName, "Mismatched C++ name for core type '%s'", name.GetText()))
+    {
       return NULL;
     }
     if (!TF_VERIFY(coreType.role == role,
                    "Mismatched roles '%s' and '%s' for core type '%s'",
                    coreType.role.GetText(),
                    role.GetText(),
-                   tfType.GetTypeName().c_str())) {
+                   tfType.GetTypeName().c_str()))
+    {
       return NULL;
     }
     if (!TF_VERIFY(coreType.dim == dimensions,
                    "Mismatched dimensions for core type '%s'",
-                   tfType.GetTypeName().c_str())) {
+                   tfType.GetTypeName().c_str()))
+    {
       return NULL;
     }
     if (!TF_VERIFY(coreType.value == value,
                    "Mismatched default value for core type '%s'",
-                   tfType.GetTypeName().c_str())) {
+                   tfType.GetTypeName().c_str()))
+    {
       return NULL;
     }
     if (!TF_VERIFY(
-          coreType.unit == unit, "Mismatched unit for core type '%s'", tfType.GetTypeName().c_str())) {
+          coreType.unit == unit, "Mismatched unit for core type '%s'", tfType.GetTypeName().c_str()))
+    {
       return NULL;
     }
   }
@@ -504,10 +538,12 @@ const Registry::CoreType *Registry::_AddCoreType(const TfToken &name,
 // Sdf_ValueTypeRegistry
 //
 
-class Sdf_ValueTypeRegistry::_Impl : public Registry {
+class Sdf_ValueTypeRegistry::_Impl : public Registry
+{
 };
 
-Sdf_ValueTypeRegistry::Sdf_ValueTypeRegistry() : _impl(new _Impl)
+Sdf_ValueTypeRegistry::Sdf_ValueTypeRegistry()
+  : _impl(new _Impl)
 {
   // Do nothing
 }
@@ -557,7 +593,8 @@ static std::string _GetTypeName(const TfType &type, const std::string &cppTypeNa
 
 void Sdf_ValueTypeRegistry::AddType(const Type &type)
 {
-  if (!type._defaultValue.IsEmpty() || !type._defaultArrayValue.IsEmpty()) {
+  if (!type._defaultValue.IsEmpty() || !type._defaultArrayValue.IsEmpty())
+  {
     AddType(type._name,
             type._defaultValue,
             type._defaultArrayValue,
@@ -567,7 +604,8 @@ void Sdf_ValueTypeRegistry::AddType(const Type &type)
             type._role,
             type._dimensions);
   }
-  else {
+  else
+  {
     AddType(type._name,
             type._type,
             /* arrayType = */ TfType(),

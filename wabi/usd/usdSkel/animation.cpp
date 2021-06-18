@@ -57,7 +57,8 @@ UsdSkelAnimation::~UsdSkelAnimation()
 /* static */
 UsdSkelAnimation UsdSkelAnimation::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelAnimation();
   }
@@ -68,7 +69,8 @@ UsdSkelAnimation UsdSkelAnimation::Get(const UsdStagePtr &stage, const SdfPath &
 UsdSkelAnimation UsdSkelAnimation::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SkelAnimation");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelAnimation();
   }
@@ -198,7 +200,8 @@ UsdAttribute UsdSkelAnimation::CreateBlendShapeWeightsAttr(VtValue const &defaul
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -247,11 +250,14 @@ WABI_NAMESPACE_BEGIN
 bool UsdSkelAnimation::GetTransforms(VtMatrix4dArray *xforms, UsdTimeCode time) const
 {
   VtVec3fArray translations;
-  if (GetTranslationsAttr().Get(&translations, time)) {
+  if (GetTranslationsAttr().Get(&translations, time))
+  {
     VtQuatfArray rotations;
-    if (GetRotationsAttr().Get(&rotations, time)) {
+    if (GetRotationsAttr().Get(&rotations, time))
+    {
       VtVec3hArray scales;
-      if (GetScalesAttr().Get(&scales, time)) {
+      if (GetScalesAttr().Get(&scales, time))
+      {
         return UsdSkelMakeTransforms(translations, rotations, scales, xforms);
       }
     }
@@ -264,7 +270,8 @@ bool UsdSkelAnimation::SetTransforms(const VtMatrix4dArray &xforms, UsdTimeCode 
   VtVec3fArray translations;
   VtQuatfArray rotations;
   VtVec3hArray scales;
-  if (UsdSkelDecomposeTransforms(xforms, &translations, &rotations, &scales)) {
+  if (UsdSkelDecomposeTransforms(xforms, &translations, &rotations, &scales))
+  {
     return GetTranslationsAttr().Set(translations, time) & GetRotationsAttr().Set(rotations, time) &
            GetScalesAttr().Set(scales, time);
   }

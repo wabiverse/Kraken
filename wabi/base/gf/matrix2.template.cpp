@@ -43,7 +43,8 @@
 {
   double det = GetDeterminant();
 
-  if (detPtr) {
+  if (detPtr)
+  {
     // CODE_COVERAGE_OFF_NO_REPORT This is inaccessible from script and not
     // worth writing a whole C++ test for.
     *detPtr = det;
@@ -57,7 +58,8 @@
   }
   inverse;
 
-  if (GfAbs(det) > eps) {
+  if (GfAbs(det) > eps)
+  {
 
     double rcp = 1.0 / det;
 
@@ -71,7 +73,8 @@
     inverse._mtx[1][0] = {{SCALAR_CAST("_mtx[1][0]*-rcp")}};
     inverse._mtx[1][1] = {{SCALAR_CAST("_mtx[0][0]*rcp")}};
   }
-  else {
+  else
+  {
     inverse.SetDiagonal(FLT_MAX);
   }
 

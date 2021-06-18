@@ -103,7 +103,8 @@ inline std::string ArchGetDemangled(const std::type_index &typeIndex)
 ///
 /// \see ArchDemangle()
 /// \overload
-template<typename T> inline std::string ArchGetDemangled()
+template<typename T>
+inline std::string ArchGetDemangled()
 {
   return ArchGetDemangled(typeid(T).name());
 }

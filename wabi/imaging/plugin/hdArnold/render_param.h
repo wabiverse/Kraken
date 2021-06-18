@@ -41,10 +41,12 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class to control the flow of rendering.
-class HdArnoldRenderParam final : public HdRenderParam {
+class HdArnoldRenderParam final : public HdRenderParam
+{
  public:
   /// Rendering status.
-  enum class Status {
+  enum class Status
+  {
     Converging,  ///< Render is still converging.
     Converged,   ///< Render converged.
     Aborted      ///< Render aborted.
@@ -96,12 +98,14 @@ class HdArnoldRenderParam final : public HdRenderParam {
   std::atomic<bool> _paused;
 };
 
-class HdArnoldRenderParamInterrupt {
+class HdArnoldRenderParamInterrupt
+{
  public:
   /// Constructor for HdArnoldRenderParamInterrupt.
   ///
   /// @param param Pointer to the HdRenderParam struct.
-  HdArnoldRenderParamInterrupt(HdRenderParam *param) : _param(reinterpret_cast<HdArnoldRenderParam *>(param))
+  HdArnoldRenderParamInterrupt(HdRenderParam *param)
+    : _param(reinterpret_cast<HdArnoldRenderParam *>(param))
   {}
 
   /// Interrupts an ongoing render.
@@ -109,7 +113,8 @@ class HdArnoldRenderParamInterrupt {
   /// Only calls interrupt once per created instance of HdArnoldRenderParamInterrupt.
   void Interrupt()
   {
-    if (!_hasInterrupted) {
+    if (!_hasInterrupted)
+    {
       _hasInterrupted = true;
       _param->Interrupt();
     }

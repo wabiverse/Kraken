@@ -56,7 +56,9 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec4f;
 
-template<> struct GfIsGfVec<class GfVec4f> {
+template<>
+struct GfIsGfVec<class GfVec4f>
+{
   static const bool value = true;
 };
 
@@ -68,7 +70,8 @@ template<> struct GfIsGfVec<class GfVec4f> {
 /// Represents a vector of 4 components of type \c float.
 /// It is intended to be fast and simple.
 ///
-class GfVec4f {
+class GfVec4f
+{
  public:
   /// Scalar element type and dimension.
   typedef float ScalarType;
@@ -78,15 +81,19 @@ class GfVec4f {
   GfVec4f() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec4f(float value) : _data{value, value, value, value}
+  constexpr explicit GfVec4f(float value)
+    : _data{value, value, value, value}
   {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec4f(float s0, float s1, float s2, float s3) : _data{s0, s1, s2, s3}
+  constexpr GfVec4f(float s0, float s1, float s2, float s3)
+    : _data{s0, s1, s2, s3}
   {}
 
   /// Construct with pointer to values.
-  template<class Scl> constexpr explicit GfVec4f(Scl const *p) : _data{p[0], p[1], p[2], p[3]}
+  template<class Scl>
+  constexpr explicit GfVec4f(Scl const *p)
+    : _data{p[0], p[1], p[2], p[3]}
   {}
 
   /// Construct from GfVec4d.

@@ -36,7 +36,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfLayerHandleVector _GetLayerStackLayers(const PcpLayerStack &layerStack)
 {
@@ -49,7 +50,8 @@ static SdfLayerOffsetVector _GetLayerOffsets(const PcpLayerStack &layerStack)
   const size_t numLayers = layerStack.GetLayers().size();
 
   SdfLayerOffsetVector rval(numLayers);
-  for (size_t i = 0; i != numLayers; ++i) {
+  for (size_t i = 0; i != numLayers; ++i)
+  {
     if (const SdfLayerOffset *offset = layerStack.GetLayerOffsetForLayer(i))
       rval[i] = *offset;
   }

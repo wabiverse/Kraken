@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -105,7 +107,8 @@ void wrapUsdShadeConnectableAPI()
 
 #include "wabi/usd/usdShade/utils.h"
 
-namespace {
+namespace
+{
 
 #include <boost/python/tuple.hpp>
 
@@ -115,10 +118,12 @@ static object _GetConnectedSource(const UsdAttribute &shadingAttr)
   TfToken sourceName;
   UsdShadeAttributeType sourceType;
 
-  if (UsdShadeConnectableAPI::GetConnectedSource(shadingAttr, &source, &sourceName, &sourceType)) {
+  if (UsdShadeConnectableAPI::GetConnectedSource(shadingAttr, &source, &sourceName, &sourceType))
+  {
     return boost::python::make_tuple(source, sourceName, sourceType);
   }
-  else {
+  else
+  {
     return object();
   }
 }

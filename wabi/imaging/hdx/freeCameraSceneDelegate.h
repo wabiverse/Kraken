@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 /// A simple scene delegate adding a camera prim to the given
 /// render index.
 ///
-class HdxFreeCameraSceneDelegate : public HdSceneDelegate {
+class HdxFreeCameraSceneDelegate : public HdSceneDelegate
+{
  public:
   /// Constructs delegate and adds camera to render index if
   /// cameras are supported by render delegate.

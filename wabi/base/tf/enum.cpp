@@ -62,7 +62,8 @@ typedef TfHashMap<string, TfEnum, TfHash> _NameToEnumTableType;
 typedef TfHashMap<string, vector<string>, TfHash> _TypeNameToNameVectorTableType;
 typedef TfHashMap<string, const type_info *, TfHash> _TypeNameToTypeTableType;
 
-class Tf_EnumRegistry : boost::noncopyable {
+class Tf_EnumRegistry : boost::noncopyable
+{
  private:
   static Tf_EnumRegistry &_GetInstance()
   {
@@ -222,17 +223,20 @@ TfEnum TfEnum::GetValueFromFullName(const string &fullname, bool *foundIt)
   tbb::spin_mutex::scoped_lock lock(r._tableLock);
 
   _NameToEnumTableType::iterator i = r._fullNameToEnum.find(fullname);
-  if (i != r._fullNameToEnum.end()) {
+  if (i != r._fullNameToEnum.end())
+  {
     if (foundIt)
       *foundIt = true;
     return TfEnum(i->second);
   }
-  else if (fullname.find("int::") == 0) {
+  else if (fullname.find("int::") == 0)
+  {
     if (foundIt)
       *foundIt = true;
     return TfEnum(atoi(fullname.c_str() + 5));
   }
-  else {
+  else
+  {
     if (foundIt)
       *foundIt = false;
     return TfEnum(-1);

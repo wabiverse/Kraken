@@ -18,7 +18,8 @@
 #include "../stream.h"
 
 RAPIDJSON_NAMESPACE_BEGIN
-namespace internal {
+namespace internal
+{
 
 //! Custom strlen() which works on different character types.
 /*! \tparam Ch Character type (e.g. char, wchar_t, short)
@@ -27,7 +28,8 @@ namespace internal {
     \note This has the same semantics as strlen(), the return value is not number of Unicode
    codepoints.
 */
-template<typename Ch> inline SizeType StrLen(const Ch *s)
+template<typename Ch>
+inline SizeType StrLen(const Ch *s)
 {
   const Ch *p = s;
   while (*p)
@@ -42,7 +44,8 @@ bool CountStringCodePoint(const typename Encoding::Ch *s, SizeType length, SizeT
   GenericStringStream<Encoding> is(s);
   const typename Encoding::Ch *end = s + length;
   SizeType count = 0;
-  while (is.src_ < end) {
+  while (is.src_ < end)
+  {
     unsigned codepoint;
     if (!Encoding::Decode(is, &codepoint))
       return false;

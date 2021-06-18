@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdSkelTokens->bindTransforms);
 /// \endcode
-struct UsdSkelTokensType {
+struct UsdSkelTokensType
+{
   USDSKEL_API UsdSkelTokensType();
   /// \brief "bindTransforms"
   ///

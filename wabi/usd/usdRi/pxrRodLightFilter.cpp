@@ -57,7 +57,8 @@ UsdRiPxrRodLightFilter::~UsdRiPxrRodLightFilter()
 /* static */
 UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRodLightFilter();
   }
@@ -68,7 +69,8 @@ UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Get(const UsdStagePtr &stage, con
 UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiRodLightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRodLightFilter();
   }
@@ -566,7 +568,8 @@ UsdAttribute UsdRiPxrRodLightFilter::CreateColorRampInterpolationAttr(VtValue co
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

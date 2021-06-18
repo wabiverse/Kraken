@@ -49,12 +49,14 @@ HdPhSamplerObject::~HdPhSamplerObject() = default;
 
 Hgi *HdPhSamplerObject::_GetHgi() const
 {
-  if (!TF_VERIFY(_samplerObjectRegistry)) {
+  if (!TF_VERIFY(_samplerObjectRegistry))
+  {
     return nullptr;
   }
 
   HdPhResourceRegistry *const registry = _samplerObjectRegistry->GetResourceRegistry();
-  if (!TF_VERIFY(registry)) {
+  if (!TF_VERIFY(registry))
+  {
     return nullptr;
   }
 
@@ -86,17 +88,20 @@ static HgiSamplerHandle _GenSampler(HdPh_SamplerObjectRegistry *const samplerObj
                                     HdSamplerParameters const &samplerParameters,
                                     const bool createSampler)
 {
-  if (!createSampler) {
+  if (!createSampler)
+  {
     return HgiSamplerHandle();
   }
 
   HdPhResourceRegistry *const registry = samplerObjectRegistry->GetResourceRegistry();
-  if (!TF_VERIFY(registry)) {
+  if (!TF_VERIFY(registry))
+  {
     return HgiSamplerHandle();
   }
 
   Hgi *const hgi = registry->GetHgi();
-  if (!TF_VERIFY(hgi)) {
+  if (!TF_VERIFY(hgi))
+  {
     return HgiSamplerHandle();
   }
 
@@ -108,44 +113,52 @@ static GLuint64EXT _GenGLTextureSamplerHandle(HgiTextureHandle const &textureHan
                                               HgiSamplerHandle const &samplerHandle,
                                               const bool createBindlessHandle)
 {
-  if (!createBindlessHandle) {
+  if (!createBindlessHandle)
+  {
     return 0;
   }
 
   HgiTexture *const texture = textureHandle.Get();
-  if (texture == nullptr) {
+  if (texture == nullptr)
+  {
     return 0;
   }
   HgiGLTexture *const glTexture = dynamic_cast<HgiGLTexture *>(texture);
-  if (glTexture == nullptr) {
+  if (glTexture == nullptr)
+  {
     TF_CODING_ERROR("Only OpenGL textures supported");
     return 0;
   }
 
   GLuint textureName = glTexture->GetTextureId();
-  if (textureName == 0) {
+  if (textureName == 0)
+  {
     return 0;
   }
 
   HgiSampler *const sampler = samplerHandle.Get();
-  if (sampler == nullptr) {
+  if (sampler == nullptr)
+  {
     return 0;
   }
 
   HgiGLSampler *const glSampler = dynamic_cast<HgiGLSampler *>(sampler);
-  if (glSampler == nullptr) {
+  if (glSampler == nullptr)
+  {
     TF_CODING_ERROR("Only OpenGL samplers supported");
     return 0;
   }
 
   const GLuint samplerName = glSampler->GetSamplerId();
-  if (samplerName == 0) {
+  if (samplerName == 0)
+  {
     return 0;
   }
 
   const GLuint64EXT result = glGetTextureSamplerHandleARB(textureName, samplerName);
 
-  if (!glIsTextureHandleResidentARB(result)) {
+  if (!glIsTextureHandleResidentARB(result))
+  {
     glMakeTextureHandleResidentARB(result);
   }
 
@@ -157,17 +170,20 @@ static GLuint64EXT _GenGLTextureSamplerHandle(HgiTextureHandle const &textureHan
 // Get texture handle for bindless textures.
 static GLuint64EXT _GenGlTextureHandle(HgiTextureHandle const &texture, const bool createGLTextureHandle)
 {
-  if (!createGLTextureHandle) {
+  if (!createGLTextureHandle)
+  {
     return 0;
   }
 
-  if (!texture) {
+  if (!texture)
+  {
     return 0;
   }
 
   const GLuint textureName = texture->GetRawResource();
   const GLuint64EXT result = glGetTextureHandleARB(textureName);
-  if (!glIsTextureHandleResidentARB(result)) {
+  if (!glIsTextureHandleResidentARB(result))
+  {
     glMakeTextureHandleResidentARB(result);
   }
 
@@ -183,18 +199,22 @@ static GLuint64EXT _GenGlTextureHandle(HgiTextureHandle const &texture, const bo
 // texture file.
 static void _ResolveSamplerParameter(const HdWrap textureOpinion, HdWrap *const parameter)
 {
-  if (*parameter == HdWrapNoOpinion) {
+  if (*parameter == HdWrapNoOpinion)
+  {
     *parameter = textureOpinion;
   }
 
   // Legacy behavior for HwUvTexture_1
-  if (*parameter == HdWrapLegacyNoOpinionFallbackRepeat) {
-    if (textureOpinion == HdWrapNoOpinion) {
+  if (*parameter == HdWrapLegacyNoOpinionFallbackRepeat)
+  {
+    if (textureOpinion == HdWrapNoOpinion)
+    {
       // Use repeat if there is no opinion on either the
       // texture node or in the texture file.
       *parameter = HdWrapRepeat;
     }
-    else {
+    else
+    {
       *parameter = textureOpinion;
     }
   }
@@ -238,7 +258,8 @@ HdPhUvSamplerObject::~HdPhUvSamplerObject()
   // because it itself was destroyed or because the file was
   // reloaded or target memory was changed.
 
-  if (Hgi *hgi = _GetHgi()) {
+  if (Hgi *hgi = _GetHgi())
+  {
     hgi->DestroySampler(&_sampler);
   }
 }
@@ -259,7 +280,8 @@ HdPhFieldSamplerObject::HdPhFieldSamplerObject(HdPhFieldTextureObject const &tex
 HdPhFieldSamplerObject::~HdPhFieldSamplerObject()
 {
   // See above comment about destroying _glTextureSamplerHandle
-  if (Hgi *hgi = _GetHgi()) {
+  if (Hgi *hgi = _GetHgi())
+  {
     hgi->DestroySampler(&_sampler);
   }
 }
@@ -325,7 +347,8 @@ HdPhUdimSamplerObject::~HdPhUdimSamplerObject()
 {
   // See above comment about destroying bindless texture handles
 
-  if (Hgi *hgi = _GetHgi()) {
+  if (Hgi *hgi = _GetHgi())
+  {
     hgi->DestroySampler(&_texelsSampler);
   }
 }

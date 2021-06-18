@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 /// Object holding information describing skeleton topology.
 /// This provides the hierarchical information needed to reason about joint
 /// relationships in a manner suitable to computations.
-class UsdSkelTopology {
+class UsdSkelTopology
+{
  public:
   /// Construct an empty topology.
   UsdSkelTopology() = default;

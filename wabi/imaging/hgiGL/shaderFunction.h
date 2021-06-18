@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// OpenGL implementation of HgiShaderFunction
 ///
-class HgiGLShaderFunction final : public HgiShaderFunction {
+class HgiGLShaderFunction final : public HgiShaderFunction
+{
  public:
   HGIGL_API
   ~HgiGLShaderFunction() override;

@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 /// Implements HdPhTextureCpuData by reading a uv texture from
 /// a file.
 ///
-class HdPhAssetUvTextureCpuData : public HdPhTextureCpuData {
+class HdPhAssetUvTextureCpuData : public HdPhTextureCpuData
+{
  public:
   HDPH_API
   HdPhAssetUvTextureCpuData(std::string const &filePath,

@@ -46,11 +46,13 @@ WABI_NAMESPACE_BEGIN
 /// with the change is required, at which point the resource is updated and the
 /// flag is cleared.
 ///
-class HdChangeTracker {
+class HdChangeTracker
+{
  public:
   // Common dirty bits for Rprims
   // XXX: Move this to HdRprim
-  enum RprimDirtyBits : HdDirtyBits {
+  enum RprimDirtyBits : HdDirtyBits
+  {
     Clean = 0,
     InitRepr = 1 << 0,
     Varying = 1 << 1,
@@ -89,7 +91,8 @@ class HdChangeTracker {
 
   // Dirty bits for Tasks
   // XXX: Move this to HdTask
-  enum TaskDirtyBits : HdDirtyBits {
+  enum TaskDirtyBits : HdDirtyBits
+  {
     // Varying               = 1 << 0,
     DirtyType = 1 << 1,
     DirtyParams = 1 << 2,
@@ -556,7 +559,8 @@ class HdChangeTracker {
   typedef TfHashMap<TfToken, int, TfToken::HashFunctor> _CollectionStateMap;
   typedef TfHashMap<TfToken, unsigned, TfToken::HashFunctor> _GeneralStateMap;
 
-  struct _PathHashCompare {
+  struct _PathHashCompare
+  {
     static bool equal(const SdfPath &a, const SdfPath &b)
     {
       return a == b;

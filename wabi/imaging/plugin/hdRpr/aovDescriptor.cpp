@@ -70,7 +70,8 @@ HdRprAovRegistry::HdRprAovRegistry()
          RPR_AOV_CRYPTOMATTE_OBJ0,
          RPR_AOV_CRYPTOMATTE_OBJ1,
          RPR_AOV_CRYPTOMATTE_OBJ2,
-       }) {
+       })
+  {
     m_aovDescriptors[rprAovId] = HdRprAovDescriptor(rprAovId);
   }
 
@@ -107,7 +108,8 @@ HdRprAovRegistry::HdRprAovRegistry()
 
   auto addAovNameLookup = [this](TfToken const &name, HdRprAovDescriptor const &descriptor) {
     auto status = m_aovNameLookup.emplace(name, AovNameLookupValue(descriptor.id, descriptor.computed));
-    if (!status.second) {
+    if (!status.second)
+    {
       TF_CODING_ERROR("AOV lookup name should be unique");
     }
   };
@@ -172,7 +174,8 @@ HdRprAovRegistry::HdRprAovRegistry()
 HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(TfToken const &name)
 {
   auto it = m_aovNameLookup.find(name);
-  if (it == m_aovNameLookup.end()) {
+  if (it == m_aovNameLookup.end())
+  {
     return kInvalidDesc;
   }
 
@@ -182,15 +185,18 @@ HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(TfToken const &name)
 HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(uint32_t id, bool computed)
 {
   size_t descsSize = computed ? m_computedAovDescriptors.size() : m_aovDescriptors.size();
-  if (id >= descsSize) {
+  if (id >= descsSize)
+  {
     TF_RUNTIME_ERROR("Invalid arguments: %#x (computed=%d)", id, int(computed));
     return kInvalidDesc;
   }
 
-  if (computed) {
+  if (computed)
+  {
     return m_computedAovDescriptors[id];
   }
-  else {
+  else
+  {
     return m_aovDescriptors[id];
   }
 }

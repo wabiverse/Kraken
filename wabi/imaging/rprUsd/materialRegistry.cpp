@@ -52,24 +52,28 @@ RprUsdMaterialRegistry::~RprUsdMaterialRegistry() = default;
 
 std::vector<RprUsdMaterialNodeDesc> const &RprUsdMaterialRegistry::GetRegisteredNodes()
 {
-  if (m_mtlxDefsDirty) {
+  if (m_mtlxDefsDirty)
+  {
     m_mtlxDefsDirty = false;
 
     auto RPR = TfGetenv("RPR");
-    if (RPR.empty()) {
+    if (RPR.empty())
+    {
       TF_WARN("RPR environment variable is not set");
       return m_registeredNodes;
     }
     TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY).Msg("RPR: %s\n", RPR.c_str());
 
-    if (TfGetEnvSetting(RPRUSD_USE_RPRMTLXLOADER)) {
+    if (TfGetEnvSetting(RPRUSD_USE_RPRMTLXLOADER))
+    {
       MaterialX::FilePathVec libraryNames = {"libraries", "materials"};
       MaterialX::FileSearchPath searchPath = RPR;
       m_mtlxLoader = std::make_unique<RPRMtlxLoader>();
       m_mtlxLoader->SetupStdlib(libraryNames, searchPath);
 
       auto logLevel = RPRMtlxLoader::LogLevel(TfGetEnvSetting(RPRUSD_RPRMTLXLOADER_LOG_LEVEL));
-      if (logLevel < RPRMtlxLoader::LogLevel::None || logLevel > RPRMtlxLoader::LogLevel::Info) {
+      if (logLevel < RPRMtlxLoader::LogLevel::None || logLevel > RPRMtlxLoader::LogLevel::Info)
+      {
         logLevel = RPRMtlxLoader::LogLevel::Error;
       }
       m_mtlxLoader->SetLogging(logLevel);
@@ -79,40 +83,49 @@ std::vector<RprUsdMaterialNodeDesc> const &RprUsdMaterialRegistry::GetRegistered
 
     auto materialFiles = TfGlob(TfNormPath(rprMaterialsPath + "/*/*.mtlx"),
                                 ARCH_GLOB_DEFAULT | ARCH_GLOB_NOSORT);
-    if (materialFiles.empty()) {
+    if (materialFiles.empty())
+    {
       TF_WARN("No materials found");
     }
 
-    for (auto &file : materialFiles) {
+    for (auto &file : materialFiles)
+    {
       TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY).Msg("Processing material: \"%s\"\n", file.c_str());
 
       // UI Folder corresponds to subsections on UI
       // e.g. $RPR/Patterns/material.mtlx corresponds to Pattern UI folder
       auto uiFolder = file.substr(rprMaterialsPath.size() + 1);
       uiFolder = TfNormPath(TfGetPathName(uiFolder));
-      if (uiFolder == ".") {
+      if (uiFolder == ".")
+      {
         uiFolder = std::string();
       }
 
-      try {
+      try
+      {
         auto mtlxDoc = MaterialX::createDocument();
         MaterialX::readFromXmlFile(mtlxDoc, file);
 
         auto nodeDefs = mtlxDoc->getNodeDefs();
-        if (nodeDefs.size() == 0) {
+        if (nodeDefs.size() == 0)
+        {
           TF_WARN("\"%s\" file has no node definitions", file.c_str());
         }
-        else {
-          for (auto &nodeDef : nodeDefs) {
+        else
+        {
+          for (auto &nodeDef : nodeDefs)
+          {
             auto shaderInfo = std::make_unique<RprUsd_MtlxNodeInfo>(mtlxDoc, nodeDef, uiFolder);
-            if (auto factory = shaderInfo->GetFactory()) {
+            if (auto factory = shaderInfo->GetFactory())
+            {
               Register(TfToken(shaderInfo->GetName()), factory, shaderInfo.get());
               m_mtlxInfos.push_back(std::move(shaderInfo));
             }
           }
         }
       }
-      catch (MaterialX::Exception &e) {
+      catch (MaterialX::Exception &e)
+      {
         TF_RUNTIME_ERROR("Error on parsing of \"%s\": materialX error - %s", file.c_str(), e.what());
       }
     }
@@ -123,7 +136,8 @@ std::vector<RprUsdMaterialNodeDesc> const &RprUsdMaterialRegistry::GetRegistered
 
 void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
 {
-  if (m_textureCommits.empty()) {
+  if (m_textureCommits.empty())
+  {
     return;
   }
 
@@ -131,7 +145,8 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   auto uniqueTextureIndicesPerCommit = std::make_unique<CommitUniqueTextureIndices[]>(
     m_textureCommits.size());
 
-  struct UniqueTextureInfo {
+  struct UniqueTextureInfo
+  {
     std::string path;
     uint32_t udimTileId;
 
@@ -148,7 +163,8 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   auto getUniqueTextureIndex = [&uniqueTexturesMapping, &uniqueTextures](std::string const &path,
                                                                          uint32_t udimTileId = 0) {
     auto status = uniqueTexturesMapping.emplace(path, uniqueTexturesMapping.size());
-    if (status.second) {
+    if (status.second)
+    {
       uniqueTextures.emplace_back(path, udimTileId);
     }
     return status.first->second;
@@ -157,27 +173,33 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   // Iterate over all texture commits and collect unique textures including UDIM tiles
   //
   std::string formatString;
-  for (size_t i = 0; i < m_textureCommits.size(); ++i) {
+  for (size_t i = 0; i < m_textureCommits.size(); ++i)
+  {
     auto &commit = m_textureCommits[i];
-    if (auto rprImage = imageCache->GetImage(commit.filepath, commit.colorspace, commit.wrapType, {}, 0)) {
+    if (auto rprImage = imageCache->GetImage(commit.filepath, commit.colorspace, commit.wrapType, {}, 0))
+    {
       commit.setTextureCallback(rprImage);
       continue;
     }
 
     auto &commitTexIndices = uniqueTextureIndicesPerCommit[i];
 
-    if (RprUsdGetUDIMFormatString(commit.filepath, &formatString)) {
+    if (RprUsdGetUDIMFormatString(commit.filepath, &formatString))
+    {
       constexpr uint32_t kStartTile = 1001;
       constexpr uint32_t kEndTile = 1100;
 
-      for (uint32_t tileId = kStartTile; tileId <= kEndTile; ++tileId) {
+      for (uint32_t tileId = kStartTile; tileId <= kEndTile; ++tileId)
+      {
         auto tilePath = TfStringPrintf(formatString.c_str(), tileId);
-        if (ArchFileAccess(tilePath.c_str(), F_OK) == 0) {
+        if (ArchFileAccess(tilePath.c_str(), F_OK) == 0)
+        {
           commitTexIndices.push_back(getUniqueTextureIndex(tilePath, tileId));
         }
       }
     }
-    else {
+    else
+    {
       commitTexIndices.push_back(getUniqueTextureIndex(commit.filepath));
     }
   }
@@ -185,11 +207,14 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   // Read all textures from disk from multi threads
   //
   WorkParallelForN(uniqueTextures.size(), [&uniqueTextures](size_t begin, size_t end) {
-    for (size_t i = begin; i < end; ++i) {
-      if (auto textureData = RprUsdTextureData::New(uniqueTextures[i].path)) {
+    for (size_t i = begin; i < end; ++i)
+    {
+      if (auto textureData = RprUsdTextureData::New(uniqueTextures[i].path))
+      {
         uniqueTextures[i].data = textureData;
       }
-      else {
+      else
+      {
         TF_RUNTIME_ERROR("Failed to load %s texture", uniqueTextures[i].path.c_str());
       }
     }
@@ -198,14 +223,16 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   // Create rpr::Image for each previously read unique texture
   // XXX(RPR): so as RPR API is single-threaded we cannot parallelize this
   //
-  for (size_t i = 0; i < m_textureCommits.size(); ++i) {
+  for (size_t i = 0; i < m_textureCommits.size(); ++i)
+  {
     auto &commitTexIndices = uniqueTextureIndicesPerCommit[i];
     if (commitTexIndices.empty())
       continue;
 
     std::vector<RprUsdCoreImage::UDIMTile> tiles;
     tiles.reserve(commitTexIndices.size());
-    for (auto uniqueTextureIdx : commitTexIndices) {
+    for (auto uniqueTextureIdx : commitTexIndices)
+    {
       auto &texture = uniqueTextures[uniqueTextureIdx];
       if (!texture.data)
         continue;
@@ -222,53 +249,65 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
   m_textureCommits.clear();
 }
 
-namespace {
+namespace
+{
 
 void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
 {
   SdfPath const *primitivePath = nullptr;
-  if (!networkMap.terminals.empty()) {
+  if (!networkMap.terminals.empty())
+  {
     primitivePath = &networkMap.terminals[0];
   }
-  else if (!networkMap.map.empty()) {
+  else if (!networkMap.map.empty())
+  {
     auto &network = networkMap.map.begin()->second;
-    if (!network.nodes.empty()) {
+    if (!network.nodes.empty())
+    {
       primitivePath = &network.nodes[0].path;
     }
   }
 
   bool closeFile = false;
   FILE *file = stdout;
-  if (primitivePath) {
+  if (primitivePath)
+  {
     auto materialPath = primitivePath->GetParentPath();
     std::string filepath = materialPath.GetString();
-    for (size_t i = 0; i < filepath.size(); ++i) {
-      if (std::strchr("/\\", filepath[i])) {
+    for (size_t i = 0; i < filepath.size(); ++i)
+    {
+      if (std::strchr("/\\", filepath[i]))
+      {
         filepath[i] = '_';
       }
     }
     file = fopen(filepath.c_str(), "w");
-    if (!file) {
+    if (!file)
+    {
       file = stdout;
     }
-    else {
+    else
+    {
       closeFile = true;
     }
   }
 
   fprintf(file, "terminals: [\n");
-  for (auto &terminal : networkMap.terminals) {
+  for (auto &terminal : networkMap.terminals)
+  {
     fprintf(file, "  \"%s\",\n", terminal.GetText());
   }
   fprintf(file, "]\n");
 
   fprintf(file, "map: {\n");
-  for (auto &entry : networkMap.map) {
+  for (auto &entry : networkMap.map)
+  {
     fprintf(file, "  \"%s\": {\n", entry.first.GetText());
 
     auto &network = entry.second;
     fprintf(file, "    relationships: [\n");
-    for (auto &rel : network.relationships) {
+    for (auto &rel : network.relationships)
+    {
       SdfPath inputId;
       TfToken inputName;
       SdfPath outputId;
@@ -283,26 +322,32 @@ void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
     fprintf(file, "    ],\n");
 
     fprintf(file, "    primvars: [\n");
-    for (auto &primvar : network.primvars) {
+    for (auto &primvar : network.primvars)
+    {
       fprintf(file, "      %s,\n", primvar.GetText());
     }
     fprintf(file, "    ]\n");
 
     fprintf(file, "    nodes: [\n");
-    for (auto &node : network.nodes) {
+    for (auto &node : network.nodes)
+    {
       fprintf(file, "      {\n");
       fprintf(file, "        path=%s\n", node.path.GetText());
       fprintf(file, "        identifier=%s\n", node.identifier.GetText());
       fprintf(file, "        parameters: {\n");
-      for (auto &param : node.parameters) {
+      for (auto &param : node.parameters)
+      {
         fprintf(file, "          {%s: %s", param.first.GetText(), param.second.GetTypeName().c_str());
-        if (param.second.IsHolding<TfToken>()) {
+        if (param.second.IsHolding<TfToken>())
+        {
           fprintf(file, "(\"%s\")", param.second.UncheckedGet<TfToken>().GetText());
         }
-        else if (param.second.IsHolding<SdfAssetPath>()) {
+        else if (param.second.IsHolding<SdfAssetPath>())
+        {
           fprintf(file, "(\"%s\")", param.second.UncheckedGet<SdfAssetPath>().GetResolvedPath().c_str());
         }
-        else if (param.second.IsHolding<GfVec4f>()) {
+        else if (param.second.IsHolding<GfVec4f>())
+        {
           auto &v = param.second.UncheckedGet<GfVec4f>();
           fprintf(file, "(%g, %g, %g, %g)", v[0], v[1], v[2], v[3]);
         }
@@ -317,7 +362,8 @@ void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
   }
   fprintf(file, "}\n");
 
-  if (closeFile) {
+  if (closeFile)
+  {
     fclose(file);
   }
 }
@@ -325,19 +371,23 @@ void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
 void ConvertLegacyHdMaterialNetwork(HdMaterialNetworkMap const &hdNetworkMap, RprUsd_MaterialNetwork *result)
 {
 
-  for (auto &entry : hdNetworkMap.map) {
+  for (auto &entry : hdNetworkMap.map)
+  {
     auto &terminalName = entry.first;
     auto &hdNetwork = entry.second;
 
     // Transfer over individual nodes
-    for (auto &node : hdNetwork.nodes) {
+    for (auto &node : hdNetwork.nodes)
+    {
       // Check if this node is a terminal
       auto termIt = std::find(hdNetworkMap.terminals.begin(), hdNetworkMap.terminals.end(), node.path);
-      if (termIt != hdNetworkMap.terminals.end()) {
+      if (termIt != hdNetworkMap.terminals.end())
+      {
         result->terminals.emplace(terminalName, RprUsd_MaterialNetwork::Connection{node.path, terminalName});
       }
 
-      if (result->nodes.count(node.path)) {
+      if (result->nodes.count(node.path))
+      {
         continue;
       }
 
@@ -347,11 +397,13 @@ void ConvertLegacyHdMaterialNetwork(HdMaterialNetworkMap const &hdNetworkMap, Rp
     }
 
     // Transfer relationships to inputConnections on receiving/downstream nodes.
-    for (HdMaterialRelationship const &rel : hdNetwork.relationships) {
+    for (HdMaterialRelationship const &rel : hdNetwork.relationships)
+    {
       // outputId (in hdMaterial terms) is the input of the receiving node
       auto const &iter = result->nodes.find(rel.outputId);
       // skip connection if the destination node doesn't exist
-      if (iter == result->nodes.end()) {
+      if (iter == result->nodes.end())
+      {
         continue;
       }
       auto &connection = iter->second.inputConnections[rel.outputName];
@@ -374,7 +426,8 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
                                                        RprUsdImageCache *imageCache) const
 {
 
-  if (TfDebug::IsEnabled(RPR_USD_DEBUG_DUMP_MATERIALS)) {
+  if (TfDebug::IsEnabled(RPR_USD_DEBUG_DUMP_MATERIALS))
+  {
     DumpMaterialNetwork(legacyNetworkMap);
   }
 
@@ -391,7 +444,8 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
   context.mtlxLoader = m_mtlxLoader.get();
 
   // The simple wrapper to retain material nodes that are used to build terminal outputs
-  struct RprUsdGraphBasedMaterial : public RprUsdMaterial {
+  struct RprUsdGraphBasedMaterial : public RprUsdMaterial
+  {
     std::map<SdfPath, std::unique_ptr<RprUsd_MaterialNode>> materialNodes;
 
     bool Finalize(RprUsd_MaterialBuilderContext &context,
@@ -403,11 +457,14 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
     {
 
       auto getTerminalRprNode = [](VtValue const &terminalOutput) -> rpr::MaterialNode * {
-        if (!terminalOutput.IsEmpty()) {
-          if (terminalOutput.IsHolding<std::shared_ptr<rpr::MaterialNode>>()) {
+        if (!terminalOutput.IsEmpty())
+        {
+          if (terminalOutput.IsHolding<std::shared_ptr<rpr::MaterialNode>>())
+          {
             return terminalOutput.UncheckedGet<std::shared_ptr<rpr::MaterialNode>>().get();
           }
-          else {
+          else
+          {
             TF_RUNTIME_ERROR("Terminal node should output material node");
           }
         }
@@ -424,8 +481,10 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
       m_uvPrimvarName = TfToken(context.uvPrimvarName);
       m_displacementScale = std::move(context.displacementScale);
 
-      if (m_surfaceNode) {
-        if (materialId >= 0) {
+      if (m_surfaceNode)
+      {
+        if (materialId >= 0)
+        {
           // TODO: add C++ wrapper
           auto apiHandle = rpr::GetRprObject(m_surfaceNode);
           RPR_ERROR_CHECK(rprMaterialNodeSetID(apiHandle, rpr_uint(materialId)),
@@ -450,42 +509,53 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
 
   // Create RprUsd_MaterialNode for each Hydra node
   auto &materialNodes = out->materialNodes;
-  for (auto &entry : network.nodes) {
+  for (auto &entry : network.nodes)
+  {
     auto &nodePath = entry.first;
     auto &node = entry.second;
     context.currentNodePath = &nodePath;
 
-    try {
+    try
+    {
       // Check if we have registered node that match nodeTypeId
       auto nodeLookupIt = m_registeredNodesLookup.find(node.nodeTypeId);
-      if (nodeLookupIt != m_registeredNodesLookup.end()) {
-        if (auto materialNode = m_registeredNodes[nodeLookupIt->second].factory(&context, node.parameters)) {
+      if (nodeLookupIt != m_registeredNodesLookup.end())
+      {
+        if (auto materialNode = m_registeredNodes[nodeLookupIt->second].factory(&context, node.parameters))
+        {
           materialNodes[nodePath].reset(materialNode);
         }
       }
-      else if (IsHoudiniPrincipledShaderHydraNode(sceneDelegate, nodePath, &isSurfaceNode)) {
-        if (isSurfaceNode) {
+      else if (IsHoudiniPrincipledShaderHydraNode(sceneDelegate, nodePath, &isSurfaceNode))
+      {
+        if (isSurfaceNode)
+        {
           houdiniPrincipledShaderNodePath = &nodePath;
           houdiniPrincipledShaderSurfaceParams = &node.parameters;
         }
-        else {
+        else
+        {
           houdiniPrincipledShaderDispParams = &node.parameters;
         }
       }
-      else {
+      else
+      {
         TF_WARN("Unknown node type: id=%s", node.nodeTypeId.GetText());
       }
     }
-    catch (RprUsd_NodeError &e) {
+    catch (RprUsd_NodeError &e)
+    {
       TF_RUNTIME_ERROR(
         "Failed to create %s(%s): %s", nodePath.GetText(), node.nodeTypeId.GetText(), e.what());
     }
-    catch (RprUsd_NodeEmpty &) {
+    catch (RprUsd_NodeEmpty &)
+    {
       TF_WARN("Empty node: %s", nodePath.GetText());
     }
   }
 
-  if (houdiniPrincipledShaderNodePath) {
+  if (houdiniPrincipledShaderNodePath)
+  {
     auto materialNode = new RprUsd_HoudiniPrincipledNode(
       &context, *houdiniPrincipledShaderSurfaceParams, houdiniPrincipledShaderDispParams);
     materialNodes[*houdiniPrincipledShaderNodePath].reset(materialNode);
@@ -498,25 +568,30 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
     auto &nodePath = nodeConnection.upstreamNode;
 
     auto nodeIt = network.nodes.find(nodePath);
-    if (nodeIt == network.nodes.end()) {
+    if (nodeIt == network.nodes.end())
+    {
       TF_CODING_ERROR("Invalid connection: %s", nodePath.GetText());
       return VtValue();
     }
     auto &node = nodeIt->second;
 
     auto materialNodeIt = materialNodes.find(nodePath);
-    if (materialNodeIt != materialNodes.end()) {
+    if (materialNodeIt != materialNodes.end())
+    {
       auto materialNode = materialNodeIt->second.get();
 
       // Set node inputs only once
-      if (visited.count(nodePath) == 0) {
+      if (visited.count(nodePath) == 0)
+      {
         visited.insert(nodePath);
 
-        for (auto &inputConnection : node.inputConnections) {
+        for (auto &inputConnection : node.inputConnections)
+        {
           auto &connection = inputConnection.second;
 
           auto nodeOutput = getNodeOutput(connection);
-          if (!nodeOutput.IsEmpty()) {
+          if (!nodeOutput.IsEmpty())
+          {
             auto &inputId = inputConnection.first;
             materialNode->SetInput(inputId, nodeOutput);
           }
@@ -525,16 +600,19 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
 
       return materialNode->GetOutput(nodeConnection.upstreamOutputName);
     }
-    else {
+    else
+    {
       // Rpr node can be missing in two cases:
       //   a) we failed to create the node
       //   b) this node has no effect on the input
       // In such a case, we simply interpret the output of the
       // first connection as the output of the current node
-      if (node.inputConnections.empty()) {
+      if (node.inputConnections.empty())
+      {
         return VtValue();
       }
-      else {
+      else
+      {
         return getNodeOutput(node.inputConnections.begin()->second);
       }
     }
@@ -542,7 +620,8 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
 
   auto getTerminalOutput = [&network, &getNodeOutput](TfToken const &terminalName) {
     auto terminalIt = network.terminals.find(terminalName);
-    if (terminalIt == network.terminals.end()) {
+    if (terminalIt == network.terminals.end())
+    {
       return VtValue();
     }
 
@@ -557,34 +636,41 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
   std::string const *cryptomatteName = nullptr;
 
   auto surfaceTerminalIt = network.terminals.find(HdMaterialTerminalTokens->surface);
-  if (surfaceTerminalIt != network.terminals.end()) {
+  if (surfaceTerminalIt != network.terminals.end())
+  {
     auto &surfaceNodePath = surfaceTerminalIt->second.upstreamNode;
 
     auto surfaceNodeIt = network.nodes.find(surfaceNodePath);
-    if (surfaceNodeIt != network.nodes.end()) {
+    if (surfaceNodeIt != network.nodes.end())
+    {
       auto &parameters = surfaceNodeIt->second.parameters;
 
       auto idIt = parameters.find(RprUsdTokens->id);
-      if (idIt != parameters.end()) {
+      if (idIt != parameters.end())
+      {
         auto &value = idIt->second;
 
-        if (value.IsHolding<int>()) {
+        if (value.IsHolding<int>())
+        {
           materialRprId = value.UncheckedGet<int>();
         }
       }
 
       auto cryptomatteNameIt = parameters.find(RprUsdTokens->cryptomatteName);
-      if (cryptomatteNameIt != parameters.end()) {
+      if (cryptomatteNameIt != parameters.end())
+      {
         auto &value = cryptomatteNameIt->second;
 
-        if (value.IsHolding<std::string>()) {
+        if (value.IsHolding<std::string>())
+        {
           cryptomatteName = &value.UncheckedGet<std::string>();
         }
       }
     }
   }
 
-  if (!cryptomatteName) {
+  if (!cryptomatteName)
+  {
     cryptomatteName = &materialId.GetString();
   }
 

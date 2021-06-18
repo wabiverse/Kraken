@@ -30,9 +30,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-ArFilesystemAsset::ArFilesystemAsset(FILE *file) : _file(file)
+ArFilesystemAsset::ArFilesystemAsset(FILE *file)
+  : _file(file)
 {
-  if (!_file) {
+  if (!_file)
+  {
     TF_CODING_ERROR("Invalid file handle");
   }
 }
@@ -50,11 +52,13 @@ size_t ArFilesystemAsset::GetSize()
 std::shared_ptr<const char> ArFilesystemAsset::GetBuffer()
 {
   ArchConstFileMapping mapping = ArchMapFileReadOnly(_file);
-  if (!mapping) {
+  if (!mapping)
+  {
     return nullptr;
   }
 
-  struct _Deleter {
+  struct _Deleter
+  {
     explicit _Deleter(ArchConstFileMapping &&mapping)
       : _mapping(new ArchConstFileMapping(std::move(mapping)))
     {}
@@ -74,7 +78,8 @@ std::shared_ptr<const char> ArFilesystemAsset::GetBuffer()
 size_t ArFilesystemAsset::Read(void *buffer, size_t count, size_t offset)
 {
   int64_t numRead = ArchPRead(_file, buffer, count, offset);
-  if (numRead == -1) {
+  if (numRead == -1)
+  {
     TF_RUNTIME_ERROR("Error occurred reading file: %s", ArchStrerror().c_str());
     return 0;
   }

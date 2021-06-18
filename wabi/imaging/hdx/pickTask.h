@@ -66,8 +66,11 @@ using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 /// Pick task params. This contains render-style state (for example), but is
 /// augmented by HdxPickTaskContextParams, which is passed in on the task
 /// context.
-struct HdxPickTaskParams {
-  HdxPickTaskParams() : cullStyle(HdCullStyleNothing), enableSceneMaterials(true)
+struct HdxPickTaskParams
+{
+  HdxPickTaskParams()
+    : cullStyle(HdCullStyleNothing),
+      enableSceneMaterials(true)
   {}
 
   HdCullStyle cullStyle;
@@ -76,7 +79,8 @@ struct HdxPickTaskParams {
 
 /// Picking hit structure. This is output by the pick task as a record of
 /// what objects the picking query found.
-struct HdxPickHit {
+struct HdxPickHit
+{
   SdfPath delegateId;
   SdfPath objectId;
   SdfPath instancerId;
@@ -127,7 +131,8 @@ using HdxPickHitVector = std::vector<HdxPickHit>;
 ///         or region. The number of hits returned depends on the resolution
 ///         used and may have duplicates.
 ///
-struct HdxPickTaskContextParams {
+struct HdxPickTaskContextParams
+{
   using DepthMaskCallback = std::function<void(void)>;
 
   HdxPickTaskContextParams()
@@ -167,7 +172,8 @@ struct HdxPickTaskContextParams {
 /// HdxPickTask takes an HdxPickTaskParams through the scene delegate, and
 /// HdxPickTaskContextParams through the task context as "pickParams".
 /// It produces a hit vector, in the task context as "pickHits".
-class HdxPickTask : public HdTask {
+class HdxPickTask : public HdTask
+{
  public:
   HDX_API
   HdxPickTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -230,7 +236,8 @@ class HdxPickTask : public HdTask {
 };
 
 /// A utility class for resolving ID buffers into hits.
-class HdxPickResult {
+class HdxPickResult
+{
  public:
   // Pick result takes a tuple of ID buffers:
   // - (primId, instanceId, elementId, edgeId, pointId)

@@ -47,7 +47,8 @@ using HgiGLDescriptorCacheVec = std::vector<struct HgiGLDescriptorCacheItem *>;
 ///
 /// Manages a cache of framebuffers based on graphics cmds descriptors.
 ///
-class HgiGLFramebufferCache final {
+class HgiGLFramebufferCache final
+{
  public:
   HGIGL_API
   HgiGLFramebufferCache();

@@ -30,7 +30,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdSceneDelegate;
 
-class HdRprInstancer : public HdInstancer {
+class HdRprInstancer : public HdInstancer
+{
  public:
   HdRprInstancer(HdSceneDelegate *delegate, SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
     : HdInstancer(delegate, id HDRPR_INSTANCER_ID_ARG)

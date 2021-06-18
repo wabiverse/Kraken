@@ -44,15 +44,26 @@ WABI_NAMESPACE_BEGIN
 /// attribute descriptions from/to USD mesh attributes, primvars, and Draco
 /// metadata.
 ///
-class UsdDracoAttributeDescriptor {
+class UsdDracoAttributeDescriptor
+{
  public:
   // The status indicates whether the descriptor is valid or invalid, as well
   // as whether the corresponding attribute is absent from the mesh.
-  enum Status { VALID, INVALID, ABSENT };
+  enum Status
+  {
+    VALID,
+    INVALID,
+    ABSENT
+  };
 
   // Describes attribute data shape, such as vector, matrix, or quaternion.
   // Scalar data types are assumed to be a special case of a vector.
-  enum Shape { VECTOR, MATRIX, QUATERNION };
+  enum Shape
+  {
+    VECTOR,
+    MATRIX,
+    QUATERNION
+  };
 
   // Keys for storing of attribute description items in Draco metadata, for
   // description items that are not directly supported by Draco file format.
@@ -244,7 +255,8 @@ class UsdDracoAttributeDescriptor {
   // Template method for extracting a single time sample for attribute values
   // or primvar indices. Supported types are UsdGeomPrimvar and UsdAttribute.
   // Returns true on success.
-  template<class T> static bool GetTimeFrom(const T &item, double *time)
+  template<class T>
+  static bool GetTimeFrom(const T &item, double *time)
   {
     // Try to get time samples and return in case of error.
     std::vector<double> times;
@@ -252,12 +264,14 @@ class UsdDracoAttributeDescriptor {
       return false;
 
     // Multiple time samples are not supported.
-    if (times.size() > 1) {
+    if (times.size() > 1)
+    {
       return false;
     }
 
     // Use default time if there are no time samples.
-    if (times.empty()) {
+    if (times.empty())
+    {
       *time = GetDefaultTime().GetValue();
       return true;
     }

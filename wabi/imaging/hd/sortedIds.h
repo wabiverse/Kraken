@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 /// The class chooses the type of sort based on how many unsorted items
 /// there are in the list.
 ///
-class Hd_SortedIds {
+class Hd_SortedIds
+{
  public:
   HD_API
   Hd_SortedIds();

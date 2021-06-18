@@ -94,7 +94,8 @@ void GlfPostPendingGLErrors(std::string const &where)
 void GlfRegisterDefaultDebugOutputMessageCallback()
 {
 #if defined(GL_KHR_debug)
-  if (glDebugMessageCallbackARB) {
+  if (glDebugMessageCallbackARB)
+  {
     glDebugMessageCallbackARB((GLDEBUGPROCARB)GlfDefaultDebugOutputMessageCallback, 0);
     // Disable push/pop group messages; we don't want to print these.
     glDebugMessageControlARB(GL_DONT_CARE, GL_DEBUG_TYPE_PUSH_GROUP, GL_DONT_CARE, 0, nullptr, GL_FALSE);
@@ -113,7 +114,8 @@ void GlfDefaultDebugOutputMessageCallback(GLenum source,
                                           GLvoid const *userParam)
 {
 #if defined(GL_ARB_debug_output) || defined(GL_VERSION_4_3)
-  if (type == GL_DEBUG_TYPE_ERROR_ARB) {
+  if (type == GL_DEBUG_TYPE_ERROR_ARB)
+  {
     TF_RUNTIME_ERROR(
       "GL debug output: "
       "source: %s type: %s id: %d severity: %s message: %s",
@@ -126,7 +128,8 @@ void GlfDefaultDebugOutputMessageCallback(GLenum source,
     TF_DEBUG(GLF_DEBUG_ERROR_STACKTRACE)
       .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
   }
-  else {
+  else
+  {
     TF_WARN("GL debug output: %s", message);
   }
 #endif
@@ -135,7 +138,8 @@ void GlfDefaultDebugOutputMessageCallback(GLenum source,
 char const *GlfDebugEnumToString(GLenum debugEnum)
 {
 #if defined(GL_ARB_debug_output) || defined(GL_VERSION_4_3)
-  switch (debugEnum) {
+  switch (debugEnum)
+  {
     case GL_DEBUG_SOURCE_API_ARB:
       return "GL_DEBUG_SOURCE_API";
     case GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB:
@@ -189,7 +193,8 @@ char const *GlfDebugEnumToString(GLenum debugEnum)
 static void _GlfPushDebugGroup(char const *message)
 {
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug)) {
+  if (GARCH_GLAPI_HAS(KHR_debug))
+  {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, message);
   }
 #endif
@@ -198,7 +203,8 @@ static void _GlfPushDebugGroup(char const *message)
 static void _GlfPopDebugGroup()
 {
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug)) {
+  if (GARCH_GLAPI_HAS(KHR_debug))
+  {
     glPopDebugGroup();
   }
 #endif
@@ -206,14 +212,16 @@ static void _GlfPopDebugGroup()
 
 GlfDebugGroup::GlfDebugGroup(char const *message)
 {
-  if (GlfTraceEnabled()) {
+  if (GlfTraceEnabled())
+  {
     _GlfPushDebugGroup(message);
   }
 }
 
 GlfDebugGroup::~GlfDebugGroup()
 {
-  if (GlfTraceEnabled()) {
+  if (GlfTraceEnabled())
+  {
     _GlfPopDebugGroup();
   }
 }
@@ -221,8 +229,10 @@ GlfDebugGroup::~GlfDebugGroup()
 void GlfDebugLabelBuffer(GLuint id, char const *label)
 {
 #if defined(GL_KHR_debug)
-  if (GlfTraceEnabled()) {
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+  if (GlfTraceEnabled())
+  {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glObjectLabel(GL_BUFFER, id, -1, label);
     }
   }
@@ -232,8 +242,10 @@ void GlfDebugLabelBuffer(GLuint id, char const *label)
 void GlfDebugLabelShader(GLuint id, char const *label)
 {
 #if defined(GL_KHR_debug)
-  if (GlfTraceEnabled()) {
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+  if (GlfTraceEnabled())
+  {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glObjectLabel(GL_SHADER, id, -1, label);
     }
   }
@@ -243,18 +255,23 @@ void GlfDebugLabelShader(GLuint id, char const *label)
 void GlfDebugLabelProgram(GLuint id, char const *label)
 {
 #if defined(GL_KHR_debug)
-  if (GlfTraceEnabled()) {
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+  if (GlfTraceEnabled())
+  {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glObjectLabel(GL_PROGRAM, id, -1, label);
     }
   }
 #endif
 }
 
-GlfGLQueryObject::GlfGLQueryObject() : _id(0), _target(0)
+GlfGLQueryObject::GlfGLQueryObject()
+  : _id(0),
+    _target(0)
 {
   GarchGLApiLoad();
-  if (glGenQueries) {
+  if (glGenQueries)
+  {
     glGenQueries(1, &_id);
   }
 }
@@ -262,7 +279,8 @@ GlfGLQueryObject::GlfGLQueryObject() : _id(0), _target(0)
 GlfGLQueryObject::~GlfGLQueryObject()
 {
   GlfSharedGLContextScopeHolder sharedGLContextScopeHolder;
-  if (glDeleteQueries && _id) {
+  if (glDeleteQueries && _id)
+  {
     glDeleteQueries(1, &_id);
   }
 }
@@ -284,14 +302,16 @@ void GlfGLQueryObject::BeginTimeElapsed()
 void GlfGLQueryObject::Begin(GLenum target)
 {
   _target = target;
-  if (glBeginQuery && _id) {
+  if (glBeginQuery && _id)
+  {
     glBeginQuery(_target, _id);
   }
 }
 
 void GlfGLQueryObject::End()
 {
-  if (glEndQuery && _target) {
+  if (glEndQuery && _target)
+  {
     glEndQuery(_target);
   }
   _target = 0;
@@ -300,7 +320,8 @@ void GlfGLQueryObject::End()
 GLint64 GlfGLQueryObject::GetResult()
 {
   GLint64 value = 0;
-  if (glGetQueryObjecti64v && _id) {
+  if (glGetQueryObjecti64v && _id)
+  {
     glGetQueryObjecti64v(_id, GL_QUERY_RESULT, &value);
   }
   return value;
@@ -309,9 +330,11 @@ GLint64 GlfGLQueryObject::GetResult()
 GLint64 GlfGLQueryObject::GetResultNoWait()
 {
   GLint64 value = 0;
-  if (glGetQueryObjecti64v && _id) {
+  if (glGetQueryObjecti64v && _id)
+  {
     glGetQueryObjecti64v(_id, GL_QUERY_RESULT_AVAILABLE, &value);
-    if (value == GL_TRUE) {
+    if (value == GL_TRUE)
+    {
       glGetQueryObjecti64v(_id, GL_QUERY_RESULT, &value);
     }
   }

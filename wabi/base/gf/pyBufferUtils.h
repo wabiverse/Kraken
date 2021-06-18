@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 
 // This function template is explicitly instantiated for T =
 //    bool, [unsigned] (char, short, int, long), half, float, and double.
-template<class T> char *Gf_GetPyBufferFmtFor();
+template<class T>
+char *Gf_GetPyBufferFmtFor();
 
 WABI_NAMESPACE_END
 

@@ -44,7 +44,8 @@ using HdPh_DrawBatchSharedPtr = std::shared_ptr<class HdPh_DrawBatch>;
 /// when adding / appending the instance. If the batch does not require
 /// the DrawItemInstanceChanged callback, then this step can be skipped
 ///
-class HdPhDrawItemInstance {
+class HdPhDrawItemInstance
+{
  public:
   HDPH_API
   HdPhDrawItemInstance(HdPhDrawItem const *drawItem);

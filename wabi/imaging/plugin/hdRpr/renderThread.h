@@ -24,7 +24,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprRenderThread {
+class HdRprRenderThread
+{
  public:
   HdRprRenderThread();
   ~HdRprRenderThread();
@@ -54,7 +55,8 @@ class HdRprRenderThread {
   std::function<void()> m_renderCallback;
   std::function<void()> m_shutdownCallback;
 
-  enum State {
+  enum State
+  {
     StateInitial,
     StateIdle,
     StateRendering,

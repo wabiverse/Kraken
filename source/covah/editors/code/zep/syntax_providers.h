@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepEditor;
 void RegisterSyntaxProviders(ZepEditor &editor);

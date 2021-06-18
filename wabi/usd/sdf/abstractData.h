@@ -67,7 +67,8 @@ TF_DECLARE_PUBLIC_TOKENS(SdfDataTokens, SDF_API, SDF_DATA_TOKENS);
 /// consistency guarantees about the scene description it contains.
 /// Instead, it is a basis for building those things.
 ///
-class SdfAbstractData : public TfRefBase, public TfWeakBase {
+class SdfAbstractData : public TfRefBase, public TfWeakBase
+{
  public:
   SdfAbstractData()
   {}
@@ -355,7 +356,8 @@ template<class T>
 inline T SdfAbstractData::GetAs(const SdfPath &path, const TfToken &field, const T &defaultVal) const
 {
   VtValue val = Get(path, field);
-  if (val.IsHolding<T>()) {
+  if (val.IsHolding<T>())
+  {
     return val.UncheckedGet<T>();
   }
   return defaultVal;
@@ -366,13 +368,16 @@ inline T SdfAbstractData::GetAs(const SdfPath &path, const TfToken &field, const
 /// A type-erased container for a field value in an SdfAbstractData.
 ///
 /// \sa SdfAbstractDataTypedValue
-class SdfAbstractDataValue {
+class SdfAbstractDataValue
+{
  public:
   virtual bool StoreValue(const VtValue &value) = 0;
 
-  template<class T> bool StoreValue(const T &v)
+  template<class T>
+  bool StoreValue(const T &v)
   {
-    if (TfSafeTypeCompare(typeid(T), valueType)) {
+    if (TfSafeTypeCompare(typeid(T), valueType))
+    {
       *static_cast<T *>(value) = v;
       return true;
     }
@@ -413,22 +418,28 @@ class SdfAbstractDataValue {
 /// are solely used to get pointer information into and out of an
 /// SdfAbstractData container.
 ///
-template<class T> class SdfAbstractDataTypedValue : public SdfAbstractDataValue {
+template<class T>
+class SdfAbstractDataTypedValue : public SdfAbstractDataValue
+{
  public:
-  SdfAbstractDataTypedValue(T *value) : SdfAbstractDataValue(value, typeid(T))
+  SdfAbstractDataTypedValue(T *value)
+    : SdfAbstractDataValue(value, typeid(T))
   {}
 
   virtual bool StoreValue(const VtValue &v)
   {
-    if (ARCH_LIKELY(v.IsHolding<T>())) {
+    if (ARCH_LIKELY(v.IsHolding<T>()))
+    {
       *static_cast<T *>(value) = v.UncheckedGet<T>();
-      if (std::is_same<T, SdfValueBlock>::value) {
+      if (std::is_same<T, SdfValueBlock>::value)
+      {
         isValueBlock = true;
       }
       return true;
     }
 
-    if (v.IsHolding<SdfValueBlock>()) {
+    if (v.IsHolding<SdfValueBlock>())
+    {
       isValueBlock = true;
       return true;
     }
@@ -444,13 +455,16 @@ template<class T> class SdfAbstractDataTypedValue : public SdfAbstractDataValue 
 /// A type-erased container for a const field value in an SdfAbstractData.
 ///
 /// \sa SdfAbstractDataConstTypedValue
-class SdfAbstractDataConstValue {
+class SdfAbstractDataConstValue
+{
  public:
   virtual bool GetValue(VtValue *value) const = 0;
 
-  template<class T> bool GetValue(T *v) const
+  template<class T>
+  bool GetValue(T *v) const
   {
-    if (TfSafeTypeCompare(typeid(T), valueType)) {
+    if (TfSafeTypeCompare(typeid(T), valueType))
+    {
       *v = *static_cast<const T *>(value);
       return true;
     }
@@ -482,9 +496,12 @@ class SdfAbstractDataConstValue {
 /// are solely used to get pointer information into an SdfAbstractData
 /// container.
 ///
-template<class T> class SdfAbstractDataConstTypedValue : public SdfAbstractDataConstValue {
+template<class T>
+class SdfAbstractDataConstTypedValue : public SdfAbstractDataConstValue
+{
  public:
-  SdfAbstractDataConstTypedValue(const T *value) : SdfAbstractDataConstValue(value, typeid(T))
+  SdfAbstractDataConstTypedValue(const T *value)
+    : SdfAbstractDataConstValue(value, typeid(T))
   {}
 
   virtual bool GetValue(VtValue *v) const
@@ -508,7 +525,8 @@ template<class T> class SdfAbstractDataConstTypedValue : public SdfAbstractDataC
 // Specialization of SdAbstractDataConstTypedValue that converts character
 // arrays to std::string.
 template<int N>
-class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTypedValue<std::string> {
+class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTypedValue<std::string>
+{
  public:
   typedef char CharArray[N];
   SdfAbstractDataConstTypedValue(const CharArray *value)
@@ -525,7 +543,8 @@ class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTyped
 /// Base class for objects used to visit specs in an SdfAbstractData object.
 ///
 /// \sa SdfAbstractData::VisitSpecs.
-class SdfAbstractDataSpecVisitor {
+class SdfAbstractDataSpecVisitor
+{
  public:
   SDF_API
   virtual ~SdfAbstractDataSpecVisitor();

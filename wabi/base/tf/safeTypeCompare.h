@@ -51,7 +51,8 @@ inline bool TfSafeTypeCompare(const std::type_info &t1, const std::type_info &t2
 ///
 /// Note that this function also works with \c TfRefPtr and \c TfWeakPtr
 /// managed objects.
-template<typename TO, typename FROM> TO TfSafeDynamic_cast(FROM *ptr)
+template<typename TO, typename FROM>
+TO TfSafeDynamic_cast(FROM *ptr)
 {
   return dynamic_cast<TO>(ptr);
 }

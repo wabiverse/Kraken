@@ -39,9 +39,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Ar_ResolverContextToPython {
+struct Ar_ResolverContextToPython
+{
   Ar_ResolverContextToPython()
   {
     to_python_converter<ArResolverContext, Ar_ResolverContextToPython>();
@@ -53,7 +55,8 @@ struct Ar_ResolverContextToPython {
   }
 };
 
-struct Ar_ResolverContextFromPython {
+struct Ar_ResolverContextFromPython
+{
   Ar_ResolverContextFromPython()
   {
     converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
@@ -61,7 +64,8 @@ struct Ar_ResolverContextFromPython {
 
   static void *_convertible(PyObject *obj_ptr)
   {
-    if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr)) {
+    if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr))
+    {
       return obj_ptr;
     }
     return 0;
@@ -72,7 +76,8 @@ struct Ar_ResolverContextFromPython {
     void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
 
     ArResolverContext context;
-    if (obj_ptr != Py_None) {
+    if (obj_ptr != Py_None)
+    {
       context = Ar_ConvertResolverContextFromPython(obj_ptr);
     }
 

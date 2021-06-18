@@ -35,61 +35,76 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-template<class T> constexpr char PyFmtFor();
-template<> constexpr char PyFmtFor<bool>()
+template<class T>
+constexpr char PyFmtFor();
+template<>
+constexpr char PyFmtFor<bool>()
 {
   return '?';
 }
-template<> constexpr char PyFmtFor<char>()
+template<>
+constexpr char PyFmtFor<char>()
 {
   return 'b';
 }
-template<> constexpr char PyFmtFor<unsigned char>()
+template<>
+constexpr char PyFmtFor<unsigned char>()
 {
   return 'B';
 }
-template<> constexpr char PyFmtFor<short>()
+template<>
+constexpr char PyFmtFor<short>()
 {
   return 'h';
 }
-template<> constexpr char PyFmtFor<unsigned short>()
+template<>
+constexpr char PyFmtFor<unsigned short>()
 {
   return 'H';
 }
-template<> constexpr char PyFmtFor<int>()
+template<>
+constexpr char PyFmtFor<int>()
 {
   return 'i';
 }
-template<> constexpr char PyFmtFor<unsigned int>()
+template<>
+constexpr char PyFmtFor<unsigned int>()
 {
   return 'I';
 }
-template<> constexpr char PyFmtFor<long>()
+template<>
+constexpr char PyFmtFor<long>()
 {
   return 'l';
 }
-template<> constexpr char PyFmtFor<unsigned long>()
+template<>
+constexpr char PyFmtFor<unsigned long>()
 {
   return 'L';
 }
-template<> constexpr char PyFmtFor<GfHalf>()
+template<>
+constexpr char PyFmtFor<GfHalf>()
 {
   return 'e';
 }
-template<> constexpr char PyFmtFor<float>()
+template<>
+constexpr char PyFmtFor<float>()
 {
   return 'f';
 }
-template<> constexpr char PyFmtFor<double>()
+template<>
+constexpr char PyFmtFor<double>()
 {
   return 'd';
 }
 
 }  // namespace
 
-template<class T> char *Gf_GetPyBufferFmtFor()
+template<class T>
+char *Gf_GetPyBufferFmtFor()
 {
   static char str[2] = {PyFmtFor<T>(), '\0'};
   return str;

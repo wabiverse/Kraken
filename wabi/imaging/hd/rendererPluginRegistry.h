@@ -36,7 +36,8 @@ class HdRendererPlugin;
 class HdRendererPluginHandle;
 class HdPluginRenderDelegateUniqueHandle;
 
-class HdRendererPluginRegistry final : public HfPluginRegistry {
+class HdRendererPluginRegistry final : public HfPluginRegistry
+{
  public:
   ///
   /// Returns the singleton registry for \c HdRendererPlugin
@@ -47,7 +48,8 @@ class HdRendererPluginRegistry final : public HfPluginRegistry {
   ///
   /// Entry point for defining an HdRendererPlugin plugin.
   ///
-  template<typename T, typename... Bases> static void Define();
+  template<typename T, typename... Bases>
+  static void Define();
 
   ///
   /// Returns the id of plugin to use as the default
@@ -100,7 +102,8 @@ class HdRendererPluginRegistry final : public HfPluginRegistry {
   HdRendererPluginRegistry &operator=(const HdRendererPluginRegistry &) = delete;
 };
 
-template<typename T, typename... Bases> void HdRendererPluginRegistry::Define()
+template<typename T, typename... Bases>
+void HdRendererPluginRegistry::Define()
 {
   HfPluginRegistry::Define<T, HdRendererPlugin, Bases...>();
 }

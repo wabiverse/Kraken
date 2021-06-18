@@ -36,16 +36,22 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
-
-Bignum::Bignum() : bigits_(bigits_buffer_, kBigitCapacity), used_digits_(0), exponent_(0)
+namespace wabi_double_conversion
 {
-  for (int i = 0; i < kBigitCapacity; ++i) {
+
+Bignum::Bignum()
+  : bigits_(bigits_buffer_, kBigitCapacity),
+    used_digits_(0),
+    exponent_(0)
+{
+  for (int i = 0; i < kBigitCapacity; ++i)
+  {
     bigits_[i] = 0;
   }
 }
 
-template<typename S> static int BitSize(S value)
+template<typename S>
+static int BitSize(S value)
 {
   (void)value;  // Mark variable as used.
   return 8 * sizeof(value);
@@ -74,7 +80,8 @@ void Bignum::AssignUInt64(uint64_t value)
 
   int needed_bigits = kUInt64Size / kBigitSize + 1;
   EnsureCapacity(needed_bigits);
-  for (int i = 0; i < needed_bigits; ++i) {
+  for (int i = 0; i < needed_bigits; ++i)
+  {
     bigits_[i] = value & kBigitMask;
     value = value >> kBigitSize;
   }
@@ -85,11 +92,13 @@ void Bignum::AssignUInt64(uint64_t value)
 void Bignum::AssignBignum(const Bignum &other)
 {
   exponent_ = other.exponent_;
-  for (int i = 0; i < other.used_digits_; ++i) {
+  for (int i = 0; i < other.used_digits_; ++i)
+  {
     bigits_[i] = other.bigits_[i];
   }
   // Clear the excess digits (if there were any).
-  for (int i = other.used_digits_; i < used_digits_; ++i) {
+  for (int i = other.used_digits_; i < used_digits_; ++i)
+  {
     bigits_[i] = 0;
   }
   used_digits_ = other.used_digits_;
@@ -98,7 +107,8 @@ void Bignum::AssignBignum(const Bignum &other)
 static uint64_t ReadUInt64(Vector<const char> buffer, int from, int digits_to_read)
 {
   uint64_t result = 0;
-  for (int i = from; i < from + digits_to_read; ++i) {
+  for (int i = from; i < from + digits_to_read; ++i)
+  {
     int digit = buffer[i] - '0';
     ASSERT(0 <= digit && digit <= 9);
     result = result * 10 + digit;
@@ -114,7 +124,8 @@ void Bignum::AssignDecimalString(Vector<const char> value)
   int length = value.length();
   unsigned int pos = 0;
   // Let's just say that each digit needs 4 bits.
-  while (length >= kMaxUint64DecimalDigits) {
+  while (length >= kMaxUint64DecimalDigits)
+  {
     uint64_t digits = ReadUInt64(value, pos, kMaxUint64DecimalDigits);
     pos += kMaxUint64DecimalDigits;
     length -= kMaxUint64DecimalDigits;
@@ -145,10 +156,12 @@ void Bignum::AssignHexString(Vector<const char> value)
   int needed_bigits = length * 4 / kBigitSize + 1;
   EnsureCapacity(needed_bigits);
   int string_index = length - 1;
-  for (int i = 0; i < needed_bigits - 1; ++i) {
+  for (int i = 0; i < needed_bigits - 1; ++i)
+  {
     // These bigits are guaranteed to be "full".
     Chunk current_bigit = 0;
-    for (int j = 0; j < kBigitSize / 4; j++) {
+    for (int j = 0; j < kBigitSize / 4; j++)
+    {
       current_bigit += HexCharValue(value[string_index--]) << (j * 4);
     }
     bigits_[i] = current_bigit;
@@ -156,11 +169,13 @@ void Bignum::AssignHexString(Vector<const char> value)
   used_digits_ = needed_bigits - 1;
 
   Chunk most_significant_bigit = 0;  // Could be = 0;
-  for (int j = 0; j <= string_index; ++j) {
+  for (int j = 0; j <= string_index; ++j)
+  {
     most_significant_bigit <<= 4;
     most_significant_bigit += HexCharValue(value[j]);
   }
-  if (most_significant_bigit != 0) {
+  if (most_significant_bigit != 0)
+  {
     bigits_[used_digits_] = most_significant_bigit;
     used_digits_++;
   }
@@ -201,14 +216,16 @@ void Bignum::AddBignum(const Bignum &other)
   Chunk carry = 0;
   int bigit_pos = other.exponent_ - exponent_;
   ASSERT(bigit_pos >= 0);
-  for (int i = 0; i < other.used_digits_; ++i) {
+  for (int i = 0; i < other.used_digits_; ++i)
+  {
     Chunk sum = bigits_[bigit_pos] + other.bigits_[i] + carry;
     bigits_[bigit_pos] = sum & kBigitMask;
     carry = sum >> kBigitSize;
     bigit_pos++;
   }
 
-  while (carry != 0) {
+  while (carry != 0)
+  {
     Chunk sum = bigits_[bigit_pos] + carry;
     bigits_[bigit_pos] = sum & kBigitMask;
     carry = sum >> kBigitSize;
@@ -230,13 +247,15 @@ void Bignum::SubtractBignum(const Bignum &other)
   int offset = other.exponent_ - exponent_;
   Chunk borrow = 0;
   int i;
-  for (i = 0; i < other.used_digits_; ++i) {
+  for (i = 0; i < other.used_digits_; ++i)
+  {
     ASSERT((borrow == 0) || (borrow == 1));
     Chunk difference = bigits_[i + offset] - other.bigits_[i] - borrow;
     bigits_[i + offset] = difference & kBigitMask;
     borrow = difference >> (kChunkSize - 1);
   }
-  while (borrow != 0) {
+  while (borrow != 0)
+  {
     Chunk difference = bigits_[i + offset] - borrow;
     bigits_[i + offset] = difference & kBigitMask;
     borrow = difference >> (kChunkSize - 1);
@@ -259,7 +278,8 @@ void Bignum::MultiplyByUInt32(uint32_t factor)
 {
   if (factor == 1)
     return;
-  if (factor == 0) {
+  if (factor == 0)
+  {
     Zero();
     return;
   }
@@ -270,12 +290,14 @@ void Bignum::MultiplyByUInt32(uint32_t factor)
   // Assert that this number + 1 (for the carry) fits into double chunk.
   ASSERT(kDoubleChunkSize >= kBigitSize + 32 + 1);
   DoubleChunk carry = 0;
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     DoubleChunk product = static_cast<DoubleChunk>(factor) * bigits_[i] + carry;
     bigits_[i] = static_cast<Chunk>(product & kBigitMask);
     carry = (product >> kBigitSize);
   }
-  while (carry != 0) {
+  while (carry != 0)
+  {
     EnsureCapacity(used_digits_ + 1);
     bigits_[used_digits_] = carry & kBigitMask;
     used_digits_++;
@@ -287,7 +309,8 @@ void Bignum::MultiplyByUInt64(uint64_t factor)
 {
   if (factor == 1)
     return;
-  if (factor == 0) {
+  if (factor == 0)
+  {
     Zero();
     return;
   }
@@ -295,14 +318,16 @@ void Bignum::MultiplyByUInt64(uint64_t factor)
   uint64_t carry = 0;
   uint64_t low = factor & 0xFFFFFFFF;
   uint64_t high = factor >> 32;
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     uint64_t product_low = low * bigits_[i];
     uint64_t product_high = high * bigits_[i];
     uint64_t tmp = (carry & kBigitMask) + product_low;
     bigits_[i] = tmp & kBigitMask;
     carry = (carry >> kBigitSize) + (tmp >> kBigitSize) + (product_high << (32 - kBigitSize));
   }
-  while (carry != 0) {
+  while (carry != 0)
+  {
     EnsureCapacity(used_digits_ + 1);
     bigits_[used_digits_] = carry & kBigitMask;
     used_digits_++;
@@ -337,15 +362,18 @@ void Bignum::MultiplyByPowerOfTen(int exponent)
 
   // We shift by exponent at the end just before returning.
   int remaining_exponent = exponent;
-  while (remaining_exponent >= 27) {
+  while (remaining_exponent >= 27)
+  {
     MultiplyByUInt64(kFive27);
     remaining_exponent -= 27;
   }
-  while (remaining_exponent >= 13) {
+  while (remaining_exponent >= 13)
+  {
     MultiplyByUInt32(kFive13);
     remaining_exponent -= 13;
   }
-  if (remaining_exponent > 0) {
+  if (remaining_exponent > 0)
+  {
     MultiplyByUInt32(kFive1_to_12[remaining_exponent - 1]);
   }
   ShiftLeft(exponent);
@@ -369,23 +397,27 @@ void Bignum::Square()
   //
   // Assert that the additional number of bits in a DoubleChunk are enough to
   // sum up used_digits of Bigit*Bigit.
-  if ((1 << (2 * (kChunkSize - kBigitSize))) <= used_digits_) {
+  if ((1 << (2 * (kChunkSize - kBigitSize))) <= used_digits_)
+  {
     UNIMPLEMENTED();
   }
   DoubleChunk accumulator = 0;
   // First shift the digits so we don't overwrite them.
   int copy_offset = used_digits_;
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     bigits_[copy_offset + i] = bigits_[i];
   }
   // We have two loops to avoid some 'if's in the loop.
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     // Process temporary digit i with power i.
     // The sum of the two indices must be equal to i.
     int bigit_index1 = i;
     int bigit_index2 = 0;
     // Sum all of the sub-products.
-    while (bigit_index1 >= 0) {
+    while (bigit_index1 >= 0)
+    {
       Chunk chunk1 = bigits_[copy_offset + bigit_index1];
       Chunk chunk2 = bigits_[copy_offset + bigit_index2];
       accumulator += static_cast<DoubleChunk>(chunk1) * chunk2;
@@ -395,12 +427,14 @@ void Bignum::Square()
     bigits_[i] = static_cast<Chunk>(accumulator) & kBigitMask;
     accumulator >>= kBigitSize;
   }
-  for (int i = used_digits_; i < product_length; ++i) {
+  for (int i = used_digits_; i < product_length; ++i)
+  {
     int bigit_index1 = used_digits_ - 1;
     int bigit_index2 = i - bigit_index1;
     // Invariant: sum of both indices is again equal to i.
     // Inner loop runs 0 times on last iteration, emptying accumulator.
-    while (bigit_index2 < used_digits_) {
+    while (bigit_index2 < used_digits_)
+    {
       Chunk chunk1 = bigits_[copy_offset + bigit_index1];
       Chunk chunk2 = bigits_[copy_offset + bigit_index2];
       accumulator += static_cast<DoubleChunk>(chunk1) * chunk2;
@@ -427,7 +461,8 @@ void Bignum::AssignPowerUInt16(uint16_t base, int power_exponent)
 {
   ASSERT(base != 0);
   ASSERT(power_exponent >= 0);
-  if (power_exponent == 0) {
+  if (power_exponent == 0)
+  {
     AssignUInt16(1);
     return;
   }
@@ -436,13 +471,15 @@ void Bignum::AssignPowerUInt16(uint16_t base, int power_exponent)
   // We expect base to be in range 2-32, and most often to be 10.
   // It does not make much sense to implement different algorithms for counting
   // the bits.
-  while ((base & 1) == 0) {
+  while ((base & 1) == 0)
+  {
     base >>= 1;
     shifts++;
   }
   int bit_size = 0;
   int tmp_base = base;
-  while (tmp_base != 0) {
+  while (tmp_base != 0)
+  {
     tmp_base >>= 1;
     bit_size++;
   }
@@ -463,31 +500,38 @@ void Bignum::AssignPowerUInt16(uint16_t base, int power_exponent)
 
   bool delayed_multipliciation = false;
   const uint64_t max_32bits = 0xFFFFFFFF;
-  while (mask != 0 && this_value <= max_32bits) {
+  while (mask != 0 && this_value <= max_32bits)
+  {
     this_value = this_value * this_value;
     // Verify that there is enough space in this_value to perform the
     // multiplication.  The first bit_size bits must be 0.
-    if ((power_exponent & mask) != 0) {
+    if ((power_exponent & mask) != 0)
+    {
       uint64_t base_bits_mask = ~((static_cast<uint64_t>(1) << (64 - bit_size)) - 1);
       bool high_bits_zero = (this_value & base_bits_mask) == 0;
-      if (high_bits_zero) {
+      if (high_bits_zero)
+      {
         this_value *= base;
       }
-      else {
+      else
+      {
         delayed_multipliciation = true;
       }
     }
     mask >>= 1;
   }
   AssignUInt64(this_value);
-  if (delayed_multipliciation) {
+  if (delayed_multipliciation)
+  {
     MultiplyByUInt32(base);
   }
 
   // Now do the same thing as a bignum.
-  while (mask != 0) {
+  while (mask != 0)
+  {
     Square();
-    if ((power_exponent & mask) != 0) {
+    if ((power_exponent & mask) != 0)
+    {
       MultiplyByUInt32(base);
     }
     mask >>= 1;
@@ -506,7 +550,8 @@ uint16_t Bignum::DivideModuloIntBignum(const Bignum &other)
 
   // Easy case: if we have less digits than the divisor than the result is 0.
   // Note: this handles the case where this == 0, too.
-  if (BigitLength() < other.BigitLength()) {
+  if (BigitLength() < other.BigitLength())
+  {
     return 0;
   }
 
@@ -516,7 +561,8 @@ uint16_t Bignum::DivideModuloIntBignum(const Bignum &other)
 
   // Start by removing multiples of 'other' until both numbers have the same
   // number of digits.
-  while (BigitLength() > other.BigitLength()) {
+  while (BigitLength() > other.BigitLength())
+  {
     // This naive approach is extremely inefficient if `this` divided by other
     // is big. This function is implemented for doubleToString where
     // the result should be small (less than 10).
@@ -536,7 +582,8 @@ uint16_t Bignum::DivideModuloIntBignum(const Bignum &other)
   Chunk this_bigit = bigits_[used_digits_ - 1];
   Chunk other_bigit = other.bigits_[other.used_digits_ - 1];
 
-  if (other.used_digits_ == 1) {
+  if (other.used_digits_ == 1)
+  {
     // Shortcut for easy (and common) case.
     int quotient = this_bigit / other_bigit;
     bigits_[used_digits_ - 1] = this_bigit - other_bigit * quotient;
@@ -551,24 +598,28 @@ uint16_t Bignum::DivideModuloIntBignum(const Bignum &other)
   result += static_cast<uint16_t>(division_estimate);
   SubtractTimes(other, division_estimate);
 
-  if (other_bigit * (division_estimate + 1) > this_bigit) {
+  if (other_bigit * (division_estimate + 1) > this_bigit)
+  {
     // No need to even try to subtract. Even if other's remaining digits were 0
     // another subtraction would be too much.
     return result;
   }
 
-  while (LessEqual(other, *this)) {
+  while (LessEqual(other, *this))
+  {
     SubtractBignum(other);
     result++;
   }
   return result;
 }
 
-template<typename S> static int SizeInHexChars(S number)
+template<typename S>
+static int SizeInHexChars(S number)
 {
   ASSERT(number > 0);
   int result = 0;
-  while (number != 0) {
+  while (number != 0)
+  {
     number >>= 4;
     result++;
   }
@@ -590,7 +641,8 @@ bool Bignum::ToHexString(char *buffer, int buffer_size) const
   ASSERT(kBigitSize % 4 == 0);
   const int kHexCharsPerBigit = kBigitSize / 4;
 
-  if (used_digits_ == 0) {
+  if (used_digits_ == 0)
+  {
     if (buffer_size < 2)
       return false;
     buffer[0] = '0';
@@ -603,21 +655,26 @@ bool Bignum::ToHexString(char *buffer, int buffer_size) const
     return false;
   int string_index = needed_chars - 1;
   buffer[string_index--] = '\0';
-  for (int i = 0; i < exponent_; ++i) {
-    for (int j = 0; j < kHexCharsPerBigit; ++j) {
+  for (int i = 0; i < exponent_; ++i)
+  {
+    for (int j = 0; j < kHexCharsPerBigit; ++j)
+    {
       buffer[string_index--] = '0';
     }
   }
-  for (int i = 0; i < used_digits_ - 1; ++i) {
+  for (int i = 0; i < used_digits_ - 1; ++i)
+  {
     Chunk current_bigit = bigits_[i];
-    for (int j = 0; j < kHexCharsPerBigit; ++j) {
+    for (int j = 0; j < kHexCharsPerBigit; ++j)
+    {
       buffer[string_index--] = HexCharOfValue(current_bigit & 0xF);
       current_bigit >>= 4;
     }
   }
   // And finally the last bigit.
   Chunk most_significant_bigit = bigits_[used_digits_ - 1];
-  while (most_significant_bigit != 0) {
+  while (most_significant_bigit != 0)
+  {
     buffer[string_index--] = HexCharOfValue(most_significant_bigit & 0xF);
     most_significant_bigit >>= 4;
   }
@@ -643,7 +700,8 @@ int Bignum::Compare(const Bignum &a, const Bignum &b)
     return -1;
   if (bigit_length_a > bigit_length_b)
     return +1;
-  for (int i = bigit_length_a - 1; i >= Min(a.exponent_, b.exponent_); --i) {
+  for (int i = bigit_length_a - 1; i >= Min(a.exponent_, b.exponent_); --i)
+  {
     Chunk bigit_a = a.BigitAt(i);
     Chunk bigit_b = b.BigitAt(i);
     if (bigit_a < bigit_b)
@@ -660,7 +718,8 @@ int Bignum::PlusCompare(const Bignum &a, const Bignum &b, const Bignum &c)
   ASSERT(a.IsClamped());
   ASSERT(b.IsClamped());
   ASSERT(c.IsClamped());
-  if (a.BigitLength() < b.BigitLength()) {
+  if (a.BigitLength() < b.BigitLength())
+  {
     return PlusCompare(b, a, c);
   }
   if (a.BigitLength() + 1 < c.BigitLength())
@@ -670,22 +729,26 @@ int Bignum::PlusCompare(const Bignum &a, const Bignum &b, const Bignum &c)
   // The exponent encodes 0-bigits. So if there are more 0-digits in 'a' than
   // 'b' has digits, then the bigit-length of 'a'+'b' must be equal to the one
   // of 'a'.
-  if (a.exponent_ >= b.BigitLength() && a.BigitLength() < c.BigitLength()) {
+  if (a.exponent_ >= b.BigitLength() && a.BigitLength() < c.BigitLength())
+  {
     return -1;
   }
 
   Chunk borrow = 0;
   // Starting at min_exponent all digits are == 0. So no need to compare them.
   int min_exponent = Min(Min(a.exponent_, b.exponent_), c.exponent_);
-  for (int i = c.BigitLength() - 1; i >= min_exponent; --i) {
+  for (int i = c.BigitLength() - 1; i >= min_exponent; --i)
+  {
     Chunk chunk_a = a.BigitAt(i);
     Chunk chunk_b = b.BigitAt(i);
     Chunk chunk_c = c.BigitAt(i);
     Chunk sum = chunk_a + chunk_b;
-    if (sum > chunk_c + borrow) {
+    if (sum > chunk_c + borrow)
+    {
       return +1;
     }
-    else {
+    else
+    {
       borrow = chunk_c + borrow - sum;
       if (borrow > 1)
         return -1;
@@ -699,10 +762,12 @@ int Bignum::PlusCompare(const Bignum &a, const Bignum &b, const Bignum &c)
 
 void Bignum::Clamp()
 {
-  while (used_digits_ > 0 && bigits_[used_digits_ - 1] == 0) {
+  while (used_digits_ > 0 && bigits_[used_digits_ - 1] == 0)
+  {
     used_digits_--;
   }
-  if (used_digits_ == 0) {
+  if (used_digits_ == 0)
+  {
     // Zero.
     exponent_ = 0;
   }
@@ -715,7 +780,8 @@ bool Bignum::IsClamped() const
 
 void Bignum::Zero()
 {
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     bigits_[i] = 0;
   }
   used_digits_ = 0;
@@ -724,7 +790,8 @@ void Bignum::Zero()
 
 void Bignum::Align(const Bignum &other)
 {
-  if (exponent_ > other.exponent_) {
+  if (exponent_ > other.exponent_)
+  {
     // If "X" represents a "hidden" digit (by the exponent) then we are in the
     // following case (a == this, b == other):
     // a:  aaaaaaXXXX   or a:   aaaaaXXX
@@ -733,10 +800,12 @@ void Bignum::Align(const Bignum &other)
     // a:  aaaaaa000X   or a:   aaaaa0XX
     int zero_digits = exponent_ - other.exponent_;
     EnsureCapacity(used_digits_ + zero_digits);
-    for (int i = used_digits_ - 1; i >= 0; --i) {
+    for (int i = used_digits_ - 1; i >= 0; --i)
+    {
       bigits_[i + zero_digits] = bigits_[i];
     }
-    for (int i = 0; i < zero_digits; ++i) {
+    for (int i = 0; i < zero_digits; ++i)
+    {
       bigits_[i] = 0;
     }
     used_digits_ += zero_digits;
@@ -751,12 +820,14 @@ void Bignum::BigitsShiftLeft(int shift_amount)
   ASSERT(shift_amount < kBigitSize);
   ASSERT(shift_amount >= 0);
   Chunk carry = 0;
-  for (int i = 0; i < used_digits_; ++i) {
+  for (int i = 0; i < used_digits_; ++i)
+  {
     Chunk new_carry = bigits_[i] >> (kBigitSize - shift_amount);
     bigits_[i] = ((bigits_[i] << shift_amount) + carry) & kBigitMask;
     carry = new_carry;
   }
-  if (carry != 0) {
+  if (carry != 0)
+  {
     bigits_[used_digits_] = carry;
     used_digits_++;
   }
@@ -765,22 +836,26 @@ void Bignum::BigitsShiftLeft(int shift_amount)
 void Bignum::SubtractTimes(const Bignum &other, int factor)
 {
   ASSERT(exponent_ <= other.exponent_);
-  if (factor < 3) {
-    for (int i = 0; i < factor; ++i) {
+  if (factor < 3)
+  {
+    for (int i = 0; i < factor; ++i)
+    {
       SubtractBignum(other);
     }
     return;
   }
   Chunk borrow = 0;
   int exponent_diff = other.exponent_ - exponent_;
-  for (int i = 0; i < other.used_digits_; ++i) {
+  for (int i = 0; i < other.used_digits_; ++i)
+  {
     DoubleChunk product = static_cast<DoubleChunk>(factor) * other.bigits_[i];
     DoubleChunk remove = borrow + product;
     Chunk difference = bigits_[i + exponent_diff] - (remove & kBigitMask);
     bigits_[i + exponent_diff] = difference & kBigitMask;
     borrow = static_cast<Chunk>((difference >> (kChunkSize - 1)) + (remove >> kBigitSize));
   }
-  for (int i = other.used_digits_ + exponent_diff; i < used_digits_; ++i) {
+  for (int i = other.used_digits_ + exponent_diff; i < used_digits_; ++i)
+  {
     if (borrow == 0)
       return;
     Chunk difference = bigits_[i] - borrow;

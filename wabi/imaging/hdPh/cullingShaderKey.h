@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct HdPh_CullingShaderKey : public HdPh_ShaderKey {
+struct HdPh_CullingShaderKey : public HdPh_ShaderKey
+{
   HdPh_CullingShaderKey(bool instancing, bool tinyCull, bool counting);
   ~HdPh_CullingShaderKey();
 

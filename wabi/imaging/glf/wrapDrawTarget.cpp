@@ -43,7 +43,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static GlfDrawTargetRefPtr _NewDrawTarget(GfVec2i const &size)
 {

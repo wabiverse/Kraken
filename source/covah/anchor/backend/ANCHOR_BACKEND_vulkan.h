@@ -33,7 +33,8 @@
 #endif
 #include <vulkan/vulkan.h>
 
-struct ANCHOR_ImplVulkan_InitInfo {
+struct ANCHOR_ImplVulkan_InitInfo
+{
   VkInstance Instance;
   VkPhysicalDevice PhysicalDevice;
   VkDevice Device;
@@ -103,7 +104,8 @@ ANCHOR_IMPL_API int ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(VkPresent
 // Helper structure to hold the data needed by one rendering frame
 // (Used by example's main.cpp. Used by multi-viewport features. Probably NOT used by your own
 // engine/app.) [Please zero-clear before use!]
-struct ANCHOR_VulkanGPU_Frame {
+struct ANCHOR_VulkanGPU_Frame
+{
   VkCommandPool CommandPool;
   VkCommandBuffer CommandBuffer;
   VkFence Fence;
@@ -112,7 +114,8 @@ struct ANCHOR_VulkanGPU_Frame {
   VkFramebuffer Framebuffer;
 };
 
-struct ANCHOR_VulkanGPU_FrameSemaphores {
+struct ANCHOR_VulkanGPU_FrameSemaphores
+{
   VkSemaphore ImageAcquiredSemaphore;
   VkSemaphore RenderCompleteSemaphore;
 };
@@ -120,7 +123,8 @@ struct ANCHOR_VulkanGPU_FrameSemaphores {
 // Helper structure to hold the data needed by one rendering context into one OS window
 // (Used by example's main.cpp. Used by multi-viewport features. Probably NOT used by your own
 // engine/app.)
-struct ANCHOR_VulkanGPU_Surface {
+struct ANCHOR_VulkanGPU_Surface
+{
   int Width;
   int Height;
   VkSwapchainKHR Swapchain;

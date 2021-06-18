@@ -50,7 +50,8 @@ std::string UsdPrimDefinition::GetDocumentation() const
 
 std::string UsdPrimDefinition::GetPropertyDocumentation(const TfToken &propName) const
 {
-  if (propName.IsEmpty()) {
+  if (propName.IsEmpty())
+  {
     return std::string();
   }
   std::string docString;
@@ -60,7 +61,8 @@ std::string UsdPrimDefinition::GetPropertyDocumentation(const TfToken &propName)
 
 TfTokenVector UsdPrimDefinition::_ListMetadataFields(const TfToken &propName) const
 {
-  if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
+  if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
+  {
     // Get the list of fields from the schematics for the property (or prim)
     // path and remove the fields that we don't allow fallbacks for.
     TfTokenVector fields = _GetSchematics()->ListFields(*path);
@@ -78,21 +80,26 @@ void UsdPrimDefinition::_SetPrimSpec(const SdfPrimSpecHandle &primSpec, bool pro
   // If there are no properties yet, we can just copy them all from the prim
   // spec without worrying about handling duplicates. Otherwise we have to
   // _AddProperty.
-  if (_propPathMap.empty()) {
-    for (SdfPropertySpecHandle prop : primSpec->GetProperties()) {
+  if (_propPathMap.empty())
+  {
+    for (SdfPropertySpecHandle prop : primSpec->GetProperties())
+    {
       _propPathMap[prop->GetNameToken()] = prop->GetPath();
       _properties.push_back(prop->GetNameToken());
     }
   }
-  else {
-    for (SdfPropertySpecHandle prop : primSpec->GetProperties()) {
+  else
+  {
+    for (SdfPropertySpecHandle prop : primSpec->GetProperties())
+    {
       _AddProperty(prop->GetNameToken(), prop->GetPath());
     }
   }
 
   // If this prim spec will provide the prim metadata, map the empty property
   // name to the prim path for the field accessor functions.
-  if (providesPrimMetadata) {
+  if (providesPrimMetadata)
+  {
     _propPathMap[TfToken()] = primSpec->GetPath();
   }
 }
@@ -100,13 +107,17 @@ void UsdPrimDefinition::_SetPrimSpec(const SdfPrimSpecHandle &primSpec, bool pro
 void UsdPrimDefinition::_ApplyPropertiesFromPrimDef(const UsdPrimDefinition &primDef,
                                                     const std::string &propPrefix)
 {
-  if (propPrefix.empty()) {
-    for (const auto &it : primDef._propPathMap) {
+  if (propPrefix.empty())
+  {
+    for (const auto &it : primDef._propPathMap)
+    {
       _AddProperty(it.first, it.second);
     }
   }
-  else {
-    for (const auto &it : primDef._propPathMap) {
+  else
+  {
+    for (const auto &it : primDef._propPathMap)
+    {
       // Apply the prefix to each property name before adding it.
       const TfToken prefixedPropName(SdfPath::JoinIdentifier(propPrefix, it.first.GetString()));
       _AddProperty(prefixedPropName, it.second);
@@ -122,21 +133,26 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
 
   // Find or create the target prim spec at the target layer.
   SdfPrimSpecHandle targetSpec = layer->GetPrimAtPath(path);
-  if (targetSpec) {
+  if (targetSpec)
+  {
     // If the target spec already exists, clear its properties and schema
     // allowed metadata. This does not clear non-schema metadata fields like
     // children, composition arc, clips, specifier, etc.
     targetSpec->SetProperties(SdfPropertySpecHandleVector());
-    for (const TfToken &fieldName : targetSpec->ListInfoKeys()) {
-      if (!UsdSchemaRegistry::IsDisallowedField(fieldName)) {
+    for (const TfToken &fieldName : targetSpec->ListInfoKeys())
+    {
+      if (!UsdSchemaRegistry::IsDisallowedField(fieldName))
+      {
         targetSpec->ClearInfo(fieldName);
       }
     }
   }
-  else {
+  else
+  {
     // Otherwise create a new target spec and set its specifier.
     targetSpec = SdfCreatePrimInLayer(layer, path);
-    if (!targetSpec) {
+    if (!targetSpec)
+    {
       TF_WARN("Failed to create prim spec at path '%s' in layer '%s'",
               path.GetText(),
               layer->GetIdentifier().c_str());
@@ -146,10 +162,13 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
   }
 
   // Copy all properties.
-  for (const TfToken &propName : GetPropertyNames()) {
+  for (const TfToken &propName : GetPropertyNames())
+  {
     SdfPropertySpecHandle propSpec = GetSchemaPropertySpec(propName);
-    if (TF_VERIFY(propSpec)) {
-      if (!SdfCopySpec(propSpec->GetLayer(), propSpec->GetPath(), layer, path.AppendProperty(propName))) {
+    if (TF_VERIFY(propSpec))
+    {
+      if (!SdfCopySpec(propSpec->GetLayer(), propSpec->GetPath(), layer, path.AppendProperty(propName)))
+      {
         TF_WARN(
           "Failed to copy prim defintion property '%s' to prim "
           "spec at path '%s' in layer '%s'.",
@@ -161,9 +180,11 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
   }
 
   // Copy prim metadata
-  for (const TfToken &fieldName : ListMetadataFields()) {
+  for (const TfToken &fieldName : ListMetadataFields())
+  {
     VtValue fieldValue;
-    if (GetMetadata(fieldName, &fieldValue)) {
+    if (GetMetadata(fieldName, &fieldValue))
+    {
       layer->SetField(path, fieldName, fieldValue);
     }
   }
@@ -193,7 +214,8 @@ UsdPrim UsdPrimDefinition::FlattenTo(const UsdPrim &parent,
   const UsdEditTarget &editTarget = parent.GetStage()->GetEditTarget();
   const SdfLayerHandle &targetLayer = editTarget.GetLayer();
   const SdfPath &targetPath = editTarget.MapToSpecPath(primPath);
-  if (targetPath.IsEmpty()) {
+  if (targetPath.IsEmpty())
+  {
     return UsdPrim();
   }
 

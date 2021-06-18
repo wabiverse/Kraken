@@ -48,7 +48,8 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-class Tf_EnvSettingRegistry {
+class Tf_EnvSettingRegistry
+{
  public:
   Tf_EnvSettingRegistry(const Tf_EnvSettingRegistry &) = delete;
   Tf_EnvSettingRegistry &operator=(const Tf_EnvSettingRegistry &) = delete;
@@ -61,7 +62,8 @@ class Tf_EnvSettingRegistry {
   Tf_EnvSettingRegistry()
   {
     string fileName = TfGetenv("WABI_TF_ENV_SETTING_FILE", "");
-    if (FILE *fp = ArchOpenFile(fileName.c_str(), "r")) {
+    if (FILE *fp = ArchOpenFile(fileName.c_str(), "r"))
+    {
       char buffer[1024];
 
 #ifdef WITH_PYTHON
@@ -82,35 +84,41 @@ class Tf_EnvSettingRegistry {
         va_end(ap);
       };
 
-      while (fgets(buffer, sizeof(buffer), fp)) {
+      while (fgets(buffer, sizeof(buffer), fp))
+      {
         ++lineNo;
         string line = string(buffer);
-        if (line.back() != '\n') {
+        if (line.back() != '\n')
+        {
           emitError("line too long; ignored");
           continue;
         }
 
         string trimmed = TfStringTrim(line);
-        if (trimmed.empty() || trimmed.front() == '#') {
+        if (trimmed.empty() || trimmed.front() == '#')
+        {
           continue;
         }
 
         size_t eqPos = trimmed.find('=');
-        if (eqPos == std::string::npos) {
+        if (eqPos == std::string::npos)
+        {
           emitError("no '=' found");
           continue;
         }
 
         string key = TfStringTrim(trimmed.substr(0, eqPos));
         string value = TfStringTrim(trimmed.substr(eqPos + 1));
-        if (key.empty()) {
+        if (key.empty())
+        {
           emitError("empty key");
           continue;
         }
 
         ArchSetEnv(key, value, /*overwrite=*/false);
 #ifdef WITH_PYTHON
-        if (syncPython && ArchGetEnv(key) == value) {
+        if (syncPython && ArchGetEnv(key) == value)
+        {
           TfPySetenv(key, value);
         }
 #endif  // WITH_PYTHON
@@ -126,7 +134,8 @@ class Tf_EnvSettingRegistry {
 
   using VariantType = boost::variant<int, bool, std::string>;
 
-  template<typename U> bool Define(string const &varName, U const &value, std::atomic<U *> *cachedValue)
+  template<typename U>
+  bool Define(string const &varName, U const &value, std::atomic<U *> *cachedValue)
   {
 
     bool inserted = false;
@@ -135,7 +144,8 @@ class Tf_EnvSettingRegistry {
       // Double check cachedValue now that we've acquired the registry
       // lock.  It's entirely possible that another thread may have
       // initialized our TfEnvSetting while we were waiting.
-      if (cachedValue->load()) {
+      if (cachedValue->load())
+      {
         return _printAlerts;
       }
 
@@ -146,7 +156,8 @@ class Tf_EnvSettingRegistry {
       cachedValue->store(entryPointer);
     }
 
-    if (!inserted) {
+    if (!inserted)
+    {
       TF_CODING_ERROR(
         "Multiple definitions of TfEnvSetting variable "
         "detected.  This is usually due to software "
@@ -155,7 +166,8 @@ class Tf_EnvSettingRegistry {
         varName.c_str());
       return false;
     }
-    else {
+    else
+    {
       return _printAlerts;
     }
   }
@@ -204,7 +216,8 @@ static string _Str(const std::string &value)
   return value;
 }
 
-template<class T> void Tf_InitializeEnvSetting(TfEnvSetting<T> *setting)
+template<class T>
+void Tf_InitializeEnvSetting(TfEnvSetting<T> *setting)
 {
   const std::string settingName = setting->_name;
 
@@ -214,9 +227,11 @@ template<class T> void Tf_InitializeEnvSetting(TfEnvSetting<T> *setting)
   // Define the setting in the registry and install the cached setting
   // value.
   Tf_EnvSettingRegistry &reg = Tf_EnvSettingRegistry::GetInstance();
-  if (reg.Define(settingName, value, setting->_value)) {
+  if (reg.Define(settingName, value, setting->_value))
+  {
     // Setting was defined successfully and we should print alerts.
-    if (setting->_default != value) {
+    if (setting->_default != value)
+    {
       string text = TfStringPrintf(
         "#  %s is overridden to '%s'.  "
         "Default is '%s'.  #",

@@ -48,8 +48,10 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+namespace
+{
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 /**
  * fwds ->. */
@@ -100,7 +102,8 @@ void wrapUsdAPISchemaBase()
 
 /* clang-format on */
 
-namespace {
+namespace
+{
 
 WRAP_CUSTOM
 {}

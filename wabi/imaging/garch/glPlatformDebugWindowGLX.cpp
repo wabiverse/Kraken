@@ -78,13 +78,15 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
   // X window
   int fbcount;
   GLXFBConfig *fbc = glXChooseFBConfig(_display, screen, attrib, &fbcount);
-  if (!fbc) {
+  if (!fbc)
+  {
     TF_FATAL_ERROR("glXChooseFBConfig failed");
     exit(1);
   }
 
   XVisualInfo *visinfo = glXGetVisualFromFBConfig(_display, fbc[0]);
-  if (!visinfo) {
+  if (!visinfo)
+  {
     TF_FATAL_ERROR("glXGetVisualFromFBConfig failed");
     exit(1);
   }
@@ -118,13 +120,15 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
   GLXContext tmpCtx = glXCreateContextAttribsARB(_display, fbc[0], 0, true, attribs);
   glXMakeCurrent(_display, _window, tmpCtx);
 
-  if (GarchGLPlatformDebugContext::IsEnabledDebugOutput()) {
+  if (GarchGLPlatformDebugContext::IsEnabledDebugOutput())
+  {
     // switch to the debug context
     _glDebugContext = GarchGLPlatformDebugContext::New(4, 5, true, true);
     _glDebugContext->makeCurrent();
     glXDestroyContext(_display, tmpCtx);
   }
-  else {
+  else
+  {
     // continue to use the GL context
     _glContext = tmpCtx;
   }
@@ -165,12 +169,15 @@ void Garch_GLPlatformDebugWindow::Run()
   _running = true;
   XEvent event;
 
-  while (_running) {
-    while (XPending(_display)) {
+  while (_running)
+  {
+    while (XPending(_display))
+    {
 
       XNextEvent(_display, &event);
 
-      switch (event.type) {
+      switch (event.type)
+      {
         case Expose:
           break;
         case ConfigureNotify:
@@ -200,10 +207,12 @@ void Garch_GLPlatformDebugWindow::Run()
         }
       }
     }
-    if (_glDebugContext) {
+    if (_glDebugContext)
+    {
       _glDebugContext->makeCurrent();
     }
-    else {
+    else
+    {
       glXMakeCurrent(_display, _window, _glContext);
     }
 
@@ -219,10 +228,12 @@ void Garch_GLPlatformDebugWindow::Run()
   _callback->OnUninitializeGL();
 
   glXMakeCurrent(_display, 0, 0);
-  if (_glDebugContext) {
+  if (_glDebugContext)
+  {
     _glDebugContext.Reset();
   }
-  else {
+  else
+  {
     glXDestroyContext(_display, _glContext);
   }
   XDestroyWindow(_display, _window);

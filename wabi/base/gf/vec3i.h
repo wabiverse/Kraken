@@ -54,7 +54,9 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec3i;
 
-template<> struct GfIsGfVec<class GfVec3i> {
+template<>
+struct GfIsGfVec<class GfVec3i>
+{
   static const bool value = true;
 };
 
@@ -66,7 +68,8 @@ template<> struct GfIsGfVec<class GfVec3i> {
 /// Represents a vector of 3 components of type \c int.
 /// It is intended to be fast and simple.
 ///
-class GfVec3i {
+class GfVec3i
+{
  public:
   /// Scalar element type and dimension.
   typedef int ScalarType;
@@ -76,15 +79,19 @@ class GfVec3i {
   GfVec3i() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec3i(int value) : _data{value, value, value}
+  constexpr explicit GfVec3i(int value)
+    : _data{value, value, value}
   {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec3i(int s0, int s1, int s2) : _data{s0, s1, s2}
+  constexpr GfVec3i(int s0, int s1, int s2)
+    : _data{s0, s1, s2}
   {}
 
   /// Construct with pointer to values.
-  template<class Scl> constexpr explicit GfVec3i(Scl const *p) : _data{p[0], p[1], p[2]}
+  template<class Scl>
+  constexpr explicit GfVec3i(Scl const *p)
+    : _data{p[0], p[1], p[2]}
   {}
 
   /// Create a unit vector along the X-axis.

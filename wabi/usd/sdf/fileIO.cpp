@@ -53,7 +53,8 @@ bool Sdf_WriteToStream(const SdfSpec &baseSpec, std::ostream &o, size_t indent)
 
   const SdfSpecType type = baseSpec.GetSpecType();
 
-  switch (type) {
+  switch (type)
+  {
     case SdfSpecTypePrim: {
       SdfPrimSpec spec = Sdf_CastAccess::CastSpec<SdfPrimSpec, SdfSpec>(baseSpec);
       return Sdf_WritePrim(spec, out, indent);

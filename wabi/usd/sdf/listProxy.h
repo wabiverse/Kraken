@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 ///
 template<class _TypePolicy>
 class SdfListProxy
-  : boost::totally_ordered<SdfListProxy<_TypePolicy>, std::vector<typename _TypePolicy::value_type>> {
+  : boost::totally_ordered<SdfListProxy<_TypePolicy>, std::vector<typename _TypePolicy::value_type>>
+{
  public:
   typedef _TypePolicy TypePolicy;
   typedef SdfListProxy<TypePolicy> This;
@@ -64,9 +65,12 @@ class SdfListProxy
 
  private:
   // Proxies an item in a list editor list.
-  class _ItemProxy : boost::totally_ordered<_ItemProxy> {
+  class _ItemProxy : boost::totally_ordered<_ItemProxy>
+  {
    public:
-    explicit _ItemProxy(This *owner, size_t index) : _owner(owner), _index(index)
+    explicit _ItemProxy(This *owner, size_t index)
+      : _owner(owner),
+        _index(index)
     {
       // Do nothing
     }
@@ -104,7 +108,8 @@ class SdfListProxy
   };
   friend class _ItemProxy;
 
-  class _GetHelper {
+  class _GetHelper
+  {
    public:
     typedef _ItemProxy result_type;
 
@@ -113,7 +118,8 @@ class SdfListProxy
       return _ItemProxy(owner, index);
     }
   };
-  class _ConstGetHelper {
+  class _ConstGetHelper
+  {
    public:
     typedef value_type result_type;
 
@@ -130,7 +136,8 @@ class SdfListProxy
                                                   typename boost::remove_cv<typename boost::remove_reference<
                                                     typename GetItem::result_type>::type>::type,
                                                   std::random_access_iterator_tag,
-                                                  typename GetItem::result_type> {
+                                                  typename GetItem::result_type>
+  {
    public:
     typedef _Iterator<Owner, GetItem> This;
     typedef boost::iterator_facade<
@@ -142,12 +149,16 @@ class SdfListProxy
     typedef typename Parent::reference reference;
     typedef typename Parent::difference_type difference_type;
 
-    _Iterator() : _owner(NULL), _index(0)
+    _Iterator()
+      : _owner(NULL),
+        _index(0)
     {
       // Do nothing
     }
 
-    _Iterator(Owner owner, size_t index) : _owner(owner), _index(index)
+    _Iterator(Owner owner, size_t index)
+      : _owner(owner),
+        _index(index)
     {
       // Do nothing
     }
@@ -162,7 +173,8 @@ class SdfListProxy
 
     bool equal(const This &other) const
     {
-      if (_owner != other._owner) {
+      if (_owner != other._owner)
+      {
         TF_CODING_ERROR(
           "Comparing SdfListProxy iterators from "
           "different proxies!");
@@ -207,7 +219,8 @@ class SdfListProxy
   /// Creates a default list proxy object for list operation vector specified
   /// \p op. This object evaluates to false in a boolean context and all
   /// operations on this object have no effect.
-  SdfListProxy(SdfListOpType op) : _op(op)
+  SdfListProxy(SdfListOpType op)
+    : _op(op)
   {}
 
   /// Create a new proxy wrapping the list operation vector specified by
@@ -331,7 +344,8 @@ class SdfListProxy
 
   /// Insert copies of the elements in [\p f, \p l) into this sequence
   /// starting at position \p pos.
-  template<class InputIterator> void insert(iterator pos, InputIterator f, InputIterator l)
+  template<class InputIterator>
+  void insert(iterator pos, InputIterator f, InputIterator l)
   {
     _Edit(pos - iterator(this, 0), 0, value_vector_type(f, l));
   }
@@ -361,10 +375,12 @@ class SdfListProxy
   void resize(size_t n, const value_type &t = value_type())
   {
     size_t s = _GetSize();
-    if (n > s) {
+    if (n > s)
+    {
       _Edit(s, 0, value_vector_type(n - s, t));
     }
-    else if (n < s) {
+    else if (n < s)
+    {
       _Edit(n, s - n, value_vector_type());
     }
   }
@@ -377,7 +393,8 @@ class SdfListProxy
 
   /// Replace all elements in this sequence with the elements in
   /// the \p other sequence.
-  template<class T2> This &operator=(const SdfListProxy<T2> &other)
+  template<class T2>
+  This &operator=(const SdfListProxy<T2> &other)
   {
     _Edit(0, _GetSize(), static_cast<value_vector_type>(other));
     return *this;
@@ -391,44 +408,51 @@ class SdfListProxy
   }
 
   /// Replace all elements in this sequence with the given vector.
-  template<class Y> This &operator=(const std::vector<Y> &v)
+  template<class Y>
+  This &operator=(const std::vector<Y> &v)
   {
     _Edit(0, _GetSize(), value_vector_type(v.begin(), v.end()));
     return *this;
   }
 
   /// Equality comparison.
-  template<class T2> bool operator==(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator==(const SdfListProxy<T2> &y) const
   {
     return value_vector_type(*this) == value_vector_type(y);
   }
 
   /// Inequality comparison.
-  template<class T2> bool operator!=(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator!=(const SdfListProxy<T2> &y) const
   {
     return !(*this == y);
   }
 
   /// Less-than comparison.
-  template<class T2> bool operator<(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator<(const SdfListProxy<T2> &y) const
   {
     return value_vector_type(*this) < value_vector_type(y);
   }
 
   /// Less-than-or-equal comparison.
-  template<class T2> bool operator<=(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator<=(const SdfListProxy<T2> &y) const
   {
     return value_vector_type(*this) <= value_vector_type(y);
   }
 
   /// Greater-than comparison.
-  template<class T2> bool operator>(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator>(const SdfListProxy<T2> &y) const
   {
     return !(*this <= y);
   }
 
   /// Greater-than-or-equal comparison.
-  template<class T2> bool operator>=(const SdfListProxy<T2> &y) const
+  template<class T2>
+  bool operator>=(const SdfListProxy<T2> &y) const
   {
     return !(*this < y);
   }
@@ -490,7 +514,8 @@ class SdfListProxy
 
   void Insert(int index, const value_type &value)
   {
-    if (index == -1) {
+    if (index == -1)
+    {
       index = static_cast<int>(_GetSize());
     }
     _Edit(index, 0, value_vector_type(1, value));
@@ -499,10 +524,12 @@ class SdfListProxy
   void Remove(const value_type &value)
   {
     size_t index = Find(value);
-    if (index != size_t(-1)) {
+    if (index != size_t(-1))
+    {
       Erase(index);
     }
-    else {
+    else
+    {
       // Allow policy to raise an error even though we're not
       // doing anything.
       _Edit(_GetSize(), 0, value_vector_type());
@@ -512,10 +539,12 @@ class SdfListProxy
   void Replace(const value_type &oldValue, const value_type &newValue)
   {
     size_t index = Find(oldValue);
-    if (index != size_t(-1)) {
+    if (index != size_t(-1))
+    {
       _Edit(index, 1, value_vector_type(1, newValue));
     }
-    else {
+    else
+    {
       // Allow policy to raise an error even though we're not
       // doing anything.
       _Edit(_GetSize(), 0, value_vector_type());
@@ -530,7 +559,8 @@ class SdfListProxy
   /// Applies the edits in the given list to this one.
   void ApplyList(const SdfListProxy &list)
   {
-    if (_Validate() && list._Validate()) {
+    if (_Validate() && list._Validate())
+    {
       _listEditor->ApplyList(_op, *list._listEditor);
     }
   }
@@ -538,7 +568,8 @@ class SdfListProxy
   /// Apply the edits in this list to the given \p vec.
   void ApplyEditsToList(value_vector_type *vec)
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       _listEditor->ApplyEditsToList(vec);
     }
   }
@@ -546,11 +577,13 @@ class SdfListProxy
  private:
   bool _Validate()
   {
-    if (!_listEditor) {
+    if (!_listEditor)
+    {
       return false;
     }
 
-    if (IsExpired()) {
+    if (IsExpired())
+    {
       TF_CODING_ERROR("Accessing expired list editor");
       return false;
     }
@@ -559,11 +592,13 @@ class SdfListProxy
 
   bool _Validate() const
   {
-    if (!_listEditor) {
+    if (!_listEditor)
+    {
       return false;
     }
 
-    if (IsExpired()) {
+    if (IsExpired())
+    {
       TF_CODING_ERROR("Accessing expired list editor");
       return false;
     }
@@ -582,13 +617,16 @@ class SdfListProxy
 
   bool _IsRelevant() const
   {
-    if (_listEditor->IsExplicit()) {
+    if (_listEditor->IsExplicit())
+    {
       return _op == SdfListOpTypeExplicit;
     }
-    else if (_listEditor->IsOrderedOnly()) {
+    else if (_listEditor->IsOrderedOnly())
+    {
       return _op == SdfListOpTypeOrdered;
     }
-    else {
+    else
+    {
       return _op != SdfListOpTypeExplicit;
     }
   }
@@ -605,19 +643,23 @@ class SdfListProxy
 
   void _Edit(size_t index, size_t n, const value_vector_type &elems)
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       // Allow policy to raise an error even if we're not
       // doing anything.
-      if (n == 0 && elems.empty()) {
+      if (n == 0 && elems.empty())
+      {
         SdfAllowed canEdit = _listEditor->PermissionToEdit(_op);
-        if (!canEdit) {
+        if (!canEdit)
+        {
           TF_CODING_ERROR("Editing list: %s", canEdit.GetWhyNot().c_str());
         }
         return;
       }
 
       bool valid = _listEditor->ReplaceEdits(_op, index, n, elems);
-      if (!valid) {
+      if (!valid)
+      {
         TF_CODING_ERROR("Inserting invalid value into list editor");
       }
     }
@@ -627,11 +669,14 @@ class SdfListProxy
   boost::shared_ptr<Sdf_ListEditor<TypePolicy>> _listEditor;
   SdfListOpType _op;
 
-  template<class> friend class SdfPyWrapListProxy;
+  template<class>
+  friend class SdfPyWrapListProxy;
 };
 
 // Allow TfIteration over list proxies.
-template<typename T> struct Tf_ShouldIterateOverCopy<SdfListProxy<T>> : boost::true_type {
+template<typename T>
+struct Tf_ShouldIterateOverCopy<SdfListProxy<T>> : boost::true_type
+{
 };
 
 WABI_NAMESPACE_END

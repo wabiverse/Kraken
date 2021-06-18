@@ -83,7 +83,8 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<UsdImagingPrimAdapter>;
 /// The primary translation layer between the Hydra (Hd) core and the Usd
 /// scene graph.
 ///
-class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
+class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
+{
   typedef UsdImagingDelegate This;
 
  public:
@@ -476,16 +477,19 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   SdfPath ConvertCachePathToIndexPath(SdfPath const &cachePath)
   {
     SdfPathMap::const_iterator it = _cache2indexPath.find(cachePath);
-    if (it != _cache2indexPath.end()) {
+    if (it != _cache2indexPath.end())
+    {
       return it->second;
     }
 
     // For pure/plain usdImaging, there is no prefix to replace
     SdfPath const &delegateID = GetDelegateID();
-    if (delegateID == SdfPath::AbsoluteRootPath()) {
+    if (delegateID == SdfPath::AbsoluteRootPath())
+    {
       return cachePath;
     }
-    if (cachePath.IsEmpty()) {
+    if (cachePath.IsEmpty())
+    {
       return cachePath;
     }
 
@@ -501,13 +505,15 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   SdfPath ConvertIndexPathToCachePath(SdfPath const &indexPath)
   {
     SdfPathMap::const_iterator it = _index2cachePath.find(indexPath);
-    if (it != _index2cachePath.end()) {
+    if (it != _index2cachePath.end())
+    {
       return it->second;
     }
 
     // For pure/plain usdImaging, there is no prefix to replace
     SdfPath const &delegateID = GetDelegateID();
-    if (delegateID == SdfPath::AbsoluteRootPath()) {
+    if (delegateID == SdfPath::AbsoluteRootPath())
+    {
       return indexPath;
     }
 
@@ -557,7 +563,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
 
   bool _ValidateRefineLevel(int level)
   {
-    if (!(0 <= level && level <= 8)) {
+    if (!(0 <= level && level <= 8))
+    {
       TF_CODING_ERROR(
         "Invalid refinement level(%d), "
         "expected range is [0,8]",
@@ -662,7 +669,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase {
   _AdapterMap _adapterMap;
 
   // Per-Hydra-Primitive tracking data
-  struct _HdPrimInfo {
+  struct _HdPrimInfo
+  {
     UsdImagingPrimAdapterSharedPtr adapter;                    // The adapter to use for the
                                                                // prim
     UsdPrim usdPrim;                                           // Reference to the Usd prim

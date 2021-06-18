@@ -31,7 +31,8 @@
 
 void PIL_sleep_ms(int ms)
 {
-  if (ms >= 1000) {
+  if (ms >= 1000)
+  {
     sleep(ms / 1000);
     ms = (ms % 1000);
   }

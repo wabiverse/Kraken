@@ -104,14 +104,18 @@ WABI_NAMESPACE_BEGIN
 /// }
 /// \endcode
 ///
-template<class T> struct Tf_StaticDataDefaultFactory {
+template<class T>
+struct Tf_StaticDataDefaultFactory
+{
   static T *New()
   {
     return new T;
   }
 };
 
-template<class T, class Factory = Tf_StaticDataDefaultFactory<T>> class TfStaticData {
+template<class T, class Factory = Tf_StaticDataDefaultFactory<T>>
+class TfStaticData
+{
  public:
   /// Return a pointer to the underlying data object. It is created and
   /// initialized if necessary.
@@ -197,12 +201,15 @@ template<class T, class Factory = Tf_StaticDataDefaultFactory<T>> class TfStatic
 /// \hideinitializer
 #define TF_MAKE_STATIC_DATA(Type, Name) \
   static void TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(TF_PP_EAT_PARENS(Type) *); \
-  namespace { \
-  struct TF_PP_CAT(Name, _Tf_StaticDataFactory) { \
+  namespace \
+  { \
+  struct TF_PP_CAT(Name, _Tf_StaticDataFactory) \
+  { \
     static TF_PP_EAT_PARENS(Type) * New() \
     { \
       auto *p = new TF_PP_EAT_PARENS(Type); \
-      TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(p); \
+      TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl) \
+      (p); \
       return p; \
     } \
   }; \

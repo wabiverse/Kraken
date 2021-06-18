@@ -78,7 +78,8 @@ class SdfAssetPath;
  * \todo GetModelInstanceName()
  */
 
-class UsdModelAPI : public UsdAPISchemaBase {
+class UsdModelAPI : public UsdAPISchemaBase
+{
  public:
   /**
    * Compile time constant representing what kind of schema this class is.
@@ -97,14 +98,16 @@ class UsdModelAPI : public UsdAPISchemaBase {
    * UsdModelAPI::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdModelAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdModelAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /**
    * Construct a UsdModelAPI on the prim held by @p schemaObj .
    * Should be preferred over UsdModelAPI(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdModelAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdModelAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /**
@@ -185,7 +188,11 @@ class UsdModelAPI : public UsdAPISchemaBase {
    *
    * Option for validating queries to a
    * prim's kind metadata. @sa IsKind() */
-  enum KindValidation { KindValidationNone, KindValidationModelHierarchy };
+  enum KindValidation
+  {
+    KindValidationNone,
+    KindValidationModelHierarchy
+  };
 
   /**
    * Retrieve the authored @p kind for this prim.
@@ -348,10 +355,12 @@ class UsdModelAPI : public UsdAPISchemaBase {
    * @} */
 
  protected:
-  template<typename T> bool _GetAssetInfoByKey(const TfToken &key, T *val) const
+  template<typename T>
+  bool _GetAssetInfoByKey(const TfToken &key, T *val) const
   {
     VtValue vtVal = GetPrim().GetAssetInfoByKey(key);
-    if (!vtVal.IsEmpty() && vtVal.IsHolding<T>()) {
+    if (!vtVal.IsEmpty() && vtVal.IsHolding<T>())
+    {
       *val = vtVal.UncheckedGet<T>();
       return true;
     }

@@ -20,7 +20,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HoudiniOpenvdbLoader {
+class HoudiniOpenvdbLoader
+{
  public:
   static HoudiniOpenvdbLoader const &Instance()
   {

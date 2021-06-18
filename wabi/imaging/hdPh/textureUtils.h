@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Helpers for loading textures.
 ///
-class HdPhTextureUtils {
+class HdPhTextureUtils
+{
  public:
   /// Converts given number of texels.
   ///

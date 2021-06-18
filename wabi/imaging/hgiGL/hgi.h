@@ -56,7 +56,8 @@ using HgiGLOpsVector = std::vector<HgiGLOpsFn>;
 /// calls and during command recording operations it expects that the OpenGL
 /// context is valid and current.
 ///
-class HgiGL final : public Hgi {
+class HgiGL final : public Hgi
+{
  public:
   HGIGL_API
   HgiGL();
@@ -155,7 +156,8 @@ class HgiGL final : public Hgi {
   // Invalidates the resource handle and places the object in the garbage
   // collector vector for future destruction.
   // This is helpful to avoid destroying GPU resources still in-flight.
-  template<class T> void _TrashObject(HgiHandle<T> *handle, std::vector<HgiHandle<T>> *collector)
+  template<class T>
+  void _TrashObject(HgiHandle<T> *handle, std::vector<HgiHandle<T>> *collector)
   {
     collector->push_back(HgiHandle<T>(handle->Get(), /*id*/ 0));
     *handle = HgiHandle<T>();

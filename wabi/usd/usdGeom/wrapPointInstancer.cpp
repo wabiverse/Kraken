@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -215,12 +217,14 @@ void wrapUsdGeomPointInstancer()
 
 #include "wabi/base/tf/pyEnum.h"
 
-namespace {
+namespace
+{
 
 static boost::python::list _ComputeMaskAtTime(const UsdGeomPointInstancer &self, const UsdTimeCode time)
 {
   boost::python::list items;
-  for (const auto &b : self.ComputeMaskAtTime(time)) {
+  for (const auto &b : self.ComputeMaskAtTime(time))
+  {
     items.append(static_cast<bool>(b));
   }
 

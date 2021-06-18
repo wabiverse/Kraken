@@ -36,14 +36,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct ArchBuildMode {
+struct ArchBuildMode
+{
 // Check if the build system has specified a build mode, falling
 // back to commonly-used macros if it has not. (Typically, _DEBUG
 // is defined by Visual Studio and DEBUG by Xcode for debug-mode builds)
 #if defined(BUILD_OPTLEVEL_DEV) || defined(_DEBUG) || defined(DEBUG)
-  enum { DEV_BUILD = 1 };
+  enum
+  {
+    DEV_BUILD = 1
+  };
 #else
-  enum { DEV_BUILD = 0 };
+  enum
+  {
+    DEV_BUILD = 0
+  };
 #endif
 };
 

@@ -59,7 +59,8 @@ TF_DECLARE_WEAK_PTRS(PlugPlugin);
 /// Generic class that provides information about scene description fields
 /// but doesn't actually provide any fields.
 ///
-class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
+class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
+{
 
  protected:
   class _SpecDefiner;
@@ -69,7 +70,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   ///
   /// Class defining various attributes for a field.
   ///
-  class FieldDefinition {
+  class FieldDefinition
+  {
    public:
     FieldDefinition(const SdfSchemaBase &schema, const TfToken &name, const VtValue &fallbackValue);
 
@@ -87,22 +89,26 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
     /// the registered validator or if no validator has been set.
     /// @{
 
-    template<class T> SdfAllowed IsValidValue(const T &value) const
+    template<class T>
+    SdfAllowed IsValidValue(const T &value) const
     {
       return (_valueValidator ? _valueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
-    template<class T> SdfAllowed IsValidListValue(const T &value) const
+    template<class T>
+    SdfAllowed IsValidListValue(const T &value) const
     {
       return (_listValueValidator ? _listValueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
-    template<class T> SdfAllowed IsValidMapKey(const T &value) const
+    template<class T>
+    SdfAllowed IsValidMapKey(const T &value) const
     {
       return (_mapKeyValidator ? _mapKeyValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
-    template<class T> SdfAllowed IsValidMapValue(const T &value) const
+    template<class T>
+    SdfAllowed IsValidMapValue(const T &value) const
     {
       return (_mapValueValidator ? _mapValueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
@@ -145,8 +151,11 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
 
   // Structure containing information about a field as it pertains to the
   // spec this object defines.
-  struct _FieldInfo {
-    _FieldInfo() : required(false), metadata(false)
+  struct _FieldInfo
+  {
+    _FieldInfo()
+      : required(false),
+        metadata(false)
     {}
     bool required;
     bool metadata;
@@ -159,7 +168,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   ///
   /// Class representing fields and other information for a spec type.
   ///
-  class SpecDefinition {
+  class SpecDefinition
+  {
    public:
     /// Returns all fields for this spec.
     SDF_API TfTokenVector GetFields() const;
@@ -260,7 +270,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   /// special handling).
   inline bool IsRequiredFieldName(const TfToken &fieldName) const
   {
-    for (size_t i = 0; i != _requiredFieldNames.size(); ++i) {
+    for (size_t i = 0; i != _requiredFieldNames.size(); ++i)
+    {
       if (_requiredFieldNames[i] == fieldName)
         return true;
     }
@@ -333,7 +344,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   ///
   /// Class that defines fields for a spec type.
   ///
-  class _SpecDefiner {
+  class _SpecDefiner
+  {
    public:
     /// Functions for setting spec attributes during registration
     /// @{
@@ -356,11 +368,13 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   };
 
   /// A helper for registering value types.
-  class _ValueTypeRegistrar {
+  class _ValueTypeRegistrar
+  {
    public:
     explicit _ValueTypeRegistrar(Sdf_ValueTypeRegistry *);
 
-    class Type {
+    class Type
+    {
      public:
       ~Type();
 
@@ -415,7 +429,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
 
   /// Construct an SdfSchemaBase but does not populate it with standard
   /// fields and types.
-  class EmptyTag {
+  class EmptyTag
+  {
   };
   SdfSchemaBase(EmptyTag);
 
@@ -493,7 +508,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
   friend struct Sdf_SchemaFieldTypeRegistrar;
   FieldDefinition &_CreateField(const TfToken &fieldKey, const VtValue &fallback, bool plugin = false);
 
-  template<class T> FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const T &fallback)
+  template<class T>
+  FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const T &fallback)
   {
     return _DoRegisterField(fieldKey, VtValue(fallback));
   }
@@ -516,7 +532,8 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable {
 /// Class that provides information about the various scene description
 /// fields.
 ///
-class SdfSchema : public SdfSchemaBase {
+class SdfSchema : public SdfSchemaBase
+{
  public:
   SDF_API
   static const SdfSchema &GetInstance()

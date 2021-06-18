@@ -58,7 +58,8 @@ TF_DECLARE_REF_PTRS(UsdSkelBinding);
 ///
 /// This provides caching of major structural components, such as skeletal
 /// topology. In a streaming context, this cache is intended to persist.
-class UsdSkelCache {
+class UsdSkelCache
+{
  public:
   USDSKEL_API
   UsdSkelCache();

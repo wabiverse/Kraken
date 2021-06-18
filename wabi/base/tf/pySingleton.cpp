@@ -32,7 +32,8 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-namespace Tf_PySingleton {
+namespace Tf_PySingleton
+{
 
 bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
 {

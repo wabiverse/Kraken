@@ -41,29 +41,36 @@ namespace mx = MaterialX;
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 /// Read a MaterialX document then convert it using UsdMtlxRead().
-template<typename R> static UsdStageRefPtr _MtlxTest(R &&reader, bool nodeGraphs)
+template<typename R>
+static UsdStageRefPtr _MtlxTest(R &&reader, bool nodeGraphs)
 {
-  try {
+  try
+  {
     auto doc = mx::createDocument();
     reader(doc);
 
     auto stage = UsdStage::CreateInMemory("tmp.usda", TfNullPtr);
-    if (nodeGraphs) {
+    if (nodeGraphs)
+    {
       UsdMtlxReadNodeGraphs(doc, stage);
     }
-    else {
+    else
+    {
       UsdMtlxRead(doc, stage);
     }
     return stage;
   }
-  catch (mx::ExceptionFoundCycle &x) {
+  catch (mx::ExceptionFoundCycle &x)
+  {
     TF_RUNTIME_ERROR("MaterialX cycle found: %s", x.what());
     return TfNullPtr;
   }
-  catch (mx::Exception &x) {
+  catch (mx::Exception &x)
+  {
     TF_RUNTIME_ERROR("MaterialX read failed: %s", x.what());
     return TfNullPtr;
   }

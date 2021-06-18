@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 /// Metal implementation of HgiResourceBindings.
 ///
 ///
-class HgiMetalResourceBindings final : public HgiResourceBindings {
+class HgiMetalResourceBindings final : public HgiResourceBindings
+{
  public:
   HGIMETAL_API
   HgiMetalResourceBindings(HgiResourceBindingsDesc const &desc);

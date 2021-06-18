@@ -41,10 +41,12 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Registers to and from python conversions with boost.python for half.
-struct HalfPythonConversions {
+struct HalfPythonConversions
+{
   static void Register()
   {
     // to-python

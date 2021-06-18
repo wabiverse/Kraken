@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -100,7 +102,8 @@ void wrapUsdClipsAPI()
 
 #include "wabi/base/tf/makePyConstructor.h"
 
-namespace {
+namespace
+{
 
 static VtDictionary _GetClips(const UsdClipsAPI &self)
 {
@@ -128,7 +131,8 @@ template<class... Args>
 static void _SetClipAssetPaths(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->AssetArray);
-  if (!v.IsHolding<VtArray<SdfAssetPath>>()) {
+  if (!v.IsHolding<VtArray<SdfAssetPath>>())
+  {
     TF_CODING_ERROR("Invalid value for 'clipAssetPaths' on %s", UsdDescribe(self.GetPrim()).c_str());
     return;
   }
@@ -136,14 +140,16 @@ static void _SetClipAssetPaths(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Ar
   self.SetClipAssetPaths(v.UncheckedGet<VtArray<SdfAssetPath>>(), args...);
 }
 
-template<class... Args> static std::string _GetClipPrimPath(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static std::string _GetClipPrimPath(const UsdClipsAPI &self, const Args &...args)
 {
   std::string result;
   self.GetClipPrimPath(&result, args...);
   return result;
 }
 
-template<class... Args> static TfPyObjWrapper _GetClipActive(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static TfPyObjWrapper _GetClipActive(const UsdClipsAPI &self, const Args &...args)
 {
   VtVec2dArray result;
   self.GetClipActive(&result, args...);
@@ -154,7 +160,8 @@ template<class... Args>
 static void _SetClipActive(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Double2Array);
-  if (!v.IsHolding<VtVec2dArray>()) {
+  if (!v.IsHolding<VtVec2dArray>())
+  {
     TF_CODING_ERROR("Invalid value for 'clipActive' on %s", UsdDescribe(self.GetPrim()).c_str());
     return;
   }
@@ -162,7 +169,8 @@ static void _SetClipActive(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &
   self.SetClipActive(v.UncheckedGet<VtVec2dArray>(), args...);
 }
 
-template<class... Args> static TfPyObjWrapper _GetClipTimes(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static TfPyObjWrapper _GetClipTimes(const UsdClipsAPI &self, const Args &...args)
 {
   VtVec2dArray result;
   self.GetClipTimes(&result, args...);
@@ -173,7 +181,8 @@ template<class... Args>
 static void _SetClipTimes(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Double2Array);
-  if (!v.IsHolding<VtVec2dArray>()) {
+  if (!v.IsHolding<VtVec2dArray>())
+  {
     TF_CODING_ERROR("Invalid value for 'clipTimes' on %s", UsdDescribe(self.GetPrim()).c_str());
     return;
   }
@@ -201,7 +210,8 @@ template<class... Args>
 static void _SetClipTemplateAssetPath(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->String);
-  if (!v.IsHolding<std::string>()) {
+  if (!v.IsHolding<std::string>())
+  {
     TF_CODING_ERROR("Invalid value for 'clipTemplateAssetPath' on %s", UsdDescribe(self.GetPrim()).c_str());
     return;
   }
@@ -217,7 +227,8 @@ static std::string _GetClipTemplateAssetPath(const UsdClipsAPI &self, const Args
   return clipTemplateAssetPath;
 }
 
-template<class... Args> static double _GetClipTemplateStride(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static double _GetClipTemplateStride(const UsdClipsAPI &self, const Args &...args)
 {
   double clipTemplateStride;
   self.GetClipTemplateStride(&clipTemplateStride, args...);
@@ -232,14 +243,16 @@ static double _GetClipTemplateActiveOffset(const UsdClipsAPI &self, const Args &
   return clipTemplateActiveOffset;
 }
 
-template<class... Args> static double _GetClipTemplateStartTime(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static double _GetClipTemplateStartTime(const UsdClipsAPI &self, const Args &...args)
 {
   double clipTemplateStartTime;
   self.GetClipTemplateStartTime(&clipTemplateStartTime, args...);
   return clipTemplateStartTime;
 }
 
-template<class... Args> static double _GetClipTemplateEndTime(const UsdClipsAPI &self, const Args &...args)
+template<class... Args>
+static double _GetClipTemplateEndTime(const UsdClipsAPI &self, const Args &...args)
 {
   double clipTemplateEndTime;
   self.GetClipTemplateEndTime(&clipTemplateEndTime, args...);

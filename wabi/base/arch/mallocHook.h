@@ -79,7 +79,8 @@ ARCH_API bool ArchIsStlAllocatorOff();
 /// The \c ArchMallocHook is a POD (plain old datastructure) which means that
 /// to use it properly, it should be declared at global scope, ensuring
 /// zero-initialization.
-class ArchMallocHook {
+class ArchMallocHook
+{
  public:
   /// Initialize hooks.
   ///

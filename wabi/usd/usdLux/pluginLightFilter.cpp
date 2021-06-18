@@ -57,7 +57,8 @@ UsdLuxPluginLightFilter::~UsdLuxPluginLightFilter()
 /* static */
 UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxPluginLightFilter();
   }
@@ -68,7 +69,8 @@ UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Get(const UsdStagePtr &stage, c
 UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PluginLightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxPluginLightFilter();
   }

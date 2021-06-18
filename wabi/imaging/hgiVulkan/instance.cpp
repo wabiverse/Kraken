@@ -75,7 +75,8 @@ HgiVulkanInstance::HgiVulkanInstance()
 
   // Enable validation layers extension.
   // Requires VK_LAYER_PATH to be set.
-  if (HgiVulkanIsDebugEnabled()) {
+  if (HgiVulkanIsDebugEnabled())
+  {
     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     const char *debugLayers[] = {"VK_LAYER_KHRONOS_validation"};
     createInfo.ppEnabledLayerNames = debugLayers;

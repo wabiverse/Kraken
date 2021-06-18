@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -113,12 +115,14 @@ void wrapUsdGeomBoundable()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable, const UsdTimeCode &time)
 {
   VtVec3fArray extent;
-  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent)) {
+  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent))
+  {
     return object();
   }
   return object(extent);
@@ -129,7 +133,8 @@ static object _ComputeExtentFromPluginsWithTransform(const UsdGeomBoundable &bou
                                                      const GfMatrix4d &transform)
 {
   VtVec3fArray extent;
-  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent)) {
+  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent))
+  {
     return object();
   }
   return object(extent);

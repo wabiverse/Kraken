@@ -25,7 +25,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdCoordSys::HdCoordSys(SdfPath const &id) : HdSprim(id), _name(SdfPath::StripNamespace(id.GetName()))
+HdCoordSys::HdCoordSys(SdfPath const &id)
+  : HdSprim(id),
+    _name(SdfPath::StripNamespace(id.GetName()))
 {}
 
 HdCoordSys::~HdCoordSys()

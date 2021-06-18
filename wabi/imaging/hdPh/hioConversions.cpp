@@ -70,7 +70,8 @@ static_assert(TfArraySize(FORMAT_DESC) == HdFormatCount,
 
 HioFormat HdPhHioConversions::GetHioFormat(HdFormat inFormat)
 {
-  if ((inFormat < 0) || (inFormat >= HdFormatCount)) {
+  if ((inFormat < 0) || (inFormat >= HdFormatCount))
+  {
     TF_CODING_ERROR("Unexpected HdFormat %d", inFormat);
     return HioFormatUNorm8Vec4;
   }

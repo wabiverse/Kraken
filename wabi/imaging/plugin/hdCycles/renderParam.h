@@ -31,7 +31,8 @@
 #include <wabi/imaging/hd/renderDelegate.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Session;
 class Scene;
 class Mesh;
@@ -47,7 +48,8 @@ WABI_NAMESPACE_BEGIN
  * Very much under construction.
  *
  */
-class HdCyclesRenderParam : public HdRenderParam {
+class HdCyclesRenderParam : public HdRenderParam
+{
  public:
   /**
    * @brief Construct a new HdCycles Render Param object
@@ -152,7 +154,8 @@ class HdCyclesRenderParam : public HdRenderParam {
 
  public:
   // Up Axis. Z and Y currently supported.
-  enum UpAxis : uint8_t {
+  enum UpAxis : uint8_t
+  {
     Z = 0,
     Y = 1,
   };

@@ -82,7 +82,8 @@ class UsdStageCacheRequest;
 /// UsdStageCache Find/Insert/Erase/Clear operations.  Also see
 /// UsdStageCache::SetDebugName() and UsdStageCache::GetDebugName().
 ///
-class UsdStageCache {
+class UsdStageCache
+{
  public:
   /// \class Id
   ///
@@ -95,9 +96,11 @@ class UsdStageCache {
   /// It never makes sense to use an Id with a stage other than the one it was
   /// obtained from.
   ///
-  struct Id : private boost::totally_ordered<Id> {
+  struct Id : private boost::totally_ordered<Id>
+  {
     /// Default construct an invalid id.
-    Id() : _value(-1)
+    Id()
+      : _value(-1)
     {}
 
     /// Create an Id from an integral value.  The supplied \p val must have
@@ -155,7 +158,8 @@ class UsdStageCache {
       return ~size_t(id.ToLongInt());
     }
 
-    explicit Id(long int val) : _value(val)
+    explicit Id(long int val)
+      : _value(val)
     {}
 
     long int _value;
@@ -378,7 +382,8 @@ class UsdStageCache {
   mutable std::mutex _mutex;
 };
 
-class UsdStageCacheRequest {
+class UsdStageCacheRequest
+{
  public:
   USD_API
   virtual ~UsdStageCacheRequest();
@@ -401,7 +406,8 @@ class UsdStageCacheRequest {
   void _Subscribe(_Mailbox *);
 
   struct _Data;
-  struct _DataDeleter {
+  struct _DataDeleter
+  {
     void operator()(_Data *);
   };
   std::unique_ptr<_Data, _DataDeleter> _data;

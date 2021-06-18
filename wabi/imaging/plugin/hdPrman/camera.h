@@ -43,7 +43,8 @@ class HdSceneDelegate;
 /// it'd require a render target to be created and bound (per camera), which
 /// would be prohibitively expensive in Prman 22.
 ///
-class HdPrmanCamera final : public HdCamera {
+class HdPrmanCamera final : public HdCamera
+{
  public:
   HdPrmanCamera(SdfPath const &id);
   ~HdPrmanCamera() override;

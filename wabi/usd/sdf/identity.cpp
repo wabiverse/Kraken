@@ -39,14 +39,16 @@ Sdf_Identity::Sdf_Identity(Sdf_IdentityRegistry *registry, const SdfPath &path)
 
 Sdf_Identity::~Sdf_Identity()
 {
-  if (_registry) {
+  if (_registry)
+  {
     _registry->_Remove(_path, this);
   }
 }
 
 const SdfLayerHandle &Sdf_Identity::GetLayer() const
 {
-  if (ARCH_LIKELY(_registry)) {
+  if (ARCH_LIKELY(_registry))
+  {
     return _registry->GetLayer();
   }
 
@@ -64,14 +66,15 @@ void Sdf_Identity::_Forget()
 // Sdf_IdentityRegistry
 //
 
-Sdf_IdentityRegistry::Sdf_IdentityRegistry(const SdfLayerHandle &layer) : _layer(layer)
+Sdf_IdentityRegistry::Sdf_IdentityRegistry(const SdfLayerHandle &layer)
+  : _layer(layer)
 {}
 
 Sdf_IdentityRegistry::~Sdf_IdentityRegistry()
 {
   tbb::spin_mutex::scoped_lock lock(_idsMutex);
 
-  TF_FOR_ALL(i, _ids)
+  TF_FOR_ALL (i, _ids)
   {
     (*i).second->_Forget();
   }
@@ -84,13 +87,15 @@ Sdf_IdentityRefPtr Sdf_IdentityRegistry::Identify(const SdfPath &path)
     // this before proceeding to protect ourselves from race conditions,
     // since other threads could drop the ref-count of this identity at
     // any time, potentially beginning its destruction.
-    if (rawId->_refCount++ > 0) {
+    if (rawId->_refCount++ > 0)
+    {
       // The node is still in active use and we can share it.
       // Since we just acquired a reference here, we know the
       // node cannot expire before we return it.
       return true;
     }
-    else {
+    else
+    {
       // The identity has expired but not yet been removed from
       // the registry map, due to the registry destructor racing
       // this function for the _idsMutex.
@@ -107,9 +112,12 @@ Sdf_IdentityRefPtr Sdf_IdentityRegistry::Identify(const SdfPath &path)
   Sdf_IdentityRefPtr oldLastId;
   tbb::spin_mutex::scoped_lock lock(_idsMutex);
 
-  if (Sdf_Identity *lastIdPtr = _lastId.get()) {
-    if (lastIdPtr->GetPath() == path) {
-      if (TryAcquire(lastIdPtr)) {
+  if (Sdf_Identity *lastIdPtr = _lastId.get())
+  {
+    if (lastIdPtr->GetPath() == path)
+    {
+      if (TryAcquire(lastIdPtr))
+      {
         return Sdf_IdentityRefPtr(lastIdPtr, /* add_ref = */ false);
       }
     }
@@ -120,9 +128,11 @@ Sdf_IdentityRefPtr Sdf_IdentityRegistry::Identify(const SdfPath &path)
   oldLastId = _lastId;
 
   _IdMap::iterator i = _ids.find(path);
-  if (i != _ids.end()) {
+  if (i != _ids.end())
+  {
     Sdf_Identity *rawId = i->second;
-    if (TryAcquire(rawId)) {
+    if (TryAcquire(rawId))
+    {
       Sdf_IdentityRefPtr ret(rawId, /* add_ref = */ false);
       _lastId = ret;
       return ret;
@@ -148,7 +158,8 @@ void Sdf_IdentityRegistry::_Remove(const SdfPath &path, Sdf_Identity *id)
 
   _IdMap::iterator i = _ids.find(path);
 
-  if (i == _ids.end()) {
+  if (i == _ids.end())
+  {
     // It is possible for this path entry to have already been
     // removed.  Consider the case where Identify() is called for
     // a path whose prior identity is expiring, but has not yet
@@ -165,7 +176,8 @@ void Sdf_IdentityRegistry::_Remove(const SdfPath &path, Sdf_Identity *id)
     return;
   }
 
-  if (i->second == id) {
+  if (i->second == id)
+  {
     // Only erase this entry if it still maps to this identity.
     // As described above, it is possible that Identify() has
     // replaced this with a new identity.
@@ -182,15 +194,18 @@ void Sdf_IdentityRegistry::MoveIdentity(const SdfPath &oldPath, const SdfPath &n
 
   // Make sure an identity actually exists at the old path, otherwise
   // there's nothing to do.
-  if (_ids.count(oldPath) == 0) {
+  if (_ids.count(oldPath) == 0)
+  {
     return;
   }
 
   // Insert an entry in the identity map for the new path. If an identity
   // already exists there, make sure we stomp it first.
   std::pair<_IdMap::iterator, bool> newIdStatus = _ids.insert(std::make_pair(newPath, (Sdf_Identity *)NULL));
-  if (!newIdStatus.second) {
-    if (TF_VERIFY(newIdStatus.first->second)) {
+  if (!newIdStatus.second)
+  {
+    if (TF_VERIFY(newIdStatus.first->second))
+    {
       newIdStatus.first->second->_Forget();
     }
   }

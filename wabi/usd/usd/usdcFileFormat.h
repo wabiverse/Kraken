@@ -42,7 +42,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdUsdcFileFormat);
 ///
 /// File format for binary Usd files.
 ///
-class UsdUsdcFileFormat : public SdfFileFormat {
+class UsdUsdcFileFormat : public SdfFileFormat
+{
  public:
   using SdfFileFormat::FileFormatArguments;
   using string = std::string;

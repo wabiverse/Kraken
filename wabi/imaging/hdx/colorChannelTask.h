@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// A task for choosing a color channel for display.
 ///
-class HdxColorChannelTask : public HdxTask {
+class HdxColorChannelTask : public HdxTask
+{
  public:
   HDX_API
   HdxColorChannelTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -72,7 +73,8 @@ class HdxColorChannelTask : public HdxTask {
 
   // This struct must match ParameterBuffer in colorChannel.glslfx.
   // Be careful to remember the std430 rules.
-  struct _ParameterBuffer {
+  struct _ParameterBuffer
+  {
     float screenSize[2];
     int channel;
     bool operator==(const _ParameterBuffer &other) const
@@ -94,7 +96,8 @@ class HdxColorChannelTask : public HdxTask {
 ///
 /// ColorChannelTask parameters.
 ///
-struct HdxColorChannelTaskParams {
+struct HdxColorChannelTaskParams
+{
   HdxColorChannelTaskParams()
   {}
 

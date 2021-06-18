@@ -71,7 +71,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdCameraTokens, HD_API, HD_CAMERA_TOKENS);
 /// Backends that use additional camera parameters can inherit from HdCamera and
 /// pull on them.
 ///
-class HdCamera : public HdSprim {
+class HdCamera : public HdSprim
+{
  public:
   using ClipPlanesVector = std::vector<GfVec4d>;
 
@@ -81,7 +82,8 @@ class HdCamera : public HdSprim {
   ~HdCamera() override;
 
   // change tracking for HdCamera
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     DirtyTransform = 1 << 0,
     DirtyViewMatrix = DirtyTransform,  // deprecated
@@ -92,7 +94,11 @@ class HdCamera : public HdSprim {
     AllDirty = (DirtyTransform | DirtyProjMatrix | DirtyWindowPolicy | DirtyClipPlanes | DirtyParams)
   };
 
-  enum Projection { Perspective = 0, Orthographic };
+  enum Projection
+  {
+    Perspective = 0,
+    Orthographic
+  };
 
   // ---------------------------------------------------------------------- //
   /// Sprim API

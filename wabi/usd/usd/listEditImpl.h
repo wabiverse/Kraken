@@ -35,12 +35,14 @@ WABI_NAMESPACE_BEGIN
 
 // Non templated base class to namespace the overloading of _TranslatePath on
 // the list item type.
-class Usd_ListEditImplBase {
+class Usd_ListEditImplBase
+{
  protected:
   // Generic path translation for the list edit types.
   static bool _TranslatePath(SdfPath *path, const UsdEditTarget &editTarget)
   {
-    if (path->IsEmpty()) {
+    if (path->IsEmpty())
+    {
       TF_CODING_ERROR("Invalid empty path");
       return false;
     }
@@ -48,12 +50,14 @@ class Usd_ListEditImplBase {
     // Root prim paths for all list edit types aren't expected to be
     // mappable across non-local edit targets, so we can just use the given
     // path as-is.
-    if (path->IsRootPrimPath()) {
+    if (path->IsRootPrimPath())
+    {
       return true;
     }
 
     const SdfPath mappedPath = editTarget.MapToSpecPath(*path);
-    if (mappedPath.IsEmpty()) {
+    if (mappedPath.IsEmpty())
+    {
       TF_CODING_ERROR("Cannot map <%s> to current edit target.", path->GetText());
       return false;
     }
@@ -72,7 +76,8 @@ class Usd_ListEditImplBase {
     // We do not map prim paths across the edit target for non-internal
     // references or payloads, as these paths are supposed to be in the
     // namespace of the layer stack.
-    if (!refOrPayload->GetAssetPath().empty()) {
+    if (!refOrPayload->GetAssetPath().empty())
+    {
       return true;
     }
 
@@ -80,12 +85,14 @@ class Usd_ListEditImplBase {
     // invalid for specializes and inherits. However an empty prim path
     // is find for references and payloads.
     SdfPath path = refOrPayload->GetPrimPath();
-    if (path.IsEmpty()) {
+    if (path.IsEmpty())
+    {
       return true;
     }
 
     // Translate the path and update the reference or payload.
-    if (!_TranslatePath(&path, editTarget)) {
+    if (!_TranslatePath(&path, editTarget))
+    {
       return false;
     }
     refOrPayload->SetPrimPath(path);
@@ -97,7 +104,8 @@ class Usd_ListEditImplBase {
 // and UsdPayloads. Editing payloads and references is identical outside of
 // their type.
 template<class UsdListEditorType, class ListOpProxyType>
-struct Usd_ListEditImpl : public Usd_ListEditImplBase {
+struct Usd_ListEditImpl : public Usd_ListEditImplBase
+{
   using ListOpValueType = typename ListOpProxyType::value_type;
   using ListOpValueVector = typename ListOpProxyType::value_vector_type;
 
@@ -105,13 +113,15 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
   {
     const UsdPrim &prim = editor.GetPrim();
 
-    if (!prim) {
+    if (!prim)
+    {
       TF_CODING_ERROR("Invalid prim");
       return false;
     }
 
     ListOpValueType item = itemIn;
-    if (!_TranslatePath(&item, prim.GetStage()->GetEditTarget())) {
+    if (!_TranslatePath(&item, prim.GetStage()->GetEditTarget()))
+    {
       return false;
     }
 
@@ -119,7 +129,8 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
     bool success = false;
     {
       TfErrorMark mark;
-      if (ListOpProxyType listEditor = _GetListEditor(prim)) {
+      if (ListOpProxyType listEditor = _GetListEditor(prim))
+      {
         Usd_InsertListItem(listEditor, item, position);
         // mark *should* contain only errors from adding the item,
         // NOT any recomposition errors, because the
@@ -135,13 +146,15 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
   {
     const UsdPrim &prim = editor.GetPrim();
 
-    if (!prim) {
+    if (!prim)
+    {
       TF_CODING_ERROR("Invalid prim");
       return false;
     }
 
     ListOpValueType item = itemIn;
-    if (!_TranslatePath(&item, prim.GetStage()->GetEditTarget())) {
+    if (!_TranslatePath(&item, prim.GetStage()->GetEditTarget()))
+    {
       return false;
     }
 
@@ -149,7 +162,8 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
     TfErrorMark mark;
     bool success = false;
 
-    if (ListOpProxyType listEditor = _GetListEditor(prim)) {
+    if (ListOpProxyType listEditor = _GetListEditor(prim))
+    {
       listEditor.Remove(item);
       success = mark.IsClean();
     }
@@ -161,7 +175,8 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
   {
     const UsdPrim &prim = editor.GetPrim();
 
-    if (!prim) {
+    if (!prim)
+    {
       TF_CODING_ERROR("Invalid prim");
       return false;
     }
@@ -170,7 +185,8 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
     TfErrorMark mark;
     bool success = false;
 
-    if (ListOpProxyType listEditor = _GetListEditor(prim)) {
+    if (ListOpProxyType listEditor = _GetListEditor(prim))
+    {
       success = listEditor.ClearEdits() && mark.IsClean();
     }
     mark.Clear();
@@ -181,7 +197,8 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
   {
     const UsdPrim &prim = editor.GetPrim();
 
-    if (!prim) {
+    if (!prim)
+    {
       TF_CODING_ERROR("Invalid prim");
       return false;
     }
@@ -192,27 +209,33 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
 
     ListOpValueVector items;
     items.reserve(itemsIn.size());
-    for (ListOpValueType item : itemsIn) {
-      if (_TranslatePath(&item, editTarget)) {
+    for (ListOpValueType item : itemsIn)
+    {
+      if (_TranslatePath(&item, editTarget))
+      {
         items.push_back(item);
       }
     }
 
-    if (!mark.IsClean()) {
+    if (!mark.IsClean())
+    {
       return false;
     }
 
     SdfChangeBlock block;
-    if (ListOpProxyType listEditor = _GetListEditor(prim)) {
+    if (ListOpProxyType listEditor = _GetListEditor(prim))
+    {
       // There's a specific semantic meaning to setting the list op to
       // an empty list which is to make the list explicitly
       // empty. We have to handle this case specifically as setting the
       // the list edit proxy's explicit items to an empty vector is a
       // no-op when the list op is not currently explicit.
-      if (items.empty()) {
+      if (items.empty())
+      {
         listEditor.ClearEditsAndMakeExplicit();
       }
-      else {
+      else
+      {
         listEditor.GetExplicitItems() = items;
       }
     }
@@ -225,13 +248,15 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase {
  private:
   static ListOpProxyType _GetListEditor(const UsdPrim &prim)
   {
-    if (!TF_VERIFY(prim)) {
+    if (!TF_VERIFY(prim))
+    {
       return ListOpProxyType();
     }
 
     SdfPrimSpecHandle spec = prim.GetStage()->_CreatePrimSpecForEditing(prim);
 
-    if (!spec) {
+    if (!spec)
+    {
       return ListOpProxyType();
     }
 

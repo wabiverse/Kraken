@@ -63,7 +63,8 @@ WABI_NAMESPACE_BEGIN
 /// provides, by virtue of deriving from boost::python::api::object_operators<T>.
 /// However it is important to note that callers must ensure the GIL is held
 /// before using these operators!
-class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrapper> {
+class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrapper>
+{
   typedef boost::python::object object;
 
  public:

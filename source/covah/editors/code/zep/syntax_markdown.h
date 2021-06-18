@@ -2,9 +2,11 @@
 
 #include "syntax.h"
 
-namespace Zep {
+namespace Zep
+{
 
-class ZepSyntax_Markdown : public ZepSyntax {
+class ZepSyntax_Markdown : public ZepSyntax
+{
  public:
   ZepSyntax_Markdown(ZepBuffer &buffer,
                      const std::unordered_set<std::string> &keywords = std::unordered_set<std::string>{},

@@ -50,7 +50,8 @@ UsdGeomScope::~UsdGeomScope()
 /* static */
 UsdGeomScope UsdGeomScope::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomScope();
   }
@@ -61,7 +62,8 @@ UsdGeomScope UsdGeomScope::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomScope UsdGeomScope::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Scope");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomScope();
   }

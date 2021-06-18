@@ -40,7 +40,8 @@ TfPyMethodResult::~TfPyMethodResult()
 
 TfPyMethodResult &TfPyMethodResult::operator=(TfPyMethodResult const &other)
 {
-  if (this != &other) {
+  if (this != &other)
+  {
     TfPyLock lock;
     m_obj = other.m_obj;
   }

@@ -57,7 +57,8 @@ UsdRiPxrCookieLightFilter::~UsdRiPxrCookieLightFilter()
 /* static */
 UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrCookieLightFilter();
   }
@@ -68,7 +69,8 @@ UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Get(const UsdStagePtr &stag
 UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiCookieLightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrCookieLightFilter();
   }
@@ -747,7 +749,8 @@ UsdAttribute UsdRiPxrCookieLightFilter::CreateColorTintAttr(VtValue const &defau
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

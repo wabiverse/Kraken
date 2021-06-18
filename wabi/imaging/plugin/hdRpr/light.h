@@ -22,7 +22,8 @@ limitations under the License.
 
 #include <boost/variant/variant.hpp>
 
-namespace rpr {
+namespace rpr
+{
 class Shape;
 class PointLight;
 class SpotLight;
@@ -36,9 +37,12 @@ WABI_NAMESPACE_BEGIN
 class HdRprApi;
 class RprUsdMaterial;
 
-class HdRprLight : public HdLight {
+class HdRprLight : public HdLight
+{
  public:
-  HdRprLight(SdfPath const &id, TfToken const &lightType) : HdLight(id), m_lightType(lightType)
+  HdRprLight(SdfPath const &id, TfToken const &lightType)
+    : HdLight(id),
+      m_lightType(lightType)
   {}
 
   ~HdRprLight() override = default;
@@ -68,12 +72,14 @@ class HdRprLight : public HdLight {
  private:
   const TfToken m_lightType;
 
-  struct AreaLight {
+  struct AreaLight
+  {
     RprUsdMaterial *material = nullptr;
     std::vector<rpr::Shape *> meshes;
   };
 
-  struct LightVariantEmpty {
+  struct LightVariantEmpty
+  {
   };
   using Light = BOOST_NS::variant<LightVariantEmpty,
                                   rpr::PointLight *,

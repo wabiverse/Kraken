@@ -35,7 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_Points final : public HdPrman_Gprim<HdPoints> {
+class HdPrman_Points final : public HdPrman_Gprim<HdPoints>
+{
  public:
   typedef HdPrman_Gprim<HdPoints> BASE;
   HF_MALLOC_TAG_NEW("new HdPrman_Points");

@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPhGLUtils {
+class HdPhGLUtils
+{
  public:
   /// Reads the content of VBO back to VtArray.
   /// The \p vboOffset is expressed in bytes.
@@ -45,7 +46,8 @@ class HdPhGLUtils {
 ///
 /// A utility class to perform batched buffer copy.
 ///
-class HdPhBufferRelocator {
+class HdPhBufferRelocator
+{
  public:
   HdPhBufferRelocator(HgiBufferHandle const &srcBuffer, HgiBufferHandle const &dstBuffer)
     : _srcBuffer(srcBuffer),
@@ -62,7 +64,8 @@ class HdPhBufferRelocator {
   void Commit(class HgiBlitCmds *blitCmds);
 
  private:
-  struct _CopyUnit {
+  struct _CopyUnit
+  {
     _CopyUnit(ptrdiff_t read, ptrdiff_t write, ptrdiff_t size)
       : readOffset(read),
         writeOffset(write),
@@ -71,7 +74,8 @@ class HdPhBufferRelocator {
 
     bool Concat(_CopyUnit const &next)
     {
-      if (readOffset + copySize == next.readOffset && writeOffset + copySize == next.writeOffset) {
+      if (readOffset + copySize == next.readOffset && writeOffset + copySize == next.writeOffset)
+      {
         copySize += next.copySize;
         return true;
       }

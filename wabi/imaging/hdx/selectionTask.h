@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 class HdRenderIndex;
 class HdSceneDelegate;
 
-struct HdxSelectionTaskParams {
+struct HdxSelectionTaskParams
+{
   bool enableSelection;
   float occludedSelectionOpacity;  // lerp factor when blending
                                    // occluded selection
@@ -56,7 +57,8 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 /// extract those buffers and bind them into the current render pass shader to
 /// enable selection highlighting.
 ///
-class HdxSelectionTask : public HdTask {
+class HdxSelectionTask : public HdTask
+{
  public:
   HDX_API
   HdxSelectionTask(HdSceneDelegate *delegate, SdfPath const &id);

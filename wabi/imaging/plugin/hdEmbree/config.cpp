@@ -80,7 +80,8 @@ HdEmbreeConfig::HdEmbreeConfig()
   useFaceColors = (TfGetEnvSetting(HDEMBREE_USE_FACE_COLORS) > 0);
   cameraLightIntensity = (std::max(100, TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) / 100.0f);
 
-  if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0) {
+  if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0)
+  {
     std::cout << "HdEmbree Configuration: \n"
               << "  samplesToConvergence       = " << samplesToConvergence << "\n"
               << "  tileSize                   = " << tileSize << "\n"

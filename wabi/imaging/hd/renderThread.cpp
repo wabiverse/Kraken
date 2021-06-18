@@ -52,7 +52,8 @@ void HdRenderThread::SetShutdownCallback(std::function<void()> shutdownCallback)
 
 void HdRenderThread::StartThread()
 {
-  if (_renderThread.joinable()) {
+  if (_renderThread.joinable())
+  {
     TF_CODING_ERROR(
       "StartThread() called while render thread is "
       "already running");
@@ -65,7 +66,8 @@ void HdRenderThread::StartThread()
 
 void HdRenderThread::StopThread()
 {
-  if (!_renderThread.joinable()) {
+  if (!_renderThread.joinable())
+  {
     return;
   }
 
@@ -85,7 +87,8 @@ bool HdRenderThread::IsThreadRunning()
 
 void HdRenderThread::StartRender()
 {
-  if (!IsRendering()) {
+  if (!IsRendering())
+  {
     std::unique_lock<std::mutex> lock(_requestedStateMutex);
     _enableRender.test_and_set();
     _requestedState = StateRendering;
@@ -96,7 +99,8 @@ void HdRenderThread::StartRender()
 
 void HdRenderThread::StopRender()
 {
-  if (IsRendering()) {
+  if (IsRendering())
+  {
     _enableRender.clear();
     std::unique_lock<std::mutex> lock(_requestedStateMutex);
     _requestedState = StateIdle;
@@ -123,7 +127,8 @@ void HdRenderThread::ResumeRender()
 
 bool HdRenderThread::IsStopRequested()
 {
-  if (!_enableRender.test_and_set()) {
+  if (!_enableRender.test_and_set())
+  {
     _stopRequested = true;
   }
 
@@ -147,16 +152,19 @@ std::unique_lock<std::mutex> HdRenderThread::LockFramebuffer()
 
 void HdRenderThread::_RenderLoop()
 {
-  while (1) {
+  while (1)
+  {
     std::unique_lock<std::mutex> lock(_requestedStateMutex);
     _requestedStateCV.wait(lock, [this]() { return _requestedState != StateIdle; });
-    if (_requestedState == StateRendering) {
+    if (_requestedState == StateRendering)
+    {
       _renderCallback();
       _stopRequested = false;
       _rendering.store(false);
       _requestedState = StateIdle;
     }
-    else if (_requestedState == StateTerminated) {
+    else if (_requestedState == StateTerminated)
+    {
       break;
     }
   }

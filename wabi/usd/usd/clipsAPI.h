@@ -102,7 +102,8 @@ class SdfAssetPath;
 /// For further information, see \ref Usd_Page_ValueClips
 ///
 ///
-class UsdClipsAPI : public UsdAPISchemaBase {
+class UsdClipsAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -118,13 +119,15 @@ class UsdClipsAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdClipsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdClipsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdClipsAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdClipsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdClipsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdClipsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdClipsAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

@@ -39,7 +39,8 @@ using _ListEditImpl = Usd_ListEditImpl<UsdInherits, SdfInheritsProxy>;
 
 // The implementation doesn't define this function as it needs to be specialized
 // so we implement it here.
-template<> SdfInheritsProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
+template<>
+SdfInheritsProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
 {
   return spec->GetInheritPathList();
 }
@@ -67,14 +68,17 @@ bool UsdInherits::SetInherits(const SdfPathVector &itemsIn)
 SdfPathVector UsdInherits::GetAllDirectInherits() const
 {
   SdfPathVector ret;
-  if (!_prim) {
+  if (!_prim)
+  {
     TF_CODING_ERROR("Invalid prim: %s", UsdDescribe(_prim).c_str());
     return ret;
   }
 
   std::unordered_set<SdfPath, SdfPath::Hash> seen;
-  for (auto const &node : _prim.GetPrimIndex().GetNodeRange(PcpRangeTypeInherit)) {
-    if (!node.IsDueToAncestor() && seen.insert(node.GetPath()).second) {
+  for (auto const &node : _prim.GetPrimIndex().GetNodeRange(PcpRangeTypeInherit))
+  {
+    if (!node.IsDueToAncestor() && seen.insert(node.GetPath()).second)
+    {
       ret.push_back(node.GetPath());
     }
   }

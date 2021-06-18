@@ -48,7 +48,8 @@ using HdVolumeFieldDescriptorVector = std::vector<struct HdVolumeFieldDescriptor
 /// - bind raymarching step sizes (querried from render delegate)
 ///   to uniforms in the shader
 ///
-class HdPh_VolumeShader final : public HdPhSurfaceShader {
+class HdPh_VolumeShader final : public HdPhSurfaceShader
+{
  public:
   explicit HdPh_VolumeShader(HdRenderDelegate *const renderDelegate);
   ~HdPh_VolumeShader() override;

@@ -51,7 +51,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This class represents a three-dimensional line segment in space.
 ///
-class GfLineSeg {
+class GfLineSeg
+{
 
  public:
   /// The default constructor leaves line parameters undefined.

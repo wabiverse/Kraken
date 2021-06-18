@@ -60,7 +60,8 @@ UsdModelAPI::~UsdModelAPI()
 /* static */
 UsdModelAPI UsdModelAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdModelAPI();
   }
@@ -148,7 +149,8 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 bool UsdModelAPI::GetKind(TfToken *retValue) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     /**
      * Special-case to pre-empt coding errors. */
     return false;
@@ -158,7 +160,8 @@ bool UsdModelAPI::GetKind(TfToken *retValue) const
 }
 bool UsdModelAPI::SetKind(const TfToken &value) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     /**
      * Special-case to pre-empt coding errors. */
     return false;
@@ -169,7 +172,8 @@ bool UsdModelAPI::SetKind(const TfToken &value) const
 
 bool UsdModelAPI::IsKind(const TfToken &baseKind, UsdModelAPI::KindValidation validation) const
 {
-  if (validation == UsdModelAPI::KindValidationModelHierarchy) {
+  if (validation == UsdModelAPI::KindValidationModelHierarchy)
+  {
     if (KindRegistry::IsA(baseKind, KindTokens->model) && !IsModel())
       return false;
   }
@@ -236,7 +240,8 @@ void UsdModelAPI::SetPayloadAssetDependencies(const VtArray<SdfAssetPath> &asset
 
 bool UsdModelAPI::GetAssetInfo(VtDictionary *info) const
 {
-  if (GetPrim().HasAssetInfo()) {
+  if (GetPrim().HasAssetInfo())
+  {
     *info = GetPrim().GetAssetInfo();
     return true;
   }

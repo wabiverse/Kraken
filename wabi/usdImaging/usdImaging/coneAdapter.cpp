@@ -71,7 +71,8 @@ void UsdImagingConeAdapter::TrackVariability(UsdPrim const &prim,
 
   // Check DirtyPoints before doing variability checks, in case we can skip
   // any of them...
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->height,
                HdChangeTracker::DirtyPoints,
@@ -79,7 +80,8 @@ void UsdImagingConeAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->radius,
                HdChangeTracker::DirtyPoints,
@@ -87,7 +89,8 @@ void UsdImagingConeAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->axis,
                HdChangeTracker::DirtyPoints,
@@ -102,7 +105,8 @@ HdDirtyBits UsdImagingConeAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                          TfToken const &propertyName)
 {
   if (propertyName == UsdGeomTokens->height || propertyName == UsdGeomTokens->radius ||
-      propertyName == UsdGeomTokens->axis) {
+      propertyName == UsdGeomTokens->axis)
+  {
     return HdChangeTracker::DirtyPoints;
   }
 
@@ -121,15 +125,18 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
   UsdGeomCone cone(prim);
 
   double height = 2.0;
-  if (!cone.GetHeightAttr().Get(&height, time)) {
+  if (!cone.GetHeightAttr().Get(&height, time))
+  {
     TF_WARN("Could not evaluate double-valued height attribute on prim %s", prim.GetPath().GetText());
   }
   double radius = 1.0;
-  if (!cone.GetRadiusAttr().Get(&radius, time)) {
+  if (!cone.GetRadiusAttr().Get(&radius, time))
+  {
     TF_WARN("Could not evaluate double-valued radius attribute on prim %s", prim.GetPath().GetText());
   }
   TfToken axis = UsdGeomTokens->z;
-  if (!cone.GetAxisAttr().Get(&axis, time)) {
+  if (!cone.GetAxisAttr().Get(&axis, time))
+  {
     TF_WARN("Could not evaluate token-valued axis attribute on prim %s", prim.GetPath().GetText());
   }
 
@@ -142,7 +149,8 @@ VtValue UsdImagingConeAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode ti
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitConeMeshPoints();
   GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
-  for (GfVec3f &pt : points) {
+  for (GfVec3f &pt : points)
+  {
     pt = scale.Transform(pt);
   }
 

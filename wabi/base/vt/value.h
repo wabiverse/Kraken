@@ -64,21 +64,25 @@ WABI_NAMESPACE_BEGIN
 /// Make a default value.
 /// VtValue uses this to create values to be returned from failed calls to \a
 /// Get. Clients may specialize this for their own types.
-template<class T> struct Vt_DefaultValueFactory;
+template<class T>
+struct Vt_DefaultValueFactory;
 
 // This is a helper class used by Vt_DefaultValueFactory to return a value with
 // its type erased and only known at runtime via a std::type_info.
-struct Vt_DefaultValueHolder {
+struct Vt_DefaultValueHolder
+{
   // Creates a value-initialized object and stores the type_info for the
   // static type.
-  template<typename T> static Vt_DefaultValueHolder Create()
+  template<typename T>
+  static Vt_DefaultValueHolder Create()
   {
     return Vt_DefaultValueHolder(TfAnyUniquePtr::New<T>(), typeid(T));
   }
 
   // Creates a copy of the object and stores the type_info for the static
   // type.
-  template<typename T> static Vt_DefaultValueHolder Create(T const &val)
+  template<typename T>
+  static Vt_DefaultValueHolder Create(T const &val)
   {
     return Vt_DefaultValueHolder(TfAnyUniquePtr::New(val), typeid(T));
   }
@@ -113,11 +117,15 @@ class VtValue;
 VT_API std::ostream &VtStreamOut(std::vector<VtValue> const &val, std::ostream &);
 
 #define VT_VALUE_SET_STORED_TYPE(SRC, DST) \
-  template<> struct Vt_ValueStoredType<SRC> { \
+  template<> \
+  struct Vt_ValueStoredType<SRC> \
+  { \
     typedef DST Type; \
   }
 
-template<class T> struct Vt_ValueStoredType {
+template<class T>
+struct Vt_ValueStoredType
+{
   typedef T Type;
 };
 VT_VALUE_SET_STORED_TYPE(char const *, std::string);
@@ -130,7 +138,9 @@ VT_VALUE_SET_STORED_TYPE(boost::python::object, TfPyObjWrapper);
 #undef VT_VALUE_SET_STORED_TYPE
 
 // A metafunction that gives the type VtValue should store for a given type T.
-template<class T> struct Vt_ValueGetStored : Vt_ValueStoredType<std::decay_t<T>> {
+template<class T>
+struct Vt_ValueGetStored : Vt_ValueStoredType<std::decay_t<T>>
+{
 };
 
 /// Provides a container which may hold any type, and provides introspection
@@ -170,13 +180,17 @@ template<class T> struct Vt_ValueGetStored : Vt_ValueStoredType<std::decay_t<T>>
 /// or less safety or checking than the conversion constructors of the types
 /// themselves.  This includes VtArray, even VtArray<T> for T in scalar types
 /// that are range-checked when held singly.
-class VtValue {
+class VtValue
+{
   static const unsigned int _LocalFlag = 1 << 0;
   static const unsigned int _TrivialCopyFlag = 1 << 1;
   static const unsigned int _ProxyFlag = 1 << 2;
 
-  template<class T> struct _Counted {
-    explicit _Counted(T const &obj) : _obj(obj)
+  template<class T>
+  struct _Counted
+  {
+    explicit _Counted(T const &obj)
+      : _obj(obj)
     {
       _refCount = 0;
     }
@@ -203,7 +217,8 @@ class VtValue {
     }
     friend inline void intrusive_ptr_release(_Counted const *d)
     {
-      if (d->_refCount.fetch_sub(1, std::memory_order_release) == 1) {
+      if (d->_refCount.fetch_sub(1, std::memory_order_release) == 1)
+      {
         std::atomic_thread_fence(std::memory_order_acquire);
         delete d;
       }
@@ -233,7 +248,8 @@ class VtValue {
       std::is_nothrow_move_constructible<T>::value && std::is_nothrow_move_assignable<T>::value>;
 
   // Type information base class.
-  struct _TypeInfo {
+  struct _TypeInfo
+  {
    private:
     using _CopyInitFunc = void (*)(_Storage const &, _Storage &);
     using _DestroyFunc = void (*)(_Storage &);
@@ -437,7 +453,9 @@ class VtValue {
   // Type-dispatching overloads.
 
   // Array type helper.
-  template<class T, class Enable = void> struct _ArrayHelper {
+  template<class T, class Enable = void>
+  struct _ArrayHelper
+  {
     static const Vt_ShapeData *GetShapeData(T const &)
     {
       return NULL;
@@ -451,7 +469,9 @@ class VtValue {
       return typeid(void);
     }
   };
-  template<class Array> struct _ArrayHelper<Array, typename std::enable_if<VtIsArray<Array>::value>::type> {
+  template<class Array>
+  struct _ArrayHelper<Array, typename std::enable_if<VtIsArray<Array>::value>::type>
+  {
     static const Vt_ShapeData *GetShapeData(Array const &obj)
     {
       return obj._GetShapeData();
@@ -492,7 +512,9 @@ class VtValue {
   }
 
   // Proxy type helper.  Base case handles non-proxies and typed proxies.
-  template<class T, class Enable = void> struct _ProxyHelper {
+  template<class T, class Enable = void>
+  struct _ProxyHelper
+  {
     using ProxiedType = typename VtGetProxiedType<T>::type;
 
     static bool CanHash(T const &)
@@ -562,7 +584,8 @@ class VtValue {
   };
 
   template<class ErasedProxy>
-  struct _ProxyHelper<ErasedProxy, typename std::enable_if<VtIsErasedValueProxy<ErasedProxy>::value>::type> {
+  struct _ProxyHelper<ErasedProxy, typename std::enable_if<VtIsErasedValueProxy<ErasedProxy>::value>::type>
+  {
     static bool CanHash(ErasedProxy const &proxy)
     {
       return VtGetErasedProxiedVtValue(proxy)->CanHash();
@@ -634,7 +657,9 @@ class VtValue {
   // _TypeInfo implementation helper.  This is a CRTP base that the
   // _LocalTypeInfo and _RemoteTypeInfo types derive.  It wraps their
   // type-specific implementations with type-generic interfaces.
-  template<class T, class Container, class Derived> struct _TypeInfoImpl : public _TypeInfo {
+  template<class T, class Container, class Derived>
+  struct _TypeInfoImpl : public _TypeInfo
+  {
     static const bool IsLocal = _UsesLocalStore<T>::value;
     static const bool HasTrivialCopy = _IsTriviallyCopyable<T>::value;
     static const bool IsProxy = VtIsValueProxy<T>::value;
@@ -831,8 +856,10 @@ class VtValue {
   struct _LocalTypeInfo : _TypeInfoImpl<T,                 // type
                                         T,                 // container
                                         _LocalTypeInfo<T>  // CRTP
-                                        > {
-    constexpr _LocalTypeInfo() : _TypeInfoImpl<T, T, _LocalTypeInfo<T>>()
+                                        >
+  {
+    constexpr _LocalTypeInfo()
+      : _TypeInfoImpl<T, T, _LocalTypeInfo<T>>()
     {}
 
     // Get returns object directly.
@@ -858,8 +885,10 @@ class VtValue {
   struct _RemoteTypeInfo : _TypeInfoImpl<T,                                  // type
                                          boost::intrusive_ptr<_Counted<T>>,  // container
                                          _RemoteTypeInfo<T>                  // CRTP
-                                         > {
-    constexpr _RemoteTypeInfo() : _TypeInfoImpl<T, boost::intrusive_ptr<_Counted<T>>, _RemoteTypeInfo<T>>()
+                                         >
+  {
+    constexpr _RemoteTypeInfo()
+      : _TypeInfoImpl<T, boost::intrusive_ptr<_Counted<T>>, _RemoteTypeInfo<T>>()
     {}
 
     typedef boost::intrusive_ptr<_Counted<T>> Ptr;
@@ -882,18 +911,23 @@ class VtValue {
   };
 
   // Metafunction that returns the specific _TypeInfo subclass for T.
-  template<class T> struct _TypeInfoFor {
+  template<class T>
+  struct _TypeInfoFor
+  {
     // return _UsesLocalStore(T) ? _LocalTypeInfo<T> : _RemoteTypeInfo<T>;
     typedef std::conditional_t<_UsesLocalStore<T>::value, _LocalTypeInfo<T>, _RemoteTypeInfo<T>> Type;
   };
 
   // Make sure char[N] is treated as a string.
-  template<size_t N> struct _TypeInfoFor<char[N]> : _TypeInfoFor<std::string> {
+  template<size_t N>
+  struct _TypeInfoFor<char[N]> : _TypeInfoFor<std::string>
+  {
   };
 
   // Runtime function to return a _TypeInfo base pointer to a specific
   // _TypeInfo subclass for type T.
-  template<class T> static TfPointerAndBits<const _TypeInfo> GetTypeInfo()
+  template<class T>
+  static TfPointerAndBits<const _TypeInfo> GetTypeInfo()
   {
     typedef typename _TypeInfoFor<T>::Type TI;
     static const TI ti;
@@ -910,7 +944,8 @@ class VtValue {
   // VtValue with one of the elements from the map, we must ensure that the
   // map isn't destroyed until after the assignment has taken place.
   friend struct _HoldAside;
-  struct _HoldAside {
+  struct _HoldAside
+  {
     explicit _HoldAside(VtValue *val)
       : info((val->IsEmpty() || val->_IsLocalAndTriviallyCopyable()) ? static_cast<_TypeInfo const *>(NULL) :
                                                                        val->_info.Get())
@@ -963,7 +998,8 @@ class VtValue {
   /// If T is a char pointer or array, produce a VtValue holding a
   /// std::string. If T is boost::python::object, produce a VtValue holding
   /// a TfPyObjWrapper.
-  template<class T> explicit VtValue(T const &obj)
+  template<class T>
+  explicit VtValue(T const &obj)
   {
     _Init(obj);
   }
@@ -987,7 +1023,8 @@ class VtValue {
   /// MyExpensiveObject obj = CreateObject();
   /// return VtValue(obj);
   /// \endcode
-  template<class T> static VtValue Take(T &obj)
+  template<class T>
+  static VtValue Take(T &obj)
   {
     VtValue ret;
     ret.Swap(obj);
@@ -1029,7 +1066,8 @@ class VtValue {
 
   /// Assignment operator from any type.
 #ifdef doxygen
-  template<class T> VtValue &operator=(T const &obj);
+  template<class T>
+  VtValue &operator=(T const &obj);
 #else
   template<class T>
   std::enable_if_t<!_TypeInfoFor<T>::Type::IsLocal || !_TypeInfoFor<T>::Type::HasTrivialCopy, VtValue &>
@@ -1060,7 +1098,8 @@ class VtValue {
   VtValue &Swap(VtValue &rhs) noexcept
   {
     // Do nothing if both empty.  Otherwise general swap.
-    if (!IsEmpty() || !rhs.IsEmpty()) {
+    if (!IsEmpty() || !rhs.IsEmpty())
+    {
       VtValue tmp;
       _Move(*this, tmp);
       _Move(rhs, *this);
@@ -1080,7 +1119,8 @@ class VtValue {
   // not holding a T, replace the held value with a value-initialized T
   // instance first, then swap.
 #ifdef doxygen
-  template<class T> void Swap(T &rhs);
+  template<class T>
+  void Swap(T &rhs);
 #else
   template<class T>
   std::enable_if_t<std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> Swap(T &rhs)
@@ -1096,7 +1136,8 @@ class VtValue {
   /// Use Swap() if this VtValue is not known to contain an object of type
   /// \p T.
 #ifdef doxygen
-  template<class T> void UncheckedSwap(T &rhs);
+  template<class T>
+  void UncheckedSwap(T &rhs);
 #else
   template<class T>
   std::enable_if_t<std::is_same<T, typename Vt_ValueGetStored<T>::Type>::value> UncheckedSwap(T &rhs)
@@ -1115,7 +1156,8 @@ class VtValue {
   /// Make this value empty and return the held \p T instance.  If
   /// this value does not hold a \p T instance, make this value empty and
   /// return a default-constructed \p T.
-  template<class T> T Remove()
+  template<class T>
+  T Remove()
   {
     T result;
     Swap(result);
@@ -1126,7 +1168,8 @@ class VtValue {
   /// Make this value empty and return the held \p T instance.  If this
   /// value does not hold a \p T instance, this method invokes undefined
   /// behavior.
-  template<class T> T UncheckedRemove()
+  template<class T>
+  T UncheckedRemove()
   {
     T result;
     UncheckedSwap(result);
@@ -1136,7 +1179,8 @@ class VtValue {
 
   /// Return true if this value is holding an object of type \p T, false
   /// otherwise.
-  template<class T> bool IsHolding() const
+  template<class T>
+  bool IsHolding() const
   {
     return _info.GetLiteral() && _TypeIs<T>();
   }
@@ -1167,7 +1211,8 @@ class VtValue {
   /// Returns a const reference to the held object if the held object
   /// is of type \a T.  Invokes undefined behavior otherwise.  This is the
   /// fastest \a Get() method to use after a successful \a IsHolding() check.
-  template<class T> T const &UncheckedGet() const
+  template<class T>
+  T const &UncheckedGet() const
   {
     return _Get<T>();
   }
@@ -1180,13 +1225,15 @@ class VtValue {
   /// Vt_DefaultValueFactory<T>.  That may be specialized for client types.
   /// The default implementation of the default value factory produces a
   /// value-initialized T.
-  template<class T> T const &Get() const
+  template<class T>
+  T const &Get() const
   {
     typedef Vt_DefaultValueFactory<T> Factory;
 
     // In the unlikely case that the types don't match, we obtain a default
     // value to return and issue an error via _FailGet.
-    if (ARCH_UNLIKELY(!IsHolding<T>())) {
+    if (ARCH_UNLIKELY(!IsHolding<T>()))
+    {
       return *(static_cast<T const *>(_FailGet(Factory::Invoke, typeid(T))));
     }
 
@@ -1197,27 +1244,31 @@ class VtValue {
   /// Return a copy of the default value \a def otherwise.  Note that this
   /// always returns a copy, as opposed to \a Get() which always returns a
   /// reference.
-  template<class T> T GetWithDefault(T const &def = T()) const
+  template<class T>
+  T GetWithDefault(T const &def = T()) const
   {
     return IsHolding<T>() ? UncheckedGet<T>() : def;
   }
 
   /// Register a cast from VtValue holding From to VtValue holding To.
-  template<typename From, typename To> static void RegisterCast(VtValue (*castFn)(VtValue const &))
+  template<typename From, typename To>
+  static void RegisterCast(VtValue (*castFn)(VtValue const &))
   {
     _RegisterCast(typeid(From), typeid(To), castFn);
   }
 
   /// Register a simple cast from VtValue holding From to VtValue
   // holding To.
-  template<typename From, typename To> static void RegisterSimpleCast()
+  template<typename From, typename To>
+  static void RegisterSimpleCast()
   {
     _RegisterCast(typeid(From), typeid(To), _SimpleCast<From, To>);
   }
 
   /// Register a two-way cast from VtValue holding From to VtValue
   /// holding To.
-  template<typename From, typename To> static void RegisterSimpleBidirectionalCast()
+  template<typename From, typename To>
+  static void RegisterSimpleBidirectionalCast()
   {
     RegisterSimpleCast<From, To>();
     RegisterSimpleCast<To, From>();
@@ -1230,7 +1281,8 @@ class VtValue {
   /// not mutate the operant \p val.
   ///
   /// \sa \ref VtValue_Casting
-  template<typename T> static VtValue Cast(VtValue const &val)
+  template<typename T>
+  static VtValue Cast(VtValue const &val)
   {
     VtValue ret = val;
     return ret.Cast<T>();
@@ -1269,7 +1321,8 @@ class VtValue {
   /// the same VtValue in multiple threads simultaneously.
   ///
   /// \sa \ref VtValue_Casting
-  template<typename T> VtValue &Cast()
+  template<typename T>
+  VtValue &Cast()
   {
     if (IsHolding<T>())
       return *this;
@@ -1303,7 +1356,8 @@ class VtValue {
   /// Return if \c this can be cast to \a T.
   ///
   /// \sa \ref VtValue_Casting
-  template<typename T> bool CanCast() const
+  template<typename T>
+  bool CanCast() const
   {
     return _CanCast(GetTypeid(), typeid(T));
   }
@@ -1342,22 +1396,26 @@ class VtValue {
   }
 
   /// Tests for equality.
-  template<typename T> friend bool operator==(VtValue const &lhs, T const &rhs)
+  template<typename T>
+  friend bool operator==(VtValue const &lhs, T const &rhs)
   {
     typedef typename Vt_ValueGetStored<T>::Type Stored;
     return lhs.IsHolding<Stored>() && lhs.UncheckedGet<Stored>() == rhs;
   }
-  template<typename T> friend bool operator==(T const &lhs, VtValue const &rhs)
+  template<typename T>
+  friend bool operator==(T const &lhs, VtValue const &rhs)
   {
     return rhs == lhs;
   }
 
   /// Tests for inequality.
-  template<typename T> friend bool operator!=(VtValue const &lhs, T const &rhs)
+  template<typename T>
+  friend bool operator!=(VtValue const &lhs, T const &rhs)
   {
     return !(lhs == rhs);
   }
-  template<typename T> friend bool operator!=(T const &lhs, VtValue const &rhs)
+  template<typename T>
+  friend bool operator!=(T const &lhs, VtValue const &rhs)
   {
     return !(lhs == rhs);
   }
@@ -1366,11 +1424,13 @@ class VtValue {
   bool operator==(const VtValue &rhs) const
   {
     bool empty = IsEmpty(), rhsEmpty = rhs.IsEmpty();
-    if (empty || rhsEmpty) {
+    if (empty || rhsEmpty)
+    {
       // Either one or both empty -- only equal if both empty.
       return empty == rhsEmpty;
     }
-    if (_info.GetLiteral() == rhs._info.GetLiteral()) {
+    if (_info.GetLiteral() == rhs._info.GetLiteral())
+    {
       // Holding identical types -- compare directly.
       return _info.Get()->Equal(_storage, rhs._storage);
     }
@@ -1391,41 +1451,48 @@ class VtValue {
 
   static inline void _Copy(VtValue const &src, VtValue &dst)
   {
-    if (src.IsEmpty()) {
+    if (src.IsEmpty())
+    {
       dst._Clear();
       return;
     }
 
     _HoldAside tmp(&dst);
     dst._info = src._info;
-    if (src._IsLocalAndTriviallyCopyable()) {
+    if (src._IsLocalAndTriviallyCopyable())
+    {
       dst._storage = src._storage;
     }
-    else {
+    else
+    {
       dst._info->CopyInit(src._storage, dst._storage);
     }
   }
 
   static inline void _Move(VtValue &src, VtValue &dst) noexcept
   {
-    if (src.IsEmpty()) {
+    if (src.IsEmpty())
+    {
       dst._Clear();
       return;
     }
 
     _HoldAside tmp(&dst);
     dst._info = src._info;
-    if (src._IsLocalAndTriviallyCopyable()) {
+    if (src._IsLocalAndTriviallyCopyable())
+    {
       dst._storage = src._storage;
     }
-    else {
+    else
+    {
       dst._info->Move(src._storage, dst._storage);
     }
 
     src._info.Set(nullptr, 0);
   }
 
-  template<class T> inline bool _TypeIs() const
+  template<class T>
+  inline bool _TypeIs() const
   {
     std::type_info const &t = typeid(T);
     bool cmp = TfSafeTypeCompare(_info->typeInfo, t);
@@ -1436,32 +1503,38 @@ class VtValue {
 
   VT_API bool _EqualityImpl(VtValue const &rhs) const;
 
-  template<class Proxy> std::enable_if_t<VtIsValueProxy<Proxy>::value, Proxy &> _GetMutable()
+  template<class Proxy>
+  std::enable_if_t<VtIsValueProxy<Proxy>::value, Proxy &> _GetMutable()
   {
     typedef typename _TypeInfoFor<Proxy>::Type TypeInfo;
     return TypeInfo::GetMutableObj(_storage);
   }
 
-  template<class T> std::enable_if_t<!VtIsValueProxy<T>::value, T &> _GetMutable()
+  template<class T>
+  std::enable_if_t<!VtIsValueProxy<T>::value, T &> _GetMutable()
   {
     // If we are a proxy, collapse it out to the real value first.
-    if (ARCH_UNLIKELY(_IsProxy())) {
+    if (ARCH_UNLIKELY(_IsProxy()))
+    {
       *this = _info->GetProxiedAsVtValue(_storage);
     }
     typedef typename _TypeInfoFor<T>::Type TypeInfo;
     return TypeInfo::GetMutableObj(_storage);
   }
 
-  template<class Proxy> std::enable_if_t<VtIsValueProxy<Proxy>::value, Proxy const &> _Get() const
+  template<class Proxy>
+  std::enable_if_t<VtIsValueProxy<Proxy>::value, Proxy const &> _Get() const
   {
     typedef typename _TypeInfoFor<Proxy>::Type TypeInfo;
     return TypeInfo::GetObj(_storage);
   }
 
-  template<class T> std::enable_if_t<!VtIsValueProxy<T>::value, T const &> _Get() const
+  template<class T>
+  std::enable_if_t<!VtIsValueProxy<T>::value, T const &> _Get() const
   {
     typedef typename _TypeInfoFor<T>::Type TypeInfo;
-    if (ARCH_UNLIKELY(_IsProxy())) {
+    if (ARCH_UNLIKELY(_IsProxy()))
+    {
       return *static_cast<T const *>(_GetProxiedObjPtr());
     }
     return TypeInfo::GetObj(_storage);
@@ -1504,7 +1577,8 @@ class VtValue {
   VT_API static bool _CanCast(std::type_info const &from, std::type_info const &to);
 
   // helper template function for simple casts from From to To.
-  template<typename From, typename To> static VtValue _SimpleCast(VtValue const &val)
+  template<typename From, typename To>
+  static VtValue _SimpleCast(VtValue const &val)
   {
     return VtValue(To(val.UncheckedGet<From>()));
   }
@@ -1528,7 +1602,9 @@ class VtValue {
 /// Make a default value.  VtValue uses this to create values to be returned
 /// from failed calls to \a Get.  Clients may specialize this for their own
 /// types.
-template<class T> struct Vt_DefaultValueFactory {
+template<class T>
+struct Vt_DefaultValueFactory
+{
   /// This function *must* return an object of type \a T.
   static Vt_DefaultValueHolder Invoke()
   {
@@ -1536,7 +1612,8 @@ template<class T> struct Vt_DefaultValueFactory {
   }
 };
 
-struct Vt_ValueShapeDataAccess {
+struct Vt_ValueShapeDataAccess
+{
   static const Vt_ShapeData *_GetShapeData(const VtValue &value)
   {
     return value._GetShapeData();
@@ -1559,7 +1636,8 @@ struct Vt_ValueShapeDataAccess {
 // the factory for these types.
 //
 #  define _VT_DECLARE_ZERO_VALUE_FACTORY(r, unused, elem) \
-    template<> VT_API Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke();
+    template<> \
+    VT_API Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke();
 
 BOOST_PP_SEQ_FOR_EACH(_VT_DECLARE_ZERO_VALUE_FACTORY,
                       unused,
@@ -1572,23 +1650,27 @@ BOOST_PP_SEQ_FOR_EACH(_VT_DECLARE_ZERO_VALUE_FACTORY,
 // VtValue *as* a VtValue.
 //
 
-template<> inline const VtValue &VtValue::Get<VtValue>() const
+template<>
+inline const VtValue &VtValue::Get<VtValue>() const
 {
   return *this;
 }
 
-template<> inline const VtValue &VtValue::UncheckedGet<VtValue>() const
+template<>
+inline const VtValue &VtValue::UncheckedGet<VtValue>() const
 {
   return *this;
 }
 
-template<> inline bool VtValue::IsHolding<VtValue>() const
+template<>
+inline bool VtValue::IsHolding<VtValue>() const
 {
   return true;
 }
 
 // Specialize VtValue::IsHolding<void>() to always return false.
-template<> inline bool VtValue::IsHolding<void>() const
+template<>
+inline bool VtValue::IsHolding<void>() const
 {
   return false;
 }

@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// A base for all metal shader section that provides metal hooks
 ///
-class HgiMetalShaderSection : public HgiShaderSection {
+class HgiMetalShaderSection : public HgiShaderSection
+{
  public:
   HGIMETAL_API
   ~HgiMetalShaderSection() override;
@@ -83,7 +84,8 @@ using HgiMetalShaderSectionPtrVector = std::vector<HgiMetalShaderSection *>;
 /// A ShaderSection for defining macros.
 /// Accepts raw strings and dumps it to the global scope under includes
 ///
-class HgiMetalMacroShaderSection final : public HgiMetalShaderSection {
+class HgiMetalMacroShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalMacroShaderSection(const std::string &macroDeclaration, const std::string &macroComment);
@@ -103,7 +105,8 @@ class HgiMetalMacroShaderSection final : public HgiMetalShaderSection {
 ///
 /// Defines a member that will be defined within the scope
 ///
-class HgiMetalMemberShaderSection final : public HgiMetalShaderSection {
+class HgiMetalMemberShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   HgiMetalMemberShaderSection(const std::string &identifier,
@@ -128,7 +131,8 @@ class HgiMetalMemberShaderSection final : public HgiMetalShaderSection {
 /// Creates a texture sampler shader
 /// section that defines how textures are sampled
 ///
-class HgiMetalSamplerShaderSection final : public HgiMetalShaderSection {
+class HgiMetalSamplerShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   HgiMetalSamplerShaderSection(const std::string &textureSharedIdentifier,
@@ -151,7 +155,8 @@ class HgiMetalSamplerShaderSection final : public HgiMetalShaderSection {
 /// Declares the texture, the sampler and the
 /// helper function for cross language sampling
 ///
-class HgiMetalTextureShaderSection final : public HgiMetalShaderSection {
+class HgiMetalTextureShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   HgiMetalTextureShaderSection(const std::string &samplerSharedIdentifier,
@@ -182,7 +187,8 @@ class HgiMetalTextureShaderSection final : public HgiMetalShaderSection {
 ///
 /// Declares the buffer
 ///
-class HgiMetalBufferShaderSection final : public HgiMetalShaderSection {
+class HgiMetalBufferShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   HgiMetalBufferShaderSection(const std::string &samplerSharedIdentifier,
@@ -212,7 +218,8 @@ class HgiMetalBufferShaderSection final : public HgiMetalShaderSection {
 ///
 /// Defines how to declare a struct type. Takes in members that it will include
 ///
-class HgiMetalStructTypeDeclarationShaderSection final : public HgiMetalShaderSection {
+class HgiMetalStructTypeDeclarationShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalStructTypeDeclarationShaderSection(const std::string &identifier,
@@ -241,7 +248,8 @@ class HgiMetalStructTypeDeclarationShaderSection final : public HgiMetalShaderSe
 ///
 /// Allows writing of instances of struct type shader sections
 ///
-class HgiMetalStructInstanceShaderSection : public HgiMetalShaderSection {
+class HgiMetalStructInstanceShaderSection : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalStructInstanceShaderSection(
@@ -264,7 +272,8 @@ class HgiMetalStructInstanceShaderSection : public HgiMetalShaderSection {
 ///
 /// An input struct to a shader stage
 ///
-class HgiMetalArgumentBufferInputShaderSection final : public HgiMetalStructInstanceShaderSection {
+class HgiMetalArgumentBufferInputShaderSection final : public HgiMetalStructInstanceShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalArgumentBufferInputShaderSection(
@@ -295,7 +304,8 @@ class HgiMetalArgumentBufferInputShaderSection final : public HgiMetalStructInst
 ///
 /// Defines and writes out special shader keyword inputs
 ///
-class HgiMetalKeywordInputShaderSection final : public HgiMetalShaderSection {
+class HgiMetalKeywordInputShaderSection final : public HgiMetalShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalKeywordInputShaderSection(const std::string &identifier,
@@ -322,7 +332,8 @@ class HgiMetalKeywordInputShaderSection final : public HgiMetalShaderSection {
 ///
 /// Defines and writes out shader stage outputs
 ///
-class HgiMetalStageOutputShaderSection final : public HgiMetalStructInstanceShaderSection {
+class HgiMetalStageOutputShaderSection final : public HgiMetalStructInstanceShaderSection
+{
  public:
   HGIMETAL_API
   explicit HgiMetalStageOutputShaderSection(

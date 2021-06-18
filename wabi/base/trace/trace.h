@@ -156,7 +156,8 @@
 
 #  define _TRACE_COUNTER_CODE_INSTANCE(instance, name, code, isDelta) \
     static WABI_NS::TraceCounterHolder TF_PP_CAT(TraceCounterHolder_, instance)(name); \
-    if (TF_PP_CAT(TraceCounterHolder_, instance).IsEnabled()) { \
+    if (TF_PP_CAT(TraceCounterHolder_, instance).IsEnabled()) \
+    { \
       double value = 0.0; \
       code TF_PP_CAT(TraceCounterHolder_, instance).RecordDelta(value, isDelta); \
     }
@@ -189,14 +190,18 @@ WABI_NAMESPACE_BEGIN
 /// A class which records a timestamp when it is created and a
 /// scope event when it is destructed.
 ///
-class TraceScopeAuto {
+class TraceScopeAuto
+{
  public:
   /// Constructor for TRACE_FUNCTION macro.
   ///
-  explicit TraceScopeAuto(const TraceStaticKeyData &key) : _key(nullptr), _start(0)
+  explicit TraceScopeAuto(const TraceStaticKeyData &key)
+    : _key(nullptr),
+      _start(0)
   {
 
-    if (ARCH_UNLIKELY(TraceCollector::IsEnabled())) {
+    if (ARCH_UNLIKELY(TraceCollector::IsEnabled()))
+    {
       // Init the key if needed.
       _key = &key;
       _start = ArchGetTickTime();
@@ -206,9 +211,11 @@ class TraceScopeAuto {
   /// Constructor that also records scope arguments.
   ///
   template<typename... Args>
-  TraceScopeAuto(const TraceStaticKeyData &key, Args &&...args) : TraceScopeAuto(key)
+  TraceScopeAuto(const TraceStaticKeyData &key, Args &&...args)
+    : TraceScopeAuto(key)
   {
-    if (ARCH_UNLIKELY(_key)) {
+    if (ARCH_UNLIKELY(_key))
+    {
       TraceCollector::GetInstance().ScopeArgs(std::forward<Args>(args)...);
     }
   }
@@ -217,7 +224,8 @@ class TraceScopeAuto {
   ///
   ~TraceScopeAuto()
   {
-    if (ARCH_UNLIKELY(_key)) {
+    if (ARCH_UNLIKELY(_key))
+    {
       TraceCollector::GetInstance().Scope(*_key, _start);
     }
   }
@@ -238,7 +246,8 @@ class TraceScopeAuto {
 /// The TRACE_FUNCTION() macro may be even more convenient in some
 /// circumstances.
 ///
-struct TraceAuto {
+struct TraceAuto
+{
   /// Constructor taking function name, pretty function name and a scope name.
   ///
   TraceAuto(const char *funcName, const char *prettyFuncName, const std::string &name)
@@ -252,7 +261,8 @@ struct TraceAuto {
 
   /// Constructor taking a TfToken key.
   ///
-  explicit TraceAuto(const TfToken &key) : _key(key)
+  explicit TraceAuto(const TfToken &key)
+    : _key(key)
   {
     std::atomic_thread_fence(std::memory_order_seq_cst);
     _collector = &TraceCollector::GetInstance();
@@ -262,7 +272,8 @@ struct TraceAuto {
 
   /// Constructor taking a string key.
   ///
-  explicit TraceAuto(const std::string &key) : TraceAuto(TfToken(key))
+  explicit TraceAuto(const std::string &key)
+    : TraceAuto(TfToken(key))
   {}
 
   // Non-copyable
@@ -306,11 +317,13 @@ struct TraceAuto {
 /// Holds on to a counter key, as well as the global
 /// collector for fast lookup.
 ///
-class TraceCounterHolder {
+class TraceCounterHolder
+{
  public:
   /// Constructor used by TRACE_COUNTER_* macro.
   ///
-  explicit TraceCounterHolder(const TraceKey &key) : _key(key)
+  explicit TraceCounterHolder(const TraceKey &key)
+    : _key(key)
   {}
 
   /// Returns whether the TraceCollector is enabled or not.
@@ -324,10 +337,12 @@ class TraceCounterHolder {
   ///
   void Record(double value, bool delta)
   {
-    if (delta) {
+    if (delta)
+    {
       TraceCollector::GetInstance().RecordCounterDelta(_key, value);
     }
-    else {
+    else
+    {
       TraceCollector::GetInstance().RecordCounterValue(_key, value);
     }
   }

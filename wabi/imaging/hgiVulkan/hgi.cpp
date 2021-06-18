@@ -128,7 +128,8 @@ void HgiVulkan::DestroyTexture(HgiTextureHandle *texHandle)
 /* Multi threaded */
 HgiTextureViewHandle HgiVulkan::CreateTextureView(HgiTextureViewDesc const &desc)
 {
-  if (!desc.sourceTexture) {
+  if (!desc.sourceTexture)
+  {
     TF_CODING_ERROR("Source texture is null");
   }
 
@@ -240,7 +241,8 @@ void HgiVulkan::StartFrame()
 {
   // Please read important usage limitations for Hgi::StartFrame
 
-  if (_frameDepth++ == 0) {
+  if (_frameDepth++ == 0)
+  {
     HgiVulkanBeginQueueLabel(GetPrimaryDevice(), "Full Hydra Frame");
   }
 }
@@ -250,7 +252,8 @@ void HgiVulkan::EndFrame()
 {
   // Please read important usage limitations for Hgi::EndFrame
 
-  if (--_frameDepth == 0) {
+  if (--_frameDepth == 0)
+  {
     _EndFrameSync();
     HgiVulkanEndQueueLabel(GetPrimaryDevice());
   }
@@ -284,21 +287,24 @@ bool HgiVulkan::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
   // However, since we currently call garbage collection here and because
   // we only have one resource command buffer, we cannot support submitting
   // cmds from secondary threads until those issues are resolved.
-  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id())) {
+  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id()))
+  {
     TF_CODING_ERROR("Secondary threads should not submit cmds");
     return false;
   }
 
   // Submit Cmds work
   bool result = false;
-  if (cmds) {
+  if (cmds)
+  {
     result = Hgi::_SubmitCmds(cmds, wait);
   }
 
   // XXX If client does not call StartFrame / EndFrame we perform end of frame
   // cleanup after each SubmitCmds. This is more frequent than ideal and also
   // prevents us from making SubmitCmds thread-safe.
-  if (_frameDepth == 0) {
+  if (_frameDepth == 0)
+  {
     _EndFrameSync();
   }
 
@@ -310,7 +316,8 @@ void HgiVulkan::_EndFrameSync()
 {
   // The garbage collector and command buffer reset must happen on the
   // main-thread when no threads are recording.
-  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id())) {
+  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id()))
+  {
     TF_CODING_ERROR("Secondary thread violation");
     return;
   }

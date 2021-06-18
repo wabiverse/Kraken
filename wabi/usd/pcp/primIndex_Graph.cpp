@@ -40,8 +40,10 @@ const size_t PcpPrimIndex_Graph::_Node::_invalidNodeIndex;
 
 ////////////////////////////////////////////////////////////
 
-struct PcpPrimIndex_Graph::_ArcStrengthOrder {
-  _ArcStrengthOrder(PcpPrimIndex_Graph *graph) : _graph(graph)
+struct PcpPrimIndex_Graph::_ArcStrengthOrder
+{
+  _ArcStrengthOrder(PcpPrimIndex_Graph *graph)
+    : _graph(graph)
   {}
 
   bool operator()(size_t aIdx, size_t bIdx) const
@@ -52,7 +54,8 @@ struct PcpPrimIndex_Graph::_ArcStrengthOrder {
     const int result = PcpCompareSiblingNodeStrength(a, b);
     if (!TF_VERIFY(result != 0,
                    "Redundant nodes in prim index for <%s>",
-                   _graph->GetRootNode().GetPath().GetString().c_str())) {
+                   _graph->GetRootNode().GetPath().GetString().c_str()))
+    {
 
       // This should never happen.  It means we have multiple nodes
       // with the same strength information.
@@ -99,11 +102,13 @@ void PcpPrimIndex_Graph::_Node::SetArc(const PcpArc &arc)
   smallInts.arcParentIndex = arc.parent._GetNodeIndex();
   smallInts.arcOriginIndex = arc.origin._GetNodeIndex();
 
-  if (arc.parent) {
+  if (arc.parent)
+  {
     mapToParent = arc.mapToParent;
     mapToRoot = arc.parent.GetMapToRoot().Compose(mapToParent);
   }
-  else {
+  else
+  {
     mapToParent = mapToRoot = PcpMapExpression::Identity();
   }
 }
@@ -150,7 +155,8 @@ bool PcpPrimIndex_Graph::IsUsd() const
 
 void PcpPrimIndex_Graph::SetHasPayloads(bool hasPayloads)
 {
-  if (_data->hasPayloads != hasPayloads) {
+  if (_data->hasPayloads != hasPayloads)
+  {
     _DetachSharedNodePool();
     _data->hasPayloads = hasPayloads;
   }
@@ -163,7 +169,8 @@ bool PcpPrimIndex_Graph::HasPayloads() const
 
 void PcpPrimIndex_Graph::SetIsInstanceable(bool instanceable)
 {
-  if (_data->instanceable != instanceable) {
+  if (_data->instanceable != instanceable)
+  {
     _DetachSharedNodePool();
     _data->instanceable = instanceable;
   }
@@ -183,10 +190,12 @@ PcpNodeRef PcpPrimIndex_Graph::GetNodeUsingSite(const PcpLayerStackSite &site) c
 {
   TRACE_FUNCTION();
 
-  for (size_t i = 0, numNodes = _data->nodes.size(); i != numNodes; ++i) {
+  for (size_t i = 0, numNodes = _data->nodes.size(); i != numNodes; ++i)
+  {
     const _Node &node = _data->nodes[i];
     if (!(node.smallInts.inert || node.smallInts.culled) && node.layerStack == site.layerStack &&
-        _nodeSitePaths[i] == site.path) {
+        _nodeSitePaths[i] == site.path)
+    {
       return PcpNodeRef(const_cast<PcpPrimIndex_Graph *>(this), i);
     }
   }
@@ -199,18 +208,22 @@ std::pair<size_t, size_t> PcpPrimIndex_Graph::_FindRootChildRange(const Predicat
 {
   const _Node &rootNode = _GetNode(0);
   for (size_t startIdx = rootNode.smallInts.firstChildIndex; startIdx != _Node::_invalidNodeIndex;
-       startIdx = _GetNode(startIdx).smallInts.nextSiblingIndex) {
+       startIdx = _GetNode(startIdx).smallInts.nextSiblingIndex)
+  {
 
-    if (!pred(PcpArcType(_GetNode(startIdx).smallInts.arcType))) {
+    if (!pred(PcpArcType(_GetNode(startIdx).smallInts.arcType)))
+    {
       continue;
     }
 
     size_t endIdx = _GetNumNodes();
     for (size_t childIdx = _GetNode(startIdx).smallInts.nextSiblingIndex;
          childIdx != _Node::_invalidNodeIndex;
-         childIdx = _GetNode(childIdx).smallInts.nextSiblingIndex) {
+         childIdx = _GetNode(childIdx).smallInts.nextSiblingIndex)
+    {
 
-      if (!pred(PcpArcType(_GetNode(childIdx).smallInts.arcType))) {
+      if (!pred(PcpArcType(_GetNode(childIdx).smallInts.arcType)))
+      {
         endIdx = childIdx;
         break;
       }
@@ -224,7 +237,8 @@ std::pair<size_t, size_t> PcpPrimIndex_Graph::_FindRootChildRange(const Predicat
 
 static PcpArcType _GetArcTypeForRangeType(const PcpRangeType rangeType)
 {
-  switch (rangeType) {
+  switch (rangeType)
+  {
     case PcpRangeTypeRoot:
       return PcpArcTypeRoot;
     case PcpRangeTypeInherit:
@@ -254,7 +268,8 @@ std::pair<size_t, size_t> PcpPrimIndex_Graph::GetNodeIndexesForRange(PcpRangeTyp
 
   std::pair<size_t, size_t> nodeRange(_GetNumNodes(), _GetNumNodes());
 
-  switch (rangeType) {
+  switch (rangeType)
+  {
     case PcpRangeTypeInvalid:
       TF_CODING_ERROR("Invalid range type specified");
       break;
@@ -286,7 +301,8 @@ void PcpPrimIndex_Graph::Finalize()
 {
   TRACE_FUNCTION();
 
-  if (_data->finalized) {
+  if (_data->finalized)
+  {
     return;
   }
 
@@ -303,7 +319,8 @@ void PcpPrimIndex_Graph::Finalize()
   // strength ordering of our nodes and reorder the pool if needed.
   std::vector<size_t> nodeIndexToStrengthOrder;
   const bool nodeOrderMatchesStrengthOrder = _ComputeStrengthOrderIndexMapping(&nodeIndexToStrengthOrder);
-  if (!nodeOrderMatchesStrengthOrder) {
+  if (!nodeOrderMatchesStrengthOrder)
+  {
     _ApplyNodeIndexMapping(nodeIndexToStrengthOrder);
   }
 
@@ -312,7 +329,8 @@ void PcpPrimIndex_Graph::Finalize()
   // transformation.
   std::vector<size_t> culledNodeMapping;
   const bool hasNodesToCull = _ComputeEraseCulledNodeIndexMapping(&culledNodeMapping);
-  if (hasNodesToCull) {
+  if (hasNodesToCull)
+  {
     _ApplyNodeIndexMapping(culledNodeMapping);
   }
 
@@ -343,20 +361,25 @@ void PcpPrimIndex_Graph::_ApplyNodeIndexMapping(const std::vector<size_t> &nodeI
   const size_t newNumNodes = oldNumNodes - numNodesToErase;
   TF_VERIFY(newNumNodes <= oldNumNodes);
 
-  struct _ConvertOldToNewIndex {
-    _ConvertOldToNewIndex(const std::vector<size_t> &table, size_t numNewNodes) : _table(table)
+  struct _ConvertOldToNewIndex
+  {
+    _ConvertOldToNewIndex(const std::vector<size_t> &table, size_t numNewNodes)
+      : _table(table)
     {
-      for (size_t i = 0, n = _table.size(); i != n; ++i) {
+      for (size_t i = 0, n = _table.size(); i != n; ++i)
+      {
         TF_VERIFY(_table[i] < numNewNodes || _table[i] == _Node::_invalidNodeIndex);
       }
     }
 
     size_t operator()(size_t oldIndex) const
     {
-      if (oldIndex != _Node::_invalidNodeIndex) {
+      if (oldIndex != _Node::_invalidNodeIndex)
+      {
         return _table[oldIndex];
       }
-      else {
+      else
+      {
         return oldIndex;
       }
     }
@@ -368,8 +391,10 @@ void PcpPrimIndex_Graph::_ApplyNodeIndexMapping(const std::vector<size_t> &nodeI
   // If this mapping causes nodes to be erased, it's much more convenient
   // to fix up node indices to accommodate those erasures in the old node
   // pool before moving nodes to their new position.
-  if (numNodesToErase > 0) {
-    for (size_t i = 0; i < oldNumNodes; ++i) {
+  if (numNodesToErase > 0)
+  {
+    for (size_t i = 0; i < oldNumNodes; ++i)
+    {
       const size_t oldNodeIndex = i;
       const size_t newNodeIndex = convertToNewIndex(oldNodeIndex);
 
@@ -378,27 +403,32 @@ void PcpPrimIndex_Graph::_ApplyNodeIndexMapping(const std::vector<size_t> &nodeI
       // Sanity-check: If this node isn't going to be erased, its parent
       // can't be erased either.
       const bool nodeWillBeErased = (newNodeIndex == _Node::_invalidNodeIndex);
-      if (!nodeWillBeErased) {
+      if (!nodeWillBeErased)
+      {
         const bool parentWillBeErased = PARENT(node) != _Node::_invalidNodeIndex &&
                                         convertToNewIndex(PARENT(node)) == _Node::_invalidNodeIndex;
         TF_VERIFY(!parentWillBeErased);
         continue;
       }
 
-      if (PREV_SIBLING(node) != _Node::_invalidNodeIndex) {
+      if (PREV_SIBLING(node) != _Node::_invalidNodeIndex)
+      {
         _Node &prevNode = _data->nodes[PREV_SIBLING(node)];
         NEXT_SIBLING(prevNode) = NEXT_SIBLING(node);
       }
-      if (NEXT_SIBLING(node) != _Node::_invalidNodeIndex) {
+      if (NEXT_SIBLING(node) != _Node::_invalidNodeIndex)
+      {
         _Node &nextNode = _data->nodes[NEXT_SIBLING(node)];
         PREV_SIBLING(nextNode) = PREV_SIBLING(node);
       }
 
       _Node &parentNode = _data->nodes[PARENT(node)];
-      if (FIRST_CHILD(parentNode) == oldNodeIndex) {
+      if (FIRST_CHILD(parentNode) == oldNodeIndex)
+      {
         FIRST_CHILD(parentNode) = NEXT_SIBLING(node);
       }
-      if (LAST_CHILD(parentNode) == oldNodeIndex) {
+      if (LAST_CHILD(parentNode) == oldNodeIndex)
+      {
         LAST_CHILD(parentNode) = PREV_SIBLING(node);
       }
     }
@@ -409,10 +439,12 @@ void PcpPrimIndex_Graph::_ApplyNodeIndexMapping(const std::vector<size_t> &nodeI
   SdfPathVector nodeSitePathsAfterMapping(newNumNodes);
   std::vector<bool> nodeHasSpecsAfterMapping(newNumNodes);
 
-  for (size_t i = 0; i < oldNumNodes; ++i) {
+  for (size_t i = 0; i < oldNumNodes; ++i)
+  {
     const size_t oldNodeIndex = i;
     const size_t newNodeIndex = convertToNewIndex(oldNodeIndex);
-    if (newNodeIndex == _Node::_invalidNodeIndex) {
+    if (newNodeIndex == _Node::_invalidNodeIndex)
+    {
       continue;
     }
 
@@ -447,12 +479,14 @@ bool PcpPrimIndex_Graph::IsFinalized() const
 void PcpPrimIndex_Graph::AppendChildNameToAllSites(const SdfPath &childPath)
 {
   const SdfPath &parentPath = childPath.GetParentPath();
-  TF_FOR_ALL(it, _nodeSitePaths)
+  TF_FOR_ALL (it, _nodeSitePaths)
   {
-    if (*it == parentPath) {
+    if (*it == parentPath)
+    {
       *it = childPath;
     }
-    else {
+    else
+    {
       *it = it->AppendChild(childPath.GetNameToken());
     }
   }
@@ -475,20 +509,26 @@ PcpNodeRef PcpPrimIndex_Graph::InsertChildNode(const PcpNodeRef &parent,
   // Node capacity is limited by both NodeIndexBits and reservation
   // of the _invalidNodeIndex value.  Other fields are limited by
   // the number of bits allocated to represent them.
-  if (_GetNumNodes() >= _Node::_invalidNodeIndex) {
-    if (error) {
+  if (_GetNumNodes() >= _Node::_invalidNodeIndex)
+  {
+    if (error)
+    {
       *error = PcpErrorCapacityExceeded::New(PcpErrorType_IndexCapacityExceeded);
     }
     return PcpNodeRef();
   }
-  if (arc.siblingNumAtOrigin >= 1 << _Node::_childrenSize) {
-    if (error) {
+  if (arc.siblingNumAtOrigin >= 1 << _Node::_childrenSize)
+  {
+    if (error)
+    {
       *error = PcpErrorCapacityExceeded::New(PcpErrorType_ArcCapacityExceeded);
     }
     return PcpNodeRef();
   }
-  if (arc.namespaceDepth >= (1 << _Node::_depthSize)) {
-    if (error) {
+  if (arc.namespaceDepth >= (1 << _Node::_depthSize))
+  {
+    if (error)
+    {
       *error = PcpErrorCapacityExceeded::New(PcpErrorType_ArcNamespaceDepthCapacityExceeded);
     }
     return PcpNodeRef();
@@ -516,8 +556,10 @@ PcpNodeRef PcpPrimIndex_Graph::InsertChildSubgraph(const PcpNodeRef &parent,
   // of _invalidNodeIndex.
   // Other capacity-limited fields were validated when
   // the nodes were added to the subgraph.
-  if (_GetNumNodes() + subgraph->_GetNumNodes() >= _Node::_invalidNodeIndex) {
-    if (error) {
+  if (_GetNumNodes() + subgraph->_GetNumNodes() >= _Node::_invalidNodeIndex)
+  {
+    if (error)
+    {
       *error = PcpErrorCapacityExceeded::New(PcpErrorType_IndexCapacityExceeded);
     }
     return PcpNodeRef();
@@ -541,13 +583,15 @@ PcpNodeRef PcpPrimIndex_Graph::_InsertChildInStrengthOrder(size_t parentNodeIdx,
   _Node &parentNode = _data->nodes[parentNodeIdx];
   _Node &childNode = _data->nodes[childNodeIdx];
   _ArcStrengthOrder comp(this);
-  if (FIRST_CHILD(parentNode) == _Node::_invalidNodeIndex) {
+  if (FIRST_CHILD(parentNode) == _Node::_invalidNodeIndex)
+  {
     // No children yet so this is the first child.
     TF_VERIFY(LAST_CHILD(parentNode) == _Node::_invalidNodeIndex);
 
     FIRST_CHILD(parentNode) = LAST_CHILD(parentNode) = childNodeIdx;
   }
-  else if (comp(childNodeIdx, FIRST_CHILD(parentNode))) {
+  else if (comp(childNodeIdx, FIRST_CHILD(parentNode)))
+  {
     // New first child.
     TF_VERIFY(LAST_CHILD(parentNode) != _Node::_invalidNodeIndex);
 
@@ -556,18 +600,22 @@ PcpNodeRef PcpPrimIndex_Graph::_InsertChildInStrengthOrder(size_t parentNodeIdx,
     PREV_SIBLING(nextNode) = childNodeIdx;
     FIRST_CHILD(parentNode) = childNodeIdx;
   }
-  else if (!comp(childNodeIdx, LAST_CHILD(parentNode))) {
+  else if (!comp(childNodeIdx, LAST_CHILD(parentNode)))
+  {
     // New last child.
     _Node &prevNode = _data->nodes[LAST_CHILD(parentNode)];
     PREV_SIBLING(childNode) = LAST_CHILD(parentNode);
     NEXT_SIBLING(prevNode) = childNodeIdx;
     LAST_CHILD(parentNode) = childNodeIdx;
   }
-  else {
+  else
+  {
     // Child goes somewhere internal to the sibling linked list.
     for (size_t index = FIRST_CHILD(parentNode); index != _Node::_invalidNodeIndex;
-         index = NEXT_SIBLING(_data->nodes[index])) {
-      if (comp(childNodeIdx, index)) {
+         index = NEXT_SIBLING(_data->nodes[index]))
+    {
+      if (comp(childNodeIdx, index))
+      {
         _Node &nextNode = _data->nodes[index];
         TF_VERIFY(PREV_SIBLING(nextNode) != _Node::_invalidNodeIndex);
         _Node &prevNode = _data->nodes[PREV_SIBLING(nextNode)];
@@ -585,7 +633,8 @@ PcpNodeRef PcpPrimIndex_Graph::_InsertChildInStrengthOrder(size_t parentNodeIdx,
 
 void PcpPrimIndex_Graph::_DetachSharedNodePool()
 {
-  if (!_data.unique()) {
+  if (!_data.unique())
+  {
     TRACE_FUNCTION();
     _data.reset(new _SharedData(*_data));
 
@@ -637,16 +686,21 @@ size_t PcpPrimIndex_Graph::_CreateNodesForSubgraph(const PcpPrimIndex_Graph &sub
 
   // Iterate over all of the newly-copied nodes and adjust references to
   // other nodes in the node pool.
-  struct _ConvertOldToNewIndex {
-    _ConvertOldToNewIndex(size_t base, size_t numNewNodes) : _base(base), _numNewNodes(numNewNodes)
+  struct _ConvertOldToNewIndex
+  {
+    _ConvertOldToNewIndex(size_t base, size_t numNewNodes)
+      : _base(base),
+        _numNewNodes(numNewNodes)
     {}
     size_t operator()(size_t oldIndex) const
     {
-      if (oldIndex != _Node::_invalidNodeIndex) {
+      if (oldIndex != _Node::_invalidNodeIndex)
+      {
         TF_VERIFY(oldIndex + _base < _numNewNodes);
         return oldIndex + _base;
       }
-      else {
+      else
+      {
         return oldIndex;
       }
     }
@@ -655,18 +709,21 @@ size_t PcpPrimIndex_Graph::_CreateNodesForSubgraph(const PcpPrimIndex_Graph &sub
   };
   const _ConvertOldToNewIndex convertToNewIndex(subgraphRootNodeIndex, newNumNodes);
 
-  for (size_t i = oldNumNodes; i < newNumNodes; ++i) {
+  for (size_t i = oldNumNodes; i < newNumNodes; ++i)
+  {
     _Node &newNode = _data->nodes[i];
 
     // Update the node's mapToRoot since it is now part of a new graph.
-    if (i != subgraphRootNodeIndex) {
+    if (i != subgraphRootNodeIndex)
+    {
       newNode.mapToRoot = subgraphRoot.mapToRoot.Compose(newNode.mapToRoot);
     }
 
     // The parent and origin of the root of the newly-inserted subgraph
     // don't need to be fixed up because it doesn't point to a node
     // within the subgraph.
-    if (i != subgraphRootNodeIndex) {
+    if (i != subgraphRootNodeIndex)
+    {
       PARENT(newNode) = convertToNewIndex(PARENT(newNode));
       ORIGIN(newNode) = convertToNewIndex(ORIGIN(newNode));
     }
@@ -720,7 +777,8 @@ bool PcpPrimIndex_Graph::_ComputeStrengthOrderIndexMappingRecursively(
   // Recurse down.
   const _Node::_SmallInts &smallInts = _GetNode(nodeIdx).smallInts;
   size_t index = smallInts.firstChildIndex;
-  if (index != _Node::_invalidNodeIndex) {
+  if (index != _Node::_invalidNodeIndex)
+  {
     (*strengthIdx)++;
 
     const bool nodeOrderMatchesStrengthOrderInSubtree = _ComputeStrengthOrderIndexMappingRecursively(
@@ -731,7 +789,8 @@ bool PcpPrimIndex_Graph::_ComputeStrengthOrderIndexMappingRecursively(
 
   // Recurse across.
   index = smallInts.nextSiblingIndex;
-  if (index != _Node::_invalidNodeIndex) {
+  if (index != _Node::_invalidNodeIndex)
+  {
     (*strengthIdx)++;
 
     const bool nodeOrderMatchesStrengthOrderInSubtree = _ComputeStrengthOrderIndexMappingRecursively(
@@ -751,7 +810,8 @@ bool PcpPrimIndex_Graph::_ComputeEraseCulledNodeIndexMapping(std::vector<size_t>
   // actually be erased from the node pool.
   const size_t numNodes = _GetNumNodes();
   std::vector<bool> nodeCanBeErased(numNodes);
-  for (size_t i = 0; i < numNodes; ++i) {
+  for (size_t i = 0; i < numNodes; ++i)
+  {
     nodeCanBeErased[i] = _GetNode(i).smallInts.culled;
   }
 
@@ -764,8 +824,10 @@ bool PcpPrimIndex_Graph::_ComputeEraseCulledNodeIndexMapping(std::vector<size_t>
   // XXX: This has some O(N^2) behavior, as we wind up visiting the nodes
   //      in the chain of origins multiple times. We could keep track of
   //      nodes we've already visited to avoid re-processing them.
-  for (size_t i = 0; i < numNodes; ++i) {
-    if (ORIGIN(_GetNode(i)) == _Node::_invalidNodeIndex) {
+  for (size_t i = 0; i < numNodes; ++i)
+  {
+    if (ORIGIN(_GetNode(i)) == _Node::_invalidNodeIndex)
+    {
       continue;
     }
 
@@ -773,19 +835,24 @@ bool PcpPrimIndex_Graph::_ComputeEraseCulledNodeIndexMapping(std::vector<size_t>
     // All subsequent nodes in the chain cannot be erased. This also
     // means that the parents of those nodes cannot be erased.
     bool subsequentOriginsCannotBeCulled = false;
-    for (size_t nIdx = i;; nIdx = ORIGIN(_GetNode(nIdx))) {
+    for (size_t nIdx = i;; nIdx = ORIGIN(_GetNode(nIdx)))
+    {
       const bool nodeIsCulled = nodeCanBeErased[nIdx];
-      if (!nodeIsCulled) {
+      if (!nodeIsCulled)
+      {
         subsequentOriginsCannotBeCulled = true;
       }
-      else if (nodeIsCulled && subsequentOriginsCannotBeCulled) {
+      else if (nodeIsCulled && subsequentOriginsCannotBeCulled)
+      {
         for (size_t pIdx = nIdx; pIdx != _Node::_invalidNodeIndex && nodeCanBeErased[pIdx];
-             pIdx = PARENT(_GetNode(pIdx))) {
+             pIdx = PARENT(_GetNode(pIdx)))
+        {
           nodeCanBeErased[pIdx] = false;
         }
       }
 
-      if (ORIGIN(_GetNode(nIdx)) == PARENT(_GetNode(nIdx))) {
+      if (ORIGIN(_GetNode(nIdx)) == PARENT(_GetNode(nIdx)))
+      {
         break;
       }
     }
@@ -794,18 +861,22 @@ bool PcpPrimIndex_Graph::_ComputeEraseCulledNodeIndexMapping(std::vector<size_t>
   // Now that we've determined which nodes can and can't be erased,
   // create the node index mapping.
   const size_t numNodesToCull = std::count(nodeCanBeErased.begin(), nodeCanBeErased.end(), true);
-  if (numNodesToCull == 0) {
+  if (numNodesToCull == 0)
+  {
     return false;
   }
 
   size_t numCulledNodes = 0;
   erasedIndexMapping->resize(numNodes);
-  for (size_t i = 0; i < numNodes; ++i) {
-    if (nodeCanBeErased[i]) {
+  for (size_t i = 0; i < numNodes; ++i)
+  {
+    if (nodeCanBeErased[i])
+    {
       (*erasedIndexMapping)[i] = _Node::_invalidNodeIndex;
       ++numCulledNodes;
     }
-    else {
+    else
+    {
       (*erasedIndexMapping)[i] = i - numCulledNodes;
     }
   }

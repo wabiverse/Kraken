@@ -31,7 +31,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdPh_Subdivision;
 
-class HdPh_Osd3Factory {
+class HdPh_Osd3Factory
+{
  public:
   static HdPh_Subdivision *CreateSubdivision();
 };

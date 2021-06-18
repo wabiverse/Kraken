@@ -71,7 +71,8 @@ TF_DECLARE_WEAK_PTRS(UsdStage);
 // dead flag to determine prim validity, and to issue informative crash messages
 // on invalid use.  See USD_CHECK_ALL_PRIM_ACCESSES.
 //
-class Usd_PrimData {
+class Usd_PrimData
+{
  public:
   // --------------------------------------------------------------------- //
   /// \name Prim Data & Behavior
@@ -262,7 +263,8 @@ class Usd_PrimData {
   {
     if (Usd_PrimDataPtr sibling = GetNextSibling())
       return sibling;
-    for (Usd_PrimDataPtr p = GetParentLink(); p; p = p->GetParentLink()) {
+    for (Usd_PrimDataPtr p = GetParentLink(); p; p = p->GetParentLink())
+    {
       if (Usd_PrimDataPtr sibling = p->GetNextSibling())
         return sibling;
     }
@@ -413,7 +415,8 @@ class Usd_PrimDataSiblingIterator
                                    Usd_PrimData *,                // value.
                                    boost::forward_traversal_tag,  // traversal.
                                    Usd_PrimData *                 // reference.
-                                   > {
+                                   >
+{
  public:
   // Default ctor.
   Usd_PrimDataSiblingIterator()
@@ -423,7 +426,8 @@ class Usd_PrimDataSiblingIterator
   friend class Usd_PrimData;
 
   // Constructor used by Prim.
-  Usd_PrimDataSiblingIterator(const base_type &i) : iterator_adaptor_(i)
+  Usd_PrimDataSiblingIterator(const base_type &i)
+    : iterator_adaptor_(i)
   {}
 
   // Core primitives implementation.
@@ -442,9 +446,13 @@ class Usd_PrimDataSiblingIterator
 typedef boost::iterator_range<class Usd_PrimDataSiblingIterator> Usd_PrimDataSiblingRange;
 
 // Inform TfIterator it should feel free to make copies of the range type.
-template<> struct Tf_ShouldIterateOverCopy<Usd_PrimDataSiblingRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<Usd_PrimDataSiblingRange> : boost::true_type
+{
 };
-template<> struct Tf_ShouldIterateOverCopy<const Usd_PrimDataSiblingRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<const Usd_PrimDataSiblingRange> : boost::true_type
+{
 };
 
 Usd_PrimDataSiblingIterator Usd_PrimData::_ChildrenBegin() const
@@ -469,7 +477,8 @@ class Usd_PrimDataSubtreeIterator
                                    Usd_PrimData *,                // value.
                                    boost::forward_traversal_tag,  // traversal.
                                    Usd_PrimData *                 // reference.
-                                   > {
+                                   >
+{
  public:
   // Default ctor.
   Usd_PrimDataSubtreeIterator()
@@ -480,7 +489,8 @@ class Usd_PrimDataSubtreeIterator
   friend class UsdPrimSubtreeIterator;
 
   // Constructor used by Prim.
-  Usd_PrimDataSubtreeIterator(const base_type &i) : iterator_adaptor_(i)
+  Usd_PrimDataSubtreeIterator(const base_type &i)
+    : iterator_adaptor_(i)
   {}
 
   // Core primitives implementation.
@@ -500,9 +510,13 @@ class Usd_PrimDataSubtreeIterator
 typedef boost::iterator_range<class Usd_PrimDataSubtreeIterator> Usd_PrimDataSubtreeRange;
 
 // Inform TfIterator it should feel free to make copies of the range type.
-template<> struct Tf_ShouldIterateOverCopy<Usd_PrimDataSubtreeRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<Usd_PrimDataSubtreeRange> : boost::true_type
+{
 };
-template<> struct Tf_ShouldIterateOverCopy<const Usd_PrimDataSubtreeRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<const Usd_PrimDataSubtreeRange> : boost::true_type
+{
 };
 
 Usd_PrimDataSubtreeIterator Usd_PrimData::_SubtreeBegin() const
@@ -545,7 +559,8 @@ inline Usd_PrimFlagsPredicate Usd_CreatePredicateForTraversal(const PrimDataPtr 
   // Don't allow traversals beneath instances unless the client has
   // explicitly requested it or the starting point is already beneath
   // an instance (i.e., the starting point is an instance proxy).
-  if (!Usd_IsInstanceProxy(p, proxyPrimPath) && !pred.IncludeInstanceProxiesInTraversal()) {
+  if (!Usd_IsInstanceProxy(p, proxyPrimPath) && !pred.IncludeInstanceProxiesInTraversal())
+  {
     pred.TraverseInstanceProxies(false);
   }
   return pred;
@@ -555,16 +570,20 @@ inline Usd_PrimFlagsPredicate Usd_CreatePredicateForTraversal(const PrimDataPtr 
 // its parent path.  If after this \p p is a prototype prim, move \p p to
 // the prim indicated by \p proxyPrimPath.  If \p p's path is then equal
 // to \p proxyPrimPath, set \p proxyPrimPath to the empty path.
-template<class PrimDataPtr> inline void Usd_MoveToParent(PrimDataPtr &p, SdfPath &proxyPrimPath)
+template<class PrimDataPtr>
+inline void Usd_MoveToParent(PrimDataPtr &p, SdfPath &proxyPrimPath)
 {
   p = p->GetParent();
 
-  if (!proxyPrimPath.IsEmpty()) {
+  if (!proxyPrimPath.IsEmpty())
+  {
     proxyPrimPath = proxyPrimPath.GetParentPath();
 
-    if (p && p->IsPrototype()) {
+    if (p && p->IsPrototype())
+    {
       p = p->GetPrimDataAtPathOrInPrototype(proxyPrimPath);
-      if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath) {
+      if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath)
+      {
         proxyPrimPath = SdfPath();
       }
     }
@@ -593,24 +612,31 @@ inline bool Usd_MoveToNextSiblingOrParent(PrimDataPtr &p,
   const bool isInstanceProxy = Usd_IsInstanceProxy(p, proxyPrimPath);
 
   PrimDataPtr next = p->GetNextSibling();
-  while (next && next != end && !Usd_EvalPredicate(pred, next, isInstanceProxy)) {
+  while (next && next != end && !Usd_EvalPredicate(pred, next, isInstanceProxy))
+  {
     p = next;
     next = p->GetNextSibling();
   }
   p = next ? next : p->GetParentLink();
 
-  if (!proxyPrimPath.IsEmpty()) {
-    if (p == end) {
+  if (!proxyPrimPath.IsEmpty())
+  {
+    if (p == end)
+    {
       proxyPrimPath = SdfPath();
     }
-    else if (p == next) {
+    else if (p == next)
+    {
       proxyPrimPath = proxyPrimPath.GetParentPath().AppendChild(p->GetName());
     }
-    else {
+    else
+    {
       proxyPrimPath = proxyPrimPath.GetParentPath();
-      if (p && p->IsPrototype()) {
+      if (p && p->IsPrototype())
+      {
         p = p->GetPrimDataAtPathOrInPrototype(proxyPrimPath);
-        if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath) {
+        if (TF_VERIFY(p, "No prim at <%s>", proxyPrimPath.GetText()) && p->GetPath() == proxyPrimPath)
+        {
           proxyPrimPath = SdfPath();
         }
       }
@@ -644,13 +670,16 @@ inline bool Usd_MoveToChild(PrimDataPtr &p,
   bool isInstanceProxy = Usd_IsInstanceProxy(p, proxyPrimPath);
 
   PrimDataPtr src = p;
-  if (src->IsInstance()) {
+  if (src->IsInstance())
+  {
     src = src->GetPrototype();
     isInstanceProxy = true;
   }
 
-  if (PrimDataPtr child = src->GetFirstChild()) {
-    if (isInstanceProxy) {
+  if (PrimDataPtr child = src->GetFirstChild())
+  {
+    if (isInstanceProxy)
+    {
       proxyPrimPath = proxyPrimPath.IsEmpty() ? p->GetPath().AppendChild(child->GetName()) :
                                                 proxyPrimPath.AppendChild(child->GetName());
     }
@@ -658,7 +687,8 @@ inline bool Usd_MoveToChild(PrimDataPtr &p,
     p = child;
 
     if (Usd_EvalPredicate(pred, p, isInstanceProxy) ||
-        !Usd_MoveToNextSiblingOrParent(p, proxyPrimPath, end, pred)) {
+        !Usd_MoveToNextSiblingOrParent(p, proxyPrimPath, end, pred))
+    {
       return true;
     }
   }

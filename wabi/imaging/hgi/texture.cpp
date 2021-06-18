@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiTexture::HgiTexture(HgiTextureDesc const &desc) : _descriptor(desc)
+HgiTexture::HgiTexture(HgiTextureDesc const &desc)
+  : _descriptor(desc)
 {}
 
 HgiTexture::~HgiTexture() = default;

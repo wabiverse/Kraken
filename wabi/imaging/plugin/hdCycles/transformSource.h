@@ -54,7 +54,8 @@ using HdCyclesTransformSmallVector = TfSmallVector<ccl::Transform, HD_CYCLES_MAX
 ///
 /// Common abstract base for all properties to be committed to the object
 ///
-class HdBbbObjectPropertiesSource : public HdBufferSource {
+class HdBbbObjectPropertiesSource : public HdBufferSource
+{
  protected:
   using HdBufferSource::HdBufferSource;
 };
@@ -64,7 +65,8 @@ using HdBbbObjectPropertiesSourceSharedPtr = std::shared_ptr<HdBbbObjectProperti
 ///
 /// Transformation motion sample source
 ///
-class HdCyclesTransformSource : public HdBbbObjectPropertiesSource {
+class HdCyclesTransformSource : public HdBbbObjectPropertiesSource
+{
  public:
   HdCyclesTransformSource(ccl::Object *object,
                           const HdCyclesMatrix4dTimeSampleArray &samples,

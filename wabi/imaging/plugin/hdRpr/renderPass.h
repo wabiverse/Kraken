@@ -22,7 +22,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdRprRenderParam;
 
-class HdRprRenderPass final : public HdRenderPass {
+class HdRprRenderPass final : public HdRenderPass
+{
  public:
   HdRprRenderPass(HdRenderIndex *index, HdRprimCollection const &collection, HdRprRenderParam *renderParam);
 

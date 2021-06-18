@@ -49,7 +49,8 @@ class HdRenderParam;
 ///
 /// The lifetime of HdSprim is owned by HdRenderIndex.
 ///
-class HdSprim {
+class HdSprim
+{
  public:
   HD_API
   HdSprim(SdfPath const &id);

@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 /// be reasoned about by apps during import/export.
 ///
 /// \sa UsdUtilsGetRegisteredVariantSets
-struct UsdUtilsRegisteredVariantSet {
+struct UsdUtilsRegisteredVariantSet
+{
  public:
   /// The name of the variantSet.
   const std::string name;
@@ -50,7 +51,8 @@ struct UsdUtilsRegisteredVariantSet {
   ///
   /// Note, in the plugInfo.json, the values for these enum's are
   /// lowerCamelCase.
-  enum class SelectionExportPolicy {
+  enum class SelectionExportPolicy
+  {
     /// Never
     ///
     /// This variantSet selection is meant to remain entirely within an

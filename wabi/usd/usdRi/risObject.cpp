@@ -57,7 +57,8 @@ UsdRiRisObject::~UsdRiRisObject()
 /* static */
 UsdRiRisObject UsdRiRisObject::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisObject();
   }
@@ -68,7 +69,8 @@ UsdRiRisObject UsdRiRisObject::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdRiRisObject UsdRiRisObject::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisObject");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisObject();
   }
@@ -137,7 +139,8 @@ UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue, boo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

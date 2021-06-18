@@ -48,7 +48,8 @@ class ArResolver;
 /// ArResolverContext objects with the asset resolver.
 ///
 /// \see \ref ArResolver_context "Asset Resolver Context Operations"
-class ArResolverContextBinder {
+class ArResolverContextBinder
+{
  public:
   /// Bind the given \p context with the asset resolver.
   ///

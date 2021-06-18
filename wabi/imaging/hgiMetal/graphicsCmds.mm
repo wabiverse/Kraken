@@ -53,12 +53,14 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
 {
   TF_VERIFY(desc.colorTextures.size() == desc.colorAttachmentDescs.size());
 
-  if (!desc.colorResolveTextures.empty() && desc.colorResolveTextures.size() != desc.colorTextures.size()) {
+  if (!desc.colorResolveTextures.empty() && desc.colorResolveTextures.size() != desc.colorTextures.size())
+  {
     TF_CODING_ERROR("color and resolve texture count mismatch.");
     return;
   }
 
-  if (desc.depthResolveTexture && !desc.depthTexture) {
+  if (desc.depthResolveTexture && !desc.depthTexture)
+  {
     TF_CODING_ERROR("DepthResolve texture without depth texture.");
     return;
   }
@@ -68,23 +70,28 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
   // Color attachments
   bool resolvingColor = !desc.colorResolveTextures.empty();
   bool hasClear = false;
-  for (size_t i = 0; i < desc.colorAttachmentDescs.size(); i++) {
+  for (size_t i = 0; i < desc.colorAttachmentDescs.size(); i++)
+  {
     HgiAttachmentDesc const &hgiColorAttachment = desc.colorAttachmentDescs[i];
     MTLRenderPassColorAttachmentDescriptor *metalColorAttachment = _renderPassDescriptor.colorAttachments[i];
 
-    if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear) {
+    if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear)
+    {
       hasClear = true;
     }
 
-    if (@available(macos 100.100, ios 8.0, *)) {
+    if (@available(macos 100.100, ios 8.0, *))
+    {
       metalColorAttachment.loadAction = MTLLoadActionLoad;
     }
-    else {
+    else
+    {
       metalColorAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(hgiColorAttachment.loadOp);
     }
 
     metalColorAttachment.storeAction = HgiMetalConversions::GetAttachmentStoreOp(hgiColorAttachment.storeOp);
-    if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear) {
+    if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear)
+    {
       GfVec4f const &clearColor = hgiColorAttachment.clearValue;
       metalColorAttachment.clearColor = MTLClearColorMake(
         clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
@@ -95,26 +102,31 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     TF_VERIFY(colorTexture->GetDescriptor().format == hgiColorAttachment.format);
     metalColorAttachment.texture = colorTexture->GetTextureId();
 
-    if (resolvingColor) {
+    if (resolvingColor)
+    {
       HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(desc.colorResolveTextures[i].Get());
 
       metalColorAttachment.resolveTexture = resolveTexture->GetTextureId();
 
-      if (hgiColorAttachment.storeOp == HgiAttachmentStoreOpStore) {
+      if (hgiColorAttachment.storeOp == HgiAttachmentStoreOpStore)
+      {
         metalColorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
       }
-      else {
+      else
+      {
         metalColorAttachment.storeAction = MTLStoreActionMultisampleResolve;
       }
     }
   }
 
   // Depth attachment
-  if (desc.depthTexture) {
+  if (desc.depthTexture)
+  {
     HgiAttachmentDesc const &hgiDepthAttachment = desc.depthAttachmentDesc;
     MTLRenderPassDepthAttachmentDescriptor *metalDepthAttachment = _renderPassDescriptor.depthAttachment;
 
-    if (hgiDepthAttachment.loadOp == HgiAttachmentLoadOpClear) {
+    if (hgiDepthAttachment.loadOp == HgiAttachmentLoadOpClear)
+    {
       hasClear = true;
     }
 
@@ -128,21 +140,25 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     TF_VERIFY(depthTexture->GetDescriptor().format == hgiDepthAttachment.format);
     metalDepthAttachment.texture = depthTexture->GetTextureId();
 
-    if (desc.depthResolveTexture) {
+    if (desc.depthResolveTexture)
+    {
       HgiMetalTexture *resolveTexture = static_cast<HgiMetalTexture *>(desc.depthResolveTexture.Get());
 
       metalDepthAttachment.resolveTexture = resolveTexture->GetTextureId();
 
-      if (hgiDepthAttachment.storeOp == HgiAttachmentStoreOpStore) {
+      if (hgiDepthAttachment.storeOp == HgiAttachmentStoreOpStore)
+      {
         metalDepthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
       }
-      else {
+      else
+      {
         metalDepthAttachment.storeAction = MTLStoreActionMultisampleResolve;
       }
     }
   }
 
-  if (hasClear) {
+  if (hasClear)
+  {
     _CreateEncoder();
   }
 }
@@ -152,21 +168,25 @@ HgiMetalGraphicsCmds::~HgiMetalGraphicsCmds()
   TF_VERIFY(_encoder == nil, "Encoder created, but never commited.");
 
   [_renderPassDescriptor release];
-  if (_debugLabel) {
+  if (_debugLabel)
+  {
     [_debugLabel release];
   }
 }
 
 void HgiMetalGraphicsCmds::_CreateEncoder()
 {
-  if (!_encoder) {
+  if (!_encoder)
+  {
     _encoder = [_hgi->GetPrimaryCommandBuffer(false)
       renderCommandEncoderWithDescriptor:_renderPassDescriptor];
 
-    if (_debugLabel) {
+    if (_debugLabel)
+    {
       [_encoder setLabel:_debugLabel];
     }
-    if (_viewportSet) {
+    if (_viewportSet)
+    {
       [_encoder setViewport:_viewport];
     }
   }
@@ -178,10 +198,12 @@ void HgiMetalGraphicsCmds::SetViewport(GfVec4i const &vp)
   double y = vp[1];
   double w = vp[2];
   double h = vp[3];
-  if (_encoder) {
+  if (_encoder)
+  {
     [_encoder setViewport:(MTLViewport){x, y, w, h, 0.0, 1.0}];
   }
-  else {
+  else
+  {
     _viewport = (MTLViewport){x, y, w, h, 0.0, 1.0};
   }
   _viewportSet = true;
@@ -204,7 +226,8 @@ void HgiMetalGraphicsCmds::BindPipeline(HgiGraphicsPipelineHandle pipeline)
   _CreateEncoder();
 
   _primitiveType = pipeline->GetDescriptor().primitiveType;
-  if (HgiMetalGraphicsPipeline *p = static_cast<HgiMetalGraphicsPipeline *>(pipeline.Get())) {
+  if (HgiMetalGraphicsPipeline *p = static_cast<HgiMetalGraphicsPipeline *>(pipeline.Get()))
+  {
     p->BindPipeline(_encoder);
   }
 }
@@ -213,7 +236,8 @@ void HgiMetalGraphicsCmds::BindResources(HgiResourceBindingsHandle r)
 {
   _CreateEncoder();
 
-  if (HgiMetalResourceBindings *rb = static_cast<HgiMetalResourceBindings *>(r.Get())) {
+  if (HgiMetalResourceBindings *rb = static_cast<HgiMetalResourceBindings *>(r.Get()))
+  {
     rb->BindResources(_encoder);
   }
 }
@@ -226,10 +250,12 @@ void HgiMetalGraphicsCmds::SetConstantValues(HgiGraphicsPipelineHandle pipeline,
 {
   _CreateEncoder();
 
-  if (stages & HgiShaderStageVertex) {
+  if (stages & HgiShaderStageVertex)
+  {
     [_encoder setVertexBytes:data length:byteSize atIndex:bindIndex];
   }
-  if (stages & HgiShaderStageFragment) {
+  if (stages & HgiShaderStageFragment)
+  {
     [_encoder setFragmentBytes:data length:byteSize atIndex:bindIndex];
   }
 }
@@ -243,7 +269,8 @@ void HgiMetalGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
 
   _CreateEncoder();
 
-  for (size_t i = 0; i < vertexBuffers.size(); i++) {
+  for (size_t i = 0; i < vertexBuffers.size(); i++)
+  {
     HgiBufferHandle bufHandle = vertexBuffers[i];
     HgiMetalBuffer *buf = static_cast<HgiMetalBuffer *>(bufHandle.Get());
     HgiBufferDesc const &desc = buf->GetDescriptor();
@@ -262,10 +289,12 @@ void HgiMetalGraphicsCmds::Draw(uint32_t vertexCount, uint32_t firstVertex, uint
 
   MTLPrimitiveType type = HgiMetalConversions::GetPrimitiveType(_primitiveType);
 
-  if (instanceCount == 1) {
+  if (instanceCount == 1)
+  {
     [_encoder drawPrimitives:type vertexStart:firstVertex vertexCount:vertexCount];
   }
-  else {
+  else
+  {
     [_encoder drawPrimitives:type
                  vertexStart:firstVertex
                  vertexCount:vertexCount
@@ -286,7 +315,8 @@ void HgiMetalGraphicsCmds::DrawIndirect(HgiBufferHandle const &drawParameterBuff
 
   MTLPrimitiveType type = HgiMetalConversions::GetPrimitiveType(_primitiveType);
 
-  for (uint32_t i = 0; i < drawCount; i++) {
+  for (uint32_t i = 0; i < drawCount; i++)
+  {
     [_encoder drawPrimitives:type
               indirectBuffer:drawBuf->GetBufferId()
         indirectBufferOffset:bufferOffset + (i * stride)];
@@ -341,7 +371,8 @@ void HgiMetalGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffe
 
   MTLPrimitiveType type = HgiMetalConversions::GetPrimitiveType(_primitiveType);
 
-  for (uint32_t i = 0; i < drawCount; i++) {
+  for (uint32_t i = 0; i < drawCount; i++)
+  {
     [_encoder drawIndexedPrimitives:type
                           indexType:MTLIndexTypeUInt32
                         indexBuffer:indexBuf->GetBufferId()
@@ -353,17 +384,20 @@ void HgiMetalGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffe
 
 void HgiMetalGraphicsCmds::PushDebugGroup(const char *label)
 {
-  if (_encoder) {
+  if (_encoder)
+  {
     HGIMETAL_DEBUG_LABEL(_encoder, label)
   }
-  else if (HgiMetalDebugEnabled()) {
+  else if (HgiMetalDebugEnabled())
+  {
     _debugLabel = [@(label) copy];
   }
 }
 
 void HgiMetalGraphicsCmds::PopDebugGroup()
 {
-  if (_debugLabel) {
+  if (_debugLabel)
+  {
     [_debugLabel release];
     _debugLabel = nil;
   }
@@ -383,12 +417,14 @@ void HgiMetalGraphicsCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 
 bool HgiMetalGraphicsCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
-  if (_encoder) {
+  if (_encoder)
+  {
     [_encoder endEncoding];
     _encoder = nil;
 
     HgiMetal::CommitCommandBufferWaitType waitType;
-    switch (wait) {
+    switch (wait)
+    {
       case HgiSubmitWaitTypeNoWait:
         waitType = HgiMetal::CommitCommandBuffer_NoWait;
         break;

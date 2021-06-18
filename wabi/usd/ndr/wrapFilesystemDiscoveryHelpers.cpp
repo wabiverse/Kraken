@@ -39,7 +39,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 NdrNodeDiscoveryResultVec _WrapFsHelpersDiscoverNodes(const NdrStringVec &searchPaths,
                                                       const NdrStringVec &allowedExtensions,

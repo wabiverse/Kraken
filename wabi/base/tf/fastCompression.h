@@ -35,7 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class TfFastCompression {
+class TfFastCompression
+{
  public:
   /// Return the largest input buffer size that can be compressed with these
   /// functions.  Guaranteed to be at least 200 GB.

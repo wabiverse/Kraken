@@ -24,11 +24,13 @@
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 ccl::AttributeElement interpolation_to_mesh_element(const HdInterpolation &interpolation)
 {
-  switch (interpolation) {
+  switch (interpolation)
+  {
     case HdInterpolationConstant:
       return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
     case HdInterpolationUniform:
@@ -66,7 +68,8 @@ HdBbMeshAttributeSource::HdBbMeshAttributeSource(TfToken name,
 
 bool HdBbMeshAttributeSource::Resolve()
 {
-  if (!_TryLock()) {
+  if (!_TryLock())
+  {
     return false;
   }
 
@@ -77,7 +80,8 @@ bool HdBbMeshAttributeSource::Resolve()
     GetName(), GetRole(source_type_desc), source_value, GetInterpolation());
 
   // late size check, since it is only known after refining
-  if (!_CheckBuffersSize()) {
+  if (!_CheckBuffersSize())
+  {
     _SetResolveError();
     return true;
   }
@@ -93,12 +97,14 @@ bool HdBbMeshAttributeSource::_CheckValid() const
 {
   // size might be different because attribute could be refined
 
-  if (!_CheckBuffersValid()) {
+  if (!_CheckBuffersValid())
+  {
     return false;
   }
 
   // early exit on correct types
-  if (_CheckBuffersType()) {
+  if (_CheckBuffersType())
+  {
     return true;
   }
 

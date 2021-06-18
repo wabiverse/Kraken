@@ -65,7 +65,8 @@ class SdfAssetPath;
 ///
 /// Represents a ris pattern object. Multiple of these can be assigned.
 ///
-class UsdRiRisPattern : public UsdRiRisObject {
+class UsdRiRisPattern : public UsdRiRisObject
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdRiRisPattern : public UsdRiRisObject {
   /// Equivalent to UsdRiRisPattern::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRisPattern(const UsdPrim &prim = UsdPrim()) : UsdRiRisObject(prim)
+  explicit UsdRiRisPattern(const UsdPrim &prim = UsdPrim())
+    : UsdRiRisObject(prim)
   {}
 
   /// Construct a UsdRiRisPattern on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRisPattern(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRisPattern(const UsdSchemaBase &schemaObj) : UsdRiRisObject(schemaObj)
+  explicit UsdRiRisPattern(const UsdSchemaBase &schemaObj)
+    : UsdRiRisObject(schemaObj)
   {}
 
   /// Destructor.

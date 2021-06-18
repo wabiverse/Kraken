@@ -53,7 +53,8 @@ class WorkDispatcher;
 /// single-threaded.  For example, the consumer could populate stl containers
 /// without locking.
 ///
-class WorkSingularTask {
+class WorkSingularTask
+{
  public:
   WorkSingularTask(WorkSingularTask const &) = delete;
   WorkSingularTask &operator=(WorkSingularTask const &) = delete;
@@ -91,8 +92,12 @@ class WorkSingularTask {
   }
 
  private:
-  template<class Dispatcher, class Fn> struct _Waker {
-    explicit _Waker(Dispatcher &d, Fn &&fn) : _dispatcher(d), _fn(std::move(fn))
+  template<class Dispatcher, class Fn>
+  struct _Waker
+  {
+    explicit _Waker(Dispatcher &d, Fn &&fn)
+      : _dispatcher(d),
+        _fn(std::move(fn))
     {}
 
     void operator()(std::atomic_size_t &count) const
@@ -106,7 +111,8 @@ class WorkSingularTask {
         // was awakened to do.  Once we successfully take the count
         // to zero, we stop.
         size_t old = count;
-        do {
+        do
+        {
           _fn();
         } while (!count.compare_exchange_strong(old, 0));
       });

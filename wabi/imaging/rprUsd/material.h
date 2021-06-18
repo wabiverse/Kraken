@@ -18,7 +18,8 @@ limitations under the License.
 #include "wabi/base/vt/value.h"
 #include "wabi/imaging/rprUsd/api.h"
 
-namespace rpr {
+namespace rpr
+{
 class Shape;
 class Curve;
 class MaterialNode;
@@ -26,7 +27,8 @@ class MaterialNode;
 
 WABI_NAMESPACE_BEGIN
 
-class RprUsdMaterial {
+class RprUsdMaterial
+{
  public:
   RPRUSD_API
   virtual ~RprUsdMaterial() = default;

@@ -30,7 +30,8 @@ bool ProcessInput(TfToken const &inputId,
                   SmartPtr const &rprNode,
                   rpr::MaterialNodeInput rprInput)
 {
-  if (inputValue.IsHolding<ExpectedType>() || inputValue.IsHolding<RprMaterialNodePtr>()) {
+  if (inputValue.IsHolding<ExpectedType>() || inputValue.IsHolding<RprMaterialNodePtr>())
+  {
     return SetRprInput(rprNode.get(), rprInput, inputValue) == RPR_SUCCESS;
   }
   TF_RUNTIME_ERROR("Input `%s` has invalid type: %s, expected - %s",
@@ -44,24 +45,28 @@ bool ProcessInput(TfToken const &inputId,
 ///
 /// The node that wraps RPR nodes required to setup correct RPR toon shader.
 ///
-class RprUsd_RprToonNode : public RprUsd_MaterialNode {
+class RprUsd_RprToonNode : public RprUsd_MaterialNode
+{
  public:
   RprUsd_RprToonNode(RprUsd_MaterialBuilderContext *ctx)
   {
 
     rpr::Status status;
     m_toonClosureNode.reset(ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_TOON_CLOSURE, &status));
-    if (!m_toonClosureNode) {
+    if (!m_toonClosureNode)
+    {
       throw RprUsd_NodeError(
         RPR_GET_ERROR_MESSAGE(status, "Failed to create toon closure node", ctx->rprContext));
     }
     m_rampNode.reset(ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_TOON_RAMP, &status));
-    if (!m_rampNode) {
+    if (!m_rampNode)
+    {
       throw RprUsd_NodeError(
         RPR_GET_ERROR_MESSAGE(status, "Failed to create toon ramp node", ctx->rprContext));
     }
     status = m_toonClosureNode->SetInput(RPR_MATERIAL_INPUT_DIFFUSE_RAMP, m_rampNode.get());
-    if (status != RPR_SUCCESS) {
+    if (status != RPR_SUCCESS)
+    {
       throw RprUsd_NodeError(
         RPR_GET_ERROR_MESSAGE(status, "Failed to set ramp node input of closure node", ctx->rprContext));
     }
@@ -75,29 +80,38 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
 
   bool SetInput(TfToken const &id, VtValue const &value) override
   {
-    if (id == _tokens->shadowColor) {
+    if (id == _tokens->shadowColor)
+    {
       return ProcessInput<GfVec3f>(id, value, m_rampNode, RPR_MATERIAL_INPUT_SHADOW);
     }
-    else if (id == _tokens->midLevel) {
+    else if (id == _tokens->midLevel)
+    {
       return ProcessInput<float>(id, value, m_rampNode, RPR_MATERIAL_INPUT_POSITION1);
     }
-    else if (id == _tokens->midLevelMix) {
+    else if (id == _tokens->midLevelMix)
+    {
       return ProcessInput<float>(id, value, m_rampNode, RPR_MATERIAL_INPUT_RANGE1);
     }
-    else if (id == _tokens->midColor) {
+    else if (id == _tokens->midColor)
+    {
       return ProcessInput<GfVec3f>(id, value, m_rampNode, RPR_MATERIAL_INPUT_MID);
     }
-    else if (id == _tokens->highlightLevel) {
+    else if (id == _tokens->highlightLevel)
+    {
       return ProcessInput<float>(id, value, m_rampNode, RPR_MATERIAL_INPUT_POSITION2);
     }
-    else if (id == _tokens->highlightLevelMix) {
+    else if (id == _tokens->highlightLevelMix)
+    {
       return ProcessInput<float>(id, value, m_rampNode, RPR_MATERIAL_INPUT_RANGE2);
     }
-    else if (id == _tokens->highlightColor) {
+    else if (id == _tokens->highlightColor)
+    {
       return ProcessInput<GfVec3f>(id, value, m_rampNode, RPR_MATERIAL_INPUT_HIGHLIGHT);
     }
-    else if (id == _tokens->interpolationMode) {
-      if (value.IsHolding<int>()) {
+    else if (id == _tokens->interpolationMode)
+    {
+      if (value.IsHolding<int>())
+      {
         int interpolationModeInt = value.UncheckedGet<int>();
         auto interpolationMode = !interpolationModeInt ? RPR_INTERPOLATION_MODE_NONE :
                                                          RPR_INTERPOLATION_MODE_LINEAR;
@@ -107,10 +121,12 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
         "Input `%s` has invalid type: %s, expected - `Token`", id.GetText(), value.GetTypeName().c_str());
       return false;
     }
-    else if (id == _tokens->roughness) {
+    else if (id == _tokens->roughness)
+    {
       return ProcessInput<float>(id, value, m_toonClosureNode, RPR_MATERIAL_INPUT_ROUGHNESS);
     }
-    else if (id == _tokens->normal) {
+    else if (id == _tokens->normal)
+    {
       return ProcessInput<GfVec3f>(id, value, m_toonClosureNode, RPR_MATERIAL_INPUT_NORMAL);
     }
 
@@ -121,7 +137,8 @@ class RprUsd_RprToonNode : public RprUsd_MaterialNode {
   static RprUsd_RprNodeInfo *GetInfo()
   {
     static RprUsd_RprNodeInfo *ret = nullptr;
-    if (ret) {
+    if (ret)
+    {
       return ret;
     }
 
@@ -168,12 +185,15 @@ ARCH_CONSTRUCTOR(RprUsd_InitDisplaceNode, 255, void)
     TfToken(nodeInfo->name, TfToken::Immortal),
     [](RprUsd_MaterialBuilderContext *context, std::map<TfToken, VtValue> const &parameters) {
       auto node = new RprUsd_RprToonNode(context);
-      for (auto &input : RprUsd_RprToonNode::GetInfo()->inputs) {
+      for (auto &input : RprUsd_RprToonNode::GetInfo()->inputs)
+      {
         auto it = parameters.find(input.name);
-        if (it == parameters.end()) {
+        if (it == parameters.end())
+        {
           node->SetInput(input.name, input.value);
         }
-        else {
+        else
+        {
           node->SetInput(input.name, it->second);
         }
       }

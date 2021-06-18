@@ -21,9 +21,14 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprCamera : public HdCamera {
+class HdRprCamera : public HdCamera
+{
  public:
-  enum Projection { Perspective = 0, Orthographic };
+  enum Projection
+  {
+    Perspective = 0,
+    Orthographic
+  };
 
   HdRprCamera(SdfPath const &id);
   ~HdRprCamera() override = default;

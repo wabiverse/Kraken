@@ -38,7 +38,8 @@ class HdPhResourceRegistry;
 class HdPhTextureIdentifier;
 using HdPhDynamicUvTextureObjectSharedPtr = std::shared_ptr<class HdPhDynamicUvTextureObject>;
 
-class HdPhRenderBuffer : public HdRenderBuffer {
+class HdPhRenderBuffer : public HdRenderBuffer
+{
  public:
   HDPH_API
   HdPhRenderBuffer(HdPhResourceRegistry *resourceRegistry, SdfPath const &id);

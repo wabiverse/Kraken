@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 /// node has any node connected to it, Houdini will automatically convert its
 /// implementation to VEX code that is not supported.
 ///
-class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode {
+class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode
+{
  public:
   RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilderContext *ctx,
                                std::map<TfToken, VtValue> const &surfaceParameters,
@@ -51,7 +52,8 @@ class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode {
   }
 
  private:
-  template<typename T> T *AddAuxiliaryNode(std::unique_ptr<T> node)
+  template<typename T>
+  T *AddAuxiliaryNode(std::unique_ptr<T> node)
   {
     T *ret = node.get();
     m_auxiliaryNodes.push_back(std::move(node));

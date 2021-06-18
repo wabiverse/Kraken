@@ -56,7 +56,8 @@ HgiMetalBlitCmds::~HgiMetalBlitCmds()
 {
   TF_VERIFY(_blitEncoder == nil, "Encoder created, but never commited.");
 
-  if (_label) {
+  if (_label)
+  {
     [_label release];
     _label = nil;
   }
@@ -64,16 +65,20 @@ HgiMetalBlitCmds::~HgiMetalBlitCmds()
 
 void HgiMetalBlitCmds::_CreateEncoder()
 {
-  if (!_blitEncoder) {
+  if (!_blitEncoder)
+  {
     _commandBuffer = _hgi->GetPrimaryCommandBuffer();
-    if (_commandBuffer == nil) {
+    if (_commandBuffer == nil)
+    {
       _commandBuffer = _hgi->GetSecondaryCommandBuffer();
       _secondaryCommandBuffer = true;
     }
     _blitEncoder = [_commandBuffer blitCommandEncoder];
 
-    if (_label) {
-      if (HgiMetalDebugEnabled()) {
+    if (_label)
+    {
+      if (HgiMetalDebugEnabled())
+      {
         _blitEncoder.label = _label;
       }
     }
@@ -82,10 +87,12 @@ void HgiMetalBlitCmds::_CreateEncoder()
 
 void HgiMetalBlitCmds::PushDebugGroup(const char *label)
 {
-  if (_blitEncoder) {
+  if (_blitEncoder)
+  {
     HGIMETAL_DEBUG_LABEL(_blitEncoder, label)
   }
-  else if (HgiMetalDebugEnabled()) {
+  else if (HgiMetalDebugEnabled())
+  {
     _label = [@(label) copy];
   }
 }
@@ -98,11 +105,13 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
   HgiTextureHandle texHandle = copyOp.gpuSourceTexture;
   HgiMetalTexture *srcTexture = static_cast<HgiMetalTexture *>(texHandle.Get());
 
-  if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle")) {
+  if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle"))
+  {
     return;
   }
 
-  if (copyOp.destinationBufferByteSize == 0) {
+  if (copyOp.destinationBufferByteSize == 0)
+  {
     TF_WARN("The size of the data to copy was zero (aborted)");
     return;
   }
@@ -111,14 +120,17 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
 
   MTLPixelFormat metalFormat = MTLPixelFormatInvalid;
 
-  if (texDesc.usage & HgiTextureUsageBitsColorTarget) {
+  if (texDesc.usage & HgiTextureUsageBitsColorTarget)
+  {
     metalFormat = HgiMetalConversions::GetPixelFormat(texDesc.format);
   }
-  else if (texDesc.usage & HgiTextureUsageBitsDepthTarget) {
+  else if (texDesc.usage & HgiTextureUsageBitsDepthTarget)
+  {
     TF_VERIFY(texDesc.format == HgiFormatFloat32);
     metalFormat = MTLPixelFormatDepth32Float;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown HgTextureUsage bit");
   }
 
@@ -155,7 +167,8 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
        destinationBytesPerImage:(bytesPerPixel * texDesc.dimensions[0] * texDesc.dimensions[1])
                         options:blitOptions];
 
-  if (@available(macOS 10.11, ios 100.100, *)) {
+  if (@available(macOS 10.11, ios 100.100, *))
+  {
     [_blitEncoder performSelector:@selector(synchronizeResource:) withObject:cpuBuffer];
   }
 
@@ -187,19 +200,22 @@ void HgiMetalBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
 
   GfVec3i const &offsets = copyOp.destinationTexelOffset;
   int depthOffset = isTexArray ? 0 : offsets[2];
-  if (texDesc.type == HgiTextureType1D) {
+  if (texDesc.type == HgiTextureType1D)
+  {
     [dstTexture->GetTextureId() replaceRegion:MTLRegionMake1D(offsets[0], width)
                                   mipmapLevel:copyOp.mipLevel
                                     withBytes:copyOp.cpuSourceBuffer
                                   bytesPerRow:copyOp.bufferByteSize];
   }
-  else if (texDesc.type == HgiTextureType2D) {
+  else if (texDesc.type == HgiTextureType2D)
+  {
     [dstTexture->GetTextureId() replaceRegion:MTLRegionMake2D(offsets[0], offsets[1], width, height)
                                   mipmapLevel:copyOp.mipLevel
                                     withBytes:copyOp.cpuSourceBuffer
                                   bytesPerRow:copyOp.bufferByteSize / height];
   }
-  else {
+  else
+  {
     [dstTexture->GetTextureId()
       replaceRegion:MTLRegionMake3D(offsets[0], offsets[1], depthOffset, width, height, depth)
         mipmapLevel:copyOp.mipLevel
@@ -215,18 +231,21 @@ void HgiMetalBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
   HgiBufferHandle const &srcBufHandle = copyOp.gpuSourceBuffer;
   HgiMetalBuffer *srcBuffer = static_cast<HgiMetalBuffer *>(srcBufHandle.Get());
 
-  if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle")) {
+  if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle"))
+  {
     return;
   }
 
   HgiBufferHandle const &dstBufHandle = copyOp.gpuDestinationBuffer;
   HgiMetalBuffer *dstBuffer = static_cast<HgiMetalBuffer *>(dstBufHandle.Get());
 
-  if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle")) {
+  if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle"))
+  {
     return;
   }
 
-  if (copyOp.byteSize == 0) {
+  if (copyOp.byteSize == 0)
+  {
     TF_WARN("The size of the data to copy was zero (aborted)");
     return;
   }
@@ -242,7 +261,8 @@ void HgiMetalBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
 
 void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 {
-  if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer) {
+  if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer)
+  {
     return;
   }
 
@@ -256,7 +276,8 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   // was created, we can skip the memcpy since the src and dst buffer are
   // the same and dst already contains the desired data.
   // See also: HgiBuffer::GetCPUStagingAddress.
-  if (copyOp.cpuSourceBuffer != dst || copyOp.sourceByteOffset != copyOp.destinationByteOffset) {
+  if (copyOp.cpuSourceBuffer != dst || copyOp.sourceByteOffset != copyOp.destinationByteOffset)
+  {
     // Offset into the src buffer
     const char *src = ((const char *)copyOp.cpuSourceBuffer) + copyOp.sourceByteOffset;
 
@@ -264,7 +285,8 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
     memcpy(dst + dstOffset, src, copyOp.byteSize);
   }
 
-  if (!sharedBuffer && [metalBuffer->GetBufferId() respondsToSelector:@selector(didModifyRange:)]) {
+  if (!sharedBuffer && [metalBuffer->GetBufferId() respondsToSelector:@selector(didModifyRange:)])
+  {
     NSRange range = NSMakeRange(dstOffset, copyOp.byteSize);
     id<MTLResource> resource = metalBuffer->GetBufferId();
 
@@ -277,13 +299,15 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 
 void HgiMetalBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
 {
-  if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer) {
+  if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer)
+  {
     return;
   }
 
   HgiMetalBuffer *metalBuffer = static_cast<HgiMetalBuffer *>(copyOp.gpuSourceBuffer.Get());
 
-  if (@available(macOS 10.11, ios 100.100, *)) {
+  if (@available(macOS 10.11, ios 100.100, *))
+  {
     [_blitEncoder performSelector:@selector(synchronizeResource:) withObject:metalBuffer->GetBufferId()];
   }
 
@@ -314,7 +338,8 @@ void HgiMetalBlitCmds::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
 void HgiMetalBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
 {
   HgiMetalTexture *metalTex = static_cast<HgiMetalTexture *>(texture.Get());
-  if (metalTex) {
+  if (metalTex)
+  {
     _CreateEncoder();
 
     [_blitEncoder generateMipmapsForTexture:metalTex->GetTextureId()];
@@ -330,13 +355,15 @@ void HgiMetalBlitCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 bool HgiMetalBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
   bool submittedWork = false;
-  if (_blitEncoder) {
+  if (_blitEncoder)
+  {
     [_blitEncoder endEncoding];
     _blitEncoder = nil;
     submittedWork = true;
 
     HgiMetal::CommitCommandBufferWaitType waitType;
-    switch (wait) {
+    switch (wait)
+    {
       case HgiSubmitWaitTypeNoWait:
         waitType = HgiMetal::CommitCommandBuffer_NoWait;
         break;
@@ -345,15 +372,18 @@ bool HgiMetalBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
         break;
     }
 
-    if (_secondaryCommandBuffer) {
+    if (_secondaryCommandBuffer)
+    {
       _hgi->CommitSecondaryCommandBuffer(_commandBuffer, waitType);
     }
-    else {
+    else
+    {
       _hgi->CommitPrimaryCommandBuffer(waitType);
     }
   }
 
-  if (_secondaryCommandBuffer) {
+  if (_secondaryCommandBuffer)
+  {
     _hgi->ReleaseSecondaryCommandBuffer(_commandBuffer);
   }
   _commandBuffer = nil;

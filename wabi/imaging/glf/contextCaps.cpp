@@ -120,7 +120,8 @@ const GlfContextCaps &GlfContextCaps::GetInstance()
 {
   GlfContextCaps &caps = TfSingleton<GlfContextCaps>::GetInstance();
 
-  if (caps.glVersion == 0) {
+  if (caps.glVersion == 0)
+  {
     TF_CODING_ERROR("GlfContextCaps has not been initialized");
     // Return the default set
   }
@@ -157,7 +158,8 @@ void GlfContextCaps::_LoadCaps()
   copyBufferEnabled = true;
   floatingPointBuffersEnabled = false;
 
-  if (!TF_VERIFY(GlfGLContext::GetCurrentGLContext()->IsValid())) {
+  if (!TF_VERIFY(GlfGLContext::GetCurrentGLContext()->IsValid()))
+  {
     return;
   }
 
@@ -170,7 +172,8 @@ void GlfContextCaps::_LoadCaps()
     return;
 
   const char *dot = strchr(glVersionStr, '.');
-  if (TF_VERIFY((dot && dot != glVersionStr), "Can't parse GL_VERSION %s", glVersionStr)) {
+  if (TF_VERIFY((dot && dot != glVersionStr), "Can't parse GL_VERSION %s", glVersionStr))
+  {
     // GL_VERSION = "4.5.0 <vendor> <version>"
     //              "4.1 <vendor-os-ver> <version>"
     //              "4.1 <vendor-os-ver>"
@@ -179,11 +182,13 @@ void GlfContextCaps::_LoadCaps()
     glVersion = major * 100 + minor * 10;
   }
 
-  if (glVersion >= 200) {
+  if (glVersion >= 200)
+  {
     const char *glslVersionStr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
     dot = strchr(glslVersionStr, '.');
     if (TF_VERIFY(
-          (dot && dot != glslVersionStr), "Can't parse GL_SHADING_LANGUAGE_VERSION %s", glslVersionStr)) {
+          (dot && dot != glslVersionStr), "Can't parse GL_SHADING_LANGUAGE_VERSION %s", glslVersionStr))
+    {
       // GL_SHADING_LANGUAGE_VERSION = "4.10"
       //                               "4.50 <vendor>"
       int major = std::max(0, std::min(9, *(dot - 1) - '0'));
@@ -191,96 +196,120 @@ void GlfContextCaps::_LoadCaps()
       glslVersion = major * 100 + minor * 10;
     }
   }
-  else {
+  else
+  {
     glslVersion = 0;
   }
 
-  if (glVersion >= 300) {
+  if (glVersion >= 300)
+  {
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxArrayTextureLayers);
     arrayTexturesEnabled = true;
   }
 
   // initialize by Core versions
-  if (glVersion >= 310) {
+  if (glVersion >= 310)
+  {
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
     glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &maxTextureBufferSize);
     glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uniformBufferOffsetAlignment);
   }
-  if (glVersion >= 320) {
+  if (glVersion >= 320)
+  {
     GLint profileMask = 0;
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profileMask);
     coreProfile = (profileMask & GL_CONTEXT_CORE_PROFILE_BIT);
   }
-  if (glVersion >= 400) {
+  if (glVersion >= 400)
+  {
     // Older versions of GL maybe support R16F and D32F, but for now we set
     // the minimum GL at 4.
     floatingPointBuffersEnabled = true;
   }
-  if (glVersion >= 420) {
+  if (glVersion >= 420)
+  {
     shadingLanguage420pack = true;
   }
-  if (glVersion >= 430) {
+  if (glVersion >= 430)
+  {
     shaderStorageBufferEnabled = true;
     explicitUniformLocation = true;
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &maxShaderStorageBlockSize);
   }
-  if (glVersion >= 440) {
+  if (glVersion >= 440)
+  {
     bufferStorageEnabled = true;
   }
-  if (glVersion >= 450) {
+  if (glVersion >= 450)
+  {
     multiDrawIndirectEnabled = true;
   }
-  if (glVersion >= 460) {
+  if (glVersion >= 460)
+  {
     shaderDrawParametersEnabled = true;
   }
 
   // initialize by individual extension.
-  if (GARCH_GLAPI_HAS(ARB_bindless_texture)) {
+  if (GARCH_GLAPI_HAS(ARB_bindless_texture))
+  {
     bindlessTextureEnabled = true;
   }
-  if (GARCH_GLAPI_HAS(NV_shader_buffer_load)) {
+  if (GARCH_GLAPI_HAS(NV_shader_buffer_load))
+  {
     bindlessBufferEnabled = true;
   }
-  if (GARCH_GLAPI_HAS(ARB_explicit_uniform_location)) {
+  if (GARCH_GLAPI_HAS(ARB_explicit_uniform_location))
+  {
     explicitUniformLocation = true;
   }
-  if (GARCH_GLAPI_HAS(ARB_shading_language_420pack)) {
+  if (GARCH_GLAPI_HAS(ARB_shading_language_420pack))
+  {
     shadingLanguage420pack = true;
   }
-  if (GARCH_GLAPI_HAS(ARB_multi_draw_indirect)) {
+  if (GARCH_GLAPI_HAS(ARB_multi_draw_indirect))
+  {
     multiDrawIndirectEnabled = true;
   }
 #if defined(GL_VERSION_4_5)
-  if (GARCH_GLAPI_HAS(VERSION_4_5) || GARCH_GLAPI_HAS(ARB_direct_state_access)) {
+  if (GARCH_GLAPI_HAS(VERSION_4_5) || GARCH_GLAPI_HAS(ARB_direct_state_access))
+  {
     directStateAccessEnabled = true;
   }
-  if (GARCH_GLAPI_HAS(ARB_shader_draw_parameters)) {
+  if (GARCH_GLAPI_HAS(ARB_shader_draw_parameters))
+  {
     shaderDrawParametersEnabled = true;
   }
 #endif
 
   // Environment variable overrides (only downgrading is possible)
-  if (!TfGetEnvSetting(GLF_ENABLE_SHADER_STORAGE_BUFFER)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_SHADER_STORAGE_BUFFER))
+  {
     shaderStorageBufferEnabled = false;
   }
-  if (!TfGetEnvSetting(GLF_ENABLE_BINDLESS_TEXTURE)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_BINDLESS_TEXTURE))
+  {
     bindlessTextureEnabled = false;
   }
-  if (!TfGetEnvSetting(GLF_ENABLE_BINDLESS_BUFFER)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_BINDLESS_BUFFER))
+  {
     bindlessBufferEnabled = false;
   }
-  if (!TfGetEnvSetting(GLF_ENABLE_MULTI_DRAW_INDIRECT)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_MULTI_DRAW_INDIRECT))
+  {
     multiDrawIndirectEnabled = false;
   }
-  if (!TfGetEnvSetting(GLF_ENABLE_DIRECT_STATE_ACCESS)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_DIRECT_STATE_ACCESS))
+  {
     directStateAccessEnabled = false;
   }
-  if (!TfGetEnvSetting(GLF_ENABLE_SHADER_DRAW_PARAMETERS)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_SHADER_DRAW_PARAMETERS))
+  {
     shaderDrawParametersEnabled = false;
   }
 
   // For debugging and unit testing
-  if (TfGetEnvSetting(GLF_GLSL_VERSION) > 0) {
+  if (TfGetEnvSetting(GLF_GLSL_VERSION) > 0)
+  {
     // GLSL version override
     glslVersion = std::min(glslVersion, TfGetEnvSetting(GLF_GLSL_VERSION));
 
@@ -295,11 +324,13 @@ void GlfContextCaps::_LoadCaps()
   }
 
   // For driver issues workaround
-  if (!TfGetEnvSetting(GLF_ENABLE_COPY_BUFFER)) {
+  if (!TfGetEnvSetting(GLF_ENABLE_COPY_BUFFER))
+  {
     copyBufferEnabled = false;
   }
 
-  if (TfDebug::IsEnabled(GLF_DEBUG_CONTEXT_CAPS)) {
+  if (TfDebug::IsEnabled(GLF_DEBUG_CONTEXT_CAPS))
+  {
     std::cout << "GlfContextCaps: \n"
               << "  GL_VENDOR                          = " << glVendorStr << "\n"
               << "  GL_RENDERER                        = " << glRendererStr << "\n"
@@ -324,7 +355,8 @@ void GlfContextCaps::_LoadCaps()
 
       ;
 
-    if (!copyBufferEnabled) {
+    if (!copyBufferEnabled)
+    {
       std::cout << "  CopyBuffer : disabled\n";
     }
   }

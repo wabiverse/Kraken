@@ -47,7 +47,8 @@ typedef std::vector<std::pair<SdfLayerHandle, SdfChangeList>> SdfLayerChangeList
 /// A list of scene description modifications, organized by the namespace
 /// paths where the changes occur.
 ///
-class SdfChangeList {
+class SdfChangeList
+{
  public:
   SdfChangeList() = default;
   SDF_API SdfChangeList(SdfChangeList const &);
@@ -55,7 +56,12 @@ class SdfChangeList {
   SDF_API SdfChangeList &operator=(SdfChangeList const &);
   SdfChangeList &operator=(SdfChangeList &&) = default;
 
-  enum SubLayerChangeType { SubLayerAdded, SubLayerRemoved, SubLayerOffset };
+  enum SubLayerChangeType
+  {
+    SubLayerAdded,
+    SubLayerRemoved,
+    SubLayerOffset
+  };
 
   void DidReplaceLayerContent();
   void DidReloadLayerContent();
@@ -106,7 +112,8 @@ class SdfChangeList {
   /// differential update logic.  It also vastly simplifies the
   /// language of invalidation.
   ///
-  struct Entry {
+  struct Entry
+  {
     // Map of info keys that have changed to (old, new) value pairs.
     typedef std::pair<VtValue, VtValue> InfoChange;
     // We usually change just a few fields on a spec in one go, so we store
@@ -119,8 +126,10 @@ class SdfChangeList {
     InfoChangeVec::const_iterator FindInfoChange(TfToken const &key) const
     {
       InfoChangeVec::const_iterator iter = infoChanged.begin();
-      for (InfoChangeVec::const_iterator end = infoChanged.end(); iter != end; ++iter) {
-        if (iter->first == key) {
+      for (InfoChangeVec::const_iterator end = infoChanged.end(); iter != end; ++iter)
+      {
+        if (iter->first == key)
+        {
           break;
         }
       }
@@ -144,7 +153,8 @@ class SdfChangeList {
     std::string oldIdentifier;
 
     // Most changes are stored as simple bits.
-    struct _Flags {
+    struct _Flags
+    {
       _Flags()
       {
         memset(this, 0, sizeof(*this));

@@ -40,7 +40,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class UsdShadersDiscoveryPlugin : public NdrDiscoveryPlugin {
+class UsdShadersDiscoveryPlugin : public NdrDiscoveryPlugin
+{
  public:
   UsdShadersDiscoveryPlugin() = default;
 

@@ -44,7 +44,8 @@ class HgiMetal;
 ///
 /// Metal implementation of HgiSampler
 ///
-class HgiMetalSampler final : public HgiSampler {
+class HgiMetalSampler final : public HgiSampler
+{
  public:
   HGIMETAL_API
   HgiMetalSampler(HgiMetal *hgi, HgiSamplerDesc const &desc);

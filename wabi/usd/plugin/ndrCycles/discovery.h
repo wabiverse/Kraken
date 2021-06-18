@@ -31,7 +31,8 @@ WABI_NAMESPACE_BEGIN
  * @brief Ndr Discovery for cycles shader nodes
  *
  */
-class NdrCyclesDiscoveryPlugin : public NdrDiscoveryPlugin {
+class NdrCyclesDiscoveryPlugin : public NdrDiscoveryPlugin
+{
  public:
   using Context = NdrDiscoveryPluginContext;
 

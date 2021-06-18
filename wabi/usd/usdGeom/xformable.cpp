@@ -43,7 +43,8 @@ UsdGeomXformable::~UsdGeomXformable()
 /* static */
 UsdGeomXformable UsdGeomXformable::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomXformable();
   }
@@ -97,7 +98,8 @@ UsdAttribute UsdGeomXformable::CreateXformOpOrderAttr(VtValue const &defaultValu
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -170,7 +172,8 @@ UsdGeomXformOp UsdGeomXformable::AddXformOp(UsdGeomXformOp::Type const opType,
   // Check if the xformOp we're about to add already exists in xformOpOrder
   TfToken opName = UsdGeomXformOp::GetOpName(opType, opSuffix, isInverseOp);
   VtTokenArray::iterator it = std::find(xformOpOrder.begin(), xformOpOrder.end(), opName);
-  if (it != xformOpOrder.end()) {
+  if (it != xformOpOrder.end())
+  {
     TF_CODING_ERROR("The xformOp '%s' already exists in xformOpOrder [%s].",
                     opName.GetText(),
                     TfStringify(xformOpOrder).c_str());
@@ -179,12 +182,14 @@ UsdGeomXformOp UsdGeomXformable::AddXformOp(UsdGeomXformOp::Type const opType,
 
   TfToken const &xformOpAttrName = UsdGeomXformOp::GetOpName(opType, opSuffix);
   UsdGeomXformOp result;
-  if (UsdAttribute xformOpAttr = GetPrim().GetAttribute(xformOpAttrName)) {
+  if (UsdAttribute xformOpAttr = GetPrim().GetAttribute(xformOpAttrName))
+  {
     // Check if the attribute's typeName has the requested precision level.
     UsdGeomXformOp::Precision existingPrecision = UsdGeomXformOp::GetPrecisionFromValueTypeName(
       xformOpAttr.GetTypeName());
 
-    if (existingPrecision != precision) {
+    if (existingPrecision != precision)
+    {
       TF_CODING_ERROR(
         "XformOp <%s> has typeName '%s' which does not "
         "match the requested precision '%s'. Proceeding to "
@@ -196,15 +201,18 @@ UsdGeomXformOp UsdGeomXformable::AddXformOp(UsdGeomXformOp::Type const opType,
 
     result = UsdGeomXformOp(xformOpAttr, isInverseOp);
   }
-  else {
+  else
+  {
     result = UsdGeomXformOp(GetPrim(), opType, precision, opSuffix, isInverseOp);
   }
 
-  if (result) {
+  if (result)
+  {
     xformOpOrder.push_back(result.GetOpName());
     CreateXformOpOrderAttr().Set(xformOpOrder);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR(
       "Unable to add xform op of type %s and precision %s on "
       "prim at path <%s>. opSuffix=%s, isInverseOp=%d",
@@ -323,7 +331,8 @@ bool UsdGeomXformable::SetResetXformStack(bool resetXformStack) const
   _GetXformOpOrderValue(&opOrderVec);
 
   bool result = true;
-  if (resetXformStack) {
+  if (resetXformStack)
+  {
     // Nothing to do if resetXformStack already exists in xformOpOrder
     if (_XformOpOrderHasResetXformStack(opOrderVec))
       return true;
@@ -336,23 +345,29 @@ bool UsdGeomXformable::SetResetXformStack(bool resetXformStack) const
 
     result = CreateXformOpOrderAttr().Set(newOpOrderVec);
   }
-  else {
+  else
+  {
     VtTokenArray newOpOrderVec;
     bool foundResetXformStack = false;
-    for (size_t i = 0; i < opOrderVec.size(); i++) {
-      if (opOrderVec[i] == UsdGeomXformOpTypes->resetXformStack) {
+    for (size_t i = 0; i < opOrderVec.size(); i++)
+    {
+      if (opOrderVec[i] == UsdGeomXformOpTypes->resetXformStack)
+      {
         foundResetXformStack = true;
         newOpOrderVec.clear();
       }
-      else if (foundResetXformStack) {
+      else if (foundResetXformStack)
+      {
         newOpOrderVec.push_back(opOrderVec[i]);
       }
     }
 
-    if (foundResetXformStack) {
+    if (foundResetXformStack)
+    {
       result = CreateXformOpOrderAttr().Set(newOpOrderVec);
     }
-    else {
+    else
+    {
       // This is a no-op if "!resetXformStack!" isn't present in
       // xformOpOrder.
     }
@@ -379,14 +394,16 @@ bool UsdGeomXformable::SetXformOpOrder(vector<UsdGeomXformOp> const &orderedXfor
   if (resetXformStack)
     ops.push_back(UsdGeomXformOpTypes->resetXformStack);
 
-  TF_FOR_ALL(it, orderedXformOps)
+  TF_FOR_ALL (it, orderedXformOps)
   {
     // Check to make sure that the xformOp being added to xformOpOrder
     // belongs to this prim.
-    if (it->GetAttr().GetPrim() == GetPrim()) {
+    if (it->GetAttr().GetPrim() == GetPrim())
+    {
       ops.push_back(it->GetOpName());
     }
-    else {
+    else
+    {
       TF_CODING_ERROR(
         "XformOp attribute <%s> does not belong to schema "
         "prim <%s>.",
@@ -420,19 +437,23 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
 {
   vector<UsdGeomXformOp> result;
 
-  if (resetsXformStack) {
+  if (resetsXformStack)
+  {
     *resetsXformStack = false;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("resetsXformStack is NULL.");
   }
 
   VtTokenArray opOrderVec;
-  if (!_GetXformOpOrderValue(&opOrderVec)) {
+  if (!_GetXformOpOrderValue(&opOrderVec))
+  {
     return result;
   }
 
-  if (opOrderVec.size() == 0) {
+  if (opOrderVec.size() == 0)
+  {
     return result;
   }
 
@@ -440,28 +461,35 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
   result.reserve(opOrderVec.size());
 
   UsdPrim thisPrim = GetPrim();
-  for (VtTokenArray::iterator it = opOrderVec.begin(); it != opOrderVec.end(); ++it) {
+  for (VtTokenArray::iterator it = opOrderVec.begin(); it != opOrderVec.end(); ++it)
+  {
 
     const TfToken &opName = *it;
 
     // If this is the special resetXformStack op, then clear the currently
     // accreted xformOps and continue.
-    if (opName == UsdGeomXformOpTypes->resetXformStack) {
-      if (resetsXformStack) {
+    if (opName == UsdGeomXformOpTypes->resetXformStack)
+    {
+      if (resetsXformStack)
+      {
         *resetsXformStack = true;
       }
       result.clear();
     }
-    else {
+    else
+    {
       bool isInverseOp = false;
       UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(thisPrim, opName, &isInverseOp);
-      if (withAttributeQueries) {
+      if (withAttributeQueries)
+      {
         TfErrorMark m;
         UsdAttributeQuery query(attr);
-        if (m.IsClean()) {
+        if (m.IsClean())
+        {
           result.emplace_back(std::move(query), isInverseOp, UsdGeomXformOp::_ValidAttributeTagType{});
         }
-        else {
+        else
+        {
           // Skip invalid xform ops that appear in xformOpOrder, but
           // issue a warning.
           TF_WARN(
@@ -473,13 +501,16 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
             GetPrim().GetPath().GetText());
         }
       }
-      else {
-        if (attr) {
+      else
+      {
+        if (attr)
+        {
           // Only add valid xform ops.  We pass _ValidAttributeTag here
           // since we've pre-checked the validity of attr above.
           result.emplace_back(attr, isInverseOp, UsdGeomXformOp::_ValidAttributeTagType{});
         }
-        else {
+        else
+        {
           // Skip invalid xform ops that appear in xformOpOrder, but
           // issue a warning.
           TF_WARN(
@@ -497,7 +528,8 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
   return result;
 }
 
-UsdGeomXformable::XformQuery::XformQuery(const UsdGeomXformable &xformable) : _resetsXformStack(false)
+UsdGeomXformable::XformQuery::XformQuery(const UsdGeomXformable &xformable)
+  : _resetsXformStack(false)
 {
   _xformOps = xformable._GetOrderedXformOps(&_resetsXformStack, /*withAttributeQueries=*/true);
 }
@@ -511,7 +543,7 @@ bool UsdGeomXformable::XformQuery::GetLocalTransformation(GfMatrix4d *transform,
 static bool _TransformMightBeTimeVarying(vector<UsdGeomXformOp> const &xformOps)
 {
   // If any of the xform ops may vary, then the cumulative transform may vary.
-  TF_FOR_ALL(it, xformOps)
+  TF_FOR_ALL (it, xformOps)
   {
     if (it->MightBeTimeVarying())
       return true;
@@ -531,11 +563,13 @@ bool UsdGeomXformable::TransformMightBeTimeVarying() const
   if (!_GetXformOpOrderValue(&opOrderVec))
     return false;
 
-  if (opOrderVec.size() == 0) {
+  if (opOrderVec.size() == 0)
+  {
     return false;
   }
 
-  for (VtTokenArray::reverse_iterator it = opOrderVec.rbegin(); it != opOrderVec.rend(); ++it) {
+  for (VtTokenArray::reverse_iterator it = opOrderVec.rbegin(); it != opOrderVec.rend(); ++it)
+  {
 
     const TfToken &opName = *it;
 
@@ -543,15 +577,19 @@ bool UsdGeomXformable::TransformMightBeTimeVarying() const
     // that none of the xformOps that affect the local transformation are
     // time-varying (since none of the (valid) xformOps after the last
     // occurrence of !resetXformStack! are time-varying).
-    if (opName == UsdGeomXformOpTypes->resetXformStack) {
+    if (opName == UsdGeomXformOpTypes->resetXformStack)
+    {
       return false;
     }
-    else {
+    else
+    {
       bool isInverseOp = false;
-      if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp)) {
+      if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp))
+      {
         // Only check valid xform ops for time-varyingness.
         UsdGeomXformOp op(attr, isInverseOp);
-        if (op && op.MightBeTimeVarying()) {
+        if (op && op.MightBeTimeVarying())
+        {
           return true;
         }
       }
@@ -583,13 +621,15 @@ bool UsdGeomXformable::GetTimeSamplesInInterval(std::vector<UsdGeomXformOp> cons
 {
   // Optimize for the case where there's a single xformOp (typically a 4x4
   // matrix op).
-  if (orderedXformOps.size() == 1) {
+  if (orderedXformOps.size() == 1)
+  {
     return orderedXformOps.front().GetTimeSamplesInInterval(interval, times);
   }
 
   vector<UsdAttribute> xformOpAttrs;
   xformOpAttrs.reserve(orderedXformOps.size());
-  for (auto &xformOp : orderedXformOps) {
+  for (auto &xformOp : orderedXformOps)
+  {
     xformOpAttrs.push_back(xformOp.GetAttr());
   }
 
@@ -612,13 +652,15 @@ bool UsdGeomXformable::XformQuery::GetTimeSamples(vector<double> *times) const
 bool UsdGeomXformable::XformQuery::GetTimeSamplesInInterval(const GfInterval &interval,
                                                             vector<double> *times) const
 {
-  if (_xformOps.size() == 1) {
+  if (_xformOps.size() == 1)
+  {
     _xformOps.front().GetTimeSamplesInInterval(interval, times);
   }
 
   vector<UsdAttributeQuery> xformOpAttrQueries;
   xformOpAttrQueries.reserve(_xformOps.size());
-  for (auto &xformOp : _xformOps) {
+  for (auto &xformOp : _xformOps)
+  {
     // This should never throw and exception because XformQuery's constructor
     // initializes an attribute query for all its xformOps.
     const UsdAttributeQuery &attrQuery = boost::get<UsdAttributeQuery>(xformOp._attr);
@@ -638,7 +680,7 @@ bool UsdGeomXformable::GetTimeSamples(vector<double> *times) const
 
 bool UsdGeomXformable::XformQuery::IsAttributeIncludedInLocalTransform(const TfToken &attrName) const
 {
-  TF_FOR_ALL(it, _xformOps)
+  TF_FOR_ALL (it, _xformOps)
   {
     if (it->GetName() == attrName)
       return true;
@@ -668,18 +710,22 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
 {
   TRACE_FUNCTION();
 
-  if (transform) {
+  if (transform)
+  {
     *transform = GfMatrix4d(1.);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("transform is NULL.");
     return false;
   }
 
-  if (resetsXformStack) {
+  if (resetsXformStack)
+  {
     *resetsXformStack = false;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("resetsXformStack is NULL.");
     return false;
   }
@@ -688,19 +734,23 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
   if (!_GetXformOpOrderValue(&opOrderVec))
     return false;
 
-  if (opOrderVec.size() == 0) {
+  if (opOrderVec.size() == 0)
+  {
     return true;
   }
 
-  for (VtTokenArray::reverse_iterator it = opOrderVec.rbegin(); it != opOrderVec.rend(); ++it) {
+  for (VtTokenArray::reverse_iterator it = opOrderVec.rbegin(); it != opOrderVec.rend(); ++it)
+  {
 
     const TfToken &opName = *it;
 
     // Skip the current xformOp and the next one if they're inverses of
     // each other.
-    if ((it + 1) != opOrderVec.rend()) {
+    if ((it + 1) != opOrderVec.rend())
+    {
       const TfToken &nextOpName = *(it + 1);
-      if (_AreInverseXformOps(opName, nextOpName)) {
+      if (_AreInverseXformOps(opName, nextOpName))
+      {
         ++it;
         continue;
       }
@@ -708,24 +758,30 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
 
     // If this is the special resetXformStack op, then the currently
     // accreted localXform is the local transformation of the prim.
-    if (opName == UsdGeomXformOpTypes->resetXformStack) {
+    if (opName == UsdGeomXformOpTypes->resetXformStack)
+    {
       *resetsXformStack = true;
       break;
     }
-    else {
+    else
+    {
       bool isInverseOp = false;
-      if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp)) {
+      if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp))
+      {
         // Only add valid xform ops.
         UsdGeomXformOp op(attr, isInverseOp);
-        if (op) {
+        if (op)
+        {
           GfMatrix4d opTransform = op.GetOpTransform(time);
           // Avoid multiplying by the identity matrix when possible.
-          if (opTransform != *_IDENTITY) {
+          if (opTransform != *_IDENTITY)
+          {
             (*transform) *= opTransform;
           }
         }
       }
-      else {
+      else
+      {
         // Skip invalid xform ops that appear in xformOpOrder, but issue
         // a warning.
         TF_WARN(
@@ -748,10 +804,12 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
 {
   TRACE_FUNCTION();
 
-  if (resetsXformStack) {
+  if (resetsXformStack)
+  {
     *resetsXformStack = GetResetXformStack();
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("resetsXformStack is NULL.");
   }
   return GetLocalTransformation(transform, ops, time);
@@ -766,15 +824,18 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
 
   for (vector<UsdGeomXformOp>::const_reverse_iterator it = orderedXformOps.rbegin();
        it != orderedXformOps.rend();
-       ++it) {
+       ++it)
+  {
 
     const UsdGeomXformOp &xformOp = *it;
 
     // Skip the current xformOp and the next one if they're inverses of
     // each other.
-    if ((it + 1) != orderedXformOps.rend()) {
+    if ((it + 1) != orderedXformOps.rend())
+    {
       const UsdGeomXformOp &nextXformOp = *(it + 1);
-      if (_AreInverseXformOps(xformOp, nextXformOp)) {
+      if (_AreInverseXformOps(xformOp, nextXformOp))
+      {
         ++it;
         continue;
       }
@@ -782,16 +843,19 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
 
     GfMatrix4d opTransform = xformOp.GetOpTransform(time);
     // Avoid multiplying by the identity matrix when possible.
-    if (opTransform != *_IDENTITY) {
+    if (opTransform != *_IDENTITY)
+    {
       xform *= opTransform;
     }
   }
 
-  if (transform) {
+  if (transform)
+  {
     *transform = xform;
     return true;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("'transform' pointer is NULL.");
   }
 

@@ -72,7 +72,8 @@ WABI_NAMESPACE_BEGIN
  *   gprim.GetMyTokenValuedAttr().Set(UsdTokens->apiSchemas);
  * @endcode
  */
-struct UsdTokensType {
+struct UsdTokensType
+{
 
   USD_API
   UsdTokensType();

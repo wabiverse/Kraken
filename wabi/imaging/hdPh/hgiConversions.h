@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Converts from Hd types to Hgi types
 ///
-class HdPhHgiConversions {
+class HdPhHgiConversions
+{
  public:
   HDPH_API
   static HgiFormat GetHgiFormat(HdFormat hdFormat);

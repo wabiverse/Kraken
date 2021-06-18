@@ -54,8 +54,10 @@ bool ArchGetAddressInfo(void *address,
 #if defined(_GNU_SOURCE) || defined(ARCH_OS_DARWIN)
 
   Dl_info info;
-  if (dladdr(address, &info)) {
-    if (objectPath) {
+  if (dladdr(address, &info))
+  {
+    if (objectPath)
+    {
       // The object filename may be a relative path if, for instance,
       // the given address comes from an executable that was invoked
       // with a relative path, or from a shared library that was
@@ -66,13 +68,16 @@ bool ArchGetAddressInfo(void *address,
       // changed after the source object was loaded.
       *objectPath = ArchAbsPath(info.dli_fname);
     }
-    if (baseAddress) {
+    if (baseAddress)
+    {
       *baseAddress = info.dli_fbase;
     }
-    if (symbolName) {
+    if (symbolName)
+    {
       *symbolName = info.dli_sname ? info.dli_sname : "";
     }
-    if (symbolAddress) {
+    if (symbolAddress)
+    {
       *symbolAddress = info.dli_saddr;
     }
     return true;
@@ -81,7 +86,8 @@ bool ArchGetAddressInfo(void *address,
 
 #elif defined(ARCH_OS_WINDOWS)
 
-  if (!address) {
+  if (!address)
+  {
     return false;
   }
 
@@ -89,18 +95,22 @@ bool ArchGetAddressInfo(void *address,
   if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                              GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                            reinterpret_cast<LPCSTR>(address),
-                           &module)) {
+                           &module))
+  {
     return false;
   }
 
-  if (objectPath) {
+  if (objectPath)
+  {
     char modName[MAX_PATH] = {0};
-    if (GetModuleFileName(module, modName, MAX_PATH)) {
+    if (GetModuleFileName(module, modName, MAX_PATH))
+    {
       objectPath->assign(modName);
     }
   }
 
-  if (baseAddress || symbolName || symbolAddress) {
+  if (baseAddress || symbolName || symbolAddress)
+  {
     DWORD displacement;
     HANDLE process = GetCurrentProcess();
     SymInitialize(process, NULL, TRUE);
@@ -118,23 +128,28 @@ bool ArchGetAddressInfo(void *address,
 
     DWORD64 dwAddress = (DWORD64)address;
     SymFromAddr(process, dwAddress, NULL, symbol);
-    if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line)) {
+    if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line))
+    {
       return false;
     }
 
-    if (baseAddress) {
+    if (baseAddress)
+    {
       MODULEINFO moduleInfo = {0};
-      if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo))) {
+      if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
+      {
         return false;
       }
       *baseAddress = moduleInfo.lpBaseOfDll;
     }
 
-    if (symbolName) {
+    if (symbolName)
+    {
       *symbolName = symbol->Name ? symbol->Name : "";
     }
 
-    if (symbolAddress) {
+    if (symbolAddress)
+    {
       *symbolAddress = (void *)symbol->Address;
     }
   }

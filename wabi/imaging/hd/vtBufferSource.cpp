@@ -52,7 +52,8 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   // It would be better for this kind of concern to be handled closer
   // to the specific backend.
   // Array and componented bools are not currently supported.
-  if (_value.IsHolding<bool>()) {
+  if (_value.IsHolding<bool>())
+  {
     int intValue = _value.UncheckedGet<bool>() ? 1 : 0;
     _value = VtValue(intValue);
     // Intentionally leave _tupleType as HdTypeBool; see comment above.
@@ -61,7 +62,8 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   // For the common case of a default value that is an empty
   // VtArray<T>, interpret it as one T per element rather than
   // a zero-sized tuple.
-  if (_value.IsArrayValued() && _value.GetArraySize() == 0) {
+  if (_value.IsArrayValued() && _value.GetArraySize() == 0)
+  {
     _tupleType.count = 1;
     _numElements = 0;
     return;
@@ -77,17 +79,21 @@ void HdVtBufferSource::_SetValue(const VtValue &v, int arraySize)
   _tupleType.count = arraySize;
 }
 
-HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtValue const &value, int arraySize) : _name(name)
+HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtValue const &value, int arraySize)
+  : _name(name)
 {
   _SetValue(value, arraySize);
 }
 
-HdVtBufferSource::HdVtBufferSource(TfToken const &name, GfMatrix4d const &matrix) : _name(name)
+HdVtBufferSource::HdVtBufferSource(TfToken const &name, GfMatrix4d const &matrix)
+  : _name(name)
 {
-  if (GetDefaultMatrixType() == HdTypeDoubleMat4) {
+  if (GetDefaultMatrixType() == HdTypeDoubleMat4)
+  {
     _SetValue(VtValue(matrix), 1);
   }
-  else {
+  else
+  {
     GfMatrix4f fmatrix(matrix[0][0],
                        matrix[0][1],
                        matrix[0][2],
@@ -111,12 +117,15 @@ HdVtBufferSource::HdVtBufferSource(TfToken const &name, GfMatrix4d const &matrix
 HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtArray<GfMatrix4d> const &matrices, int arraySize)
   : _name(name)
 {
-  if (GetDefaultMatrixType() == HdTypeDoubleMat4) {
+  if (GetDefaultMatrixType() == HdTypeDoubleMat4)
+  {
     _SetValue(VtValue(matrices), arraySize);
   }
-  else {
+  else
+  {
     VtArray<GfMatrix4f> fmatrices(matrices.size());
-    for (size_t i = 0; i < matrices.size(); ++i) {
+    for (size_t i = 0; i < matrices.size(); ++i)
+    {
       GfMatrix4d const &matrix = matrices[i];
       GfMatrix4f fmatrix(matrix[0][0],
                          matrix[0][1],
@@ -145,7 +154,8 @@ HdVtBufferSource::~HdVtBufferSource()
 
 void HdVtBufferSource::Truncate(size_t numElements)
 {
-  if (numElements > _numElements) {
+  if (numElements > _numElements)
+  {
     TF_CODING_ERROR("Buffer '%s', cannot truncate from length %zu to length %zu",
                     _name.GetText(),
                     _numElements,

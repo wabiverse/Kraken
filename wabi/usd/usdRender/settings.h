@@ -66,7 +66,8 @@ class SdfAssetPath;
 /// that should result, and the UsdGeomImageable purposes that should
 /// be rendered.  \ref UsdRenderHowSettingsAffectRendering
 ///
-class UsdRenderSettings : public UsdRenderSettingsBase {
+class UsdRenderSettings : public UsdRenderSettingsBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -82,13 +83,15 @@ class UsdRenderSettings : public UsdRenderSettingsBase {
   /// Equivalent to UsdRenderSettings::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderSettings(const UsdPrim &prim = UsdPrim()) : UsdRenderSettingsBase(prim)
+  explicit UsdRenderSettings(const UsdPrim &prim = UsdPrim())
+    : UsdRenderSettingsBase(prim)
   {}
 
   /// Construct a UsdRenderSettings on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderSettings(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderSettings(const UsdSchemaBase &schemaObj) : UsdRenderSettingsBase(schemaObj)
+  explicit UsdRenderSettings(const UsdSchemaBase &schemaObj)
+    : UsdRenderSettingsBase(schemaObj)
   {}
 
   /// Destructor.

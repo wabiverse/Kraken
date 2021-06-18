@@ -36,7 +36,7 @@ void WM_draw_update(const cContext &C)
   Main cmain = CTX_data_main(C);
   wmWindowManager wm = CTX_wm_manager(C);
 
-  TF_FOR_ALL(win, wm->windows)
+  TF_FOR_ALL (win, wm->windows)
   {
     WM_window_swap_buffers(win->second);
   }

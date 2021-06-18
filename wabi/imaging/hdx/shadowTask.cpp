@@ -65,7 +65,8 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   GLF_GROUP_FUNCTION();
 
   HdRenderIndex &renderIndex = delegate->GetRenderIndex();
-  if (!renderIndex.IsSprimTypeSupported(HdPrimTypeTokens->simpleLight)) {
+  if (!renderIndex.IsSprimTypeSupported(HdPrimTypeTokens->simpleLight))
+  {
     // Clean to prevent repeated calling.
     *dirtyBits = HdChangeTracker::Clean;
     return;
@@ -73,7 +74,8 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
 
   // Extract the lighting context information from the task context
   GlfSimpleLightingContextRefPtr lightingContext;
-  if (!_GetTaskContextData(ctx, HdxTokens->lightingContext, &lightingContext)) {
+  if (!_GetTaskContextData(ctx, HdxTokens->lightingContext, &lightingContext))
+  {
     return;
   }
 
@@ -82,14 +84,17 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
 
   // Extract the new shadow task params from scene delegate
   const bool dirtyParams = (*dirtyBits) & HdChangeTracker::DirtyParams;
-  if (dirtyParams) {
-    if (!_GetTaskParams(delegate, &_params)) {
+  if (dirtyParams)
+  {
+    if (!_GetTaskParams(delegate, &_params))
+    {
       return;
     }
   }
 
   // Update render tags from scene delegate
-  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags)
+  {
     _renderTags = _GetTaskRenderTags(delegate);
   }
 
@@ -107,9 +112,11 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   // Mostly we can populate the renderpasses from shadow info, but the lights
   // contain the shadow collection; so we need to loop through the lights
   // assigning collections to their shadows.
-  for (size_t lightId = 0; lightId < glfLights.size(); ++lightId) {
+  for (size_t lightId = 0; lightId < glfLights.size(); ++lightId)
+  {
 
-    if (!glfLights[lightId].HasShadow()) {
+    if (!glfLights[lightId].HasShadow())
+    {
       continue;
     }
 
@@ -140,42 +147,51 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
     // to invalidate fewer passes if the collections match already.
     // SetRprimCollection checks for identity changes on the collection
     // and no-ops in that case.
-    for (int shadowId = shadowStart; shadowId <= shadowEnd; ++shadowId) {
+    for (int shadowId = shadowStart; shadowId <= shadowEnd; ++shadowId)
+    {
       // Remember, we have two render passes (one for each collection)
       // per shadow map. First the "defaultMaterialTag" passes.
-      if (_passes[shadowId]) {
+      if (_passes[shadowId])
+      {
         _passes[shadowId]->SetRprimCollection(newColDefault);
       }
-      else {
+      else
+      {
         _passes[shadowId] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColDefault);
       }
 
       // Then the "masked" materialTag passes
-      if (_passes[shadowId + numShadowMaps]) {
+      if (_passes[shadowId + numShadowMaps])
+      {
         _passes[shadowId + numShadowMaps]->SetRprimCollection(newColMasked);
       }
-      else {
+      else
+      {
         _passes[shadowId + numShadowMaps] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColMasked);
       }
     }
   }
 
   // Shrink down to fit to conserve resources
-  if (_renderPassStates.size() > _passes.size()) {
+  if (_renderPassStates.size() > _passes.size())
+  {
     _renderPassStates.resize(_passes.size());
   }
 
   // Ensure all passes have the right params set.
-  if (dirtyParams) {
-    TF_FOR_ALL(it, _renderPassStates)
+  if (dirtyParams)
+  {
+    TF_FOR_ALL (it, _renderPassStates)
     {
       _UpdateDirtyParams(*it, _params);
     }
   }
 
   // Add new states if the number of passes has grown
-  if (_renderPassStates.size() < _passes.size()) {
-    for (size_t passId = _renderPassStates.size(); passId < _passes.size(); passId++) {
+  if (_renderPassStates.size() < _passes.size())
+  {
+    for (size_t passId = _renderPassStates.size(); passId < _passes.size(); passId++)
+    {
       HdPhRenderPassShaderSharedPtr renderPassShadowShader = std::make_shared<HdPhRenderPassShader>(
         HdxPackageRenderPassShadowShader());
       HdPhRenderPassStateSharedPtr renderPassState = std::make_shared<HdPhRenderPassState>(
@@ -203,11 +219,13 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
     }
   }
 
-  for (size_t passId = 0; passId < _passes.size(); passId++) {
+  for (size_t passId = 0; passId < _passes.size(); passId++)
+  {
 
     // Make sure each pass got created. Light shadow indices are supposed
     // to be compact (see simpleLightTask.cpp).
-    if (!TF_VERIFY(_passes[passId])) {
+    if (!TF_VERIFY(_passes[passId]))
+    {
       continue;
     }
 
@@ -234,7 +252,8 @@ void HdxShadowTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
   HdResourceRegistrySharedPtr resourceRegistry = renderIndex->GetResourceRegistry();
 
-  for (size_t passId = 0; passId < _passes.size(); passId++) {
+  for (size_t passId = 0; passId < _passes.size(); passId++)
+  {
     _renderPassStates[passId]->Prepare(resourceRegistry);
     _passes[passId]->Prepare(GetRenderTags());
   }
@@ -248,30 +267,35 @@ void HdxShadowTask::Execute(HdTaskContext *ctx)
 
   // Extract the lighting context information from the task context
   GlfSimpleLightingContextRefPtr lightingContext;
-  if (!_GetTaskContextData(ctx, HdxTokens->lightingContext, &lightingContext)) {
+  if (!_GetTaskContextData(ctx, HdxTokens->lightingContext, &lightingContext))
+  {
     return;
   }
 
   // Generate the actual shadow maps
   GlfSimpleShadowArrayRefPtr const shadows = lightingContext->GetShadows();
   size_t numShadowMaps = shadows->GetNumShadowMapPasses();
-  for (size_t shadowId = 0; shadowId < numShadowMaps; shadowId++) {
+  for (size_t shadowId = 0; shadowId < numShadowMaps; shadowId++)
+  {
 
     // Make sure each pass got created. Light shadow indices are supposed
     // to be compact (see simpleLightTask.cpp).
-    if (!TF_VERIFY(_passes[shadowId]) || !TF_VERIFY(_passes[shadowId + numShadowMaps])) {
+    if (!TF_VERIFY(_passes[shadowId]) || !TF_VERIFY(_passes[shadowId + numShadowMaps]))
+    {
       continue;
     }
 
     // Bind the framebuffer that will store shadowId shadow map
     shadows->BeginCapture(shadowId, true);
 
-    if (_HasDrawItems(_passes[shadowId])) {
+    if (_HasDrawItems(_passes[shadowId]))
+    {
       // Render the actual geometry in the "defaultMaterialTag" collection
       _passes[shadowId]->Execute(_renderPassStates[shadowId], GetRenderTags());
     }
 
-    if (_HasDrawItems(_passes[shadowId + numShadowMaps])) {
+    if (_HasDrawItems(_passes[shadowId + numShadowMaps]))
+    {
       // Render the actual geometry in the "masked" materialTag collection
       _passes[shadowId + numShadowMaps]->Execute(_renderPassStates[shadowId + numShadowMaps],
                                                  GetRenderTags());
@@ -294,7 +318,8 @@ void HdxShadowTask::_UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassS
   renderPassState->SetWireframeColor(params.wireframeColor);
   renderPassState->SetCullStyle(HdInvertCullStyle(params.cullStyle));
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get())) {
+  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get()))
+  {
     extendedState->SetUseSceneMaterials(params.enableSceneMaterials);
   }
 }

@@ -140,7 +140,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 /// and assets in the scene.   A session layer, if present, contributes to a
 /// UsdStage's identity, for purposes of stage-caching, etc.
 ///
-class UsdStage : public TfRefBase, public TfWeakBase {
+class UsdStage : public TfRefBase, public TfWeakBase
+{
  public:
   // --------------------------------------------------------------------- //
   /// \anchor Usd_lifetimeManagement
@@ -152,7 +153,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   ///
   /// Specifies the initial set of prims to load when opening a UsdStage.
   ///
-  enum InitialLoadSet {
+  enum InitialLoadSet
+  {
     LoadAll,  ///< Load all loadable prims
     LoadNone  ///< Load no loadable prims
   };
@@ -1159,7 +1161,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   /// than the requested type
   ///
   /// \sa \ref Usd_OM_Metadata
-  template<class T> bool GetMetadata(const TfToken &key, T *value) const;
+  template<class T>
+  bool GetMetadata(const TfToken &key, T *value) const;
   /// \overload
   USD_API
   bool GetMetadata(const TfToken &key, VtValue *value) const;
@@ -1192,7 +1195,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   /// Generates a coding error if \p key is not allowed as layer metadata.
   ///
   /// \sa \ref Usd_OM_Metadata
-  template<typename T> bool SetMetadata(const TfToken &key, const T &value) const;
+  template<typename T>
+  bool SetMetadata(const TfToken &key, const T &value) const;
   /// \overload
   USD_API
   bool SetMetadata(const TfToken &key, const VtValue &value) const;
@@ -1223,7 +1227,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   ///
   /// The \p keyPath is a ':'-separated path addressing an element
   /// in subdictionaries.  If \p keyPath is empty, returns an empty VtValue.
-  template<typename T> bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
+  template<typename T>
+  bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const;
   /// overload
   USD_API
   bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, VtValue *value) const;
@@ -1564,7 +1569,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
            InitialLoadSet load);
 
   // Helper for Open() overloads -- searches and publishes to bound caches.
-  template<class... Args> static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &...args);
+  template<class... Args>
+  static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &...args);
 
   // Releases resources used by this stage.
   void _Close();
@@ -1590,7 +1596,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
 
   SdfPropertySpecHandle _GetSchemaPropertySpec(const UsdProperty &prop) const;
 
-  template<class PropType> SdfHandle<PropType> _GetSchemaPropertySpec(const UsdProperty &prop) const;
+  template<class PropType>
+  SdfHandle<PropType> _GetSchemaPropertySpec(const UsdProperty &prop) const;
 
   SdfAttributeSpecHandle _GetSchemaAttributeSpec(const UsdAttribute &attr) const;
 
@@ -1598,7 +1605,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
 
   SdfPrimSpecHandle _CreatePrimSpecForEditing(const UsdPrim &prim);
 
-  template<class PropType> SdfHandle<PropType> _CreatePropertySpecForEditing(const UsdProperty &prop);
+  template<class PropType>
+  SdfHandle<PropType> _CreatePropertySpecForEditing(const UsdProperty &prop);
 
   SdfPropertySpecHandle _CreatePropertySpecForEditing(const UsdProperty &prop);
 
@@ -1630,7 +1638,9 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   // Trait that allows us to call the correct versions of _SetValue and
   // _SetMetadata for types whose values need to be mapped when written to
   // different edit targets.
-  template<class T> struct _IsEditTargetMappable {
+  template<class T>
+  struct _IsEditTargetMappable
+  {
     static const bool value = std::is_same<T, SdfTimeCode>::value ||
                               std::is_same<T, VtArray<SdfTimeCode>>::value ||
                               std::is_same<T, SdfTimeSampleMap>::value ||
@@ -1656,7 +1666,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   template<class T>
   bool _SetEditTargetMappedValue(UsdTimeCode time, const UsdAttribute &attr, const T &newValue);
 
-  template<class T> bool _SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T &value);
+  template<class T>
+  bool _SetValueImpl(UsdTimeCode time, const UsdAttribute &attr, const T &value);
 
   bool _ClearValue(UsdTimeCode time, const UsdAttribute &attr);
 
@@ -1816,8 +1827,10 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   // Helper to apply Pcp changes and recompose the scenegraph accordingly,
   // given an optional initial set of paths to recompose.
   void _Recompose(const PcpChanges &changes);
-  template<class T> void _Recompose(const PcpChanges &changes, T *pathsToRecompose);
-  template<class T> void _RecomposePrims(T *pathsToRecompose);
+  template<class T>
+  void _Recompose(const PcpChanges &changes, T *pathsToRecompose);
+  template<class T>
+  void _RecomposePrims(T *pathsToRecompose);
 
   // Helper for _Recompose to find the subtrees that need to be
   // fully recomposed and to recompose the name children of the
@@ -1892,7 +1905,9 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   // types that require type specific value resolution as opposed to just
   // strongest opinion. These types also use type specific resolution
   // in _GetValue.
-  template<class T> struct _HasTypeSpecificResolution {
+  template<class T>
+  struct _HasTypeSpecificResolution
+  {
     static const bool value = std::is_same<T, SdfAssetPath>::value ||
                               std::is_same<T, VtArray<SdfAssetPath>>::value ||
                               std::is_same<T, SdfTimeCode>::value ||
@@ -2003,7 +2018,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
                        UsdResolveInfo *resolveInfo,
                        const UsdTimeCode *time = nullptr) const;
 
-  template<class T> struct _ExtraResolveInfo;
+  template<class T>
+  struct _ExtraResolveInfo;
 
   template<class T>
   void _GetResolveInfo(const UsdAttribute &attr,
@@ -2011,7 +2027,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
                        const UsdTimeCode *time = nullptr,
                        _ExtraResolveInfo<T> *extraInfo = nullptr) const;
 
-  template<class T> struct _ResolveInfoResolver;
+  template<class T>
+  struct _ResolveInfoResolver;
   struct _PropertyStackResolver;
 
   template<class Resolver>
@@ -2021,7 +2038,8 @@ class UsdStage : public TfRefBase, public TfWeakBase {
 
   bool _GetValue(UsdTimeCode time, const UsdAttribute &attr, VtValue *result) const;
 
-  template<class T> bool _GetValue(UsdTimeCode time, const UsdAttribute &attr, T *result) const;
+  template<class T>
+  bool _GetValue(UsdTimeCode time, const UsdAttribute &attr, T *result) const;
 
   template<class T>
   bool _GetValueImpl(UsdTimeCode time,
@@ -2165,9 +2183,11 @@ class UsdStage : public TfRefBase, public TfWeakBase {
   friend class Usd_PcpCacheAccess;
   friend class Usd_PrimData;
   friend class Usd_StageOpenRequest;
-  template<class T> friend struct Usd_AttrGetValueHelper;
+  template<class T>
+  friend struct Usd_AttrGetValueHelper;
   friend struct Usd_AttrGetUntypedValueHelper;
-  template<class RefsOrPayloadsEditorType, class RefsOrPayloadsProxyType> friend struct Usd_ListEditImpl;
+  template<class RefsOrPayloadsEditorType, class RefsOrPayloadsProxyType>
+  friend struct Usd_ListEditImpl;
 };
 
 // UsdObject's typed metadata query relies on this specialization being
@@ -2180,18 +2200,22 @@ USD_API bool UsdStage::_GetTypeSpecificResolvedMetadata(const UsdObject &obj,
                                                         bool useFallbacks,
                                                         SdfTimeSampleMap *result) const;
 
-template<typename T> bool UsdStage::GetMetadata(const TfToken &key, T *value) const
+template<typename T>
+bool UsdStage::GetMetadata(const TfToken &key, T *value) const
 {
   VtValue result;
-  if (!GetMetadata(key, &result)) {
+  if (!GetMetadata(key, &result))
+  {
     return false;
   }
 
-  if (result.IsHolding<T>()) {
+  if (result.IsHolding<T>())
+  {
     *value = result.UncheckedGet<T>();
     return true;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR(
       "Requested type %s for stage metadatum %s does not"
       " match retrieved type %s",
@@ -2202,7 +2226,8 @@ template<typename T> bool UsdStage::GetMetadata(const TfToken &key, T *value) co
   }
 }
 
-template<typename T> bool UsdStage::SetMetadata(const TfToken &key, const T &value) const
+template<typename T>
+bool UsdStage::SetMetadata(const TfToken &key, const T &value) const
 {
   VtValue in(value);
   return SetMetadata(key, in);
@@ -2212,15 +2237,18 @@ template<typename T>
 bool UsdStage::GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
 {
   VtValue result;
-  if (!GetMetadataByDictKey(key, keyPath, &result)) {
+  if (!GetMetadataByDictKey(key, keyPath, &result))
+  {
     return false;
   }
 
-  if (result.IsHolding<T>()) {
+  if (result.IsHolding<T>())
+  {
     *value = result.UncheckedGet<T>();
     return true;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR(
       "Requested type %s for stage metadatum %s[%s] does not"
       " match retrieved type %s",

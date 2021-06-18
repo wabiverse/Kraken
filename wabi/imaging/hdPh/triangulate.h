@@ -53,7 +53,8 @@ class HdPh_MeshTopology;
 // ... |   m0   |   m1   | ...   primitive param buffer (coarse face index)
 // ----+--------+--------+------
 
-class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource {
+class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource
+{
  public:
   HdPh_TriangleIndexBuilderComputation(HdPh_MeshTopology *topology, SdfPath const &id);
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
@@ -78,7 +79,8 @@ class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource {
 ///
 /// CPU face-varying triangulation.
 ///
-class HdPh_TriangulateFaceVaryingComputation : public HdComputedBufferSource {
+class HdPh_TriangulateFaceVaryingComputation : public HdComputedBufferSource
+{
  public:
   HdPh_TriangulateFaceVaryingComputation(HdPh_MeshTopology *topolgoy,
                                          HdBufferSourceSharedPtr const &source,

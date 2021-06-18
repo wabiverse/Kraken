@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahObject : public TfRefBase, public TfWeakBase {
+struct CovahObject : public TfRefBase, public TfWeakBase
+{
 
   CovahObject()
   {}

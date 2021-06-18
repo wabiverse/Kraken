@@ -58,12 +58,14 @@ HgiMetalSampler::HgiMetalSampler(HgiMetal *hgi, HgiSamplerDesc const &desc)
 
 HgiMetalSampler::~HgiMetalSampler()
 {
-  if (_label) {
+  if (_label)
+  {
     [_label release];
     _label = nil;
   }
 
-  if (_samplerId != nil) {
+  if (_samplerId != nil)
+  {
     [_samplerId release];
     _samplerId = nil;
   }

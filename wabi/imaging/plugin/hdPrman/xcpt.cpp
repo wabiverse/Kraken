@@ -29,7 +29,8 @@ WABI_NAMESPACE_BEGIN
 
 void HdPrman_Xcpt::HandleXcpt(int /*code*/, int severity, const char *msg)
 {
-  switch (severity) {
+  switch (severity)
+  {
     case RIE_INFO:
       TF_STATUS("%s", msg);
       break;

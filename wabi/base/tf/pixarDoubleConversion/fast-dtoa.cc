@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 // The minimal and maximal target exponent define the range of w's binary
 // exponent, where 'w' is the result of multiplying the input by a cached power
@@ -150,7 +151,8 @@ static bool RoundWeed(Vector<char> buffer,
   while (rest < small_distance &&                // Negated condition 1
          unsafe_interval - rest >= ten_kappa &&  // Negated condition 2
          (rest + ten_kappa < small_distance ||   // buffer{-1} > w_high
-          small_distance - rest >= rest + ten_kappa - small_distance)) {
+          small_distance - rest >= rest + ten_kappa - small_distance))
+  {
     buffer[length - 1]--;
     rest += ten_kappa;
   }
@@ -159,7 +161,8 @@ static bool RoundWeed(Vector<char> buffer,
   // would require changing the buffer. If yes, then we have two possible
   // representations close to w, but we cannot decide which one is closer.
   if (rest < big_distance && unsafe_interval - rest >= ten_kappa &&
-      (rest + ten_kappa < big_distance || big_distance - rest > rest + ten_kappa - big_distance)) {
+      (rest + ten_kappa < big_distance || big_distance - rest > rest + ten_kappa - big_distance))
+  {
     return false;
   }
 
@@ -205,14 +208,17 @@ static bool RoundWeedCounted(Vector<char> buffer,
   if (ten_kappa - unit <= unit)
     return false;
   // If 2 * (rest + unit) <= 10^kappa we can safely round down.
-  if ((ten_kappa - rest > rest) && (ten_kappa - 2 * rest >= 2 * unit)) {
+  if ((ten_kappa - rest > rest) && (ten_kappa - 2 * rest >= 2 * unit))
+  {
     return true;
   }
   // If 2 * (rest - unit) >= 10^kappa, then we can safely round up.
-  if ((rest > unit) && (ten_kappa - (rest - unit) <= (rest - unit))) {
+  if ((rest > unit) && (ten_kappa - (rest - unit) <= (rest - unit)))
+  {
     // Increment the last digit recursively until we find a non '9' digit.
     buffer[length - 1]++;
-    for (int i = length - 1; i > 0; --i) {
+    for (int i = length - 1; i > 0; --i)
+    {
       if (buffer[i] != '0' + 10)
         break;
       buffer[i] = '0';
@@ -222,7 +228,8 @@ static bool RoundWeedCounted(Vector<char> buffer,
     // exception of the first digit all digits are now '0'. Simply switch the
     // first digit to '1' and adjust the kappa. Example: "99" becomes "10" and
     // the power (the kappa) is increased.
-    if (buffer[0] == '0' + 10) {
+    if (buffer[0] == '0' + 10)
+    {
       buffer[0] = '1';
       (*kappa) += 1;
     }
@@ -254,7 +261,8 @@ static void BiggestPowerTen(uint32_t number, int number_bits, uint32_t *power, i
   // Note: kPowersOf10[i] == 10^(i-1).
   exponent_plus_one_guess++;
   // We don't have any guarantees that 2^number_bits <= number.
-  if (number < kSmallPowersOfTen[exponent_plus_one_guess]) {
+  if (number < kSmallPowersOfTen[exponent_plus_one_guess])
+  {
     exponent_plus_one_guess--;
   }
   *power = kSmallPowersOfTen[exponent_plus_one_guess];
@@ -346,7 +354,8 @@ static bool DigitGen(DiyFp low, DiyFp w, DiyFp high, Vector<char> buffer, int *l
   // The invariant holds for the first iteration: kappa has been initialized
   // with the divisor exponent + 1. And the divisor is the biggest power of ten
   // that is smaller than integrals.
-  while (*kappa > 0) {
+  while (*kappa > 0)
+  {
     int digit = integrals / divisor;
     ASSERT(digit <= 9);
     buffer[*length] = static_cast<char>('0' + digit);
@@ -358,7 +367,8 @@ static bool DigitGen(DiyFp low, DiyFp w, DiyFp high, Vector<char> buffer, int *l
     uint64_t rest = (static_cast<uint64_t>(integrals) << -one.e()) + fractionals;
     // Invariant: too_high = buffer * 10^kappa + DiyFp(rest, one.e())
     // Reminder: unsafe_interval.e() == one.e()
-    if (rest < unsafe_interval.f()) {
+    if (rest < unsafe_interval.f())
+    {
       // Rounding down (by not emitting the remaining digits) yields a number
       // that lies within the unsafe interval.
       return RoundWeed(buffer,
@@ -381,7 +391,8 @@ static bool DigitGen(DiyFp low, DiyFp w, DiyFp high, Vector<char> buffer, int *l
   ASSERT(one.e() >= -60);
   ASSERT(fractionals < one.f());
   ASSERT(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10 >= one.f());
-  for (;;) {
+  for (;;)
+  {
     fractionals *= 10;
     unit *= 10;
     unsafe_interval.set_f(unsafe_interval.f() * 10);
@@ -392,7 +403,8 @@ static bool DigitGen(DiyFp low, DiyFp w, DiyFp high, Vector<char> buffer, int *l
     (*length)++;
     fractionals &= one.f() - 1;  // Modulo by one.
     (*kappa)--;
-    if (fractionals < unsafe_interval.f()) {
+    if (fractionals < unsafe_interval.f())
+    {
       return RoundWeed(buffer,
                        *length,
                        DiyFp::Minus(too_high, w).f() * unit,
@@ -459,7 +471,8 @@ static bool DigitGenCounted(DiyFp w, int requested_digits, Vector<char> buffer, 
   // The invariant holds for the first iteration: kappa has been initialized
   // with the divisor exponent + 1. And the divisor is the biggest power of ten
   // that is smaller than 'integrals'.
-  while (*kappa > 0) {
+  while (*kappa > 0)
+  {
     int digit = integrals / divisor;
     ASSERT(digit <= 9);
     buffer[*length] = static_cast<char>('0' + digit);
@@ -474,7 +487,8 @@ static bool DigitGenCounted(DiyFp w, int requested_digits, Vector<char> buffer, 
     divisor /= 10;
   }
 
-  if (requested_digits == 0) {
+  if (requested_digits == 0)
+  {
     uint64_t rest = (static_cast<uint64_t>(integrals) << -one.e()) + fractionals;
     return RoundWeedCounted(
       buffer, *length, rest, static_cast<uint64_t>(divisor) << -one.e(), w_error, kappa);
@@ -489,7 +503,8 @@ static bool DigitGenCounted(DiyFp w, int requested_digits, Vector<char> buffer, 
   ASSERT(one.e() >= -60);
   ASSERT(fractionals < one.f());
   ASSERT(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10 >= one.f());
-  while (requested_digits > 0 && fractionals > w_error) {
+  while (requested_digits > 0 && fractionals > w_error)
+  {
     fractionals *= 10;
     w_error *= 10;
     // Integer division by one.
@@ -525,10 +540,12 @@ static bool Grisu3(double v, FastDtoaMode mode, Vector<char> buffer, int *length
   // boundary_minus and boundary_plus will round to v when convert to a double.
   // Grisu3 will never output representations that lie exactly on a boundary.
   DiyFp boundary_minus, boundary_plus;
-  if (mode == FAST_DTOA_SHORTEST) {
+  if (mode == FAST_DTOA_SHORTEST)
+  {
     Double(v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
   }
-  else {
+  else
+  {
     ASSERT(mode == FAST_DTOA_SHORTEST_SINGLE);
     float single_v = static_cast<float>(v);
     Single(single_v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
@@ -627,7 +644,8 @@ bool FastDtoa(double v,
 
   bool result = false;
   int decimal_exponent = 0;
-  switch (mode) {
+  switch (mode)
+  {
     case FAST_DTOA_SHORTEST:
     case FAST_DTOA_SHORTEST_SINGLE:
       result = Grisu3(v, mode, buffer, length, &decimal_exponent);
@@ -638,7 +656,8 @@ bool FastDtoa(double v,
     default:
       UNREACHABLE();
   }
-  if (result) {
+  if (result)
+  {
     *decimal_point = *length + decimal_exponent;
     buffer[*length] = '\0';
   }

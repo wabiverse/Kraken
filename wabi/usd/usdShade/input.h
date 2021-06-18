@@ -45,7 +45,8 @@ class UsdShadeOutput;
 /// This class encapsulates a shader or node-graph input, which is a
 /// connectable attribute representing a typed value.
 ///
-class UsdShadeInput {
+class UsdShadeInput
+{
  public:
   /// Default constructor returns an invalid Input.  Exists for the sake of
   /// container classes
@@ -82,7 +83,8 @@ class UsdShadeInput {
   }
 
   /// Convenience wrapper for the templated UsdAttribute::Get().
-  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return GetAttr().Get(value, time);
   }
@@ -99,13 +101,15 @@ class UsdShadeInput {
   /// \overload
   /// Set a value of the Input at \p time.
   ///
-  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return _attr.Set(value, time);
   }
 
   /// Hash functor.
-  struct Hash {
+  struct Hash
+  {
     inline size_t operator()(const UsdShadeInput &input) const
     {
       return hash_value(input._attr);

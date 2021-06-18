@@ -29,7 +29,8 @@
 
 WABI_NAMESPACE_USING
 
-ANCHOR_DisplayManager::ANCHOR_DisplayManager(void) : m_settingsInitialized(false)
+ANCHOR_DisplayManager::ANCHOR_DisplayManager(void)
+  : m_settingsInitialized(false)
 {}
 
 ANCHOR_DisplayManager::~ANCHOR_DisplayManager(void)
@@ -38,11 +39,13 @@ ANCHOR_DisplayManager::~ANCHOR_DisplayManager(void)
 eAnchorStatus ANCHOR_DisplayManager::initialize(void)
 {
   eAnchorStatus success;
-  if (!m_settingsInitialized) {
+  if (!m_settingsInitialized)
+  {
     success = initializeSettings();
     m_settingsInitialized = true;
   }
-  else {
+  else
+  {
     success = ANCHOR_SUCCESS;
   }
   return success;
@@ -62,11 +65,14 @@ eAnchorStatus ANCHOR_DisplayManager::getNumDisplaySettings(AnchorU8 display, Anc
   ANCHOR_ASSERT(m_settingsInitialized);
   AnchorU8 numDisplays;
   success = getNumDisplays(numDisplays);
-  if (success == ANCHOR_SUCCESS) {
-    if (display < numDisplays) {
+  if (success == ANCHOR_SUCCESS)
+  {
+    if (display < numDisplays)
+    {
       numSettings = m_settings[display].size();
     }
-    else {
+    else
+    {
       success = ANCHOR_ERROR;
     }
   }
@@ -82,11 +88,14 @@ eAnchorStatus ANCHOR_DisplayManager::getDisplaySetting(AnchorU8 display,
   ANCHOR_ASSERT(m_settingsInitialized);
   AnchorU8 numDisplays;
   success = getNumDisplays(numDisplays);
-  if (success == ANCHOR_SUCCESS) {
-    if (display < numDisplays && ((AnchorU8)index < m_settings[display].size())) {
+  if (success == ANCHOR_SUCCESS)
+  {
+    if (display < numDisplays && ((AnchorU8)index < m_settings[display].size()))
+    {
       setting = m_settings[display][index];
     }
-    else {
+    else
+    {
       success = ANCHOR_ERROR;
     }
   }
@@ -120,7 +129,8 @@ eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
 
   /**
    * Look at all the display modes. */
-  for (int i = 0; (i < (int)m_settings[display].size()); i++) {
+  for (int i = 0; (i < (int)m_settings[display].size()); i++)
+  {
     // Store the capabilities of the display device
     capabilities[0] = m_settings[display][i].xPixels;
     capabilities[1] = m_settings[display][i].yPixels;
@@ -130,12 +140,14 @@ eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
     /**
      * Match against all the fields of the display settings. */
     score = 0;
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 4; j++)
+    {
       field = capabilities[j] - criteria[j];
       score += field * field;
     }
 
-    if (score < best) {
+    if (score < best)
+    {
       found = i;
       best = score;
     }
@@ -156,21 +168,26 @@ eAnchorStatus ANCHOR_DisplayManager::initializeSettings(void)
 {
   AnchorU8 numDisplays;
   eAnchorStatus success = getNumDisplays(numDisplays);
-  if (success == ANCHOR_SUCCESS) {
-    for (AnchorU8 display = 0; (display < numDisplays) && (success == ANCHOR_SUCCESS); display++) {
+  if (success == ANCHOR_SUCCESS)
+  {
+    for (AnchorU8 display = 0; (display < numDisplays) && (success == ANCHOR_SUCCESS); display++)
+    {
       ANCHOR_DisplaySettings displaySettings;
       m_settings.push_back(displaySettings);
       AnchorS32 numSettings;
       success = getNumDisplaySettings(display, numSettings);
-      if (success == ANCHOR_SUCCESS) {
+      if (success == ANCHOR_SUCCESS)
+      {
         AnchorS32 index;
         ANCHOR_DisplaySetting setting;
-        for (index = 0; (index < numSettings) && (success == ANCHOR_SUCCESS); index++) {
+        for (index = 0; (index < numSettings) && (success == ANCHOR_SUCCESS); index++)
+        {
           success = getDisplaySetting(display, index, setting);
           m_settings[display].push_back(setting);
         }
       }
-      else {
+      else
+      {
         break;
       }
     }

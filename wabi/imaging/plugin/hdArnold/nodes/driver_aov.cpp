@@ -20,31 +20,39 @@ WABI_NAMESPACE_BEGIN
 
 AI_DRIVER_NODE_EXPORT_METHODS(HdArnoldDriverAOVMtd);
 
-namespace {
+namespace
+{
 const char *supportedExtensions[] = {nullptr};
 
-struct DriverData {
+struct DriverData
+{
   HdArnoldRenderBuffer *renderBuffer;
 };
 
 HdFormat _GetFormatFromArnoldType(const int arnoldType)
 {
-  if (arnoldType == AI_TYPE_RGBA) {
+  if (arnoldType == AI_TYPE_RGBA)
+  {
     return HdFormatFloat32Vec4;
   }
-  else if (arnoldType == AI_TYPE_RGB || arnoldType == AI_TYPE_VECTOR) {
+  else if (arnoldType == AI_TYPE_RGB || arnoldType == AI_TYPE_VECTOR)
+  {
     return HdFormatFloat32Vec3;
   }
-  else if (arnoldType == AI_TYPE_VECTOR2) {
+  else if (arnoldType == AI_TYPE_VECTOR2)
+  {
     return HdFormatFloat32Vec2;
   }
-  else if (arnoldType == AI_TYPE_FLOAT) {
+  else if (arnoldType == AI_TYPE_FLOAT)
+  {
     return HdFormatFloat32;
   }
-  else if (arnoldType == AI_TYPE_INT) {
+  else if (arnoldType == AI_TYPE_INT)
+  {
     return HdFormatInt32;
   }
-  else {
+  else
+  {
     return HdFormatUNorm8;
   }
 }
@@ -99,8 +107,10 @@ driver_process_bucket
   const char *outputName = nullptr;
   int pixelType = AI_TYPE_RGBA;
   const void *bucketData = nullptr;
-  while (AiOutputIteratorGetNext(iterator, &outputName, &pixelType, &bucketData)) {
-    if (Ai_likely(driverData->renderBuffer != nullptr)) {
+  while (AiOutputIteratorGetNext(iterator, &outputName, &pixelType, &bucketData))
+  {
+    if (Ai_likely(driverData->renderBuffer != nullptr))
+    {
       driverData->renderBuffer->WriteBucket(
         bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, _GetFormatFromArnoldType(pixelType), bucketData);
     }

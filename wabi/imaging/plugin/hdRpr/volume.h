@@ -21,7 +21,8 @@ WABI_NAMESPACE_BEGIN
 
 struct HdRprApiVolume;
 
-class HdRprVolume : public HdVolume {
+class HdRprVolume : public HdVolume
+{
  public:
   HdRprVolume(SdfPath const &id);
   ~HdRprVolume() override = default;

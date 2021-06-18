@@ -27,7 +27,8 @@ RAPIDJSON_NAMESPACE_BEGIN
 //! Combination of PrettyWriter format flags.
 /*! \see PrettyWriter::SetFormatOptions
  */
-enum PrettyFormatOptions {
+enum PrettyFormatOptions
+{
   kFormatDefault = 0,         //!< Default pretty formatting.
   kFormatSingleLineArray = 1  //!< Format arrays on a single line.
 };
@@ -45,7 +46,8 @@ template<typename OutputStream,
          typename StackAllocator = CrtAllocator,
          unsigned writeFlags = kWriteDefaultFlags>
 class PrettyWriter
-  : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags> {
+  : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags>
+{
  public:
   typedef Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator> Base;
   typedef typename Base::Ch Ch;
@@ -173,7 +175,8 @@ class PrettyWriter
     RAPIDJSON_ASSERT(!Base::level_stack_.template Top<typename Base::Level>()->inArray);
     bool empty = Base::level_stack_.template Pop<typename Base::Level>(1)->valueCount == 0;
 
-    if (!empty) {
+    if (!empty)
+    {
       Base::os_->Put('\n');
       WriteIndent();
     }
@@ -199,7 +202,8 @@ class PrettyWriter
     RAPIDJSON_ASSERT(Base::level_stack_.template Top<typename Base::Level>()->inArray);
     bool empty = Base::level_stack_.template Pop<typename Base::Level>(1)->valueCount == 0;
 
-    if (!empty && !(formatOptions_ & kFormatSingleLineArray)) {
+    if (!empty && !(formatOptions_ & kFormatSingleLineArray))
+    {
       Base::os_->Put('\n');
       WriteIndent();
     }
@@ -246,28 +250,36 @@ class PrettyWriter
   void PrettyPrefix(Type type)
   {
     (void)type;
-    if (Base::level_stack_.GetSize() != 0) {  // this value is not at root
+    if (Base::level_stack_.GetSize() != 0)
+    {  // this value is not at root
       typename Base::Level *level = Base::level_stack_.template Top<typename Base::Level>();
 
-      if (level->inArray) {
-        if (level->valueCount > 0) {
+      if (level->inArray)
+      {
+        if (level->valueCount > 0)
+        {
           Base::os_->Put(',');  // add comma if it is not the first element in array
           if (formatOptions_ & kFormatSingleLineArray)
             Base::os_->Put(' ');
         }
 
-        if (!(formatOptions_ & kFormatSingleLineArray)) {
+        if (!(formatOptions_ & kFormatSingleLineArray))
+        {
           Base::os_->Put('\n');
           WriteIndent();
         }
       }
-      else {  // in object
-        if (level->valueCount > 0) {
-          if (level->valueCount % 2 == 0) {
+      else
+      {  // in object
+        if (level->valueCount > 0)
+        {
+          if (level->valueCount % 2 == 0)
+          {
             Base::os_->Put(',');
             Base::os_->Put('\n');
           }
-          else {
+          else
+          {
             Base::os_->Put(':');
             Base::os_->Put(' ');
           }
@@ -282,7 +294,8 @@ class PrettyWriter
         RAPIDJSON_ASSERT(type == kStringType);  // if it's in object, then even number should be a name
       level->valueCount++;
     }
-    else {
+    else
+    {
       RAPIDJSON_ASSERT(!Base::hasRoot_);  // Should only has one and only one root.
       Base::hasRoot_ = true;
     }

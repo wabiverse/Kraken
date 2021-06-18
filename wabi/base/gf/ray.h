@@ -65,7 +65,8 @@ class GfRange3d;
 /// Note for ray intersections, the start point is included in the computations,
 /// i.e., a distance of zero is defined to be intersecting.
 ///
-class GfRay {
+class GfRay
+{
 
  public:
   /// The default constructor leaves the ray parameters undefined.

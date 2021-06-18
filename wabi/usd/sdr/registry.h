@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// The shading-specialized version of `NdrRegistry`.
 ///
-class SdrRegistry : public NdrRegistry {
+class SdrRegistry : public NdrRegistry
+{
  public:
   /// Get the single `SdrRegistry` instance.
   SDR_API

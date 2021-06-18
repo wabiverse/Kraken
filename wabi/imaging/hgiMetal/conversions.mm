@@ -171,7 +171,8 @@ static_assert(_CompileTimeValidateHgiVertexFormatTable(),
 //
 // HgiCullMode
 //
-struct {
+struct
+{
   HgiCullMode hgiCullMode;
   MTLCullMode metalCullMode;
 } static const _CullModeTable[] = {
@@ -187,7 +188,8 @@ static_assert(TfArraySize(_CullModeTable) == HgiCullModeCount,
 //
 // HgiPolygonMode
 //
-struct {
+struct
+{
   HgiPolygonMode hgiFillMode;
   MTLTriangleFillMode metalFillMode;
 } static const _PolygonModeTable[] = {
@@ -202,7 +204,8 @@ static_assert(TfArraySize(_PolygonModeTable) == HgiPolygonModeCount,
 //
 // HgiBlendOp
 //
-struct {
+struct
+{
   HgiBlendOp hgiBlendOp;
   MTLBlendOperation metalBlendOp;
 } static const _blendEquationTable[] = {
@@ -219,7 +222,8 @@ static_assert(TfArraySize(_blendEquationTable) == HgiBlendOpCount,
 //
 // HgiBlendFactor
 //
-struct {
+struct
+{
   HgiBlendFactor hgiBlendFactor;
   MTLBlendFactor metalBlendFactor;
 } static const _blendFactorTable[] = {
@@ -250,7 +254,8 @@ static_assert(TfArraySize(_blendFactorTable) == HgiBlendFactorCount,
 //
 // HgiWinding
 //
-struct {
+struct
+{
   HgiWinding hgiWinding;
   MTLWinding metalWinding;
 } static const _windingTable[] = {
@@ -264,7 +269,8 @@ static_assert(TfArraySize(_windingTable) == HgiWindingCount,
 //
 // HgiAttachmentLoadOp
 //
-struct {
+struct
+{
   HgiAttachmentLoadOp hgiAttachmentLoadOp;
   MTLLoadAction metalLoadOp;
 } static const _attachmentLoadOpTable[] = {
@@ -279,7 +285,8 @@ static_assert(TfArraySize(_attachmentLoadOpTable) == HgiAttachmentLoadOpCount,
 //
 // HgiAttachmentStoreOp
 //
-struct {
+struct
+{
   HgiAttachmentStoreOp hgiAttachmentStoreOp;
   MTLStoreAction metalStoreOp;
 } static const _attachmentStoreOpTable[] = {
@@ -293,7 +300,8 @@ static_assert(TfArraySize(_attachmentStoreOpTable) == HgiAttachmentStoreOpCount,
 //
 // HgiCompareFunction
 //
-struct {
+struct
+{
   HgiCompareFunction hgiCompareFunction;
   MTLCompareFunction metalCF;
 } static const _compareFnTable[] = {
@@ -310,7 +318,8 @@ struct {
 static_assert(TfArraySize(_compareFnTable) == HgiCompareFunctionCount,
               "_compareFnTable array out of sync with HgiFormat enum");
 
-struct {
+struct
+{
   HgiTextureType hgiTextureType;
   MTLTextureType metalTT;
 } static const _textureTypeTable[HgiTextureTypeCount] = {
@@ -324,7 +333,8 @@ struct {
 static_assert(TfArraySize(_compareFnTable) == HgiCompareFunctionCount,
               "_compareFnTable array out of sync with HgiFormat enum");
 
-struct {
+struct
+{
   HgiSamplerAddressMode hgiAddressMode;
   MTLSamplerAddressMode metalAM;
 } static const _samplerAddressModeTable[HgiSamplerAddressModeCount] = {
@@ -334,14 +344,16 @@ struct {
   {HgiSamplerAddressModeMirrorRepeat, MTLSamplerAddressModeMirrorRepeat},
   {HgiSamplerAddressModeClampToBorderColor, MTLSamplerAddressModeClampToBorderColor}};
 
-struct {
+struct
+{
   HgiSamplerFilter hgiSamplerFilter;
   MTLSamplerMinMagFilter metalSF;
 } static const _samplerFilterTable[HgiSamplerFilterCount] = {
   {HgiSamplerFilterNearest, MTLSamplerMinMagFilterNearest},
   {HgiSamplerFilterLinear, MTLSamplerMinMagFilterLinear}};
 
-struct {
+struct
+{
   HgiMipFilter hgiMipFilter;
   MTLSamplerMipFilter metalMF;
 } static const _mipFilterTable[HgiMipFilterCount] = {
@@ -351,7 +363,8 @@ struct {
 
 #if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15) || \
   __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-struct {
+struct
+{
   HgiComponentSwizzle hgiComponentSwizzle;
   MTLTextureSwizzle metalCS;
 } static const _componentSwizzleTable[HgiComponentSwizzleCount] = {
@@ -363,7 +376,8 @@ struct {
   {HgiComponentSwizzleA, MTLTextureSwizzleAlpha}};
 #endif
 
-struct {
+struct
+{
   HgiPrimitiveType hgiPrimitiveType;
   MTLPrimitiveTopologyClass metalTC;
 } static const _primitiveClassTable[HgiPrimitiveTypeCount] = {
@@ -373,7 +387,8 @@ struct {
   {HgiPrimitiveTypeTriangleList, MTLPrimitiveTopologyClassTriangle},
   {HgiPrimitiveTypePatchList, MTLPrimitiveTopologyClassUnspecified}};
 
-struct {
+struct
+{
   HgiPrimitiveType hgiPrimitiveType;
   MTLPrimitiveType metalPT;
 } static const _primitiveTypeTable[HgiPrimitiveTypeCount] = {
@@ -385,17 +400,20 @@ struct {
 
 MTLPixelFormat HgiMetalConversions::GetPixelFormat(HgiFormat inFormat)
 {
-  if (inFormat == HgiFormatInvalid) {
+  if (inFormat == HgiFormatInvalid)
+  {
     return MTLPixelFormatInvalid;
   }
 
-  if ((inFormat < 0) || (inFormat >= HgiFormatCount)) {
+  if ((inFormat < 0) || (inFormat >= HgiFormatCount))
+  {
     TF_CODING_ERROR("Unexpected HgiFormat %d", inFormat);
     return MTLPixelFormatRGBA8Unorm;
   }
 
   MTLPixelFormat outFormat = _PIXEL_FORMAT_DESC[inFormat];
-  if (outFormat == MTLPixelFormatInvalid) {
+  if (outFormat == MTLPixelFormatInvalid)
+  {
     TF_CODING_ERROR("Unsupported HgiFormat %d", inFormat);
     return MTLPixelFormatRGBA8Unorm;
   }
@@ -404,13 +422,15 @@ MTLPixelFormat HgiMetalConversions::GetPixelFormat(HgiFormat inFormat)
 
 MTLVertexFormat HgiMetalConversions::GetVertexFormat(HgiFormat inFormat)
 {
-  if ((inFormat < 0) || (inFormat >= HgiFormatCount)) {
+  if ((inFormat < 0) || (inFormat >= HgiFormatCount))
+  {
     TF_CODING_ERROR("Unexpected HgiFormat %d", inFormat);
     return MTLVertexFormatFloat4;
   }
 
   MTLVertexFormat outFormat = _VERTEX_FORMAT_DESC[inFormat];
-  if (outFormat == MTLVertexFormatInvalid) {
+  if (outFormat == MTLVertexFormatInvalid)
+  {
     TF_CODING_ERROR("Unsupported HgiFormat %d", inFormat);
     return MTLVertexFormatFloat4;
   }
@@ -492,7 +512,8 @@ MTLPrimitiveTopologyClass HgiMetalConversions::GetPrimitiveClass(HgiPrimitiveTyp
 
 MTLPrimitiveType HgiMetalConversions::GetPrimitiveType(HgiPrimitiveType pt)
 {
-  if (pt == HgiPrimitiveTypePatchList) {
+  if (pt == HgiPrimitiveTypePatchList)
+  {
     TF_CODING_ERROR("Patch primitives invalid for Metal");
   }
   return _primitiveTypeTable[pt].metalPT;

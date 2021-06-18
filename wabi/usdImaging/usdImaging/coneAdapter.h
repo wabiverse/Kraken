@@ -38,11 +38,13 @@ class UsdGeomCone;
 ///
 /// Delegate support for UsdGeomCone.
 ///
-class UsdImagingConeAdapter : public UsdImagingGprimAdapter {
+class UsdImagingConeAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingConeAdapter() : UsdImagingGprimAdapter()
+  UsdImagingConeAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   virtual ~UsdImagingConeAdapter();

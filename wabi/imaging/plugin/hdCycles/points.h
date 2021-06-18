@@ -30,7 +30,8 @@
 #include <wabi/imaging/hd/points.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Object;
 class Mesh;
 class Scene;
@@ -47,7 +48,8 @@ class HdCyclesRenderDelegate;
  * @brief HdCycles Points Rprim mapped to Cycles point cloud or mesh instances
  *
  */
-class HdCyclesPoints final : public HdPoints {
+class HdCyclesPoints final : public HdPoints
+{
  public:
   /**
    * @brief Construct a new HdCycles Point object

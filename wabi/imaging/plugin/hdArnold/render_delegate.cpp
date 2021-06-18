@@ -82,24 +82,30 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 );
 // clang-format on
 
-namespace {
+namespace
+{
 
 VtValue _GetNodeParamValue(AtNode *node, const AtParamEntry *pentry)
 {
-  if (Ai_unlikely(pentry == nullptr)) {
+  if (Ai_unlikely(pentry == nullptr))
+  {
     return {};
   }
   const auto ptype = AiParamGetType(pentry);
-  if (ptype == AI_TYPE_INT) {
+  if (ptype == AI_TYPE_INT)
+  {
     return VtValue(AiNodeGetInt(node, AiParamGetName(pentry)));
   }
-  else if (ptype == AI_TYPE_FLOAT) {
+  else if (ptype == AI_TYPE_FLOAT)
+  {
     return VtValue(AiNodeGetFlt(node, AiParamGetName(pentry)));
   }
-  else if (ptype == AI_TYPE_BOOLEAN) {
+  else if (ptype == AI_TYPE_BOOLEAN)
+  {
     return VtValue(AiNodeGetBool(node, AiParamGetName(pentry)));
   }
-  else if (ptype == AI_TYPE_STRING || ptype == AI_TYPE_ENUM) {
+  else if (ptype == AI_TYPE_STRING || ptype == AI_TYPE_ENUM)
+  {
     return VtValue(std::string(AiNodeGetStr(node, AiParamGetName(pentry))));
   }
   return {};
@@ -108,60 +114,77 @@ VtValue _GetNodeParamValue(AtNode *node, const AtParamEntry *pentry)
 void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
 {
   // Some applications might send integers instead of booleans.
-  if (value.IsHolding<int>()) {
+  if (value.IsHolding<int>())
+  {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
     auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr) {
+    if (paramEntry != nullptr)
+    {
       const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT) {
+      if (paramType == AI_TYPE_INT)
+      {
         AiNodeSetInt(node, AtString(key.GetText()), value.UncheckedGet<int>());
       }
-      else if (paramType == AI_TYPE_BOOLEAN) {
+      else if (paramType == AI_TYPE_BOOLEAN)
+      {
         AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<int>() != 0);
       }
     }
     // Or longs.
   }
-  else if (value.IsHolding<long>()) {
+  else if (value.IsHolding<long>())
+  {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
     auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr) {
+    if (paramEntry != nullptr)
+    {
       const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT) {
+      if (paramType == AI_TYPE_INT)
+      {
         AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long>()));
       }
-      else if (paramType == AI_TYPE_BOOLEAN) {
+      else if (paramType == AI_TYPE_BOOLEAN)
+      {
         AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long>() != 0);
       }
     }
     // Or long longs.
   }
-  else if (value.IsHolding<long long>()) {
+  else if (value.IsHolding<long long>())
+  {
     const auto *nodeEntry = AiNodeGetNodeEntry(node);
     auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr) {
+    if (paramEntry != nullptr)
+    {
       const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT) {
+      if (paramType == AI_TYPE_INT)
+      {
         AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long long>()));
       }
-      else if (paramType == AI_TYPE_BOOLEAN) {
+      else if (paramType == AI_TYPE_BOOLEAN)
+      {
         AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long long>() != 0);
       }
     }
   }
-  else if (value.IsHolding<float>()) {
+  else if (value.IsHolding<float>())
+  {
     AiNodeSetFlt(node, AtString(key.GetText()), value.UncheckedGet<float>());
   }
-  else if (value.IsHolding<double>()) {
+  else if (value.IsHolding<double>())
+  {
     AiNodeSetFlt(node, AtString(key.GetText()), static_cast<float>(value.UncheckedGet<double>()));
   }
-  else if (value.IsHolding<bool>()) {
+  else if (value.IsHolding<bool>())
+  {
     AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<bool>());
   }
-  else if (value.IsHolding<std::string>()) {
+  else if (value.IsHolding<std::string>())
+  {
     AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<std::string>().c_str()));
   }
-  else if (value.IsHolding<TfToken>()) {
+  else if (value.IsHolding<TfToken>())
+  {
     AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<TfToken>().GetText()));
   }
 }
@@ -187,9 +210,11 @@ inline const TfTokenVector &_SupportedBprimTypes()
   return r;
 }
 
-struct SupportedRenderSetting {
+struct SupportedRenderSetting
+{
   /// Constructor with no default value.
-  SupportedRenderSetting(const char *_label) : label(_label)
+  SupportedRenderSetting(const char *_label)
+    : label(_label)
   {}
 
   /// Constructor with a default value.
@@ -269,22 +294,27 @@ const SupportedRenderSettings &_GetSupportedRenderSettings()
 
 int _GetLogFlagsFromVerbosity(int verbosity)
 {
-  if (verbosity <= 0) {
+  if (verbosity <= 0)
+  {
     return 0;
   }
-  if (verbosity >= 5) {
+  if (verbosity >= 5)
+  {
     return AI_LOG_ALL & ~AI_LOG_COLOR;
   }
 
   int flags = AI_LOG_ERRORS | AI_LOG_TIMESTAMP | AI_LOG_MEMORY | AI_LOG_BACKTRACE;
 
-  if (verbosity >= 2) {
+  if (verbosity >= 2)
+  {
     flags |= AI_LOG_WARNINGS;
-    if (verbosity >= 3) {
+    if (verbosity >= 3)
+    {
       // Don't want progress without info, as otherwise it never prints a
       // "render done" message!
       flags |= AI_LOG_INFO | AI_LOG_PROGRESS;
-      if (verbosity >= 4) {
+      if (verbosity >= 4)
+      {
         flags |= AI_LOG_STATS | AI_LOG_PLUGINS;
       }
     }
@@ -296,49 +326,63 @@ int _GetLogVerbosityFromFlags(int flags)
 {
   // This isn't an exact mapping, as verbosity can't emcompass all possible
   // flag combinations... so we just check for certain flags, and assume
-  if (flags == 0) {
+  if (flags == 0)
+  {
     return 0;
   };
-  if (flags & AI_LOG_DEBUG) {
+  if (flags & AI_LOG_DEBUG)
+  {
     return 5;
   }
-  if (flags & (AI_LOG_STATS | AI_LOG_PLUGINS)) {
+  if (flags & (AI_LOG_STATS | AI_LOG_PLUGINS))
+  {
     return 4;
   }
-  if (flags & (AI_LOG_INFO | AI_LOG_PROGRESS)) {
+  if (flags & (AI_LOG_INFO | AI_LOG_PROGRESS))
+  {
     return 3;
   }
-  if (flags & (AI_LOG_WARNINGS)) {
+  if (flags & (AI_LOG_WARNINGS))
+  {
     return 2;
   }
   return 1;
 }
 
-template<typename F> void _CheckForBoolValue(const VtValue &value, F &&f)
+template<typename F>
+void _CheckForBoolValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<bool>()) {
+  if (value.IsHolding<bool>())
+  {
     f(value.UncheckedGet<bool>());
   }
-  else if (value.IsHolding<int>()) {
+  else if (value.IsHolding<int>())
+  {
     f(value.UncheckedGet<int>() != 0);
   }
-  else if (value.IsHolding<long>()) {
+  else if (value.IsHolding<long>())
+  {
     f(value.UncheckedGet<long>() != 0);
   }
-  else if (value.IsHolding<long long>()) {
+  else if (value.IsHolding<long long>())
+  {
     f(value.UncheckedGet<long long>() != 0);
   }
 }
 
-template<typename F> void _CheckForIntValue(const VtValue &value, F &&f)
+template<typename F>
+void _CheckForIntValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<int>()) {
+  if (value.IsHolding<int>())
+  {
     f(value.UncheckedGet<int>());
   }
-  else if (value.IsHolding<long>()) {
+  else if (value.IsHolding<long>())
+  {
     f(static_cast<int>(value.UncheckedGet<long>()));
   }
-  else if (value.IsHolding<long long>()) {
+  else if (value.IsHolding<long long>())
+  {
     f(static_cast<int>(value.UncheckedGet<long long>()));
   }
 }
@@ -356,11 +400,13 @@ std::mutex HdArnoldRenderDelegate::_mutexResourceRegistry;
 std::atomic_int HdArnoldRenderDelegate::_counterResourceRegistry;
 HdResourceRegistrySharedPtr HdArnoldRenderDelegate::_resourceRegistry;
 
-HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : _context(context)
+HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context)
+  : _context(context)
 {
   _lightLinkingChanged.store(false, std::memory_order_release);
   _id = SdfPath(TfToken(TfStringPrintf("/HdArnoldRenderDelegate_%p", this)));
-  if (AiUniverseIsActive()) {
+  if (AiUniverseIsActive())
+  {
     TF_CODING_ERROR("There is already an active Arnold universe!");
   }
   // TODO(pal): We need to investigate if it's safe to set session to AI_SESSION_BATCH when
@@ -369,14 +415,17 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
   //  changes?
 
   const auto &config = HdArnoldConfig::GetInstance();
-  if (config.log_flags_console >= 0) {
+  if (config.log_flags_console >= 0)
+  {
     _ignoreVerbosityLogFlags = true;
     AiMsgSetConsoleFlags(config.log_flags_console);
   }
-  else {
+  else
+  {
     AiMsgSetConsoleFlags(_verbosityLogFlags);
   }
-  if (config.log_flags_file >= 0) {
+  if (config.log_flags_file >= 0)
+  {
     AiMsgSetLogFileFlags(config.log_flags_file);
   }
 
@@ -386,7 +435,8 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
                           HdPrimTypeTokens->points,
                           HdPrimTypeTokens->basisCurves};
   auto *shapeIter = AiUniverseGetNodeEntryIterator(AI_NODE_SHAPE);
-  while (!AiNodeEntryIteratorFinished(shapeIter)) {
+  while (!AiNodeEntryIteratorFinished(shapeIter))
+  {
     const auto *nodeEntry = AiNodeEntryIteratorGetNext(shapeIter);
     TfToken rprimType{ArnoldUsdMakeCamelCase(TfStringPrintf("Arnold_%s", AiNodeEntryGetName(nodeEntry)))};
     _supportedRprimTypes.push_back(rprimType);
@@ -394,10 +444,12 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
 
     NativeRprimParamList paramList;
     auto *paramIter = AiNodeEntryGetParamIterator(nodeEntry);
-    while (!AiParamIteratorFinished(paramIter)) {
+    while (!AiParamIteratorFinished(paramIter))
+    {
       const auto *param = AiParamIteratorGetNext(paramIter);
       const auto paramName = AiParamGetName(param);
-      if (ArnoldUsdIgnoreParameter(paramName)) {
+      if (ArnoldUsdIgnoreParameter(paramName))
+      {
         continue;
       }
 #if WABI_VERSION >= 2011
@@ -412,7 +464,8 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
   }
   AiRenderSetHintStr(str::render_context, _context == HdArnoldRenderContext::Hydra ? str::hydra : str::husk);
   std::lock_guard<std::mutex> guard(_mutexResourceRegistry);
-  if (_counterResourceRegistry.fetch_add(1) == 0) {
+  if (_counterResourceRegistry.fetch_add(1) == 0)
+  {
     _resourceRegistry.reset(new HdResourceRegistry());
   }
 
@@ -421,7 +474,8 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
   _universe = nullptr;
 
   _options = AiUniverseGetOptions(_universe);
-  for (const auto &o : _GetSupportedRenderSettings()) {
+  for (const auto &o : _GetSupportedRenderSettings())
+  {
     _SetRenderSetting(o.first, o.second.defaultValue);
   }
 
@@ -446,11 +500,13 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
   _renderParam.reset(new HdArnoldRenderParam());
 
   // We need access to both beauty and P at the same time.
-  if (_context == HdArnoldRenderContext::Husk) {
+  if (_context == HdArnoldRenderContext::Husk)
+  {
     AiRenderSetHintBool(str::progressive, false);
     AiNodeSetBool(_options, str::enable_progressive_render, false);
   }
-  else {
+  else
+  {
     AiRenderSetHintBool(str::progressive_show_all_outputs, true);
   }
 }
@@ -458,7 +514,8 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context) : 
 HdArnoldRenderDelegate::~HdArnoldRenderDelegate()
 {
   std::lock_guard<std::mutex> guard(_mutexResourceRegistry);
-  if (_counterResourceRegistry.fetch_sub(1) == 1) {
+  if (_counterResourceRegistry.fetch_sub(1) == 1)
+  {
     _resourceRegistry.reset();
   }
   _renderParam->Interrupt();
@@ -493,7 +550,8 @@ const TfTokenVector &HdArnoldRenderDelegate::GetSupportedBprimTypes() const
 void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValue &_value)
 {
   // Special setting that describes custom output, like deep AOVs.
-  if (_key == _tokens->delegateRenderProducts) {
+  if (_key == _tokens->delegateRenderProducts)
+  {
     _ParseDelegateRenderProducts(_value);
     return;
   }
@@ -505,74 +563,98 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
   auto value = _value.IsHolding<double>() ? VtValue(static_cast<float>(_value.UncheckedGet<double>())) :
                                             _value;
   // Certain applications might pass boolean values via ints or longs.
-  if (key == str::t_enable_gpu_rendering) {
+  if (key == str::t_enable_gpu_rendering)
+  {
     _CheckForBoolValue(value, [&](const bool b) {
       AiNodeSetStr(_options, str::render_device, b ? str::GPU : str::CPU);
       AiDeviceAutoSelect();
     });
   }
-  else if (key == str::t_log_verbosity) {
-    if (value.IsHolding<int>()) {
+  else if (key == str::t_log_verbosity)
+  {
+    if (value.IsHolding<int>())
+    {
       _verbosityLogFlags = _GetLogFlagsFromVerbosity(value.UncheckedGet<int>());
-      if (!_ignoreVerbosityLogFlags) {
+      if (!_ignoreVerbosityLogFlags)
+      {
         AiMsgSetConsoleFlags(_verbosityLogFlags);
       }
     }
   }
-  else if (key == str::t_log_file) {
-    if (value.IsHolding<std::string>()) {
+  else if (key == str::t_log_file)
+  {
+    if (value.IsHolding<std::string>())
+    {
       _logFile = value.UncheckedGet<std::string>();
       AiMsgSetLogFileName(_logFile.c_str());
     }
   }
-  else if (key == str::t_enable_progressive_render) {
-    if (_context != HdArnoldRenderContext::Husk) {
+  else if (key == str::t_enable_progressive_render)
+  {
+    if (_context != HdArnoldRenderContext::Husk)
+    {
       _CheckForBoolValue(value, [&](const bool b) {
         AiRenderSetHintBool(str::progressive, b);
         AiNodeSetBool(_options, str::enable_progressive_render, b);
       });
     }
   }
-  else if (key == str::t_progressive_min_AA_samples) {
-    if (_context != HdArnoldRenderContext::Husk) {
+  else if (key == str::t_progressive_min_AA_samples)
+  {
+    if (_context != HdArnoldRenderContext::Husk)
+    {
       _CheckForIntValue(value, [&](const int i) { AiRenderSetHintInt(str::progressive_min_AA_samples, i); });
     }
   }
-  else if (key == str::t_interactive_target_fps) {
-    if (_context != HdArnoldRenderContext::Husk) {
-      if (value.IsHolding<float>()) {
+  else if (key == str::t_interactive_target_fps)
+  {
+    if (_context != HdArnoldRenderContext::Husk)
+    {
+      if (value.IsHolding<float>())
+      {
         AiRenderSetHintFlt(str::interactive_target_fps, value.UncheckedGet<float>());
       }
     }
   }
-  else if (key == str::t_interactive_target_fps_min) {
-    if (_context != HdArnoldRenderContext::Husk) {
-      if (value.IsHolding<float>()) {
+  else if (key == str::t_interactive_target_fps_min)
+  {
+    if (_context != HdArnoldRenderContext::Husk)
+    {
+      if (value.IsHolding<float>())
+      {
         AiRenderSetHintFlt(str::interactive_target_fps_min, value.UncheckedGet<float>());
       }
     }
   }
-  else if (key == str::t_interactive_fps_min) {
-    if (_context != HdArnoldRenderContext::Husk) {
-      if (value.IsHolding<float>()) {
+  else if (key == str::t_interactive_fps_min)
+  {
+    if (_context != HdArnoldRenderContext::Husk)
+    {
+      if (value.IsHolding<float>())
+      {
         AiRenderSetHintFlt(str::interactive_fps_min, value.UncheckedGet<float>());
       }
     }
   }
-  else if (key == str::t_profile_file) {
-    if (value.IsHolding<std::string>()) {
+  else if (key == str::t_profile_file)
+  {
+    if (value.IsHolding<std::string>())
+    {
       AiProfileSetFileName(value.UncheckedGet<std::string>().c_str());
     }
   }
-  else if (key == _tokens->instantaneousShutter) {
+  else if (key == _tokens->instantaneousShutter)
+  {
     _CheckForBoolValue(value, [&](const bool b) { AiNodeSetBool(_options, str::ignore_motion_blur, b); });
   }
-  else {
+  else
+  {
     auto *optionsEntry = AiNodeGetNodeEntry(_options);
     // Sometimes the Render Delegate receives parameters that don't exist
     // on the options node. For example, if the host application ignores the
     // render setting descriptor list.
-    if (AiNodeEntryLookUpParameter(optionsEntry, AtString(key.GetText())) != nullptr) {
+    if (AiNodeEntryLookUpParameter(optionsEntry, AtString(key.GetText())) != nullptr)
+    {
       _SetNodeParam(_options, key, value);
     }
   }
@@ -585,25 +667,30 @@ void HdArnoldRenderDelegate::_ParseDelegateRenderProducts(const VtValue &value)
   // Delegate Render Products are used by husk, so we only have to parse them once.
   // We don't support cases where delegate render products are passed AFTER the first execution
   // of the render pass.
-  if (!_delegateRenderProducts.empty()) {
+  if (!_delegateRenderProducts.empty())
+  {
     return;
   }
   using DataType = VtArray<HdAovSettingsMap>;
-  if (!value.IsHolding<DataType>()) {
+  if (!value.IsHolding<DataType>())
+  {
     return;
   }
   auto products = value.UncheckedGet<DataType>();
-  for (auto &productIter : products) {
+  for (auto &productIter : products)
+  {
     HdArnoldDelegateRenderProduct product;
     const auto *productType = TfMapLookupPtr(productIter, _tokens->productType);
     // We only care about deep products for now.
     if (productType == nullptr || !productType->IsHolding<TfToken>() ||
-        productType->UncheckedGet<TfToken>() != _tokens->deep) {
+        productType->UncheckedGet<TfToken>() != _tokens->deep)
+    {
       continue;
     }
     // Ignoring cases where productName is not set.
     const auto *productName = TfMapLookupPtr(productIter, _tokens->productName);
-    if (productName == nullptr || !productName->IsHolding<TfToken>()) {
+    if (productName == nullptr || !productName->IsHolding<TfToken>())
+    {
       continue;
     }
     product.productName = productName->UncheckedGet<TfToken>();
@@ -611,64 +698,82 @@ void HdArnoldRenderDelegate::_ParseDelegateRenderProducts(const VtValue &value)
     productIter.erase(_tokens->productName);
     // Elements of the HdAovSettingsMap in the product are either a list of RenderVars or generic
     // attributes of the render product.
-    for (const auto &productElem : productIter) {
+    for (const auto &productElem : productIter)
+    {
       // If the key is "aovDescriptor.aovSettings" then we got the list of RenderVars.
-      if (productElem.first == _tokens->orderedVars) {
-        if (!productElem.second.IsHolding<DataType>()) {
+      if (productElem.first == _tokens->orderedVars)
+      {
+        if (!productElem.second.IsHolding<DataType>())
+        {
           continue;
         }
         const auto &renderVars = productElem.second.UncheckedGet<DataType>();
-        for (const auto &renderVarIter : renderVars) {
+        for (const auto &renderVarIter : renderVars)
+        {
           HdArnoldRenderVar renderVar;
           renderVar.sourceType = _tokens->raw;
           // Each element either contains a setting, or "aovDescriptor.aovSettings" which will hold
           // extra settings for the RenderVar including metadata.
-          for (const auto &renderVarElem : renderVarIter) {
-            if (renderVarElem.first == _tokens->aovSettings) {
-              if (!renderVarElem.second.IsHolding<HdAovSettingsMap>()) {
+          for (const auto &renderVarElem : renderVarIter)
+          {
+            if (renderVarElem.first == _tokens->aovSettings)
+            {
+              if (!renderVarElem.second.IsHolding<HdAovSettingsMap>())
+              {
                 continue;
               }
               renderVar.settings = renderVarElem.second.UncheckedGet<HdAovSettingsMap>();
               // name is not coming through as a top parameter.
               const auto *aovName = TfMapLookupPtr(renderVar.settings, _tokens->aovName);
-              if (aovName != nullptr) {
-                if (aovName->IsHolding<std::string>()) {
+              if (aovName != nullptr)
+              {
+                if (aovName->IsHolding<std::string>())
+                {
                   renderVar.name = aovName->UncheckedGet<std::string>();
                 }
-                else if (aovName->IsHolding<TfToken>()) {
+                else if (aovName->IsHolding<TfToken>())
+                {
                   renderVar.name = aovName->UncheckedGet<TfToken>().GetString();
                 }
               }
             }
             else if (renderVarElem.first == _tokens->sourceName &&
-                     renderVarElem.second.IsHolding<std::string>()) {
+                     renderVarElem.second.IsHolding<std::string>())
+            {
               renderVar.sourceName = renderVarElem.second.UncheckedGet<std::string>();
             }
             else if (renderVarElem.first == _tokens->sourceType &&
-                     renderVarElem.second.IsHolding<TfToken>()) {
+                     renderVarElem.second.IsHolding<TfToken>())
+            {
               renderVar.sourceType = renderVarElem.second.UncheckedGet<TfToken>();
             }
-            else if (renderVarElem.first == _tokens->dataType && renderVarElem.second.IsHolding<TfToken>()) {
+            else if (renderVarElem.first == _tokens->dataType && renderVarElem.second.IsHolding<TfToken>())
+            {
               renderVar.dataType = renderVarElem.second.UncheckedGet<TfToken>();
             }
-            else if (renderVarElem.first == _tokens->format && renderVarElem.second.IsHolding<HdFormat>()) {
+            else if (renderVarElem.first == _tokens->format && renderVarElem.second.IsHolding<HdFormat>())
+            {
               renderVar.format = renderVarElem.second.UncheckedGet<HdFormat>();
             }
-            else if (renderVarElem.first == _tokens->clearValue) {
+            else if (renderVarElem.first == _tokens->clearValue)
+            {
               renderVar.clearValue = renderVarElem.second;
             }
             else if (renderVarElem.first == _tokens->multiSampled &&
-                     renderVarElem.second.IsHolding<bool>()) {
+                     renderVarElem.second.IsHolding<bool>())
+            {
               renderVar.multiSampled = renderVarElem.second.UncheckedGet<bool>();
             }
           }
           // Any other cases should have good/reasonable defaults.
-          if (!renderVar.sourceName.empty() && !renderVar.name.empty()) {
+          if (!renderVar.sourceName.empty() && !renderVar.name.empty())
+          {
             product.renderVars.emplace_back(std::move(renderVar));
           }
         }
       }
-      else {
+      else
+      {
         // It's a setting describing the RenderProduct.
         product.settings.insert({productElem.first, productElem.second});
       }
@@ -688,41 +793,50 @@ VtValue HdArnoldRenderDelegate::GetRenderSetting(const TfToken &_key) const
   TfToken key;
   _RemoveArnoldGlobalPrefix(_key, key);
 
-  if (key == str::t_enable_gpu_rendering) {
+  if (key == str::t_enable_gpu_rendering)
+  {
     return VtValue(AiNodeGetStr(_options, str::render_device) == str::GPU);
   }
-  else if (key == str::t_enable_progressive_render) {
+  else if (key == str::t_enable_progressive_render)
+  {
     bool v = true;
     AiRenderGetHintBool(str::progressive, v);
     return VtValue(v);
   }
-  else if (key == str::t_progressive_min_AA_samples) {
+  else if (key == str::t_progressive_min_AA_samples)
+  {
     int v = -4;
     AiRenderGetHintInt(str::progressive_min_AA_samples, v);
     return VtValue(v);
   }
-  else if (key == str::t_log_verbosity) {
+  else if (key == str::t_log_verbosity)
+  {
     return VtValue(_GetLogVerbosityFromFlags(_verbosityLogFlags));
   }
-  else if (key == str::t_log_file) {
+  else if (key == str::t_log_file)
+  {
     return VtValue(_logFile);
   }
-  else if (key == str::t_interactive_target_fps) {
+  else if (key == str::t_interactive_target_fps)
+  {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_target_fps, v);
     return VtValue(v);
   }
-  else if (key == str::t_interactive_target_fps_min) {
+  else if (key == str::t_interactive_target_fps_min)
+  {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_target_fps_min, v);
     return VtValue(v);
   }
-  else if (key == str::t_interactive_fps_min) {
+  else if (key == str::t_interactive_fps_min)
+  {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_fps_min, v);
     return VtValue(v);
   }
-  else if (key == str::t_profile_file) {
+  else if (key == str::t_profile_file)
+  {
     return VtValue(std::string(AiProfileGetFileName().c_str()));
   }
   const auto *nentry = AiNodeGetNodeEntry(_options);
@@ -736,15 +850,18 @@ HdRenderSettingDescriptorList HdArnoldRenderDelegate::GetRenderSettingDescriptor
 {
   const auto *nentry = AiNodeGetNodeEntry(_options);
   HdRenderSettingDescriptorList ret;
-  for (const auto &it : _GetSupportedRenderSettings()) {
+  for (const auto &it : _GetSupportedRenderSettings())
+  {
     HdRenderSettingDescriptor desc;
     desc.name = it.second.label;
     desc.key = it.first;
-    if (it.second.defaultValue.IsEmpty()) {
+    if (it.second.defaultValue.IsEmpty())
+    {
       const auto *pentry = AiNodeEntryLookUpParameter(nentry, AtString(it.first.GetText()));
       desc.defaultValue = _GetNodeParamValue(_options, pentry);
     }
-    else {
+    else
+    {
       desc.defaultValue = it.second.defaultValue;
     }
     ret.emplace_back(std::move(desc));
@@ -795,20 +912,25 @@ void HdArnoldRenderDelegate::DestroyInstancer(HdInstancer *instancer)
 HdRprim *HdArnoldRenderDelegate::CreateRprim(const TfToken &typeId, const SdfPath &rprimId)
 {
   _renderParam->Interrupt();
-  if (typeId == HdPrimTypeTokens->mesh) {
+  if (typeId == HdPrimTypeTokens->mesh)
+  {
     return new HdArnoldMesh(this, rprimId);
   }
-  if (typeId == HdPrimTypeTokens->volume) {
+  if (typeId == HdPrimTypeTokens->volume)
+  {
     return new HdArnoldVolume(this, rprimId);
   }
-  if (typeId == HdPrimTypeTokens->points) {
+  if (typeId == HdPrimTypeTokens->points)
+  {
     return new HdArnoldPoints(this, rprimId);
   }
-  if (typeId == HdPrimTypeTokens->basisCurves) {
+  if (typeId == HdPrimTypeTokens->basisCurves)
+  {
     return new HdArnoldBasisCurves(this, rprimId);
   }
   auto typeIt = _nativeRprimTypes.find(typeId);
-  if (typeIt != _nativeRprimTypes.end()) {
+  if (typeIt != _nativeRprimTypes.end())
+  {
     return new HdArnoldNativeRprim(this, typeIt->second, rprimId);
   }
   TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
@@ -820,20 +942,25 @@ HdRprim *HdArnoldRenderDelegate::CreateRprim(const TfToken &typeId,
                                              const SdfPath &instancerId)
 {
   _renderParam->Interrupt();
-  if (typeId == HdPrimTypeTokens->mesh) {
+  if (typeId == HdPrimTypeTokens->mesh)
+  {
     return new HdArnoldMesh(this, rprimId, instancerId);
   }
-  if (typeId == HdPrimTypeTokens->volume) {
+  if (typeId == HdPrimTypeTokens->volume)
+  {
     return new HdArnoldVolume(this, rprimId, instancerId);
   }
-  if (typeId == HdPrimTypeTokens->points) {
+  if (typeId == HdPrimTypeTokens->points)
+  {
     return new HdArnoldPoints(this, rprimId, instancerId);
   }
-  if (typeId == HdPrimTypeTokens->basisCurves) {
+  if (typeId == HdPrimTypeTokens->basisCurves)
+  {
     return new HdArnoldBasisCurves(this, rprimId, instancerId);
   }
   auto typeIt = _nativeRprimTypes.find(typeId);
-  if (typeIt != _nativeRprimTypes.end()) {
+  if (typeIt != _nativeRprimTypes.end())
+  {
     return new HdArnoldNativeRprim(this, typeIt->second, rprimId, instancerId);
   }
   TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
@@ -850,34 +977,44 @@ void HdArnoldRenderDelegate::DestroyRprim(HdRprim *rPrim)
 HdSprim *HdArnoldRenderDelegate::CreateSprim(const TfToken &typeId, const SdfPath &sprimId)
 {
   _renderParam->Interrupt();
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdArnoldCamera(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->material) {
+  if (typeId == HdPrimTypeTokens->material)
+  {
     return new HdArnoldMaterial(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->sphereLight) {
+  if (typeId == HdPrimTypeTokens->sphereLight)
+  {
     return HdArnoldLight::CreatePointLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->distantLight) {
+  if (typeId == HdPrimTypeTokens->distantLight)
+  {
     return HdArnoldLight::CreateDistantLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->diskLight) {
+  if (typeId == HdPrimTypeTokens->diskLight)
+  {
     return HdArnoldLight::CreateDiskLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->rectLight) {
+  if (typeId == HdPrimTypeTokens->rectLight)
+  {
     return HdArnoldLight::CreateRectLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->cylinderLight) {
+  if (typeId == HdPrimTypeTokens->cylinderLight)
+  {
     return HdArnoldLight::CreateCylinderLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->domeLight) {
+  if (typeId == HdPrimTypeTokens->domeLight)
+  {
     return HdArnoldLight::CreateDomeLight(this, sprimId);
   }
-  if (typeId == HdPrimTypeTokens->simpleLight) {
+  if (typeId == HdPrimTypeTokens->simpleLight)
+  {
     return nullptr;
   }
-  if (typeId == HdPrimTypeTokens->extComputation) {
+  if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdExtComputation(sprimId);
   }
   TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
@@ -886,34 +1023,44 @@ HdSprim *HdArnoldRenderDelegate::CreateSprim(const TfToken &typeId, const SdfPat
 
 HdSprim *HdArnoldRenderDelegate::CreateFallbackSprim(const TfToken &typeId)
 {
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdArnoldCamera(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->material) {
+  if (typeId == HdPrimTypeTokens->material)
+  {
     return new HdArnoldMaterial(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->sphereLight) {
+  if (typeId == HdPrimTypeTokens->sphereLight)
+  {
     return HdArnoldLight::CreatePointLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->distantLight) {
+  if (typeId == HdPrimTypeTokens->distantLight)
+  {
     return HdArnoldLight::CreateDistantLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->diskLight) {
+  if (typeId == HdPrimTypeTokens->diskLight)
+  {
     return HdArnoldLight::CreateDiskLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->rectLight) {
+  if (typeId == HdPrimTypeTokens->rectLight)
+  {
     return HdArnoldLight::CreateRectLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->cylinderLight) {
+  if (typeId == HdPrimTypeTokens->cylinderLight)
+  {
     return HdArnoldLight::CreateCylinderLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->domeLight) {
+  if (typeId == HdPrimTypeTokens->domeLight)
+  {
     return HdArnoldLight::CreateDomeLight(this, SdfPath::EmptyPath());
   }
-  if (typeId == HdPrimTypeTokens->simpleLight) {
+  if (typeId == HdPrimTypeTokens->simpleLight)
+  {
     return nullptr;
   }
-  if (typeId == HdPrimTypeTokens->extComputation) {
+  if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdExtComputation(SdfPath::EmptyPath());
   }
   TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
@@ -929,10 +1076,12 @@ void HdArnoldRenderDelegate::DestroySprim(HdSprim *sPrim)
 HdBprim *HdArnoldRenderDelegate::CreateBprim(const TfToken &typeId, const SdfPath &bprimId)
 {
   // Neither of these will create Arnold nodes.
-  if (typeId == HdPrimTypeTokens->renderBuffer) {
+  if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdArnoldRenderBuffer(bprimId);
   }
-  if (typeId == _tokens->openvdbAsset) {
+  if (typeId == _tokens->openvdbAsset)
+  {
     return new HdArnoldOpenvdbAsset(this, bprimId);
   }
   TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
@@ -941,10 +1090,12 @@ HdBprim *HdArnoldRenderDelegate::CreateBprim(const TfToken &typeId, const SdfPat
 
 HdBprim *HdArnoldRenderDelegate::CreateFallbackBprim(const TfToken &typeId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer) {
+  if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdArnoldRenderBuffer(SdfPath());
   }
-  if (typeId == _tokens->openvdbAsset) {
+  if (typeId == _tokens->openvdbAsset)
+  {
     return new HdArnoldOpenvdbAsset(this, SdfPath());
   }
   TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
@@ -995,39 +1146,47 @@ AtNode *HdArnoldRenderDelegate::GetFallbackVolumeShader() const
 
 HdAovDescriptor HdArnoldRenderDelegate::GetDefaultAovDescriptor(const TfToken &name) const
 {
-  if (name == HdAovTokens->color) {
+  if (name == HdAovTokens->color)
+  {
 #if 1
     return HdAovDescriptor(HdFormatFloat32Vec4, false, VtValue(GfVec4f(0.0f)));
 #else
     return HdAovDescriptor(HdFormatUNorm8Vec4, false, VtValue(GfVec4f(0.0f, 0.0f, 0.0f, 0.0f)));
 #endif
   }
-  else if (name == HdAovTokens->depth) {
+  else if (name == HdAovTokens->depth)
+  {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
   }
-  else if (name == HdAovTokens->primId) {
+  else if (name == HdAovTokens->primId)
+  {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
   }
   else if (name == HdAovTokens->instanceId || name == HdAovTokens->elementId ||
-           name == HdAovTokens->pointId) {
+           name == HdAovTokens->pointId)
+  {
     // We are only supporting the prim id buffer for now.
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
   }
   else if (name == HdAovTokens->normal || name == HdAovTokens->Neye ||
            name == "linearDepth" ||  // This was changed to cameraDepth after 0.19.11.
-           name == "cameraDepth") {
+           name == "cameraDepth")
+  {
     // More built-in aovs.
     return HdAovDescriptor();
   }
-  else if (TfStringStartsWith(name.GetString(), HdAovTokens->primvars)) {
+  else if (TfStringStartsWith(name.GetString(), HdAovTokens->primvars))
+  {
     // Primvars.
     return HdAovDescriptor();
   }
-  else if (TfStringStartsWith(name.GetString(), HdAovTokens->lpe)) {
+  else if (TfStringStartsWith(name.GetString(), HdAovTokens->lpe))
+  {
     // LPEs
     return HdAovDescriptor();
   }
-  else {
+  else
+  {
     // Anything else. The colorize task does not display custom aovs properly for now.
     // TODO(pal): Query the available AOV types and their format from arnold.
     // return HdAovDescriptor(HdFormatFloat32Vec3, false, VtValue(GfVec3f(0.0f, 0.0f, 0.0f)));
@@ -1040,17 +1199,22 @@ void HdArnoldRenderDelegate::RegisterLightLinking(const TfToken &name, HdLight *
   std::lock_guard<std::mutex> guard(_lightLinkingMutex);
   auto &links = isShadow ? _shadowLinks : _lightLinks;
   auto it = links.find(name);
-  if (it == links.end()) {
-    if (!name.IsEmpty() || !links.empty()) {
+  if (it == links.end())
+  {
+    if (!name.IsEmpty() || !links.empty())
+    {
       _lightLinkingChanged.store(true, std::memory_order_release);
     }
     links.emplace(name, std::vector<HdLight *>{light});
   }
-  else {
-    if (std::find(it->second.begin(), it->second.end(), light) == it->second.end()) {
+  else
+  {
+    if (std::find(it->second.begin(), it->second.end(), light) == it->second.end())
+    {
       // We only trigger the change if we are registering a non-empty collection, or there are more
       // than one collections.
-      if (!name.IsEmpty() || links.size() > 1) {
+      if (!name.IsEmpty() || links.size() > 1)
+      {
         _lightLinkingChanged.store(true, std::memory_order_release);
       }
       it->second.push_back(light);
@@ -1063,14 +1227,17 @@ void HdArnoldRenderDelegate::DeregisterLightLinking(const TfToken &name, HdLight
   std::lock_guard<std::mutex> guard(_lightLinkingMutex);
   auto &links = isShadow ? _shadowLinks : _lightLinks;
   auto it = links.find(name);
-  if (it != links.end()) {
+  if (it != links.end())
+  {
     // We only trigger updates if either deregistering a named collection, or deregistering the
     // empty collection and there are other collection.
-    if (!name.IsEmpty() || links.size() > 1) {
+    if (!name.IsEmpty() || links.size() > 1)
+    {
       _lightLinkingChanged.store(true, std::memory_order_release);
     }
     it->second.erase(std::remove(it->second.begin(), it->second.end(), light), it->second.end());
-    if (it->second.empty()) {
+    if (it->second.empty())
+    {
       links.erase(name);
     }
   }
@@ -1085,25 +1252,32 @@ void HdArnoldRenderDelegate::ApplyLightLinking(AtNode *shape, const VtArray<TfTo
                           (_lightLinks.size() == 1 && _lightLinks.count(TfToken{}) == 1);
   const auto shadowEmpty = _shadowLinks.empty() ||
                            (_shadowLinks.size() == 1 && _shadowLinks.count(TfToken{}) == 1);
-  if (lightEmpty) {
+  if (lightEmpty)
+  {
     AiNodeResetParameter(shape, str::use_light_group);
     AiNodeResetParameter(shape, str::light_group);
   }
-  if (shadowEmpty) {
+  if (shadowEmpty)
+  {
     AiNodeResetParameter(shape, str::use_shadow_group);
     AiNodeResetParameter(shape, str::shadow_group);
   }
-  if (lightEmpty && shadowEmpty) {
+  if (lightEmpty && shadowEmpty)
+  {
     return;
   }
   auto applyGroups = [&](const AtString &group, const AtString &useGroup, const LightLinkingMap &links) {
     std::vector<AtNode *> lights;
-    for (const auto &category : categories) {
+    for (const auto &category : categories)
+    {
       auto it = links.find(category);
-      if (it != links.end()) {
-        for (auto *light : it->second) {
+      if (it != links.end())
+      {
+        for (auto *light : it->second)
+        {
           auto *arnoldLight = HdArnoldLight::GetLightNode(light);
-          if (arnoldLight != nullptr) {
+          if (arnoldLight != nullptr)
+          {
             lights.push_back(arnoldLight);
           }
         }
@@ -1111,29 +1285,36 @@ void HdArnoldRenderDelegate::ApplyLightLinking(AtNode *shape, const VtArray<TfTo
     }
     // Add the lights with an empty collection to the list.
     auto it = links.find(TfToken{});
-    if (it != links.end()) {
-      for (auto *light : it->second) {
+    if (it != links.end())
+    {
+      for (auto *light : it->second)
+      {
         auto *arnoldLight = HdArnoldLight::GetLightNode(light);
-        if (arnoldLight != nullptr) {
+        if (arnoldLight != nullptr)
+        {
           lights.push_back(arnoldLight);
         }
       }
     }
     // If lights is empty, then no lights affect the shape, and we still have to set useGroup to
     // true.
-    if (lights.empty()) {
+    if (lights.empty())
+    {
       AiNodeResetParameter(shape, group);
     }
-    else {
+    else
+    {
       AiNodeSetArray(
         shape, group, AiArrayConvert(static_cast<uint32_t>(lights.size()), 1, AI_TYPE_NODE, lights.data()));
     }
     AiNodeSetBool(shape, useGroup, true);
   };
-  if (!lightEmpty) {
+  if (!lightEmpty)
+  {
     applyGroups(str::light_group, str::use_light_group, _lightLinks);
   }
-  if (!shadowEmpty) {
+  if (!shadowEmpty)
+  {
     applyGroups(str::shadow_group, str::use_shadow_group, _shadowLinks);
   }
 }
@@ -1145,56 +1326,70 @@ bool HdArnoldRenderDelegate::ShouldSkipIteration(HdRenderIndex *renderIndex,
   HdDirtyBits bits = HdChangeTracker::Clean;
   // If Light Linking have changed, we have to dirty the categories on all rprims to force updating
   // the the light linking information.
-  if (_lightLinkingChanged.exchange(false, std::memory_order_acq_rel)) {
+  if (_lightLinkingChanged.exchange(false, std::memory_order_acq_rel))
+  {
     bits |= HdChangeTracker::DirtyCategories;
   }
   // When shutter open and shutter close significantly changes, we might not have enough samples
   // for transformation and deformation, so we need to force re-syncing all the prims.
-  if (_shutterOpen != shutterOpen || _shutterClose != shutterClose) {
+  if (_shutterOpen != shutterOpen || _shutterClose != shutterClose)
+  {
     _shutterOpen = shutterOpen;
     _shutterClose = shutterClose;
     bits |= HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyInstancer;
   }
   auto skip = false;
-  if (bits != HdChangeTracker::Clean) {
+  if (bits != HdChangeTracker::Clean)
+  {
     renderIndex->GetChangeTracker().MarkAllRprimsDirty(bits);
     skip = true;
   }
   SdfPath id;
   // We are first removing materials, to avoid untracking them later.
-  while (_materialRemovalQueue.try_pop(id)) {
+  while (_materialRemovalQueue.try_pop(id))
+  {
     _materialToShapeMap.erase(id);
   }
   ShapeMaterialChange shapeChange;
-  while (_shapeMaterialUntrackQueue.try_pop(shapeChange)) {
-    for (const auto &material : shapeChange.materials) {
+  while (_shapeMaterialUntrackQueue.try_pop(shapeChange))
+  {
+    for (const auto &material : shapeChange.materials)
+    {
       auto it = _materialToShapeMap.find(material);
       // In case it was already removed.
-      if (it != _materialToShapeMap.end()) {
+      if (it != _materialToShapeMap.end())
+      {
         it->second.erase(shapeChange.shape);
       }
     }
   }
-  while (_shapeMaterialTrackQueue.try_pop(shapeChange)) {
-    for (const auto &material : shapeChange.materials) {
+  while (_shapeMaterialTrackQueue.try_pop(shapeChange))
+  {
+    for (const auto &material : shapeChange.materials)
+    {
       auto it = _materialToShapeMap.find(material);
-      if (it == _materialToShapeMap.end()) {
+      if (it == _materialToShapeMap.end())
+      {
         _materialToShapeMap.insert({material, {shapeChange.shape}});
       }
-      else {
+      else
+      {
         it->second.insert(shapeChange.shape);
       }
     }
   }
   auto &changeTracker = renderIndex->GetChangeTracker();
   // And at last we are triggering changes.
-  while (_materialDirtyQueue.try_pop(id)) {
+  while (_materialDirtyQueue.try_pop(id))
+  {
     auto it = _materialToShapeMap.find(id);
     // There could be cases where the material is not assigned anything tracking, but this should
     // be rare.
-    if (it != _materialToShapeMap.end()) {
+    if (it != _materialToShapeMap.end())
+    {
       skip = true;
-      for (const auto &shape : it->second) {
+      for (const auto &shape : it->second)
+      {
         changeTracker.MarkRprimDirty(shape, HdChangeTracker::DirtyMaterialId);
       }
     }

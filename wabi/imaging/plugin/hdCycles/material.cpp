@@ -112,7 +112,8 @@ bool IsValidCyclesIdentifier(const std::string &identifier)
 
 void ApplyPrimvarAOVs(ccl::ShaderGraph *graph)
 {
-  if (graph) {
+  if (graph)
+  {
     auto *geo = new ccl::GeometryNode();
     graph->add(geo);
     // P
@@ -166,7 +167,8 @@ HdCyclesMaterial::HdCyclesMaterial(SdfPath const &id, HdCyclesRenderDelegate *a_
 
 HdCyclesMaterial::~HdCyclesMaterial()
 {
-  if (m_shader) {
+  if (m_shader)
+  {
     m_renderDelegate->GetCyclesRenderParam()->RemoveShaderSafe(m_shader);
     delete m_shader;
   }
@@ -180,9 +182,12 @@ ccl::ShaderNode *matConvertUSDPrimvarReader(HdMaterialNode &usd_node, ccl::Shade
   ccl::UVMapNode *uvmap = new ccl::UVMapNode();
   uvmap->attribute = ccl::ustring("st");
 
-  for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
-    if (params.first == _tokens->varname) {
-      if (params.second.IsHolding<TfToken>()) {
+  for (std::pair<TfToken, VtValue> params : usd_node.parameters)
+  {
+    if (params.first == _tokens->varname)
+    {
+      if (params.second.IsHolding<TfToken>())
+      {
         uvmap->attribute = ccl::ustring(params.second.Get<TfToken>().GetString().c_str());
       }
     }
@@ -198,9 +203,12 @@ ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node, ccl::ShaderGra
   // NOTE: There's no way to author this via UsdPreviewSurface...
   // imageTexture->interpolation = ccl::InterpolationType::INTERPOLATION_CLOSEST;
 
-  for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
-    if (params.first == _tokens->file) {
-      if (params.second.IsHolding<SdfAssetPath>()) {
+  for (std::pair<TfToken, VtValue> params : usd_node.parameters)
+  {
+    if (params.first == _tokens->file)
+    {
+      if (params.second.IsHolding<SdfAssetPath>())
+      {
         std::string filepath = "";
 
         // TODO:
@@ -213,10 +221,12 @@ ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node, ccl::ShaderGra
         filepath = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
 #else
         std::string raw_path = std::string(params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
-        if (HdCyclesPathIsUDIM(raw_path)) {
+        if (HdCyclesPathIsUDIM(raw_path))
+        {
           filepath = raw_path;
         }
-        else {
+        else
+        {
           filepath = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
         }
 #endif
@@ -226,7 +236,8 @@ ccl::ShaderNode *matConvertUSDUVTexture(HdMaterialNode &usd_node, ccl::ShaderGra
   }
 
   // Handle udim tiles
-  if (HdCyclesPathIsUDIM(imageTexture->filename.string())) {
+  if (HdCyclesPathIsUDIM(imageTexture->filename.string()))
+  {
     HdCyclesParseUDIMS(imageTexture->filename.string(), imageTexture->tiles);
   }
   cycles_shader_graph->add(imageTexture);
@@ -239,35 +250,48 @@ ccl::ShaderNode *matConvertUSDPreviewSurface(HdMaterialNode &usd_node, ccl::Shad
   principled->base_color = ccl::make_float3(1.0f, 1.0f, 1.0f);
 
   // Convert params
-  for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
-    if (params.first == _tokens->diffuseColor) {
-      if (params.second.IsHolding<GfVec3f>()) {
+  for (std::pair<TfToken, VtValue> params : usd_node.parameters)
+  {
+    if (params.first == _tokens->diffuseColor)
+    {
+      if (params.second.IsHolding<GfVec3f>())
+      {
         principled->base_color = vec3f_to_float3(params.second.UncheckedGet<GfVec3f>());
       }
-      else if (params.second.IsHolding<GfVec4f>()) {
+      else if (params.second.IsHolding<GfVec4f>())
+      {
         principled->base_color = vec4f_to_float3(params.second.UncheckedGet<GfVec4f>());
       }
     }
-    else if (params.first == _tokens->emissiveColor) {
-      if (params.second.IsHolding<GfVec3f>()) {
+    else if (params.first == _tokens->emissiveColor)
+    {
+      if (params.second.IsHolding<GfVec3f>())
+      {
         principled->emission = vec3f_to_float3(params.second.UncheckedGet<GfVec3f>());
       }
-      else if (params.second.IsHolding<GfVec4f>()) {
+      else if (params.second.IsHolding<GfVec4f>())
+      {
         principled->emission = vec4f_to_float3(params.second.UncheckedGet<GfVec4f>());
       }
     }
-    else if (params.first == _tokens->roughness) {
-      if (params.second.IsHolding<float>()) {
+    else if (params.first == _tokens->roughness)
+    {
+      if (params.second.IsHolding<float>())
+      {
         principled->roughness = params.second.UncheckedGet<float>();
       }
     }
-    else if (params.first == _tokens->metallic) {
-      if (params.second.IsHolding<float>()) {
+    else if (params.first == _tokens->metallic)
+    {
+      if (params.second.IsHolding<float>())
+      {
         principled->metallic = params.second.UncheckedGet<float>();
       }
     }
-    else if (params.first == _tokens->specular) {
-      if (params.second.IsHolding<float>()) {
+    else if (params.first == _tokens->specular)
+    {
+      if (params.second.IsHolding<float>())
+      {
         principled->specular = params.second.UncheckedGet<float>();
       }
     }
@@ -280,25 +304,32 @@ ccl::ShaderNode *matConvertUSDPreviewSurface(HdMaterialNode &usd_node, ccl::Shad
 TfToken socketConverter(TfToken a_token)
 {
   // TODO: Add check if preview surface
-  if (a_token == _tokens->rgb || a_token == _tokens->r || a_token == _tokens->g || a_token == _tokens->b) {
+  if (a_token == _tokens->rgb || a_token == _tokens->r || a_token == _tokens->g || a_token == _tokens->b)
+  {
     return _tokens->Color;
   }
-  else if (a_token == _tokens->st) {
+  else if (a_token == _tokens->st)
+  {
     return _tokens->Vector;
   }
-  else if (a_token == _tokens->diffuseColor) {
+  else if (a_token == _tokens->diffuseColor)
+  {
     return _tokens->base_color;
   }
-  else if (a_token == _tokens->emissiveColor) {
+  else if (a_token == _tokens->emissiveColor)
+  {
     return _tokens->emission;
   }
-  else if (a_token == _tokens->result) {
+  else if (a_token == _tokens->result)
+  {
     return _tokens->UV;
   }
-  else if (a_token == _tokens->a) {
+  else if (a_token == _tokens->a)
+  {
     return _tokens->alpha;
   }
-  else if (a_token == _tokens->opacity) {
+  else if (a_token == _tokens->opacity)
+  {
     return _tokens->alpha;
   }
 
@@ -312,7 +343,8 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
 
   bool has_valid_prefix = IsValidCyclesIdentifier(node_id);
 
-  if (!has_valid_prefix) {
+  if (!has_valid_prefix)
+  {
     // illegal node name
     TF_WARN("MATERIAL ERROR: Illegal cycles node name: %s", node_id.c_str());
     return nullptr;
@@ -322,7 +354,8 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
 
   // Find dynamic node type
   const ccl::NodeType *node_type = ccl::NodeType::find(cycles_node_name);
-  if (!node_type) {
+  if (!node_type)
+  {
     TF_WARN("OMATERIAL ERRR: Could not find cycles node of type: %s",
             usd_node.identifier.GetString().c_str());
     return nullptr;
@@ -334,15 +367,18 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
   cycles_shader_graph->add(cyclesNode);
 
   // Convert cycles params
-  for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
+  for (std::pair<TfToken, VtValue> params : usd_node.parameters)
+  {
     // Loop through all cycles inputs for matching usd shade param
-    for (const ccl::SocketType &socket : cyclesNode->type->inputs) {
+    for (const ccl::SocketType &socket : cyclesNode->type->inputs)
+    {
       // Early out if usd shade param doesn't match input name
       if (!ccl::string_iequals(params.first.GetText(), socket.name.string()))
         continue;
 
       // Ensure param has value
-      if (params.second.IsEmpty()) {
+      if (params.second.IsEmpty())
+      {
         continue;
       }
 
@@ -357,68 +393,86 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
         if (ccl::string_iequals("attribute", socket.name.string()))
           continue;
 
-      switch (socket.type) {
+      switch (socket.type)
+      {
         case ccl::SocketType::BOOLEAN: {
-          if (params.second.IsHolding<bool>()) {
+          if (params.second.IsHolding<bool>())
+          {
             cyclesNode->set(socket, params.second.Get<bool>());
           }
-          else if (params.second.IsHolding<int>()) {
+          else if (params.second.IsHolding<int>())
+          {
             cyclesNode->set(socket, static_cast<bool>(params.second.Get<int>()));
           }
-        } break;
+        }
+        break;
 
         case ccl::SocketType::INT: {
           cyclesNode->set(socket, params.second.Get<int>());
-        } break;
+        }
+        break;
 
         case ccl::SocketType::FLOAT: {
           cyclesNode->set(socket, params.second.Get<float>());
-        } break;
+        }
+        break;
 
         case ccl::SocketType::FLOAT_ARRAY: {
-          if (params.second.IsHolding<VtFloatArray>()) {
+          if (params.second.IsHolding<VtFloatArray>())
+          {
             ccl::array<float> val;
             VtFloatArray floatArray = params.second.Get<VtFloatArray>();
             val.resize(floatArray.size());
-            for (size_t i = 0; i < val.size(); i++) {
+            for (size_t i = 0; i < val.size(); i++)
+            {
               val[i] = floatArray[i];
             }
             cyclesNode->set(socket, val);
           }
-        } break;
+        }
+        break;
 
         case ccl::SocketType::ENUM: {
-          if (params.second.IsHolding<int>()) {
+          if (params.second.IsHolding<int>())
+          {
             const ccl::NodeEnum &node_enums = *socket.enum_values;
             auto index = params.second.Get<int>();
-            if (node_enums.exists(index)) {
+            if (node_enums.exists(index))
+            {
               const char *value = node_enums[index].string().c_str();
               cyclesNode->set(socket, value);
             }
-            else {
+            else
+            {
               // fallback to Blender's defaults
-              if (cycles_node_name == "principled_bsdf") {
+              if (cycles_node_name == "principled_bsdf")
+              {
                 cyclesNode->set(socket, "GGX");
               }
-              else {
+              else
+              {
                 TF_CODING_ERROR("Invalid enum without fallback value");
               }
             }
           }
-          else if (params.second.IsHolding<std::string>()) {
+          else if (params.second.IsHolding<std::string>())
+          {
             cyclesNode->set(socket, params.second.Get<std::string>().c_str());
           }
-          else if (params.second.IsHolding<TfToken>()) {
+          else if (params.second.IsHolding<TfToken>())
+          {
             // Arguably all enums should be strings, but at one point
             // our houdini material nodes output them as tokens so this
             // is more for backwards compat.
             cyclesNode->set(socket, params.second.Get<TfToken>().GetText());
           }
-        } break;
+        }
+        break;
 
         case ccl::SocketType::STRING: {
           std::string val;
-          if (params.second.IsHolding<SdfAssetPath>()) {
+          if (params.second.IsHolding<SdfAssetPath>())
+          {
 // TODO:
 // USD Issue-916 means that we cant resolve relative UDIM
 // paths. This is fixed in 20.08. When we upgrade to that
@@ -429,78 +483,94 @@ ccl::ShaderNode *convertCyclesNode(HdMaterialNode &usd_node, ccl::ShaderGraph *c
             val = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
 #else
             std::string raw_path = std::string(params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
-            if (HdCyclesPathIsUDIM(raw_path)) {
+            if (HdCyclesPathIsUDIM(raw_path))
+            {
               val = raw_path;
             }
-            else {
+            else
+            {
               val = std::string(params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
             }
 #endif
           }
-          else if (params.second.IsHolding<TfToken>()) {
+          else if (params.second.IsHolding<TfToken>())
+          {
             val = params.second.Get<TfToken>().GetString().c_str();
             if (val.length() > 0)
               val = TfMakeValidIdentifier(val);
           }
-          else if (params.second.IsHolding<std::string>()) {
+          else if (params.second.IsHolding<std::string>())
+          {
             val = std::string(params.second.Get<std::string>().c_str());
             if (val.length() > 0)
               val = TfMakeValidIdentifier(val);
           }
 
           cyclesNode->set(socket, val.c_str());
-        } break;
+        }
+        break;
 
         case ccl::SocketType::COLOR:
         case ccl::SocketType::VECTOR:
         case ccl::SocketType::POINT:
         case ccl::SocketType::NORMAL: {
-          if (params.second.IsHolding<GfVec4f>()) {
+          if (params.second.IsHolding<GfVec4f>())
+          {
             cyclesNode->set(socket, vec4f_to_float3(params.second.Get<GfVec4f>()));
           }
-          else if (params.second.IsHolding<GfVec3f>()) {
+          else if (params.second.IsHolding<GfVec3f>())
+          {
             cyclesNode->set(socket, vec3f_to_float3(params.second.Get<GfVec3f>()));
           }
-        } break;
+        }
+        break;
 
         case ccl::SocketType::COLOR_ARRAY:
         case ccl::SocketType::VECTOR_ARRAY:
         case ccl::SocketType::POINT_ARRAY:
         case ccl::SocketType::NORMAL_ARRAY: {
-          if (params.second.IsHolding<VtVec4fArray>()) {
+          if (params.second.IsHolding<VtVec4fArray>())
+          {
             ccl::array<ccl::float3> val;
             VtVec4fArray colarray = params.second.Get<VtVec4fArray>();
             val.resize(colarray.size());
-            for (size_t i = 0; i < val.size(); i++) {
+            for (size_t i = 0; i < val.size(); i++)
+            {
               val[i] = vec4f_to_float3(colarray[i]);
             }
             cyclesNode->set(socket, val);
           }
-          else if (params.second.IsHolding<VtVec3fArray>()) {
+          else if (params.second.IsHolding<VtVec3fArray>())
+          {
             ccl::array<ccl::float3> val;
             VtVec3fArray colarray = params.second.Get<VtVec3fArray>();
             val.resize(colarray.size());
-            for (size_t i = 0; i < val.size(); i++) {
+            for (size_t i = 0; i < val.size(); i++)
+            {
               val[i] = vec3f_to_float3(colarray[i]);
             }
             cyclesNode->set(socket, val);
           }
-        } break;
+        }
+        break;
 
         default: {
           std::cout << "HdCycles unsupported socket type. Node: " << node_id
                     << " - Socket: " << socket.name.string() << " - Type: " << socket.type << '\n';
-        } break;
+        }
+        break;
       }
     }
   }
 
   // TODO: Check proper type
-  if (cycles_node_name == "image_texture") {
+  if (cycles_node_name == "image_texture")
+  {
     ccl::ImageTextureNode *tex = static_cast<ccl::ImageTextureNode *>(cyclesNode);
 
     // Handle udim tiles
-    if (HdCyclesPathIsUDIM(tex->filename.string())) {
+    if (HdCyclesPathIsUDIM(tex->filename.string()))
+    {
       HdCyclesParseUDIMS(tex->filename.string(), tex->tiles);
     }
   }
@@ -522,73 +592,95 @@ static bool GetMaterialNetwork(TfToken const &terminal,
 
   ccl::ShaderNode *output_node = nullptr;
 
-  if (terminal == HdCyclesMaterialTerminalTokens->surface) {
+  if (terminal == HdCyclesMaterialTerminalTokens->surface)
+  {
     // Early out for already linked surface graph
     if (graph->output()->input("Surface")->link)
       return false;
   }
-  else if (terminal == HdCyclesMaterialTerminalTokens->displacement) {
+  else if (terminal == HdCyclesMaterialTerminalTokens->displacement)
+  {
     // Early out for already linked displacement graph
     if (graph->output()->input("Displacement")->link)
       return false;
   }
-  else if (terminal == HdCyclesMaterialTerminalTokens->volume) {
+  else if (terminal == HdCyclesMaterialTerminalTokens->volume)
+  {
     // Early out for already linked volume graph
-    if (graph->output()->input("Volume")->link) {
+    if (graph->output()->input("Volume")->link)
+    {
       return false;
     }
   }
 
-  for (std::pair<TfToken, HdMaterialNetwork> net : networkMap.map) {
+  for (std::pair<TfToken, HdMaterialNetwork> net : networkMap.map)
+  {
     if (net.first != terminal)
       continue;
     // Convert material nodes
-    for (HdMaterialNode &node : net.second.nodes) {
+    for (HdMaterialNode &node : net.second.nodes)
+    {
       ccl::ShaderNode *cycles_node = nullptr;
 
-      if (node.identifier == UsdImagingTokens->UsdPreviewSurface) {
+      if (node.identifier == UsdImagingTokens->UsdPreviewSurface)
+      {
         cycles_node = matConvertUSDPreviewSurface(node, graph);
-        if (cycles_node && preview_shaders) {
+        if (cycles_node && preview_shaders)
+        {
           preview_shaders->emplace_back(cycles_node);
         }
       }
-      else if (node.identifier == UsdImagingTokens->UsdUVTexture) {
+      else if (node.identifier == UsdImagingTokens->UsdUVTexture)
+      {
         cycles_node = matConvertUSDUVTexture(node, graph);
       }
-      else if (node.identifier == UsdImagingTokens->UsdPrimvarReader_float2) {
+      else if (node.identifier == UsdImagingTokens->UsdPrimvarReader_float2)
+      {
         cycles_node = matConvertUSDPrimvarReader(node, graph);
       }
-      else {
+      else
+      {
         cycles_node = convertCyclesNode(node, graph);
       }
 
-      if (cycles_node != nullptr) {
+      if (cycles_node != nullptr)
+      {
         conversionMap.insert(std::pair<SdfPath, std::pair<HdMaterialNode *, ccl::ShaderNode *>>(
           node.path, std::make_pair(&node, cycles_node)));
       }
 
-      for (const SdfPath &tPath : networkMap.terminals) {
-        if (node.path == tPath) {
+      for (const SdfPath &tPath : networkMap.terminals)
+      {
+        if (node.path == tPath)
+        {
           output_node = cycles_node;
 
-          if (terminal == HdCyclesMaterialTerminalTokens->surface) {
-            if (cycles_node->output("BSDF") != NULL) {
+          if (terminal == HdCyclesMaterialTerminalTokens->surface)
+          {
+            if (cycles_node->output("BSDF") != NULL)
+            {
               graph->connect(cycles_node->output("BSDF"), graph->output()->input("Surface"));
             }
-            else if (cycles_node->output("Closure") != NULL) {
+            else if (cycles_node->output("Closure") != NULL)
+            {
               graph->connect(cycles_node->output("Closure"), graph->output()->input("Surface"));
             }
-            else if (cycles_node->output("Emission") != NULL) {
+            else if (cycles_node->output("Emission") != NULL)
+            {
               graph->connect(cycles_node->output("Emission"), graph->output()->input("Surface"));
             }
           }
-          if (terminal == HdCyclesMaterialTerminalTokens->displacement) {
-            if (cycles_node->output("Displacement") != NULL) {
+          if (terminal == HdCyclesMaterialTerminalTokens->displacement)
+          {
+            if (cycles_node->output("Displacement") != NULL)
+            {
               graph->connect(cycles_node->output("Displacement"), graph->output()->input("Displacement"));
             }
           }
-          if (terminal == HdCyclesMaterialTerminalTokens->volume) {
-            if (cycles_node->output("Volume") != NULL) {
+          if (terminal == HdCyclesMaterialTerminalTokens->volume)
+          {
+            if (cycles_node->output("Volume") != NULL)
+            {
               graph->connect(cycles_node->output("Volume"), graph->output()->input("Volume"));
             }
           }
@@ -597,7 +689,8 @@ static bool GetMaterialNetwork(TfToken const &terminal,
     }
 
     // Link material nodes
-    for (const HdMaterialRelationship &matRel : net.second.relationships) {
+    for (const HdMaterialRelationship &matRel : net.second.relationships)
+    {
       ccl::ShaderNode *tonode = conversionMap[matRel.outputId].second;
       ccl::ShaderNode *fromnode = conversionMap[matRel.inputId].second;
 
@@ -605,7 +698,8 @@ static bool GetMaterialNetwork(TfToken const &terminal,
       HdMaterialNode *hd_fromnode = conversionMap[matRel.inputId].first;
 
       // Skip invalid connections. I don't know where they come from, but they exist.
-      if (fromnode == nullptr || hd_fromnode == nullptr || tonode == nullptr || hd_tonode == nullptr) {
+      if (fromnode == nullptr || hd_fromnode == nullptr || tonode == nullptr || hd_tonode == nullptr)
+      {
         continue;
       }
 
@@ -627,40 +721,50 @@ static bool GetMaterialNetwork(TfToken const &terminal,
       if (!to_has_valid_prefix)
         cOutputName = socketConverter(cOutputName);
 
-      if (tonode == nullptr) {
+      if (tonode == nullptr)
+      {
         TF_WARN("MATERIAL ERROR: Could not link, tonode was null: %s", matRel.outputId.GetString().c_str());
         continue;
       }
-      else if (fromnode == nullptr) {
+      else if (fromnode == nullptr)
+      {
         TF_WARN("MATERIAL ERROR: Could not link, fromnode was null: %s", matRel.inputId.GetString().c_str());
         continue;
       }
 
-      if (fromnode) {
-        for (ccl::ShaderOutput *out : fromnode->outputs) {
+      if (fromnode)
+      {
+        for (ccl::ShaderOutput *out : fromnode->outputs)
+        {
           if (!out)
             continue;
 
-          if (ccl::string_iequals(out->socket_type.name.string(), cInputName)) {
+          if (ccl::string_iequals(out->socket_type.name.string(), cInputName))
+          {
             output = out;
             break;
           }
         }
       }
 
-      if (tonode) {
-        for (ccl::ShaderInput *in : tonode->inputs) {
+      if (tonode)
+      {
+        for (ccl::ShaderInput *in : tonode->inputs)
+        {
           if (!in)
             continue;
-          if (ccl::string_iequals(in->socket_type.name.string(), cOutputName)) {
+          if (ccl::string_iequals(in->socket_type.name.string(), cOutputName))
+          {
             input = in;
             break;
           }
         }
       }
 
-      if (output && input) {
-        if (input->link) {
+      if (output && input)
+      {
+        if (input->link)
+        {
           continue;
         }
         graph->connect(output, input);
@@ -672,12 +776,18 @@ static bool GetMaterialNetwork(TfToken const &terminal,
 
     // TODO: This is to allow retroactive material_output node support
     // As this becomes phased out, we can remove this.
-    if (output_node != nullptr) {
-      if (graph->output()->input("Surface")->link == nullptr) {
-        if (output_node->input("Surface") != NULL) {
-          if (output_node->name == "output") {
-            if (output_node->input("Surface")->link) {
-              if (terminal == HdCyclesMaterialTerminalTokens->surface) {
+    if (output_node != nullptr)
+    {
+      if (graph->output()->input("Surface")->link == nullptr)
+      {
+        if (output_node->input("Surface") != NULL)
+        {
+          if (output_node->name == "output")
+          {
+            if (output_node->input("Surface")->link)
+            {
+              if (terminal == HdCyclesMaterialTerminalTokens->surface)
+              {
                 graph->connect(output_node->input("Surface")->link, graph->output()->input("Surface"));
               }
             }
@@ -702,11 +812,14 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
   ccl::thread_scoped_lock lock{param->GetCyclesScene()->mutex};
   bool material_updated = false;
 
-  if (*dirtyBits & HdMaterial::DirtyResource) {
+  if (*dirtyBits & HdMaterial::DirtyResource)
+  {
     VtValue vtMat = sceneDelegate->GetMaterialResource(id);
 
-    if (vtMat.IsHolding<HdMaterialNetworkMap>()) {
-      if (m_shaderGraph) {
+    if (vtMat.IsHolding<HdMaterialNetworkMap>())
+    {
+      if (m_shaderGraph)
+      {
         m_shaderGraph = new ccl::ShaderGraph();
       }
 
@@ -725,8 +838,10 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
                              *cyclesRenderParam,
                              &surface,
                              m_shaderGraph,
-                             &preview_shaders)) {
-        if (m_shader && m_shaderGraph) {
+                             &preview_shaders))
+      {
+        if (m_shader && m_shaderGraph)
+        {
           material_updated = true;
         }
       }
@@ -736,8 +851,10 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
                              networkMap,
                              *cyclesRenderParam,
                              &displacement,
-                             m_shaderGraph)) {
-        if (m_shader && m_shaderGraph) {
+                             m_shaderGraph))
+      {
+        if (m_shader && m_shaderGraph)
+        {
           material_updated = true;
         }
       }
@@ -747,13 +864,16 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
                              networkMap,
                              *cyclesRenderParam,
                              &volume,
-                             m_shaderGraph)) {
-        if (m_shader && m_shaderGraph) {
+                             m_shaderGraph))
+      {
+        if (m_shader && m_shaderGraph)
+        {
           material_updated = true;
         }
       }
 
-      if (!material_updated) {
+      if (!material_updated)
+      {
         TF_CODING_WARNING("Material type not supported");
       }
 
@@ -761,13 +881,15 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if (*dirtyBits & HdMaterial::DirtyResource) {
+  if (*dirtyBits & HdMaterial::DirtyResource)
+  {
     TfToken displacementMethod = _HdCyclesGetParam<TfToken>(sceneDelegate,
                                                             id,
                                                             HdCyclesTokens->cyclesMaterialDisplacementMethod,
                                                             HdCyclesTokens->displacement_bump);
 
-    if (m_shader->displacement_method != DISPLACEMENT_CONVERSION[displacementMethod]) {
+    if (m_shader->displacement_method != DISPLACEMENT_CONVERSION[displacementMethod])
+    {
       m_shader->displacement_method = DISPLACEMENT_CONVERSION[displacementMethod];
     }
 
@@ -795,7 +917,8 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
       HdCyclesTokens->cyclesMaterialVolumeInterpolationMethod,
       HdCyclesTokens->volume_interpolation_linear);
 
-    if (m_shader->volume_interpolation_method != VOLUME_INTERPOLATION_CONVERSION[volume_interpolation]) {
+    if (m_shader->volume_interpolation_method != VOLUME_INTERPOLATION_CONVERSION[volume_interpolation])
+    {
       m_shader->volume_interpolation_method = VOLUME_INTERPOLATION_CONVERSION[volume_interpolation];
     }
 
@@ -805,14 +928,17 @@ void HdCyclesMaterial::Sync(HdSceneDelegate *sceneDelegate,
       HdCyclesTokens->cyclesMaterialVolumeSamplingMethod,
       HdCyclesTokens->volume_sampling_multiple_importance);
 
-    if (m_shader->volume_sampling_method != VOLUME_SAMPLING_CONVERSION[volume_sampling]) {
+    if (m_shader->volume_sampling_method != VOLUME_SAMPLING_CONVERSION[volume_sampling])
+    {
       m_shader->volume_sampling_method = VOLUME_SAMPLING_CONVERSION[volume_sampling];
     }
     material_updated = true;
   }
 
-  if (material_updated) {
-    if (m_shader->graph != m_shaderGraph) {
+  if (material_updated)
+  {
+    if (m_shader->graph != m_shaderGraph)
+    {
       m_shader->set_graph(m_shaderGraph);
     }
 

@@ -39,7 +39,8 @@ using HdPhSurfaceShaderSharedPtr = std::shared_ptr<class HdPhSurfaceShader>;
 
 class HioGlslfx;
 
-class HdPhMaterial final : public HdMaterial {
+class HdPhMaterial final : public HdMaterial
+{
  public:
   HF_MALLOC_TAG_NEW("new HdPhMaterial");
 

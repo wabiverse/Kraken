@@ -8,7 +8,8 @@
 #include "zep/keymap.h"
 #include "zep/window.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepEditor;
 
@@ -16,8 +17,10 @@ class ZepEditor;
 // Key mapping needs a rethink for international keyboards.  But for modes, this is the remapped
 // key definitions for anything that isn't basic ascii symbol.  ASCII 0-31 are mostly ununsed these
 // days anyway.
-struct ExtKeys {
-  enum Key {
+struct ExtKeys
+{
+  enum Key
+  {
     RETURN = 0,  // NOTE: Do not change this value
     ESCAPE = 1,
     BACKSPACE = 2,
@@ -50,33 +53,67 @@ struct ExtKeys {
   };
 };
 
-struct ModifierKey {
-  enum Key { None = (0), Ctrl = (1 << 0), Alt = (1 << 1), Shift = (1 << 2) };
+struct ModifierKey
+{
+  enum Key
+  {
+    None = (0),
+    Ctrl = (1 << 0),
+    Alt = (1 << 1),
+    Shift = (1 << 2)
+  };
 };  // ModifierKey
 
-enum class EditorMode { None, Normal, Insert, Visual, Ex };
+enum class EditorMode
+{
+  None,
+  Normal,
+  Insert,
+  Visual,
+  Ex
+};
 
-enum class CommandOperation { None, Delete, DeleteLines, Insert, Copy, CopyLines, Replace, Paste };
+enum class CommandOperation
+{
+  None,
+  Delete,
+  DeleteLines,
+  Insert,
+  Copy,
+  CopyLines,
+  Replace,
+  Paste
+};
 
-namespace ModeFlags {
-enum { None = (0), InsertModeGroupUndo = (1 << 0), StayInInsertMode = (1 << 1) };
+namespace ModeFlags
+{
+enum
+{
+  None = (0),
+  InsertModeGroupUndo = (1 << 0),
+  StayInInsertMode = (1 << 1)
+};
 }
 
-namespace CommandResultFlags {
-enum {
+namespace CommandResultFlags
+{
+enum
+{
   None = 0,
   HandledCount = (1 << 2),  // Command implements the count, no need to recall it.
   BeginUndoGroup = (1 << 4)
 };
 }  // namespace CommandResultFlags
 
-struct CommandResult {
+struct CommandResult
+{
   uint32_t flags = CommandResultFlags::None;
   EditorMode modeSwitch = EditorMode::None;
   std::shared_ptr<ZepCommand> spCommand;
 };
 
-class CommandContext {
+class CommandContext
+{
  public:
   CommandContext(const std::string &commandIn, ZepMode &md, EditorMode editorMode);
 
@@ -112,7 +149,8 @@ class CommandContext {
   bool foundCommand = false;
 };
 
-class ZepMode : public ZepComponent {
+class ZepMode : public ZepComponent
+{
  public:
   ZepMode(ZepEditor &editor);
   virtual ~ZepMode();

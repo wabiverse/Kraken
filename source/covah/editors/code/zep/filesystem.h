@@ -8,13 +8,15 @@
 #include <memory>
 #include <string>
 
-namespace Zep {
+namespace Zep
+{
 
 // Zep's view of the outside world in terms of files
 // Below there is a version of this that will work on most platforms using std's <filesystem> for
 // file operations If you want to expose your app's view of the world, you need to implement this
 // minimal set of functions
-class IZepFileSystem {
+class IZepFileSystem
+{
  public:
   virtual ~IZepFileSystem(){};
   virtual std::string Read(const ZepPath &filePath) = 0;
@@ -51,7 +53,8 @@ class IZepFileSystem {
 // This is typically the only one that is used for normal desktop usage.
 // But you could make your own if your files were stored in a compressed folder, or the target
 // system didn't have a traditional file system...
-class ZepFileSystemCPP : public IZepFileSystem {
+class ZepFileSystemCPP : public IZepFileSystem
+{
  public:
   ZepFileSystemCPP(const ZepPath &configPath);
   ~ZepFileSystemCPP();

@@ -53,7 +53,8 @@ void HdPrmanCoordSys::Finalize(HdRenderParam *renderParam)
 void HdPrmanCoordSys::_ResetCoordSys(HdPrman_Context *context)
 {
   riley::Riley *riley = context->riley;
-  if (_coordSysId != riley::CoordinateSystemId::k_InvalidId) {
+  if (_coordSysId != riley::CoordinateSystemId::k_InvalidId)
+  {
     riley->DeleteCoordinateSystem(_coordSysId);
     _coordSysId = riley::CoordinateSystemId::k_InvalidId;
   }
@@ -70,14 +71,16 @@ void HdPrmanCoordSys::Sync(HdSceneDelegate *sceneDelegate,
 
   riley::Riley *riley = context->riley;
 
-  if (*dirtyBits) {
+  if (*dirtyBits)
+  {
     _ResetCoordSys(context);
 
     // Sample transform
     HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> xf;
     sceneDelegate->SampleTransform(id, &xf);
     TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt_values(xf.count);
-    for (size_t i = 0; i < xf.count; ++i) {
+    for (size_t i = 0; i < xf.count; ++i)
+    {
       xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(xf.values[i]);
     }
     const riley::Transform xform = {unsigned(xf.count), xf_rt_values.data(), xf.times.data()};

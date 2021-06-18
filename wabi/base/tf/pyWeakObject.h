@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 typedef TfWeakPtr<struct Tf_PyWeakObject> Tf_PyWeakObjectPtr;
 
 // A weak pointable weak reference to a python object.
-struct Tf_PyWeakObject : public TfWeakBase {
+struct Tf_PyWeakObject : public TfWeakBase
+{
  public:
   typedef Tf_PyWeakObject This;
 

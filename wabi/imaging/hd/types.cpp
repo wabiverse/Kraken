@@ -127,11 +127,13 @@ bool HdSamplerParameters::operator!=(const HdSamplerParameters &other) const
   return !(*this == other);
 }
 
-template<class T> static void const *_GetArrayData(VtValue const &v)
+template<class T>
+static void const *_GetArrayData(VtValue const &v)
 {
   return v.UncheckedGet<VtArray<T>>().cdata();
 }
-template<class T> static void const *_GetSingleData(VtValue const &v)
+template<class T>
+static void const *_GetSingleData(VtValue const &v)
 {
   return &v.UncheckedGet<T>();
 }
@@ -146,15 +148,33 @@ static inline ValueDataGetterMap _MakeValueDataGetterMap()
   }
 
   return ValueDataGetterMap{
-    ELEM(GfHalf),     ELEM(GfMatrix3d), ELEM(GfMatrix3f),
-    ELEM(GfMatrix4d), ELEM(GfMatrix4f), ELEM(GfVec2d),
-    ELEM(GfVec2f),    ELEM(GfVec2h),    ELEM(GfVec2i),
-    ELEM(GfVec3d),    ELEM(GfVec3f),    ELEM(GfVec3h),
-    ELEM(GfVec3i),    ELEM(GfVec4d),    ELEM(GfVec4f),
-    ELEM(GfVec4h),    ELEM(GfVec4i),    ELEM(HdVec4f_2_10_10_10_REV),
-    ELEM(bool),       ELEM(char),       ELEM(double),
-    ELEM(float),      ELEM(int16_t),    ELEM(int32_t),
-    ELEM(uint16_t),   ELEM(uint32_t),   ELEM(unsigned char),
+    ELEM(GfHalf),
+    ELEM(GfMatrix3d),
+    ELEM(GfMatrix3f),
+    ELEM(GfMatrix4d),
+    ELEM(GfMatrix4f),
+    ELEM(GfVec2d),
+    ELEM(GfVec2f),
+    ELEM(GfVec2h),
+    ELEM(GfVec2i),
+    ELEM(GfVec3d),
+    ELEM(GfVec3f),
+    ELEM(GfVec3h),
+    ELEM(GfVec3i),
+    ELEM(GfVec4d),
+    ELEM(GfVec4f),
+    ELEM(GfVec4h),
+    ELEM(GfVec4i),
+    ELEM(HdVec4f_2_10_10_10_REV),
+    ELEM(bool),
+    ELEM(char),
+    ELEM(double),
+    ELEM(float),
+    ELEM(int16_t),
+    ELEM(int32_t),
+    ELEM(uint16_t),
+    ELEM(uint32_t),
+    ELEM(unsigned char),
   };
 #undef ELEM
 }
@@ -163,7 +183,8 @@ const void *HdGetValueData(const VtValue &value)
 {
   static ValueDataGetterMap const getterMap = _MakeValueDataGetterMap();
   auto const iter = getterMap.find(value.GetTypeid());
-  if (ARCH_UNLIKELY(iter == getterMap.end())) {
+  if (ARCH_UNLIKELY(iter == getterMap.end()))
+  {
     return nullptr;
   }
   return iter->second(value);
@@ -207,15 +228,18 @@ HdTupleType HdGetValueTupleType(const VtValue &value)
 {
   static const TupleTypeMap tupleTypeMap = _MakeTupleTypeMap();
 
-  if (value.IsArrayValued()) {
+  if (value.IsArrayValued())
+  {
     auto const iter = tupleTypeMap.find(value.GetElementTypeid());
-    if (ARCH_UNLIKELY(iter == tupleTypeMap.end())) {
+    if (ARCH_UNLIKELY(iter == tupleTypeMap.end()))
+    {
       return HdTupleType{HdTypeInvalid, 0};
     }
     return HdTupleType{iter->second, value.GetArraySize()};
   }
   auto const iter = tupleTypeMap.find(value.GetTypeid());
-  if (ARCH_UNLIKELY(iter == tupleTypeMap.end())) {
+  if (ARCH_UNLIKELY(iter == tupleTypeMap.end()))
+  {
     return HdTupleType{HdTypeInvalid, 0};
   }
   return HdTupleType{iter->second, 1};
@@ -223,7 +247,8 @@ HdTupleType HdGetValueTupleType(const VtValue &value)
 
 HdType HdGetComponentType(HdType t)
 {
-  switch (t) {
+  switch (t)
+  {
     case HdTypeUInt32Vec2:
     case HdTypeUInt32Vec3:
     case HdTypeUInt32Vec4:
@@ -255,7 +280,8 @@ HdType HdGetComponentType(HdType t)
 
 size_t HdGetComponentCount(HdType t)
 {
-  switch (t) {
+  switch (t)
+  {
     case HdTypeInt32Vec2:
     case HdTypeUInt32Vec2:
     case HdTypeFloatVec2:
@@ -287,7 +313,8 @@ size_t HdGetComponentCount(HdType t)
 
 size_t HdDataSizeOfType(HdType t)
 {
-  switch (t) {
+  switch (t)
+  {
     case HdTypeInvalid:
     default:
       TF_CODING_ERROR("Cannot query size of invalid HdType");
@@ -365,7 +392,8 @@ size_t HdDataSizeOfTupleType(HdTupleType tupleType)
 
 HdFormat HdGetComponentFormat(HdFormat f)
 {
-  switch (f) {
+  switch (f)
+  {
     case HdFormatUNorm8:
     case HdFormatUNorm8Vec2:
     case HdFormatUNorm8Vec3:
@@ -400,7 +428,8 @@ HdFormat HdGetComponentFormat(HdFormat f)
 
 size_t HdGetComponentCount(HdFormat f)
 {
-  switch (f) {
+  switch (f)
+  {
     case HdFormatUNorm8Vec2:
     case HdFormatSNorm8Vec2:
     case HdFormatFloat16Vec2:
@@ -426,7 +455,8 @@ size_t HdGetComponentCount(HdFormat f)
 
 size_t HdDataSizeOfFormat(HdFormat f)
 {
-  switch (f) {
+  switch (f)
+  {
     case HdFormatUNorm8:
     case HdFormatSNorm8:
       return 1;

@@ -40,11 +40,14 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-class _PyResolverContextBinder : public boost::noncopyable {
+class _PyResolverContextBinder : public boost::noncopyable
+{
  public:
-  _PyResolverContextBinder(const ArResolverContext &context) : _context(context)
+  _PyResolverContextBinder(const ArResolverContext &context)
+    : _context(context)
   {}
 
   void Enter()

@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 /// A single namespace edit.  It supports renaming, reparenting, reparenting
 /// with a rename, reordering, and removal.
 ///
-struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit> {
+struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit>
+{
  public:
   typedef SdfNamespaceEdit This;
   typedef SdfPath Path;
@@ -58,7 +59,8 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit> {
   static const Index Same = -2;
 
   /// The default edit maps the empty path to the empty path.
-  SdfNamespaceEdit() : index(AtEnd)
+  SdfNamespaceEdit()
+    : index(AtEnd)
   {}
 
   /// The fully general edit.
@@ -126,10 +128,12 @@ SDF_API std::ostream &operator<<(std::ostream &, const SdfNamespaceEditVector &)
 ///
 /// Detailed information about a namespace edit.
 ///
-struct SdfNamespaceEditDetail : boost::equality_comparable<SdfNamespaceEditDetail> {
+struct SdfNamespaceEditDetail : boost::equality_comparable<SdfNamespaceEditDetail>
+{
  public:
   /// Validity of an edit.
-  enum Result {
+  enum Result
+  {
     Error,      ///< Edit will fail.
     Unbatched,  ///< Edit will succeed but not batched.
     Okay,       ///< Edit will succeed as a batch.
@@ -196,7 +200,8 @@ inline SdfNamespaceEditDetail::Result CombineUnbatched(SdfNamespaceEditDetail::R
 /// implementations must not elide notices that contain information about any
 /// edit that clients must be able to know but otherwise cannot determine.
 ///
-class SdfBatchNamespaceEdit {
+class SdfBatchNamespaceEdit
+{
  public:
   /// Create an empty sequence of edits.
   SDF_API SdfBatchNamespaceEdit();

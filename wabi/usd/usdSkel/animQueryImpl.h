@@ -55,7 +55,8 @@ TF_DECLARE_REF_PTRS(UsdSkel_AnimQueryImpl);
 /// Internal implementation of anim animation query.
 /// Subclassing of animation queries is supported out of an expectation
 /// that additional core animation prim types may be added in the future.
-class UsdSkel_AnimQueryImpl : public TfRefBase {
+class UsdSkel_AnimQueryImpl : public TfRefBase
+{
  public:
   /// Create an anim query for \p prim, if the prim is a valid type.
   static UsdSkel_AnimQueryImplRefPtr New(const UsdPrim &prim);

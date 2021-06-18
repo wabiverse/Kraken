@@ -45,7 +45,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 const DoubleToStringConverter &DoubleToStringConverter::EcmaScriptConverter()
 {
@@ -57,16 +58,19 @@ const DoubleToStringConverter &DoubleToStringConverter::EcmaScriptConverter()
 bool DoubleToStringConverter::HandleSpecialValues(double value, StringBuilder *result_builder) const
 {
   Double double_inspect(value);
-  if (double_inspect.IsInfinite()) {
+  if (double_inspect.IsInfinite())
+  {
     if (infinity_symbol_ == NULL)
       return false;
-    if (value < 0) {
+    if (value < 0)
+    {
       result_builder->AddCharacter('-');
     }
     result_builder->AddString(infinity_symbol_);
     return true;
   }
-  if (double_inspect.IsNan()) {
+  if (double_inspect.IsNan())
+  {
     if (nan_symbol_ == NULL)
       return false;
     result_builder->AddString(nan_symbol_);
@@ -82,21 +86,26 @@ void DoubleToStringConverter::CreateExponentialRepresentation(const char *decima
 {
   ASSERT(length != 0);
   result_builder->AddCharacter(decimal_digits[0]);
-  if (length != 1) {
+  if (length != 1)
+  {
     result_builder->AddCharacter('.');
     result_builder->AddSubstring(&decimal_digits[1], length - 1);
   }
   result_builder->AddCharacter(exponent_character_);
-  if (exponent < 0) {
+  if (exponent < 0)
+  {
     result_builder->AddCharacter('-');
     exponent = -exponent;
   }
-  else {
-    if ((flags_ & EMIT_POSITIVE_EXPONENT_SIGN) != 0) {
+  else
+  {
+    if ((flags_ & EMIT_POSITIVE_EXPONENT_SIGN) != 0)
+    {
       result_builder->AddCharacter('+');
     }
   }
-  if (exponent == 0) {
+  if (exponent == 0)
+  {
     result_builder->AddCharacter('0');
     return;
   }
@@ -105,7 +114,8 @@ void DoubleToStringConverter::CreateExponentialRepresentation(const char *decima
   char buffer[kMaxExponentLength + 1];
   buffer[kMaxExponentLength] = '\0';
   int first_char_pos = kMaxExponentLength;
-  while (exponent > 0) {
+  while (exponent > 0)
+  {
     buffer[--first_char_pos] = '0' + (exponent % 10);
     exponent /= 10;
   }
@@ -119,10 +129,12 @@ void DoubleToStringConverter::CreateDecimalRepresentation(const char *decimal_di
                                                           StringBuilder *result_builder) const
 {
   // Create a representation that is padded with zeros if needed.
-  if (decimal_point <= 0) {
+  if (decimal_point <= 0)
+  {
     // "0.00000decimal_rep" or "0.000decimal_rep00".
     result_builder->AddCharacter('0');
-    if (digits_after_point > 0) {
+    if (digits_after_point > 0)
+    {
       result_builder->AddCharacter('.');
       result_builder->AddPadding('0', -decimal_point);
       ASSERT(length <= digits_after_point - (-decimal_point));
@@ -131,16 +143,19 @@ void DoubleToStringConverter::CreateDecimalRepresentation(const char *decimal_di
       result_builder->AddPadding('0', remaining_digits);
     }
   }
-  else if (decimal_point >= length) {
+  else if (decimal_point >= length)
+  {
     // "decimal_rep0000.00000" or "decimal_rep.0000".
     result_builder->AddSubstring(decimal_digits, length);
     result_builder->AddPadding('0', decimal_point - length);
-    if (digits_after_point > 0) {
+    if (digits_after_point > 0)
+    {
       result_builder->AddCharacter('.');
       result_builder->AddPadding('0', digits_after_point);
     }
   }
-  else {
+  else
+  {
     // "decima.l_rep000".
     ASSERT(digits_after_point > 0);
     result_builder->AddSubstring(decimal_digits, decimal_point);
@@ -150,11 +165,14 @@ void DoubleToStringConverter::CreateDecimalRepresentation(const char *decimal_di
     int remaining_digits = digits_after_point - (length - decimal_point);
     result_builder->AddPadding('0', remaining_digits);
   }
-  if (digits_after_point == 0) {
-    if ((flags_ & EMIT_TRAILING_DECIMAL_POINT) != 0) {
+  if (digits_after_point == 0)
+  {
+    if ((flags_ & EMIT_TRAILING_DECIMAL_POINT) != 0)
+    {
       result_builder->AddCharacter('.');
     }
-    if ((flags_ & EMIT_TRAILING_ZERO_AFTER_POINT) != 0) {
+    if ((flags_ & EMIT_TRAILING_ZERO_AFTER_POINT) != 0)
+    {
       result_builder->AddCharacter('0');
     }
   }
@@ -165,7 +183,8 @@ bool DoubleToStringConverter::ToShortestIeeeNumber(double value,
                                                    DoubleToStringConverter::DtoaMode mode) const
 {
   ASSERT(mode == SHORTEST || mode == SHORTEST_SINGLE);
-  if (Double(value).IsSpecial()) {
+  if (Double(value).IsSpecial())
+  {
     return HandleSpecialValues(value, result_builder);
   }
 
@@ -179,19 +198,22 @@ bool DoubleToStringConverter::ToShortestIeeeNumber(double value,
     value, mode, 0, decimal_rep, kDecimalRepCapacity, &sign, &decimal_rep_length, &decimal_point);
 
   bool unique_zero = (flags_ & UNIQUE_ZERO) != 0;
-  if (sign && (value != 0.0 || !unique_zero)) {
+  if (sign && (value != 0.0 || !unique_zero))
+  {
     result_builder->AddCharacter('-');
   }
 
   int exponent = decimal_point - 1;
-  if ((decimal_in_shortest_low_ <= exponent) && (exponent < decimal_in_shortest_high_)) {
+  if ((decimal_in_shortest_low_ <= exponent) && (exponent < decimal_in_shortest_high_))
+  {
     CreateDecimalRepresentation(decimal_rep,
                                 decimal_rep_length,
                                 decimal_point,
                                 Max(0, decimal_rep_length - decimal_point),
                                 result_builder);
   }
-  else {
+  else
+  {
     CreateExponentialRepresentation(decimal_rep, decimal_rep_length, exponent, result_builder);
   }
   return true;
@@ -204,7 +226,8 @@ bool DoubleToStringConverter::ToFixed(double value,
   ASSERT(kMaxFixedDigitsBeforePoint == 60);
   const double kFirstNonFixed = 1e60;
 
-  if (Double(value).IsSpecial()) {
+  if (Double(value).IsSpecial())
+  {
     return HandleSpecialValues(value, result_builder);
   }
 
@@ -230,7 +253,8 @@ bool DoubleToStringConverter::ToFixed(double value,
                 &decimal_point);
 
   bool unique_zero = ((flags_ & UNIQUE_ZERO) != 0);
-  if (sign && (value != 0.0 || !unique_zero)) {
+  if (sign && (value != 0.0 || !unique_zero))
+  {
     result_builder->AddCharacter('-');
   }
 
@@ -243,7 +267,8 @@ bool DoubleToStringConverter::ToExponential(double value,
                                             int requested_digits,
                                             StringBuilder *result_builder) const
 {
-  if (Double(value).IsSpecial()) {
+  if (Double(value).IsSpecial())
+  {
     return HandleSpecialValues(value, result_builder);
   }
 
@@ -260,11 +285,13 @@ bool DoubleToStringConverter::ToExponential(double value,
   char decimal_rep[kDecimalRepCapacity];
   int decimal_rep_length;
 
-  if (requested_digits == -1) {
+  if (requested_digits == -1)
+  {
     DoubleToAscii(
       value, SHORTEST, 0, decimal_rep, kDecimalRepCapacity, &sign, &decimal_rep_length, &decimal_point);
   }
-  else {
+  else
+  {
     DoubleToAscii(value,
                   PRECISION,
                   requested_digits + 1,
@@ -275,14 +302,16 @@ bool DoubleToStringConverter::ToExponential(double value,
                   &decimal_point);
     ASSERT(decimal_rep_length <= requested_digits + 1);
 
-    for (int i = decimal_rep_length; i < requested_digits + 1; ++i) {
+    for (int i = decimal_rep_length; i < requested_digits + 1; ++i)
+    {
       decimal_rep[i] = '0';
     }
     decimal_rep_length = requested_digits + 1;
   }
 
   bool unique_zero = ((flags_ & UNIQUE_ZERO) != 0);
-  if (sign && (value != 0.0 || !unique_zero)) {
+  if (sign && (value != 0.0 || !unique_zero))
+  {
     result_builder->AddCharacter('-');
   }
 
@@ -293,11 +322,13 @@ bool DoubleToStringConverter::ToExponential(double value,
 
 bool DoubleToStringConverter::ToPrecision(double value, int precision, StringBuilder *result_builder) const
 {
-  if (Double(value).IsSpecial()) {
+  if (Double(value).IsSpecial())
+  {
     return HandleSpecialValues(value, result_builder);
   }
 
-  if (precision < kMinPrecisionDigits || precision > kMaxPrecisionDigits) {
+  if (precision < kMinPrecisionDigits || precision > kMaxPrecisionDigits)
+  {
     return false;
   }
 
@@ -320,7 +351,8 @@ bool DoubleToStringConverter::ToPrecision(double value, int precision, StringBui
   ASSERT(decimal_rep_length <= precision);
 
   bool unique_zero = ((flags_ & UNIQUE_ZERO) != 0);
-  if (sign && (value != 0.0 || !unique_zero)) {
+  if (sign && (value != 0.0 || !unique_zero))
+  {
     result_builder->AddCharacter('-');
   }
 
@@ -330,17 +362,20 @@ bool DoubleToStringConverter::ToPrecision(double value, int precision, StringBui
 
   int extra_zero = ((flags_ & EMIT_TRAILING_ZERO_AFTER_POINT) != 0) ? 1 : 0;
   if ((-decimal_point + 1 > max_leading_padding_zeroes_in_precision_mode_) ||
-      (decimal_point - precision + extra_zero > max_trailing_padding_zeroes_in_precision_mode_)) {
+      (decimal_point - precision + extra_zero > max_trailing_padding_zeroes_in_precision_mode_))
+  {
     // Fill buffer to contain 'precision' digits.
     // Usually the buffer is already at the correct length, but 'DoubleToAscii'
     // is allowed to return less characters.
-    for (int i = decimal_rep_length; i < precision; ++i) {
+    for (int i = decimal_rep_length; i < precision; ++i)
+    {
       decimal_rep[i] = '0';
     }
 
     CreateExponentialRepresentation(decimal_rep, precision, exponent, result_builder);
   }
-  else {
+  else
+  {
     CreateDecimalRepresentation(
       decimal_rep, decimal_rep_length, decimal_point, Max(0, precision - decimal_point), result_builder);
   }
@@ -349,7 +384,8 @@ bool DoubleToStringConverter::ToPrecision(double value, int precision, StringBui
 
 static BignumDtoaMode DtoaToBignumDtoaMode(DoubleToStringConverter::DtoaMode dtoa_mode)
 {
-  switch (dtoa_mode) {
+  switch (dtoa_mode)
+  {
     case DoubleToStringConverter::SHORTEST:
       return BIGNUM_DTOA_SHORTEST;
     case DoubleToStringConverter::SHORTEST_SINGLE:
@@ -376,21 +412,25 @@ void DoubleToStringConverter::DoubleToAscii(double v,
   ASSERT(!Double(v).IsSpecial());
   ASSERT(mode == SHORTEST || mode == SHORTEST_SINGLE || requested_digits >= 0);
 
-  if (Double(v).Sign() < 0) {
+  if (Double(v).Sign() < 0)
+  {
     *sign = true;
     v = -v;
   }
-  else {
+  else
+  {
     *sign = false;
   }
 
-  if (mode == PRECISION && requested_digits == 0) {
+  if (mode == PRECISION && requested_digits == 0)
+  {
     vector[0] = '\0';
     *length = 0;
     return;
   }
 
-  if (v == 0) {
+  if (v == 0)
+  {
     vector[0] = '0';
     vector[1] = '\0';
     *length = 1;
@@ -399,7 +439,8 @@ void DoubleToStringConverter::DoubleToAscii(double v,
   }
 
   bool fast_worked;
-  switch (mode) {
+  switch (mode)
+  {
     case SHORTEST:
       fast_worked = FastDtoa(v, FAST_DTOA_SHORTEST, 0, vector, length, point);
       break;
@@ -427,10 +468,12 @@ void DoubleToStringConverter::DoubleToAscii(double v,
 
 // Consumes the given substring from the iterator.
 // Returns false, if the substring does not match.
-template<class Iterator> static bool ConsumeSubString(Iterator *current, Iterator end, const char *substring)
+template<class Iterator>
+static bool ConsumeSubString(Iterator *current, Iterator end, const char *substring)
 {
   ASSERT(**current == *substring);
-  for (substring++; *substring != '\0'; substring++) {
+  for (substring++; *substring != '\0'; substring++)
+  {
     ++*current;
     if (*current == end || **current != *substring)
       return false;
@@ -451,20 +494,23 @@ const int kMaxSignificantDigits = 772;
 static const char kWhitespaceTable7[] = {32, 13, 10, 9, 11, 12};
 static const int kWhitespaceTable7Length = ARRAY_SIZE(kWhitespaceTable7);
 
-static const uc16 kWhitespaceTable16[] = {160,  8232, 8233, 5760, 6158, 8192, 8193, 8194, 8195,  8196,
-                                          8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288, 65279};
+static const uc16 kWhitespaceTable16[] = {160, 8232, 8233, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288, 65279};
 static const int kWhitespaceTable16Length = ARRAY_SIZE(kWhitespaceTable16);
 
 static bool isWhitespace(int x)
 {
-  if (x < 128) {
-    for (int i = 0; i < kWhitespaceTable7Length; i++) {
+  if (x < 128)
+  {
+    for (int i = 0; i < kWhitespaceTable7Length; i++)
+    {
       if (kWhitespaceTable7[i] == x)
         return true;
     }
   }
-  else {
-    for (int i = 0; i < kWhitespaceTable16Length; i++) {
+  else
+  {
+    for (int i = 0; i < kWhitespaceTable16Length; i++)
+    {
       if (kWhitespaceTable16[i] == x)
         return true;
     }
@@ -473,9 +519,11 @@ static bool isWhitespace(int x)
 }
 
 // Returns true if a nonspace found and false if the end has reached.
-template<class Iterator> static inline bool AdvanceToNonspace(Iterator *current, Iterator end)
+template<class Iterator>
+static inline bool AdvanceToNonspace(Iterator *current, Iterator end)
 {
-  while (*current != end) {
+  while (*current != end)
+  {
     if (!isWhitespace(**current))
       return true;
     ++*current;
@@ -544,9 +592,11 @@ static double RadixStringToIeee(Iterator *current,
   *result_is_junk = true;
 
   // Skip leading 0s.
-  while (**current == '0') {
+  while (**current == '0')
+  {
     ++(*current);
-    if (*current == end) {
+    if (*current == end)
+    {
       *result_is_junk = false;
       return SignedZero(sign);
     }
@@ -556,33 +606,42 @@ static double RadixStringToIeee(Iterator *current,
   int exponent = 0;
   const int radix = (1 << radix_log_2);
 
-  do {
+  do
+  {
     int digit;
-    if (IsDecimalDigitForRadix(**current, radix)) {
+    if (IsDecimalDigitForRadix(**current, radix))
+    {
       digit = static_cast<char>(**current) - '0';
     }
-    else if (IsCharacterDigitForRadix(**current, radix, 'a')) {
+    else if (IsCharacterDigitForRadix(**current, radix, 'a'))
+    {
       digit = static_cast<char>(**current) - 'a' + 10;
     }
-    else if (IsCharacterDigitForRadix(**current, radix, 'A')) {
+    else if (IsCharacterDigitForRadix(**current, radix, 'A'))
+    {
       digit = static_cast<char>(**current) - 'A' + 10;
     }
-    else {
-      if (allow_trailing_junk || !AdvanceToNonspace(current, end)) {
+    else
+    {
+      if (allow_trailing_junk || !AdvanceToNonspace(current, end))
+      {
         break;
       }
-      else {
+      else
+      {
         return junk_string_value;
       }
     }
 
     number = number * radix + digit;
     int overflow = static_cast<int>(number >> kSignificandSize);
-    if (overflow != 0) {
+    if (overflow != 0)
+    {
       // Overflow occurred. Need to determine which direction to round the
       // result.
       int overflow_bits_count = 1;
-      while (overflow > 1) {
+      while (overflow > 1)
+      {
         overflow_bits_count++;
         overflow >>= 1;
       }
@@ -593,7 +652,8 @@ static double RadixStringToIeee(Iterator *current,
       exponent = overflow_bits_count;
 
       bool zero_tail = true;
-      for (;;) {
+      for (;;)
+      {
         ++(*current);
         if (*current == end || !isDigit(**current, radix))
           break;
@@ -601,24 +661,29 @@ static double RadixStringToIeee(Iterator *current,
         exponent += radix_log_2;
       }
 
-      if (!allow_trailing_junk && AdvanceToNonspace(current, end)) {
+      if (!allow_trailing_junk && AdvanceToNonspace(current, end))
+      {
         return junk_string_value;
       }
 
       int middle_value = (1 << (overflow_bits_count - 1));
-      if (dropped_bits > middle_value) {
+      if (dropped_bits > middle_value)
+      {
         number++;  // Rounding up.
       }
-      else if (dropped_bits == middle_value) {
+      else if (dropped_bits == middle_value)
+      {
         // Rounding to even to consistency with decimals: half-way case rounds
         // up if significant part is odd and down otherwise.
-        if ((number & 1) != 0 || !zero_tail) {
+        if ((number & 1) != 0 || !zero_tail)
+        {
           number++;  // Rounding up.
         }
       }
 
       // Rounding up may cause overflow.
-      if ((number & ((int64_t)1 << kSignificandSize)) != 0) {
+      if ((number & ((int64_t)1 << kSignificandSize)) != 0)
+      {
         exponent++;
         number >>= 1;
       }
@@ -632,8 +697,10 @@ static double RadixStringToIeee(Iterator *current,
 
   *result_is_junk = false;
 
-  if (exponent == 0) {
-    if (sign) {
+  if (exponent == 0)
+  {
+    if (sign)
+    {
       if (number == 0)
         return -0.0;
       number = -number;
@@ -672,12 +739,15 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
   if (current == end)
     return empty_string_value_;
 
-  if (allow_leading_spaces || allow_trailing_spaces) {
-    if (!AdvanceToNonspace(&current, end)) {
+  if (allow_leading_spaces || allow_trailing_spaces)
+  {
+    if (!AdvanceToNonspace(&current, end))
+    {
       *processed_characters_count = static_cast<int>(current - input);
       return empty_string_value_;
     }
-    if (!allow_leading_spaces && (input != current)) {
+    if (!allow_leading_spaces && (input != current))
+    {
       // No leading spaces allowed, but AdvanceToNonspace moved forward.
       return junk_string_value_;
     }
@@ -697,29 +767,36 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
 
   bool sign = false;
 
-  if (*current == '+' || *current == '-') {
+  if (*current == '+' || *current == '-')
+  {
     sign = (*current == '-');
     ++current;
     Iterator next_non_space = current;
     // Skip following spaces (if allowed).
     if (!AdvanceToNonspace(&next_non_space, end))
       return junk_string_value_;
-    if (!allow_spaces_after_sign && (current != next_non_space)) {
+    if (!allow_spaces_after_sign && (current != next_non_space))
+    {
       return junk_string_value_;
     }
     current = next_non_space;
   }
 
-  if (infinity_symbol_ != NULL) {
-    if (*current == infinity_symbol_[0]) {
-      if (!ConsumeSubString(&current, end, infinity_symbol_)) {
+  if (infinity_symbol_ != NULL)
+  {
+    if (*current == infinity_symbol_[0])
+    {
+      if (!ConsumeSubString(&current, end, infinity_symbol_))
+      {
         return junk_string_value_;
       }
 
-      if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
+      if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end))
+      {
         return junk_string_value_;
       }
-      if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
+      if (!allow_trailing_junk && AdvanceToNonspace(&current, end))
+      {
         return junk_string_value_;
       }
 
@@ -729,16 +806,21 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     }
   }
 
-  if (nan_symbol_ != NULL) {
-    if (*current == nan_symbol_[0]) {
-      if (!ConsumeSubString(&current, end, nan_symbol_)) {
+  if (nan_symbol_ != NULL)
+  {
+    if (*current == nan_symbol_[0])
+    {
+      if (!ConsumeSubString(&current, end, nan_symbol_))
+      {
         return junk_string_value_;
       }
 
-      if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
+      if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end))
+      {
         return junk_string_value_;
       }
-      if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
+      if (!allow_trailing_junk && AdvanceToNonspace(&current, end))
+      {
         return junk_string_value_;
       }
 
@@ -749,9 +831,11 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
   }
 
   bool leading_zero = false;
-  if (*current == '0') {
+  if (*current == '0')
+  {
     ++current;
-    if (current == end) {
+    if (current == end)
+    {
       *processed_characters_count = static_cast<int>(current - input);
       return SignedZero(sign);
     }
@@ -759,16 +843,19 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     leading_zero = true;
 
     // It could be hexadecimal value.
-    if ((flags_ & ALLOW_HEX) && (*current == 'x' || *current == 'X')) {
+    if ((flags_ & ALLOW_HEX) && (*current == 'x' || *current == 'X'))
+    {
       ++current;
-      if (current == end || !isDigit(*current, 16)) {
+      if (current == end || !isDigit(*current, 16))
+      {
         return junk_string_value_;  // "0x".
       }
 
       bool result_is_junk;
       double result = RadixStringToIeee<4>(
         &current, end, sign, allow_trailing_junk, junk_string_value_, read_as_double, &result_is_junk);
-      if (!result_is_junk) {
+      if (!result_is_junk)
+      {
         if (allow_trailing_spaces)
           AdvanceToNonspace(&current, end);
         *processed_characters_count = static_cast<int>(current - input);
@@ -777,9 +864,11 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     }
 
     // Ignore leading zeros in the integer part.
-    while (*current == '0') {
+    while (*current == '0')
+    {
       ++current;
-      if (current == end) {
+      if (current == end)
+      {
         *processed_characters_count = static_cast<int>(current - input);
         return SignedZero(sign);
       }
@@ -789,14 +878,17 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
   bool octal = leading_zero && (flags_ & ALLOW_OCTALS) != 0;
 
   // Copy significant digits of the integer part (if any) to the buffer.
-  while (*current >= '0' && *current <= '9') {
-    if (significant_digits < kMaxSignificantDigits) {
+  while (*current >= '0' && *current <= '9')
+  {
+    if (significant_digits < kMaxSignificantDigits)
+    {
       ASSERT(buffer_pos < kBufferSize);
       buffer[buffer_pos++] = static_cast<char>(*current);
       significant_digits++;
       // Will later check if it's an octal in the buffer.
     }
-    else {
+    else
+    {
       insignificant_digits++;  // Move the digit into the exponential part.
       nonzero_digit_dropped = nonzero_digit_dropped || *current != '0';
     }
@@ -806,33 +898,41 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
       goto parsing_done;
   }
 
-  if (significant_digits == 0) {
+  if (significant_digits == 0)
+  {
     octal = false;
   }
 
-  if (*current == '.') {
+  if (*current == '.')
+  {
     if (octal && !allow_trailing_junk)
       return junk_string_value_;
     if (octal)
       goto parsing_done;
 
     ++current;
-    if (current == end) {
-      if (significant_digits == 0 && !leading_zero) {
+    if (current == end)
+    {
+      if (significant_digits == 0 && !leading_zero)
+      {
         return junk_string_value_;
       }
-      else {
+      else
+      {
         goto parsing_done;
       }
     }
 
-    if (significant_digits == 0) {
+    if (significant_digits == 0)
+    {
       // octal = false;
       // Integer part consists of 0 or is absent. Significant digits start after
       // leading zeros (if any).
-      while (*current == '0') {
+      while (*current == '0')
+      {
         ++current;
-        if (current == end) {
+        if (current == end)
+        {
           *processed_characters_count = static_cast<int>(current - input);
           return SignedZero(sign);
         }
@@ -842,14 +942,17 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
 
     // There is a fractional part.
     // We don't emit a '.', but adjust the exponent instead.
-    while (*current >= '0' && *current <= '9') {
-      if (significant_digits < kMaxSignificantDigits) {
+    while (*current >= '0' && *current <= '9')
+    {
+      if (significant_digits < kMaxSignificantDigits)
+      {
         ASSERT(buffer_pos < kBufferSize);
         buffer[buffer_pos++] = static_cast<char>(*current);
         significant_digits++;
         exponent--;
       }
-      else {
+      else
+      {
         // Ignore insignificant digits in the fractional part.
         nonzero_digit_dropped = nonzero_digit_dropped || *current != '0';
       }
@@ -859,7 +962,8 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     }
   }
 
-  if (!leading_zero && exponent == 0 && significant_digits == 0) {
+  if (!leading_zero && exponent == 0 && significant_digits == 0)
+  {
     // If leading_zeros is true then the string contains zeros.
     // If exponent < 0 then string was [+-]\.0*...
     // If significant_digits != 0 the string is not equal to 0.
@@ -868,39 +972,50 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
   }
 
   // Parse exponential part.
-  if (*current == 'e' || *current == 'E') {
+  if (*current == 'e' || *current == 'E')
+  {
     if (octal && !allow_trailing_junk)
       return junk_string_value_;
     if (octal)
       goto parsing_done;
     ++current;
-    if (current == end) {
-      if (allow_trailing_junk) {
+    if (current == end)
+    {
+      if (allow_trailing_junk)
+      {
         goto parsing_done;
       }
-      else {
+      else
+      {
         return junk_string_value_;
       }
     }
     char exponen_sign = '+';
-    if (*current == '+' || *current == '-') {
+    if (*current == '+' || *current == '-')
+    {
       exponen_sign = static_cast<char>(*current);
       ++current;
-      if (current == end) {
-        if (allow_trailing_junk) {
+      if (current == end)
+      {
+        if (allow_trailing_junk)
+        {
           goto parsing_done;
         }
-        else {
+        else
+        {
           return junk_string_value_;
         }
       }
     }
 
-    if (current == end || *current < '0' || *current > '9') {
-      if (allow_trailing_junk) {
+    if (current == end || *current < '0' || *current > '9')
+    {
+      if (allow_trailing_junk)
+      {
         goto parsing_done;
       }
-      else {
+      else
+      {
         return junk_string_value_;
       }
     }
@@ -908,13 +1023,16 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     const int max_exponent = INT_MAX / 2;
     ASSERT(-max_exponent / 2 <= exponent && exponent <= max_exponent / 2);
     int num = 0;
-    do {
+    do
+    {
       // Check overflow.
       int digit = *current - '0';
-      if (num >= max_exponent / 10 && !(num == max_exponent / 10 && digit <= max_exponent % 10)) {
+      if (num >= max_exponent / 10 && !(num == max_exponent / 10 && digit <= max_exponent % 10))
+      {
         num = max_exponent;
       }
-      else {
+      else
+      {
         num = num * 10 + digit;
       }
       ++current;
@@ -923,20 +1041,24 @@ double StringToDoubleConverter::StringToIeee(Iterator input,
     exponent += (exponen_sign == '-' ? -num : num);
   }
 
-  if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end)) {
+  if (!(allow_trailing_spaces || allow_trailing_junk) && (current != end))
+  {
     return junk_string_value_;
   }
-  if (!allow_trailing_junk && AdvanceToNonspace(&current, end)) {
+  if (!allow_trailing_junk && AdvanceToNonspace(&current, end))
+  {
     return junk_string_value_;
   }
-  if (allow_trailing_spaces) {
+  if (allow_trailing_spaces)
+  {
     AdvanceToNonspace(&current, end);
   }
 
 parsing_done:
   exponent += insignificant_digits;
 
-  if (octal) {
+  if (octal)
+  {
     double result;
     bool result_is_junk;
     char *start = buffer;
@@ -952,7 +1074,8 @@ parsing_done:
     return result;
   }
 
-  if (nonzero_digit_dropped) {
+  if (nonzero_digit_dropped)
+  {
     buffer[buffer_pos++] = '1';
     exponent--;
   }
@@ -961,10 +1084,12 @@ parsing_done:
   buffer[buffer_pos] = '\0';
 
   double converted;
-  if (read_as_double) {
+  if (read_as_double)
+  {
     converted = Strtod(Vector<const char>(buffer, buffer_pos), exponent);
   }
-  else {
+  else
+  {
     converted = Strtof(Vector<const char>(buffer, buffer_pos), exponent);
   }
   *processed_characters_count = static_cast<int>(current - input);

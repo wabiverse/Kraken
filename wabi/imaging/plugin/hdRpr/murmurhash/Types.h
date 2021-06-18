@@ -34,7 +34,8 @@ void MixVCode(const void *blob, int len);
 
 typedef void (*pfHash)(const void *blob, const int len, const uint32_t seed, void *out);
 
-struct ByteVec : public std::vector<uint8_t> {
+struct ByteVec : public std::vector<uint8_t>
+{
   ByteVec(const void *key, int len)
   {
     resize(len);
@@ -43,17 +44,23 @@ struct ByteVec : public std::vector<uint8_t> {
 };
 
 template<typename hashtype, typename keytype>
-struct CollisionMap : public std::map<hashtype, std::vector<keytype>> {
+struct CollisionMap : public std::map<hashtype, std::vector<keytype>>
+{
 };
 
-template<typename hashtype> struct HashSet : public std::set<hashtype> {
+template<typename hashtype>
+struct HashSet : public std::set<hashtype>
+{
 };
 
 //-----------------------------------------------------------------------------
 
-template<class T> class hashfunc {
+template<class T>
+class hashfunc
+{
  public:
-  hashfunc(pfHash h) : m_hash(h)
+  hashfunc(pfHash h)
+    : m_hash(h)
   {}
 
   inline void operator()(const void *key, const int len, const uint32_t seed, uint32_t *out)
@@ -81,8 +88,10 @@ template<class T> class hashfunc {
 //-----------------------------------------------------------------------------
 // Key-processing callback objects. Simplifies keyset testing a bit.
 
-struct KeyCallback {
-  KeyCallback() : m_count(0)
+struct KeyCallback
+{
+  KeyCallback()
+    : m_count(0)
   {}
 
   virtual ~KeyCallback()
@@ -100,10 +109,14 @@ struct KeyCallback {
 
 //----------
 
-template<typename hashtype> struct HashCallback : public KeyCallback {
+template<typename hashtype>
+struct HashCallback : public KeyCallback
+{
   typedef std::vector<hashtype> hashvec;
 
-  HashCallback(pfHash hash, hashvec &hashes) : m_hashes(hashes), m_pfHash(hash)
+  HashCallback(pfHash hash, hashvec &hashes)
+    : m_hashes(hashes),
+      m_pfHash(hash)
   {
     m_hashes.clear();
   }
@@ -133,7 +146,9 @@ template<typename hashtype> struct HashCallback : public KeyCallback {
 
 //----------
 
-template<typename hashtype> struct CollisionCallback : public KeyCallback {
+template<typename hashtype>
+struct CollisionCallback : public KeyCallback
+{
   typedef HashSet<hashtype> hashset;
   typedef CollisionMap<hashtype, ByteVec> collmap;
 
@@ -149,7 +164,8 @@ template<typename hashtype> struct CollisionCallback : public KeyCallback {
 
     m_pfHash(key, len, 0, &h);
 
-    if (m_collisions.count(h)) {
+    if (m_collisions.count(h))
+    {
       m_collmap[h].push_back(ByteVec(key, len));
     }
   }
@@ -166,18 +182,22 @@ template<typename hashtype> struct CollisionCallback : public KeyCallback {
 
 //-----------------------------------------------------------------------------
 
-template<int _bits> class Blob {
+template<int _bits>
+class Blob
+{
  public:
   Blob()
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] = 0;
     }
   }
 
   Blob(int x)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] = 0;
     }
 
@@ -186,14 +206,16 @@ template<int _bits> class Blob {
 
   Blob(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] = k.bytes[i];
     }
   }
 
   Blob &operator=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] = k.bytes[i];
     }
 
@@ -212,11 +234,13 @@ template<int _bits> class Blob {
 
     len = len > sizeof(bytes) ? sizeof(bytes) : len;
 
-    for (size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++)
+    {
       bytes[i] = k[i];
     }
 
-    for (size_t i = len; i < sizeof(bytes); i++) {
+    for (size_t i = len; i < sizeof(bytes); i++)
+    {
       bytes[i] = 0;
     }
   }
@@ -236,7 +260,8 @@ template<int _bits> class Blob {
 
   bool operator<(const Blob &k) const
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       if (bytes[i] < k.bytes[i])
         return true;
       if (bytes[i] > k.bytes[i])
@@ -248,7 +273,8 @@ template<int _bits> class Blob {
 
   bool operator==(const Blob &k) const
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       if (bytes[i] != k.bytes[i])
         return false;
     }
@@ -268,7 +294,8 @@ template<int _bits> class Blob {
   {
     Blob t;
 
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       t.bytes[i] = bytes[i] ^ k.bytes[i];
     }
 
@@ -277,7 +304,8 @@ template<int _bits> class Blob {
 
   Blob &operator^=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] ^= k.bytes[i];
     }
 
@@ -291,7 +319,8 @@ template<int _bits> class Blob {
 
   Blob &operator&=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++) {
+    for (size_t i = 0; i < sizeof(bytes); i++)
+    {
       bytes[i] &= k.bytes[i];
     }
   }

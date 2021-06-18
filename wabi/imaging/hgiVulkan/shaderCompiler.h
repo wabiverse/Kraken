@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 
 class HgiVulkanDevice;
 
-struct HgiVulkanDescriptorSetInfo {
+struct HgiVulkanDescriptorSetInfo
+{
   uint32_t setNumber;
   VkDescriptorSetLayoutCreateInfo createInfo;
   std::vector<VkDescriptorSetLayoutBinding> bindings;

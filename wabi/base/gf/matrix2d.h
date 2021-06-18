@@ -52,7 +52,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> struct GfIsGfMatrix<class GfMatrix2d> {
+template<>
+struct GfIsGfMatrix<class GfMatrix2d>
+{
   static const bool value = true;
 };
 
@@ -67,7 +69,8 @@ class GfMatrix2f;
 /// Matrices are defined to be in row-major order, so <c>matrix[i][j]</c>
 /// indexes the element in the \e i th row and the \e j th column.
 ///
-class GfMatrix2d {
+class GfMatrix2d
+{
  public:
   typedef double ScalarType;
 

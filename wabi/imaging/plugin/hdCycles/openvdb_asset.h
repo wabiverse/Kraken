@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 #ifdef WITH_OPENVDB
 // Very temporary. Apparently Cycles has code to do this but it isnt in the head cycles standalone
 // repo
-class HdCyclesVolumeLoader : public ccl::VDBImageLoader {
+class HdCyclesVolumeLoader : public ccl::VDBImageLoader
+{
  public:
   HdCyclesVolumeLoader(const char *filepath, const char *grid_name_in)
     : ccl::VDBImageLoader(grid_name_in),
@@ -50,26 +51,32 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader {
 
   void UpdateGrid()
   {
-    if (TF_VERIFY(!m_file_path.empty())) {
-      try {
+    if (TF_VERIFY(!m_file_path.empty()))
+    {
+      try
+      {
         openvdb::io::File file(m_file_path);
         file.setCopyMaxBytes(0);
         file.open();
 
-        if (grid) {
+        if (grid)
+        {
           grid.reset();
         }
 
         this->grid = file.readGrid(grid_name);
       }
-      catch (const openvdb::IoError &e) {
+      catch (const openvdb::IoError &e)
+      {
         TF_RUNTIME_ERROR("Unable to load grid %s from file %s", grid_name.c_str(), m_file_path.c_str());
       }
-      catch (const std::exception &e) {
+      catch (const std::exception &e)
+      {
         TF_RUNTIME_ERROR("Error updating grid: %s", e.what());
       }
     }
-    else {
+    else
+    {
       TF_WARN("Volume file path is empty!");
     }
   }
@@ -87,7 +94,8 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader {
 #endif
 
 /// Utility class for translating Hydra Openvdb Asset to Cycles Volume.
-class HdCyclesOpenvdbAsset : public HdField {
+class HdCyclesOpenvdbAsset : public HdField
+{
  public:
   /// Constructor for HdCyclesOpenvdbAsset
   ///

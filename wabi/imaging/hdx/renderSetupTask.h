@@ -62,7 +62,8 @@ class HdPhRenderPassState;
 /// create a render setup task internally.  See the HdxRenderTask documentation
 /// for details.
 ///
-class HdxRenderSetupTask : public HdTask {
+class HdxRenderSetupTask : public HdTask
+{
  public:
   HDX_API
   HdxRenderSetupTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -122,7 +123,8 @@ class HdxRenderSetupTask : public HdTask {
 ///
 /// RenderTask parameters (renderpass state).
 ///
-struct HdxRenderTaskParams {
+struct HdxRenderTaskParams
+{
   HdxRenderTaskParams()
     // Global Params
     : overrideColor(0.0),

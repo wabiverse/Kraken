@@ -77,7 +77,8 @@ void HdPrmanLightFilter::Sync(HdSceneDelegate *sceneDelegate,
 {
   HdPrman_Context *context = static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
 
-  if (*dirtyBits) {
+  if (*dirtyBits)
+  {
     _ResetLightFilter(context);
   }
 

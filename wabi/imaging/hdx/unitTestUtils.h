@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 class HdEngine;
 class HdRprimCollection;
 
-namespace HdxUnitTestUtils {
+namespace HdxUnitTestUtils
+{
 HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
                                               HdSelection::HighlightMode highlightMode,
                                               HdxPickHitVector const &allHits);
@@ -56,7 +57,8 @@ GfMatrix4d ComputePickingProjectionMatrix(GfVec2i const &start,
                                           GfVec2i const &screen,
                                           GfFrustum const &viewFrustum);
 
-class Marquee {
+class Marquee
+{
  public:
   Marquee();
   ~Marquee();

@@ -121,7 +121,8 @@
 #    define PUGIXML_CHAR char
 #  endif
 
-namespace pugi {
+namespace pugi
+{
 // Character type used for all internal storage and operations; depends on PUGIXML_WCHAR_MODE
 typedef PUGIXML_CHAR char_t;
 
@@ -133,9 +134,11 @@ typedef std::basic_string<PUGIXML_CHAR, std::char_traits<PUGIXML_CHAR>, std::all
 }  // namespace pugi
 
 // The PugiXML namespace
-namespace pugi {
+namespace pugi
+{
 // Tree node types
-enum xml_node_type {
+enum xml_node_type
+{
   node_null,         // Empty (null) node handle
   node_document,     // A document tree's absolute root
   node_element,      // Element tag, i.e. '<node/>'
@@ -227,7 +230,8 @@ const unsigned int parse_full = parse_default | parse_pi | parse_comments | pars
                                 parse_doctype;
 
 // These flags determine the encoding of input data for XML document
-enum xml_encoding {
+enum xml_encoding
+{
   encoding_auto,      // Auto-detect input encoding using BOM or < / <? detection; use UTF8 if BOM is
                       // not found
   encoding_utf8,      // UTF8 encoding
@@ -301,12 +305,16 @@ class xpath_variable_set;
 #  endif
 
 // Range-based for loop support
-template<typename It> class xml_object_range {
+template<typename It>
+class xml_object_range
+{
  public:
   typedef It const_iterator;
   typedef It iterator;
 
-  xml_object_range(It b, It e) : _begin(b), _end(e)
+  xml_object_range(It b, It e)
+    : _begin(b),
+      _end(e)
   {}
 
   It begin() const
@@ -323,7 +331,8 @@ template<typename It> class xml_object_range {
 };
 
 // Writer interface for node printing (see xml_node::print)
-class PUGIXML_CLASS xml_writer {
+class PUGIXML_CLASS xml_writer
+{
  public:
   virtual ~xml_writer()
   {}
@@ -333,7 +342,8 @@ class PUGIXML_CLASS xml_writer {
 };
 
 // xml_writer implementation for FILE*
-class PUGIXML_CLASS xml_writer_file : public xml_writer {
+class PUGIXML_CLASS xml_writer_file : public xml_writer
+{
  public:
   // Construct writer from a FILE* object; void* is used to avoid header dependencies on stdio
   xml_writer_file(void *file);
@@ -346,7 +356,8 @@ class PUGIXML_CLASS xml_writer_file : public xml_writer {
 
 #  ifndef PUGIXML_NO_STL
 // xml_writer implementation for streams
-class PUGIXML_CLASS xml_writer_stream : public xml_writer {
+class PUGIXML_CLASS xml_writer_stream : public xml_writer
+{
  public:
   // Construct writer from an output stream object
   xml_writer_stream(std::basic_ostream<char, std::char_traits<char>> &stream);
@@ -361,7 +372,8 @@ class PUGIXML_CLASS xml_writer_stream : public xml_writer {
 #  endif
 
 // A light-weight handle for manipulating attributes in DOM tree
-class PUGIXML_CLASS xml_attribute {
+class PUGIXML_CLASS xml_attribute
+{
   friend class xml_attribute_iterator;
   friend class xml_node;
 
@@ -469,7 +481,8 @@ bool PUGIXML_FUNCTION operator||(const xml_attribute &lhs, bool rhs);
 #  endif
 
 // A light-weight handle for manipulating nodes in DOM tree
-class PUGIXML_CLASS xml_node {
+class PUGIXML_CLASS xml_node
+{
   friend class xml_attribute_iterator;
   friend class xml_node_iterator;
   friend class xml_named_node_iterator;
@@ -611,7 +624,8 @@ class PUGIXML_CLASS xml_node {
                                  xml_encoding encoding = encoding_auto);
 
   // Find attribute using predicate. Returns first attribute for which predicate returned true.
-  template<typename Predicate> xml_attribute find_attribute(Predicate pred) const
+  template<typename Predicate>
+  xml_attribute find_attribute(Predicate pred) const
   {
     if (!_root)
       return xml_attribute();
@@ -624,7 +638,8 @@ class PUGIXML_CLASS xml_node {
   }
 
   // Find child node using predicate. Returns first child for which predicate returned true.
-  template<typename Predicate> xml_node find_child(Predicate pred) const
+  template<typename Predicate>
+  xml_node find_child(Predicate pred) const
   {
     if (!_root)
       return xml_node();
@@ -638,14 +653,16 @@ class PUGIXML_CLASS xml_node {
 
   // Find node from subtree using predicate. Returns first node from subtree (depth-first), for
   // which predicate returned true.
-  template<typename Predicate> xml_node find_node(Predicate pred) const
+  template<typename Predicate>
+  xml_node find_node(Predicate pred) const
   {
     if (!_root)
       return xml_node();
 
     xml_node cur = first_child();
 
-    while (cur._root && cur._root != _root) {
+    while (cur._root && cur._root != _root)
+    {
       if (pred(cur))
         return cur;
 
@@ -653,7 +670,8 @@ class PUGIXML_CLASS xml_node {
         cur = cur.first_child();
       else if (cur.next_sibling())
         cur = cur.next_sibling();
-      else {
+      else
+      {
         while (!cur.next_sibling() && cur._root != _root)
           cur = cur.parent();
 
@@ -752,7 +770,8 @@ bool PUGIXML_FUNCTION operator||(const xml_node &lhs, bool rhs);
 #  endif
 
 // A helper for working with text inside PCDATA nodes
-class PUGIXML_CLASS xml_text {
+class PUGIXML_CLASS xml_text
+{
   friend class xml_node;
 
   xml_node_struct *_root;
@@ -842,7 +861,8 @@ bool PUGIXML_FUNCTION operator||(const xml_text &lhs, bool rhs);
 #  endif
 
 // Child node iterator (a bidirectional iterator over a collection of xml_node)
-class PUGIXML_CLASS xml_node_iterator {
+class PUGIXML_CLASS xml_node_iterator
+{
   friend class xml_node;
 
  private:
@@ -883,7 +903,8 @@ class PUGIXML_CLASS xml_node_iterator {
 };
 
 // Attribute iterator (a bidirectional iterator over a collection of xml_attribute)
-class PUGIXML_CLASS xml_attribute_iterator {
+class PUGIXML_CLASS xml_attribute_iterator
+{
   friend class xml_node;
 
  private:
@@ -924,7 +945,8 @@ class PUGIXML_CLASS xml_attribute_iterator {
 };
 
 // Named node range helper
-class PUGIXML_CLASS xml_named_node_iterator {
+class PUGIXML_CLASS xml_named_node_iterator
+{
   friend class xml_node;
 
  public:
@@ -966,7 +988,8 @@ class PUGIXML_CLASS xml_named_node_iterator {
 };
 
 // Abstract tree walker class (see xml_node::traverse)
-class PUGIXML_CLASS xml_tree_walker {
+class PUGIXML_CLASS xml_tree_walker
+{
   friend class xml_node;
 
  private:
@@ -991,7 +1014,8 @@ class PUGIXML_CLASS xml_tree_walker {
 };
 
 // Parsing status, returned as part of xml_parse_result object
-enum xml_parse_status {
+enum xml_parse_status
+{
   status_ok = 0,  // No error
 
   status_file_not_found,  // File was not found during load_file()
@@ -1021,7 +1045,8 @@ enum xml_parse_status {
 };
 
 // Parsing result
-struct PUGIXML_CLASS xml_parse_result {
+struct PUGIXML_CLASS xml_parse_result
+{
   // Parsing status (see xml_parse_status)
   xml_parse_status status;
 
@@ -1042,7 +1067,8 @@ struct PUGIXML_CLASS xml_parse_result {
 };
 
 // Document class (DOM tree root)
-class PUGIXML_CLASS xml_document : public xml_node {
+class PUGIXML_CLASS xml_document : public xml_node
+{
  private:
   char_t *_buffer;
 
@@ -1158,7 +1184,8 @@ class PUGIXML_CLASS xml_document : public xml_node {
 
 #  ifndef PUGIXML_NO_XPATH
 // XPath query return type
-enum xpath_value_type {
+enum xpath_value_type
+{
   xpath_type_none,      // Unknown type (query failed to compile)
   xpath_type_node_set,  // Node set (xpath_node_set)
   xpath_type_number,    // Number
@@ -1167,7 +1194,8 @@ enum xpath_value_type {
 };
 
 // XPath parsing result
-struct PUGIXML_CLASS xpath_parse_result {
+struct PUGIXML_CLASS xpath_parse_result
+{
   // Error message (0 if no error)
   const char *error;
 
@@ -1185,7 +1213,8 @@ struct PUGIXML_CLASS xpath_parse_result {
 };
 
 // A single XPath variable
-class PUGIXML_CLASS xpath_variable {
+class PUGIXML_CLASS xpath_variable
+{
   friend class xpath_variable_set;
 
  protected:
@@ -1220,7 +1249,8 @@ class PUGIXML_CLASS xpath_variable {
 };
 
 // A set of XPath variables
-class PUGIXML_CLASS xpath_variable_set {
+class PUGIXML_CLASS xpath_variable_set
+{
  private:
   xpath_variable *_data[64];
 
@@ -1263,7 +1293,8 @@ class PUGIXML_CLASS xpath_variable_set {
 };
 
 // A compiled XPath query object
-class PUGIXML_CLASS xpath_query {
+class PUGIXML_CLASS xpath_query
+{
  private:
   void *_impl;
   xpath_parse_result _result;
@@ -1343,7 +1374,8 @@ class PUGIXML_CLASS xpath_query {
 
 #    ifndef PUGIXML_NO_EXCEPTIONS
 // XPath exception class
-class PUGIXML_CLASS xpath_exception : public std::exception {
+class PUGIXML_CLASS xpath_exception : public std::exception
+{
  private:
   xpath_parse_result _result;
 
@@ -1360,7 +1392,8 @@ class PUGIXML_CLASS xpath_exception : public std::exception {
 #    endif
 
 // XPath node class (either xml_node or xml_attribute)
-class PUGIXML_CLASS xpath_node {
+class PUGIXML_CLASS xpath_node
+{
  private:
   xml_node _node;
   xml_attribute _attribute;
@@ -1400,10 +1433,12 @@ bool PUGIXML_FUNCTION operator||(const xpath_node &lhs, bool rhs);
 #    endif
 
 // A fixed-size collection of XPath nodes
-class PUGIXML_CLASS xpath_node_set {
+class PUGIXML_CLASS xpath_node_set
+{
  public:
   // Collection type
-  enum type_t {
+  enum type_t
+  {
     type_unsorted,       // Not ordered
     type_sorted,         // Sorted by document order (ascending)
     type_sorted_reverse  // Sorted by document order (descending)
@@ -1502,7 +1537,8 @@ deallocation_function PUGIXML_FUNCTION get_memory_deallocation_function();
 }  // namespace pugi
 
 #  if !defined(PUGIXML_NO_STL) && (defined(_MSC_VER) || defined(__ICC))
-namespace std {
+namespace std
+{
 // Workarounds for (non-standard) iterator category detection for older versions (MSVC7/IC8 and
 // earlier)
 std::bidirectional_iterator_tag PUGIXML_FUNCTION _Iter_cat(const pugi::xml_node_iterator &);
@@ -1512,7 +1548,8 @@ std::bidirectional_iterator_tag PUGIXML_FUNCTION _Iter_cat(const pugi::xml_named
 #  endif
 
 #  if !defined(PUGIXML_NO_STL) && defined(__SUNPRO_CC)
-namespace std {
+namespace std
+{
 // Workarounds for (non-standard) iterator category detection
 std::bidirectional_iterator_tag PUGIXML_FUNCTION __iterator_category(const pugi::xml_node_iterator &);
 std::bidirectional_iterator_tag PUGIXML_FUNCTION __iterator_category(const pugi::xml_attribute_iterator &);

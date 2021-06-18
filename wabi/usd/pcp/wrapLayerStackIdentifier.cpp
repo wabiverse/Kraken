@@ -35,7 +35,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _Repr(const PcpLayerStackIdentifier &x)
 {

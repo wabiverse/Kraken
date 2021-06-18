@@ -50,20 +50,26 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfPayloadsProxy>().Alias(TfType::GetRoot(), "SdfPayloadsProxy");
 }
 
-template<class P> struct Sdf_ListEditorProxyTraits {
+template<class P>
+struct Sdf_ListEditorProxyTraits
+{
 };
 
-template<> struct Sdf_ListEditorProxyTraits<SdfPathEditorProxy> {
+template<>
+struct Sdf_ListEditorProxyTraits<SdfPathEditorProxy>
+{
   typedef SdfPathEditorProxy::TypePolicy TypePolicy;
 
   static boost::shared_ptr<Sdf_ListEditor<TypePolicy>> GetListEditor(const SdfSpecHandle &o,
                                                                      const TfToken &n)
   {
-    if (n == SdfFieldKeys->TargetPaths) {
+    if (n == SdfFieldKeys->TargetPaths)
+    {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
         new Sdf_RelationshipTargetListEditor(o, TypePolicy(o)));
     }
-    else if (n == SdfFieldKeys->ConnectionPaths) {
+    else if (n == SdfFieldKeys->ConnectionPaths)
+    {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
         new Sdf_AttributeConnectionListEditor(o, TypePolicy(o)));
     }
@@ -73,7 +79,9 @@ template<> struct Sdf_ListEditorProxyTraits<SdfPathEditorProxy> {
   }
 };
 
-template<> struct Sdf_ListEditorProxyTraits<SdfReferenceEditorProxy> {
+template<>
+struct Sdf_ListEditorProxyTraits<SdfReferenceEditorProxy>
+{
   typedef SdfReferenceEditorProxy::TypePolicy TypePolicy;
 
   static boost::shared_ptr<Sdf_ListEditor<TypePolicy>> GetListEditor(const SdfSpecHandle &o,
@@ -84,7 +92,9 @@ template<> struct Sdf_ListEditorProxyTraits<SdfReferenceEditorProxy> {
   }
 };
 
-template<> struct Sdf_ListEditorProxyTraits<SdfPayloadEditorProxy> {
+template<>
+struct Sdf_ListEditorProxyTraits<SdfPayloadEditorProxy>
+{
   typedef SdfPayloadEditorProxy::TypePolicy TypePolicy;
 
   static boost::shared_ptr<Sdf_ListEditor<TypePolicy>> GetListEditor(const SdfSpecHandle &o,
@@ -95,7 +105,8 @@ template<> struct Sdf_ListEditorProxyTraits<SdfPayloadEditorProxy> {
   }
 };
 
-template<class Proxy> inline Proxy SdfGetListEditorProxy(const SdfSpecHandle &o, const TfToken &n)
+template<class Proxy>
+inline Proxy SdfGetListEditorProxy(const SdfSpecHandle &o, const TfToken &n)
 {
   typedef Sdf_ListEditorProxyTraits<Proxy> Traits;
   return Proxy(Traits::GetListEditor(o, n));
@@ -118,7 +129,8 @@ SdfPayloadEditorProxy SdfGetPayloadEditorProxy(const SdfSpecHandle &o, const TfT
 
 SdfNameOrderProxy SdfGetNameOrderProxy(const SdfSpecHandle &spec, const TfToken &orderField)
 {
-  if (!spec) {
+  if (!spec)
+  {
     return SdfNameOrderProxy(SdfListOpTypeOrdered);
   }
 

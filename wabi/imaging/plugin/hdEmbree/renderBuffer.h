@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdEmbreeRenderBuffer : public HdRenderBuffer {
+class HdEmbreeRenderBuffer : public HdRenderBuffer
+{
  public:
   HdEmbreeRenderBuffer(SdfPath const &id);
   ~HdEmbreeRenderBuffer();

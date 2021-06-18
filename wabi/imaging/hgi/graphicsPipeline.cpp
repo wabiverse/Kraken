@@ -49,7 +49,9 @@ bool operator!=(const HgiVertexAttributeDesc &lhs, const HgiVertexAttributeDesc 
   return !(lhs == rhs);
 }
 
-HgiVertexBufferDesc::HgiVertexBufferDesc() : bindingIndex(0), vertexStride(0)
+HgiVertexBufferDesc::HgiVertexBufferDesc()
+  : bindingIndex(0),
+    vertexStride(0)
 {}
 
 bool operator==(const HgiVertexBufferDesc &lhs, const HgiVertexBufferDesc &rhs)
@@ -63,7 +65,9 @@ bool operator!=(const HgiVertexBufferDesc &lhs, const HgiVertexBufferDesc &rhs)
   return !(lhs == rhs);
 }
 
-HgiMultiSampleState::HgiMultiSampleState() : alphaToCoverageEnable(false), sampleCount(HgiSampleCount1)
+HgiMultiSampleState::HgiMultiSampleState()
+  : alphaToCoverageEnable(false),
+    sampleCount(HgiSampleCount1)
 {}
 
 bool operator==(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
@@ -129,7 +133,8 @@ bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShad
   return !(lhs == rhs);
 }
 
-HgiGraphicsPipelineDesc::HgiGraphicsPipelineDesc() : primitiveType(HgiPrimitiveTypeTriangleList)
+HgiGraphicsPipelineDesc::HgiGraphicsPipelineDesc()
+  : primitiveType(HgiPrimitiveTypeTriangleList)
 {}
 
 HgiGraphicsPipelineDesc const &HgiGraphicsPipeline::GetDescriptor() const
@@ -154,7 +159,8 @@ bool operator!=(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
   return !(lhs == rhs);
 }
 
-HgiGraphicsPipeline::HgiGraphicsPipeline(HgiGraphicsPipelineDesc const &desc) : _descriptor(desc)
+HgiGraphicsPipeline::HgiGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
+  : _descriptor(desc)
 {}
 
 HgiGraphicsPipeline::~HgiGraphicsPipeline() = default;

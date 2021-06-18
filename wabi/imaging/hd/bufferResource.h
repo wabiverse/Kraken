@@ -48,7 +48,8 @@ using HdBufferResourceNamedList = std::vector<std::pair<TfToken, HdBufferResourc
 ///
 /// A specific type of HdResource (GPU resource) representing a buffer object.
 ///
-class HdBufferResource : public HdResource {
+class HdBufferResource : public HdResource
+{
  public:
   HD_API
   HdBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride);

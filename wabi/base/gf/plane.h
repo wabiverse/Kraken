@@ -56,7 +56,8 @@ class GfVec4d;
 /// normal. The plane can also be used to represent a half-space: the
 /// side of the plane in the direction of the normal.
 ///
-class GfPlane {
+class GfPlane
+{
  public:
   /// The default constructor leaves the plane parameters undefined.
   GfPlane()
@@ -174,7 +175,8 @@ class GfPlane {
   /// halfspace.
   void Reorient(const GfVec3d &p)
   {
-    if (GetDistance(p) < 0) {
+    if (GetDistance(p) < 0)
+    {
       _normal = -_normal;
       _distance = -_distance;
     }

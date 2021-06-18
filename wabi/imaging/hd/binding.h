@@ -44,10 +44,12 @@ typedef std::vector<class HdBindingRequest> HdBindingRequestVector;
 /// Bindings are used for buffers or textures, it simple associates a binding
 /// type with a binding location.
 ///
-class HdBinding {
+class HdBinding
+{
  public:
-  enum Type {  // primvar, drawing coordinate and dispatch buffer bindings
-               // also shader fallback values
+  enum Type
+  {  // primvar, drawing coordinate and dispatch buffer bindings
+     // also shader fallback values
     UNKNOWN,
     DISPATCH,                   // GL_DRAW_INDIRECT_BUFFER
     DRAW_INDEX,                 // per-drawcall. not instanced
@@ -86,12 +88,14 @@ class HdBinding {
                                    // the texture exists.
     TRANSFORM_2D                   // transform2d
   };
-  enum Location {
+  enum Location
+  {
     // NOT_EXIST is a special value of location for a uniform
     // which is assigned but optimized out after linking program.
     NOT_EXIST = 0xffff
   };
-  HdBinding() : _typeAndLocation(-1)
+  HdBinding()
+    : _typeAndLocation(-1)
   {}
   HdBinding(Type type, int location, int textureUnit = 0)
   {
@@ -139,7 +143,8 @@ class HdBinding {
 /// This is a "request" because the caller makes a request before bindings are
 /// resolved. All requests are consulted and fulfilled during binding
 /// resolution.
-class HdBindingRequest {
+class HdBindingRequest
+{
  public:
   HdBindingRequest() = default;
 
@@ -300,7 +305,8 @@ class HdBindingRequest {
   size_t ComputeHash() const;
 
   // TfHash support.
-  template<class HashState> friend void TfHashAppend(HashState &h, HdBindingRequest const &br)
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, HdBindingRequest const &br)
   {
     h.Append(br._name, br._bindingType, br._dataType, br._isInterleaved);
   }

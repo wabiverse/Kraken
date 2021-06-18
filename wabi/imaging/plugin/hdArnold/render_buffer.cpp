@@ -24,31 +24,44 @@
 // TOOD(pal): use a more efficient locking mechanism than the std::mutex.
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // Mapping the HdFormat base type to a C++ type.
 // The function querying the component size is not constexpr.
-template<int TYPE> struct HdFormatType {
+template<int TYPE>
+struct HdFormatType
+{
   using type = void;
 };
 
-template<> struct HdFormatType<HdFormatUNorm8> {
+template<>
+struct HdFormatType<HdFormatUNorm8>
+{
   using type = uint8_t;
 };
 
-template<> struct HdFormatType<HdFormatSNorm8> {
+template<>
+struct HdFormatType<HdFormatSNorm8>
+{
   using type = int8_t;
 };
 
-template<> struct HdFormatType<HdFormatFloat16> {
+template<>
+struct HdFormatType<HdFormatFloat16>
+{
   using type = GfHalf;
 };
 
-template<> struct HdFormatType<HdFormatFloat32> {
+template<>
+struct HdFormatType<HdFormatFloat32>
+{
   using type = float;
 };
 
-template<> struct HdFormatType<HdFormatInt32> {
+template<>
+struct HdFormatType<HdFormatInt32>
+{
   using type = int32_t;
 };
 
@@ -56,12 +69,16 @@ template<> struct HdFormatType<HdFormatInt32> {
 // key to look them up. We need to investigate if the overhead of the unordered_map lookup, the
 // function call and pushing the arguments to the stack are significant, compared to inlining all
 // the functions.
-struct ConversionKey {
+struct ConversionKey
+{
   const uint16_t from;
   const uint16_t to;
-  ConversionKey(int _from, int _to) : from(static_cast<uint16_t>(_from)), to(static_cast<uint16_t>(_to))
+  ConversionKey(int _from, int _to)
+    : from(static_cast<uint16_t>(_from)),
+      to(static_cast<uint16_t>(_to))
   {}
-  struct HashFunctor {
+  struct HashFunctor
+  {
     size_t operator()(const ConversionKey &key) const
     {
       // The max value for the key is 20.
@@ -84,28 +101,33 @@ inline bool _SupportedComponentFormat(HdFormat format)
          componentFormat == HdFormatInt32;
 }
 
-template<typename TO, typename FROM> inline TO _ConvertType(FROM from)
+template<typename TO, typename FROM>
+inline TO _ConvertType(FROM from)
 {
   return static_cast<TO>(from);
 }
 
 // TODO(pal): Dithering?
-template<> inline uint8_t _ConvertType(float from)
+template<>
+inline uint8_t _ConvertType(float from)
 {
   return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
 }
 
-template<> inline uint8_t _ConvertType(GfHalf from)
+template<>
+inline uint8_t _ConvertType(GfHalf from)
 {
   return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
 }
 
-template<> inline int8_t _ConvertType(float from)
+template<>
+inline int8_t _ConvertType(float from)
 {
   return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
 }
 
-template<> inline int8_t _ConvertType(GfHalf from)
+template<>
+inline int8_t _ConvertType(GfHalf from)
 {
   return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
 }
@@ -139,18 +161,23 @@ inline void _WriteBucket(void *buffer,
   // We use std::transform instead of std::copy, so we can add special logic for float32/float16.
   // If the lambda is just a straight copy, the behavior should be the same since we can't use
   // memcpy.
-  if (componentCount == bucketComponentCount) {
+  if (componentCount == bucketComponentCount)
+  {
     const auto copyWidth = dataWidth * componentCount;
-    for (auto y = yo; y < ye; y += 1) {
+    for (auto y = yo; y < ye; y += 1)
+    {
       std::transform(from, from + copyWidth, to, copyOp);
       to -= toStep;
       from += fromStep;
     }
   }
-  else {  // We need to call std::transform per pixel with the amount of components to copy.
+  else
+  {  // We need to call std::transform per pixel with the amount of components to copy.
     const auto componentsToCopy = std::min(componentCount, bucketComponentCount);
-    for (auto y = yo; y < ye; y += 1) {
-      for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1) {
+    for (auto y = yo; y < ye; y += 1)
+    {
+      for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1)
+      {
         std::transform(from + x * bucketComponentCount,
                        from + x * bucketComponentCount + componentsToCopy,
                        to + x * componentCount,
@@ -207,7 +234,8 @@ WriteBucketFunctionMap writeBucketFunctions{
 
 }  // namespace
 
-HdArnoldRenderBuffer::HdArnoldRenderBuffer(const SdfPath &id) : HdRenderBuffer(id)
+HdArnoldRenderBuffer::HdArnoldRenderBuffer(const SdfPath &id)
+  : HdRenderBuffer(id)
 {
   _hasUpdates.store(false, std::memory_order_release);
 }
@@ -218,7 +246,8 @@ bool HdArnoldRenderBuffer::Allocate(const GfVec3i &dimensions, HdFormat format, 
   // So deallocate won't lock.
   decltype(_buffer) tmp{};
   _buffer.swap(tmp);
-  if (!_SupportedComponentFormat(format)) {
+  if (!_SupportedComponentFormat(format))
+  {
     _width = 0;
     _height = 0;
     return false;
@@ -228,7 +257,8 @@ bool HdArnoldRenderBuffer::Allocate(const GfVec3i &dimensions, HdFormat format, 
   _width = dimensions[0];
   _height = dimensions[1];
   const auto byteCount = _width * _height * HdDataSizeOfFormat(format);
-  if (byteCount != 0) {
+  if (byteCount != 0)
+  {
     _buffer.resize(byteCount, 0);
   }
   return true;
@@ -241,7 +271,8 @@ uint8_t *HdArnoldRenderBuffer::Map()
 #endif
 {
   _mutex.lock();
-  if (_buffer.empty()) {
+  if (_buffer.empty())
+  {
     _mutex.unlock();
     return nullptr;
   }
@@ -250,7 +281,8 @@ uint8_t *HdArnoldRenderBuffer::Map()
 
 void HdArnoldRenderBuffer::Unmap()
 {
-  if (!_buffer.empty()) {
+  if (!_buffer.empty())
+  {
     _mutex.unlock();
   }
 }
@@ -274,24 +306,28 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
                                        HdFormat format,
                                        const void *bucketData)
 {
-  if (!_SupportedComponentFormat(format)) {
+  if (!_SupportedComponentFormat(format))
+  {
     return;
   }
   std::lock_guard<std::mutex> _guard(_mutex);
   // Checking for empty buffers.
-  if (_buffer.empty()) {
+  if (_buffer.empty())
+  {
     return;
   }
   const auto xo = AiClamp(bucketXO, 0u, _width);
   const auto xe = AiClamp(bucketXO + bucketWidth, 0u, _width);
   // Empty bucket.
-  if (xe == xo) {
+  if (xe == xo)
+  {
     return;
   }
   const auto yo = AiClamp(bucketYO, 0u, _height);
   const auto ye = AiClamp(bucketYO + bucketHeight, 0u, _height);
   // Empty bucket.
-  if (ye == yo) {
+  if (ye == yo)
+  {
     return;
   }
   _hasUpdates.store(true, std::memory_order_release);
@@ -314,7 +350,8 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
   // For now we are only implementing cases where the format does matches.
   const auto inComponentCount = HdGetComponentCount(format);
   const auto inComponentFormat = HdGetComponentFormat(format);
-  if (componentFormat == inComponentFormat) {
+  if (componentFormat == inComponentFormat)
+  {
     const auto pixelSize = HdDataSizeOfFormat(_format);
     // Copy per line
     const auto lineDataSize = dataWidth * pixelSize;
@@ -324,17 +361,20 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
     // This is the first pixel we are copying into.
     auto *data = _buffer.data() + (xo + (_height - yo - 1) * _width) * pixelSize;
     const auto *inData = static_cast<const uint8_t *>(bucketData);
-    if (inComponentCount == componentCount) {
+    if (inComponentCount == componentCount)
+    {
       // The size of the line for the bucket, this could be more than the data copied.
       const auto inLineDataSize = bucketWidth * pixelSize;
       // This is the first pixel we are copying into.
-      for (auto y = yo; y < ye; y += 1) {
+      for (auto y = yo; y < ye; y += 1)
+      {
         memcpy(data, inData, lineDataSize);
         data -= fullLineDataSize;
         inData += inLineDataSize;
       }
     }
-    else {
+    else
+    {
       // Component counts do not match, we need to copy as much data as possible and leave the rest
       // to their default values, we expect someone to set that up before this call.
       const auto copiedDataSize = std::min(inComponentCount, componentCount) *
@@ -343,8 +383,10 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
       const auto inPixelSize = HdDataSizeOfFormat(format);
       // The size of the line for the bucket, this could be more than the data copied.
       const auto inLineDataSize = bucketWidth * inPixelSize;
-      for (auto y = yo; y < ye; y += 1) {
-        for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1) {
+      for (auto y = yo; y < ye; y += 1)
+      {
+        for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1)
+        {
           memcpy(data + x * pixelSize, inData + x * inPixelSize, copiedDataSize);
         }
         data -= fullLineDataSize;
@@ -352,9 +394,11 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
       }
     }
   }
-  else {  // Need to do conversion.
+  else
+  {  // Need to do conversion.
     const auto it = writeBucketFunctions.find({componentFormat, inComponentFormat});
-    if (it != writeBucketFunctions.end()) {
+    if (it != writeBucketFunctions.end())
+    {
       it->second(_buffer.data(),
                  componentCount,
                  _width,

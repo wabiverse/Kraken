@@ -34,7 +34,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-PcpLayerStackIdentifier::PcpLayerStackIdentifier() : _hash(0)
+PcpLayerStackIdentifier::PcpLayerStackIdentifier()
+  : _hash(0)
 {
   // Do nothing
 }
@@ -52,7 +53,8 @@ PcpLayerStackIdentifier::PcpLayerStackIdentifier(const SdfLayerHandle &rootLayer
 
 PcpLayerStackIdentifier &PcpLayerStackIdentifier::operator=(const PcpLayerStackIdentifier &rhs)
 {
-  if (this != &rhs) {
+  if (this != &rhs)
+  {
     const_cast<SdfLayerHandle &>(rootLayer) = rhs.rootLayer;
     const_cast<SdfLayerHandle &>(sessionLayer) = rhs.sessionLayer;
     const_cast<ArResolverContext &>(pathResolverContext) = rhs.pathResolverContext;
@@ -147,7 +149,8 @@ size_t PcpLayerStackIdentifierStr::_ComputeHash() const
   return hash;
 }
 
-enum Pcp_IdentifierFormat {
+enum Pcp_IdentifierFormat
+{
   Pcp_IdentifierFormatIdentifier,  // Must be zero for correct default.
   Pcp_IdentifierFormatRealPath,
   Pcp_IdentifierFormatBaseName
@@ -161,11 +164,13 @@ static long Pcp_IdentifierFormatIndex()
 
 static std::string Pcp_FormatIdentifier(std::ostream &os, const SdfLayerHandle &layer)
 {
-  if (!layer) {
+  if (!layer)
+  {
     return std::string("<expired>");
   }
 
-  switch (os.iword(Pcp_IdentifierFormatIndex())) {
+  switch (os.iword(Pcp_IdentifierFormatIndex()))
+  {
     default:
     case Pcp_IdentifierFormatIdentifier:
       return layer->GetIdentifier();
@@ -180,11 +185,13 @@ static std::string Pcp_FormatIdentifier(std::ostream &os, const SdfLayerHandle &
 
 static std::string Pcp_FormatIdentifier(std::ostream &os, std::string const &layerId)
 {
-  if (layerId.empty()) {
+  if (layerId.empty())
+  {
     return std::string("<empty>");
   }
 
-  switch (os.iword(Pcp_IdentifierFormatIndex())) {
+  switch (os.iword(Pcp_IdentifierFormatIndex()))
+  {
     default:
     case Pcp_IdentifierFormatIdentifier:
     case Pcp_IdentifierFormatRealPath:
@@ -216,11 +223,13 @@ std::ostream &PcpIdentifierFormatIdentifier(std::ostream &os)
 std::ostream &operator<<(std::ostream &s, const PcpLayerStackIdentifier &x)
 {
   // XXX: Should probably write the resolver context, too.
-  if (x.sessionLayer) {
+  if (x.sessionLayer)
+  {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayer) << "@,"
              << "@" << Pcp_FormatIdentifier(s, x.sessionLayer) << "@" << PcpIdentifierFormatIdentifier;
   }
-  else {
+  else
+  {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayer) << "@" << PcpIdentifierFormatIdentifier;
   }
 }
@@ -228,11 +237,13 @@ std::ostream &operator<<(std::ostream &s, const PcpLayerStackIdentifier &x)
 std::ostream &operator<<(std::ostream &s, const PcpLayerStackIdentifierStr &x)
 {
   // XXX: Should probably write the resolver context, too.
-  if (!x.sessionLayerId.empty()) {
+  if (!x.sessionLayerId.empty())
+  {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayerId) << "@,"
              << "@" << Pcp_FormatIdentifier(s, x.sessionLayerId) << "@" << PcpIdentifierFormatIdentifier;
   }
-  else {
+  else
+  {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayerId) << "@" << PcpIdentifierFormatIdentifier;
   }
 }

@@ -66,7 +66,8 @@ class SdfAssetPath;
 /// documentation for more information.
 ///
 ///
-class UsdSkelAnimation : public UsdTyped {
+class UsdSkelAnimation : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -82,13 +83,15 @@ class UsdSkelAnimation : public UsdTyped {
   /// Equivalent to UsdSkelAnimation::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelAnimation(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdSkelAnimation(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdSkelAnimation on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelAnimation(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelAnimation(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdSkelAnimation(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

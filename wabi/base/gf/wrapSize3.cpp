@@ -49,7 +49,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static int normalizeIndex(int index)
 {

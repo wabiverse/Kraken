@@ -36,7 +36,8 @@ using _ListEditImpl = Usd_ListEditImpl<UsdPayloads, SdfPayloadsProxy>;
 
 // The implementation doesn't define this function as it needs to be specialized
 // so we implement it here.
-template<> SdfPayloadsProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
+template<>
+SdfPayloadsProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
 {
   return spec->GetPayloadList();
 }

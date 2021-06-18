@@ -42,7 +42,8 @@ typedef NSOpenGLContext NSGLContext;
 
 WABI_NAMESPACE_BEGIN
 
-class GarchNSGLContextState::Detail {
+class GarchNSGLContextState::Detail
+{
  public:
   Detail()
   {
@@ -60,7 +61,8 @@ class GarchNSGLContextState::Detail {
 };
 
 /// Construct with the current state.
-GarchNSGLContextState::GarchNSGLContextState() : _detail(std::make_shared<GarchNSGLContextState::Detail>())
+GarchNSGLContextState::GarchNSGLContextState()
+  : _detail(std::make_shared<GarchNSGLContextState::Detail>())
 {}
 
 GarchNSGLContextState::GarchNSGLContextState(NullState)

@@ -48,7 +48,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 string _Repr(GfBBox3d const &self)
 {

@@ -48,14 +48,18 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
   const auto &id = GetId();
 
   // Sync any built-in parameters.
-  if (*dirtyBits & ArnoldUsdRprimBitsParams && Ai_likely(_paramList != nullptr)) {
+  if (*dirtyBits & ArnoldUsdRprimBitsParams && Ai_likely(_paramList != nullptr))
+  {
     param.Interrupt();
-    for (const auto &paramIt : *_paramList) {
+    for (const auto &paramIt : *_paramList)
+    {
 #if WABI_VERSION >= 2011
       const auto val = sceneDelegate->Get(id, str::t_arnold__attributes);
-      if (val.IsHolding<ArnoldUsdParamValueList>()) {
+      if (val.IsHolding<ArnoldUsdParamValueList>())
+      {
         const auto *nodeEntry = AiNodeGetNodeEntry(GetArnoldNode());
-        for (const auto &param : val.UncheckedGet<ArnoldUsdParamValueList>()) {
+        for (const auto &param : val.UncheckedGet<ArnoldUsdParamValueList>())
+        {
           HdArnoldSetParameter(
             GetArnoldNode(), AiNodeEntryLookUpParameter(nodeEntry, param.first), param.second);
         }
@@ -63,36 +67,42 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
 #else
       const auto val = sceneDelegate->Get(id, paramIt.first);
       // Do we need to check for this?
-      if (!val.IsEmpty()) {
+      if (!val.IsEmpty())
+      {
         HdArnoldSetParameter(GetArnoldNode(), paramIt.second, val);
       }
 #endif
     }
   }
 
-  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id))
+  {
     param.Interrupt();
     _UpdateVisibility(sceneDelegate, dirtyBits);
     SetShapeVisibility(_sharedData.visible ? AI_RAY_ALL : uint8_t{0});
   }
 
   auto transformDirtied = false;
-  if (HdChangeTracker::IsTransformDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsTransformDirty(*dirtyBits, id))
+  {
     param.Interrupt();
     HdArnoldSetTransform(GetArnoldNode(), sceneDelegate, GetId());
     transformDirtied = true;
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyMaterialId) {
+  if (*dirtyBits & HdChangeTracker::DirtyMaterialId)
+  {
     param.Interrupt();
     const auto materialId = sceneDelegate->GetMaterialId(id);
     _materialTracker.TrackSingleMaterial(GetRenderDelegate(), id, materialId);
     const auto *material = reinterpret_cast<const HdArnoldMaterial *>(
       sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
-    if (material != nullptr) {
+    if (material != nullptr)
+    {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
     }
-    else {
+    else
+    {
       AiNodeResetParameter(GetArnoldNode(), str::shader);
     }
   }

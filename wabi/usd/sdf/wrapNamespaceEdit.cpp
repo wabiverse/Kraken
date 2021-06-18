@@ -42,7 +42,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _StringifyEdit(const SdfNamespaceEdit &x)
 {
@@ -51,10 +52,12 @@ static std::string _StringifyEdit(const SdfNamespaceEdit &x)
 
 static std::string _ReprEdit(const SdfNamespaceEdit &x)
 {
-  if (x == SdfNamespaceEdit()) {
+  if (x == SdfNamespaceEdit())
+  {
     return TfStringPrintf("%sNamespaceEdit()", TF_PY_REPR_PREFIX.c_str());
   }
-  else {
+  else
+  {
     return TfStringPrintf("%sNamespaceEdit(%s,%s,%d)",
                           TF_PY_REPR_PREFIX.c_str(),
                           TfPyRepr(x.currentPath).c_str(),
@@ -70,10 +73,12 @@ static std::string _StringifyEditDetail(const SdfNamespaceEditDetail &x)
 
 static std::string _ReprEditDetail(const SdfNamespaceEditDetail &x)
 {
-  if (x == SdfNamespaceEditDetail()) {
+  if (x == SdfNamespaceEditDetail())
+  {
     return TfStringPrintf("%sNamespaceEditDetail()", TF_PY_REPR_PREFIX.c_str());
   }
-  else {
+  else
+  {
     return TfStringPrintf("%sNamespaceEditDetail(%s,%s,%s)",
                           TF_PY_REPR_PREFIX.c_str(),
                           TfPyRepr(x.result).c_str(),
@@ -85,13 +90,16 @@ static std::string _ReprEditDetail(const SdfNamespaceEditDetail &x)
 static std::string _StringifyBatchEdit(const SdfBatchNamespaceEdit &x)
 {
   std::vector<std::string> edits;
-  for (const auto &edit : x.GetEdits()) {
+  for (const auto &edit : x.GetEdits())
+  {
     edits.push_back(_StringifyEdit(edit));
   }
-  if (edits.empty()) {
+  if (edits.empty())
+  {
     return TfStringPrintf("[]");
   }
-  else {
+  else
+  {
     return TfStringPrintf("[%s]", TfStringJoin(edits, ",").c_str());
   }
 }
@@ -99,10 +107,12 @@ static std::string _StringifyBatchEdit(const SdfBatchNamespaceEdit &x)
 static std::string _ReprBatchEdit(const SdfBatchNamespaceEdit &x)
 {
   const SdfNamespaceEditVector &edits = x.GetEdits();
-  if (edits.empty()) {
+  if (edits.empty())
+  {
     return TfStringPrintf("%sBatchNamespaceEdit()", TF_PY_REPR_PREFIX.c_str());
   }
-  else {
+  else
+  {
     return TfStringPrintf("%sBatchNamespaceEdit(%s)", TF_PY_REPR_PREFIX.c_str(), TfPyRepr(edits).c_str());
   }
 }
@@ -129,7 +139,8 @@ static void _AddOldAndNew3(SdfBatchNamespaceEdit &x,
 
 static bool _TranslateCanEdit(const object &canEdit, const SdfNamespaceEdit &edit, std::string *whyNot)
 {
-  if (TfPyIsNone(canEdit)) {
+  if (TfPyIsNone(canEdit))
+  {
     return true;
   }
 
@@ -140,17 +151,22 @@ static bool _TranslateCanEdit(const object &canEdit, const SdfNamespaceEdit &edi
   // string.  We'll also accept for failure just a str.
   {
     extract<tuple> e(result);
-    if (e.check()) {
+    if (e.check())
+    {
       tuple tupleResult = e();
-      if (len(tupleResult) != 2) {
+      if (len(tupleResult) != 2)
+      {
         TfPyThrowValueError("expected a 2-tuple");
       }
       str whyNotResult = extract<str>(tupleResult[1]);
-      if (extract<bool>(tupleResult[0])) {
+      if (extract<bool>(tupleResult[0]))
+      {
         return true;
       }
-      else {
-        if (whyNot) {
+      else
+      {
+        if (whyNot)
+        {
           *whyNot = extract<std::string>(whyNotResult);
         }
         return false;
@@ -159,14 +175,17 @@ static bool _TranslateCanEdit(const object &canEdit, const SdfNamespaceEdit &edi
   }
   {
     extract<str> whyNotResult(result);
-    if (whyNotResult.check()) {
-      if (whyNot) {
+    if (whyNotResult.check())
+    {
+      if (whyNot)
+      {
         *whyNot = extract<std::string>(whyNotResult);
       }
       return false;
     }
   }
-  if (!extract<bool>(result)) {
+  if (!extract<bool>(result))
+  {
     // Need a string on failure.
     TfPyThrowValueError("expected a 2-tuple");
   }
@@ -184,24 +203,28 @@ static tuple _Process(const SdfBatchNamespaceEdit &x,
   SdfNamespaceEditVector edits;
   SdfNamespaceEditDetailVector details;
   bool result;
-  if (TfPyIsNone(hasObjectAtPath)) {
+  if (TfPyIsNone(hasObjectAtPath))
+  {
     result = x.Process(&edits,
                        SdfBatchNamespaceEdit::HasObjectAtPath(),
                        std::bind(&_TranslateCanEdit, canEdit, ph::_1, ph::_2),
                        &details,
                        fixBackpointers);
   }
-  else {
+  else
+  {
     result = x.Process(&edits,
                        TfPyCall<bool>(hasObjectAtPath),
                        std::bind(&_TranslateCanEdit, canEdit, ph::_1, ph::_2),
                        &details,
                        fixBackpointers);
   }
-  if (result) {
+  if (result)
+  {
     return make_tuple(object(true), object(edits));
   }
-  else {
+  else
+  {
     return make_tuple(object(false), object(details));
   }
 }

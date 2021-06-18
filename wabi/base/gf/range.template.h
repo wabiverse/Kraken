@@ -65,18 +65,22 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GfRange {
+class GfRange
+{
   {
     DIM
   }
 } d;
-class GfRange {
+class GfRange
+{
   {
     DIM
   }
 } f;
 
-template<> struct GfIsGfRange<class {{RNG}}> {
+template<>
+struct GfIsGfRange<class {{RNG}}>
+{
   static const bool value = true;
 };
 
@@ -89,7 +93,8 @@ template<> struct GfIsGfRange<class {{RNG}}> {
 /// operations are component-wise and conform to interval mathematics. An
 /// empty range is one where max < min.
 /// The default empty is [FLT_MAX,-FLT_MAX]
-class {
+class
+{
   {
     RNG
   }
@@ -487,11 +492,13 @@ class {
   }
   operator*=(double m)
   {
-    if (m > 0) {
+    if (m > 0)
+    {
       _min *= m;
       _max *= m;
     }
-    else {
+    else
+    {
       {
         {
           MINMAX

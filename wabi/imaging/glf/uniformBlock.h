@@ -50,7 +50,8 @@ TF_DECLARE_WEAK_PTRS(GlfBindingMap);
 ///
 /// Manages a GL uniform buffer object.
 ///
-class GlfUniformBlock : public TfRefBase, public TfWeakBase {
+class GlfUniformBlock : public TfRefBase, public TfWeakBase
+{
  public:
   /// Returns a new instance.
   GLF_API

@@ -129,8 +129,10 @@ WABI_NAMESPACE_BEGIN
 /// Macro to define private tokens.
 /// \hideinitializer
 #define TF_DEFINE_PRIVATE_TOKENS(key, seq) \
-  namespace { \
-  struct _TF_TOKENS_STRUCT_NAME_PRIVATE(key) { \
+  namespace \
+  { \
+  struct _TF_TOKENS_STRUCT_NAME_PRIVATE(key) \
+  { \
     _TF_TOKENS_STRUCT_NAME_PRIVATE(key) \
     () \
       : _TF_TOKENS_INITIALIZE_SEQ(BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
@@ -185,15 +187,18 @@ WABI_NAMESPACE_BEGIN
 // Private macro used to generate a struct of TfTokens.
 //
 #define _TF_DECLARE_TOKENS3(key, seq, eiapi) \
-  struct _TF_TOKENS_STRUCT_NAME(key) { \
+  struct _TF_TOKENS_STRUCT_NAME(key) \
+  { \
     eiapi _TF_TOKENS_STRUCT_NAME(key)(); \
     eiapi ~_TF_TOKENS_STRUCT_NAME(key)(); \
     _TF_TOKENS_DECLARE_MEMBERS(seq) \
   };
 
 #define _TF_DECLARE_TOKENS2(key, seq) \
-  struct _TF_TOKENS_STRUCT_NAME(key) { \
-    _TF_TOKENS_STRUCT_NAME(key)(); \
+  struct _TF_TOKENS_STRUCT_NAME(key) \
+  { \
+    _TF_TOKENS_STRUCT_NAME(key) \
+    (); \
     ~_TF_TOKENS_STRUCT_NAME(key)(); \
     _TF_TOKENS_DECLARE_MEMBERS(seq) \
   };
@@ -212,7 +217,8 @@ WABI_NAMESPACE_BEGIN
                                    (_TF_TOKENS_INITIALIZE_MEMBER(elem))))
 
 #define _TF_TOKENS_INITIALIZE_MEMBER_TUPLE(elem) \
-  BOOST_PP_TUPLE_ELEM(2, 0, elem)(BOOST_PP_TUPLE_ELEM(2, 1, elem), TfToken::Immortal)
+  BOOST_PP_TUPLE_ELEM(2, 0, elem) \
+  (BOOST_PP_TUPLE_ELEM(2, 1, elem), TfToken::Immortal)
 
 #define _TF_TOKENS_INITIALIZE_MEMBER(elem) elem(TF_PP_STRINGIZE(elem), TfToken::Immortal)
 

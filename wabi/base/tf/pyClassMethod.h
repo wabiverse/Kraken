@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Tf_PyClassMethod {
+namespace Tf_PyClassMethod
+{
 
 using namespace boost::python;
 
@@ -41,15 +42,19 @@ using namespace boost::python;
 // See typedef below for docs.
 // This is very similar to the staticmethod() method on boost::python::class,
 // except it uses PyClassMethod_New() instead of PyStaticMethod_New().
-struct _TfPyClassMethod : def_visitor<_TfPyClassMethod> {
+struct _TfPyClassMethod : def_visitor<_TfPyClassMethod>
+{
   friend class def_visitor_access;
 
-  _TfPyClassMethod(const std::string &methodName) : _methodName(methodName)
+  _TfPyClassMethod(const std::string &methodName)
+    : _methodName(methodName)
   {}
-  explicit _TfPyClassMethod(const char *methodName) : _methodName(methodName)
+  explicit _TfPyClassMethod(const char *methodName)
+    : _methodName(methodName)
   {}
 
-  template<typename CLS> void visit(CLS &c) const
+  template<typename CLS>
+  void visit(CLS &c) const
   {
     PyTypeObject *self = downcast<PyTypeObject>(c.ptr());
     dict d((handle<>(borrowed(self->tp_dict))));

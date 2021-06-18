@@ -60,7 +60,8 @@ WABI_NAMESPACE_BEGIN
 ///     subscribe to when the caps changes, so they can
 ///     update and invalidate.
 ///
-class GlfContextCaps {
+class GlfContextCaps
+{
  public:
   /// InitInstance queries the GL context for its capabilities.
   /// It should be called by the application before using systems

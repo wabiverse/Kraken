@@ -57,7 +57,8 @@ class SdfAssetPath;
 /// The fallback values for Cube, Sphere, Cone, and Cylinder are set so that
 /// they all pack into the same volume/bounds.
 ///
-class UsdGeomSphere : public UsdGeomGprim {
+class UsdGeomSphere : public UsdGeomGprim
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -73,13 +74,15 @@ class UsdGeomSphere : public UsdGeomGprim {
   /// Equivalent to UsdGeomSphere::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomSphere(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim)
+  explicit UsdGeomSphere(const UsdPrim &prim = UsdPrim())
+    : UsdGeomGprim(prim)
   {}
 
   /// Construct a UsdGeomSphere on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomSphere(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomSphere(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj)
+  explicit UsdGeomSphere(const UsdSchemaBase &schemaObj)
+    : UsdGeomGprim(schemaObj)
   {}
 
   /// Destructor.

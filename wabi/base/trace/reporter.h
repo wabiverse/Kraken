@@ -66,7 +66,8 @@ class TraceCollectionAvailable;
 /// This class converters streams of TraceEvent objects into call trees which
 /// can then be used as a data source to a GUI or written out to a file.
 ///
-class TraceReporter : public TraceReporterBase {
+class TraceReporter : public TraceReporterBase
+{
  public:
   TF_MALLOC_TAG_NEW("Trace", "TraceReporter");
 

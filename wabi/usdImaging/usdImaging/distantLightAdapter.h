@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type DistantLight
 ///
-class UsdImagingDistantLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingDistantLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingDistantLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingDistantLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

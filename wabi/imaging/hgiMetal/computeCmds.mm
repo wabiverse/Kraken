@@ -59,9 +59,11 @@ HgiMetalComputeCmds::~HgiMetalComputeCmds()
 
 void HgiMetalComputeCmds::_CreateEncoder()
 {
-  if (!_encoder) {
+  if (!_encoder)
+  {
     _commandBuffer = _hgi->GetPrimaryCommandBuffer();
-    if (_commandBuffer == nil) {
+    if (_commandBuffer == nil)
+    {
       _commandBuffer = _hgi->GetSecondaryCommandBuffer();
       _secondaryCommandBuffer = true;
     }
@@ -78,7 +80,8 @@ void HgiMetalComputeCmds::BindPipeline(HgiComputePipelineHandle pipeline)
 
 void HgiMetalComputeCmds::BindResources(HgiResourceBindingsHandle r)
 {
-  if (HgiMetalResourceBindings *rb = static_cast<HgiMetalResourceBindings *>(r.Get())) {
+  if (HgiMetalResourceBindings *rb = static_cast<HgiMetalResourceBindings *>(r.Get()))
+  {
     _CreateEncoder();
     rb->BindResources(_encoder);
   }
@@ -99,11 +102,13 @@ void HgiMetalComputeCmds::Dispatch(int dimX, int dimY)
   uint32_t exeWidth = [_pipelineState->GetMetalPipelineState() threadExecutionWidth];
 
   uint32_t thread_width, thread_height;
-  if (dimY == 1) {
+  if (dimY == 1)
+  {
     thread_width = (maxTotalThreads / exeWidth) * exeWidth;
     thread_height = 1;
   }
-  else {
+  else
+  {
     thread_width = exeWidth;
     thread_height = maxTotalThreads / exeWidth;
   }
@@ -133,13 +138,15 @@ void HgiMetalComputeCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 bool HgiMetalComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
   bool submittedWork = false;
-  if (_encoder) {
+  if (_encoder)
+  {
     [_encoder endEncoding];
     _encoder = nil;
     submittedWork = true;
 
     HgiMetal::CommitCommandBufferWaitType waitType;
-    switch (wait) {
+    switch (wait)
+    {
       case HgiSubmitWaitTypeNoWait:
         waitType = HgiMetal::CommitCommandBuffer_NoWait;
         break;
@@ -148,15 +155,18 @@ bool HgiMetalComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
         break;
     }
 
-    if (_secondaryCommandBuffer) {
+    if (_secondaryCommandBuffer)
+    {
       _hgi->CommitSecondaryCommandBuffer(_commandBuffer, waitType);
     }
-    else {
+    else
+    {
       _hgi->CommitPrimaryCommandBuffer(waitType);
     }
   }
 
-  if (_secondaryCommandBuffer) {
+  if (_secondaryCommandBuffer)
+  {
     _hgi->ReleaseSecondaryCommandBuffer(_commandBuffer);
   }
   _commandBuffer = nil;

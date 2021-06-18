@@ -89,7 +89,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdLuxTokens->rightHanded
 /// as the value.
 ///
-class UsdLuxDomeLight : public UsdLuxLight {
+class UsdLuxDomeLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -105,13 +106,15 @@ class UsdLuxDomeLight : public UsdLuxLight {
   /// Equivalent to UsdLuxDomeLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxDomeLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxDomeLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxDomeLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxDomeLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxDomeLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxDomeLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

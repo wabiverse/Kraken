@@ -33,7 +33,8 @@ WABI_NAMESPACE_BEGIN
 /// This is meant for clients that use Hydra to push scene data
 /// to Riley, but do not use Hydra to coordinate image generation
 /// and presentation.
-class HdPrman_RenderPass final : public HdRenderPass {
+class HdPrman_RenderPass final : public HdRenderPass
+{
  public:
   HdPrman_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection);
   virtual ~HdPrman_RenderPass();

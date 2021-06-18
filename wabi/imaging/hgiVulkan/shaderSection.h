@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Base class for Vulkan code sections. The generator holds these
 ///
-class HgiVulkanShaderSection : public HgiShaderSection {
+class HgiVulkanShaderSection : public HgiShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanShaderSection(const std::string &identifier,
@@ -86,7 +87,8 @@ class HgiVulkanShaderSection : public HgiShaderSection {
 /// A ShaderSection for defining macros.
 /// Accepts raw strings and dumps it to the global scope under includes
 ///
-class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanMacroShaderSection(const std::string &macroDeclaration, const std::string &macroComment);
@@ -110,7 +112,8 @@ class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection {
 /// Declares a member in global scope, for declaring instances of structs, constant
 /// params etc - it's quite flexible in it's writing capabilities
 ///
-class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanMemberShaderSection(const std::string &identifier,
@@ -140,7 +143,8 @@ class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection {
 ///
 /// For writing out uniform blocks, defines them in the global member declerations.
 ///
-class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanBlockShaderSection(const std::string &identifier,
@@ -160,7 +164,8 @@ class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection {
 ///
 /// Declares OpenGL textures, and their cross language function
 ///
-class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanTextureShaderSection(const std::string &identifier,
@@ -192,7 +197,8 @@ class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection {
 ///
 /// Declares Vulkan buffers, and their cross language function
 ///
-class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanBufferShaderSection(const std::string &identifier,
@@ -221,7 +227,8 @@ class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection {
 ///
 /// Declares reserved Vulkan shader inputs, and their cross language function
 ///
-class HgiVulkanKeywordShaderSection final : public HgiVulkanShaderSection {
+class HgiVulkanKeywordShaderSection final : public HgiVulkanShaderSection
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanKeywordShaderSection(const std::string &identifier,

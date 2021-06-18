@@ -50,7 +50,8 @@ typedef std::shared_ptr<class GlfGLContext> GlfGLContextSharedPtr;
 ///
 /// Registry of GlfGLContexts.
 ///
-class GlfGLContextRegistry {
+class GlfGLContextRegistry
+{
  public:
   static GlfGLContextRegistry &GetInstance()
   {

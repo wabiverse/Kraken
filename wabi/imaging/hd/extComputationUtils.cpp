@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
   CompQueue computations;
 
   // First discover the computation tied to the computation primvars.
-  for (auto const &pv : compPrimvars) {
+  for (auto const &pv : compPrimvars)
+  {
     HdExtComputation const *sourceComp = static_cast<HdExtComputation const *>(
       renderIndex.GetSprim(HdPrimTypeTokens->extComputation, pv.sourceComputationId));
 
@@ -63,11 +64,13 @@ WABI_NAMESPACE_BEGIN
   // At each step, we pop a node, exit early if it has already been processed,
   // discover its dependent comps and add them to the queue to be visited.
   HdExtComputationUtils::ComputationDependencyMap cdm;
-  while (!computations.empty()) {
+  while (!computations.empty())
+  {
     // Pop head entry and skip if already processed.
     HdExtComputation const *curComp = computations.back();
     computations.pop_front();
-    if (cdm.find(curComp) != cdm.end()) {
+    if (cdm.find(curComp) != cdm.end())
+    {
       continue;
     }
 
@@ -79,11 +82,13 @@ WABI_NAMESPACE_BEGIN
     // Get unique dependent computation paths (to reduce the number of
     // render index lookups)
     std::unordered_set<SdfPath, SdfPath::Hash> dependentCompPaths;
-    for (auto const &input : compInputs) {
+    for (auto const &input : compInputs)
+    {
       dependentCompPaths.insert(input.sourceComputationId);
     }
     // Update dependency map entry, and add the dep. comp to the queue.
-    for (auto const &depCompPath : dependentCompPaths) {
+    for (auto const &depCompPath : dependentCompPaths)
+    {
       HdExtComputation const *depComp = static_cast<HdExtComputation const *>(
         renderIndex.GetSprim(HdPrimTypeTokens->extComputation, depCompPath));
 
@@ -118,27 +123,32 @@ WABI_NAMESPACE_BEGIN
 
   // Populate the context with all the inputs (scene, computed).
   Hd_ExtComputationContextInternal context;
-  for (size_t i = 0; i < sceneInputValues.size(); ++i) {
+  for (size_t i = 0; i < sceneInputValues.size(); ++i)
+  {
     context.SetInputValue(sceneInputNames[i], sceneInputValues[i]);
   }
 
-  for (size_t i = 0; i < compInputValues.size(); ++i) {
+  for (size_t i = 0; i < compInputValues.size(); ++i)
+  {
     context.SetInputValue(compInputs[i].name, compInputValues[i]);
   }
 
   SdfPath const &compId = comp.GetId();
   sceneDelegate.InvokeExtComputation(compId, &context);
 
-  if (context.HasComputationError()) {
+  if (context.HasComputationError())
+  {
     TF_WARN("Error invoking computation %s.\n", compId.GetText());
     return false;
   }
 
   // Retrieve the computed output values from the context.
-  for (size_t i = 0; i < compOutputValues.size(); ++i) {
+  for (size_t i = 0; i < compOutputValues.size(); ++i)
+  {
     TfToken const &name = compOutputs[i].name;
 
-    if (!context.GetOutputValue(name, &compOutputValues[i])) {
+    if (!context.GetOutputValue(name, &compOutputValues[i]))
+    {
       TF_WARN("Error getting out %s for computation %s.\n", name.GetText(), compId.GetText());
       return false;
     }
@@ -147,7 +157,8 @@ WABI_NAMESPACE_BEGIN
   return true;
 }
 
-namespace {
+namespace
+{
 
 static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationConstPtrVector computations,
                                                               HdSceneDelegate *sceneDelegate)
@@ -155,15 +166,18 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   HD_TRACE_FUNCTION();
 
   HdExtComputationUtils::ValueStore valueStore;
-  for (auto const &comp : computations) {
+  for (auto const &comp : computations)
+  {
     SdfPath const &compId = comp->GetId();
 
     // Add all the scene inputs to the value store
-    for (TfToken const &input : comp->GetSceneInputNames()) {
+    for (TfToken const &input : comp->GetSceneInputNames())
+    {
       valueStore[input] = sceneDelegate->GetExtComputationInput(compId, input);
     }
 
-    if (comp->IsInputAggregation()) {
+    if (comp->IsInputAggregation())
+    {
       // An aggregator computation produces no output, and thus
       // doesn't need to be executed.
       continue;
@@ -172,31 +186,38 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
     // Populate the context with all the inputs (scene, computed) from
     // the value store.
     Hd_ExtComputationContextInternal context;
-    for (auto const &sceneInput : comp->GetSceneInputNames()) {
+    for (auto const &sceneInput : comp->GetSceneInputNames())
+    {
       context.SetInputValue(sceneInput, valueStore.at(sceneInput));
     }
 
-    for (auto const &computedInput : comp->GetComputationInputs()) {
+    for (auto const &computedInput : comp->GetComputationInputs())
+    {
       context.SetInputValue(computedInput.name, valueStore.at(computedInput.sourceComputationOutputName));
     }
 
     sceneDelegate->InvokeExtComputation(compId, &context);
 
-    if (context.HasComputationError()) {
+    if (context.HasComputationError())
+    {
       // We could bail here, or choose to execute other computations.
       // Choose the latter.
       TF_WARN("Error invoking computation %s.\n", compId.GetText());
     }
-    else {
+    else
+    {
       // Add outputs to the value store (subsequent computations may need
       // them as computation inputs)
       TfTokenVector const &outputNames = comp->GetOutputNames();
-      for (auto const &name : outputNames) {
+      for (auto const &name : outputNames)
+      {
         VtValue value;
-        if (!context.GetOutputValue(name, &value)) {
+        if (!context.GetOutputValue(name, &value))
+        {
           TF_WARN("Error getting out %s for computation %s.\n", name.GetText(), compId.GetText());
         }
-        else {
+        else
+        {
           valueStore[name] = value;
         }
       }
@@ -221,7 +242,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   HdExtComputationConstPtrVector sortedComputations;
   bool success = DependencySort(cdm, &sortedComputations);
 
-  if (!success) {
+  if (!success)
+  {
     return HdExtComputationUtils::ValueStore();
   }
 
@@ -230,7 +252,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
 
   // Output extraction
   HdExtComputationUtils::ValueStore computedPrimvarValueStore;
-  for (auto const &pv : compPrimvars) {
+  for (auto const &pv : compPrimvars)
+  {
     TfToken const &compOutputName = pv.sourceComputationOutputName;
 
     computedPrimvarValueStore[pv.name] = valueStore[compOutputName];
@@ -243,7 +266,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
                                                       HdExtComputationConstPtrVector *sortedComps)
 {
   HD_TRACE_FUNCTION();
-  if (!sortedComps) {
+  if (!sortedComps)
+  {
     TF_CODING_ERROR("Received nullptr for sortedComps.");
     return false;
   }
@@ -254,14 +278,17 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   // Add independent comps to the queue and remove them from the graph.
   using GraphIterator = HdExtComputationUtils::ComputationDependencyMap::iterator;
   GraphIterator it = cdm.begin();
-  while (it != cdm.end()) {
+  while (it != cdm.end())
+  {
     HdExtComputation const *comp = it->first;
     HdExtComputationConstPtrVector const &dependencies = it->second;
-    if (dependencies.empty()) {
+    if (dependencies.empty())
+    {
       independentComps.emplace_back(comp);
       it = cdm.erase(it);
     }
-    else {
+    else
+    {
       it++;
     }
   }
@@ -270,22 +297,26 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   // the dependency list for each computation in the graph (if it exists).
   // On removal, if the latter has no remaining dependencies, add it to the
   // queue and remove it from the graph.
-  while (!independentComps.empty()) {
+  while (!independentComps.empty())
+  {
     HdExtComputation const *indComp = independentComps.back();
     sortedComps->emplace_back(indComp);
     independentComps.pop_back();
 
     // Remove dependency edge from computations that depend on comp.
     GraphIterator it = cdm.begin();
-    while (it != cdm.end()) {
+    while (it != cdm.end())
+    {
       HdExtComputation const *comp = it->first;
       HdExtComputationConstPtrVector &dependencies = it->second;
       auto depIt = std::find(dependencies.begin(), dependencies.end(), indComp);
-      if (depIt != dependencies.end()) {
+      if (depIt != dependencies.end())
+      {
         dependencies.erase(depIt);
       }
 
-      if (dependencies.empty()) {
+      if (dependencies.empty())
+      {
         // Add the computation to the queue, since its dependencies have
         // been resolved.
         independentComps.emplace_front(comp);
@@ -293,7 +324,8 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
         // Remove it from the graph, so we don't revisit it again.
         it = cdm.erase(it);
       }
-      else {
+      else
+      {
         it++;
       }
     }
@@ -302,11 +334,13 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   // If the graph isn't empty, it indicates that there are computations whose
   // dependencies haven't been resolved. This can happen only when there are
   // cycles.
-  if (!cdm.empty()) {
+  if (!cdm.empty())
+  {
     TF_WARN(
       "Cycle detected in ExtComputation dependency graph. "
       "Unresolved dependencies:\n");
-    if (TfDebug::IsEnabled(HD_EXT_COMPUTATION_EXECUTION)) {
+    if (TfDebug::IsEnabled(HD_EXT_COMPUTATION_EXECUTION))
+    {
       PrintDependencyMap(cdm);
     }
     sortedComps->clear();
@@ -320,9 +354,11 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
   HdExtComputationUtils::ComputationDependencyMap const &cdm)
 {
   std::cout << "Computations dep map" << std::endl;
-  for (auto const &pair : cdm) {
+  for (auto const &pair : cdm)
+  {
     std::cout << pair.first->GetId() << " -> [ ";
-    for (auto const &depComp : pair.second) {
+    for (auto const &depComp : pair.second)
+    {
       std::cout << depComp->GetId() << ", ";
     }
     std::cout << " ]" << std::endl;

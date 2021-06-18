@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahMain : public CovahObject {
+struct CovahMain : public CovahObject
+{
   uint64_t build_commit_timestamp;
   std::string build_hash;
 
@@ -47,7 +48,8 @@ struct CovahMain : public CovahObject {
   std::string covah_version_decimal;
 };
 
-struct Global {
+struct Global
+{
   Main main;
 
   bool server;
@@ -57,9 +59,20 @@ struct Global {
   bool is_rendering;
 };
 
-enum ckeStatusCode { COVAH_SUCCESS = 0, COVAH_ERROR, COVAH_RUN };
+enum ckeStatusCode
+{
+  COVAH_SUCCESS = 0,
+  COVAH_ERROR,
+  COVAH_RUN
+};
 
-enum ckeErrorType { COVAH_ERROR_VERSION, COVAH_ERROR_IO, COVAH_ERROR_GL, COVAH_ERROR_HYDRA };
+enum ckeErrorType
+{
+  COVAH_ERROR_VERSION,
+  COVAH_ERROR_IO,
+  COVAH_ERROR_GL,
+  COVAH_ERROR_HYDRA
+};
 
 COVAH_KERNEL_API
 Main CKE_main_init(void);

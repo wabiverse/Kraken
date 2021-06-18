@@ -76,7 +76,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdRenderTokens->rightHanded
 /// as the value.
 ///
-class UsdRenderVar : public UsdTyped {
+class UsdRenderVar : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -92,13 +93,15 @@ class UsdRenderVar : public UsdTyped {
   /// Equivalent to UsdRenderVar::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderVar(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdRenderVar(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdRenderVar on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderVar(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderVar(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdRenderVar(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

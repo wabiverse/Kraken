@@ -57,7 +57,8 @@ using HgiBlitCmdsUniquePtr = std::unique_ptr<class HgiBlitCmds>;
 /// HgiBlitCmds is a lightweight object that cannot be re-used after it has
 /// been submitted. A new cmds object should be acquired for each frame.
 ///
-class HgiBlitCmds : public HgiCmds {
+class HgiBlitCmds : public HgiCmds
+{
  public:
   HGI_API
   ~HgiBlitCmds() override;

@@ -57,7 +57,8 @@ WABI_NAMESPACE_BEGIN
 /// as what you would see in the viewer in usdview.
 ///
 /// Note that it is assumed that an OpenGL context has already been setup.
-class UsdAppUtilsFrameRecorder {
+class UsdAppUtilsFrameRecorder
+{
  public:
   USDAPPUTILS_API
   UsdAppUtilsFrameRecorder();
@@ -83,7 +84,8 @@ class UsdAppUtilsFrameRecorder {
   /// The default image width is 960 pixels.
   void SetImageWidth(const size_t imageWidth)
   {
-    if (imageWidth == 0u) {
+    if (imageWidth == 0u)
+    {
       TF_CODING_ERROR("Image width cannot be zero");
       return;
     }

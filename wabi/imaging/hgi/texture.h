@@ -58,7 +58,8 @@ WABI_NAMESPACE_BEGIN
 ///   What component is used for alpha channel.
 /// </ul>
 ///
-struct HgiComponentMapping {
+struct HgiComponentMapping
+{
   HgiComponentSwizzle r;
   HgiComponentSwizzle g;
   HgiComponentSwizzle b;
@@ -106,7 +107,8 @@ bool operator!=(const HgiComponentMapping &lhs, const HgiComponentMapping &rhs);
 ///   in more detail how mip dimensions are rounded.</li>
 /// </ul>
 ///
-struct HgiTextureDesc {
+struct HgiTextureDesc
+{
   HgiTextureDesc()
     : usage(0),
       format(HgiFormatInvalid),
@@ -152,7 +154,8 @@ bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs);
 /// To the client (HdPh) texture resources are referred to via
 /// opaque, stateless handles (HgTextureHandle).
 ///
-class HgiTexture {
+class HgiTexture
+{
  public:
   HGI_API
   virtual ~HgiTexture();
@@ -226,7 +229,8 @@ using HgiTextureHandleVector = std::vector<HgiTextureHandle>;
 ///   view.</li>
 ///   </ul>
 ///
-struct HgiTextureViewDesc {
+struct HgiTextureViewDesc
+{
   HgiTextureViewDesc()
     : format(HgiFormatInvalid),
       layerCount(1),
@@ -269,7 +273,8 @@ bool operator!=(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs);
 /// a RGBAI32 texture once the F32 texture is no longer needed
 /// (transient resources).
 ///
-class HgiTextureView {
+class HgiTextureView
+{
  public:
   HGI_API
   HgiTextureView(HgiTextureViewDesc const &desc);

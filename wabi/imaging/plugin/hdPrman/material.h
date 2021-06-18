@@ -38,7 +38,8 @@ struct HdPrman_Context;
 ///
 /// A representation for materials (including displacement) in prman.
 ///
-class HdPrmanMaterial final : public HdMaterial {
+class HdPrmanMaterial final : public HdMaterial
+{
  public:
   HdPrmanMaterial(SdfPath const &id);
   virtual ~HdPrmanMaterial();

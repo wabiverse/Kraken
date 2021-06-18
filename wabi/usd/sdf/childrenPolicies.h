@@ -49,7 +49,9 @@ SDF_DECLARE_HANDLES(SdfVariantSetSpec);
 // Token Child Policies
 //
 
-template<class SpecType> class Sdf_TokenChildPolicy {
+template<class SpecType>
+class Sdf_TokenChildPolicy
+{
  public:
   typedef SdfNameKeyPolicy KeyPolicy;
   typedef KeyPolicy::value_type KeyType;
@@ -77,7 +79,8 @@ template<class SpecType> class Sdf_TokenChildPolicy {
   }
 };
 
-class Sdf_PrimChildPolicy : public Sdf_TokenChildPolicy<SdfPrimSpecHandle> {
+class Sdf_PrimChildPolicy : public Sdf_TokenChildPolicy<SdfPrimSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -90,14 +93,17 @@ class Sdf_PrimChildPolicy : public Sdf_TokenChildPolicy<SdfPrimSpecHandle> {
   }
 };
 
-class Sdf_PropertyChildPolicy : public Sdf_TokenChildPolicy<SdfPropertySpecHandle> {
+class Sdf_PropertyChildPolicy : public Sdf_TokenChildPolicy<SdfPropertySpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
-    if (parentPath.IsTargetPath()) {
+    if (parentPath.IsTargetPath())
+    {
       return parentPath.AppendRelationalAttribute(key);
     }
-    else {
+    else
+    {
       return parentPath.AppendProperty(key);
     }
   }
@@ -113,14 +119,17 @@ class Sdf_PropertyChildPolicy : public Sdf_TokenChildPolicy<SdfPropertySpecHandl
   }
 };
 
-class Sdf_AttributeChildPolicy : public Sdf_TokenChildPolicy<SdfAttributeSpecHandle> {
+class Sdf_AttributeChildPolicy : public Sdf_TokenChildPolicy<SdfAttributeSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
-    if (parentPath.IsTargetPath()) {
+    if (parentPath.IsTargetPath())
+    {
       return parentPath.AppendRelationalAttribute(key);
     }
-    else {
+    else
+    {
       return parentPath.AppendProperty(key);
     }
   }
@@ -136,7 +145,8 @@ class Sdf_AttributeChildPolicy : public Sdf_TokenChildPolicy<SdfAttributeSpecHan
   }
 };
 
-class Sdf_RelationshipChildPolicy : public Sdf_TokenChildPolicy<SdfRelationshipSpecHandle> {
+class Sdf_RelationshipChildPolicy : public Sdf_TokenChildPolicy<SdfRelationshipSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -154,7 +164,8 @@ class Sdf_RelationshipChildPolicy : public Sdf_TokenChildPolicy<SdfRelationshipS
   }
 };
 
-class Sdf_MapperArgChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle> {
+class Sdf_MapperArgChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -167,7 +178,8 @@ class Sdf_MapperArgChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle> {
   }
 };
 
-class Sdf_ExpressionChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle> {
+class Sdf_ExpressionChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -180,7 +192,8 @@ class Sdf_ExpressionChildPolicy : public Sdf_TokenChildPolicy<SdfSpecHandle> {
   }
 };
 
-class Sdf_VariantChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSpecHandle> {
+class Sdf_VariantChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -201,7 +214,8 @@ class Sdf_VariantChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSpecHandle>
   }
 };
 
-class Sdf_VariantSetChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSetSpecHandle> {
+class Sdf_VariantSetChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSetSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -218,7 +232,9 @@ class Sdf_VariantSetChildPolicy : public Sdf_TokenChildPolicy<SdfVariantSetSpecH
 // Path Child Policies
 //
 
-template<class SpecType> class Sdf_PathChildPolicy {
+template<class SpecType>
+class Sdf_PathChildPolicy
+{
  public:
   typedef SdfPathKeyPolicy KeyPolicy;
   typedef KeyPolicy::value_type KeyType;
@@ -256,7 +272,8 @@ template<class SpecType> class Sdf_PathChildPolicy {
   }
 };
 
-class Sdf_MapperChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle> {
+class Sdf_MapperChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle>
+{
  public:
   static SdfPath GetChildPath(const SdfPath &parentPath, const FieldType &key)
   {
@@ -276,7 +293,8 @@ class Sdf_MapperChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle> {
   }
 };
 
-class Sdf_AttributeConnectionChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle> {
+class Sdf_AttributeConnectionChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle>
+{
  public:
   static TfToken GetChildrenToken(const SdfPath &parentPath)
   {
@@ -284,7 +302,8 @@ class Sdf_AttributeConnectionChildPolicy : public Sdf_PathChildPolicy<SdfSpecHan
   }
 };
 
-class Sdf_RelationshipTargetChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle> {
+class Sdf_RelationshipTargetChildPolicy : public Sdf_PathChildPolicy<SdfSpecHandle>
+{
 
  public:
   static TfToken GetChildrenToken(const SdfPath &parentPath)

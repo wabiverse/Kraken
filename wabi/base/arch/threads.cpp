@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 // as possible, so we actually capture the main thread's id.  We assume that
 // we're not starting threads before main().
 
-namespace {
+namespace
+{
 
 const std::thread::id _mainThreadId = std::this_thread::get_id();
 

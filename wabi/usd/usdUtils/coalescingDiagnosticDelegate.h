@@ -48,14 +48,16 @@ WABI_NAMESPACE_BEGIN
 /// The shared component in a coalesced result
 /// This type can be thought of as the key by which we
 /// coalesce our diagnostics.
-struct UsdUtilsCoalescingDiagnosticDelegateSharedItem {
+struct UsdUtilsCoalescingDiagnosticDelegateSharedItem
+{
   size_t sourceLineNumber;
   std::string sourceFunction;
   std::string sourceFileName;
 };
 
 /// The unshared component in a coalesced result
-struct UsdUtilsCoalescingDiagnosticDelegateUnsharedItem {
+struct UsdUtilsCoalescingDiagnosticDelegateUnsharedItem
+{
   TfCallContext context;
   std::string commentary;
 };
@@ -63,7 +65,8 @@ struct UsdUtilsCoalescingDiagnosticDelegateUnsharedItem {
 /// An item used in coalesced results, containing a shared component:
 /// the file/function/line number, and a set of unshared components: the
 /// call context and commentary.
-struct UsdUtilsCoalescingDiagnosticDelegateItem {
+struct UsdUtilsCoalescingDiagnosticDelegateItem
+{
   UsdUtilsCoalescingDiagnosticDelegateSharedItem sharedItem;
   std::vector<UsdUtilsCoalescingDiagnosticDelegateUnsharedItem> unsharedItems;
 };
@@ -80,7 +83,8 @@ typedef std::vector<UsdUtilsCoalescingDiagnosticDelegateItem> UsdUtilsCoalescing
 /// results, as well as a compressed view which deduplicates
 /// diagnostic events by their source line number, function and file
 /// from which they occurred.
-class UsdUtilsCoalescingDiagnosticDelegate : public TfDiagnosticMgr::Delegate {
+class UsdUtilsCoalescingDiagnosticDelegate : public TfDiagnosticMgr::Delegate
+{
  public:
   USDUTILS_API
   UsdUtilsCoalescingDiagnosticDelegate();

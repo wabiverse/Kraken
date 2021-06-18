@@ -44,9 +44,11 @@ class HdPhResourceRegistry;
 ///
 /// This class doesn't perform any aggregation.
 ///
-class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
+class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
+{
  public:
-  HdPhVBOSimpleMemoryManager(HdPhResourceRegistry *resourceRegistry) : _resourceRegistry(resourceRegistry)
+  HdPhVBOSimpleMemoryManager(HdPhResourceRegistry *resourceRegistry)
+    : _resourceRegistry(resourceRegistry)
   {}
 
   /// Factory for creating HdBufferArray managed by
@@ -79,7 +81,8 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
   ///
   /// Specialized buffer array range for SimpleBufferArray.
   ///
-  class _SimpleBufferArrayRange final : public HdPhBufferArrayRange {
+  class _SimpleBufferArrayRange final : public HdPhBufferArrayRange
+  {
    public:
     /// Constructor.
     _SimpleBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
@@ -216,7 +219,8 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy {
   ///
   /// Simple buffer array (non-aggregated).
   ///
-  class _SimpleBufferArray final : public HdBufferArray {
+  class _SimpleBufferArray final : public HdBufferArray
+  {
    public:
     /// Constructor.
     HDPH_API

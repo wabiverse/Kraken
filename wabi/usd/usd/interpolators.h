@@ -41,7 +41,8 @@ class UsdAttribute;
 /// values. This is invoked during value resolution for times that do not have
 /// authored time samples.
 ///
-class Usd_InterpolatorBase {
+class Usd_InterpolatorBase
+{
  public:
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
                            const SdfPath &path,
@@ -60,7 +61,8 @@ class Usd_InterpolatorBase {
 /// Null interpolator object for use in cases where interpolation is
 /// not expected.
 ///
-class Usd_NullInterpolator : public Usd_InterpolatorBase {
+class Usd_NullInterpolator : public Usd_InterpolatorBase
+{
  public:
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
                            const SdfPath &path,
@@ -89,9 +91,12 @@ class Usd_NullInterpolator : public Usd_InterpolatorBase {
 /// expected value type, so this interpolator needs to do more costly
 /// type lookups to dispatch to the appropriate interpolator.
 ///
-class Usd_UntypedInterpolator : public Usd_InterpolatorBase {
+class Usd_UntypedInterpolator : public Usd_InterpolatorBase
+{
  public:
-  Usd_UntypedInterpolator(const UsdAttribute &attr, VtValue *result) : _attr(attr), _result(result)
+  Usd_UntypedInterpolator(const UsdAttribute &attr, VtValue *result)
+    : _attr(attr),
+      _result(result)
   {}
 
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
@@ -124,9 +129,12 @@ class Usd_UntypedInterpolator : public Usd_InterpolatorBase {
 /// attribute value for a time with no samples authored is the nearest
 /// preceding value.
 ///
-template<class T> class Usd_HeldInterpolator : public Usd_InterpolatorBase {
+template<class T>
+class Usd_HeldInterpolator : public Usd_InterpolatorBase
+{
  public:
-  Usd_HeldInterpolator(T *result) : _result(result)
+  Usd_HeldInterpolator(T *result)
+    : _result(result)
   {}
 
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
@@ -151,7 +159,8 @@ template<class T> class Usd_HeldInterpolator : public Usd_InterpolatorBase {
   T *_result;
 };
 
-template<class T> inline T Usd_Lerp(double alpha, const T &lower, const T &upper)
+template<class T>
+inline T Usd_Lerp(double alpha, const T &lower, const T &upper)
 {
   return GfLerp(alpha, lower, upper);
 }
@@ -178,9 +187,12 @@ inline GfQuatd Usd_Lerp(double alpha, const GfQuatd &lower, const GfQuatd &upper
 /// With linear interpolation, the attribute value for a time with no samples
 /// will be linearly interpolated from the previous and next time samples.
 ///
-template<class T> class Usd_LinearInterpolator : public Usd_InterpolatorBase {
+template<class T>
+class Usd_LinearInterpolator : public Usd_InterpolatorBase
+{
  public:
-  Usd_LinearInterpolator(T *result) : _result(result)
+  Usd_LinearInterpolator(T *result)
+    : _result(result)
   {}
 
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
@@ -215,10 +227,12 @@ template<class T> class Usd_LinearInterpolator : public Usd_InterpolatorBase {
     Usd_LinearInterpolator<T> lowerInterpolator(&lowerValue);
     Usd_LinearInterpolator<T> upperInterpolator(&upperValue);
 
-    if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue)) {
+    if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue))
+    {
       return false;
     }
-    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue)) {
+    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
+    {
       upperValue = lowerValue;
     }
 
@@ -233,9 +247,12 @@ template<class T> class Usd_LinearInterpolator : public Usd_InterpolatorBase {
 
 // Specialization to linearly interpolate each element for
 // array types.
-template<class T> class Usd_LinearInterpolator<VtArray<T>> : public Usd_InterpolatorBase {
+template<class T>
+class Usd_LinearInterpolator<VtArray<T>> : public Usd_InterpolatorBase
+{
  public:
-  Usd_LinearInterpolator(VtArray<T> *result) : _result(result)
+  Usd_LinearInterpolator(VtArray<T> *result)
+    : _result(result)
   {}
 
   virtual bool Interpolate(const SdfLayerRefPtr &layer,
@@ -270,10 +287,12 @@ template<class T> class Usd_LinearInterpolator<VtArray<T>> : public Usd_Interpol
     Usd_LinearInterpolator<VtArray<T>> lowerInterpolator(&lowerValue);
     Usd_LinearInterpolator<VtArray<T>> upperInterpolator(&upperValue);
 
-    if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue)) {
+    if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue))
+    {
       return false;
     }
-    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue)) {
+    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
+    {
       upperValue = lowerValue;
     }
 
@@ -284,22 +303,27 @@ template<class T> class Usd_LinearInterpolator<VtArray<T>> : public Usd_Interpol
     // that would be too restrictive. Consumers will be responsible for
     // implementing their own interpolation in cases where this occurs
     // (e.g. meshes with varying topology)
-    if (_result->size() != upperValue.size()) {
+    if (_result->size() != upperValue.size())
+    {
       return true;
     }
 
     const double parametricTime = (time - lower) / (upper - lower);
-    if (parametricTime == 0.0) {
+    if (parametricTime == 0.0)
+    {
       // do nothing.
     }
-    else if (parametricTime == 1.0) {
+    else if (parametricTime == 1.0)
+    {
       // just swap the upper value in.
       _result->swap(upperValue);
     }
-    else {
+    else
+    {
       // must actually calculate interpolated values.
       T *rptr = _result->data();
-      for (size_t i = 0, j = _result->size(); i != j; ++i) {
+      for (size_t i = 0, j = _result->size(); i != j; ++i)
+      {
         rptr[i] = Usd_Lerp(parametricTime, rptr[i], upperValue[i]);
       }
     }
@@ -324,7 +348,8 @@ inline bool Usd_GetOrInterpolateValue(const Src &src,
                                       Usd_InterpolatorBase *interpolator,
                                       T *result)
 {
-  if (GfIsClose(lower, upper, /* epsilon = */ 1e-6)) {
+  if (GfIsClose(lower, upper, /* epsilon = */ 1e-6))
+  {
     bool queryResult = Usd_QueryTimeSample(src, path, lower, interpolator, result);
     return queryResult && (!Usd_ClearValueIfBlocked(result));
   }

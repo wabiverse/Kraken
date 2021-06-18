@@ -47,7 +47,8 @@ class PcpPrimIndex;
 /// Private helper object for computing and caching clip information for
 /// a prim on a UsdStage.
 ///
-class Usd_ClipCache {
+class Usd_ClipCache
+{
   Usd_ClipCache(Usd_ClipCache const &) = delete;
   Usd_ClipCache &operator=(Usd_ClipCache const &) = delete;
 
@@ -61,7 +62,8 @@ class Usd_ClipCache {
   /// PopulateClipsForPrim.  Protects member data reads/writes with a mutex
   /// during its lifetime.
   /// \sa PopulateClipsForPrim.
-  struct ConcurrentPopulationContext {
+  struct ConcurrentPopulationContext
+  {
     explicit ConcurrentPopulationContext(Usd_ClipCache &cache);
     ~ConcurrentPopulationContext();
     Usd_ClipCache &_cache;
@@ -100,7 +102,8 @@ class Usd_ClipCache {
   /// Structure for keeping invalidated clip data alive.
   /// \sa InvalidateClipsForPrim.
   ///
-  struct Lifeboat {
+  struct Lifeboat
+  {
     explicit Lifeboat(Usd_ClipCache &cache);
     ~Lifeboat();
     Usd_ClipCache &_cache;

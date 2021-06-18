@@ -33,7 +33,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename HydraType> class HdArnoldRprim : public HydraType {
+template<typename HydraType>
+class HdArnoldRprim : public HydraType
+{
  public:
 #if WABI_VERSION >= 2102
   /// Constructor for HdArnoldRprim.

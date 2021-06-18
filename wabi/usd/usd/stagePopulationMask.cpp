@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-UsdStagePopulationMask::UsdStagePopulationMask(std::vector<SdfPath> &&paths) : _paths(std::move(paths))
+UsdStagePopulationMask::UsdStagePopulationMask(std::vector<SdfPath> &&paths)
+  : _paths(std::move(paths))
 {
   _ValidateAndNormalize();
 }
@@ -49,26 +50,34 @@ UsdStagePopulationMask UsdStagePopulationMask::Union(UsdStagePopulationMask cons
 
   // Step through both lists in order, merging as we go, and removing paths
   // prefixed by others.
-  while (lcur != lend && rcur != rend) {
-    if (rcur->HasPrefix(*lcur)) {
+  while (lcur != lend && rcur != rend)
+  {
+    if (rcur->HasPrefix(*lcur))
+    {
       result._paths.push_back(*lcur);
-      do {
+      do
+      {
         ++rcur;
       } while (rcur != rend && rcur->HasPrefix(*lcur));
       ++lcur;
     }
-    else if (lcur->HasPrefix(*rcur)) {
+    else if (lcur->HasPrefix(*rcur))
+    {
       result._paths.push_back(*rcur);
-      do {
+      do
+      {
         ++lcur;
       } while (lcur != lend && lcur->HasPrefix(*rcur));
       ++rcur;
     }
-    else {
-      if (*lcur < *rcur) {
+    else
+    {
+      if (*lcur < *rcur)
+      {
         result._paths.push_back(*lcur++);
       }
-      else {
+      else
+      {
         result._paths.push_back(*rcur++);
       }
     }
@@ -91,7 +100,8 @@ UsdStagePopulationMask UsdStagePopulationMask::GetUnion(UsdStagePopulationMask c
 UsdStagePopulationMask UsdStagePopulationMask::GetUnion(SdfPath const &path) const
 {
   // This could be made faster if need-be.
-  if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath()) {
+  if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath())
+  {
     TF_CODING_ERROR(
       "Invalid path <%s>; must be an absolute prim path or "
       "the absolute root path",
@@ -114,24 +124,32 @@ UsdStagePopulationMask UsdStagePopulationMask::Intersection(UsdStagePopulationMa
 
   // Step through both lists in order, merging as we go, and including paths
   // prefixed by others.
-  while (lcur != lend && rcur != rend) {
-    if (rcur->HasPrefix(*lcur)) {
-      do {
+  while (lcur != lend && rcur != rend)
+  {
+    if (rcur->HasPrefix(*lcur))
+    {
+      do
+      {
         result._paths.push_back(*rcur++);
       } while (rcur != rend && rcur->HasPrefix(*lcur));
       ++lcur;
     }
-    else if (lcur->HasPrefix(*rcur)) {
-      do {
+    else if (lcur->HasPrefix(*rcur))
+    {
+      do
+      {
         result._paths.push_back(*lcur++);
       } while (lcur != lend && lcur->HasPrefix(*rcur));
       ++rcur;
     }
-    else {
-      if (*lcur < *rcur) {
+    else
+    {
+      if (*lcur < *rcur)
+      {
         ++lcur;
       }
-      else {
+      else
+      {
         ++rcur;
       }
     }
@@ -166,7 +184,8 @@ bool UsdStagePopulationMask::Includes(SdfPath const &path) const
   return (prev && path.HasPrefix(*prev)) || (cur && cur->HasPrefix(path));
 }
 
-namespace {
+namespace
+{
 // Return pair where the first element is true if the mask represented by
 // paths includes the subtree rooted at path, false otherwise. The second
 // element is the result of calling lower_bound on paths with path.
@@ -192,13 +211,16 @@ bool UsdStagePopulationMask::IncludesSubtree(SdfPath const &path) const
   return _IncludesSubtree(_paths, path).first;
 }
 
-namespace {
+namespace
+{
 // Return the name of the child prim that appears in \p fullPath
 // immediately after the prefix \p path.
 TfToken _GetChildNameBeneathPath(SdfPath const &fullPath, SdfPath const &path)
 {
-  for (SdfPath p = fullPath; !p.IsEmpty(); p = p.GetParentPath()) {
-    if (p.GetParentPath() == path) {
+  for (SdfPath p = fullPath; !p.IsEmpty(); p = p.GetParentPath())
+  {
+    if (p.GetParentPath() == path)
+    {
       return p.GetNameToken();
     }
   }
@@ -214,11 +236,13 @@ bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path, std::vec
   if (includesSubtree.first)
     return true;
 
-  for (auto it = includesSubtree.second; it != _paths.end() && it->HasPrefix(path); ++it) {
+  for (auto it = includesSubtree.second; it != _paths.end() && it->HasPrefix(path); ++it)
+  {
 
     const SdfPath &maskPath = *it;
     const TfToken &childName = _GetChildNameBeneathPath(maskPath, path);
-    if (!TF_VERIFY(!childName.IsEmpty())) {
+    if (!TF_VERIFY(!childName.IsEmpty()))
+    {
       // Should never happen because all paths in the range are prefixed
       // by path, and if path was in the range then the earlier call to
       // _IncludesSubtree would have returned true.
@@ -227,7 +251,8 @@ bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path, std::vec
 
     // Because the range is sorted, we only need to check the last
     // element to see if childName has been added already.
-    if (names->empty() || names->back() != childName) {
+    if (names->empty() || names->back() != childName)
+    {
       names->push_back(childName);
     }
   }
@@ -243,8 +268,10 @@ std::vector<SdfPath> UsdStagePopulationMask::GetPaths() const
 void UsdStagePopulationMask::_ValidateAndNormalize()
 {
   // Check that all paths are valid.
-  for (auto const &path : _paths) {
-    if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath()) {
+  for (auto const &path : _paths)
+  {
+    if (!path.IsAbsolutePath() || !path.IsAbsoluteRootOrPrimPath())
+    {
       TF_CODING_ERROR(
         "Invalid path <%s>; must be an absolute prim path "
         "or the absolute root path",

@@ -86,7 +86,8 @@ WABI_NAMESPACE_BEGIN
 /// command-line arguments specified are passed to the function.
 /// (Most library test functions shouldn't need any arguments.)
 ///
-class TfRegTest {
+class TfRegTest
+{
  public:
   /// Run a single regression test function, returning 0 if the function
   /// succeeded and 1 otherwise.

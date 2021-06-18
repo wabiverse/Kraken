@@ -31,10 +31,12 @@ WABI_NAMESPACE_BEGIN
 //! [CreateMatrixWithDefault]
 bool CreateMatrixWithDefault(UsdGeomXformable const &gprim, GfMatrix4d const &defValue)
 {
-  if (UsdGeomXformOp transform = gprim.MakeMatrixXform()) {
+  if (UsdGeomXformOp transform = gprim.MakeMatrixXform())
+  {
     return transform.Set(defValue, UsdTimeCode::Default());
   }
-  else {
+  else
+  {
     return false;
   }
 }
@@ -49,13 +51,16 @@ bool CreateExampleSRT(UsdGeomXformable const &gprim)
 
   UsdGeomXformOp s, r, t;
 
-  if (!(t = gprim.AddTranslateOp())) {
+  if (!(t = gprim.AddTranslateOp()))
+  {
     return false;
   }
-  if (!(r = gprim.AddRotateXYZOp())) {
+  if (!(r = gprim.AddRotateXYZOp()))
+  {
     return false;
   }
-  if (!(s = gprim.AddScaleOp())) {
+  if (!(s = gprim.AddScaleOp()))
+  {
     return false;
   }
 
@@ -72,7 +77,8 @@ bool CreateSRTWithDefaults(UsdGeomXformable const &gprim,
                            GfVec3f const &defScale,
                            GfVec3f const &defPivot)
 {
-  if (UsdGeomXformCommonAPI xform = UsdGeomXformCommonAPI(gprim)) {
+  if (UsdGeomXformCommonAPI xform = UsdGeomXformCommonAPI(gprim))
+  {
     return xform.SetXformVectors(defTranslate,
                                  defRotateXYZ,
                                  defScale,
@@ -80,7 +86,8 @@ bool CreateSRTWithDefaults(UsdGeomXformable const &gprim,
                                  UsdGeomXformCommonAPI::RotationOrderXYZ,
                                  UsdTimeCode::Default());
   }
-  else {
+  else
+  {
     return false;
   }
 }
@@ -93,7 +100,8 @@ bool CreateAnimatedTransform(UsdGeomXformable const &gprim,
                              GfVec3f const &defPivot)
 {
   // Only need to do this if you're overriding an existing scene
-  if (!gprim.ClearXformOpOrder()) {
+  if (!gprim.ClearXformOpOrder())
+  {
     return false;
   }
 
@@ -118,7 +126,8 @@ bool CreateAnimatedTransform(UsdGeomXformable const &gprim,
   GfVec3d position(baseTranslate);
   GfVec3f rotation(baseRotateXYZ);
 
-  for (double frame = 0; frame < 100.0; frame += 1.0) {
+  for (double frame = 0; frame < 100.0; frame += 1.0)
+  {
     trans.Set(position, frame);
     rotate.Set(rotation, frame);
     position[0] += 5.0;

@@ -56,17 +56,20 @@ void HdPhCopyComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &range_,
   HdPhBufferResourceSharedPtr srcRes = srcRange->GetResource(_name);
   HdPhBufferResourceSharedPtr dstRes = dstRange->GetResource(_name);
 
-  if (!TF_VERIFY(srcRes)) {
+  if (!TF_VERIFY(srcRes))
+  {
     return;
   }
-  if (!TF_VERIFY(dstRes)) {
+  if (!TF_VERIFY(dstRes))
+  {
     return;
   }
 
   int srcResSize = HdDataSizeOfTupleType(srcRes->GetTupleType()) * srcRange->GetNumElements();
   int dstResSize = HdDataSizeOfTupleType(dstRes->GetTupleType()) * dstRange->GetNumElements();
 
-  if (!TF_VERIFY(srcResSize <= dstResSize)) {
+  if (!TF_VERIFY(srcResSize <= dstResSize))
+  {
     // The number of elements in the BAR *can* differ during migration.
     // One example is during mesh refinement when migration is necessary,
     // and we copy only the unrefined data over.
@@ -86,16 +89,19 @@ void HdPhCopyComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &range_,
   // Unfortunately at the time the copy computation is added, we don't
   // know if the source buffer has 0 length.  So we can get here with
   // a zero sized copy.
-  if (srcResSize > 0) {
+  if (srcResSize > 0)
+  {
 
     // If the buffer's have 0 size, resources for them would not have
     // be allocated, so the check for resource allocation has been moved
     // until after the copy size check.
 
-    if (!TF_VERIFY(srcRes->GetHandle())) {
+    if (!TF_VERIFY(srcRes->GetHandle()))
+    {
       return;
     }
-    if (!TF_VERIFY(dstRes->GetHandle())) {
+    if (!TF_VERIFY(dstRes->GetHandle()))
+    {
       return;
     }
 

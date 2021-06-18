@@ -59,7 +59,8 @@ typedef std::vector<class HdLight const *> HdLightPtrConstVector;
 ///
 /// A light model, used in conjunction with HdRenderPass.
 ///
-class HdLight : public HdSprim {
+class HdLight : public HdSprim
+{
  public:
   HD_API
   HdLight(SdfPath const &id);
@@ -67,7 +68,8 @@ class HdLight : public HdSprim {
   virtual ~HdLight();
 
   // Change tracking for HdLight
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     DirtyTransform = 1 << 0,
     DirtyParams = 1 << 1,

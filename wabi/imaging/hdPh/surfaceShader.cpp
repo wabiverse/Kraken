@@ -76,11 +76,13 @@ HdPhSurfaceShader::~HdPhSurfaceShader() = default;
 
 void HdPhSurfaceShader::_SetSource(TfToken const &shaderStageKey, std::string const &source)
 {
-  if (shaderStageKey == HdShaderTokens->fragmentShader) {
+  if (shaderStageKey == HdShaderTokens->fragmentShader)
+  {
     _fragmentSource = source;
     _isValidComputedHash = false;
   }
-  else if (shaderStageKey == HdShaderTokens->geometryShader) {
+  else if (shaderStageKey == HdShaderTokens->geometryShader)
+  {
     _geometrySource = source;
     _isValidComputedHash = false;
   }
@@ -93,10 +95,12 @@ void HdPhSurfaceShader::_SetSource(TfToken const &shaderStageKey, std::string co
 /*virtual*/
 std::string HdPhSurfaceShader::GetSource(TfToken const &shaderStageKey) const
 {
-  if (shaderStageKey == HdShaderTokens->fragmentShader) {
+  if (shaderStageKey == HdShaderTokens->fragmentShader)
+  {
     return _fragmentSource;
   }
-  else if (shaderStageKey == HdShaderTokens->geometryShader) {
+  else if (shaderStageKey == HdShaderTokens->geometryShader)
+  {
     return _geometrySource;
   }
 
@@ -166,7 +170,8 @@ void HdPhSurfaceShader::AddBindings(HdBindingRequestVector *customBindings)
 HdPhShaderCode::ID HdPhSurfaceShader::ComputeHash() const
 {
   // All mutator methods that might affect the hash must reset this (fragile).
-  if (!_isValidComputedHash) {
+  if (!_isValidComputedHash)
+  {
     _computedHash = _ComputeHash();
     _isValidComputedHash = true;
   }
@@ -176,7 +181,8 @@ HdPhShaderCode::ID HdPhSurfaceShader::ComputeHash() const
 /*virtual*/
 HdPhShaderCode::ID HdPhSurfaceShader::ComputeTextureSourceHash() const
 {
-  if (!_isValidComputedTextureSourceHash) {
+  if (!_isValidComputedTextureSourceHash)
+  {
     _computedTextureSourceHash = _ComputeTextureSourceHash();
     _isValidComputedTextureSourceHash = true;
   }
@@ -206,7 +212,8 @@ HdPhShaderCode::ID HdPhSurfaceShader::_ComputeTextureSourceHash() const
 
   size_t hash = 0;
 
-  for (const HdPhShaderCode::NamedTextureHandle &namedHandle : _namedTextureHandles) {
+  for (const HdPhShaderCode::NamedTextureHandle &namedHandle : _namedTextureHandles)
+  {
 
     // Use name, texture object and sampling parameters.
     boost::hash_combine(hash, namedHandle.name);
@@ -245,33 +252,41 @@ void HdPhSurfaceShader::SetBufferSources(HdBufferSpecVector const &bufferSpecs,
                                          HdBufferSourceSharedPtrVector &&bufferSources,
                                          HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
-  if (bufferSpecs.empty()) {
-    if (!_paramSpec.empty()) {
+  if (bufferSpecs.empty())
+  {
+    if (!_paramSpec.empty())
+    {
       _isValidComputedHash = false;
     }
 
     _paramSpec.clear();
     _paramArray.reset();
   }
-  else {
-    if (!_paramArray || _paramSpec != bufferSpecs) {
+  else
+  {
+    if (!_paramArray || _paramSpec != bufferSpecs)
+    {
       _paramSpec = bufferSpecs;
 
       // establish a buffer range
       HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateShaderStorageBufferArrayRange(
         HdTokens->materialParams, bufferSpecs, HdBufferArrayUsageHint());
 
-      if (!TF_VERIFY(range->IsValid())) {
+      if (!TF_VERIFY(range->IsValid()))
+      {
         _paramArray.reset();
       }
-      else {
+      else
+      {
         _paramArray = range;
       }
       _isValidComputedHash = false;
     }
 
-    if (_paramArray->IsValid()) {
-      if (!bufferSources.empty()) {
+    if (_paramArray->IsValid())
+    {
+      if (!bufferSources.empty())
+      {
         resourceRegistry->AddSources(_paramArray, std::move(bufferSources));
       }
     }
@@ -300,7 +315,8 @@ bool HdPhSurfaceShader::CanAggregate(HdPhShaderCodeSharedPtr const &shaderA,
                                      HdPhShaderCodeSharedPtr const &shaderB)
 {
   // Can aggregate if the shaders are identical.
-  if (shaderA == shaderB) {
+  if (shaderA == shaderB)
+  {
     return true;
   }
 
@@ -311,12 +327,15 @@ bool HdPhSurfaceShader::CanAggregate(HdPhShaderCodeSharedPtr const &shaderA,
 
   // We can't aggregate if the shaders have data buffers that aren't
   // aggregated or if the shaders don't match.
-  if (!dataIsAggregated || shaderA->ComputeHash() != shaderB->ComputeHash()) {
+  if (!dataIsAggregated || shaderA->ComputeHash() != shaderB->ComputeHash())
+  {
     return false;
   }
 
-  if (!GlfContextCaps::GetInstance().bindlessTextureEnabled) {
-    if (shaderA->ComputeTextureSourceHash() != shaderB->ComputeTextureSourceHash()) {
+  if (!GlfContextCaps::GetInstance().bindlessTextureEnabled)
+  {
+    if (shaderA->ComputeTextureSourceHash() != shaderB->ComputeTextureSourceHash())
+    {
       return false;
     }
   }
@@ -379,20 +398,25 @@ static TfTokenVector _CollectPrimvarNames(const HdPh_MaterialParamVector &params
 {
   TfTokenVector primvarNames = _GetExtraIncludedShaderPrimvarNames();
 
-  for (HdPh_MaterialParam const &param : params) {
-    if (param.IsFallback()) {
+  for (HdPh_MaterialParam const &param : params)
+  {
+    if (param.IsFallback())
+    {
       primvarNames.push_back(param.name);
     }
-    else if (param.IsPrimvarRedirect()) {
+    else if (param.IsPrimvarRedirect())
+    {
       primvarNames.push_back(param.name);
       // primvar redirect connections are encoded as sampler coords
       primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
     }
-    else if (param.IsTexture()) {
+    else if (param.IsTexture())
+    {
       // include sampler coords for textures
       primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
     }
-    else if (param.IsAdditionalPrimvar()) {
+    else if (param.IsAdditionalPrimvar())
+    {
       primvarNames.push_back(param.name);
     }
   }
@@ -409,7 +433,8 @@ void HdPhSurfaceShader::AddResourcesFromTextures(ResourceContext &ctx) const
   HdBufferSourceSharedPtrVector result;
   HdPh_TextureBinder::ComputeBufferSources(GetNamedTextureHandles(), bindlessTextureEnabled, &result);
 
-  if (!result.empty()) {
+  if (!result.empty())
+  {
     ctx.AddSources(GetShaderData(), std::move(result));
   }
 }

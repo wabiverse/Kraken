@@ -47,7 +47,8 @@ HGIMETAL_API
 bool HgiMetalDebugEnabled();
 
 #define HGIMETAL_DEBUG_LABEL(_obj, label) \
-  if (HgiMetalDebugEnabled()) { \
+  if (HgiMetalDebugEnabled()) \
+  { \
     [_obj setLabel:@(label)]; \
   }
 

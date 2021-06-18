@@ -83,7 +83,8 @@ class HdResourceRegistry;
 ///
 /// Performance counter monitoring.
 ///
-class HdPerfLog {
+class HdPerfLog
+{
  public:
   HD_API
   static HdPerfLog &GetInstance()
@@ -188,9 +189,12 @@ class HdPerfLog {
   HD_API ~HdPerfLog();
 
   // Tracks number of hits and misses and provides some convenience API.
-  class _CacheEntry {
+  class _CacheEntry
+  {
    public:
-    _CacheEntry() : _hits(0), _misses(0)
+    _CacheEntry()
+      : _hits(0),
+        _misses(0)
     {}
 
     void AddHit()

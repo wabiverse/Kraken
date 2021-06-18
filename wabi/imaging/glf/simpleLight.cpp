@@ -328,7 +328,8 @@ std::ostream &operator<<(std::ostream &out, const GlfSimpleLight &v)
       << v._shadowBias << v._shadowBlur << v._shadowIndexStart << v._shadowIndexEnd << v._transform
       << v._isCameraSpaceLight << v._isDomeLight << v._domeLightTextureFile << v._postSurfaceIdentifier
       << v._postSurfaceShaderSource << v._postSurfaceShaderParams << v._id;
-  for (auto const &m : v._shadowMatrices) {
+  for (auto const &m : v._shadowMatrices)
+  {
     out << m;
   }
   return out;

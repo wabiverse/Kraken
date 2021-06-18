@@ -52,7 +52,8 @@ WABI_NAMESPACE_BEGIN
 
 /// \enum TfDiagnosticType
 /// Enum describing various diagnostic conditions.
-enum TfDiagnosticType : int {
+enum TfDiagnosticType : int
+{
   TF_DIAGNOSTIC_INVALID_TYPE = 0,
   TF_DIAGNOSTIC_CODING_ERROR_TYPE,
   TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE,
@@ -66,7 +67,8 @@ enum TfDiagnosticType : int {
 
 #if !defined(doxygen)
 
-struct Tf_DiagnosticLiteHelper {
+struct Tf_DiagnosticLiteHelper
+{
   constexpr Tf_DiagnosticLiteHelper(TfCallContext const &context, TfDiagnosticType type)
     : _context(context),
       _type(type)

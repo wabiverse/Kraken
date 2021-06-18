@@ -65,19 +65,26 @@ WABI_NAMESPACE_BEGIN
 /// Specifically, <em> width = maxX - minX + 1</em> and
 /// <em>height = maxY - minY + 1.</em>
 ///
-class GfRect2i {
+class GfRect2i
+{
  public:
   /// Constructs an empty rectangle.
-  GfRect2i() : _min(0, 0), _max(-1, -1)
+  GfRect2i()
+    : _min(0, 0),
+      _max(-1, -1)
   {}
 
   /// Constructs a rectangle with \p min and \p max corners.
-  GfRect2i(const GfVec2i &min, const GfVec2i &max) : _min(min), _max(max)
+  GfRect2i(const GfVec2i &min, const GfVec2i &max)
+    : _min(min),
+      _max(max)
   {}
 
   /// Constructs a rectangle with \p min corner and the indicated \p width
   /// and \p height.
-  GfRect2i(const GfVec2i &min, int width, int height) : _min(min), _max(min + GfVec2i(width - 1, height - 1))
+  GfRect2i(const GfVec2i &min, int width, int height)
+    : _min(min),
+      _max(min + GfVec2i(width - 1, height - 1))
   {}
 
   /// Returns true if the rectangle is a null rectangle.

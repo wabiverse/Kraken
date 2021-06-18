@@ -97,7 +97,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This function will be invoked for each (field, type) pair. The template
 /// type T will be the C++ value type and the TfToken will be the field name.
-template<class Registrar> inline void SdfRegisterFields(Registrar *reg)
+template<class Registrar>
+inline void SdfRegisterFields(Registrar *reg)
 {
 #define _SDF_REGISTER_FIELDS(r, unused, elem) \
   reg->template RegisterField<_SDF_FIELDS_TYPE(elem)>(_SDF_FIELDS_NAME(elem));
@@ -115,7 +116,8 @@ template<class Registrar> inline void SdfRegisterFields(Registrar *reg)
 /// This function will be invoked for each C++ value type, which will be
 /// given to the function as the template type T. Note that this function may
 /// be called with the same T multiple times.
-template<class Registrar> inline void SdfRegisterTypes(Registrar *reg)
+template<class Registrar>
+inline void SdfRegisterTypes(Registrar *reg)
 {
   // Register all of the C++ value types from the field list above.
 #define _SDF_REGISTER_TYPES(r, unused, elem) reg->template RegisterType<_SDF_FIELDS_TYPE(elem)>();

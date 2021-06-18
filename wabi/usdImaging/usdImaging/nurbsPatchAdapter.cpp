@@ -90,12 +90,14 @@ HdDirtyBits UsdImagingNurbsPatchAdapter::ProcessPropertyChange(UsdPrim const &pr
                                                                SdfPath const &cachePath,
                                                                TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->points) {
+  if (propertyName == UsdGeomTokens->points)
+  {
     return HdChangeTracker::DirtyPoints;
   }
 
   if (propertyName == UsdGeomTokens->uVertexCount || propertyName == UsdGeomTokens->vVertexCount ||
-      propertyName == UsdGeomTokens->orientation) {
+      propertyName == UsdGeomTokens->orientation)
+  {
     return HdChangeTracker::DirtyTopology;
   }
 
@@ -109,7 +111,8 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeC
 {
   VtArray<GfVec3f> points;
 
-  if (!prim.GetAttribute(UsdGeomTokens->points).Get(&points, time)) {
+  if (!prim.GetAttribute(UsdGeomTokens->points).Get(&points, time))
+  {
     TF_WARN("Points could not be read from prim: <%s>", prim.GetPath().GetText());
     points = VtVec3fArray();
   }
@@ -126,17 +129,20 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
   // quads out of the patches
   int nUVertexCount = 0, nVVertexCount = 0;
 
-  if (!nurbsPatch.GetUVertexCountAttr().Get(&nUVertexCount, time)) {
+  if (!nurbsPatch.GetUVertexCountAttr().Get(&nUVertexCount, time))
+  {
     TF_WARN("UVertexCount could not be read from prim: <%s>", prim.GetPath().GetText());
     return VtValue(HdMeshTopology());
   }
 
-  if (!nurbsPatch.GetVVertexCountAttr().Get(&nVVertexCount, time)) {
+  if (!nurbsPatch.GetVVertexCountAttr().Get(&nVVertexCount, time))
+  {
     TF_WARN("VVertexCount could not be read from prim: <%s>", prim.GetPath().GetText());
     return VtValue(HdMeshTopology());
   }
 
-  if (nUVertexCount == 0 || nVVertexCount == 0) {
+  if (nUVertexCount == 0 || nVVertexCount == 0)
+  {
     TF_WARN("NurbsPatch skipped <%s>, VVertexCount or UVertexCount is 0", prim.GetPath().GetText());
     return VtValue(HdMeshTopology());
   }
@@ -148,7 +154,8 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
 
   // Prepare the array of vertices per face required for rendering
   VtArray<int> vertsPerFace(nFaces);
-  for (int i = 0; i < nFaces; i++) {
+  for (int i = 0; i < nFaces; i++)
+  {
     vertsPerFace[i] = 4;
   }
 
@@ -157,8 +164,10 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
   // last column and last row.
   int uid = 0;
   VtArray<int> indices(nIndices);
-  for (int row = 0; row < nVVertexCount - 1; row++) {
-    for (int col = 0; col < nUVertexCount - 1; col++) {
+  for (int row = 0; row < nVVertexCount - 1; row++)
+  {
+    for (int col = 0; col < nUVertexCount - 1; col++)
+    {
       int idx = row * nUVertexCount + col;
 
       indices[uid++] = idx;
@@ -170,7 +179,8 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
 
   // Obtain the orientation
   TfToken orientation;
-  if (!prim.GetAttribute(UsdGeomTokens->orientation).Get(&orientation, time)) {
+  if (!prim.GetAttribute(UsdGeomTokens->orientation).Get(&orientation, time))
+  {
     TF_WARN("Orientation could not be read from prim, using right handed: <%s>", prim.GetPath().GetText());
     orientation = HdTokens->rightHanded;
   }

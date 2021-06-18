@@ -53,7 +53,8 @@ using HgiVulkanGfxFunctionVector = std::vector<HgiVulkanGfxFunction>;
 ///
 /// Vulkan implementation of HgiGraphicsEncoder.
 ///
-class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds {
+class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanGraphicsCmds() override;

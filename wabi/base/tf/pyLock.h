@@ -119,7 +119,8 @@ WABI_NAMESPACE_BEGIN
 /// variables, or in thread local storage. DO NOT create a single instance
 /// that could be shared across multiple threads.
 ///
-class TfPyLock {
+class TfPyLock
+{
  public:
   /// Acquires the Python GIL and swaps in callers thread state.
   TF_API TfPyLock();
@@ -145,7 +146,10 @@ class TfPyLock {
  private:
   // Non-acquiring constructor for TfPyEnsureGILUnlockedObj's use.
   friend struct TfPyEnsureGILUnlockedObj;
-  enum _UnlockedTag { _ConstructUnlocked };
+  enum _UnlockedTag
+  {
+    _ConstructUnlocked
+  };
   explicit TfPyLock(_UnlockedTag);
 
   PyGILState_STATE _gilState;
@@ -155,7 +159,8 @@ class TfPyLock {
 };
 
 // Helper class for TF_PY_ALLOW_THREADS_IN_SCOPE()
-struct TfPyEnsureGILUnlockedObj {
+struct TfPyEnsureGILUnlockedObj
+{
   // Do nothing if the current thread does not have the GIL, otherwise unlock
   // the GIL, and relock upon destruction.
   TF_API TfPyEnsureGILUnlockedObj();

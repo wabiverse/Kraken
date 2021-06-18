@@ -45,7 +45,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 typedef SdfPyChildrenProxy<SdfLayer::RootPrimsView> RootPrimsProxy;
 
@@ -59,11 +60,13 @@ static bool _WrapIsMuted(const SdfLayerHandle &layer)
   return layer->IsMuted();
 }
 
-class Sdf_SubLayerOffsetsProxy {
+class Sdf_SubLayerOffsetsProxy
+{
  public:
   typedef Sdf_SubLayerOffsetsProxy This;
 
-  Sdf_SubLayerOffsetsProxy(const SdfLayerHandle &layer) : _layer(layer)
+  Sdf_SubLayerOffsetsProxy(const SdfLayerHandle &layer)
+    : _layer(layer)
   {
     // Wrap as soon as the first instance is constructed.
     TfPyWrapOnce<Sdf_SubLayerOffsetsProxy>(&_Wrap);
@@ -95,7 +98,8 @@ class Sdf_SubLayerOffsetsProxy {
   // exception, which Boost catches and converts to a Python exception.
   SdfLayer *GetLayer() const
   {
-    if (!_layer) {
+    if (!_layer)
+    {
       // CODE_COVERAGE_OFF
       // I cannot figure out a way to get a pointer to an expired
       // layer in python, so I have not been able to cover this...
@@ -142,8 +146,10 @@ class Sdf_SubLayerOffsetsProxy {
   {
     SdfLayerOffsetVector values = _GetValues();
 
-    for (size_t i = 0; i < values.size(); ++i) {
-      if (values[i] == val) {
+    for (size_t i = 0; i < values.size(); ++i)
+    {
+      if (values[i] == val)
+      {
         return i;
       }
     }
@@ -154,8 +160,10 @@ class Sdf_SubLayerOffsetsProxy {
   int _FindIndexForPath(const std::string &path) const
   {
     SdfSubLayerProxy paths = GetLayer()->GetSubLayerPaths();
-    for (size_t i = 0, n = paths.size(); i < n; ++i) {
-      if (paths[i] == path) {
+    for (size_t i = 0, n = paths.size(); i < n; ++i)
+    {
+      if (paths[i] == path)
+      {
         return i;
       }
     }
@@ -172,7 +180,8 @@ class Sdf_SubLayerOffsetsProxy {
   SdfLayerOffset _GetItemByPath(const std::string &path) const
   {
     int index = _FindIndexForPath(path);
-    if (index == -1) {
+    if (index == -1)
+    {
       TfPyThrowIndexError(TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
     }
 
@@ -182,10 +191,12 @@ class Sdf_SubLayerOffsetsProxy {
   void _SetItemByIndex(int index, const SdfLayerOffset &value)
   {
     int size = GetLayer()->GetNumSubLayerPaths();
-    if (index == -1) {
+    if (index == -1)
+    {
       index = size;
     }
-    if (index < 0 || index > size) {
+    if (index < 0 || index > size)
+    {
       TfPyThrowIndexError("Index out of range");
     }
     GetLayer()->SetSubLayerOffset(value, index);
@@ -194,7 +205,8 @@ class Sdf_SubLayerOffsetsProxy {
   void _SetItemByPath(const std::string &path, const SdfLayerOffset &value)
   {
     int index = _FindIndexForPath(path);
-    if (index == -1) {
+    if (index == -1)
+    {
       TfPyThrowIndexError(TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
     }
 
@@ -212,9 +224,10 @@ class Sdf_SubLayerOffsetsProxy {
     SdfLayerOffsetVector values = _GetValues();
 
     std::string result;
-    TF_FOR_ALL(it, values)
+    TF_FOR_ALL (it, values)
     {
-      if (!result.empty()) {
+      if (!result.empty())
+      {
         result += ", ";
       }
       result += TfPyRepr(*it);
@@ -236,7 +249,8 @@ static Sdf_SubLayerOffsetsProxy _WrapGetSubLayerOffsets(const SdfLayerHandle &se
 static bool _ExtractFileFormatArguments(const boost::python::dict &dict, SdfLayer::FileFormatArguments *args)
 {
   std::string errMsg;
-  if (!SdfFileFormatArgumentsFromPython(dict, args, &errMsg)) {
+  if (!SdfFileFormatArgumentsFromPython(dict, args, &errMsg))
+  {
     TF_CODING_ERROR("%s", errMsg.c_str());
     return false;
   }
@@ -245,7 +259,8 @@ static bool _ExtractFileFormatArguments(const boost::python::dict &dict, SdfLaye
 
 static std::string _Repr(const SdfLayerHandle &self)
 {
-  if (!self) {
+  if (!self)
+  {
     return "<expired " + TF_PY_REPR_PREFIX + "Layer instance>";
   }
   return TF_PY_REPR_PREFIX + "Find(" + TfPyRepr(self->GetIdentifier()) + ")";
@@ -264,7 +279,8 @@ static bool _Export(const SdfLayerHandle &layer,
                     const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return false;
   }
 
@@ -335,10 +351,12 @@ static object _CanApplyNamespaceEdit(const SdfLayerHandle &x, const SdfBatchName
 {
   SdfNamespaceEditDetailVector details;
   SdfNamespaceEditDetail::Result result = x->CanApply(edit, &details);
-  if (result != SdfNamespaceEditDetail::Okay) {
+  if (result != SdfNamespaceEditDetail::Okay)
+  {
     return make_tuple(object(false), object(details));
   }
-  else {
+  else
+  {
     return object(true);
   }
 }
@@ -347,7 +365,8 @@ static SdfLayerRefPtr _CreateNew(const std::string &identifier,
                                  const boost::python::dict &dict = boost::python::dict())
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerRefPtr();
   }
 
@@ -359,7 +378,8 @@ static SdfLayerRefPtr _New(const SdfFileFormatConstPtr &fileFormat,
                            const boost::python::dict &dict = boost::python::dict())
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerRefPtr();
   }
 
@@ -369,7 +389,8 @@ static SdfLayerRefPtr _New(const SdfFileFormatConstPtr &fileFormat,
 static SdfLayerRefPtr _CreateAnonymous(const std::string &tag, const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerRefPtr();
   }
 
@@ -381,7 +402,8 @@ static SdfLayerRefPtr _CreateAnonymous(const std::string &tag,
                                        const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerRefPtr();
   }
 
@@ -391,7 +413,8 @@ static SdfLayerRefPtr _CreateAnonymous(const std::string &tag,
 static SdfLayerRefPtr _FindOrOpen(const std::string &identifier, const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerRefPtr();
   }
 
@@ -401,7 +424,8 @@ static SdfLayerRefPtr _FindOrOpen(const std::string &identifier, const boost::py
 static SdfLayerHandle _Find(const std::string &identifier, const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerHandle();
   }
 
@@ -413,7 +437,8 @@ static SdfLayerHandle _FindRelativeToLayer(const SdfLayerHandle &anchor,
                                            const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerHandle();
   }
 
@@ -425,7 +450,8 @@ static SdfLayerRefPtr _FindOrOpenRelativeToLayer(const SdfLayerHandle &anchor,
                                                  const boost::python::dict &dict)
 {
   SdfLayer::FileFormatArguments args;
-  if (!_ExtractFileFormatArguments(dict, &args)) {
+  if (!_ExtractFileFormatArguments(dict, &args))
+  {
     return SdfLayerHandle();
   }
 

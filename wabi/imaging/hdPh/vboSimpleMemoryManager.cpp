@@ -96,7 +96,7 @@ size_t HdPhVBOSimpleMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr 
 
   _SimpleBufferArraySharedPtr bufferArray_ = std::static_pointer_cast<_SimpleBufferArray>(bufferArray);
 
-  TF_FOR_ALL(resIt, bufferArray_->GetResources())
+  TF_FOR_ALL (resIt, bufferArray_->GetResources())
   {
     HdPhBufferResourceSharedPtr const &resource = resIt->second;
 
@@ -105,17 +105,20 @@ size_t HdPhVBOSimpleMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr 
     uint64_t id = buffer ? buffer->GetRawResource() : 0;
 
     // XXX avoid double counting of resources shared within a buffer
-    if (id > 0 && idSet.count(id) == 0) {
+    if (id > 0 && idSet.count(id) == 0)
+    {
       idSet.insert(id);
 
       std::string const &role = resource->GetRole().GetString();
       size_t size = size_t(resource->GetSize());
 
-      if (result.count(role)) {
+      if (result.count(role))
+      {
         size_t currentSize = result[role].Get<size_t>();
         result[role] = VtValue(currentSize + size);
       }
-      else {
+      else
+      {
         result[role] = VtValue(size);
       }
 
@@ -142,7 +145,7 @@ HdPhVBOSimpleMemoryManager::_SimpleBufferArray::_SimpleBufferArray(HdPhResourceR
   HF_MALLOC_TAG_FUNCTION();
 
   // populate BufferResources
-  TF_FOR_ALL(it, bufferSpecs)
+  TF_FOR_ALL (it, bufferSpecs)
   {
     int stride = HdDataSizeOfTupleType(it->tupleType);
     _AddResource(it->name, it->tupleType, /*offset=*/0, stride);
@@ -151,7 +154,7 @@ HdPhVBOSimpleMemoryManager::_SimpleBufferArray::_SimpleBufferArray(HdPhResourceR
   _SetMaxNumRanges(1);
 
   // compute max bytes / elements
-  TF_FOR_ALL(it, GetResources())
+  TF_FOR_ALL (it, GetResources())
   {
     HdPhBufferResourceSharedPtr const &bres = it->second;
     _maxBytesPerElement = std::max(_maxBytesPerElement, HdDataSizeOfTupleType(bres->GetTupleType()));
@@ -165,10 +168,12 @@ HdPhBufferResourceSharedPtr HdPhVBOSimpleMemoryManager::_SimpleBufferArray::_Add
   int stride)
 {
   HD_TRACE_FUNCTION();
-  if (TfDebug::IsEnabled(HD_SAFE_MODE)) {
+  if (TfDebug::IsEnabled(HD_SAFE_MODE))
+  {
     // duplication check
     HdPhBufferResourceSharedPtr bufferRes = GetResource(name);
-    if (!TF_VERIFY(!bufferRes)) {
+    if (!TF_VERIFY(!bufferRes))
+    {
       return bufferRes;
     }
   }
@@ -187,7 +192,8 @@ HdPhVBOSimpleMemoryManager::_SimpleBufferArray::~_SimpleBufferArray()
   // invalidate buffer array range
   // (the range may still be held by drawItems)
   _SimpleBufferArrayRangeSharedPtr range = _GetRangeSharedPtr();
-  if (range) {
+  if (range)
+  {
     range->Invalidate();
   }
 }
@@ -198,7 +204,8 @@ bool HdPhVBOSimpleMemoryManager::_SimpleBufferArray::GarbageCollect()
   HF_MALLOC_TAG_FUNCTION();
 
   // no range referring this buffer = empty
-  if (GetRangeCount() > 0 && GetRange(0).expired()) {
+  if (GetRangeCount() > 0 && GetRange(0).expired())
+  {
     _DeallocateResources();
     HD_PERF_COUNTER_INCR(HdPerfTokens->garbageCollectedVbo);
     return true;
@@ -222,7 +229,8 @@ bool HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Resize(int numElements)
   // this change is for the unit test consistency.
   //
   // if (_capacity < numElements) {
-  if (_capacity != numElements) {
+  if (_capacity != numElements)
+  {
     _needsReallocation = true;
     return true;
   }
@@ -238,12 +246,14 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
 
   HD_PERF_COUNTER_INCR(HdPerfTokens->vboRelocated);
 
-  if (!TF_VERIFY(curRangeOwner == shared_from_this())) {
+  if (!TF_VERIFY(curRangeOwner == shared_from_this()))
+  {
     TF_CODING_ERROR("HdPhVBOSimpleMemoryManager can't reassign ranges");
     return;
   }
 
-  if (ranges.size() > 1) {
+  if (ranges.size() > 1)
+  {
     TF_CODING_ERROR("HdPhVBOSimpleMemoryManager can't take multiple ranges");
     return;
   }
@@ -251,7 +261,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
 
   _SimpleBufferArrayRangeSharedPtr range = _GetRangeSharedPtr();
 
-  if (!range) {
+  if (!range)
+  {
     TF_CODING_ERROR("_SimpleBufferArrayRange expired unexpectedly.");
     return;
   }
@@ -263,7 +274,7 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
   HgiBlitCmds *blitCmds = _resourceRegistry->GetGlobalBlitCmds();
   blitCmds->PushDebugGroup(__ARCH_PRETTY_FUNCTION__);
 
-  TF_FOR_ALL(bresIt, GetResources())
+  TF_FOR_ALL (bresIt, GetResources())
   {
     HdPhBufferResourceSharedPtr const &bres = bresIt->second;
 
@@ -273,7 +284,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
     HgiBufferHandle oldBuf = bres->GetHandle();
     HgiBufferHandle newBuf;
 
-    if (bufferSize > 0) {
+    if (bufferSize > 0)
+    {
       HgiBufferDesc bufDesc;
       bufDesc.byteSize = bufferSize;
       bufDesc.usage = HgiBufferUsageUniform;
@@ -297,7 +309,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
     int oldSize = range->GetCapacity();
     int newSize = range->GetNumElements();
     size_t copySize = std::min(oldSize, newSize) * bytesPerElement;
-    if (copySize > 0 && oldBuf) {
+    if (copySize > 0 && oldBuf)
+    {
       HD_PERF_COUNTER_INCR(HdPhPerfTokens->copyBufferGpuToGpu);
 
       HgiBufferGpuToGpuOp blitOp;
@@ -308,7 +321,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::Reallocate(
     }
 
     // delete old buffer
-    if (oldBuf) {
+    if (oldBuf)
+    {
       hgi->DestroyBuffer(&oldBuf);
     }
 
@@ -333,7 +347,7 @@ size_t HdPhVBOSimpleMemoryManager::_SimpleBufferArray::GetMaxNumElements() const
 void HdPhVBOSimpleMemoryManager::_SimpleBufferArray::_DeallocateResources()
 {
   Hgi *hgi = _resourceRegistry->GetHgi();
-  TF_FOR_ALL(it, GetResources())
+  TF_FOR_ALL (it, GetResources())
   {
     hgi->DestroyBuffer(&it->second->GetHandle());
   }
@@ -346,12 +360,14 @@ HdPhBufferResourceSharedPtr HdPhVBOSimpleMemoryManager::_SimpleBufferArray::GetR
   if (_resourceList.empty())
     return HdPhBufferResourceSharedPtr();
 
-  if (TfDebug::IsEnabled(HD_SAFE_MODE)) {
+  if (TfDebug::IsEnabled(HD_SAFE_MODE))
+  {
     // make sure this buffer array has only one resource.
     HgiBufferHandle const &buffer = _resourceList.begin()->second->GetHandle();
-    TF_FOR_ALL(it, _resourceList)
+    TF_FOR_ALL (it, _resourceList)
     {
-      if (it->second->GetHandle() != buffer) {
+      if (it->second->GetHandle() != buffer)
+      {
         TF_CODING_ERROR(
           "GetResource(void) called on"
           "HdBufferArray having multiple GPU resources");
@@ -369,7 +385,8 @@ HdPhBufferResourceSharedPtr HdPhVBOSimpleMemoryManager::_SimpleBufferArray::GetR
 
   // linear search.
   // The number of buffer resources should be small (<10 or so).
-  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it) {
+  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it)
+  {
     if (it->first == name)
       return it->second;
   }
@@ -380,7 +397,7 @@ HdBufferSpecVector HdPhVBOSimpleMemoryManager::_SimpleBufferArray::GetBufferSpec
 {
   HdBufferSpecVector result;
   result.reserve(_resourceList.size());
-  TF_FOR_ALL(it, _resourceList)
+  TF_FOR_ALL (it, _resourceList)
   {
     result.emplace_back(it->first, it->second->GetTupleType());
   }
@@ -413,7 +430,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::CopyData(
 
   HdPhBufferResourceSharedPtr VBO = _bufferArray->GetResource(bufferSource->GetName());
 
-  if (!VBO || !VBO->GetHandle()) {
+  if (!VBO || !VBO->GetHandle())
+  {
     TF_CODING_ERROR("VBO doesn't exist for %s", bufferSource->GetName().GetText());
     return;
   }
@@ -423,7 +441,8 @@ void HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::CopyData(
   // issue warning here and continue to copy for the valid range.
   size_t dstSize = _numElements * bytesPerElement;
   size_t srcSize = bufferSource->GetNumElements() * HdDataSizeOfTupleType(bufferSource->GetTupleType());
-  if (srcSize > dstSize) {
+  if (srcSize > dstSize)
+  {
     TF_WARN(
       "%s: size %ld is larger than the range (%ld)", bufferSource->GetName().GetText(), srcSize, dstSize);
     srcSize = dstSize;
@@ -455,7 +474,8 @@ VtValue HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::ReadData(TfToken co
 
   HdPhBufferResourceSharedPtr VBO = _bufferArray->GetResource(name);
 
-  if (!VBO || (!VBO->GetHandle() && _numElements > 0)) {
+  if (!VBO || (!VBO->GetHandle() && _numElements > 0))
+  {
     TF_CODING_ERROR("VBO doesn't exist for %s", name.GetText());
     return VtValue();
   }
@@ -474,7 +494,8 @@ size_t HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::GetMaxNumElements() 
 
 HdBufferArrayUsageHint HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::GetUsageHint() const
 {
-  if (!TF_VERIFY(_bufferArray)) {
+  if (!TF_VERIFY(_bufferArray))
+  {
     return HdBufferArrayUsageHint();
   }
 
@@ -499,7 +520,8 @@ HdPhBufferResourceSharedPtr HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange:
 
 HdPhBufferResourceNamedList const &HdPhVBOSimpleMemoryManager::_SimpleBufferArrayRange::GetResources() const
 {
-  if (!TF_VERIFY(_bufferArray)) {
+  if (!TF_VERIFY(_bufferArray))
+  {
     static HdPhBufferResourceNamedList empty;
     return empty;
   }

@@ -30,7 +30,8 @@ DEALINGS IN THE SOFTWARE.
 #include "checked.h"
 #include <string>
 
-namespace utf8 {
+namespace utf8
+{
 
 inline void append(char32_t cp, std::string &s)
 {

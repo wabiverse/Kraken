@@ -213,10 +213,12 @@ WABI_NAMESPACE_BEGIN
 /// not an actual prim in that layer, the stage's recomposition will
 /// fail, and pass on composition errors to the client.
 ///
-class UsdReferences {
+class UsdReferences
+{
   friend class UsdPrim;
 
-  explicit UsdReferences(const UsdPrim &prim) : _prim(prim)
+  explicit UsdReferences(const UsdPrim &prim)
+    : _prim(prim)
   {}
 
  public:

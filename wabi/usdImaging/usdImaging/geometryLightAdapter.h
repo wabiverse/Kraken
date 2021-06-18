@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type GeometryLight
 ///
-class UsdImagingGeometryLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingGeometryLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingGeometryLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingGeometryLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

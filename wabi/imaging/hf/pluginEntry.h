@@ -46,7 +46,8 @@ struct HfPluginDesc;
 ///
 /// Internal class that manages a single plugin.
 ///
-class Hf_PluginEntry final {
+class Hf_PluginEntry final
+{
  public:
   HF_MALLOC_TAG_NEW("new Hf_PluginEntry");
 
@@ -129,9 +130,11 @@ class Hf_PluginEntry final {
   /// from TfType::FactoryBase, which because of templating was exposing
   /// this class rather than keeping it private.
   ///
-  class _Factory final : public TfType::FactoryBase {
+  class _Factory final : public TfType::FactoryBase
+  {
    public:
-    _Factory(_PluginFactoryFn &func) : _func(func)
+    _Factory(_PluginFactoryFn &func)
+      : _func(func)
     {}
 
     HfPluginBase *New() const

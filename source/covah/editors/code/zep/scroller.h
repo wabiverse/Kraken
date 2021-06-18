@@ -4,11 +4,13 @@
 #include "splits.h"
 #include "zep/mcommon/animation/timer.h"
 
-namespace Zep {
+namespace Zep
+{
 class ZepTheme;
 class ZepEditor;
 
-class Scroller : public ZepComponent {
+class Scroller : public ZepComponent
+{
  public:
   Scroller(ZepEditor &editor, Region &parent);
 
@@ -40,7 +42,15 @@ class Scroller : public ZepComponent {
   std::shared_ptr<Region> m_mainRegion;
   timer m_start_delay_timer;
   timer m_reclick_timer;
-  enum class ScrollState { None, ScrollDown, ScrollUp, PageUp, PageDown, Drag };
+  enum class ScrollState
+  {
+    None,
+    ScrollDown,
+    ScrollUp,
+    PageUp,
+    PageDown,
+    Drag
+  };
   ScrollState m_scrollState = ScrollState::None;
   NVec2f m_mouseDownPos;
   float m_mouseDownPercent;

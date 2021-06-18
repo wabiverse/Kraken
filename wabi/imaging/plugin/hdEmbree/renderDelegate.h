@@ -85,7 +85,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdEmbreeRenderSettingsTokens, HDEMBREE_RENDER_SETTINGS_
 /// schedule a final BVH build (though Embree doesn't currenlty use it).
 /// Importantly, no scene updates are processed after CommitResources().
 ///
-class HdEmbreeRenderDelegate final : public HdRenderDelegate {
+class HdEmbreeRenderDelegate final : public HdRenderDelegate
+{
  public:
   /// Render delegate constructor. This method creates the RTC device and
   /// scene, and links embree error handling to hydra error handling.

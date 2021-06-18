@@ -86,7 +86,8 @@ class SdfAssetPath;
 /// SetRotate(), SetScale() and SetPivot() methods are provided by this API
 /// to allow such sparse authoring.
 ///
-class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
+class UsdGeomXformCommonAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -102,13 +103,15 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdGeomXformCommonAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomXformCommonAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdGeomXformCommonAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdGeomXformCommonAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomXformCommonAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomXformCommonAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdGeomXformCommonAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -171,7 +174,8 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
   // --(BEGIN CUSTOM CODE)--
 
   /// Enumerates the rotation order of the 3-angle Euler rotation.
-  enum RotationOrder {
+  enum RotationOrder
+  {
     RotationOrderXYZ,
     RotationOrderXZY,
     RotationOrderYXZ,
@@ -182,7 +186,8 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
 
   /// Enumerates the categories of ops that can be handled by XformCommonAPI.
   /// For use with CreateXformOps().
-  enum OpFlags {
+  enum OpFlags
+  {
     OpNone = 0,
     OpTranslate = 1,
     OpPivot = 2,
@@ -194,7 +199,8 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase {
   /// Stores the op of each type that is present on the prim.
   /// The order of members in this struct corresponds to the expected op order
   /// for XformCommonAPI.
-  struct Ops {
+  struct Ops
+  {
     UsdGeomXformOp translateOp;
     UsdGeomXformOp pivotOp;
     UsdGeomXformOp rotateOp;

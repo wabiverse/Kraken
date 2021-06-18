@@ -63,7 +63,8 @@ std::vector<TfToken> UsdGetClipRelatedFields()
   return std::vector<TfToken>{UsdTokens->clips, UsdTokens->clipSets};
 }
 
-struct Usd_SortByExternalTime {
+struct Usd_SortByExternalTime
+{
   bool operator()(const Usd_Clip::TimeMapping &x, const Usd_Clip::ExternalTime y) const
   {
     return x.externalTime < y;
@@ -88,7 +89,10 @@ std::ostream &operator<<(std::ostream &out, const Usd_ClipRefPtr &clip)
 
 // ------------------------------------------------------------
 
-Usd_Clip::Usd_Clip() : startTime(0), endTime(0), _hasLayer(false)
+Usd_Clip::Usd_Clip()
+  : startTime(0),
+    endTime(0),
+    _hasLayer(false)
 {}
 
 Usd_Clip::Usd_Clip(const PcpLayerStackPtr &clipSourceLayerStack,
@@ -110,7 +114,8 @@ Usd_Clip::Usd_Clip(const PcpLayerStackPtr &clipSourceLayerStack,
     endTime(clipEndTime),
     times(timeMapping)
 {
-  if (!times.empty()) {
+  if (!times.empty())
+  {
     // Maintain the relative order of entries with the same stage time for
     // jump discontinuities in case the authored times array was unsorted.
     std::stable_sort(times.begin(), times.end(), Usd_SortByExternalTime());
@@ -120,8 +125,10 @@ Usd_Clip::Usd_Clip(const PcpLayerStackPtr &clipSourceLayerStack,
     // We represent this internally as (10 - SafeStep(), 10), (10, 0)
     // because a lot of the desired behavior just falls out from this
     // representation.
-    for (size_t i = 0; i < times.size() - 1; ++i) {
-      if (times[i].externalTime == times[i + 1].externalTime) {
+    for (size_t i = 0; i < times.size() - 1; ++i)
+    {
+      if (times[i].externalTime == times[i + 1].externalTime)
+      {
         times[i].externalTime = times[i].externalTime - UsdTimeCode::SafeStep();
         times[i].isJumpDiscontinuity = true;
       }
@@ -139,7 +146,8 @@ Usd_Clip::Usd_Clip(const PcpLayerStackPtr &clipSourceLayerStack,
   // This is important for change processing. Clip layers will be kept
   // alive during change processing, so any clips that are reconstructed
   // will have the opportunity to reuse the already-opened layer.
-  if (TF_VERIFY(sourceLayerIndex < sourceLayerStack->GetLayers().size())) {
+  if (TF_VERIFY(sourceLayerIndex < sourceLayerStack->GetLayers().size()))
+  {
     const ArResolverContextBinder binder(sourceLayerStack->GetIdentifier().pathResolverContext);
     _layer = SdfLayer::FindRelativeToLayer(sourceLayerStack->GetLayers()[sourceLayerIndex],
                                            assetPath.GetAssetPath());
@@ -155,22 +163,26 @@ static bool _GetBracketingTimeSegment(const Usd_Clip::TimeMappings &times,
                                       size_t *m1,
                                       size_t *m2)
 {
-  if (times.empty()) {
+  if (times.empty())
+  {
     return false;
   }
 
   // This relies on the Usd_Clip c'tor inserting sentinel values at the
   // beginning and end of the TimeMappings object. Consumers rely on this
   // function never returning m1 == m2.
-  if (time <= times.front().externalTime) {
+  if (time <= times.front().externalTime)
+  {
     *m1 = 0;
     *m2 = 1;
   }
-  else if (time >= times.back().externalTime) {
+  else if (time >= times.back().externalTime)
+  {
     *m1 = times.size() - 2;
     *m2 = times.size() - 1;
   }
-  else {
+  else
+  {
     *m2 = std::distance(times.begin(),
                         std::lower_bound(times.begin(), times.end(), time, Usd_SortByExternalTime()));
     *m1 = *m2 - 1;
@@ -220,25 +232,31 @@ static bool _GetBracketingTimeSamples(Iterator begin,
                                       Usd_Clip::ExternalTime *tLower,
                                       Usd_Clip::ExternalTime *tUpper)
 {
-  if (begin == end) {
+  if (begin == end)
+  {
     return false;
   }
 
-  if (time <= _GetTime(*begin)) {
+  if (time <= _GetTime(*begin))
+  {
     // Time is at-or-before the first sample.
     *tLower = *tUpper = _GetTime(*begin);
   }
-  else if (time >= _GetTime(*(end - 1))) {
+  else if (time >= _GetTime(*(end - 1)))
+  {
     // Time is at-or-after the last sample.
     *tLower = *tUpper = _GetTime(*(end - 1));
   }
-  else {
+  else
+  {
     auto iter = _GetLowerBound(begin, end, time);
-    if (_GetTime(*iter) == time) {
+    if (_GetTime(*iter) == time)
+    {
       // Time is exactly on a sample.
       *tLower = *tUpper = _GetTime(*iter);
     }
-    else {
+    else
+    {
       // Time is in-between two samples; return the bracketing times.
       *tUpper = _GetTime(*iter);
       --iter;
@@ -258,7 +276,8 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
   const InternalTime timeInClip = _TranslateTimeToInternal(time);
   InternalTime lowerInClip, upperInClip;
 
-  if (!clip->GetBracketingTimeSamplesForPath(clipPath, timeInClip, &lowerInClip, &upperInClip)) {
+  if (!clip->GetBracketingTimeSamplesForPath(clipPath, timeInClip, &lowerInClip, &upperInClip))
+  {
     return false;
   }
 
@@ -299,7 +318,8 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
   // s2, since s2 is in the range of (m2, m3), we use those mappings to map
   // s2 to e2. So, our final answer is (e1, e2).
   size_t m1, m2;
-  if (!_GetBracketingTimeSegment(times, time, &m1, &m2)) {
+  if (!_GetBracketingTimeSegment(times, time, &m1, &m2))
+  {
     *tLower = lowerInClip;
     *tUpper = upperInClip;
     return true;
@@ -313,7 +333,8 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
 
     // If this segment is a jump discontinuity it should not be used
     // to map any internal times to external times.
-    if (map1.isJumpDiscontinuity) {
+    if (map1.isJumpDiscontinuity)
+    {
       return false;
     }
 
@@ -323,23 +344,31 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
     const InternalTime lower = std::min(map1.internalTime, map2.internalTime);
     const InternalTime upper = std::max(map1.internalTime, map2.internalTime);
 
-    if (lower <= timeInClip && timeInClip <= upper) {
-      if (map1.internalTime != map2.internalTime) {
+    if (lower <= timeInClip && timeInClip <= upper)
+    {
+      if (map1.internalTime != map2.internalTime)
+      {
         translated.reset(this->_TranslateTimeToExternal(timeInClip, i1, i2));
       }
-      else {
+      else
+      {
         const bool lowerUpperMatch = (lowerInClip == upperInClip);
-        if (lowerUpperMatch && time == map1.externalTime) {
+        if (lowerUpperMatch && time == map1.externalTime)
+        {
           translated.reset(map1.externalTime);
         }
-        else if (lowerUpperMatch && time == map2.externalTime) {
+        else if (lowerUpperMatch && time == map2.externalTime)
+        {
           translated.reset(map2.externalTime);
         }
-        else {
-          if (translatingLower) {
+        else
+        {
+          if (translatingLower)
+          {
             translated.reset(map1.externalTime);
           }
-          else {
+          else
+          {
             translated.reset(map2.externalTime);
           }
         }
@@ -348,25 +377,32 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
     return static_cast<bool>(translated);
   };
 
-  for (int i1 = m1, i2 = m2; i1 >= 0 && i2 >= 0; --i1, --i2) {
-    if (_CanTranslate(times, i1, i2, /*lower=*/true)) {
+  for (int i1 = m1, i2 = m2; i1 >= 0 && i2 >= 0; --i1, --i2)
+  {
+    if (_CanTranslate(times, i1, i2, /*lower=*/true))
+    {
       break;
     }
   }
 
-  for (size_t i1 = m1, i2 = m2, sz = times.size(); i1 < sz && i2 < sz; ++i1, ++i2) {
-    if (_CanTranslate(times, i1, i2, /*lower=*/false)) {
+  for (size_t i1 = m1, i2 = m2, sz = times.size(); i1 < sz && i2 < sz; ++i1, ++i2)
+  {
+    if (_CanTranslate(times, i1, i2, /*lower=*/false))
+    {
       break;
     }
   }
 
-  if (translatedLower && !translatedUpper) {
+  if (translatedLower && !translatedUpper)
+  {
     translatedUpper = translatedLower;
   }
-  else if (!translatedLower && translatedUpper) {
+  else if (!translatedLower && translatedUpper)
+  {
     translatedLower = translatedUpper;
   }
-  else if (!translatedLower && !translatedUpper) {
+  else if (!translatedLower && !translatedUpper)
+  {
     // If we haven't been able to translate either internal time, it's
     // because they are outside the range of the clip time mappings. We
     // clamp them to the nearest external time to match the behavior of
@@ -378,17 +414,21 @@ bool Usd_Clip::_GetBracketingTimeSamplesForPathFromClipLayer(const SdfPath &path
     //
     // The 'timingOutsideClip' test case in testUsdModelClips exercises
     // this behavior.
-    if (lowerInClip < times.front().internalTime) {
+    if (lowerInClip < times.front().internalTime)
+    {
       translatedLower.reset(times.front().externalTime);
     }
-    else if (lowerInClip > times.back().internalTime) {
+    else if (lowerInClip > times.back().internalTime)
+    {
       translatedLower.reset(times.back().externalTime);
     }
 
-    if (upperInClip < times.front().internalTime) {
+    if (upperInClip < times.front().internalTime)
+    {
       translatedUpper.reset(times.front().externalTime);
     }
-    else if (upperInClip > times.back().internalTime) {
+    else if (upperInClip > times.back().internalTime)
+    {
       translatedUpper.reset(times.back().externalTime);
     }
   }
@@ -408,14 +448,16 @@ bool Usd_Clip::GetBracketingTimeSamplesForPath(const SdfPath &path,
 
   // Add time samples from the clip layer.
   if (_GetBracketingTimeSamplesForPathFromClipLayer(
-        path, time, &bracketingTimes[numTimes], &bracketingTimes[numTimes + 1])) {
+        path, time, &bracketingTimes[numTimes], &bracketingTimes[numTimes + 1]))
+  {
     numTimes += 2;
   }
 
   // Each external time in the clip times array is considered a time
   // sample.
   if (_GetBracketingTimeSamples(
-        times.cbegin(), times.cend(), time, &bracketingTimes[numTimes], &bracketingTimes[numTimes + 1])) {
+        times.cbegin(), times.cend(), time, &bracketingTimes[numTimes], &bracketingTimes[numTimes + 1]))
+  {
     numTimes += 2;
   }
 
@@ -435,10 +477,12 @@ bool Usd_Clip::GetBracketingTimeSamplesForPath(const SdfPath &path,
     numTimes = std::distance(bracketingTimes.begin(), removeIt);
   }
 
-  if (numTimes == 0) {
+  if (numTimes == 0)
+  {
     return false;
   }
-  else if (numTimes == 1) {
+  else if (numTimes == 1)
+  {
     *tLower = *tUpper = bracketingTimes[0];
     return true;
   }
@@ -462,7 +506,8 @@ void Usd_Clip::_ListTimeSamplesForPathFromClipLayer(const SdfPath &path,
 {
   std::set<InternalTime> timeSamplesInClip = _GetLayerForClip()->ListTimeSamplesForPath(
     _TranslatePathToClip(path));
-  if (times.empty()) {
+  if (times.empty())
+  {
     *timeSamples = std::move(timeSamplesInClip);
 
     // Filter out all samples that are outside the clip's active range
@@ -481,37 +526,47 @@ void Usd_Clip::_ListTimeSamplesForPathFromClipLayer(const SdfPath &path,
   //
   // To deal with this, every internal time sample has to be checked
   // against the entire mapping function.
-  for (InternalTime t : timeSamplesInClip) {
-    for (size_t i = 0; i < times.size() - 1; ++i) {
+  for (InternalTime t : timeSamplesInClip)
+  {
+    for (size_t i = 0; i < times.size() - 1; ++i)
+    {
       const TimeMapping &m1 = times[i];
       const TimeMapping &m2 = times[i + 1];
 
       // Ignore time mappings whose external time domain does not
       // intersect the times at which this clip is active.
       const GfInterval mappingInterval(m1.externalTime, m2.externalTime);
-      if (!mappingInterval.Intersects(clipTimeInterval)) {
+      if (!mappingInterval.Intersects(clipTimeInterval))
+      {
         continue;
       }
 
       // If this segment is a jump discontinuity it should not be used
       // to map any internal times to external times.
-      if (m1.isJumpDiscontinuity) {
+      if (m1.isJumpDiscontinuity)
+      {
         continue;
       }
 
       if (std::min(m1.internalTime, m2.internalTime) <= t &&
-          t <= std::max(m1.internalTime, m2.internalTime)) {
-        if (m1.internalTime == m2.internalTime) {
-          if (clipTimeInterval.Contains(m1.externalTime)) {
+          t <= std::max(m1.internalTime, m2.internalTime))
+      {
+        if (m1.internalTime == m2.internalTime)
+        {
+          if (clipTimeInterval.Contains(m1.externalTime))
+          {
             timeSamples->insert(m1.externalTime);
           }
-          if (clipTimeInterval.Contains(m2.externalTime)) {
+          if (clipTimeInterval.Contains(m2.externalTime))
+          {
             timeSamples->insert(m2.externalTime);
           }
         }
-        else {
+        else
+        {
           const ExternalTime extTime = _TranslateTimeToExternal(t, i, i + 1);
-          if (clipTimeInterval.Contains(extTime)) {
+          if (clipTimeInterval.Contains(extTime))
+          {
             timeSamples->insert(extTime);
           }
         }
@@ -528,8 +583,10 @@ std::set<Usd_Clip::ExternalTime> Usd_Clip::ListTimeSamplesForPath(const SdfPath 
 
   // Each entry in the clip's time mapping is considered a time sample,
   // so add them in here.
-  for (const TimeMapping &t : times) {
-    if (startTime <= t.externalTime && t.externalTime < endTime) {
+  for (const TimeMapping &t : times)
+  {
+    if (startTime <= t.externalTime && t.externalTime < endTime)
+    {
       timeSamples.insert(t.externalTime);
     }
   }
@@ -558,7 +615,8 @@ bool Usd_Clip::IsBlocked(const SdfPath &path, ExternalTime time) const
   SdfAbstractDataTypedValue<SdfValueBlock> blockValue(nullptr);
   if (_GetLayerForClip()->QueryTimeSample(
         path, _TranslateTimeToInternal(time), (SdfAbstractDataValue *)&blockValue) &&
-      blockValue.isValueBlock) {
+      blockValue.isValueBlock)
+  {
     return true;
   }
   return false;
@@ -575,13 +633,16 @@ static Usd_Clip::InternalTime _TranslateTimeToInternalHelper(Usd_Clip::ExternalT
 {
   // Early out in some special cases to avoid unnecessary
   // math operations that could introduce precision issues.
-  if (m1.externalTime == m2.externalTime) {
+  if (m1.externalTime == m2.externalTime)
+  {
     return m1.internalTime;
   }
-  else if (extTime == m1.externalTime) {
+  else if (extTime == m1.externalTime)
+  {
     return m1.internalTime;
   }
-  else if (extTime == m2.externalTime) {
+  else if (extTime == m2.externalTime)
+  {
     return m2.internalTime;
   }
 
@@ -593,7 +654,8 @@ static Usd_Clip::InternalTime _TranslateTimeToInternalHelper(Usd_Clip::ExternalT
 Usd_Clip::InternalTime Usd_Clip::_TranslateTimeToInternal(ExternalTime extTime) const
 {
   size_t i1, i2;
-  if (!_GetBracketingTimeSegment(times, extTime, &i1, &i2)) {
+  if (!_GetBracketingTimeSegment(times, extTime, &i1, &i2))
+  {
     return extTime;
   }
 
@@ -622,7 +684,8 @@ Usd_Clip::InternalTime Usd_Clip::_TranslateTimeToInternal(ExternalTime extTime) 
   // (0, 0) and (10, 10), which gives a translated internal time of 3.
   // This avoids all of the issues above and more closely matches the intent
   // expressed in the authored times metadata.
-  if (m2.isJumpDiscontinuity) {
+  if (m2.isJumpDiscontinuity)
+  {
     TF_VERIFY(i2 + 1 < times.size());
     const TimeMapping &m3 = times[i2 + 1];
     return _TranslateTimeToInternalHelper(extTime, m1, TimeMapping(m3.externalTime, m2.internalTime));
@@ -637,13 +700,16 @@ static Usd_Clip::ExternalTime _TranslateTimeToExternalHelper(Usd_Clip::InternalT
 {
   // Early out in some special cases to avoid unnecessary
   // math operations that could introduce precision issues.
-  if (m1.internalTime == m2.internalTime) {
+  if (m1.internalTime == m2.internalTime)
+  {
     return m1.externalTime;
   }
-  else if (intTime == m1.internalTime) {
+  else if (intTime == m1.internalTime)
+  {
     return m1.externalTime;
   }
-  else if (intTime == m2.internalTime) {
+  else if (intTime == m2.internalTime)
+  {
     return m2.externalTime;
   }
 
@@ -682,7 +748,8 @@ Usd_Clip::ExternalTime Usd_Clip::_TranslateTimeToExternal(InternalTime intTime, 
   // (0, 0) and (10, 10), which gives a translated external time of 3.
   // This avoids all of the issues above and more closely matches the intent
   // expressed in the authored times metadata.
-  if (m2.isJumpDiscontinuity) {
+  if (m2.isJumpDiscontinuity)
+  {
     TF_VERIFY(i2 + 1 < times.size());
     const TimeMapping &m3 = times[i2 + 1];
     return _TranslateTimeToExternalHelper(intTime, m1, TimeMapping(m3.externalTime, m2.internalTime));
@@ -700,19 +767,22 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (dummy_clip)((dummy_clipFormat, "dummy_clip.%s
 
 SdfLayerRefPtr Usd_Clip::_GetLayerForClip() const
 {
-  if (_hasLayer) {
+  if (_hasLayer)
+  {
     return _layer;
   }
 
   SdfLayerRefPtr layer;
 
-  if (TF_VERIFY(sourceLayerIndex < sourceLayerStack->GetLayers().size())) {
+  if (TF_VERIFY(sourceLayerIndex < sourceLayerStack->GetLayers().size()))
+  {
     const ArResolverContextBinder binder(sourceLayerStack->GetIdentifier().pathResolverContext);
     layer = SdfLayer::FindOrOpenRelativeToLayer(sourceLayerStack->GetLayers()[sourceLayerIndex],
                                                 assetPath.GetAssetPath());
   }
 
-  if (!layer) {
+  if (!layer)
+  {
     // If we failed to open the specified layer, report an error
     // and use a dummy anonymous layer instead, to avoid having
     // to check layer validity everywhere and to avoid reissuing
@@ -724,7 +794,8 @@ SdfLayerRefPtr Usd_Clip::_GetLayerForClip() const
   }
 
   std::lock_guard<std::mutex> lock(_layerMutex);
-  if (!_layer) {
+  if (!_layer)
+  {
     _layer = layer;
     _hasLayer = true;
   }
@@ -741,13 +812,15 @@ SdfLayerHandle Usd_Clip::GetLayer() const
 
 SdfLayerHandle Usd_Clip::GetLayerIfOpen() const
 {
-  if (!_hasLayer) {
+  if (!_hasLayer)
+  {
     return SdfLayerHandle();
   }
   return GetLayer();
 }
 
-namespace {  // Anonymous namespace
+namespace
+{  // Anonymous namespace
 
 // SdfTimeCode values from clips need to be converted from internal time to
 // external time. We treat time code values as relative to the internal time
@@ -764,29 +837,34 @@ inline void _ConvertValueForTime(const Usd_Clip::ExternalTime &extTime,
                                  const Usd_Clip::InternalTime &intTime,
                                  VtArray<SdfTimeCode> *value)
 {
-  for (size_t i = 0; i < value->size(); ++i) {
+  for (size_t i = 0; i < value->size(); ++i)
+  {
     _ConvertValueForTime(extTime, intTime, &(*value)[i]);
   }
 }
 
 // Helpers for accessing the typed value from type erased values, needed for
 // converting SdfTimeCodes.
-template<class T> inline void _UncheckedSwap(SdfAbstractDataValue *value, T &val)
+template<class T>
+inline void _UncheckedSwap(SdfAbstractDataValue *value, T &val)
 {
   std::swap(*static_cast<T *>(value->value), val);
 }
 
-template<class T> inline void _UncheckedSwap(VtValue *value, T &val)
+template<class T>
+inline void _UncheckedSwap(VtValue *value, T &val)
 {
   value->UncheckedSwap(val);
 }
 
-template<class T> inline bool _IsHolding(const SdfAbstractDataValue &value)
+template<class T>
+inline bool _IsHolding(const SdfAbstractDataValue &value)
 {
   return TfSafeTypeCompare(typeid(T), value.valueType);
 }
 
-template<class T> inline bool _IsHolding(const VtValue &value)
+template<class T>
+inline bool _IsHolding(const VtValue &value)
 {
   return value.IsHolding<T>();
 }
@@ -798,13 +876,15 @@ inline void _ConvertTypeErasedValueForTime(const Usd_Clip::ExternalTime &extTime
                                            const Usd_Clip::InternalTime &intTime,
                                            Storage *value)
 {
-  if (_IsHolding<SdfTimeCode>(*value)) {
+  if (_IsHolding<SdfTimeCode>(*value))
+  {
     SdfTimeCode rawVal;
     _UncheckedSwap(value, rawVal);
     _ConvertValueForTime(extTime, intTime, &rawVal);
     _UncheckedSwap(value, rawVal);
   }
-  else if (_IsHolding<VtArray<SdfTimeCode>>(*value)) {
+  else if (_IsHolding<VtArray<SdfTimeCode>>(*value))
+  {
     VtArray<SdfTimeCode> rawVal;
     _UncheckedSwap(value, rawVal);
     _ConvertValueForTime(extTime, intTime, &rawVal);
@@ -842,7 +922,8 @@ static bool _Interpolate(const SdfLayerRefPtr &clip,
                          T *value)
 {
   double lowerInClip, upperInClip;
-  if (clip->GetBracketingTimeSamplesForPath(clipPath, clipTime, &lowerInClip, &upperInClip)) {
+  if (clip->GetBracketingTimeSamplesForPath(clipPath, clipTime, &lowerInClip, &upperInClip))
+  {
 
     return Usd_GetOrInterpolateValue(
       clip, clipPath, clipTime, lowerInClip, upperInClip, interpolator, value);
@@ -863,9 +944,11 @@ bool Usd_Clip::QueryTimeSample(const SdfPath &path,
   const InternalTime clipTime = _TranslateTimeToInternal(time);
   const SdfLayerRefPtr &clip = _GetLayerForClip();
 
-  if (!clip->QueryTimeSample(clipPath, clipTime, value)) {
+  if (!clip->QueryTimeSample(clipPath, clipTime, value))
+  {
     // See comment in Usd_Clip::GetBracketingTimeSamples.
-    if (!_Interpolate(clip, clipPath, clipTime, interpolator, value)) {
+    if (!_Interpolate(clip, clipPath, clipTime, interpolator, value))
+    {
       return false;
     }
   }

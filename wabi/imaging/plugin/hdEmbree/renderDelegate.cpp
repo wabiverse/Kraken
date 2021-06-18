@@ -71,7 +71,8 @@ HdResourceRegistrySharedPtr HdEmbreeRenderDelegate::_resourceRegistry;
 void HdEmbreeRenderDelegate::HandleRtcError(void *userPtr, RTCError code, const char *msg)
 {
   // Forward RTC error messages through to hydra logging.
-  switch (code) {
+  switch (code)
+  {
     case RTC_ERROR_UNKNOWN:
       TF_CODING_ERROR("Embree unknown error: %s", msg);
       break;
@@ -102,7 +103,8 @@ static void _RenderCallback(HdEmbreeRenderer *renderer, HdRenderThread *renderTh
   renderer->Render(renderThread);
 }
 
-HdEmbreeRenderDelegate::HdEmbreeRenderDelegate() : HdRenderDelegate()
+HdEmbreeRenderDelegate::HdEmbreeRenderDelegate()
+  : HdRenderDelegate()
 {
   _Initialize();
 }
@@ -175,7 +177,8 @@ void HdEmbreeRenderDelegate::_Initialize()
   // Initialize one resource registry for all embree plugins
   std::lock_guard<std::mutex> guard(_mutexResourceRegistry);
 
-  if (_counterResourceRegistry.fetch_add(1) == 0) {
+  if (_counterResourceRegistry.fetch_add(1) == 0)
+  {
     _resourceRegistry = std::make_shared<HdResourceRegistry>();
   }
 }
@@ -185,7 +188,8 @@ HdEmbreeRenderDelegate::~HdEmbreeRenderDelegate()
   // Clean the resource registry only when it is the last Embree delegate
   {
     std::lock_guard<std::mutex> guard(_mutexResourceRegistry);
-    if (_counterResourceRegistry.fetch_sub(1) == 1) {
+    if (_counterResourceRegistry.fetch_sub(1) == 1)
+    {
       _resourceRegistry.reset();
     }
   }
@@ -233,25 +237,32 @@ HdResourceRegistrySharedPtr HdEmbreeRenderDelegate::GetResourceRegistry() const
 
 HdAovDescriptor HdEmbreeRenderDelegate::GetDefaultAovDescriptor(TfToken const &name) const
 {
-  if (name == HdAovTokens->color) {
+  if (name == HdAovTokens->color)
+  {
     return HdAovDescriptor(HdFormatUNorm8Vec4, true, VtValue(GfVec4f(0.0f)));
   }
-  else if (name == HdAovTokens->normal || name == HdAovTokens->Neye) {
+  else if (name == HdAovTokens->normal || name == HdAovTokens->Neye)
+  {
     return HdAovDescriptor(HdFormatFloat32Vec3, false, VtValue(GfVec3f(-1.0f)));
   }
-  else if (name == HdAovTokens->depth) {
+  else if (name == HdAovTokens->depth)
+  {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
   }
-  else if (name == HdAovTokens->cameraDepth) {
+  else if (name == HdAovTokens->cameraDepth)
+  {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(0.0f));
   }
   else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
-           name == HdAovTokens->elementId) {
+           name == HdAovTokens->elementId)
+  {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
   }
-  else {
+  else
+  {
     HdParsedAovToken aovId(name);
-    if (aovId.isPrimvar) {
+    if (aovId.isPrimvar)
+    {
       return HdAovDescriptor(HdFormatFloat32Vec3, false, VtValue(GfVec3f(0.0f)));
     }
   }
@@ -302,10 +313,12 @@ void HdEmbreeRenderDelegate::DestroyInstancer(HdInstancer *instancer)
 
 HdRprim *HdEmbreeRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const &rprimId)
 {
-  if (typeId == HdPrimTypeTokens->mesh) {
+  if (typeId == HdPrimTypeTokens->mesh)
+  {
     return new HdEmbreeMesh(rprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
 
@@ -319,13 +332,16 @@ void HdEmbreeRenderDelegate::DestroyRprim(HdRprim *rPrim)
 
 HdSprim *HdEmbreeRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdCamera(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->extComputation) {
+  else if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdExtComputation(sprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -336,13 +352,16 @@ HdSprim *HdEmbreeRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
 {
   // For fallback sprims, create objects with an empty scene path.
   // They'll use default values and won't be updated by a scene delegate.
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdCamera(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->extComputation) {
+  else if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdExtComputation(SdfPath::EmptyPath());
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -356,10 +375,12 @@ void HdEmbreeRenderDelegate::DestroySprim(HdSprim *sPrim)
 
 HdBprim *HdEmbreeRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &bprimId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer) {
+  if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdEmbreeRenderBuffer(bprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
   return nullptr;
@@ -367,10 +388,12 @@ HdBprim *HdEmbreeRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath cons
 
 HdBprim *HdEmbreeRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer) {
+  if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdEmbreeRenderBuffer(SdfPath::EmptyPath());
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
   return nullptr;

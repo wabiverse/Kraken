@@ -55,7 +55,8 @@ class TfToken;
 /// that layer. The delegate may keep track of these operations for various
 /// purposes.
 ///
-class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
+class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase
+{
  public:
   SDF_API
   virtual ~SdfLayerStateDelegateBase();
@@ -201,7 +202,8 @@ class SdfLayerStateDelegateBase : public TfRefBase, public TfWeakBase {
 /// \class SdfSimpleLayerStateDelegate
 /// A layer state delegate that simply records whether any changes have
 /// been made to a layer.
-class SdfSimpleLayerStateDelegate : public SdfLayerStateDelegateBase {
+class SdfSimpleLayerStateDelegate : public SdfLayerStateDelegateBase
+{
  public:
   static SdfSimpleLayerStateDelegateRefPtr New();
 

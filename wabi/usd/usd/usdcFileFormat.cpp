@@ -99,14 +99,16 @@ bool UsdUsdcFileFormat::WriteToFile(const SdfLayer &layer,
   SdfAbstractDataConstPtr dataSource = _GetLayerData(layer);
 
   // XXX: WBN to avoid const-cast -- saving can't be non-mutating in general.
-  if (auto const *constCrateData = dynamic_cast<Usd_CrateData const *>(get_pointer(dataSource))) {
+  if (auto const *constCrateData = dynamic_cast<Usd_CrateData const *>(get_pointer(dataSource)))
+  {
     auto *crateData = const_cast<Usd_CrateData *>(constCrateData);
     return crateData->Save(filePath);
   }
 
   // Otherwise we're dealing with some arbitrary data object, just copy the
   // contents into the binary data.
-  if (auto dataDest = TfDynamic_cast<Usd_CrateDataRefPtr>(InitData(FileFormatArguments()))) {
+  if (auto dataDest = TfDynamic_cast<Usd_CrateDataRefPtr>(InitData(FileFormatArguments())))
+  {
     dataDest->CopyFrom(dataSource);
     return dataDest->Save(filePath);
   }

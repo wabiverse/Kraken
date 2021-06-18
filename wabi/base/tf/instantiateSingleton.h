@@ -43,10 +43,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T> std::mutex *TfSingleton<T>::_mutex = 0;
-template<class T> T *TfSingleton<T>::_instance = 0;
+template<class T>
+std::mutex *TfSingleton<T>::_mutex = 0;
+template<class T>
+T *TfSingleton<T>::_instance = 0;
 
-template<typename T> T &TfSingleton<T>::_CreateInstance()
+template<typename T>
+T &TfSingleton<T>::_CreateInstance()
 {
   // Why is TfSingleton<T>::_mutex a pointer requiring allocation and
   // construction and not simply an object?  Because the default
@@ -61,7 +64,8 @@ template<typename T> T &TfSingleton<T>::_CreateInstance()
   TfAutoMallocTag tag("Create Singleton " + ArchGetDemangled<T>());
 
   std::lock_guard<std::mutex> lock(*TfSingleton<T>::_mutex);
-  if (!TfSingleton<T>::_instance) {
+  if (!TfSingleton<T>::_instance)
+  {
     ARCH_PRAGMA_PUSH
     ARCH_PRAGMA_MAY_NOT_BE_ALIGNED
     T *inst = new T;
@@ -69,7 +73,8 @@ template<typename T> T &TfSingleton<T>::_CreateInstance()
 
     // T's constructor could cause this to be created and set
     // already, so guard against that.
-    if (!TfSingleton<T>::_instance) {
+    if (!TfSingleton<T>::_instance)
+    {
       TfSingleton<T>::_instance = inst;
     }
   }
@@ -77,7 +82,8 @@ template<typename T> T &TfSingleton<T>::_CreateInstance()
   return *TfSingleton<T>::_instance;
 }
 
-template<typename T> void TfSingleton<T>::_DestroyInstance()
+template<typename T>
+void TfSingleton<T>::_DestroyInstance()
 {
   std::lock_guard<std::mutex> lock(*TfSingleton<T>::_mutex);
   delete TfSingleton<T>::_instance;

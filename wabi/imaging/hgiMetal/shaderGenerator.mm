@@ -44,13 +44,15 @@ SectionType *HgiMetalShaderGenerator::CreateShaderSection(T &&...t)
   return result;
 }
 
-namespace {
+namespace
+{
 
 // This is a conversion layer from descriptors into shader sections
 // In purity we don't want the shader generator to know how to
 // turn descriptors into sections, it is more interested in
 // writing abstract sections
-class ShaderStageData final {
+class ShaderStageData final
+{
  public:
   ShaderStageData(const HgiShaderFunctionDesc &descriptor, HgiMetalShaderGenerator *generator);
 
@@ -82,7 +84,8 @@ T *_BuildStructInstance(const std::string &typeName,
                         HgiMetalShaderGenerator *generator)
 {
   // If it doesn't have any members, don't declare an empty struct instance
-  if (typeName.empty() || members.empty()) {
+  if (typeName.empty() || members.empty())
+  {
     return nullptr;
   }
 
@@ -100,7 +103,8 @@ T *_BuildStructInstance(const std::string &typeName,
 ///
 /// Generates a metal stage function. Base class for vertex/fragment/compute
 ///
-class HgiMetalShaderStageEntryPoint final {
+class HgiMetalShaderStageEntryPoint final
+{
  public:
   HgiMetalShaderStageEntryPoint(const ShaderStageData &stageData,
                                 HgiMetalShaderGenerator *generator,
@@ -155,7 +159,8 @@ class HgiMetalShaderStageEntryPoint final {
   const std::string _inputInstanceName;
 };
 
-namespace {
+namespace
+{
 
 // This is used by the macro blob, basically this is dumped on top
 // of the generated shader
@@ -283,35 +288,42 @@ std::string _ComputeHeader(id<MTLDevice> device)
 
   // Metal feature set defines
   // Define all macOS 10.13 feature set enums onwards
-  if (@available(macos 10.13, ios 100.100, *)) {
+  if (@available(macos 10.13, ios 100.100, *))
+  {
     header << "#define ARCH_OS_MACOS\n";
     if ([device supportsFeatureSet:MTLFeatureSet(10003)])
       header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v3\n";
   }
-  if (@available(macos 10.14, ios 100.100, *)) {
+  if (@available(macos 10.14, ios 100.100, *))
+  {
     if ([device supportsFeatureSet:MTLFeatureSet(10004)])
       header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v4\n";
   }
-  if (@available(macos 10.14, ios 100.100, *)) {
+  if (@available(macos 10.14, ios 100.100, *))
+  {
     if ([device supportsFeatureSet:MTLFeatureSet(10005)])
       header << "#define METAL_FEATURESET_MACOS_GPUFAMILY2_v1\n";
   }
 
-  if (@available(macos 100.100, ios 12.0, *)) {
+  if (@available(macos 100.100, ios 12.0, *))
+  {
     header << "#define ARCH_OS_IOS\n";
     // Define all iOS 12 feature set enums onwards
     if ([device supportsFeatureSet:MTLFeatureSet(12)])
       header << "#define METAL_FEATURESET_IOS_GPUFAMILY1_v5\n";
   }
-  if (@available(macos 100.100, ios 12.0, *)) {
+  if (@available(macos 100.100, ios 12.0, *))
+  {
     if ([device supportsFeatureSet:MTLFeatureSet(12)])
       header << "#define METAL_FEATURESET_IOS_GPUFAMILY2_v5\n";
   }
-  if (@available(macos 100.100, ios 12.0, *)) {
+  if (@available(macos 100.100, ios 12.0, *))
+  {
     if ([device supportsFeatureSet:MTLFeatureSet(13)])
       header << "#define METAL_FEATURESET_IOS_GPUFAMILY3_v4\n";
   }
-  if (@available(macos 100.100, ios 12.0, *)) {
+  if (@available(macos 100.100, ios 12.0, *))
+  {
     if ([device supportsFeatureSet:MTLFeatureSet(14)])
       header << "#define METAL_FEATURESET_IOS_GPUFAMILY4_v2\n";
   }
@@ -441,18 +453,22 @@ HgiMetalShaderSectionPtrVector ShaderStageData::AccumulateParams(
 {
   HgiMetalShaderSectionPtrVector stageShaderSections;
   // only some roles have an index
-  if (!iterateAttrs) {
+  if (!iterateAttrs)
+  {
     // possible metal attributes on shader inputs.
     // Map from descriptor to metal
     std::unordered_map<std::string, uint32_t> roleIndexM{{"color", 0}};
 
-    for (const HgiShaderFunctionParamDesc &p : params) {
+    for (const HgiShaderFunctionParamDesc &p : params)
+    {
       // For metal, the role is the actual attribute so far
       std::string indexAsStr;
       // check if has a role
-      if (!p.role.empty()) {
+      if (!p.role.empty())
+      {
         auto it = roleIndexM.find(p.role);
-        if (it != roleIndexM.end()) {
+        if (it != roleIndexM.end())
+        {
           indexAsStr = std::to_string(it->second);
           // Increment index, so that the next color
           // or texture or vertex has a higher index
@@ -467,8 +483,10 @@ HgiMetalShaderSectionPtrVector ShaderStageData::AccumulateParams(
       stageShaderSections.push_back(section);
     }
   }
-  else {
-    for (size_t i = 0; i < params.size(); i++) {
+  else
+  {
+    for (size_t i = 0; i < params.size(); i++)
+    {
       const HgiShaderFunctionParamDesc &p = params[i];
       // For metal, the role is the actual attribute so far
       const HgiShaderSectionAttributeVector attributes = {
@@ -602,7 +620,8 @@ std::string HgiMetalShaderStageEntryPoint::GetScopeTypeName() const
 std::string HgiMetalShaderStageEntryPoint::GetInputsTypeName() const
 {
   std::string inputInstance = GetInputsInstanceName();
-  if (inputInstance.empty()) {
+  if (inputInstance.empty())
+  {
     return std::string();
   }
   inputInstance[0] = std::toupper(inputInstance[0]);
@@ -661,7 +680,8 @@ void HgiMetalShaderGenerator::_BuildTextureShaderSections(const HgiShaderFunctio
 {
   HgiMetalShaderSectionPtrVector structMembers;
   const std::vector<HgiShaderFunctionTextureDesc> &textures = descriptor.textures;
-  for (size_t i = 0; i < textures.size(); ++i) {
+  for (size_t i = 0; i < textures.size(); ++i)
+  {
     // Create the sampler shader section
     const std::string &texName = textures[i].nameInShader;
 
@@ -698,7 +718,8 @@ void HgiMetalShaderGenerator::_BuildTextureShaderSections(const HgiShaderFunctio
 void HgiMetalShaderGenerator::_BuildBufferShaderSections(const HgiShaderFunctionDesc &descriptor)
 {
   const std::vector<HgiShaderFunctionBufferDesc> &buffers = descriptor.buffers;
-  for (size_t i = 0; i < buffers.size(); ++i) {
+  for (size_t i = 0; i < buffers.size(); ++i)
+  {
     // Create the buffer shader section
     const std::string &bufName = buffers[i].nameInShader;
     const std::string &bufType = buffers[i].type;
@@ -722,14 +743,17 @@ void HgiMetalShaderGenerator::_BuildKeywordInputShaderSections(const HgiShaderFu
     {HgiShaderKeywordTokens->hdGlobalInvocationID, "thread_position_in_grid"}};
 
   const std::vector<HgiShaderFunctionParamDesc> &inputs = descriptor.stageInputs;
-  for (size_t i = 0; i < inputs.size(); ++i) {
+  for (size_t i = 0; i < inputs.size(); ++i)
+  {
     const HgiShaderFunctionParamDesc &p(inputs[i]);
     const std::string &role = p.role;
 
     // check if has a role
-    if (!p.role.empty()) {
+    if (!p.role.empty())
+    {
       auto it = roleIndexM.find(p.role);
-      if (it != roleIndexM.end()) {
+      if (it != roleIndexM.end())
+      {
         // Create the keyword shader section
         const std::string &keywordName = p.nameInShader;
 
@@ -747,17 +771,20 @@ void HgiMetalShaderGenerator::_BuildKeywordInputShaderSections(const HgiShaderFu
 std::unique_ptr<HgiMetalShaderStageEntryPoint> HgiMetalShaderGenerator::_BuildShaderStageEntryPoints(
   const HgiShaderFunctionDesc &descriptor)
 {
-  if (!descriptor.textures.empty()) {
+  if (!descriptor.textures.empty())
+  {
     _BuildTextureShaderSections(descriptor);
   }
-  if (!descriptor.buffers.empty()) {
+  if (!descriptor.buffers.empty())
+  {
     _BuildBufferShaderSections(descriptor);
   }
   _BuildKeywordInputShaderSections(descriptor);
   // Create differing shader function signature based on stage
   const ShaderStageData stageData(descriptor, this);
 
-  switch (descriptor.shaderStage) {
+  switch (descriptor.shaderStage)
+  {
     case HgiShaderStageVertex: {
       return std::make_unique<HgiMetalShaderStageEntryPoint>(
         stageData, this, "vsInput", "vsInput", "vertex", "vsInput");
@@ -790,12 +817,14 @@ HgiMetalShaderGenerator::~HgiMetalShaderGenerator() = default;
 void HgiMetalShaderGenerator::_Execute(std::ostream &ss, const std::string &originalShaderCode)
 {
   HgiMetalShaderSectionUniquePtrVector *const shaderSections = GetShaderSections();
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     section->VisitGlobalMacros(ss);
     ss << "\n";
   }
 
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     section->VisitGlobalMemberDeclarations(ss);
     ss << "\n";
   }
@@ -809,13 +838,16 @@ void HgiMetalShaderGenerator::_Execute(std::ostream &ss, const std::string &orig
 
   // Metal extends the global scope into a "scope" embedder,
   // which simulates a global scope for some member variables
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     section->VisitScopeStructs(ss);
   }
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     section->VisitScopeMemberDeclarations(ss);
   }
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     section->VisitScopeFunctionDefinitions(ss);
   }
 
@@ -825,11 +857,13 @@ void HgiMetalShaderGenerator::_Execute(std::ostream &ss, const std::string &orig
   // write out the entry point signature
   HgiMetalStageOutputShaderSection *const outputs = _generatorShaderSections->GetOutputs();
   std::stringstream returnSS;
-  if (outputs) {
+  if (outputs)
+  {
     const HgiMetalStructTypeDeclarationShaderSection *const decl = outputs->GetStructTypeDeclaration();
     decl->WriteIdentifier(returnSS);
   }
-  else {
+  else
+  {
     // handle compute
     returnSS << "void";
   }
@@ -839,13 +873,17 @@ void HgiMetalShaderGenerator::_Execute(std::ostream &ss, const std::string &orig
   // Pass in all parameters declared by interested code sections into the
   // entry point of the shader
   bool firstParam = true;
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
     std::stringstream paramDecl;
-    if (section->VisitEntryPointParameterDeclarations(paramDecl)) {
-      if (!firstParam) {
+    if (section->VisitEntryPointParameterDeclarations(paramDecl))
+    {
+      if (!firstParam)
+      {
         ss << ",\n";
       }
-      else {
+      else
+      {
         firstParam = false;
       }
       ss << paramDecl.str();
@@ -856,17 +894,21 @@ void HgiMetalShaderGenerator::_Execute(std::ostream &ss, const std::string &orig
      << _generatorShaderSections->GetScopeInstanceName() << ";\n";
 
   // Execute all code that hooks into the entry point function
-  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections) {
-    if (section->VisitEntryPointFunctionExecutions(ss, _generatorShaderSections->GetScopeInstanceName())) {
+  for (const HgiMetalShaderSectionUniquePtr &section : *shaderSections)
+  {
+    if (section->VisitEntryPointFunctionExecutions(ss, _generatorShaderSections->GetScopeInstanceName()))
+    {
       ss << "\n";
     }
   }
   // return the instance of the shader entrypoint output type
-  if (outputs) {
+  if (outputs)
+  {
     const std::string outputInstanceName = _generatorShaderSections->GetOutputInstanceName();
     ss << "return " << outputInstanceName << ";\n";
   }
-  else {
+  else
+  {
     ss << _generatorShaderSections->GetScopeInstanceName() << ".main();\n";
   }
   ss << "}\n";

@@ -56,7 +56,8 @@ using HdDriverVector = std::vector<HdDriver *>;
 /// that is obtained from the render delegate and passed to each prim
 /// during Sync processing.
 ///
-class HdRenderParam {
+class HdRenderParam
+{
  public:
   HdRenderParam()
   {}
@@ -75,7 +76,8 @@ typedef TfHashMap<TfToken, VtValue, TfToken::HashFunctor> HdRenderSettingsMap;
 /// HdRenderSettingDescriptor represents a render setting that a render delegate
 /// wants to export (e.g. to UI).
 ///
-struct HdRenderSettingDescriptor {
+struct HdRenderSettingDescriptor
+{
   // A human readable name.
   std::string name;
   // The key for HdRenderDelegate::SetRenderSetting/GetRenderSetting.
@@ -88,7 +90,8 @@ typedef std::vector<HdRenderSettingDescriptor> HdRenderSettingDescriptorList;
 
 /// \class HdRenderDelegate
 ///
-class HdRenderDelegate {
+class HdRenderDelegate
+{
  public:
   HD_API
   virtual ~HdRenderDelegate();
@@ -156,7 +159,8 @@ class HdRenderDelegate {
   /// Get the current value for a render setting, taking a desired type
   /// and a fallback value in case of type mismatch.
   ///
-  template<typename T> T GetRenderSetting(TfToken const &key, T const &defValue) const
+  template<typename T>
+  T GetRenderSetting(TfToken const &key, T const &defValue) const
   {
     return GetRenderSetting(key).Cast<T>().GetWithDefault(defValue);
   }

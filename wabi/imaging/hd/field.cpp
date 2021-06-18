@@ -27,7 +27,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(HdFieldTokens, HD_FIELD_TOKENS);
 
-HdField::HdField(SdfPath const &id) : HdBprim(id)
+HdField::HdField(SdfPath const &id)
+  : HdBprim(id)
 {}
 
 HdField::~HdField()

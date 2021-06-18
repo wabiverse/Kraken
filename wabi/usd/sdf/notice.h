@@ -41,14 +41,16 @@ SDF_DECLARE_HANDLES(SdfLayer);
 ///
 /// Wrapper class for Sdf notices.
 ///
-class SdfNotice {
+class SdfNotice
+{
  public:
   /// \class Base
   ///
   /// Base notification class for scene.  Only useful for type hierarchy
   /// purposes.
   ///
-  class Base : public TfNotice {
+  class Base : public TfNotice
+  {
    public:
     SDF_API ~Base();
   };
@@ -57,7 +59,8 @@ class SdfNotice {
   ///
   /// Base class for LayersDidChange and LayersDidChangeSentPerLayer.
   ///
-  class BaseLayersDidChange {
+  class BaseLayersDidChange
+  {
    public:
     BaseLayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : _vec(&changeVec),
@@ -125,7 +128,8 @@ class SdfNotice {
   /// can listen to notices from only the set of layers they care about rather
   /// than listening to the global LayersDidChange notice.
   ///
-  class LayersDidChangeSentPerLayer : public Base, public BaseLayersDidChange {
+  class LayersDidChangeSentPerLayer : public Base, public BaseLayersDidChange
+  {
    public:
     LayersDidChangeSentPerLayer(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : BaseLayersDidChange(changeVec, serialNumber)
@@ -137,7 +141,8 @@ class SdfNotice {
   ///
   /// Global notice sent to indicate that layer contents have changed.
   ///
-  class LayersDidChange : public Base, public BaseLayersDidChange {
+  class LayersDidChange : public Base, public BaseLayersDidChange
+  {
    public:
     LayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : BaseLayersDidChange(changeVec, serialNumber)
@@ -149,9 +154,11 @@ class SdfNotice {
   ///
   /// Sent when the (scene spec) info of a layer have changed.
   ///
-  class LayerInfoDidChange : public Base {
+  class LayerInfoDidChange : public Base
+  {
    public:
-    LayerInfoDidChange(const TfToken &key) : _key(key)
+    LayerInfoDidChange(const TfToken &key)
+      : _key(key)
     {}
     SDF_API ~LayerInfoDidChange();
 
@@ -169,7 +176,8 @@ class SdfNotice {
   ///
   /// Sent when the identifier of a layer has changed.
   ///
-  class LayerIdentifierDidChange : public Base {
+  class LayerIdentifierDidChange : public Base
+  {
    public:
     SDF_API
     LayerIdentifierDidChange(const std::string &oldIdentifier, const std::string &newIdentifier);
@@ -197,14 +205,16 @@ class SdfNotice {
   ///
   /// Sent after a menv layer has been loaded from a file.
   ///
-  class LayerDidReplaceContent : public Base {
+  class LayerDidReplaceContent : public Base
+  {
    public:
     SDF_API ~LayerDidReplaceContent();
   };
 
   /// \class LayerDidReloadContent
   /// Sent after a layer is reloaded.
-  class LayerDidReloadContent : public LayerDidReplaceContent {
+  class LayerDidReloadContent : public LayerDidReplaceContent
+  {
    public:
     SDF_API virtual ~LayerDidReloadContent();
   };
@@ -213,7 +223,8 @@ class SdfNotice {
   ///
   /// Sent after a layer is saved to file.
   ///
-  class LayerDidSaveLayerToFile : public Base {
+  class LayerDidSaveLayerToFile : public Base
+  {
    public:
     SDF_API ~LayerDidSaveLayerToFile();
   };
@@ -223,7 +234,8 @@ class SdfNotice {
   /// Similar behavior to LayersDidChange, but only gets sent if a change
   /// in the dirty status of a layer occurs.
   ///
-  class LayerDirtinessChanged : public Base {
+  class LayerDirtinessChanged : public Base
+  {
    public:
     SDF_API ~LayerDirtinessChanged();
   };
@@ -234,7 +246,8 @@ class SdfNotice {
   /// muted layers. Note this does not necessarily mean the specified
   /// layer is currently loaded.
   ///
-  class LayerMutenessChanged : public Base {
+  class LayerMutenessChanged : public Base
+  {
    public:
     LayerMutenessChanged(const std::string &layerPath, bool wasMuted)
       : _layerPath(layerPath),

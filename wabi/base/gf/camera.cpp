@@ -140,7 +140,8 @@ void GfCamera::SetPerspectiveFromAspectRatioAndFieldOfView(float aspectRatio,
   // Compute tangent for field of view
   const float tanValue = tan(0.5 * GfDegreesToRadians(fieldOfView));
 
-  if (tanValue == 0) {
+  if (tanValue == 0)
+  {
     // To avoid division by zero, just set default value
     _focalLength = 50.0;
     return;
@@ -161,17 +162,21 @@ void GfCamera::SetOrthographicFromAspectRatioAndSize(float aspectRatio,
   _focalLength = 50.0;
 
   // Set horizontal and vertial aperture
-  if (direction == FOVHorizontal) {
+  if (direction == FOVHorizontal)
+  {
     // We are given the width, determine height by dividing by aspect ratio
     _horizontalAperture = orthographicSize / GfCamera::APERTURE_UNIT;
-    if (aspectRatio > 0.0) {
+    if (aspectRatio > 0.0)
+    {
       _verticalAperture = _horizontalAperture / aspectRatio;
     }
-    else {
+    else
+    {
       _verticalAperture = _horizontalAperture;
     }
   }
-  else {
+  else
+  {
     // We are given the height, determine the width by multiplying
     _verticalAperture = orthographicSize / GfCamera::APERTURE_UNIT;
     _horizontalAperture = _verticalAperture * aspectRatio;
@@ -186,9 +191,11 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
 
   _focalLength = focalLength;
 
-  if (projMatrix[2][3] < -0.5) {
+  if (projMatrix[2][3] < -0.5)
+  {
     // Use !(a<b) rather than a>=b so that NaN is caught.
-    if (!(fabs(projMatrix[2][3] - (-1.0)) < 1e-6)) {
+    if (!(fabs(projMatrix[2][3] - (-1.0)) < 1e-6))
+    {
       TF_WARN(
         "GfCamera: Given projection matrix does not appear to be "
         "valid perspective matrix.");
@@ -205,8 +212,10 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
     _clippingRange = GfRange1f(projMatrix[3][2] / (projMatrix[2][2] - 1.0),
                                projMatrix[3][2] / (projMatrix[2][2] + 1.0));
   }
-  else {
-    if (!(fabs(projMatrix[2][3]) < 1e-6)) {
+  else
+  {
+    if (!(fabs(projMatrix[2][3]) < 1e-6))
+    {
       TF_WARN(
         "GfCamera: Given projection matrix does not appear to be "
         "valid orthographic matrix.");
@@ -318,7 +327,8 @@ GfFrustum GfCamera::GetFrustum() const
   // Up to now, all computations were done in mm, convert to cm.
   window *= GfCamera::APERTURE_UNIT;
 
-  if (_projection != Orthographic && _focalLength != 0) {
+  if (_projection != Orthographic && _focalLength != 0)
+  {
     window /= _focalLength * GfCamera::FOCAL_LENGTH_UNIT;
   }
 

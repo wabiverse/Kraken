@@ -67,7 +67,8 @@ class SdfAssetPath;
 /// more information.
 ///
 ///
-class UsdSkelSkeleton : public UsdGeomBoundable {
+class UsdSkelSkeleton : public UsdGeomBoundable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -83,13 +84,15 @@ class UsdSkelSkeleton : public UsdGeomBoundable {
   /// Equivalent to UsdSkelSkeleton::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelSkeleton(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim)
+  explicit UsdSkelSkeleton(const UsdPrim &prim = UsdPrim())
+    : UsdGeomBoundable(prim)
   {}
 
   /// Construct a UsdSkelSkeleton on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelSkeleton(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelSkeleton(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj)
+  explicit UsdSkelSkeleton(const UsdSchemaBase &schemaObj)
+    : UsdGeomBoundable(schemaObj)
   {}
 
   /// Destructor.

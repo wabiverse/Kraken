@@ -38,7 +38,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Ndr Discovery for arnold shader nodes.
-class NdrArnoldDiscoveryPlugin : public NdrDiscoveryPlugin {
+class NdrArnoldDiscoveryPlugin : public NdrDiscoveryPlugin
+{
  public:
   using Context = NdrDiscoveryPluginContext;
 

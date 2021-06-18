@@ -37,7 +37,8 @@ struct HdPrman_Context;
 ///
 /// A representation for coordinate systems.
 ///
-class HdPrmanCoordSys final : public HdCoordSys {
+class HdPrmanCoordSys final : public HdCoordSys
+{
  public:
   HdPrmanCoordSys(SdfPath const &id);
   virtual ~HdPrmanCoordSys();

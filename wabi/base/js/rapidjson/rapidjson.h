@@ -113,7 +113,9 @@
 #  define RAPIDJSON_NAMESPACE rapidjson
 #endif
 #ifndef RAPIDJSON_NAMESPACE_BEGIN
-#  define RAPIDJSON_NAMESPACE_BEGIN namespace RAPIDJSON_NAMESPACE {
+#  define RAPIDJSON_NAMESPACE_BEGIN \
+    namespace RAPIDJSON_NAMESPACE \
+    {
 #endif
 #ifndef RAPIDJSON_NAMESPACE_END
 #  define RAPIDJSON_NAMESPACE_END }
@@ -421,11 +423,19 @@ RAPIDJSON_NAMESPACE_END
 //!@cond RAPIDJSON_HIDDEN_FROM_DOXYGEN
 #  endif
 RAPIDJSON_NAMESPACE_BEGIN
-template<bool x> struct STATIC_ASSERTION_FAILURE;
-template<> struct STATIC_ASSERTION_FAILURE<true> {
-  enum { value = 1 };
+template<bool x>
+struct STATIC_ASSERTION_FAILURE;
+template<>
+struct STATIC_ASSERTION_FAILURE<true>
+{
+  enum
+  {
+    value = 1
+  };
 };
-template<int x> struct StaticAssertTest {
+template<int x>
+struct StaticAssertTest
+{
 };
 RAPIDJSON_NAMESPACE_END
 
@@ -487,7 +497,9 @@ RAPIDJSON_NAMESPACE_END
 
 //!@cond RAPIDJSON_HIDDEN_FROM_DOXYGEN
 
-#define RAPIDJSON_MULTILINEMACRO_BEGIN do {
+#define RAPIDJSON_MULTILINEMACRO_BEGIN \
+  do \
+  {
 #define RAPIDJSON_MULTILINEMACRO_END \
   } \
   while ((void)0, 0)
@@ -523,7 +535,8 @@ RAPIDJSON_NAMESPACE_END
 #  define RAPIDJSON_PRAGMA(x) __pragma(x)
 #  define RAPIDJSON_DIAG_PRAGMA(x) RAPIDJSON_PRAGMA(warning(x))
 
-#  define RAPIDJSON_DIAG_OFF(x) RAPIDJSON_DIAG_PRAGMA(disable : x)
+#  define RAPIDJSON_DIAG_OFF(x) RAPIDJSON_DIAG_PRAGMA(disable \
+                                                      : x)
 #  define RAPIDJSON_DIAG_PUSH RAPIDJSON_DIAG_PRAGMA(push)
 #  define RAPIDJSON_DIAG_POP RAPIDJSON_DIAG_PRAGMA(pop)
 
@@ -611,7 +624,8 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_NAMESPACE_BEGIN
 
 //! Type of JSON value
-enum Type {
+enum Type
+{
   kNullType = 0,    //!< null
   kFalseType = 1,   //!< false
   kTrueType = 2,    //!< true

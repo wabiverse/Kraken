@@ -29,7 +29,8 @@ class HdBbMeshTopology;
 ///
 /// Blackbird Mesh attribute source
 ///
-class HdBbMeshAttributeSource : public HdBbAttributeSource {
+class HdBbMeshAttributeSource : public HdBbAttributeSource
+{
  public:
   HdBbMeshAttributeSource(TfToken name,
                           const TfToken &role,

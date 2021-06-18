@@ -67,7 +67,8 @@ using HdPh_BasisCurvesTopologySharedPtr = std::shared_ptr<class HdPh_BasisCurves
 ///   * if complexity is 3 or above, the patch is displaced into a half tube
 /// We plan for future checkins will remove the need for the camera facing normal
 /// mode, using the fake "bumped" round normal instead.
-class HdPhBasisCurves final : public HdBasisCurves {
+class HdPhBasisCurves final : public HdBasisCurves
+{
  public:
   HF_MALLOC_TAG_NEW("new HdPhBasisCurves");
 
@@ -123,13 +124,15 @@ class HdPhBasisCurves final : public HdBasisCurves {
                                 HdDirtyBits *dirtyBits);
 
  private:
-  enum DrawingCoord {
+  enum DrawingCoord
+  {
     HullTopology = HdDrawingCoord::CustomSlotsBegin,
     PointsTopology,
     InstancePrimvar  // has to be at the very end
   };
 
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     DirtyIndices = HdChangeTracker::CustomBitsBegin,
     DirtyHullIndices = (DirtyIndices << 1),
     DirtyPointsIndices = (DirtyHullIndices << 1)

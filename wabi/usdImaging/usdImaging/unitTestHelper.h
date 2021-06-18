@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 using HdRenderPassSharedPtr = std::shared_ptr<HdRenderPass>;
 
 /// A simple test task that just causes sync processing
-class UsdImaging_TestTask final : public HdTask {
+class UsdImaging_TestTask final : public HdTask
+{
  public:
   UsdImaging_TestTask(HdRenderPassSharedPtr const &renderPass, TfTokenVector const &renderTags)
     : HdTask(SdfPath::EmptyPath()),
@@ -86,7 +87,8 @@ class UsdImaging_TestTask final : public HdTask {
 /// no images are produced.  It just tests interaction between Hydra and
 /// UsdImaging during Hydra's Sync phase. of Hydra
 ///
-class UsdImaging_TestDriver final {
+class UsdImaging_TestDriver final
+{
  public:
   UsdImaging_TestDriver(std::string const &usdFilePath)
     : _engine(),

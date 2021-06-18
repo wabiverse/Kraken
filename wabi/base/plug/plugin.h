@@ -62,7 +62,8 @@ class TfType;
 /// the plugin and to retrieve information about the
 /// classes implemented by the plugin.
 ///
-class PlugPlugin : public TfRefBase, public TfWeakBase {
+class PlugPlugin : public TfRefBase, public TfWeakBase
+{
  public:
   PLUG_API virtual ~PlugPlugin();
 
@@ -125,7 +126,8 @@ class PlugPlugin : public TfRefBase, public TfWeakBase {
   PLUG_API std::string FindPluginResource(const std::string &path, bool verify = true) const;
 
  private:
-  enum _Type {
+  enum _Type
+  {
     LibraryType,
 #ifdef WITH_PYTHON
     PythonType,

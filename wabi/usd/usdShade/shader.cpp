@@ -50,7 +50,8 @@ UsdShadeShader::~UsdShadeShader()
 /* static */
 UsdShadeShader UsdShadeShader::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeShader();
   }
@@ -61,7 +62,8 @@ UsdShadeShader UsdShadeShader::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdShadeShader UsdShadeShader::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Shader");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeShader();
   }
@@ -255,8 +257,10 @@ NdrTokenMap UsdShadeShader::GetSdrMetadata() const
   NdrTokenMap result;
 
   VtDictionary sdrMetadata;
-  if (GetPrim().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata)) {
-    for (const auto &it : sdrMetadata) {
+  if (GetPrim().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata))
+  {
+    for (const auto &it : sdrMetadata)
+    {
       result[TfToken(it.first)] = TfStringify(it.second);
     }
   }
@@ -273,7 +277,8 @@ std::string UsdShadeShader::GetSdrMetadataByKey(const TfToken &key) const
 
 void UsdShadeShader::SetSdrMetadata(const NdrTokenMap &sdrMetadata) const
 {
-  for (auto &i : sdrMetadata) {
+  for (auto &i : sdrMetadata)
+  {
     SetSdrMetadataByKey(i.first, i.second);
   }
 }

@@ -57,7 +57,8 @@ UsdLuxGeometryLight::~UsdLuxGeometryLight()
 /* static */
 UsdLuxGeometryLight UsdLuxGeometryLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxGeometryLight();
   }
@@ -68,7 +69,8 @@ UsdLuxGeometryLight UsdLuxGeometryLight::Get(const UsdStagePtr &stage, const Sdf
 UsdLuxGeometryLight UsdLuxGeometryLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("GeometryLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxGeometryLight();
   }

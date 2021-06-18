@@ -49,7 +49,8 @@ SDF_DECLARE_HANDLES(SdfSpec);
 ///
 /// Sdf text file format
 ///
-class SdfTextFileFormat : public SdfFileFormat {
+class SdfTextFileFormat : public SdfFileFormat
+{
  public:
   // SdfFileFormat overrides.
   SDF_API

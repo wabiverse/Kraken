@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// \see ArResolver::OpenAssetForWrite for how to retrieve instances of
 /// this object.
-class ArWritableAsset {
+class ArWritableAsset
+{
  public:
   AR_API
   virtual ~ArWritableAsset();

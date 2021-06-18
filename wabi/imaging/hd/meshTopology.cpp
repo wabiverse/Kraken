@@ -158,7 +158,8 @@ int HdMeshTopology::GetNumPoints() const
   int numIndices = verts.size();
   int numPoints = -1;
   int const *vertsPtr = verts.cdata();
-  for (int i = 0; i < numIndices; ++i) {
+  for (int i = 0; i < numIndices; ++i)
+  {
     // find the max vertex index in face verts
     numPoints = std::max(numPoints, vertsPtr[i]);
   }
@@ -172,7 +173,8 @@ HdTopology::ID HdMeshTopology::ComputeHash() const
 
   HdTopology::ID hash = _topology.ComputeHash();
   hash = ArchHash64((const char *)&_refineLevel, sizeof(_refineLevel), hash);
-  for (const HdGeomSubset &subset : _geomSubsets) {
+  for (const HdGeomSubset &subset : _geomSubsets)
+  {
     hash = ArchHash64((const char *)&subset.type, sizeof(subset.type), hash);
     hash = ArchHash64((const char *)&subset.id, sizeof(subset.id), hash);
     hash = ArchHash64((const char *)&subset.materialId, sizeof(subset.materialId), hash);

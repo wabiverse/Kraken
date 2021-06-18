@@ -40,11 +40,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 // Returns iterator in \p path pointing to outermost ']' delimiter.
 std::string::const_iterator _FindOutermostClosingDelimiter(const std::string &path)
 {
-  if (path.empty() || path.back() != ']') {
+  if (path.empty() || path.back() != ']')
+  {
     return path.end();
   }
   return path.end() - 1;
@@ -56,17 +58,21 @@ std::string::const_iterator _FindOutermostClosingDelimiter(std::string &&path) =
 // Returns iterator in \p path pointing to the innermost ']' delimiter.
 std::string::const_iterator _FindInnermostClosingDelimiter(const std::string &path)
 {
-  if (path.empty() || path.back() != ']') {
+  if (path.empty() || path.back() != ']')
+  {
     return path.end();
   }
 
-  for (auto it = path.rbegin(); it != path.rend(); ++it) {
-    if (*it == '\\') {
+  for (auto it = path.rbegin(); it != path.rend(); ++it)
+  {
+    if (*it == '\\')
+    {
       // The previous ']' character was escaped, so the innermost
       // delimiter is really the one before that character.
       return (it - 1).base();
     }
-    else if (*it != ']') {
+    else if (*it != ']')
+    {
       return it.base();
     }
   }
@@ -85,11 +91,14 @@ std::string::const_iterator _FindMatchingOpeningDelimiter(const std::string &pat
 {
   size_t numOpenNeeded = 1;
   std::string::const_reverse_iterator revIt(closingDelimIt);
-  for (; revIt != path.rend() && numOpenNeeded != 0; ++revIt) {
-    if (*revIt == '[' || *revIt == ']') {
+  for (; revIt != path.rend() && numOpenNeeded != 0; ++revIt)
+  {
+    if (*revIt == '[' || *revIt == ']')
+    {
       // Ignore this delimiter if it's been escaped.
       auto prevCharIt = revIt + 1;
-      if (prevCharIt != path.rend() && *prevCharIt == '\\') {
+      if (prevCharIt != path.rend() && *prevCharIt == '\\')
+      {
         continue;
       }
       numOpenNeeded += (*revIt == '[') ? -1 : 1;
@@ -106,14 +115,17 @@ std::string::const_iterator _FindMatchingOpeningDelimiter(const std::string &pat
 // that path has already been escaped and only process the package portion.
 std::string _EscapeDelimiters(const std::string &path)
 {
-  if (path.empty()) {
+  if (path.empty())
+  {
     return path;
   }
 
   auto escapeRangeBegin = path.begin(), escapeRangeEnd = path.end();
-  if (path.back() == ']') {
+  if (path.back() == ']')
+  {
     auto outermostOpenIt = _FindMatchingOpeningDelimiter(path, path.end() - 1);
-    if (outermostOpenIt != path.end()) {
+    if (outermostOpenIt != path.end())
+    {
       escapeRangeEnd = outermostOpenIt;
     }
   }
@@ -131,14 +143,17 @@ std::string _EscapeDelimiters(const std::string &path)
 // that path has already been escaped and only process the package portion.
 std::string _UnescapeDelimiters(const std::string &path)
 {
-  if (path.empty()) {
+  if (path.empty())
+  {
     return path;
   }
 
   auto escapeRangeBegin = path.begin(), escapeRangeEnd = path.end();
-  if (path.back() == ']') {
+  if (path.back() == ']')
+  {
     auto outermostOpenIt = _FindMatchingOpeningDelimiter(path, path.end() - 1);
-    if (outermostOpenIt != path.end()) {
+    if (outermostOpenIt != path.end())
+    {
       escapeRangeEnd = outermostOpenIt;
     }
   }
@@ -157,9 +172,11 @@ bool ArIsPackageRelativePath(const std::string &path)
          _FindMatchingOpeningDelimiter(path, path.end() - 1) != path.end();
 }
 
-namespace {
+namespace
+{
 
-template<class Iter> const std::string &_Get(Iter it)
+template<class Iter>
+const std::string &_Get(Iter it)
 {
   return *it;
 }
@@ -169,16 +186,20 @@ const std::string &_Get(const std::string *const *it)
   return **it;
 }
 
-template<class Iter> std::string _JoinPackageRelativePath(Iter begin, Iter end)
+template<class Iter>
+std::string _JoinPackageRelativePath(Iter begin, Iter end)
 {
   Iter pathIt = begin;
-  for (; pathIt != end; ++pathIt) {
-    if (!_Get(pathIt).empty()) {
+  for (; pathIt != end; ++pathIt)
+  {
+    if (!_Get(pathIt).empty())
+    {
       break;
     }
   }
 
-  if (pathIt == end) {
+  if (pathIt == end)
+  {
     return std::string();
   }
 
@@ -188,15 +209,18 @@ template<class Iter> std::string _JoinPackageRelativePath(Iter begin, Iter end)
   // should come just before the innermost ']' delimiter.
   std::string packageRelativePath = _Get(pathIt++);
   size_t insertIdx = packageRelativePath.length();
-  if (packageRelativePath.back() == ']') {
+  if (packageRelativePath.back() == ']')
+  {
     auto innermostCloseRevIt = std::find_if(
       packageRelativePath.rbegin(), packageRelativePath.rend(), [](char c) { return c != ']'; });
     insertIdx = std::distance(packageRelativePath.begin(), innermostCloseRevIt.base());
   }
 
   // Loop through and insert the rest of the paths.
-  for (; pathIt != end; ++pathIt) {
-    if (_Get(pathIt).empty()) {
+  for (; pathIt != end; ++pathIt)
+  {
+    if (_Get(pathIt).empty())
+    {
       continue;
     }
 
@@ -235,11 +259,13 @@ std::pair<std::string, std::string> ArSplitPackageRelativePathOuter(const std::s
   // find the range [outermostOpenIt, outermostCloseIt] containing
   // "[bar.package[baz.file]]"
   auto outermostCloseIt = _FindOutermostClosingDelimiter(path);
-  if (outermostCloseIt == path.end()) {
+  if (outermostCloseIt == path.end())
+  {
     return std::make_pair(path, std::string());
   }
   auto outermostOpenIt = _FindMatchingOpeningDelimiter(path, outermostCloseIt);
-  if (outermostOpenIt == path.end()) {
+  if (outermostOpenIt == path.end())
+  {
     return std::make_pair(path, std::string());
   }
 
@@ -260,11 +286,13 @@ std::pair<std::string, std::string> ArSplitPackageRelativePathInner(const std::s
   // find the range [innermostOpenIt, innermostCloseIt] containing
   // "[baz.file]"
   auto innermostCloseIt = _FindInnermostClosingDelimiter(path);
-  if (innermostCloseIt == path.end()) {
+  if (innermostCloseIt == path.end())
+  {
     return std::make_pair(path, std::string());
   }
   auto innermostOpenIt = _FindMatchingOpeningDelimiter(path, innermostCloseIt);
-  if (innermostOpenIt == path.end()) {
+  if (innermostOpenIt == path.end())
+  {
     return std::make_pair(path, std::string());
   }
 

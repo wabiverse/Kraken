@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Discovers nodes supported by the HdPrman render delegate.
 ///
-class RmanDiscoveryPlugin final : public NdrDiscoveryPlugin {
+class RmanDiscoveryPlugin final : public NdrDiscoveryPlugin
+{
  public:
   /// A filter for discovered nodes.  If the function returns false
   /// then the discovered node is discarded.  Otherwise the function

@@ -62,7 +62,8 @@ using HgiMetalShaderStageEntryPointUniquePtr = std::unique_ptr<class HgiMetalSha
 /// Takes in a descriptor and spits out metal code through it's Execute function
 ///
 
-class HgiMetalShaderGenerator final : public HgiShaderGenerator {
+class HgiMetalShaderGenerator final : public HgiShaderGenerator
+{
  public:
   HGIMETAL_API
   HgiMetalShaderGenerator(const HgiShaderFunctionDesc &descriptor, id<MTLDevice> device);
@@ -73,7 +74,8 @@ class HgiMetalShaderGenerator final : public HgiShaderGenerator {
   HGIMETAL_API
   HgiMetalShaderSectionUniquePtrVector *GetShaderSections();
 
-  template<typename SectionType, typename... T> SectionType *CreateShaderSection(T &&...t);
+  template<typename SectionType, typename... T>
+  SectionType *CreateShaderSection(T &&...t);
 
  protected:
   HGIMETAL_API

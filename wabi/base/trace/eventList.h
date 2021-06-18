@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 /// This class represents an ordered collection of TraceEvents and the
 /// TraceDynamicKeys and data that the events reference.
 ///
-class TraceEventList {
+class TraceEventList
+{
  public:
   /// Constructor.
   TRACE_API TraceEventList();
@@ -96,7 +97,8 @@ class TraceEventList {
 
   /// Construct a TraceEvent at the end on the list.
   /// Returns a reference to the newly constructed event.
-  template<class... Args> const TraceEvent &EmplaceBack(Args &&...args)
+  template<class... Args>
+  const TraceEvent &EmplaceBack(Args &&...args)
   {
     return _events.emplace_back(std::forward<Args>(args)...);
   }

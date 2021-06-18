@@ -36,11 +36,14 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-
-template<typename T> T _ConvertWithDefault(const object obj, const T &def)
+namespace
 {
-  if (!TfPyIsNone(obj)) {
+
+template<typename T>
+T _ConvertWithDefault(const object obj, const T &def)
+{
+  if (!TfPyIsNone(obj))
+  {
     return extract<T>(obj);
   }
 

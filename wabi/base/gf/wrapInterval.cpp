@@ -46,14 +46,17 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string _Repr(GfInterval const &self)
 {
   string r = TF_PY_REPR_PREFIX + "Interval(";
-  if (!self.IsEmpty()) {
+  if (!self.IsEmpty())
+  {
     r += TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax());
-    if (!self.IsMinClosed() || !self.IsMaxClosed()) {
+    if (!self.IsMinClosed() || !self.IsMaxClosed())
+    {
       r += ", " + TfPyRepr(self.IsMinClosed()) + ", " + TfPyRepr(self.IsMaxClosed());
     }
   }

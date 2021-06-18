@@ -65,7 +65,8 @@ inline long ArchSign(long val)
 /// as a 32-bit unsigned integer.
 inline uint32_t ArchFloatToBitPattern(float v)
 {
-  union {
+  union
+  {
     float _float;
     uint32_t _uint;
   } value;
@@ -77,7 +78,8 @@ inline uint32_t ArchFloatToBitPattern(float v)
 /// given IEEE-754 bit pattern.
 inline float ArchBitPatternToFloat(uint32_t v)
 {
-  union {
+  union
+  {
     uint32_t _uint;
     float _float;
   } value;
@@ -89,7 +91,8 @@ inline float ArchBitPatternToFloat(uint32_t v)
 /// as a 64-bit unsigned integer.
 inline uint64_t ArchDoubleToBitPattern(double v)
 {
-  union {
+  union
+  {
     double _double;
     uint64_t _uint;
   } value;
@@ -101,7 +104,8 @@ inline uint64_t ArchDoubleToBitPattern(double v)
 /// given IEEE-754 bit pattern.
 inline double ArchBitPatternToDouble(uint64_t v)
 {
-  union {
+  union
+  {
     uint64_t _uint;
     double _double;
   } value;

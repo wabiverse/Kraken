@@ -47,15 +47,19 @@ vector<const UsdStageCache *> UsdStageCacheContext::_GetReadOnlyCaches()
   const Stack &stack = GetStack();
   vector<const UsdStageCache *> caches;
   caches.reserve(stack.size());
-  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter) {
+  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter)
+  {
     const auto &ctx = *ctxIter;
-    if (ctx->_blockType == UsdBlockStageCaches) {
+    if (ctx->_blockType == UsdBlockStageCaches)
+    {
       break;
     }
-    else if (ctx->_blockType == UsdBlockStageCachePopulation) {
+    else if (ctx->_blockType == UsdBlockStageCachePopulation)
+    {
       continue;
     }
-    else if (ctx->_isReadOnlyCache) {
+    else if (ctx->_isReadOnlyCache)
+    {
       caches.push_back(ctx->_roCache);
     }
   }
@@ -68,15 +72,19 @@ vector<const UsdStageCache *> UsdStageCacheContext::_GetReadableCaches()
   const Stack &stack = GetStack();
   vector<const UsdStageCache *> caches;
   caches.reserve(stack.size());
-  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter) {
+  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter)
+  {
     const auto &ctx = *ctxIter;
-    if (ctx->_blockType == UsdBlockStageCaches) {
+    if (ctx->_blockType == UsdBlockStageCaches)
+    {
       break;
     }
-    else if (ctx->_blockType == UsdBlockStageCachePopulation) {
+    else if (ctx->_blockType == UsdBlockStageCachePopulation)
+    {
       continue;
     }
-    else {
+    else
+    {
       caches.push_back(ctx->_isReadOnlyCache ? ctx->_roCache : ctx->_rwCache);
     }
   }
@@ -89,12 +97,15 @@ std::vector<UsdStageCache *> UsdStageCacheContext::_GetWritableCaches()
   const Stack &stack = GetStack();
   vector<UsdStageCache *> caches;
   caches.reserve(stack.size());
-  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter) {
+  for (auto ctxIter = stack.rbegin(); ctxIter != stack.rend(); ++ctxIter)
+  {
     const auto &ctx = *ctxIter;
-    if (ctx->_blockType == UsdBlockStageCaches || ctx->_blockType == UsdBlockStageCachePopulation) {
+    if (ctx->_blockType == UsdBlockStageCaches || ctx->_blockType == UsdBlockStageCachePopulation)
+    {
       break;
     }
-    else if (!ctx->_isReadOnlyCache) {
+    else if (!ctx->_isReadOnlyCache)
+    {
       caches.push_back(ctx->_rwCache);
     }
   }

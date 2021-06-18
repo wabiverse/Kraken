@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 /// maybe operate on this HgiTexture without having to worry about converting
 /// the aov data from CPU to GPU.
 ///
-class HdxAovInputTask : public HdxTask {
+class HdxAovInputTask : public HdxTask
+{
  public:
   HDX_API
   HdxAovInputTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -89,8 +90,11 @@ class HdxAovInputTask : public HdxTask {
 ///
 /// AovInput parameters.
 ///
-struct HdxAovInputTaskParams {
-  HdxAovInputTaskParams() : aovBufferPath(), depthBufferPath()
+struct HdxAovInputTaskParams
+{
+  HdxAovInputTaskParams()
+    : aovBufferPath(),
+      depthBufferPath()
   {}
 
   SdfPath aovBufferPath;

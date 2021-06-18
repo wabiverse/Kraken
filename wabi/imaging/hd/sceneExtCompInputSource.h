@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 /// An Hd Buffer Source Computation that is used to bind an ExtComputation input
 /// to a value provided by the scene delegate.
 ///
-class Hd_SceneExtCompInputSource : public Hd_ExtCompInputSource {
+class Hd_SceneExtCompInputSource : public Hd_ExtCompInputSource
+{
  public:
   /// Constructs the computation, binding inputName to the provided value.
   HD_API

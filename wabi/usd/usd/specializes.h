@@ -48,10 +48,12 @@ SDF_DECLARE_HANDLES(SdfPrimSpec);
 /// will be issued and no changes will be made. Root prim specializes paths
 /// will not be translated.
 ///
-class UsdSpecializes {
+class UsdSpecializes
+{
   friend class UsdPrim;
 
-  explicit UsdSpecializes(const UsdPrim &prim) : _prim(prim)
+  explicit UsdSpecializes(const UsdPrim &prim)
+    : _prim(prim)
   {}
 
  public:

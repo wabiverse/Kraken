@@ -26,7 +26,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace str {
+namespace str
+{
 
 #ifdef EXPAND_ARNOLD_USD_STRINGS
 #  define ASTR(x) \

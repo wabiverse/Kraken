@@ -33,14 +33,17 @@ WABI_NAMESPACE_BEGIN
 // Given a python object and a pointer to a variable,
 // attempts to extract a value of the variable's type out of the object
 // If successful, returns the pointer; otherwise returns null
-template<typename T> static T *_ExtractValue(object &pyObject, T *varPtr)
+template<typename T>
+static T *_ExtractValue(object &pyObject, T *varPtr)
 {
   extract<T> extractor(pyObject);
-  if (extractor.check()) {
+  if (extractor.check())
+  {
     *varPtr = extractor();
     return varPtr;
   }
-  else {
+  else
+  {
     return NULL;
   }
 }
@@ -48,21 +51,25 @@ template<typename T> static T *_ExtractValue(object &pyObject, T *varPtr)
 bool PcpVariantFallbackMapFromPython(const dict &d, PcpVariantFallbackMap *result)
 {
   object iterItems = d.items();
-  for (int i = 0; i < len(iterItems); ++i) {
+  for (int i = 0; i < len(iterItems); ++i)
+  {
     object key = iterItems[i][0];
     object value = iterItems[i][1];
     std::string k;
     std::vector<std::string> v;
 
-    if (!_ExtractValue(key, &k)) {
+    if (!_ExtractValue(key, &k))
+    {
       TF_CODING_ERROR("unrecognized type for PcpVariantFallbackMap key");
       return false;
     }
-    if (!_ExtractValue(value, &v)) {
+    if (!_ExtractValue(value, &v))
+    {
       TF_CODING_ERROR("unrecognized type for PcpVariantFallbackMap val");
       return false;
     }
-    if (!k.empty() && !v.empty()) {
+    if (!k.empty() && !v.empty())
+    {
       (*result)[k] = v;
     }
   }

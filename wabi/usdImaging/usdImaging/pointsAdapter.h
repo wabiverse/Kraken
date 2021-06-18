@@ -37,11 +37,13 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Delegate support for UsdGeomPoints.
 ///
-class UsdImagingPointsAdapter : public UsdImagingGprimAdapter {
+class UsdImagingPointsAdapter : public UsdImagingGprimAdapter
+{
  public:
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingPointsAdapter() : UsdImagingGprimAdapter()
+  UsdImagingPointsAdapter()
+    : UsdImagingGprimAdapter()
   {}
 
   USDIMAGING_API

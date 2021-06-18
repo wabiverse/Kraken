@@ -46,7 +46,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for translating Hydra Mesh to Arnold Polymesh.
-class HdArnoldMesh : public HdArnoldRprim<HdMesh> {
+class HdArnoldMesh : public HdArnoldRprim<HdMesh>
+{
  public:
 #if WABI_VERSION >= 2102
   /// Constructor for HdArnoldMesh.

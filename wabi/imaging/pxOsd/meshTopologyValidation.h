@@ -64,11 +64,13 @@ class PxOsdMeshTopology;
 /// the topology is valid and false if any invalidations were found.
 /// That is to say, a conversion to true implies an empty invalidation
 /// vector and false implies a non-empty invalidation vector.
-class PxOsdMeshTopologyValidation {
+class PxOsdMeshTopologyValidation
+{
  public:
   friend class PxOsdMeshTopology;
   /// Codes for various invalid states for PxOsdMeshTopology
-  enum class Code {
+  enum class Code
+  {
     /// Encodes invalid scheme token value
     InvalidScheme,
     /// Encodes invalid orientation token value
@@ -115,7 +117,8 @@ class PxOsdMeshTopologyValidation {
   };
   /// A tuple containing a code describing an invalidation and a descriptive
   /// message
-  struct Invalidation {
+  struct Invalidation
+  {
     Code code;
     std::string message;
   };
@@ -123,23 +126,27 @@ class PxOsdMeshTopologyValidation {
  private:
   // TODO: In C++17, this class is uncessary and should be replaced with
   // std::optional<std::vector<Invalidation>>
-  class _OptionalInvalidationVector {
+  class _OptionalInvalidationVector
+  {
     std::unique_ptr<std::vector<Invalidation>> _value;
 
    public:
     _OptionalInvalidationVector() = default;
     _OptionalInvalidationVector(_OptionalInvalidationVector &&) = default;
     _OptionalInvalidationVector &operator=(_OptionalInvalidationVector &&) = default;
-    _OptionalInvalidationVector(_OptionalInvalidationVector const &other) : _value(nullptr)
+    _OptionalInvalidationVector(_OptionalInvalidationVector const &other)
+      : _value(nullptr)
     {
-      if (other._value) {
+      if (other._value)
+      {
         _value.reset(new std::vector<Invalidation>(*other._value));
       }
     }
     _OptionalInvalidationVector &operator=(_OptionalInvalidationVector const &other)
     {
       _value = nullptr;
-      if (other._value) {
+      if (other._value)
+      {
         _value.reset(new std::vector<Invalidation>(*other._value));
       }
       return *this;
@@ -173,7 +180,8 @@ class PxOsdMeshTopologyValidation {
   /// initializes the vector if necessary
   void _AppendInvalidation(const Invalidation &invalidation)
   {
-    if (!_invalidations) {
+    if (!_invalidations)
+    {
       _invalidations.emplace();
     }
     _invalidations.value().push_back(invalidation);

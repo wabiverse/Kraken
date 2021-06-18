@@ -49,7 +49,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 /// is inserted into the layer registry. This allows SdfLayer::Find/FindOrOpen
 /// to locate loaded layers.
 ///
-class Sdf_LayerRegistry : boost::noncopyable {
+class Sdf_LayerRegistry : boost::noncopyable
+{
  public:
   /// Constructor.
   Sdf_LayerRegistry();
@@ -88,27 +89,34 @@ class Sdf_LayerRegistry : boost::noncopyable {
 
  private:
   // Index tags.
-  struct by_identity {
+  struct by_identity
+  {
   };
-  struct by_identifier {
+  struct by_identifier
+  {
   };
-  struct by_repository_path {
+  struct by_repository_path
+  {
   };
-  struct by_real_path {
+  struct by_real_path
+  {
   };
 
   // Key Extractors.
-  struct layer_identifier {
+  struct layer_identifier
+  {
     typedef std::string result_type;
     const result_type &operator()(const SdfLayerHandle &layer) const;
   };
 
-  struct layer_repository_path {
+  struct layer_repository_path
+  {
     typedef std::string result_type;
     result_type operator()(const SdfLayerHandle &layer) const;
   };
 
-  struct layer_real_path {
+  struct layer_real_path
+  {
     typedef std::string result_type;
     result_type operator()(const SdfLayerHandle &layer) const;
   };

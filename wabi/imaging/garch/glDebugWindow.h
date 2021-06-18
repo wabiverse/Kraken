@@ -43,7 +43,8 @@ class Garch_GLPlatformDebugWindow;
 ///
 /// Platform specific minimum GL widget for unit tests.
 ///
-class GarchGLDebugWindow {
+class GarchGLDebugWindow
+{
  public:
   GARCH_API
   GarchGLDebugWindow(const char *title, int width, int height);
@@ -66,8 +67,19 @@ class GarchGLDebugWindow {
     return _height;
   }
 
-  enum Buttons { MyButton1 = 0, MyButton2 = 1, MyButton3 = 2 };
-  enum ModifierKeys { NoModifiers = 0, Shift = 1, Alt = 2, Ctrl = 4 };
+  enum Buttons
+  {
+    MyButton1 = 0,
+    MyButton2 = 1,
+    MyButton3 = 2
+  };
+  enum ModifierKeys
+  {
+    NoModifiers = 0,
+    Shift = 1,
+    Alt = 2,
+    Ctrl = 4
+  };
 
   GARCH_API
   virtual void OnInitializeGL();

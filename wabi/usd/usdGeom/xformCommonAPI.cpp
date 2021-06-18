@@ -46,7 +46,8 @@ UsdGeomXformCommonAPI::~UsdGeomXformCommonAPI()
 /* static */
 UsdGeomXformCommonAPI UsdGeomXformCommonAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomXformCommonAPI();
   }
@@ -151,12 +152,14 @@ static UsdGeomXformCommonAPI::Ops _GetOrAddCommonXformOps(
 /* virtual */
 bool UsdGeomXformCommonAPI::_IsCompatible() const
 {
-  if (!UsdAPISchemaBase::_IsCompatible()) {
+  if (!UsdAPISchemaBase::_IsCompatible())
+  {
     return false;
   }
 
   UsdGeomXformable xformable(GetPrim());
-  if (!xformable) {
+  if (!xformable)
+  {
     return false;
   }
 
@@ -199,7 +202,8 @@ bool UsdGeomXformCommonAPI::SetXformVectors(const GfVec3d &translation,
   // The call below will check rotation order compatibility before any data
   // is authored.
   const Ops ops = CreateXformOps(rotOrder, OpTranslate, OpRotate, OpScale, OpPivot);
-  if (!ops.translateOp || !ops.rotateOp || !ops.scaleOp || !ops.pivotOp) {
+  if (!ops.translateOp || !ops.rotateOp || !ops.scaleOp || !ops.pivotOp)
+  {
     return false;
   }
 
@@ -215,7 +219,8 @@ static bool _IsMatrixIdentity(const GfMatrix4d &matrix)
   if (GfIsClose(matrix.GetRow(0), IDENTITY.GetRow(0), TOLERANCE) &&
       GfIsClose(matrix.GetRow(1), IDENTITY.GetRow(1), TOLERANCE) &&
       GfIsClose(matrix.GetRow(2), IDENTITY.GetRow(2), TOLERANCE) &&
-      GfIsClose(matrix.GetRow(3), IDENTITY.GetRow(3), TOLERANCE)) {
+      GfIsClose(matrix.GetRow(3), IDENTITY.GetRow(3), TOLERANCE))
+  {
     return true;
   }
 
@@ -279,8 +284,10 @@ static_assert(!_IsRotateOpType(UsdGeomXformOp::TypeScale) &&
 
 static UsdGeomXformOp::Type _GetRotateOpType(const vector<UsdGeomXformOp> &ops)
 {
-  for (const UsdGeomXformOp &op : ops) {
-    if (_IsRotateOpType(op.GetOpType())) {
+  for (const UsdGeomXformOp &op : ops)
+  {
+    if (_IsRotateOpType(op.GetOpType()))
+    {
       return op.GetOpType();
     }
   }
@@ -290,7 +297,8 @@ static UsdGeomXformOp::Type _GetRotateOpType(const vector<UsdGeomXformOp> &ops)
 /* static */
 UsdGeomXformOp::Type UsdGeomXformCommonAPI::ConvertRotationOrderToOpType(RotationOrder rotOrder)
 {
-  switch (rotOrder) {
+  switch (rotOrder)
+  {
     case UsdGeomXformCommonAPI::RotationOrderXYZ:
       return UsdGeomXformOp::TypeRotateXYZ;
     case UsdGeomXformCommonAPI::RotationOrderXZY:
@@ -315,7 +323,8 @@ UsdGeomXformOp::Type UsdGeomXformCommonAPI::ConvertRotationOrderToOpType(Rotatio
 UsdGeomXformCommonAPI::RotationOrder UsdGeomXformCommonAPI::ConvertOpTypeToRotationOrder(
   UsdGeomXformOp::Type opType)
 {
-  switch (opType) {
+  switch (opType)
+  {
     case UsdGeomXformOp::TypeRotateXYZ:
       return UsdGeomXformCommonAPI::RotationOrderXYZ;
     case UsdGeomXformOp::TypeRotateXZY:
@@ -361,16 +370,19 @@ static vector<UsdGeomXformOp::Type> _GetCommonOpTypesForOpOrder(const vector<Usd
   bool hasScaleOp = false;
   size_t numInverseTranslateOps = 0;
 
-  TF_FOR_ALL(it, xformOps)
+  TF_FOR_ALL (it, xformOps)
   {
-    if (_IsRotateOpType(it->GetOpType())) {
+    if (_IsRotateOpType(it->GetOpType()))
+    {
       hasRotateOp = true;
       rotateOpType = it->GetOpType();
     }
-    else if (it->GetOpType() == UsdGeomXformOp::TypeScale) {
+    else if (it->GetOpType() == UsdGeomXformOp::TypeScale)
+    {
       hasScaleOp = true;
     }
-    else if (it->GetOpType() == UsdGeomXformOp::TypeTranslate && it->IsInverseOp()) {
+    else if (it->GetOpType() == UsdGeomXformOp::TypeTranslate && it->IsInverseOp())
+    {
       ++numInverseTranslateOps;
     }
   }
@@ -388,12 +400,14 @@ static vector<UsdGeomXformOp::Type> _GetCommonOpTypesForOpOrder(const vector<Usd
   *translateIdentityIndex = -1;
   *scaleIndex = -1;
 
-  if (hasRotateOp) {
+  if (hasRotateOp)
+  {
     commonOpTypes.push_back(rotateOpType);
     *rotateIndex = currentIndex++;
   }
 
-  if (numInverseTranslateOps > 1) {
+  if (numInverseTranslateOps > 1)
+  {
     // If more than one inverse translate is present, assume that means
     // that both a rotate pivot and a scale pivot are specified. For it to
     // be reducible, they must be at the same location in space, in which
@@ -403,7 +417,8 @@ static vector<UsdGeomXformOp::Type> _GetCommonOpTypesForOpOrder(const vector<Usd
     *translateIdentityIndex = currentIndex++;
   }
 
-  if (hasScaleOp) {
+  if (hasScaleOp)
+  {
     commonOpTypes.push_back(UsdGeomXformOp::TypeScale);
     *scaleIndex = currentIndex++;
   }
@@ -421,7 +436,8 @@ bool UsdGeomXformCommonAPI::GetXformVectors(GfVec3d *translation,
                                             RotationOrder *rotOrder,
                                             const UsdTimeCode time) const
 {
-  if (!TF_VERIFY(translation && rotation && scale && pivot && rotOrder)) {
+  if (!TF_VERIFY(translation && rotation && scale && pivot && rotOrder))
+  {
     return false;
   }
 
@@ -430,7 +446,8 @@ bool UsdGeomXformCommonAPI::GetXformVectors(GfVec3d *translation,
   // Handle incompatible xform case first.
   // It's ok for an xform to be incompatible when extracting xform vectors.
   UsdGeomXformOp t, p, r, s;
-  if (!_GetCommonXformOps(xformable, &t, &p, &r, &s)) {
+  if (!_GetCommonXformOps(xformable, &t, &p, &r, &s))
+  {
     GfMatrix4d localXform(1.);
 
     // Do we want to be able to use a UsdGeomXformCache for this?
@@ -451,19 +468,23 @@ bool UsdGeomXformCommonAPI::GetXformVectors(GfVec3d *translation,
   // If any of the ops don't exist or if no value is authored, then returning
   // identity values.
 
-  if (!t || !t.Get(translation, time)) {
+  if (!t || !t.Get(translation, time))
+  {
     *translation = GfVec3d(0.);
   }
 
-  if (!r || !r.Get(rotation, time)) {
+  if (!r || !r.Get(rotation, time))
+  {
     *rotation = GfVec3f(0.);
   }
 
-  if (!s || !s.Get(scale, time)) {
+  if (!s || !s.Get(scale, time))
+  {
     *scale = GfVec3f(1.);
   }
 
-  if (!p || !p.Get(pivot, time)) {
+  if (!p || !p.Get(pivot, time))
+  {
     *pivot = GfVec3f(0.);
   }
 
@@ -481,7 +502,8 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
 {
   // If the xformOps are compatible as authored, then just use the usual
   // component extraction method.
-  if (_IsCompatible()) {
+  if (_IsCompatible())
+  {
     return GetXformVectors(translation, rotation, scale, pivot, rotOrder, time);
   }
 
@@ -521,11 +543,13 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
   int xformOpIndex = xformOps.size() - 1;
   int commonOpTypeIndex = commonOpTypes.size() - 1;
 
-  while (xformOpIndex >= 0 && commonOpTypeIndex >= translateIndex) {
+  while (xformOpIndex >= 0 && commonOpTypeIndex >= translateIndex)
+  {
     const UsdGeomXformOp xformOp = xformOps[xformOpIndex];
     UsdGeomXformOp::Type commonOpType = commonOpTypes[commonOpTypeIndex];
 
-    if (xformOp.GetOpType() != commonOpType) {
+    if (xformOp.GetOpType() != commonOpType)
+    {
       --commonOpTypeIndex;
       continue;
     }
@@ -535,13 +559,16 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
     commonOpMatrices[commonOpTypeIndex] *= xformOp.GetOpTransform(time);
     --xformOpIndex;
 
-    if (commonOpType == rotateOpType) {
+    if (commonOpType == rotateOpType)
+    {
       // We currently do not allow rotate ops to accumulate, so as
       // soon as we match one, advance to the next commonOpType.
       --commonOpTypeIndex;
     }
-    else if (commonOpType == UsdGeomXformOp::TypeTranslate) {
-      if (xformOp.IsInverseOp()) {
+    else if (commonOpType == UsdGeomXformOp::TypeTranslate)
+    {
+      if (xformOp.IsInverseOp())
+      {
         // We use the inverse-ness of translate ops to know when we
         // should move on to the next common op type. When we see an
         // inverse translate, we can assume that a valid order will
@@ -550,7 +577,8 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
       }
       else if (commonOpTypeIndex == translatePivotIndex &&
                _MatricesAreInverses(commonOpMatrices[translatePivotIndex],
-                                    commonOpMatrices[translatePivotInvertIndex])) {
+                                    commonOpMatrices[translatePivotInvertIndex]))
+      {
         // We've found a pair of pivot transforms, so we'll accumulate
         // the rest of the translates into regular translation.
         --commonOpTypeIndex;
@@ -560,7 +588,8 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
 
   bool reducible = true;
 
-  if (xformOpIndex >= translateIndex) {
+  if (xformOpIndex >= translateIndex)
+  {
     // We didn't make it all the way through the xformOps, so there must
     // have been something in there that does not conform.
     reducible = false;
@@ -568,14 +597,16 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
 
   // Make sure that any translates between the rotate and scale ops
   // accumulated to identity.
-  if (translateIdentityIndex >= 0 && !_IsMatrixIdentity(commonOpMatrices[translateIdentityIndex])) {
+  if (translateIdentityIndex >= 0 && !_IsMatrixIdentity(commonOpMatrices[translateIdentityIndex]))
+  {
     reducible = false;
   }
 
   // If all we saw while scanning were translates, then swap the accumulated
   // translation matrix from the "Translate (invert pivot)" position into the
   // "Translate" position.
-  if (commonOpTypeIndex == translatePivotInvertIndex) {
+  if (commonOpTypeIndex == translatePivotInvertIndex)
+  {
     commonOpMatrices[translateIndex] = commonOpMatrices[commonOpTypeIndex];
     commonOpMatrices[commonOpTypeIndex] = GfMatrix4d(1.0);
   }
@@ -583,46 +614,57 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
   // Verify that the translate pivot and inverse translate pivot are inverses
   // of each other. If there is no pivot, these should both still be identity.
   if (!_MatricesAreInverses(commonOpMatrices[translatePivotIndex],
-                            commonOpMatrices[translatePivotInvertIndex])) {
+                            commonOpMatrices[translatePivotInvertIndex]))
+  {
     reducible = false;
   }
 
-  if (!reducible) {
+  if (!reducible)
+  {
     return GetXformVectors(translation, rotation, scale, pivot, rotOrder, time);
   }
 
-  if (translation) {
+  if (translation)
+  {
     *translation = commonOpMatrices[translateIndex].ExtractTranslation();
   }
 
-  if (pivot) {
+  if (pivot)
+  {
     GfVec3d result = commonOpMatrices[translatePivotIndex].ExtractTranslation();
     *pivot = GfVec3f(result[0], result[1], result[2]);
   }
 
-  if (rotation) {
-    if (rotateIndex >= 0) {
+  if (rotation)
+  {
+    if (rotateIndex >= 0)
+    {
       GfRotation accumRot = commonOpMatrices[rotateIndex].ExtractRotation();
       GfVec3d result = accumRot.Decompose(GfVec3d::XAxis(), GfVec3d::YAxis(), GfVec3d::ZAxis());
       *rotation = GfVec3f(result[0], result[1], result[2]);
     }
-    else {
+    else
+    {
       *rotation = GfVec3f(0.0, 0.0, 0.0);
     }
   }
 
-  if (scale) {
-    if (scaleIndex >= 0) {
+  if (scale)
+  {
+    if (scaleIndex >= 0)
+    {
       (*scale)[0] = commonOpMatrices[scaleIndex][0][0];
       (*scale)[1] = commonOpMatrices[scaleIndex][1][1];
       (*scale)[2] = commonOpMatrices[scaleIndex][2][2];
     }
-    else {
+    else
+    {
       *scale = GfVec3f(1.0, 1.0, 1.0);
     }
   }
 
-  if (rotOrder) {
+  if (rotOrder)
+  {
     *rotOrder = CanConvertOpTypeToRotationOrder(rotateOpType) ? ConvertOpTypeToRotationOrder(rotateOpType) :
                                                                 UsdGeomXformCommonAPI::RotationOrderXYZ;
   }
@@ -669,7 +711,8 @@ static bool _GetCommonXformOps(const UsdGeomXformable &xformable,
   // This holds the computed attribute name tokens so that we can avoid
   // hard-coding them.
   // The name for the rotate op is not computed here because it can vary.
-  static const struct {
+  static const struct
+  {
     TfToken translate = UsdGeomXformOp::GetOpName(UsdGeomXformOp::TypeTranslate);
     TfToken pivot = UsdGeomXformOp::GetOpName(UsdGeomXformOp::TypeTranslate, UsdGeomTokens->pivot);
     TfToken scale = UsdGeomXformOp::GetOpName(UsdGeomXformOp::TypeScale);
@@ -683,32 +726,37 @@ static bool _GetCommonXformOps(const UsdGeomXformable &xformable,
   // Note, in checks below, avoid using UsdGeomXformOp::GetOpName() because
   // it will construct strings in the case of an inverted op.
   UsdGeomXformOp t;
-  if (it != xformOps.end() && it->GetName() == attrNames.translate && !it->IsInverseOp()) {
+  if (it != xformOps.end() && it->GetName() == attrNames.translate && !it->IsInverseOp())
+  {
     t = std::move(*it);
     ++it;
   }
 
   UsdGeomXformOp p;
-  if (it != xformOps.end() && it->GetName() == attrNames.pivot && !it->IsInverseOp()) {
+  if (it != xformOps.end() && it->GetName() == attrNames.pivot && !it->IsInverseOp())
+  {
     p = std::move(*it);
     ++it;
   }
 
   UsdGeomXformOp r;
   if (it != xformOps.end() && UsdGeomXformCommonAPI::CanConvertOpTypeToRotationOrder(it->GetOpType()) &&
-      !it->IsInverseOp()) {
+      !it->IsInverseOp())
+  {
     r = std::move(*it);
     ++it;
   }
 
   UsdGeomXformOp s;
-  if (it != xformOps.end() && it->GetName() == attrNames.scale && !it->IsInverseOp()) {
+  if (it != xformOps.end() && it->GetName() == attrNames.scale && !it->IsInverseOp())
+  {
     s = std::move(*it);
     ++it;
   }
 
   UsdGeomXformOp pInv;
-  if (it != xformOps.end() && it->GetName() == attrNames.pivot && it->IsInverseOp()) {
+  if (it != xformOps.end() && it->GetName() == attrNames.pivot && it->IsInverseOp())
+  {
     pInv = std::move(*it);
     ++it;
   }
@@ -716,37 +764,45 @@ static bool _GetCommonXformOps(const UsdGeomXformable &xformable,
   // If we did not reach the end of the xformOps vector, then there were
   // extra ops that did not match any of the expected ops.
   // This means that the xformOps vector isn't XformCommonAPI-compatible.
-  if (it != xformOps.end()) {
+  if (it != xformOps.end())
+  {
     return false;
   }
 
   // Verify that translate pivot and inverse translate pivot are either both
   // present or both absent.
-  if ((bool)p != (bool)pInv) {
+  if ((bool)p != (bool)pInv)
+  {
     return false;
   }
 
-  if (translateOp) {
+  if (translateOp)
+  {
     *translateOp = std::move(t);
   }
 
-  if (pivotOp) {
+  if (pivotOp)
+  {
     *pivotOp = std::move(p);
   }
 
-  if (rotateOp) {
+  if (rotateOp)
+  {
     *rotateOp = std::move(r);
   }
 
-  if (scaleOp) {
+  if (scaleOp)
+  {
     *scaleOp = std::move(s);
   }
 
-  if (pivotInvOp) {
+  if (pivotInvOp)
+  {
     *pivotInvOp = std::move(pInv);
   }
 
-  if (resetXformStack) {
+  if (resetXformStack)
+  {
     *resetXformStack = tempResetXformStack;
   }
 
@@ -774,7 +830,8 @@ static UsdGeomXformCommonAPI::Ops _GetOrAddCommonXformOps(
   // Can't get or add ops on an xformable with incompatible schema.
   UsdGeomXformOp t, p, r, s, pInv;
   bool resetXformStack = false;
-  if (!_GetCommonXformOps(xformable, &t, &p, &r, &s, &pInv, &resetXformStack)) {
+  if (!_GetCommonXformOps(xformable, &t, &p, &r, &s, &pInv, &resetXformStack))
+  {
     TF_WARN("Could not determine xform ops for incompatible xformable <%s>", xformable.GetPath().GetText());
     return UsdGeomXformCommonAPI::Ops();
   }
@@ -783,10 +840,12 @@ static UsdGeomXformCommonAPI::Ops _GetOrAddCommonXformOps(
   // that the existing rotation order matches the requested rotation order.
   // We do this first so that we can early-exit without modifying the xform
   // op order if we encounter an error.
-  if (createRotate && rotOrder && r) {
+  if (createRotate && rotOrder && r)
+  {
     const UsdGeomXformCommonAPI::RotationOrder existingRotOrder =
       UsdGeomXformCommonAPI::ConvertOpTypeToRotationOrder(r.GetOpType());
-    if (existingRotOrder != *rotOrder) {
+    if (existingRotOrder != *rotOrder)
+    {
       TF_CODING_ERROR("Rotation order mismatch on prim <%s> (%s != %s)",
                       xformable.GetPath().GetText(),
                       TfEnum::GetName(*rotOrder).c_str(),
@@ -797,43 +856,52 @@ static UsdGeomXformCommonAPI::Ops _GetOrAddCommonXformOps(
 
   // Add ops if they were requested but the ops do not yet exist.
   bool addedOps = false;
-  if (createTranslate && !t) {
+  if (createTranslate && !t)
+  {
     addedOps = true;
     t = xformable.AddTranslateOp();
-    if (!TF_VERIFY(t)) {
+    if (!TF_VERIFY(t))
+    {
       return UsdGeomXformCommonAPI::Ops();
     }
   }
-  if (createPivot && !p) {
+  if (createPivot && !p)
+  {
     addedOps = true;
     p = xformable.AddTranslateOp(UsdGeomXformOp::PrecisionFloat, UsdGeomTokens->pivot);
     pInv = xformable.AddTranslateOp(UsdGeomXformOp::PrecisionFloat,
                                     UsdGeomTokens->pivot,
                                     /* isInverseOp */ true);
-    if (!TF_VERIFY(p && pInv)) {
+    if (!TF_VERIFY(p && pInv))
+    {
       return UsdGeomXformCommonAPI::Ops();
     }
   }
-  if (createRotate && !r) {
+  if (createRotate && !r)
+  {
     addedOps = true;
     const UsdGeomXformOp::Type rotateOpType = rotOrder ? UsdGeomXformCommonAPI::ConvertRotationOrderToOpType(
                                                            *rotOrder) :
                                                          UsdGeomXformOp::TypeRotateXYZ;
     r = xformable.AddXformOp(rotateOpType, UsdGeomXformOp::PrecisionFloat);
-    if (!TF_VERIFY(r)) {
+    if (!TF_VERIFY(r))
+    {
       return UsdGeomXformCommonAPI::Ops();
     }
   }
-  if (createScale && !s) {
+  if (createScale && !s)
+  {
     addedOps = true;
     s = xformable.AddScaleOp();
-    if (!TF_VERIFY(s)) {
+    if (!TF_VERIFY(s))
+    {
       return UsdGeomXformCommonAPI::Ops();
     }
   }
 
   // Only update the xform op order if we had to add new ops.
-  if (addedOps) {
+  if (addedOps)
+  {
     std::vector<UsdGeomXformOp> newXformOps;
     if (t)
       newXformOps.push_back(t);
@@ -862,7 +930,8 @@ bool UsdGeomXformCommonAPI::SetTranslate(const GfVec3d &translation,
 {
   // Can't set translate on an xformable with incompatible schema.
   Ops ops = CreateXformOps(OpTranslate);
-  if (!ops.translateOp) {
+  if (!ops.translateOp)
+  {
     return false;
   }
 
@@ -874,7 +943,8 @@ bool UsdGeomXformCommonAPI::SetPivot(const GfVec3f &pivot,
 {
   // Can't set pivot on an xformable with incompatible schema.
   Ops ops = CreateXformOps(OpPivot);
-  if (!ops.pivotOp) {
+  if (!ops.pivotOp)
+  {
     return false;
   }
 
@@ -887,7 +957,8 @@ bool UsdGeomXformCommonAPI::SetRotate(const GfVec3f &rotation,
 {
   // Can't set rotate on an xformable with incompatible schema.
   Ops ops = CreateXformOps(rotOrder, OpRotate);
-  if (!ops.rotateOp) {
+  if (!ops.rotateOp)
+  {
     return false;
   }
 
@@ -899,7 +970,8 @@ bool UsdGeomXformCommonAPI::SetScale(const GfVec3f &scale,
 {
   // Can't set scale on an xformable with incompatible schema.
   Ops ops = CreateXformOps(OpScale);
-  if (!ops.scaleOp) {
+  if (!ops.scaleOp)
+  {
     return false;
   }
 
@@ -913,7 +985,8 @@ UsdGeomXformCommonAPI::Ops UsdGeomXformCommonAPI::CreateXformOps(RotationOrder r
                                                                  OpFlags op4) const
 {
   UsdGeomXformable xformable(GetPrim());
-  if (!xformable) {
+  if (!xformable)
+  {
     return UsdGeomXformCommonAPI::Ops();
   }
 
@@ -928,7 +1001,8 @@ UsdGeomXformCommonAPI::Ops UsdGeomXformCommonAPI::CreateXformOps(OpFlags op1,
                                                                  OpFlags op4) const
 {
   UsdGeomXformable xformable(GetPrim());
-  if (!xformable) {
+  if (!xformable)
+  {
     return UsdGeomXformCommonAPI::Ops();
   }
 

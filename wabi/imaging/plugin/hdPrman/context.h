@@ -55,7 +55,8 @@ class HdPrmanCamera;
 class HdPrmanRenderDelegate;
 
 // Context for HdPrman to communicate with an instance of PRMan.
-struct HdPrman_Context {
+struct HdPrman_Context
+{
   HDPRMAN_API
   HdPrman_Context();
 

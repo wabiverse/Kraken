@@ -54,7 +54,8 @@ VERSION HISTORY
 /*! @enum SpvReflectResult
 
 */
-typedef enum SpvReflectResult {
+typedef enum SpvReflectResult
+{
   SPV_REFLECT_RESULT_SUCCESS,
   SPV_REFLECT_RESULT_NOT_READY,
   SPV_REFLECT_RESULT_ERROR_PARSE_FAILED,
@@ -81,7 +82,8 @@ typedef enum SpvReflectResult {
 /*! @enum SpvReflectTypeFlagBits
 
 */
-typedef enum SpvReflectTypeFlagBits {
+typedef enum SpvReflectTypeFlagBits
+{
   SPV_REFLECT_TYPE_FLAG_UNDEFINED = 0x00000000,
   SPV_REFLECT_TYPE_FLAG_VOID = 0x00000001,
   SPV_REFLECT_TYPE_FLAG_BOOL = 0x00000002,
@@ -103,7 +105,8 @@ typedef uint32_t SpvReflectTypeFlags;
 /*! @enum SpvReflectDecorationBits
 
 */
-typedef enum SpvReflectDecorationFlagBits {
+typedef enum SpvReflectDecorationFlagBits
+{
   SPV_REFLECT_DECORATION_NONE = 0x00000000,
   SPV_REFLECT_DECORATION_BLOCK = 0x00000001,
   SPV_REFLECT_DECORATION_BUFFER_BLOCK = 0x00000002,
@@ -120,7 +123,8 @@ typedef uint32_t SpvReflectDecorationFlags;
 /*! @enum SpvReflectResourceType
 
 */
-typedef enum SpvReflectResourceType {
+typedef enum SpvReflectResourceType
+{
   SPV_REFLECT_RESOURCE_FLAG_UNDEFINED = 0x00000000,
   SPV_REFLECT_RESOURCE_FLAG_SAMPLER = 0x00000001,
   SPV_REFLECT_RESOURCE_FLAG_CBV = 0x00000002,
@@ -131,7 +135,8 @@ typedef enum SpvReflectResourceType {
 /*! @enum SpvReflectFormat
 
 */
-typedef enum SpvReflectFormat {
+typedef enum SpvReflectFormat
+{
   SPV_REFLECT_FORMAT_UNDEFINED = 0,              // = VK_FORMAT_UNDEFINED
   SPV_REFLECT_FORMAT_R32_UINT = 98,              // = VK_FORMAT_R32_UINT
   SPV_REFLECT_FORMAT_R32_SINT = 99,              // = VK_FORMAT_R32_SINT
@@ -150,7 +155,8 @@ typedef enum SpvReflectFormat {
 /*! @enum SpvReflectVariableFlagBits
 
 */
-enum SpvReflectVariableFlagBits {
+enum SpvReflectVariableFlagBits
+{
   SPV_REFLECT_VARIABLE_FLAGS_NONE = 0x00000000,
   SPV_REFLECT_VARIABLE_FLAGS_UNUSED = 0x00000001,
 };
@@ -160,7 +166,8 @@ typedef uint32_t SpvReflectVariableFlags;
 /*! @enum SpvReflectDescriptorType
 
 */
-typedef enum SpvReflectDescriptorType {
+typedef enum SpvReflectDescriptorType
+{
   SPV_REFLECT_DESCRIPTOR_TYPE_SAMPLER = 0,                 // = VK_DESCRIPTOR_TYPE_SAMPLER
   SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER = 1,  // = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
   SPV_REFLECT_DESCRIPTOR_TYPE_SAMPLED_IMAGE = 2,           // = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
@@ -177,7 +184,8 @@ typedef enum SpvReflectDescriptorType {
 /*! @enum SpvReflectShaderStageFlagBits
 
 */
-typedef enum SpvReflectShaderStageFlagBits {
+typedef enum SpvReflectShaderStageFlagBits
+{
   SPV_REFLECT_SHADER_STAGE_VERTEX_BIT = 0x00000001,  // = VK_SHADER_STAGE_VERTEX_BIT
   SPV_REFLECT_SHADER_STAGE_TESSELLATION_CONTROL_BIT =
     0x00000002,  // = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
@@ -191,7 +199,8 @@ typedef enum SpvReflectShaderStageFlagBits {
 /*! @enum SpvReflectGenerator
 
 */
-typedef enum SpvReflectGenerator {
+typedef enum SpvReflectGenerator
+{
   SPV_REFLECT_GENERATOR_KHRONOS_LLVM_SPIRV_TRANSLATOR = 6,
   SPV_REFLECT_GENERATOR_KHRONOS_SPIRV_TOOLS_ASSEMBLER = 7,
   SPV_REFLECT_GENERATOR_KHRONOS_GLSLANG_REFERENCE_FRONT_END = 8,
@@ -204,31 +213,41 @@ typedef enum SpvReflectGenerator {
   SPV_REFLECT_GENERATOR_CLAY_CLAY_SHADER_COMPILER = 19,
 } SpvReflectGenerator;
 
-enum {
+enum
+{
   SPV_REFLECT_MAX_ARRAY_DIMS = 32,
   SPV_REFLECT_MAX_DESCRIPTOR_SETS = 64,
 };
 
-enum { SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE = ~0, SPV_REFLECT_SET_NUMBER_DONT_CHANGE = ~0 };
+enum
+{
+  SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE = ~0,
+  SPV_REFLECT_SET_NUMBER_DONT_CHANGE = ~0
+};
 
-typedef struct SpvReflectNumericTraits {
-  struct Scalar {
+typedef struct SpvReflectNumericTraits
+{
+  struct Scalar
+  {
     uint32_t width;
     uint32_t signedness;
   } scalar;
 
-  struct Vector {
+  struct Vector
+  {
     uint32_t component_count;
   } vector;
 
-  struct Matrix {
+  struct Matrix
+  {
     uint32_t column_count;
     uint32_t row_count;
     uint32_t stride;  // Measured in bytes
   } matrix;
 } SpvReflectNumericTraits;
 
-typedef struct SpvReflectImageTraits {
+typedef struct SpvReflectImageTraits
+{
   SpvDim dim;
   uint32_t depth;
   uint32_t arrayed;
@@ -237,13 +256,15 @@ typedef struct SpvReflectImageTraits {
   SpvImageFormat image_format;
 } SpvReflectImageTraits;
 
-typedef struct SpvReflectArrayTraits {
+typedef struct SpvReflectArrayTraits
+{
   uint32_t dims_count;
   uint32_t dims[SPV_REFLECT_MAX_ARRAY_DIMS];
   uint32_t stride;  // Measured in bytes
 } SpvReflectArrayTraits;
 
-typedef struct SpvReflectBindingArrayTraits {
+typedef struct SpvReflectBindingArrayTraits
+{
   uint32_t dims_count;
   uint32_t dims[SPV_REFLECT_MAX_ARRAY_DIMS];
 } SpvReflectBindingArrayTraits;
@@ -251,7 +272,8 @@ typedef struct SpvReflectBindingArrayTraits {
 /*! @struct SpvReflectTypeDescription
 
 */
-typedef struct SpvReflectTypeDescription {
+typedef struct SpvReflectTypeDescription
+{
   uint32_t id;
   SpvOp op;
   const char *type_name;
@@ -260,7 +282,8 @@ typedef struct SpvReflectTypeDescription {
   SpvReflectTypeFlags type_flags;
   SpvReflectDecorationFlags decoration_flags;
 
-  struct Traits {
+  struct Traits
+  {
     SpvReflectNumericTraits numeric;
     SpvReflectImageTraits image;
     SpvReflectArrayTraits array;
@@ -273,7 +296,8 @@ typedef struct SpvReflectTypeDescription {
 /*! @struct SpvReflectInterfaceVariable
 
 */
-typedef struct SpvReflectInterfaceVariable {
+typedef struct SpvReflectInterfaceVariable
+{
   uint32_t spirv_id;
   const char *name;
   uint32_t location;
@@ -295,7 +319,8 @@ typedef struct SpvReflectInterfaceVariable {
   //       variables.
   SpvReflectTypeDescription *type_description;
 
-  struct {
+  struct
+  {
     uint32_t location;
   } word_offset;
 } SpvReflectInterfaceVariable;
@@ -303,7 +328,8 @@ typedef struct SpvReflectInterfaceVariable {
 /*! @struct SpvReflectBlockVariable
 
 */
-typedef struct SpvReflectBlockVariable {
+typedef struct SpvReflectBlockVariable
+{
   uint32_t spirv_id;
   const char *name;
   uint32_t offset;           // Measured in bytes
@@ -324,7 +350,8 @@ typedef struct SpvReflectBlockVariable {
 /*! @struct SpvReflectDescriptorBinding
 
 */
-typedef struct SpvReflectDescriptorBinding {
+typedef struct SpvReflectDescriptorBinding
+{
   uint32_t spirv_id;
   const char *name;
   uint32_t binding;
@@ -342,7 +369,8 @@ typedef struct SpvReflectDescriptorBinding {
 
   SpvReflectTypeDescription *type_description;
 
-  struct {
+  struct
+  {
     uint32_t binding;
     uint32_t set;
   } word_offset;
@@ -351,7 +379,8 @@ typedef struct SpvReflectDescriptorBinding {
 /*! @struct SpvReflectDescriptorSet
 
 */
-typedef struct SpvReflectDescriptorSet {
+typedef struct SpvReflectDescriptorSet
+{
   uint32_t set;
   uint32_t binding_count;
   SpvReflectDescriptorBinding **bindings;
@@ -360,7 +389,8 @@ typedef struct SpvReflectDescriptorSet {
 /*! @struct SpvReflectEntryPoint
 
  */
-typedef struct SpvReflectEntryPoint {
+typedef struct SpvReflectEntryPoint
+{
   const char *name;
   uint32_t id;
 
@@ -380,7 +410,8 @@ typedef struct SpvReflectEntryPoint {
   uint32_t used_push_constant_count;
   uint32_t *used_push_constants;
 
-  struct LocalSize {
+  struct LocalSize
+  {
     uint32_t x;
     uint32_t y;
     uint32_t z;
@@ -390,7 +421,8 @@ typedef struct SpvReflectEntryPoint {
 /*! @struct SpvReflectShaderModule
 
 */
-typedef struct SpvReflectShaderModule {
+typedef struct SpvReflectShaderModule
+{
   SpvReflectGenerator generator;
   const char *entry_point_name;
   uint32_t entry_point_id;
@@ -413,7 +445,8 @@ typedef struct SpvReflectShaderModule {
   uint32_t push_constant_block_count;
   SpvReflectBlockVariable *push_constant_blocks;
 
-  struct Internal {
+  struct Internal
+  {
     size_t spirv_size;
     uint32_t *spirv_code;
     uint32_t spirv_word_count;
@@ -1208,12 +1241,14 @@ const char *spvReflectSourceLanguage(SpvSourceLanguage source_lang);
 #  include <string>
 #  include <vector>
 
-namespace spv_reflect {
+namespace spv_reflect
+{
 
 /*! \class ShaderModule
 
 */
-class ShaderModule {
+class ShaderModule
+{
  public:
   ShaderModule();
   ShaderModule(size_t size, const void *p_code);

@@ -38,11 +38,13 @@ WABI_NAMESPACE_BEGIN
 
 /// Delegate support for UsdGeomPointInstancer
 ///
-class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
+class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingPointInstancerAdapter() : BaseAdapter()
+  UsdImagingPointInstancerAdapter()
+    : BaseAdapter()
   {}
   virtual ~UsdImagingPointInstancerAdapter();
 
@@ -324,8 +326,11 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
   // declared on the instancer. For example, a character may be targeted
   // by the prototypes relationship; it will have many meshes, and each
   // mesh is represented as a separate proto prim.
-  struct _ProtoPrim {
-    _ProtoPrim() : variabilityBits(0), visible(true)
+  struct _ProtoPrim
+  {
+    _ProtoPrim()
+      : variabilityBits(0),
+        visible(true)
     {}
     // Each prim will become a prototype "child" under the instancer.
     // paths is a list of paths we had to hop across when resolving native
@@ -353,7 +358,8 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter {
   // All data associated with a given Instancer prim. PrimMap could
   // technically be split out to avoid two lookups, however it seems cleaner
   // to keep everything bundled up under the instancer path.
-  struct _InstancerData {
+  struct _InstancerData
+  {
     _InstancerData()
     {}
     SdfPath parentInstancerCachePath;

@@ -42,7 +42,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string __repr__(TfTemplateString const &self)
 {

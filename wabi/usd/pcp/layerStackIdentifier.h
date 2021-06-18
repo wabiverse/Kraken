@@ -45,7 +45,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 ///
 /// Objects of this type are immutable.
 ///
-class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier> {
+class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
+{
  public:
   typedef PcpLayerStackIdentifier This;
 
@@ -79,7 +80,8 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier> 
   bool operator<(const This &rhs) const;
 
   // Hashing.
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(const This &x) const
     {
       return x.GetHash();
@@ -113,7 +115,8 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier> 
 /// places where they should be stable wrt layer lifetimes.  This is done by
 /// storing layer identifiers as strings rather than SdfLayerHandles.
 ///
-class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifierStr> {
+class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifierStr>
+{
  public:
   typedef PcpLayerStackIdentifierStr This;
 
@@ -143,7 +146,8 @@ class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifie
   bool operator<(const This &rhs) const;
 
   // Hashing.
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(const This &x) const
     {
       return x.GetHash();

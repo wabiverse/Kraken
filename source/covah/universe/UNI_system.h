@@ -31,7 +31,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct SystemPaths {
+struct SystemPaths
+{
   /** Executable Path, where covah.exe resides. */
   char exe_path[MAX_SYSTEM_FILE_PATH];
 
@@ -51,7 +52,8 @@ struct SystemPaths {
   char stage_path[MAX_SYSTEM_FILE_PATH];
 };
 
-struct SystemVersion {
+struct SystemVersion
+{
   /** Build commit timestamp, the timestamp from this build's latest revision. */
   uint64_t build_commit_timestamp;
 
@@ -65,7 +67,8 @@ struct SystemVersion {
   char pixar_version[MAX_SYSTEM_VERSION_INFO];
 };
 
-struct System {
+struct System
+{
   SystemPaths paths;
   SystemVersion version;
 };

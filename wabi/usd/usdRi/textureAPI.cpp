@@ -53,7 +53,8 @@ UsdRiTextureAPI::~UsdRiTextureAPI()
 /* static */
 UsdRiTextureAPI UsdRiTextureAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiTextureAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdRiTextureAPI::_GetSchemaType() const
 /* static */
 UsdRiTextureAPI UsdRiTextureAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiTextureAPI>()) {
+  if (prim.ApplyAPI<UsdRiTextureAPI>())
+  {
     return UsdRiTextureAPI(prim);
   }
   return UsdRiTextureAPI();
@@ -132,7 +134,8 @@ UsdAttribute UsdRiTextureAPI::CreateRiTextureSaturationAttr(VtValue const &defau
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

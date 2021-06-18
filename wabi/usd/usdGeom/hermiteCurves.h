@@ -83,7 +83,8 @@ class SdfAssetPath;
 /// varying (linear), uniform (per curve element), or constant (per prim).
 ///
 ///
-class UsdGeomHermiteCurves : public UsdGeomCurves {
+class UsdGeomHermiteCurves : public UsdGeomCurves
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -99,13 +100,15 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
   /// Equivalent to UsdGeomHermiteCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomHermiteCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomCurves(prim)
+  explicit UsdGeomHermiteCurves(const UsdPrim &prim = UsdPrim())
+    : UsdGeomCurves(prim)
   {}
 
   /// Construct a UsdGeomHermiteCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomHermiteCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomHermiteCurves(const UsdSchemaBase &schemaObj) : UsdGeomCurves(schemaObj)
+  explicit UsdGeomHermiteCurves(const UsdSchemaBase &schemaObj)
+    : UsdGeomCurves(schemaObj)
   {}
 
   /// Destructor.
@@ -218,7 +221,8 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
   /// Represents points and tangents of the same size.
   ///
   /// Utility to interleave point and tangent data. This class is immutable.
-  class PointAndTangentArrays {
+  class PointAndTangentArrays
+  {
     VtArray<GfVec3f> _points;
     VtArray<GfVec3f> _tangents;
 
@@ -240,7 +244,8 @@ class UsdGeomHermiteCurves : public UsdGeomCurves {
       : _points(points),
         _tangents(tangents)
     {
-      if (_points.size() != _tangents.size()) {
+      if (_points.size() != _tangents.size())
+      {
         TF_RUNTIME_ERROR("Points and tangents must be the same size.");
         _points.clear();
         _tangents.clear();

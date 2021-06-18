@@ -46,7 +46,8 @@ class HgiVulkanCommandBuffer;
 ///
 /// OpenGL implementation of HgiComputeCmds.
 ///
-class HgiVulkanComputeCmds final : public HgiComputeCmds {
+class HgiVulkanComputeCmds final : public HgiComputeCmds
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanComputeCmds() override;

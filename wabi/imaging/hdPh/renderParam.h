@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 /// to each prim during Sync(). Phoenix uses this class to house global
 /// counters amd flags that assist invalidation of draw batch caches.
 ///
-class HdPhRenderParam final : public HdRenderParam {
+class HdPhRenderParam final : public HdRenderParam
+{
  public:
   HdPhRenderParam();
   ~HdPhRenderParam() override;

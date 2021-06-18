@@ -33,7 +33,8 @@ WABI_NAMESPACE_BEGIN
  * render delegate classes.
  *
  */
-class HdCyclesRendererPlugin final : public HdRendererPlugin {
+class HdCyclesRendererPlugin final : public HdRendererPlugin
+{
  public:
   /**
    * @brief Use default constructor

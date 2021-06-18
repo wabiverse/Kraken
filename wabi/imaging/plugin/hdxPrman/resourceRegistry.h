@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// HdxPrman's implementation of the hydra resource registry.
 /// Renderman manages its resources internally, but uses the HdResourceRegistry
 /// to respond to certain resource changes, such as texture reloading.
-class HdxPrman_ResourceRegistry final : public HdResourceRegistry {
+class HdxPrman_ResourceRegistry final : public HdResourceRegistry
+{
  public:
   HDPRMAN_API
   HdxPrman_ResourceRegistry(std::shared_ptr<HdxPrman_InteractiveContext> const &context);

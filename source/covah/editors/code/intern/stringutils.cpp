@@ -8,7 +8,8 @@
 
 #include "zep/mcommon/string/stringutils.h"
 
-namespace Zep {
+namespace Zep
+{
 
 std::unordered_map<uint32_t, std::string> &StringId::GetStringLookup()
 {
@@ -26,7 +27,8 @@ std::string string_tolower(const std::string &str)
 std::string string_replace(std::string subject, const std::string &search, const std::string &replace)
 {
   size_t pos = 0;
-  while ((pos = subject.find(search, pos)) != std::string::npos) {
+  while ((pos = subject.find(search, pos)) != std::string::npos)
+  {
     subject.replace(pos, search.length(), replace);
     pos += replace.length();
   }
@@ -36,7 +38,8 @@ std::string string_replace(std::string subject, const std::string &search, const
 void string_replace_in_place(std::string &subject, const std::string &search, const std::string &replace)
 {
   size_t pos = 0;
-  while ((pos = subject.find(search, pos)) != std::string::npos) {
+  while ((pos = subject.find(search, pos)) != std::string::npos)
+  {
     subject.replace(pos, search.length(), replace);
     pos += replace.length();
   }
@@ -70,7 +73,8 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
   // Mix 4 bytes at a time into the hash
   const unsigned char *data = (const unsigned char *)key;
 
-  while (len >= 4) {
+  while (len >= 4)
+  {
 #ifdef PLATFORM_BIG_ENDIAN
     unsigned int k = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
 #else
@@ -90,7 +94,8 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
 
   // Handle the last few bytes of the input array
 
-  switch (len) {
+  switch (len)
+  {
     case 3:
       h ^= data[2] << 16;
     case 2:
@@ -161,7 +166,8 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
   const uint64_t *data = (const uint64_t *)key;
   const uint64_t *end = data + (len / 8);
 
-  while (data != end) {
+  while (data != end)
+  {
 #ifdef PLATFORM_BIG_ENDIAN
     uint64 k = *data++;
     char *p = (char *)&k;
@@ -192,7 +198,8 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
 
   const unsigned char *data2 = (const unsigned char *)data;
 
-  switch (len & 7) {
+  switch (len & 7)
+  {
     case 7:
       h ^= uint64_t(data2[6]) << 48;
     case 6:
@@ -231,7 +238,8 @@ void string_split(const std::string &text, const char *delims, std::vector<std::
   tokens.clear();
   std::size_t start = text.find_first_not_of(delims), end = 0;
 
-  while ((end = text.find_first_of(delims, start)) != std::string::npos) {
+  while ((end = text.find_first_of(delims, start)) != std::string::npos)
+  {
     tokens.push_back(text.substr(start, end - start));
     start = text.find_first_not_of(delims, end);
   }
@@ -243,7 +251,8 @@ void string_split_each(const std::string &text, const char *delims, std::functio
 {
   std::size_t start = text.find_first_not_of(delims), end = 0;
 
-  while ((end = text.find_first_of(delims, start)) != std::string::npos) {
+  while ((end = text.find_first_of(delims, start)) != std::string::npos)
+  {
     if (!fn(start, end - start))
       return;
     start = text.find_first_not_of(delims, end);
@@ -254,11 +263,14 @@ void string_split_each(const std::string &text, const char *delims, std::functio
 
 size_t string_first_not_of(const char *text, size_t start, size_t end, const char *delims)
 {
-  for (auto index = start; index < end; index++) {
+  for (auto index = start; index < end; index++)
+  {
     bool found = false;
     auto pDelim = delims;
-    while (*pDelim != 0) {
-      if (text[index] == *pDelim++) {
+    while (*pDelim != 0)
+    {
+      if (text[index] == *pDelim++)
+      {
         found = true;
         break;
       }
@@ -271,10 +283,13 @@ size_t string_first_not_of(const char *text, size_t start, size_t end, const cha
 
 size_t string_first_of(const char *text, size_t start, size_t end, const char *delims)
 {
-  for (auto index = start; index < end; index++) {
+  for (auto index = start; index < end; index++)
+  {
     auto pDelim = delims;
-    while (*pDelim != 0) {
-      if (text[index] == *pDelim++) {
+    while (*pDelim != 0)
+    {
+      if (text[index] == *pDelim++)
+      {
         return index;
       }
     }
@@ -293,7 +308,8 @@ void string_split_each(char *text,
   std::size_t end;
 
   // Find first delim (end now at first delim)
-  while ((end = string_first_of(text, start, endIndex, delims)) != std::string::npos) {
+  while ((end = string_first_of(text, start, endIndex, delims)) != std::string::npos)
+  {
     // Callback with string between delims
     if (!fn(start, end))
       return;
@@ -319,17 +335,21 @@ std::string string_slurp_if(std::string::const_iterator &itr,
                             char first,
                             char last)
 {
-  if (itr == itrEnd) {
+  if (itr == itrEnd)
+  {
     return "";
   }
 
   auto itrCurrent = itr;
-  if (*itrCurrent == first) {
-    while ((itrCurrent != itrEnd) && *itrCurrent != last) {
+  if (*itrCurrent == first)
+  {
+    while ((itrCurrent != itrEnd) && *itrCurrent != last)
+    {
       itrCurrent++;
     }
 
-    if ((itrCurrent != itrEnd) && *itrCurrent == last) {
+    if ((itrCurrent != itrEnd) && *itrCurrent == last)
+    {
       itrCurrent++;
       auto ret = std::string(itr, itrCurrent);
       itr = itrCurrent;
@@ -343,16 +363,19 @@ std::string string_slurp_if(std::string::const_iterator &itr,
                             std::string::const_iterator itrEnd,
                             std::function<bool(char)> fnIs)
 {
-  if (itr == itrEnd) {
+  if (itr == itrEnd)
+  {
     return "";
   }
 
   auto itrCurrent = itr;
-  while ((itrCurrent != itrEnd) && fnIs(*itrCurrent)) {
+  while ((itrCurrent != itrEnd) && fnIs(*itrCurrent))
+  {
     itrCurrent++;
   }
 
-  if (itrCurrent != itr) {
+  if (itrCurrent != itr)
+  {
     auto ret = std::string(itr, itrCurrent);
     itr = itrCurrent;
 

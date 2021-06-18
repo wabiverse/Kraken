@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// A simple delegate class for unit test driver.
 ///
-class HdUnitTestDelegate : public HdSceneDelegate {
+class HdUnitTestDelegate : public HdSceneDelegate
+{
  public:
   HD_API
   HdUnitTestDelegate(HdRenderIndex *parentIndex, SdfPath const &delegateID);
@@ -307,7 +308,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
   void UpdateCamera(SdfPath const &id, TfToken const &key, VtValue value);
 
   /// Tasks
-  template<typename T> void AddTask(SdfPath const &id)
+  template<typename T>
+  void AddTask(SdfPath const &id)
   {
     GetRenderIndex().InsertTask<T>(this, id);
     _tasks[id] = _Task();
@@ -427,7 +429,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
   // ---------------------------------------------------------------------- //
   // internal types
   // ---------------------------------------------------------------------- //
-  struct _Mesh {
+  struct _Mesh
+  {
     _Mesh()
     {}
     _Mesh(TfToken const &scheme,
@@ -464,7 +467,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
     bool doubleSided;
     HdReprSelector reprSelector;
   };
-  struct _Curves {
+  struct _Curves
+  {
     _Curves()
     {}
     _Curves(VtVec3fArray const &points,
@@ -482,15 +486,18 @@ class HdUnitTestDelegate : public HdSceneDelegate {
     TfToken type;
     TfToken basis;
   };
-  struct _Points {
+  struct _Points
+  {
     _Points()
     {}
-    _Points(VtVec3fArray const &points) : points(points)
+    _Points(VtVec3fArray const &points)
+      : points(points)
     {}
 
     VtVec3fArray points;
   };
-  struct _Instancer {
+  struct _Instancer
+  {
     _Instancer()
     {}
     _Instancer(VtVec3fArray const &scale,
@@ -510,7 +517,8 @@ class HdUnitTestDelegate : public HdSceneDelegate {
 
     std::vector<SdfPath> prototypes;
   };
-  struct _Primvar {
+  struct _Primvar
+  {
     _Primvar()
     {}
     _Primvar(TfToken const &_name,
@@ -536,19 +544,26 @@ class HdUnitTestDelegate : public HdSceneDelegate {
   // and returns true with the iterator to the entry if it was found.
   bool _FindPrimvar(SdfPath const &id, TfToken const &name, _Primvars::iterator *pvIt);
 
-  struct _Camera {
+  struct _Camera
+  {
     VtDictionary params;
   };
-  struct _Light {
+  struct _Light
+  {
     VtDictionary params;
   };
-  struct _Task {
+  struct _Task
+  {
     VtDictionary params;
   };
-  struct _RenderBuffer {
+  struct _RenderBuffer
+  {
     _RenderBuffer()
     {}
-    _RenderBuffer(GfVec3i const &d, HdFormat f, bool ms) : dims(d), format(f), multiSampled(ms)
+    _RenderBuffer(GfVec3i const &d, HdFormat f, bool ms)
+      : dims(d),
+        format(f),
+        multiSampled(ms)
     {}
     GfVec3i dims;
     HdFormat format;

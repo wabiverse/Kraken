@@ -44,7 +44,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 /// Returns the result of HdResampleNeighbors() for the enclosed values, if
 /// they are of type T.
 template<typename T>
@@ -56,7 +57,8 @@ bool _TryResample(float alpha,
 {
   static const TfType type = TfType::Find<T>();
 
-  if (valueType == type) {
+  if (valueType == type)
+  {
     const T &val0 = v0.Get<T>();
     const T &val1 = v1.Get<T>();
     *result = VtValue(HdResampleNeighbors(alpha, val0, val1));
@@ -66,7 +68,9 @@ bool _TryResample(float alpha,
   return false;
 }
 
-template<typename... T> struct _TypeList {
+template<typename... T>
+struct _TypeList
+{
 };
 
 void _Resample(float alpha,
@@ -90,10 +94,12 @@ void _Resample(float alpha,
                _TypeList<T, U...>)
 {
   // A VtValue containing T or a VtArray<T> is supported.
-  if (_TryResample<T>(alpha, v0, v1, valueType, result)) {
+  if (_TryResample<T>(alpha, v0, v1, valueType, result))
+  {
     return;
   }
-  if (_TryResample<VtArray<T>>(alpha, v0, v1, valueType, result)) {
+  if (_TryResample<VtArray<T>>(alpha, v0, v1, valueType, result))
+  {
     return;
   }
 
@@ -107,13 +113,15 @@ VtValue HdResampleNeighbors(float alpha, const VtValue &v0, const VtValue &v1)
   // After verifying that the values have matching types, return the result
   // of HdResampleNeighbors() for the enclosed values.
   const TfType t0 = v0.GetType();
-  if (!t0) {
+  if (!t0)
+  {
     TF_CODING_ERROR("Unknown sample value type '%s'", v0.GetTypeName().c_str());
     return v0;
   }
 
   const TfType t1 = v1.GetType();
-  if (t0 != t1) {
+  if (t0 != t1)
+  {
     TF_CODING_ERROR(
       "Mismatched sample value types '%s' and '%s'", v0.GetTypeName().c_str(), v1.GetTypeName().c_str());
     return v0;

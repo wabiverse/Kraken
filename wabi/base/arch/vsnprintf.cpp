@@ -59,7 +59,8 @@ string ArchVStringPrintf(const char *fmt, va_list ap)
   size_t needed = ArchVsnprintf(buf, sizeof(buf), fmt, ap) + 1;
   string s(needed <= sizeof(buf) ? buf : string());
 
-  if (s.empty()) {
+  if (s.empty())
+  {
     char *tmp = new char[needed];
     ArchVsnprintf(tmp, needed, fmt, apcopy);
     s = string(tmp);

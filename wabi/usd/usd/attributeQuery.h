@@ -62,7 +62,8 @@ WABI_NAMESPACE_BEGIN
 /// Failing to do so may result in incorrect values or crashes due to
 /// dereferencing invalid objects.
 ///
-class UsdAttributeQuery {
+class UsdAttributeQuery
+{
  public:
   /// Construct an invalid query object.
   USD_API
@@ -119,7 +120,8 @@ class UsdAttributeQuery {
   /// with this query at the requested UsdTimeCode \p time.
   ///
   /// \sa UsdAttribute::Get
-  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     static_assert(SdfValueTypeTraits<T>::IsValueType, "T must be an SdfValueType.");
     return _Get(value, time);
@@ -239,7 +241,8 @@ class UsdAttributeQuery {
  private:
   void _Initialize(const UsdAttribute &attr);
 
-  template<typename T> USD_API bool _Get(T *value, UsdTimeCode time) const;
+  template<typename T>
+  USD_API bool _Get(T *value, UsdTimeCode time) const;
 
  private:
   UsdAttribute _attr;

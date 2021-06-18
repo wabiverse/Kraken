@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 /// the string version of id is used to sort alphabetically ('a' has priority
 /// over 'b').
 ///
-struct HfPluginDesc {
+struct HfPluginDesc
+{
   TfToken id;
   std::string displayName;
   int priority;

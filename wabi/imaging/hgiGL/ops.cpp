@@ -51,7 +51,8 @@ HgiGLOpsFn HgiGLOps::PushDebugGroup(const char *label)
 
   return [lbl] {
 #if defined(GL_KHR_debug)
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, lbl.c_str());
     }
 #endif
@@ -62,7 +63,8 @@ HgiGLOpsFn HgiGLOps::PopDebugGroup()
 {
   return [] {
 #if defined(GL_KHR_debug)
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glPopDebugGroup();
     }
 #endif
@@ -77,11 +79,13 @@ HgiGLOpsFn HgiGLOps::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
     HgiTextureHandle texHandle = copyOp.gpuSourceTexture;
     HgiGLTexture *srcTexture = static_cast<HgiGLTexture *>(texHandle.Get());
 
-    if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle")) {
+    if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle"))
+    {
       return;
     }
 
-    if (copyOp.destinationBufferByteSize == 0) {
+    if (copyOp.destinationBufferByteSize == 0)
+    {
       TF_WARN("The size of the data to copy was zero (aborted)");
       return;
     }
@@ -91,22 +95,26 @@ HgiGLOpsFn HgiGLOps::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
     GLenum glFormat = 0;
     GLenum glPixelType = 0;
 
-    if (texDesc.usage & HgiTextureUsageBitsDepthTarget) {
+    if (texDesc.usage & HgiTextureUsageBitsDepthTarget)
+    {
       TF_VERIFY(texDesc.format == HgiFormatFloat32 || texDesc.format == HgiFormatFloat32UInt8);
       // XXX: Copy only the depth component. To copy stencil, we'd need
       // to set the format to GL_STENCIL_INDEX separately..
       glFormat = GL_DEPTH_COMPONENT;
       glPixelType = GL_FLOAT;
     }
-    else if (texDesc.usage & HgiTextureUsageBitsStencilTarget) {
+    else if (texDesc.usage & HgiTextureUsageBitsStencilTarget)
+    {
       TF_WARN("Copying a stencil-only texture is unsupported currently\n");
       return;
     }
-    else {
+    else
+    {
       HgiGLConversions::GetFormat(texDesc.format, &glFormat, &glPixelType);
     }
 
-    if (HgiIsCompressed(texDesc.format)) {
+    if (HgiIsCompressed(texDesc.format))
+    {
       TF_CODING_ERROR("Copying from compressed GPU texture not supported.");
       return;
     }
@@ -147,9 +155,11 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
 
     HgiGLTexture *dstTexture = static_cast<HgiGLTexture *>(copyOp.gpuDestinationTexture.Get());
 
-    switch (desc.type) {
+    switch (desc.type)
+    {
       case HgiTextureType2D:
-        if (isCompressed) {
+        if (isCompressed)
+        {
           glCompressedTextureSubImage2D(dstTexture->GetTextureId(),
                                         copyOp.mipLevel,
                                         offsets[0],
@@ -160,7 +170,8 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
         }
-        else {
+        else
+        {
           glTextureSubImage2D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
                               offsets[0],
@@ -173,7 +184,8 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
         }
         break;
       case HgiTextureType3D:
-        if (isCompressed) {
+        if (isCompressed)
+        {
           glCompressedTextureSubImage3D(dstTexture->GetTextureId(),
                                         copyOp.mipLevel,
                                         offsets[0],
@@ -186,7 +198,8 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
         }
-        else {
+        else
+        {
           glTextureSubImage3D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
                               offsets[0],
@@ -217,18 +230,21 @@ HgiGLOpsFn HgiGLOps::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
     HgiBufferHandle const &srcBufHandle = copyOp.gpuSourceBuffer;
     HgiGLBuffer *srcBuffer = static_cast<HgiGLBuffer *>(srcBufHandle.Get());
 
-    if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle")) {
+    if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle"))
+    {
       return;
     }
 
     HgiBufferHandle const &dstBufHandle = copyOp.gpuDestinationBuffer;
     HgiGLBuffer *dstBuffer = static_cast<HgiGLBuffer *>(dstBufHandle.Get());
 
-    if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle")) {
+    if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle"))
+    {
       return;
     }
 
-    if (copyOp.byteSize == 0) {
+    if (copyOp.byteSize == 0)
+    {
       TF_WARN("The size of the data to copy was zero (aborted)");
       return;
     }
@@ -246,7 +262,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   return [copyOp] {
     TRACE_SCOPE("HgiGLOps::CopyBufferCpuToGpu");
 
-    if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer) {
+    if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer)
+    {
       return;
     }
 
@@ -269,7 +286,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
   return [copyOp] {
     TRACE_SCOPE("HgiGLOps::CopyBufferGpuToCpu");
 
-    if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer) {
+    if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer)
+    {
       return;
     }
 
@@ -295,7 +313,8 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
     HgiTextureHandle texHandle = copyOp.gpuSourceTexture;
     HgiGLTexture *srcTexture = static_cast<HgiGLTexture *>(texHandle.Get());
 
-    if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle")) {
+    if (!TF_VERIFY(srcTexture && srcTexture->GetTextureId(), "Invalid texture handle"))
+    {
       return;
     }
 
@@ -304,7 +323,8 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
     // a bound PBO, so glGetTextureImage() is used instead, which does not
     // allow to specify an offset. Only the whole texture copy is supported
     // in HgiGL.
-    if (copyOp.sourceTexelOffset != GfVec3i(0)) {
+    if (copyOp.sourceTexelOffset != GfVec3i(0))
+    {
       TF_WARN("Texture offset not supported (aborted).");
       return;
     }
@@ -312,11 +332,13 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
     HgiBufferHandle const &bufHandle = copyOp.gpuDestinationBuffer;
     HgiGLBuffer *dstBuffer = static_cast<HgiGLBuffer *>(bufHandle.Get());
 
-    if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle")) {
+    if (!TF_VERIFY(dstBuffer && dstBuffer->GetBufferId(), "Invalid destination buffer handle"))
+    {
       return;
     }
 
-    if (copyOp.byteSize == 0) {
+    if (copyOp.byteSize == 0)
+    {
       TF_WARN("The size of the data to copy was zero (aborted)");
       return;
     }
@@ -329,10 +351,12 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
 
     // Bind the buffer as a pixel packing PBO and transfer the data
     glBindBuffer(GL_PIXEL_PACK_BUFFER, dstBuffer->GetBufferId());
-    if (HgiIsCompressed(texDesc.format)) {
+    if (HgiIsCompressed(texDesc.format))
+    {
       glGetCompressedTextureImage(srcTexture->GetTextureId(), copyOp.mipLevel, copyOp.byteSize, byteOffset);
     }
-    else {
+    else
+    {
       GLenum format = 0;
       GLenum type = 0;
       HgiGLConversions::GetFormat(texDesc.format, &format, &type);
@@ -353,18 +377,21 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
     HgiBufferHandle const &bufHandle = copyOp.gpuSourceBuffer;
     HgiGLBuffer *srcBuffer = static_cast<HgiGLBuffer *>(bufHandle.Get());
 
-    if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle")) {
+    if (!TF_VERIFY(srcBuffer && srcBuffer->GetBufferId(), "Invalid source buffer handle"))
+    {
       return;
     }
 
     HgiTextureHandle texHandle = copyOp.gpuDestinationTexture;
     HgiGLTexture *dstTexture = static_cast<HgiGLTexture *>(texHandle.Get());
 
-    if (!TF_VERIFY(dstTexture && dstTexture->GetTextureId(), "Invalid texture handle")) {
+    if (!TF_VERIFY(dstTexture && dstTexture->GetTextureId(), "Invalid texture handle"))
+    {
       return;
     }
 
-    if (copyOp.byteSize == 0) {
+    if (copyOp.byteSize == 0)
+    {
       TF_WARN("The size of the data to copy was zero (aborted)");
       return;
     }
@@ -388,9 +415,11 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
     // Bind the buffer as a pixel unpacking PBO
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, srcBuffer->GetBufferId());
 
-    switch (texDesc.type) {
+    switch (texDesc.type)
+    {
       case HgiTextureType2D:
-        if (isCompressed) {
+        if (isCompressed)
+        {
           glCompressedTextureSubImage2D(dstTexture->GetTextureId(),
                                         copyOp.mipLevel,
                                         offsets[0],
@@ -401,7 +430,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         copyOp.byteSize,
                                         byteOffset);
         }
-        else {
+        else
+        {
           glTextureSubImage2D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
                               offsets[0],
@@ -414,7 +444,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
         }
         break;
       case HgiTextureType3D:
-        if (isCompressed) {
+        if (isCompressed)
+        {
           glCompressedTextureSubImage3D(dstTexture->GetTextureId(),
                                         copyOp.mipLevel,
                                         offsets[0],
@@ -427,7 +458,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         copyOp.byteSize,
                                         byteOffset);
         }
-        else {
+        else
+        {
           glTextureSubImage3D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
                               offsets[0],
@@ -466,7 +498,8 @@ HgiGLOpsFn HgiGLOps::BindPipeline(HgiGraphicsPipelineHandle pipeline)
 {
   return [pipeline] {
     TRACE_SCOPE("HgiGLOps::BindPipeline");
-    if (HgiGLGraphicsPipeline *p = static_cast<HgiGLGraphicsPipeline *>(pipeline.Get())) {
+    if (HgiGLGraphicsPipeline *p = static_cast<HgiGLGraphicsPipeline *>(pipeline.Get()))
+    {
       p->BindPipeline();
     }
   };
@@ -476,7 +509,8 @@ HgiGLOpsFn HgiGLOps::BindPipeline(HgiComputePipelineHandle pipeline)
 {
   return [pipeline] {
     TRACE_SCOPE("HgiGLOps::BindPipeline");
-    if (HgiGLComputePipeline *p = static_cast<HgiGLComputePipeline *>(pipeline.Get())) {
+    if (HgiGLComputePipeline *p = static_cast<HgiGLComputePipeline *>(pipeline.Get()))
+    {
       p->BindPipeline();
     }
   };
@@ -486,7 +520,8 @@ HgiGLOpsFn HgiGLOps::BindResources(HgiResourceBindingsHandle res)
 {
   return [res] {
     TRACE_SCOPE("HgiGLOps::BindResources");
-    if (HgiGLResourceBindings *rb = static_cast<HgiGLResourceBindings *>(res.Get())) {
+    if (HgiGLResourceBindings *rb = static_cast<HgiGLResourceBindings *>(res.Get()))
+    {
       rb->BindResources();
     }
   };
@@ -545,7 +580,8 @@ HgiGLOpsFn HgiGLOps::BindVertexBuffers(uint32_t firstBinding,
     TF_VERIFY(byteOffsets.size() == vertexBuffers.size());
 
     // XXX use glBindVertexBuffers to bind all VBs in one go.
-    for (size_t i = 0; i < vertexBuffers.size(); i++) {
+    for (size_t i = 0; i < vertexBuffers.size(); i++)
+    {
       HgiBufferHandle bufHandle = vertexBuffers[i];
       HgiGLBuffer *buf = static_cast<HgiGLBuffer *>(bufHandle.Get());
       HgiBufferDesc const &desc = buf->GetDescriptor();
@@ -685,17 +721,20 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
     bool blendEnabled = false;
 
     // Apply LoadOps and blend mode
-    for (size_t i = 0; i < desc.colorAttachmentDescs.size(); i++) {
+    for (size_t i = 0; i < desc.colorAttachmentDescs.size(); i++)
+    {
       HgiAttachmentDesc const &colorAttachment = desc.colorAttachmentDescs[i];
 
-      if (colorAttachment.format == HgiFormatInvalid) {
+      if (colorAttachment.format == HgiFormatInvalid)
+      {
         TF_CODING_ERROR(
           "Binding framebuffer with invalid format "
           "for color attachment %zu.",
           i);
       }
 
-      if (colorAttachment.loadOp == HgiAttachmentLoadOpClear) {
+      if (colorAttachment.loadOp == HgiAttachmentLoadOpClear)
+      {
         glClearBufferfv(GL_COLOR, i, colorAttachment.clearValue.data());
       }
 
@@ -716,28 +755,35 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
 
     HgiAttachmentDesc const &depthAttachment = desc.depthAttachmentDesc;
 
-    if (desc.depthTexture) {
-      if (depthAttachment.format == HgiFormatInvalid) {
+    if (desc.depthTexture)
+    {
+      if (depthAttachment.format == HgiFormatInvalid)
+      {
         TF_CODING_ERROR(
           "Binding framebuffer with invalid format "
           "for depth attachment.");
       }
     }
 
-    if (desc.depthTexture && depthAttachment.loadOp == HgiAttachmentLoadOpClear) {
-      if (depthAttachment.usage & HgiTextureUsageBitsStencilTarget) {
+    if (desc.depthTexture && depthAttachment.loadOp == HgiAttachmentLoadOpClear)
+    {
+      if (depthAttachment.usage & HgiTextureUsageBitsStencilTarget)
+      {
         glClearBufferfi(GL_DEPTH_STENCIL, 0, depthAttachment.clearValue[0], depthAttachment.clearValue[1]);
       }
-      else {
+      else
+      {
         glClearBufferfv(GL_DEPTH, 0, depthAttachment.clearValue.data());
       }
     }
 
     // Setup blending
-    if (blendEnabled) {
+    if (blendEnabled)
+    {
       glEnable(GL_BLEND);
     }
-    else {
+    else
+    {
       glDisable(GL_BLEND);
     }
 
@@ -751,7 +797,8 @@ HgiGLOpsFn HgiGLOps::GenerateMipMaps(HgiTextureHandle const &texture)
     TRACE_SCOPE("HgiGLOps::GenerateMipMaps");
 
     HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texture.Get());
-    if (glTex && glTex->GetTextureId()) {
+    if (glTex && glTex->GetTextureId())
+    {
       glGenerateTextureMipmap(glTex->GetTextureId());
       HGIGL_POST_PENDING_GL_ERRORS();
     }
@@ -765,7 +812,8 @@ HgiGLOpsFn HgiGLOps::ResolveFramebuffer(HgiGLDevice *device, HgiGraphicsCmdsDesc
 
     const uint32_t resolvedFramebuffer = device->AcquireFramebuffer(graphicsCmds,
                                                                     /* resolved = */ true);
-    if (!resolvedFramebuffer) {
+    if (!resolvedFramebuffer)
+    {
       return;
     }
 
@@ -774,13 +822,15 @@ HgiGLOpsFn HgiGLOps::ResolveFramebuffer(HgiGLDevice *device, HgiGraphicsCmdsDesc
     GfVec3i dim(0);
     GLbitfield mask = 0;
     size_t numResolvesRequired = 0;
-    if (!graphicsCmds.colorResolveTextures.empty()) {
+    if (!graphicsCmds.colorResolveTextures.empty())
+    {
       mask |= GL_COLOR_BUFFER_BIT;
       HgiTextureHandle const &tex = graphicsCmds.colorResolveTextures.front();
       dim = tex->GetDescriptor().dimensions;
       numResolvesRequired = graphicsCmds.colorTextures.size();
     }
-    if (graphicsCmds.depthResolveTexture) {
+    if (graphicsCmds.depthResolveTexture)
+    {
       mask |= GL_DEPTH_BUFFER_BIT;
       dim = graphicsCmds.depthResolveTexture->GetDescriptor().dimensions;
       numResolvesRequired = std::max<size_t>(1, numResolvesRequired);
@@ -800,7 +850,8 @@ HgiGLOpsFn HgiGLOps::ResolveFramebuffer(HgiGLDevice *device, HgiGraphicsCmdsDesc
     GLint restoreDrawBuffer;
     glGetIntegerv(GL_DRAW_BUFFER, &restoreDrawBuffer);
 
-    for (size_t i = 0; i < numResolvesRequired; i++) {
+    for (size_t i = 0; i < numResolvesRequired; i++)
+    {
       glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
       glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
       glBlitFramebuffer(0,
@@ -823,7 +874,8 @@ HgiGLOpsFn HgiGLOps::ResolveFramebuffer(HgiGLDevice *device, HgiGraphicsCmdsDesc
 HgiGLOpsFn HgiGLOps::MemoryBarrier(HgiMemoryBarrier barrier)
 {
   return [barrier] {
-    if (TF_VERIFY(barrier == HgiMemoryBarrierAll)) {
+    if (TF_VERIFY(barrier == HgiMemoryBarrierAll))
+    {
       glMemoryBarrier(GL_ALL_BARRIER_BITS);
     }
   };

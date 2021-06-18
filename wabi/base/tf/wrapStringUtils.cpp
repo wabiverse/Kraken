@@ -44,7 +44,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static int DictionaryStrcmp(string const &l, string const &r)
 {
@@ -55,7 +56,8 @@ static int DictionaryStrcmp(string const &l, string const &r)
 // Register a from-python conversion that lets clients pass python unicode
 // objects to bindings expecting std::strings.  We encode the unicode string as
 // utf-8 to produce the std::string.
-struct Tf_StdStringFromPythonUnicode {
+struct Tf_StdStringFromPythonUnicode
+{
   Tf_StdStringFromPythonUnicode()
   {
     boost::python::converter::registry::insert(

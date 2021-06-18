@@ -38,11 +38,13 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Delegate support for UsdVolVolume.
 ///
-class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter {
+class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingVolumeAdapter() : UsdImagingGprimAdapter()
+  UsdImagingVolumeAdapter()
+    : UsdImagingGprimAdapter()
   {}
   virtual ~UsdImagingVolumeAdapter();
 

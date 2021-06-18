@@ -71,7 +71,8 @@ WABI_NAMESPACE_BEGIN
 typedef TfWeakPtr<class Tf_TestBase> Tf_TestBasePtr;
 typedef TfWeakPtr<const class Tf_TestBase> Tf_TestBaseConstPtr;
 typedef TfRefPtr<class Tf_TestBase> Tf_TestBaseRefPtr;
-class Tf_TestBase : public TfRefBase, public TfWeakBase {
+class Tf_TestBase : public TfRefBase, public TfWeakBase
+{
  public:
   virtual ~Tf_TestBase()
   {}
@@ -98,7 +99,8 @@ class Tf_TestBase : public TfRefBase, public TfWeakBase {
 // Derived
 typedef TfWeakPtr<class Tf_TestDerived> Tf_TestDerivedPtr;
 typedef TfRefPtr<class Tf_TestDerived> Tf_TestDerivedRefPtr;
-class Tf_TestDerived : public Tf_TestBase {
+class Tf_TestDerived : public Tf_TestBase
+{
  public:
   // CODE_COVERAGE_OFF_GCOV_BUG  woot
   virtual ~Tf_TestDerived()
@@ -178,7 +180,9 @@ TF_REGISTRY_FUNCTION(TfType)
 
 ////////////////////////////////
 
-template<typename T = Tf_TestBase> struct polymorphic_Tf_TestBase : public T, public TfPyPolymorphic<T> {
+template<typename T = Tf_TestBase>
+struct polymorphic_Tf_TestBase : public T, public TfPyPolymorphic<T>
+{
   typedef polymorphic_Tf_TestBase This;
   virtual string Virtual() const
   {
@@ -211,7 +215,9 @@ static string callVirtual(Tf_TestBase *base)
   return base->VirtualCaller();
 }
 
-template<typename T = Tf_TestDerived> struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T> {
+template<typename T = Tf_TestDerived>
+struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T>
+{
   typedef polymorphic_Tf_TestDerived This;
   string default_Virtual() const
   {
@@ -239,12 +245,17 @@ template<typename T = Tf_TestDerived> struct polymorphic_Tf_TestDerived : public
   }
 };
 
-template<typename T> static TfRefPtr<T> __Ref_init__()
+template<typename T>
+static TfRefPtr<T> __Ref_init__()
 {
   return TfCreateRefPtr(new T);
 }
 
-enum TfPyTestErrorCodes { TF_TEST_ERROR_1, TF_TEST_ERROR_2 };
+enum TfPyTestErrorCodes
+{
+  TF_TEST_ERROR_1,
+  TF_TEST_ERROR_2
+};
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
@@ -254,7 +265,8 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 static void mightRaise(bool raise)
 {
-  if (raise) {
+  if (raise)
+  {
     TF_ERROR(TF_TEST_ERROR_1, "Test error 1!");
     TF_ERROR(TF_TEST_ERROR_2, "Test error 2!");
   }
@@ -270,7 +282,8 @@ static void doErrors()
   TF_STATUS("status message %d", 4);
 };
 
-struct _TestStaticMethodError {
+struct _TestStaticMethodError
+{
   static void Error()
   {
     TF_ERROR(TF_TEST_ERROR_1, "Test error 1!");
@@ -280,27 +293,43 @@ struct _TestStaticMethodError {
 ////////////////////////////////
 // Enums
 
-enum Tf_TestEnum {
+enum Tf_TestEnum
+{
   Tf_Alpha = 3,
   Tf_Bravo,
   Tf_Charlie,
   Tf_Delta,
 };
 
-enum class Tf_TestScopedEnum { Hydrogen = 1, Helium, Lithium, Beryllium, Boron };
+enum class Tf_TestScopedEnum
+{
+  Hydrogen = 1,
+  Helium,
+  Lithium,
+  Beryllium,
+  Boron
+};
 
-struct Tf_Enum {
-  enum TestEnum2 {
+struct Tf_Enum
+{
+  enum TestEnum2
+  {
     One = 1,
     Two,
     Three,
   };
-  enum TestEnum3 {
+  enum TestEnum3
+  {
     _Alpha = 100,
     _Beta,
     _Gamma,
   };
-  enum class TestScopedEnum { Alef = 300, Bet, Gimel };
+  enum class TestScopedEnum
+  {
+    Alef = 300,
+    Bet,
+    Gimel
+  };
 };
 
 TF_REGISTRY_FUNCTION(TfEnum)
@@ -419,7 +448,8 @@ static void sendTfNoticeWithSender(Tf_TestBasePtr const &base)
 ////////////////////////////////
 // TfPyClassMethod()
 
-class Tf_ClassWithClassMethod {
+class Tf_ClassWithClassMethod
+{
  public:
   Tf_ClassWithClassMethod()
   {}
@@ -466,7 +496,8 @@ static size_t TakesVecVecString(std::vector<std::vector<std::string>> arg)
 
 TF_DECLARE_WEAK_AND_REF_PTRS(Tf_ClassWithVarArgInit);
 
-class Tf_ClassWithVarArgInit : public TfRefBase, public TfWeakBase {
+class Tf_ClassWithVarArgInit : public TfRefBase, public TfWeakBase
+{
  public:
   bool allowExtraArgs;
   tuple args;
@@ -498,7 +529,8 @@ static Tf_ClassWithVarArgInitRefPtr _MakeClassWithVarArgInit(bool allowExtraArgs
 static object _ConvertByteListToByteArray(const list &byteList)
 {
   std::vector<char> inputList;
-  for (int i = 0; i < len(byteList); ++i) {
+  for (int i = 0; i < len(byteList); ++i)
+  {
     inputList.push_back(extract<char>(byteList[i]));
   }
 

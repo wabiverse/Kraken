@@ -60,7 +60,8 @@ WABI_NAMESPACE_BEGIN
 //
 // Ideally this would be self-contained, but the parser currently accesses lots
 // of public member variables.
-class Sdf_ParserValueContext {
+class Sdf_ParserValueContext
+{
  public:
   typedef Sdf_ParserHelpers::Value Value;
   typedef std::function<void(const std::string &)> ErrorReporter;

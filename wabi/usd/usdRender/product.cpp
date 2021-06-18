@@ -57,7 +57,8 @@ UsdRenderProduct::~UsdRenderProduct()
 /* static */
 UsdRenderProduct UsdRenderProduct::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderProduct();
   }
@@ -68,7 +69,8 @@ UsdRenderProduct UsdRenderProduct::Get(const UsdStagePtr &stage, const SdfPath &
 UsdRenderProduct UsdRenderProduct::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RenderProduct");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderProduct();
   }
@@ -148,7 +150,8 @@ UsdRelationship UsdRenderProduct::CreateOrderedVarsRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

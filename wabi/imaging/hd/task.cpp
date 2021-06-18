@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 // HdTask Definitions
 // -------------------------------------------------------------------------- //
 
-HdTask::HdTask(SdfPath const &id) : _id(id)
+HdTask::HdTask(SdfPath const &id)
+  : _id(id)
 {}
 
 HdTask::~HdTask()

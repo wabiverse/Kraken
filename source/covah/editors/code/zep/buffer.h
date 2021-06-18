@@ -14,17 +14,24 @@
 #include "zep/line_widgets.h"
 #include "zep/range_markers.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepSyntax;
 class ZepTheme;
 class ZepMode;
 enum class ThemeColor;
 
-enum class Direction { Forward, Backward };
+enum class Direction
+{
+  Forward,
+  Backward
+};
 
-namespace SearchType {
-enum : uint32_t {
+namespace SearchType
+{
+enum : uint32_t
+{
   WORD = (1 << 0),
   Begin = (1 << 1),
   End = (1 << 2),
@@ -33,8 +40,10 @@ enum : uint32_t {
 };
 };
 
-namespace FileFlags {
-enum : uint32_t {
+namespace FileFlags
+{
+enum : uint32_t
+{
   StrippedCR = (1 << 0),
   TerminatedWithZero = (1 << 1),
   ReadOnly = (1 << 2),
@@ -58,21 +67,34 @@ inline int ToASCII(const char ch)
   return ret;
 }
 
-enum class BufferType { Normal, Search, Repl, DataGrid, Tree };
+enum class BufferType
+{
+  Normal,
+  Search,
+  Repl,
+  DataGrid,
+  Tree
+};
 
 // A really big cursor move; which will likely clamp
 // static const iterator MaxCursorMove = iterator(0xFFFFFFF);
 // const long InvalidByteIndex = -1;
 
-enum class ExpressionType { Inner, Outer };
+enum class ExpressionType
+{
+  Inner,
+  Outer
+};
 
 // The type of replacement that happens in the buffer
-enum class ReplaceRangeMode {
+enum class ReplaceRangeMode
+{
   Fill,
   Replace,
 };
 
-struct ChangeRecord {
+struct ChangeRecord
+{
   std::string strDeleted;
   std::string strInserted;
   GlyphIterator itrStart;
@@ -87,7 +109,8 @@ struct ChangeRecord {
 };
 
 using fnKeyNotifier = std::function<bool(uint32_t key, uint32_t modifier)>;
-class ZepBuffer : public ZepComponent {
+class ZepBuffer : public ZepComponent
+{
  public:
   ZepBuffer(ZepEditor &editor, const std::string &strName);
   ZepBuffer(ZepEditor &editor, const ZepPath &path);
@@ -163,11 +186,14 @@ class ZepBuffer : public ZepComponent {
 
   void SetSyntaxProvider(SyntaxProvider provider)
   {
-    if (provider.syntaxID != m_syntaxProvider.syntaxID) {
-      if (provider.factory) {
+    if (provider.syntaxID != m_syntaxProvider.syntaxID)
+    {
+      if (provider.factory)
+      {
         m_spSyntax = provider.factory(this);
       }
-      else {
+      else
+      {
         m_spSyntax.reset();
       }
 
@@ -289,7 +315,8 @@ class ZepBuffer : public ZepComponent {
 };
 
 // Notification payload
-enum class BufferMessageType {
+enum class BufferMessageType
+{
   // Inform clients that we are about to mess with the buffer
   PreBufferChange = 0,
   TextChanged,
@@ -299,7 +326,8 @@ enum class BufferMessageType {
   MarkersChanged
 };
 
-struct BufferMessage : public ZepMessage {
+struct BufferMessage : public ZepMessage
+{
   BufferMessage(ZepBuffer *pBuff,
                 BufferMessageType messageType,
                 const GlyphIterator &startLoc,

@@ -19,9 +19,11 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-namespace rif {
+namespace rif
+{
 
-class Image : public Object {
+class Image : public Object
+{
  public:
   static rif_image_desc GetDesc(uint32_t width, uint32_t height, HdFormat format);
 

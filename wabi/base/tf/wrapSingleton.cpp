@@ -34,11 +34,13 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Need an empty class to serve as the singleton base class wrapped out to
 // python.
-struct Tf_PySingleton {
+struct Tf_PySingleton
+{
 };
 
 static object _GetSingletonInstance(object const &classObj)
@@ -47,7 +49,8 @@ static object _GetSingletonInstance(object const &classObj)
   // Try to get existing instance from this class.
   object instance = classObj.attr("__dict__").attr("get")("__instance");
 
-  if (TfPyIsNone(instance)) {
+  if (TfPyIsNone(instance))
+  {
     // Create instance.  Use our first base class in the method resolution
     // order (mro) to create it.
     instance = TfPyGetClassObject<Tf_PySingleton>().attr("__mro__")[1].attr("__new__")(classObj);

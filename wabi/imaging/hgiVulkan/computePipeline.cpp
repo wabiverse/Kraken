@@ -51,7 +51,8 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
 
   HgiShaderFunctionHandleVector const &sfv = desc.shaderProgram->GetShaderFunctions();
 
-  if (sfv.empty()) {
+  if (sfv.empty())
+  {
     TF_CODING_ERROR("Missing compute program");
     return;
   }
@@ -73,7 +74,8 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
   //
   bool usePushConstants = desc.shaderConstantsDesc.byteSize > 0;
   VkPushConstantRange pcRanges;
-  if (usePushConstants) {
+  if (usePushConstants)
+  {
     TF_VERIFY(desc.shaderConstantsDesc.byteSize % 4 == 0, "Push constants not multipes of 4");
     pcRanges.offset = 0;
     pcRanges.size = desc.shaderConstantsDesc.byteSize;
@@ -93,7 +95,8 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
             VK_SUCCESS);
 
   // Debug label
-  if (!desc.debugName.empty()) {
+  if (!desc.debugName.empty())
+  {
     std::string debugLabel = "PipelineLayout " + desc.debugName;
     HgiVulkanSetDebugName(
       device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
@@ -114,7 +117,8 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
                                      &_vkPipeline) == VK_SUCCESS);
 
   // Debug label
-  if (!desc.debugName.empty()) {
+  if (!desc.debugName.empty())
+  {
     std::string debugLabel = "Pipeline " + desc.debugName;
     HgiVulkanSetDebugName(device, (uint64_t)_vkPipeline, VK_OBJECT_TYPE_PIPELINE, debugLabel.c_str());
   }
@@ -126,7 +130,8 @@ HgiVulkanComputePipeline::~HgiVulkanComputePipeline()
 
   vkDestroyPipeline(_device->GetVulkanDevice(), _vkPipeline, HgiVulkanAllocator());
 
-  for (VkDescriptorSetLayout layout : _vkDescriptorSetLayouts) {
+  for (VkDescriptorSetLayout layout : _vkDescriptorSetLayouts)
+  {
     vkDestroyDescriptorSetLayout(_device->GetVulkanDevice(), layout, HgiVulkanAllocator());
   }
 }

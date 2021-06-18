@@ -77,26 +77,32 @@ MINLINE float pow7f(float x)
 
 MINLINE float sqrt3f(float f)
 {
-  if (UNLIKELY(f == 0.0f)) {
+  if (UNLIKELY(f == 0.0f))
+  {
     return 0.0f;
   }
-  else if (UNLIKELY(f < 0.0f)) {
+  else if (UNLIKELY(f < 0.0f))
+  {
     return -(float)(exp(log(-f) / 3.0));
   }
-  else {
+  else
+  {
     return (float)(exp(log(f) / 3.0));
   }
 }
 
 MINLINE double sqrt3d(double d)
 {
-  if (UNLIKELY(d == 0.0)) {
+  if (UNLIKELY(d == 0.0))
+  {
     return 0.0;
   }
-  else if (UNLIKELY(d < 0.0)) {
+  else if (UNLIKELY(d < 0.0))
+  {
     return -exp(log(-d) / 3.0);
   }
-  else {
+  else
+  {
     return exp(log(d) / 3.0);
   }
 }
@@ -108,72 +114,88 @@ MINLINE float sqrtf_signed(float f)
 
 MINLINE float saacos(float fac)
 {
-  if (UNLIKELY(fac <= -1.0f)) {
+  if (UNLIKELY(fac <= -1.0f))
+  {
     return (float)M_PI;
   }
-  else if (UNLIKELY(fac >= 1.0f)) {
+  else if (UNLIKELY(fac >= 1.0f))
+  {
     return 0.0f;
   }
-  else {
+  else
+  {
     return acosf(fac);
   }
 }
 
 MINLINE float saasin(float fac)
 {
-  if (UNLIKELY(fac <= -1.0f)) {
+  if (UNLIKELY(fac <= -1.0f))
+  {
     return (float)-M_PI / 2.0f;
   }
-  else if (UNLIKELY(fac >= 1.0f)) {
+  else if (UNLIKELY(fac >= 1.0f))
+  {
     return (float)M_PI / 2.0f;
   }
-  else {
+  else
+  {
     return asinf(fac);
   }
 }
 
 MINLINE float sasqrt(float fac)
 {
-  if (UNLIKELY(fac <= 0.0f)) {
+  if (UNLIKELY(fac <= 0.0f))
+  {
     return 0.0f;
   }
-  else {
+  else
+  {
     return sqrtf(fac);
   }
 }
 
 MINLINE float saacosf(float fac)
 {
-  if (UNLIKELY(fac <= -1.0f)) {
+  if (UNLIKELY(fac <= -1.0f))
+  {
     return (float)M_PI;
   }
-  else if (UNLIKELY(fac >= 1.0f)) {
+  else if (UNLIKELY(fac >= 1.0f))
+  {
     return 0.0f;
   }
-  else {
+  else
+  {
     return acosf(fac);
   }
 }
 
 MINLINE float saasinf(float fac)
 {
-  if (UNLIKELY(fac <= -1.0f)) {
+  if (UNLIKELY(fac <= -1.0f))
+  {
     return (float)-M_PI / 2.0f;
   }
-  else if (UNLIKELY(fac >= 1.0f)) {
+  else if (UNLIKELY(fac >= 1.0f))
+  {
     return (float)M_PI / 2.0f;
   }
-  else {
+  else
+  {
     return asinf(fac);
   }
 }
 
 MINLINE float sasqrtf(float fac)
 {
-  if (UNLIKELY(fac <= 0.0f)) {
+  if (UNLIKELY(fac <= 0.0f))
+  {
     return 0.0f;
   }
-  else {
+  else
+  {
     return sqrtf(fac);
   }
 }
@@ -218,11 +240,13 @@ MINLINE int is_power_of_2_i(int n)
 
 MINLINE int power_of_2_max_i(int n)
 {
-  if (is_power_of_2_i(n)) {
+  if (is_power_of_2_i(n))
+  {
     return n;
   }
 
-  do {
+  do
+  {
     n = n & (n - 1);
   } while (!is_power_of_2_i(n));
 
@@ -231,7 +255,8 @@ MINLINE int power_of_2_max_i(int n)
 
 MINLINE int power_of_2_min_i(int n)
 {
-  while (!is_power_of_2_i(n)) {
+  while (!is_power_of_2_i(n))
+  {
     n = n & (n - 1);
   }
 
@@ -266,10 +291,12 @@ MINLINE unsigned int log2_floor_u(unsigned int x)
 
 MINLINE unsigned int log2_ceil_u(unsigned int x)
 {
-  if (is_power_of_2_i((int)x)) {
+  if (is_power_of_2_i((int)x))
+  {
     return log2_floor_u(x);
   }
-  else {
+  else
+  {
     return log2_floor_u(x) + 1;
   }
 }
@@ -277,13 +304,16 @@ MINLINE unsigned int log2_ceil_u(unsigned int x)
 #define _round_clamp_fl_impl(arg, ty, min, max) \
   { \
     float r = floorf(arg + 0.5f); \
-    if (UNLIKELY(r <= (float)min)) { \
+    if (UNLIKELY(r <= (float)min)) \
+    { \
       return (ty)min; \
     } \
-    else if (UNLIKELY(r >= (float)max)) { \
+    else if (UNLIKELY(r >= (float)max)) \
+    { \
       return (ty)max; \
     } \
-    else { \
+    else \
+    { \
       return (ty)r; \
     } \
   }
@@ -291,13 +321,16 @@ MINLINE unsigned int log2_ceil_u(unsigned int x)
 #define _round_clamp_db_impl(arg, ty, min, max) \
   { \
     double r = floor(arg + 0.5); \
-    if (UNLIKELY(r <= (double)min)) { \
+    if (UNLIKELY(r <= (double)min)) \
+    { \
       return (ty)min; \
     } \
-    else if (UNLIKELY(r >= (double)max)) { \
+    else if (UNLIKELY(r >= (double)max)) \
+    { \
       return (ty)max; \
     } \
-    else { \
+    else \
+    { \
       return (ty)r; \
     } \
   }
@@ -391,7 +424,8 @@ MINLINE float wrapf(float value, float max, float min)
 
 MINLINE float pingpongf(float value, float scale)
 {
-  if (scale == 0.0f) {
+  if (scale == 0.0f)
+  {
     return 0.0f;
   }
   return fabsf(fractf((value - scale) / (scale * 2.0f)) * scale * 2.0f - scale);
@@ -468,11 +502,13 @@ MINLINE float max_ff(float a, float b)
 
 MINLINE float smoothminf(float a, float b, float c)
 {
-  if (c != 0.0f) {
+  if (c != 0.0f)
+  {
     float h = max_ff(c - fabsf(a - b), 0.0f) / c;
     return min_ff(a, b) - h * h * h * c * (1.0f / 6.0f);
   }
-  else {
+  else
+  {
     return min_ff(a, b);
   }
 }
@@ -565,10 +601,12 @@ MINLINE int clamp_i(int value, int min, int max)
 
 MINLINE float clamp_f(float value, float min, float max)
 {
-  if (value > max) {
+  if (value > max)
+  {
     return max;
   }
-  else if (value < min) {
+  else if (value < min)
+  {
     return min;
   }
   return value;
@@ -586,7 +624,8 @@ MINLINE int compare_ff(float a, float b, const float max_diff)
 
 MINLINE int compare_ff_relative(float a, float b, const float max_diff, const int max_ulps)
 {
-  union {
+  union
+  {
     float f;
     int i;
   } ua, ub;
@@ -594,14 +633,16 @@ MINLINE int compare_ff_relative(float a, float b, const float max_diff, const in
   CLI_assert(sizeof(float) == sizeof(int));
   CLI_assert(max_ulps < (1 << 22));
 
-  if (fabsf(a - b) <= max_diff) {
+  if (fabsf(a - b) <= max_diff)
+  {
     return 1;
   }
 
   ua.f = a;
   ub.f = b;
 
-  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 : 0;
+  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 :
+                                                                           0;
 }
 
 MINLINE float signf(float f)
@@ -611,39 +652,48 @@ MINLINE float signf(float f)
 
 MINLINE float compatible_signf(float f)
 {
-  if (f > 0.0f) {
+  if (f > 0.0f)
+  {
     return 1.0f;
   }
-  if (f < 0.0f) {
+  if (f < 0.0f)
+  {
     return -1.0f;
   }
-  else {
+  else
+  {
     return 0.0f;
   }
 }
 
 MINLINE int signum_i_ex(float a, float eps)
 {
-  if (a > eps) {
+  if (a > eps)
+  {
     return 1;
   }
-  if (a < -eps) {
+  if (a < -eps)
+  {
     return -1;
   }
-  else {
+  else
+  {
     return 0;
   }
 }
 
 MINLINE int signum_i(float a)
 {
-  if (a > 0.0f) {
+  if (a > 0.0f)
+  {
     return 1;
   }
-  if (a < 0.0f) {
+  if (a < 0.0f)
+  {
     return -1;
   }
-  else {
+  else
+  {
     return 0;
   }
 }

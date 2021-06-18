@@ -71,7 +71,8 @@ WABI_NAMESPACE_BEGIN
 /// \li Insert doc about references and inherits here.
 /// \li Should have validate... methods for name, children, properties
 ///
-class SdfPrimSpec : public SdfSpec {
+class SdfPrimSpec : public SdfSpec
+{
   SDF_DECLARE_SPEC(SdfPrimSpec, SdfSpec);
 
  public:

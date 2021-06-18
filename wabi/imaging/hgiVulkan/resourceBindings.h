@@ -46,7 +46,8 @@ class HgiVulkanDevice;
 /// Vulkan implementation of HgiResourceBindings.
 ///
 ///
-class HgiVulkanResourceBindings final : public HgiResourceBindings {
+class HgiVulkanResourceBindings final : public HgiResourceBindings
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanResourceBindings() override;

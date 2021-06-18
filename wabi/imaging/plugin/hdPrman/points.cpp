@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Points::HdPrman_Points(SdfPath const &id) : BASE(id)
+HdPrman_Points::HdPrman_Points(SdfPath const &id)
+  : BASE(id)
 {}
 
 HdDirtyBits HdPrman_Points::GetInitialDirtyBitsMask() const

@@ -53,7 +53,9 @@ WABI_NAMESPACE_BEGIN
 ///
 /// The type policy defines the value type that a particular proxy can operate
 /// on.
-template<class _TypePolicy> class SdfListEditorProxy {
+template<class _TypePolicy>
+class SdfListEditorProxy
+{
  public:
   typedef _TypePolicy TypePolicy;
   typedef SdfListEditorProxy<TypePolicy> This;
@@ -80,7 +82,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// Returns true if the list editor is expired.
   bool IsExpired() const
   {
-    if (!_listEditor) {
+    if (!_listEditor)
+    {
       return false;
     }
 
@@ -112,7 +115,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// Apply the edits to \p vec.
   void ApplyEditsToList(value_vector_type *vec) const
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       _listEditor->ApplyEditsToList(vec, ApplyCallback());
     }
   }
@@ -122,9 +126,11 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// returned key is invalid then the key will not be applied.  Otherwise
   /// the returned key is applied, allowing callbacks to perform key
   /// translation.
-  template<class CB> void ApplyEditsToList(value_vector_type *vec, CB callback) const
+  template<class CB>
+  void ApplyEditsToList(value_vector_type *vec, CB callback) const
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       _listEditor->ApplyEditsToList(vec, ApplyCallback(callback));
     }
   }
@@ -164,9 +170,11 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// \p callback is called for every key.  If the returned key is
   /// invalid then the key is removed, otherwise it's replaced with the
   /// returned key.
-  template<class CB> void ModifyItemEdits(CB callback)
+  template<class CB>
+  void ModifyItemEdits(CB callback)
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       _listEditor->ModifyItemEdits(ModifyCallback(callback));
     }
   }
@@ -176,37 +184,45 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// \c true we only check the added or explicit items.
   bool ContainsItemEdit(const value_type &item, bool onlyAddOrExplicit = false) const
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       size_t i;
 
       i = GetExplicitItems().Find(item);
-      if (i != size_t(-1)) {
+      if (i != size_t(-1))
+      {
         return true;
       }
 
       i = GetAddedItems().Find(item);
-      if (i != size_t(-1)) {
+      if (i != size_t(-1))
+      {
         return true;
       }
 
       i = GetPrependedItems().Find(item);
-      if (i != size_t(-1)) {
+      if (i != size_t(-1))
+      {
         return true;
       }
 
       i = GetAppendedItems().Find(item);
-      if (i != size_t(-1)) {
+      if (i != size_t(-1))
+      {
         return true;
       }
 
-      if (!onlyAddOrExplicit) {
+      if (!onlyAddOrExplicit)
+      {
         i = GetDeletedItems().Find(item);
-        if (i != size_t(-1)) {
+        if (i != size_t(-1))
+        {
           return true;
         }
 
         i = GetOrderedItems().Find(item);
-        if (i != size_t(-1)) {
+        if (i != size_t(-1))
+        {
           return true;
         }
       }
@@ -219,7 +235,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// the item is explicit, added, prepended, appended, deleted, or ordered.
   void RemoveItemEdits(const value_type &item)
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       SdfChangeBlock block;
 
       GetExplicitItems().Remove(item);
@@ -236,7 +253,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   /// deleted or ordered.
   void ReplaceItemEdits(const value_type &oldItem, const value_type &newItem)
   {
-    if (_Validate()) {
+    if (_Validate())
+    {
       SdfChangeBlock block;
 
       GetExplicitItems().Replace(oldItem, newItem);
@@ -288,7 +306,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   value_vector_type GetAddedOrExplicitItems() const
   {
     value_vector_type result;
-    if (_Validate()) {
+    if (_Validate())
+    {
       _listEditor->ApplyEditsToList(&result);
     }
     return result;
@@ -296,12 +315,16 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   void Add(const value_type &value)
   {
-    if (_Validate()) {
-      if (!_listEditor->IsOrderedOnly()) {
-        if (_listEditor->IsExplicit()) {
+    if (_Validate())
+    {
+      if (!_listEditor->IsOrderedOnly())
+      {
+        if (_listEditor->IsExplicit())
+        {
           _AddOrReplace(SdfListOpTypeExplicit, value);
         }
-        else {
+        else
+        {
           GetDeletedItems().Remove(value);
           _AddOrReplace(SdfListOpTypeAdded, value);
         }
@@ -311,12 +334,16 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   void Prepend(const value_type &value)
   {
-    if (_Validate()) {
-      if (!_listEditor->IsOrderedOnly()) {
-        if (_listEditor->IsExplicit()) {
+    if (_Validate())
+    {
+      if (!_listEditor->IsOrderedOnly())
+      {
+        if (_listEditor->IsExplicit())
+        {
           _Prepend(SdfListOpTypeExplicit, value);
         }
-        else {
+        else
+        {
           GetDeletedItems().Remove(value);
           _Prepend(SdfListOpTypePrepended, value);
         }
@@ -326,12 +353,16 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   void Append(const value_type &value)
   {
-    if (_Validate()) {
-      if (!_listEditor->IsOrderedOnly()) {
-        if (_listEditor->IsExplicit()) {
+    if (_Validate())
+    {
+      if (!_listEditor->IsOrderedOnly())
+      {
+        if (_listEditor->IsExplicit())
+        {
           _Append(SdfListOpTypeExplicit, value);
         }
-        else {
+        else
+        {
           GetDeletedItems().Remove(value);
           _Append(SdfListOpTypeAppended, value);
         }
@@ -341,11 +372,14 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   void Remove(const value_type &value)
   {
-    if (_Validate()) {
-      if (_listEditor->IsExplicit()) {
+    if (_Validate())
+    {
+      if (_listEditor->IsExplicit())
+      {
         GetExplicitItems().Remove(value);
       }
-      else if (!_listEditor->IsOrderedOnly()) {
+      else if (!_listEditor->IsOrderedOnly())
+      {
         GetAddedItems().Remove(value);
         GetPrependedItems().Remove(value);
         GetAppendedItems().Remove(value);
@@ -356,12 +390,16 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   void Erase(const value_type &value)
   {
-    if (_Validate()) {
-      if (!_listEditor->IsOrderedOnly()) {
-        if (_listEditor->IsExplicit()) {
+    if (_Validate())
+    {
+      if (!_listEditor->IsOrderedOnly())
+      {
+        if (_listEditor->IsExplicit())
+        {
           GetExplicitItems().Remove(value);
         }
-        else {
+        else
+        {
           GetAddedItems().Remove(value);
           GetPrependedItems().Remove(value);
           GetAppendedItems().Remove(value);
@@ -381,11 +419,13 @@ template<class _TypePolicy> class SdfListEditorProxy {
  private:
   bool _Validate()
   {
-    if (!_listEditor) {
+    if (!_listEditor)
+    {
       return false;
     }
 
-    if (IsExpired()) {
+    if (IsExpired())
+    {
       TF_CODING_ERROR("Accessing expired list editor");
       return false;
     }
@@ -394,11 +434,13 @@ template<class _TypePolicy> class SdfListEditorProxy {
 
   bool _Validate() const
   {
-    if (!_listEditor) {
+    if (!_listEditor)
+    {
       return false;
     }
 
-    if (IsExpired()) {
+    if (IsExpired())
+    {
       TF_CODING_ERROR("Accessing expired list editor");
       return false;
     }
@@ -409,7 +451,8 @@ template<class _TypePolicy> class SdfListEditorProxy {
   {
     ListProxy proxy(_listEditor, op);
     size_t index = proxy.Find(value);
-    if (index == size_t(-1)) {
+    if (index == size_t(-1))
+    {
       proxy.push_back(value);
     }
   }
@@ -418,10 +461,12 @@ template<class _TypePolicy> class SdfListEditorProxy {
   {
     ListProxy proxy(_listEditor, op);
     size_t index = proxy.Find(value);
-    if (index == size_t(-1)) {
+    if (index == size_t(-1))
+    {
       proxy.push_back(value);
     }
-    else if (value != static_cast<value_type>(proxy[index])) {
+    else if (value != static_cast<value_type>(proxy[index]))
+    {
       proxy[index] = value;
     }
   }
@@ -430,8 +475,10 @@ template<class _TypePolicy> class SdfListEditorProxy {
   {
     ListProxy proxy(_listEditor, op);
     size_t index = proxy.Find(value);
-    if (index != 0) {
-      if (index != size_t(-1)) {
+    if (index != 0)
+    {
+      if (index != size_t(-1))
+      {
         proxy.Erase(index);
       }
       proxy.insert(proxy.begin(), value);
@@ -442,8 +489,10 @@ template<class _TypePolicy> class SdfListEditorProxy {
   {
     ListProxy proxy(_listEditor, op);
     size_t index = proxy.Find(value);
-    if (proxy.empty() || (index != proxy.size() - 1)) {
-      if (index != size_t(-1)) {
+    if (proxy.empty() || (index != proxy.size() - 1))
+    {
+      if (index != size_t(-1))
+      {
         proxy.Erase(index);
       }
       proxy.push_back(value);
@@ -454,11 +503,14 @@ template<class _TypePolicy> class SdfListEditorProxy {
   boost::shared_ptr<Sdf_ListEditor<TypePolicy>> _listEditor;
 
   friend class Sdf_ListEditorProxyAccess;
-  template<class T> friend class SdfPyWrapListEditorProxy;
+  template<class T>
+  friend class SdfPyWrapListEditorProxy;
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<class TP> struct Vt_DefaultValueFactory<SdfListEditorProxy<TP>> {
+template<class TP>
+struct Vt_DefaultValueFactory<SdfListEditorProxy<TP>>
+{
   static Vt_DefaultValueHolder Invoke() = delete;
 };
 

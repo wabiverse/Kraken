@@ -46,7 +46,8 @@ bool HdxPresentTask::IsFormatSupported(HgiFormat aovFormat)
   return !_IsIntegerFormat(aovFormat) && !HgiIsCompressed(aovFormat);
 }
 
-HdxPresentTask::HdxPresentTask(HdSceneDelegate *delegate, SdfPath const &id) : HdxTask(id)
+HdxPresentTask::HdxPresentTask(HdSceneDelegate *delegate, SdfPath const &id)
+  : HdxTask(id)
 {}
 
 HdxPresentTask::~HdxPresentTask() = default;
@@ -56,10 +57,12 @@ void HdxPresentTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirt
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
+  {
     HdxPresentTaskParams params;
 
-    if (_GetTaskParams(delegate, &params)) {
+    if (_GetTaskParams(delegate, &params))
+    {
       _params = params;
     }
   }
@@ -78,16 +81,19 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
   // rendering or doesn't use Hgi interop (e.g. directly access AOV results).
   // But we still need to call Hgi::EndFrame.
 
-  if (_params.enabled && _HasTaskContextData(ctx, HdAovTokens->color)) {
+  if (_params.enabled && _HasTaskContextData(ctx, HdAovTokens->color))
+  {
     // The color and depth aovs have the results we want to blit to the
     // application. Depth is optional. When we are previewing a custom aov
     // we may not have a depth buffer.
 
     HgiTextureHandle aovTexture;
     _GetTaskContextData(ctx, HdAovTokens->color, &aovTexture);
-    if (aovTexture) {
+    if (aovTexture)
+    {
       HgiTextureDesc texDesc = aovTexture->GetDescriptor();
-      if (!IsFormatSupported(texDesc.format)) {
+      if (!IsFormatSupported(texDesc.format))
+      {
         // Warn, but don't bail.
         TF_WARN(
           "Aov texture format %d may not be correctly supported "
@@ -97,7 +103,8 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
     }
 
     HgiTextureHandle depthTexture;
-    if (_HasTaskContextData(ctx, HdAovTokens->depth)) {
+    if (_HasTaskContextData(ctx, HdAovTokens->depth))
+    {
       _GetTaskContextData(ctx, HdAovTokens->depth, &depthTexture);
     }
 

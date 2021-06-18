@@ -27,7 +27,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 template<typename T>
 void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t const *src)
 {
@@ -36,42 +37,54 @@ void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t
   size_t srcComponentCount = HdGetComponentCount(srcFormat);
   size_t dstComponentCount = HdGetComponentCount(dstFormat);
 
-  for (size_t c = 0; c < dstComponentCount; ++c) {
+  for (size_t c = 0; c < dstComponentCount; ++c)
+  {
     T readValue = 0;
-    if (c < srcComponentCount) {
-      if (srcComponentFormat == HdFormatInt32) {
+    if (c < srcComponentCount)
+    {
+      if (srcComponentFormat == HdFormatInt32)
+      {
         readValue = static_cast<T>(reinterpret_cast<const int32_t *>(src)[c]);
       }
-      else if (srcComponentFormat == HdFormatFloat16) {
+      else if (srcComponentFormat == HdFormatFloat16)
+      {
         GfHalf half;
         half.setBits(reinterpret_cast<const uint16_t *>(src)[c]);
         readValue = static_cast<T>(half);
       }
-      else if (srcComponentFormat == HdFormatFloat32) {
+      else if (srcComponentFormat == HdFormatFloat32)
+      {
         // We need to subtract one from here due to cycles prim defaulting to 0 but hydra to -1
         readValue = static_cast<T>(reinterpret_cast<const float *>(src)[c]);
       }
-      else if (srcComponentFormat == HdFormatUNorm8) {
+      else if (srcComponentFormat == HdFormatUNorm8)
+      {
         readValue = static_cast<T>(reinterpret_cast<const uint8_t *>(src)[c] / 255.0f);
       }
-      else if (srcComponentFormat == HdFormatSNorm8) {
+      else if (srcComponentFormat == HdFormatSNorm8)
+      {
         readValue = static_cast<T>(reinterpret_cast<const int8_t *>(src)[c] / 127.0f);
       }
     }
 
-    if (dstComponentFormat == HdFormatInt32) {
+    if (dstComponentFormat == HdFormatInt32)
+    {
       reinterpret_cast<int32_t *>(dst)[c] = static_cast<int32_t>(readValue);
     }
-    else if (dstComponentFormat == HdFormatFloat16) {
+    else if (dstComponentFormat == HdFormatFloat16)
+    {
       reinterpret_cast<uint16_t *>(dst)[c] = GfHalf(float(readValue)).bits();
     }
-    else if (dstComponentFormat == HdFormatFloat32) {
+    else if (dstComponentFormat == HdFormatFloat32)
+    {
       reinterpret_cast<float *>(dst)[c] = static_cast<float>(readValue);
     }
-    else if (dstComponentFormat == HdFormatUNorm8) {
+    else if (dstComponentFormat == HdFormatUNorm8)
+    {
       reinterpret_cast<uint8_t *>(dst)[c] = static_cast<uint8_t>(static_cast<float>(readValue) * 255.0f);
     }
-    else if (dstComponentFormat == HdFormatSNorm8) {
+    else if (dstComponentFormat == HdFormatSNorm8)
+    {
       reinterpret_cast<int8_t *>(dst)[c] = static_cast<int8_t>(static_cast<float>(readValue) * 127.0f);
     }
   }
@@ -103,7 +116,8 @@ bool HdCyclesRenderBuffer::Allocate(const GfVec3i &dimensions, HdFormat format, 
 {
   TF_UNUSED(multiSampled);
 
-  if (dimensions[2] != 1) {
+  if (dimensions[2] != 1)
+  {
     TF_WARN("Render buffer allocated with dims <%d, %d, %d> and format %s; depth must be 1!",
             dimensions[0],
             dimensions[1],
@@ -155,7 +169,8 @@ bool HdCyclesRenderBuffer::IsMultiSampled() const
 void *HdCyclesRenderBuffer::Map()
 {
   m_mutex.lock();
-  if (m_buffer.empty()) {
+  if (m_buffer.empty())
+  {
     m_mutex.unlock();
     return nullptr;
   }
@@ -166,7 +181,8 @@ void *HdCyclesRenderBuffer::Map()
 
 void HdCyclesRenderBuffer::Unmap()
 {
-  if (!m_buffer.empty()) {
+  if (!m_buffer.empty())
+  {
     m_mappers--;
     m_mutex.unlock();
   }
@@ -217,22 +233,29 @@ void HdCyclesRenderBuffer::BlitTile(HdFormat format,
                                     uint8_t const *data)
 {
   // TODO: BlitTile shouldnt be called but it is...
-  if (m_width <= 0) {
+  if (m_width <= 0)
+  {
     return;
   }
-  if (m_height <= 0) {
+  if (m_height <= 0)
+  {
     return;
   }
-  if (m_buffer.size() <= 0) {
+  if (m_buffer.size() <= 0)
+  {
     return;
   }
 
   size_t pixelSize = HdDataSizeOfFormat(format);
 
-  if (m_format == format) {
-    for (unsigned int j = 0; j < height; ++j) {
-      if ((x + width) <= m_width) {
-        if ((y + height) <= m_height) {
+  if (m_format == format)
+  {
+    for (unsigned int j = 0; j < height; ++j)
+    {
+      if ((x + width) <= m_width)
+      {
+        if ((y + height) <= m_height)
+        {
           int mem_start = static_cast<int>((((y + j) * m_width) * pixelSize) + (x * pixelSize));
 
           unsigned int tile_mem_start = (j * width) * static_cast<unsigned int>(pixelSize);
@@ -242,26 +265,33 @@ void HdCyclesRenderBuffer::BlitTile(HdFormat format,
       }
     }
   }
-  else {
+  else
+  {
     // Convert pixel by pixel, with nearest point sampling.
     // If src and dst are both int-based, don't round trip to float.
     bool convertAsInt = (HdGetComponentFormat(format) == HdFormatInt32) &&
                         (HdGetComponentFormat(m_format) == HdFormatInt32);
 
-    for (unsigned int j = 0; j < height; ++j) {
-      for (unsigned int i = 0; i < width; ++i) {
+    for (unsigned int j = 0; j < height; ++j)
+    {
+      for (unsigned int i = 0; i < width; ++i)
+      {
         size_t mem_start = (((y + j) * m_width) * m_pixelSize) + ((x + i) * m_pixelSize);
 
         int tile_mem_start = static_cast<int>(((j * width) * pixelSize) + (i * pixelSize));
 
-        if (convertAsInt) {
+        if (convertAsInt)
+        {
           _ConvertPixel<int32_t>(m_format, &m_buffer[mem_start], format, &data[tile_mem_start]);
         }
-        else {
-          if (mem_start >= m_buffer.size()) {
+        else
+        {
+          if (mem_start >= m_buffer.size())
+          {
             // TODO: This is triggered more times than it should be
           }
-          else {
+          else
+          {
             _ConvertPixel<float>(m_format, &m_buffer[mem_start], format, &data[tile_mem_start]);
           }
         }

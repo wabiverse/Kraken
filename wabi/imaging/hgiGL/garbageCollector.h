@@ -49,7 +49,8 @@ class HgiGL;
 /// Handles garbage collection of opengl objects by delaying their destruction
 /// until those objects are no longer used.
 ///
-class HgiGLGarbageCollector final {
+class HgiGLGarbageCollector final
+{
  public:
   HGIGL_API
   HgiGLGarbageCollector(HgiGL *hgi);
@@ -83,7 +84,8 @@ class HgiGLGarbageCollector final {
   /// Returns a thread_local vector in which to store a object handle.
   /// Thread safety: The returned vector is a thread_local vector so this call
   /// is thread safe as long as the vector is only used by the calling thread.
-  template<class T> T *_GetThreadLocalStorageList(std::vector<T *> *collector);
+  template<class T>
+  T *_GetThreadLocalStorageList(std::vector<T *> *collector);
 
   HgiGL *_hgi;
 

@@ -63,7 +63,8 @@ WABI_NAMESPACE_BEGIN
 /// \note
 /// Rendering backends may choose to specialize this class.
 ///
-class HdDrawItem {
+class HdDrawItem
+{
  public:
   HF_MALLOC_TAG_NEW("new HdDrawItem");
 
@@ -235,7 +236,8 @@ class HdDrawItem {
 
  protected:
   // TfHash support.
-  template<class HashState> friend void TfHashAppend(HashState &h, HdDrawItem const &di);
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, HdDrawItem const &di);
 
   /// Returns the shared data
   HD_API

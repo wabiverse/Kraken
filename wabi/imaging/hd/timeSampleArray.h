@@ -37,7 +37,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Resample two neighboring samples.
-template<typename T> inline T HdResampleNeighbors(float alpha, const T &v0, const T &v1)
+template<typename T>
+inline T HdResampleNeighbors(float alpha, const T &v0, const T &v1)
 {
   return GfLerp(alpha, v0, v1);
 }
@@ -54,7 +55,8 @@ template<typename T>
 inline VtArray<T> HdResampleNeighbors(float alpha, const VtArray<T> &v0, const VtArray<T> &v1)
 {
   VtArray<T> r(v0.size());
-  for (size_t i = 0; i < r.size(); ++i) {
+  for (size_t i = 0; i < r.size(); ++i)
+  {
     r[i] = HdResampleNeighbors(alpha, v0[i], v1[i]);
   }
   return r;
@@ -68,32 +70,40 @@ VtValue HdResampleNeighbors(float alpha, const VtValue &v0, const VtValue &v1);
 /// using a linear reconstruction filter evaluated at the given
 /// parametric position u.  The function is considered constant
 /// outside the supplied sample range.
-template<typename T> T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T *vs)
+template<typename T>
+T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T *vs)
 {
-  if (numSamples == 0) {
+  if (numSamples == 0)
+  {
     TF_CODING_ERROR("HdResampleRawTimeSamples: Zero samples provided");
     return T();
   }
 
   size_t i = 0;
-  for (; i < numSamples; ++i) {
-    if (us[i] == u) {
+  for (; i < numSamples; ++i)
+  {
+    if (us[i] == u)
+    {
       // Fast path for exact parameter match.
       return vs[i];
     }
-    if (us[i] > u) {
+    if (us[i] > u)
+    {
       break;
     }
   }
-  if (i == 0) {
+  if (i == 0)
+  {
     // u is before the first sample.
     return vs[0];
   }
-  else if (i == numSamples) {
+  else if (i == numSamples)
+  {
     // u is after the last sample.
     return vs[numSamples - 1];
   }
-  else if (us[i] == us[i - 1]) {
+  else if (us[i] == us[i - 1])
+  {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
@@ -102,7 +112,8 @@ template<typename T> T HdResampleRawTimeSamples(float u, size_t numSamples, cons
       us[i]);
     return vs[i - 1];
   }
-  else {
+  else
+  {
     // Linear blend of neighboring samples.
     float alpha = (us[i] - u) / (us[i] - us[i - 1]);
     return HdResampleNeighbors(alpha, vs[i - 1], vs[i]);
@@ -120,30 +131,37 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
                                                   const T *vs,
                                                   const VtIntArray *is)
 {
-  if (numSamples == 0) {
+  if (numSamples == 0)
+  {
     TF_CODING_ERROR("HdResampleRawTimeSamples: Zero samples provided");
     return std::pair<T, VtIntArray>(T(), VtIntArray(0));
   }
 
   size_t i = 0;
-  for (; i < numSamples; ++i) {
-    if (us[i] == u) {
+  for (; i < numSamples; ++i)
+  {
+    if (us[i] == u)
+    {
       // Fast path for exact parameter match.
       return std::pair<T, VtIntArray>(vs[i], is[i]);
     }
-    if (us[i] > u) {
+    if (us[i] > u)
+    {
       break;
     }
   }
-  if (i == 0) {
+  if (i == 0)
+  {
     // u is before the first sample.
     return std::pair<T, VtIntArray>(vs[0], is[0]);
   }
-  else if (i == numSamples) {
+  else if (i == numSamples)
+  {
     // u is after the last sample.
     return std::pair<T, VtIntArray>(vs[numSamples - 1], is[numSamples - 1]);
   }
-  else if (us[i] == us[i - 1]) {
+  else if (us[i] == us[i - 1])
+  {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
@@ -152,7 +170,8 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
       us[i]);
     return std::pair<T, VtIntArray>(vs[i - 1], is[i - 1]);
   }
-  else {
+  else
+  {
     // Linear blend of neighboring samples for values
     // Hold earlier value for indices
     float alpha = (us[i] - u) / (us[i] - us[i - 1]);
@@ -165,7 +184,9 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
 /// This type has static capacity but dynamic size, providing
 /// a limited ability to handle variable sampling without requiring
 /// heap allocation.
-template<typename TYPE, unsigned int CAPACITY> struct HdTimeSampleArray {
+template<typename TYPE, unsigned int CAPACITY>
+struct HdTimeSampleArray
+{
   HdTimeSampleArray()
   {
     times.resize(CAPACITY);
@@ -214,11 +235,14 @@ template<typename TYPE, unsigned int CAPACITY> struct HdTimeSampleArray {
   {
     Resize(box.count);
     times = box.times;
-    for (size_t i = 0; i < box.count; ++i) {
-      if (box.values[i].GetArraySize() > 0) {
+    for (size_t i = 0; i < box.count; ++i)
+    {
+      if (box.values[i].GetArraySize() > 0)
+      {
         values[i] = box.values[i].template Get<TYPE>();
       }
-      else {
+      else
+      {
         values[i] = TYPE();
       }
     }
@@ -232,13 +256,16 @@ template<typename TYPE, unsigned int CAPACITY> struct HdTimeSampleArray {
 /// An array of a value and its indices sampled over time, in struct-of-arrays
 /// layout.
 template<typename TYPE, unsigned int CAPACITY>
-struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY> {
-  HdIndexedTimeSampleArray() : HdTimeSampleArray<TYPE, CAPACITY>()
+struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY>
+{
+  HdIndexedTimeSampleArray()
+    : HdTimeSampleArray<TYPE, CAPACITY>()
   {
     indices.resize(CAPACITY);
   }
 
-  HdIndexedTimeSampleArray(const HdIndexedTimeSampleArray &rhs) : HdTimeSampleArray<TYPE, CAPACITY>(rhs)
+  HdIndexedTimeSampleArray(const HdIndexedTimeSampleArray &rhs)
+    : HdTimeSampleArray<TYPE, CAPACITY>(rhs)
   {
     indices = rhs.indices;
   }
@@ -278,11 +305,14 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY> {
     Resize(box.count);
     this->times = box.times;
     indices = box.indices;
-    for (size_t i = 0; i < box.count; ++i) {
-      if (box.values[i].GetArraySize() > 0) {
+    for (size_t i = 0; i < box.count; ++i)
+    {
+      if (box.values[i].GetArraySize() > 0)
+      {
         this->values[i] = box.values[i].template Get<TYPE>();
       }
-      else {
+      else
+      {
         this->values[i] = TYPE();
       }
     }

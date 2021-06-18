@@ -139,6 +139,10 @@ void MainListener::ProcessMainNotice(const MainNotice &n)
 }
 
 
+/**
+ *  -----  MsgBus Initialization. ----- */
+
+
 void WM_msgbus_register(void)
 {
   MainListener *listener = new MainListener();
@@ -146,6 +150,10 @@ void WM_msgbus_register(void)
     MainNotice("Covah Notice.").Send();
   }
 }
+
+
+/**
+ *  -----  Registration with TfRegistry. ----- */
 
 
 TF_REGISTRY_FUNCTION(TfType)

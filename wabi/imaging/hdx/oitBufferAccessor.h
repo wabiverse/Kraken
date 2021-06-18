@@ -39,7 +39,8 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
 
 /// Class for OIT render tasks to access the OIT buffers.
-class HdxOitBufferAccessor {
+class HdxOitBufferAccessor
+{
  public:
   static bool IsOitEnabled();
 

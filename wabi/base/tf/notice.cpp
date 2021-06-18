@@ -107,7 +107,8 @@ size_t TfNotice::SendWithWeakBase(const TfWeakBase *senderWeakBase,
 
 bool TfNotice::Revoke(Key &key)
 {
-  if (!key) {
+  if (!key)
+  {
     return false;
   }
 
@@ -118,7 +119,7 @@ bool TfNotice::Revoke(Key &key)
 
 void TfNotice::Revoke(Keys *keys)
 {
-  TF_FOR_ALL(i, *keys)
+  TF_FOR_ALL (i, *keys)
   {
     Revoke(*i);
   }

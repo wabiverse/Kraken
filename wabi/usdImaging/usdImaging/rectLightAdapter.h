@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type RectLight
 ///
-class UsdImagingRectLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingRectLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingRectLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingRectLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

@@ -68,13 +68,16 @@ TF_DEFINE_PRIVATE_TOKENS(
  * Convert the Token to the MaterialX Node Type. */
 static TfToken _GetMxNodeType(TfToken const &hdNodeType)
 {
-  if (hdNodeType == _tokens->ND_standard_surface_surfaceshader) {
+  if (hdNodeType == _tokens->ND_standard_surface_surfaceshader)
+  {
     return _tokens->standard_surface;
   }
-  else if (hdNodeType == _tokens->ND_UsdPreviewSurface_surfaceshader) {
+  else if (hdNodeType == _tokens->ND_UsdPreviewSurface_surfaceshader)
+  {
     return _tokens->UsdPreviewSurface;
   }
-  else {
+  else
+  {
     TF_WARN("Unsupported Node Type '%s'", hdNodeType.GetText());
     return TfToken();
   }
@@ -107,7 +110,8 @@ static bool _FindConnectedNode(HdMaterialNetwork2 const &hdNetwork,
   /**
    * If this path is not in the network raise a warning. */
   auto hdNodeIt = hdNetwork.nodes.find(connectionPath);
-  if (hdNodeIt == hdNetwork.nodes.end()) {
+  if (hdNodeIt == hdNetwork.nodes.end())
+  {
     TF_WARN("Unknown material node '%s'", connectionPath.GetText());
     return false;
   }
@@ -129,7 +133,8 @@ static mx::NodePtr _AddNodeToNodeGraph(std::string const &mxNodeName,
 {
   /**
    * Add the node to the  mxNodeGraph if needed. */
-  if (addedNodeNames->find(mxNodeName) == addedNodeNames->end()) {
+  if (addedNodeNames->find(mxNodeName) == addedNodeNames->end())
+  {
     addedNodeNames->insert(mxNodeName);
     return mxNodeGraph->addNode(mxNodeCategory, mxNodeName, mxNodeType);
   }
@@ -143,37 +148,44 @@ static mx::NodePtr _AddNodeToNodeGraph(std::string const &mxNodeName,
 std::string HdMtlxConvertToString(VtValue const &hdParameterValue)
 {
   std::ostringstream valStream;
-  if (hdParameterValue.IsHolding<bool>()) {
+  if (hdParameterValue.IsHolding<bool>())
+  {
     return (hdParameterValue.UncheckedGet<bool>()) ? "false" : "true";
   }
-  else if (hdParameterValue.IsHolding<int>() || hdParameterValue.IsHolding<float>()) {
+  else if (hdParameterValue.IsHolding<int>() || hdParameterValue.IsHolding<float>())
+  {
     valStream << hdParameterValue;
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<GfVec2f>()) {
+  else if (hdParameterValue.IsHolding<GfVec2f>())
+  {
     const GfVec2f &value = hdParameterValue.UncheckedGet<GfVec2f>();
     valStream << value.data()[0] << ", " << value.data()[1];
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<GfVec3f>()) {
+  else if (hdParameterValue.IsHolding<GfVec3f>())
+  {
     const GfVec3f &value = hdParameterValue.UncheckedGet<GfVec3f>();
     valStream << value.data()[0] << ", " << value.data()[1] << ", " << value.data()[2];
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<GfVec4f>()) {
+  else if (hdParameterValue.IsHolding<GfVec4f>())
+  {
     const GfVec4f &value = hdParameterValue.UncheckedGet<GfVec4f>();
     valStream << value.data()[0] << ", " << value.data()[1] << ", " << value.data()[2] << ", "
               << value.data()[3];
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<GfMatrix3d>()) {
+  else if (hdParameterValue.IsHolding<GfMatrix3d>())
+  {
     const GfMatrix3d &value = hdParameterValue.UncheckedGet<GfMatrix3d>();
     valStream << value[0][0] << ", " << value[0][1] << ", " << value[0][2] << ",  " << value[1][0] << ", "
               << value[1][1] << ", " << value[1][2] << ",  " << value[2][0] << ", " << value[2][1] << ", "
               << value[2][2] << ",  ";
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<GfMatrix4d>()) {
+  else if (hdParameterValue.IsHolding<GfMatrix4d>())
+  {
     const GfMatrix4d &value = hdParameterValue.UncheckedGet<GfMatrix4d>();
     valStream << value[0][0] << ", " << value[0][1] << ", " << value[0][2] << ", " << value[0][3] << ",  "
               << value[1][0] << ", " << value[1][1] << ", " << value[1][2] << ", " << value[1][3] << ",  "
@@ -181,13 +193,16 @@ std::string HdMtlxConvertToString(VtValue const &hdParameterValue)
               << value[3][0] << ", " << value[3][1] << ", " << value[3][2] << ", " << value[3][3] << ",  ";
     return valStream.str();
   }
-  else if (hdParameterValue.IsHolding<SdfAssetPath>()) {
+  else if (hdParameterValue.IsHolding<SdfAssetPath>())
+  {
     return hdParameterValue.UncheckedGet<SdfAssetPath>().GetAssetPath();
   }
-  else if (hdParameterValue.IsHolding<std::string>()) {
+  else if (hdParameterValue.IsHolding<std::string>())
+  {
     return hdParameterValue.UncheckedGet<std::string>();
   }
-  else {
+  else
+  {
     TF_WARN("Unsupported Parameter Type '%s'", hdParameterValue.GetTypeName().c_str());
     return mx::EMPTY_STRING;
   }
@@ -212,7 +227,8 @@ static void _GetMxInputInfo(std::pair<TfToken, VtValue> const &hdParameter,
   /**
    * Get the mxInputType for the mxNodeDef. */
   mx::InputPtr mxInput = mxNodeDef->getInput(*mxInputName);
-  if (mxInput) {
+  if (mxInput)
+  {
     *mxInputType = mxInput->getType();
   }
 }
@@ -232,7 +248,8 @@ static mx::NodePtr _AddMaterialXNode(HdMaterialNetwork2 const &hdNetwork,
   /**
    * Get the mxNode information. */
   mx::NodeDefPtr mxNodeDef = mxDoc->getNodeDef(hdNode.nodeTypeId.GetString());
-  if (!mxNodeDef) {
+  if (!mxNodeDef)
+  {
     TF_WARN("NodeDef not found for Node '%s'", hdNode.nodeTypeId.GetText());
     return mx::NodePtr();
   }
@@ -248,7 +265,8 @@ static mx::NodePtr _AddMaterialXNode(HdMaterialNetwork2 const &hdNetwork,
   /**
    * For each of the HdNode parameters add the corresponding parameter/input
    * to the mxNode. */
-  for (auto const &currParam : hdNode.parameters) {
+  for (auto const &currParam : hdNode.parameters)
+  {
 
     // Get the MaterialX Parameter info
     std::string mxInputName, mxInputValue, mxInputType;
@@ -256,7 +274,8 @@ static mx::NodePtr _AddMaterialXNode(HdMaterialNetwork2 const &hdNetwork,
     mxNode->setInputValue(mxInputName, mxInputValue, mxInputType);
 
     // If this is a MaterialX Texture node
-    if (mxNodeCategory == "image" || mxNodeCategory == "tiledimage") {
+    if (mxNodeCategory == "image" || mxNodeCategory == "tiledimage")
+    {
 
       // Save the corresponding MaterialX and Hydra names for ShaderGen
       (*mxHdTextureMap)[hdNodePath.GetName()] = connectionName;
@@ -287,14 +306,16 @@ static void _GatherUpstreamNodes(HdMaterialNetwork2 const &hdNetwork,
   HdMaterialNode2 hdNode; /* HdNode -> mxCurrNode */
   bool found = _FindConnectedNode(hdNetwork, hdConnection, &hdNode, &hdNodePath);
 
-  if (!found) {
+  if (!found)
+  {
     TF_WARN("Could not find the connected Node with path '%s'", hdConnection.upstreamNode.GetText());
     return;
   }
 
   /**
    * Initilize the mxNodeGraph if needed. */
-  if (!(*mxNodeGraph)) {
+  if (!(*mxNodeGraph))
+  {
     const std::string &nodeGraphName = hdNodePath.GetParentPath().GetName();
     *mxNodeGraph = mxDoc->addNodeGraph(nodeGraphName);
   }
@@ -311,16 +332,19 @@ static void _GatherUpstreamNodes(HdMaterialNetwork2 const &hdNetwork,
                                              connectionName,
                                              mxHdTextureMap);
 
-  if (!mxCurrNode) {
+  if (!mxCurrNode)
+  {
     return;
   }
 
   /**
    * Continue traversing the upsteam connections to create the mxNodeGraph. */
-  for (auto &inputConnections : hdNode.inputConnections) {
+  for (auto &inputConnections : hdNode.inputConnections)
+  {
 
     TfToken connName = inputConnections.first;
-    for (auto &currConnection : inputConnections.second) {
+    for (auto &currConnection : inputConnections.second)
+    {
 
       /**
        * Gather the nodes uptream from the mxCurrNode. */
@@ -371,10 +395,12 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
    * Create mxNodeGraph from the inputConnections in the HdMaterialNetwork. */
   mx::NodeGraphPtr mxNodeGraph;
   mx::StringSet addedNodeNames; /* Set of NodeNames in the mxNodeGraph */
-  for (auto inputConns : hdMaterialXNode.inputConnections) {
+  for (auto inputConns : hdMaterialXNode.inputConnections)
+  {
 
     const std::string &mxNodeGraphOutput = inputConns.first.GetString();
-    for (HdMaterialConnection2 &currConnection : inputConns.second) {
+    for (HdMaterialConnection2 &currConnection : inputConns.second)
+    {
 
       /**
        *  Gather the nodes uptream from the hdMaterialXNode. */
@@ -389,7 +415,8 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
                            mxNodeGraphOutput,
                            mxHdTextureMap);
 
-      if (!mxUpstreamNode) {
+      if (!mxUpstreamNode)
+      {
         continue;
       }
 
@@ -408,7 +435,8 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
 
   /**
    * Add Inputs - The StandardSurface or USDPreviewSurface inputs. */
-  for (auto currParameter : hdMaterialXNode.parameters) {
+  for (auto currParameter : hdMaterialXNode.parameters)
+  {
 
     const std::string &mxInputName = currParameter.first.GetString();
     mx::InputPtr mxInput = mxShaderNode->addInput(mxInputName);
@@ -416,31 +444,38 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
     /**
      * Convert the parameter to the appropriate MaterialX input format. */
     VtValue hdParamValue = currParameter.second;
-    if (hdParamValue.IsHolding<bool>()) {
+    if (hdParamValue.IsHolding<bool>())
+    {
       bool value = hdParamValue.UncheckedGet<bool>();
       mxInput->setValue(value);
     }
-    else if (hdParamValue.IsHolding<int>()) {
+    else if (hdParamValue.IsHolding<int>())
+    {
       int value = hdParamValue.UncheckedGet<int>();
       mxInput->setValue(value);
     }
-    else if (hdParamValue.IsHolding<float>()) {
+    else if (hdParamValue.IsHolding<float>())
+    {
       float value = hdParamValue.UncheckedGet<float>();
       mxInput->setValue(value);
     }
-    else if (hdParamValue.IsHolding<GfVec3f>()) {
+    else if (hdParamValue.IsHolding<GfVec3f>())
+    {
 
       const GfVec3f &value = hdParamValue.UncheckedGet<GfVec3f>();
       /**
        * Check if the parameter is a mx::vector3 or mx::color3. */
-      if (_IsInputVector3(mxInputName)) {
+      if (_IsInputVector3(mxInputName))
+      {
         mxInput->setValue(mx::Vector3(value.data()[0], value.data()[1], value.data()[2]));
       }
-      else {
+      else
+      {
         mxInput->setValue(mx::Color3(value.data()[0], value.data()[1], value.data()[2]));
       }
     }
-    else {
+    else
+    {
       mxShaderNode->removeInput(mxInputName);
       TF_WARN("Unsupported Input Type '%s' for mxNode '%s' of type '%s'",
               hdParamValue.GetTypeName().c_str(),
@@ -452,7 +487,8 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
   /**
    * Validate the MaterialX Document. */
   std::string message;
-  if (!mxDoc->validate(&message)) {
+  if (!mxDoc->validate(&message))
+  {
     TF_WARN("Validation warnings for generated MaterialX file.\n%s\n", message.c_str());
   }
 

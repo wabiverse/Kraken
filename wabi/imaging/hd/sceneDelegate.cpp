@@ -36,7 +36,8 @@ HdSceneDelegate::HdSceneDelegate(HdRenderIndex *parentIndex, SdfPath const &dele
   : _index(parentIndex),
     _delegateID(delegateID)
 {
-  if (!_delegateID.IsAbsolutePath()) {
+  if (!_delegateID.IsAbsolutePath())
+  {
     TF_CODING_ERROR("Scene Delegate Id must be an absolute path: %s", delegateID.GetText());
 
     _delegateID = _delegateID.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
@@ -56,7 +57,8 @@ void HdSceneDelegate::PostSyncCleanup()
 /*virtual*/
 bool HdSceneDelegate::IsEnabled(TfToken const &option) const
 {
-  if (option == HdOptionTokens->parallelRprimSync) {
+  if (option == HdOptionTokens->parallelRprimSync)
+  {
     return true;
   }
 
@@ -109,7 +111,8 @@ size_t HdSceneDelegate::SampleTransform(SdfPath const &id,
                                         float *sampleTimes,
                                         GfMatrix4d *sampleValues)
 {
-  if (maxSampleCount > 0) {
+  if (maxSampleCount > 0)
+  {
     sampleTimes[0] = 0.0;
     sampleValues[0] = GetTransform(id);
     return 1;
@@ -170,7 +173,8 @@ size_t HdSceneDelegate::SamplePrimvar(SdfPath const &id,
                                       float *sampleTimes,
                                       VtValue *sampleValues)
 {
-  if (maxSampleCount > 0) {
+  if (maxSampleCount > 0)
+  {
     sampleTimes[0] = 0.0;
     sampleValues[0] = Get(id, key);
     return 1;
@@ -186,7 +190,8 @@ size_t HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
                                              VtValue *sampleValues,
                                              VtIntArray *sampleIndices)
 {
-  if (maxSampleCount > 0) {
+  if (maxSampleCount > 0)
+  {
     sampleTimes[0] = 0.0;
     sampleValues[0] = GetIndexedPrimvar(id, key, &sampleIndices[0]);
     return 1;
@@ -250,7 +255,8 @@ size_t HdSceneDelegate::SampleInstancerTransform(SdfPath const &instancerId,
                                                  float *sampleTimes,
                                                  GfMatrix4d *sampleValues)
 {
-  if (maxSampleCount > 0) {
+  if (maxSampleCount > 0)
+  {
     sampleTimes[0] = 0.0;
     sampleValues[0] = GetInstancerTransform(instancerId);
     return 1;
@@ -382,7 +388,8 @@ size_t HdSceneDelegate::SampleExtComputationInput(SdfPath const &computationId,
                                                   float *sampleTimes,
                                                   VtValue *sampleValues)
 {
-  if (maxSampleCount > 0) {
+  if (maxSampleCount > 0)
+  {
     sampleTimes[0] = 0.0;
     sampleValues[0] = GetExtComputationInput(computationId, input);
     return 1;

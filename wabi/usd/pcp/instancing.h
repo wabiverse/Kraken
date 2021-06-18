@@ -99,11 +99,14 @@ inline bool Pcp_ChildNodeIsInstanceable(const PcpNodeRef &node, bool *hasAnyDire
 
 inline bool Pcp_ChildNodeIsDirectOrInDirectArcSubtree(const PcpNodeRef &node)
 {
-  if (node.IsRootNode() || !node.IsDueToAncestor()) {
+  if (node.IsRootNode() || !node.IsDueToAncestor())
+  {
     return true;
   }
-  for (PcpNodeRef parent = node.GetParentNode(); !parent.IsRootNode(); parent = parent.GetParentNode()) {
-    if (!parent.IsDueToAncestor()) {
+  for (PcpNodeRef parent = node.GetParentNode(); !parent.IsRootNode(); parent = parent.GetParentNode())
+  {
+    if (!parent.IsDueToAncestor())
+    {
       return true;
     }
   }
@@ -124,16 +127,18 @@ inline void Pcp_TraverseInstanceableStrongToWeakHelper(const PcpNodeRef &node,
   // If the node is culled, the entire subtree rooted at this node
   // does not contribute to the prim index, so we can prune the
   // traversal.
-  if (node.IsCulled()) {
+  if (node.IsCulled())
+  {
     return;
   }
 
   const bool isInstanceable = Pcp_ChildNodeIsInstanceable(node, &hasAnyDirectArcsInNodeChain);
-  if (!visitor->Visit(node, isInstanceable)) {
+  if (!visitor->Visit(node, isInstanceable))
+  {
     return;
   }
 
-  TF_FOR_ALL(childIt, Pcp_GetChildrenRange(node))
+  TF_FOR_ALL (childIt, Pcp_GetChildrenRange(node))
   {
     const PcpNodeRef &childNode = *childIt;
     Pcp_TraverseInstanceableStrongToWeakHelper(childNode, visitor, hasAnyDirectArcsInNodeChain);
@@ -144,11 +149,12 @@ template<class Visitor>
 inline void Pcp_TraverseInstanceableStrongToWeak(const PcpPrimIndex &primIndex, Visitor *visitor)
 {
   const PcpNodeRef &rootNode = primIndex.GetRootNode();
-  if (!visitor->Visit(rootNode, /* nodeIsInstanceable = */ false)) {
+  if (!visitor->Visit(rootNode, /* nodeIsInstanceable = */ false))
+  {
     return;
   }
 
-  TF_FOR_ALL(childIt, Pcp_GetChildrenRange(rootNode))
+  TF_FOR_ALL (childIt, Pcp_GetChildrenRange(rootNode))
   {
     const PcpNodeRef &childNode = *childIt;
     Pcp_TraverseInstanceableStrongToWeakHelper(
@@ -164,7 +170,8 @@ inline void Pcp_TraverseInstanceableWeakToStrongHelper(const PcpNodeRef &node,
   // If the node is culled, the entire subtree rooted at this node
   // does not contribute to the prim index, so we can prune the
   // traversal.
-  if (node.IsCulled()) {
+  if (node.IsCulled())
+  {
     return;
   }
 

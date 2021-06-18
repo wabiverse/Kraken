@@ -64,7 +64,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomCone : public UsdGeomGprim {
+class UsdGeomCone : public UsdGeomGprim
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -80,13 +81,15 @@ class UsdGeomCone : public UsdGeomGprim {
   /// Equivalent to UsdGeomCone::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomCone(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim)
+  explicit UsdGeomCone(const UsdPrim &prim = UsdPrim())
+    : UsdGeomGprim(prim)
   {}
 
   /// Construct a UsdGeomCone on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomCone(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomCone(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj)
+  explicit UsdGeomCone(const UsdSchemaBase &schemaObj)
+    : UsdGeomGprim(schemaObj)
   {}
 
   /// Destructor.

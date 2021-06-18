@@ -88,20 +88,23 @@ UsdAttribute UsdSchemaBase::_CreateAttr(TfToken const &attrName,
 {
   UsdPrim prim(GetPrim());
 
-  if (writeSparsely && !custom) {
+  if (writeSparsely && !custom)
+  {
     // We are a builtin, and we're trying to be parsimonious.
     // We only need to even CREATE a propertySpec if we are
     // authoring a non-fallback default value
     UsdAttribute attr = prim.GetAttribute(attrName);
     VtValue fallback;
     if (defaultValue.IsEmpty() ||
-        (!attr.HasAuthoredValue() && attr.Get(&fallback) && fallback == defaultValue)) {
+        (!attr.HasAuthoredValue() && attr.Get(&fallback) && fallback == defaultValue))
+    {
       return attr;
     }
   }
 
   UsdAttribute attr(prim.CreateAttribute(attrName, typeName, custom, variability));
-  if (attr && !defaultValue.IsEmpty()) {
+  if (attr && !defaultValue.IsEmpty())
+  {
     attr.Set(defaultValue);
   }
 

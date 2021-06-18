@@ -71,7 +71,8 @@ void Tf_PyRestorePythonExceptionState(TfPyExceptionState state)
   state.Release();
 }
 
-TfPyExceptionStateScope::TfPyExceptionStateScope() : _state(Tf_PyFetchPythonExceptionState())
+TfPyExceptionStateScope::TfPyExceptionStateScope()
+  : _state(Tf_PyFetchPythonExceptionState())
 {
   // Tf_PyFetchPythonExceptionState() clears the exception state
   // but we want it back.

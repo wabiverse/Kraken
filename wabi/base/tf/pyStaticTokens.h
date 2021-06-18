@@ -64,9 +64,11 @@ WABI_NAMESPACE_BEGIN
 // strings and for some reason simply wrapping the token using def_readonly
 // bypasses to-Python conversion, leading to the error that there's no
 // Python type for the C++ TfToken type.  So we wrap this functor instead.
-class _TfPyWrapStaticToken {
+class _TfPyWrapStaticToken
+{
  public:
-  _TfPyWrapStaticToken(const TfToken *token) : _token(token)
+  _TfPyWrapStaticToken(const TfToken *token)
+    : _token(token)
   {}
 
   std::string operator()() const

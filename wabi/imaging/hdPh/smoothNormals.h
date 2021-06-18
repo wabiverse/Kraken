@@ -38,7 +38,8 @@ class Hd_VertexAdjacency;
 /// smooth normal computation GPU
 ///
 ///
-class HdPh_SmoothNormalsComputationGPU : public HdComputation {
+class HdPh_SmoothNormalsComputationGPU : public HdComputation
+{
  public:
   /// Constructor
   HDPH_API

@@ -35,13 +35,16 @@ WABI_NAMESPACE_BEGIN
 
 class Sdf_ValueTypeImpl;
 
-struct Sdf_ValueTypePrivate {
+struct Sdf_ValueTypePrivate
+{
  public:
-  struct Empty {
+  struct Empty
+  {
   };
 
   // Represents a type/role pair.
-  struct CoreType {
+  struct CoreType
+  {
     CoreType()
     {}
     CoreType(Empty);
@@ -66,7 +69,8 @@ struct Sdf_ValueTypePrivate {
 };
 
 /// Represents a registered type name.
-class Sdf_ValueTypeImpl {
+class Sdf_ValueTypeImpl
+{
  public:
   Sdf_ValueTypeImpl();
 

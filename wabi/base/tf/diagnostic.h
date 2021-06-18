@@ -423,8 +423,11 @@ void TfSetProgramNameForErrors(std::string const &programName);
 std::string TfGetProgramNameForErrors();
 
 /// \private
-struct Tf_DiagnosticHelper {
-  Tf_DiagnosticHelper(TfCallContext const &context, TfDiagnosticType type) : _context(context), _type(type)
+struct Tf_DiagnosticHelper
+{
+  Tf_DiagnosticHelper(TfCallContext const &context, TfDiagnosticType type)
+    : _context(context),
+      _type(type)
   {}
 
   TfCallContext const &GetContext() const

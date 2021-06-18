@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 /// For information on shapes, see the VtShape class reference in the C++
 /// documentation.
 ///
-class SdfAttributeSpec : public SdfPropertySpec {
+class SdfAttributeSpec : public SdfPropertySpec
+{
   SDF_DECLARE_SPEC(SdfAttributeSpec, SdfPropertySpec);
 
  public:

@@ -41,7 +41,8 @@ class VtValue;
 /// input to an ExtComputation.
 ///
 ///
-class Hd_ExtCompInputSource : public HdNullBufferSource {
+class Hd_ExtCompInputSource : public HdNullBufferSource
+{
  public:
   /// Constructs the input binding with the name inputName
   HD_API

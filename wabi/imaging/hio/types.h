@@ -46,7 +46,8 @@ class GfVec3i;
 ///
 /// For reference, see:
 ///  https://www.khronos.org/registry/vulkan/specs/1.1/html/vkspec.html#VkFormat
-enum HioFormat {
+enum HioFormat
+{
   HioFormatInvalid = -1,
 
   // UNorm8 - a 1-byte value representing a float between 0 and 1.
@@ -140,13 +141,19 @@ enum HioFormat {
 ///
 /// Available texture sampling dimensions.
 ///
-enum HioAddressDimension { HioAddressDimensionU, HioAddressDimensionV, HioAddressDimensionW };
+enum HioAddressDimension
+{
+  HioAddressDimensionU,
+  HioAddressDimensionV,
+  HioAddressDimensionW
+};
 
 /// \enum HioAddressMode
 ///
 /// Various modes used during sampling of a texture.
 ///
-enum HioAddressMode {
+enum HioAddressMode
+{
   HioAddressModeClampToEdge = 0,
   HioAddressModeMirrorClampToEdge,
   HioAddressModeRepeat,
@@ -158,7 +165,8 @@ enum HioAddressMode {
 ///
 /// Various color channel representation formats.
 ///
-enum HioType {
+enum HioType
+{
   HioTypeUnsignedByte,
   HioTypeUnsignedByteSRGB,
   HioTypeSignedByte,

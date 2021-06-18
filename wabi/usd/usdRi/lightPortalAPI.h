@@ -65,7 +65,8 @@ class SdfAssetPath;
 ///
 /// Renderman-specific attributes for light portals.
 ///
-class UsdRiLightPortalAPI : public UsdAPISchemaBase {
+class UsdRiLightPortalAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdRiLightPortalAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiLightPortalAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiLightPortalAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiLightPortalAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiLightPortalAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiLightPortalAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiLightPortalAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiLightPortalAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

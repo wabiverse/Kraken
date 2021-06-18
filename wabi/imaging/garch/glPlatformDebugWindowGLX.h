@@ -43,7 +43,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GarchGLPlatformDebugContext);
 
 /// \class Garch_GLPlatformDebugWindow
 ///
-class Garch_GLPlatformDebugWindow {
+class Garch_GLPlatformDebugWindow
+{
  public:
   Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w);
 

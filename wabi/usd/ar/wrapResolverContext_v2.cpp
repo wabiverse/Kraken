@@ -47,11 +47,13 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Helper struct to allow implicit conversions from None or a
 // sequence of context objects to an Ar.ResolverContext object.
-struct Ar_ResolverContextFromPython {
+struct Ar_ResolverContextFromPython
+{
   Ar_ResolverContextFromPython()
   {
     converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
@@ -60,7 +62,8 @@ struct Ar_ResolverContextFromPython {
   static void *_convertible(PyObject *obj_ptr)
   {
     object obj(handle<>(borrowed(obj_ptr)));
-    if (obj.is_none() || extract<std::vector<ArResolverContext>>(obj).check()) {
+    if (obj.is_none() || extract<std::vector<ArResolverContext>>(obj).check())
+    {
       return obj_ptr;
     }
     return 0;
@@ -73,7 +76,8 @@ struct Ar_ResolverContextFromPython {
     ArResolverContext context;
 
     object obj(handle<>(borrowed(obj_ptr)));
-    if (!obj.is_none()) {
+    if (!obj.is_none())
+    {
       context = ArResolverContext(extract<std::vector<ArResolverContext>>(obj)());
     }
 
@@ -86,12 +90,14 @@ struct Ar_ResolverContextFromPython {
 
 WABI_NAMESPACE_BEGIN
 
-class Ar_ResolverContextPythonAccess {
+class Ar_ResolverContextPythonAccess
+{
  public:
   static boost::python::list GetAsList(const ArResolverContext &ctx)
   {
     boost::python::list l;
-    for (const auto &data : ctx._contexts) {
+    for (const auto &data : ctx._contexts)
+    {
       l.append(data->GetPythonObj().Get());
     }
     return l;
@@ -100,7 +106,8 @@ class Ar_ResolverContextPythonAccess {
   static std::string GetRepr(const ArResolverContext &ctx)
   {
     std::vector<std::string> objReprs;
-    for (const auto &data : ctx._contexts) {
+    for (const auto &data : ctx._contexts)
+    {
       objReprs.push_back(TfPyObjectRepr(data->GetPythonObj().Get()));
     }
     return TF_PY_REPR_PREFIX + TfStringPrintf("ResolverContext(%s)", TfStringJoin(objReprs, ", ").c_str());

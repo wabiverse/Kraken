@@ -39,7 +39,8 @@ class Hgi;
 ///
 /// A single draw pass to a render target/buffer. Stream implementation.
 ///
-class HdPh_RenderPass : public HdRenderPass {
+class HdPh_RenderPass : public HdRenderPass
+{
  public:
   HDPH_API
   HdPh_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection);

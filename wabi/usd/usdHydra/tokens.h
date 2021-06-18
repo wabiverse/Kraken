@@ -59,7 +59,8 @@ WABI_NAMESPACE_BEGIN
 /// with the gradual transition to the new style hydra shaders that are based
 /// off of the new shader registry.
 ///
-struct UsdHydraTokensType {
+struct UsdHydraTokensType
+{
   USDHYDRA_API UsdHydraTokensType();
 
   /// \brief "HwPrimvar_1"

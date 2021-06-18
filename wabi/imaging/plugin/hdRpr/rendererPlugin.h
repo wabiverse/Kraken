@@ -18,7 +18,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprPlugin final : public HdRendererPlugin {
+class HdRprPlugin final : public HdRendererPlugin
+{
  public:
   HdRprPlugin() = default;
   ~HdRprPlugin() override = default;

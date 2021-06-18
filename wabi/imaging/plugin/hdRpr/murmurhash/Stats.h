@@ -45,11 +45,14 @@ int FindCollisions(std::vector<hashtype> &hashes, HashSet<hashtype> &collisions,
 
   std::sort(hashes.begin(), hashes.end());
 
-  for (size_t i = 1; i < hashes.size(); i++) {
-    if (hashes[i] == hashes[i - 1]) {
+  for (size_t i = 1; i < hashes.size(); i++)
+  {
+    if (hashes[i] == hashes[i - 1])
+    {
       collcount++;
 
-      if ((int)collisions.size() < maxCollisions) {
+      if ((int)collisions.size() < maxCollisions)
+      {
         collisions.insert(hashes[i]);
       }
     }
@@ -68,14 +71,16 @@ int PrintCollisions(hashfunc<hashtype> hash, std::vector<keytype> &keys)
   typedef std::map<hashtype, keytype> htab;
   htab tab;
 
-  for (size_t i = 1; i < keys.size(); i++) {
+  for (size_t i = 1; i < keys.size(); i++)
+  {
     keytype &k1 = keys[i];
 
     hashtype h = hash(&k1, sizeof(keytype), 0);
 
     typename htab::iterator it = tab.find(h);
 
-    if (it != tab.end()) {
+    if (it != tab.end())
+    {
       keytype &k2 = (*it).second;
 
       printf("A: ");
@@ -83,7 +88,8 @@ int PrintCollisions(hashfunc<hashtype> hash, std::vector<keytype> &keys)
       printf("B: ");
       printbits(&k2, sizeof(keytype));
     }
-    else {
+    else
+    {
       tab.insert(std::make_pair(h, k1));
     }
   }
@@ -94,7 +100,8 @@ int PrintCollisions(hashfunc<hashtype> hash, std::vector<keytype> &keys)
 //----------------------------------------------------------------------------
 // Measure the distribution "score" for each possible N-bit span up to 20 bits
 
-template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
+template<typename hashtype>
+double TestDistribution(std::vector<hashtype> &hashes, bool drawDiagram)
 {
   printf("Testing distribution - ");
 
@@ -108,7 +115,8 @@ template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashe
   // We need at least 5 keys per bin to reliably test distribution biases
   // down to 1%, so don't bother to test sparser distributions than that
 
-  while (double(hashes.size()) / double(1 << maxwidth) < 5.0) {
+  while (double(hashes.size()) / double(1 << maxwidth) < 5.0)
+  {
     maxwidth--;
   }
 
@@ -119,13 +127,15 @@ template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashe
   int worstStart = -1;
   int worstWidth = -1;
 
-  for (int start = 0; start < hashbits; start++) {
+  for (int start = 0; start < hashbits; start++)
+  {
     int width = maxwidth;
     int bincount = (1 << width);
 
     memset(&bins[0], 0, sizeof(int) * bincount);
 
-    for (size_t j = 0; j < hashes.size(); j++) {
+    for (size_t j = 0; j < hashes.size(); j++)
+    {
       hashtype &hash = hashes[j];
 
       uint32_t index = window(&hash, sizeof(hash), start, width);
@@ -139,13 +149,15 @@ template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashe
     if (drawDiagram)
       printf("[");
 
-    while (bincount >= 256) {
+    while (bincount >= 256)
+    {
       double n = calcScore(&bins[0], bincount, (int)hashes.size());
 
       if (drawDiagram)
         plot(n);
 
-      if (n > worst) {
+      if (n > worst)
+      {
         worst = n;
         worstStart = start;
         worstWidth = width;
@@ -157,7 +169,8 @@ template<typename hashtype> double TestDistribution(std::vector<hashtype> &hashe
       if (width < 8)
         break;
 
-      for (int i = 0; i < bincount; i++) {
+      for (int i = 0; i < bincount; i++)
+      {
         bins[i] += bins[i + bincount];
       }
     }
@@ -201,22 +214,26 @@ bool TestHashList(std::vector<hashtype> &hashes,
 
     printf("actual %8.2f (%5.2fx)", collcount, collcount / expected);
 
-    if (sizeof(hashtype) == sizeof(uint32_t)) {
+    if (sizeof(hashtype) == sizeof(uint32_t))
+    {
       // 2x expected collisions = fail
 
       // #TODO - collision failure cutoff needs to be expressed as a standard deviation instead
       // of a scale factor, otherwise we fail erroneously if there are a small expected number
       // of collisions
 
-      if (double(collcount) / double(expected) > 2.0) {
+      if (double(collcount) / double(expected) > 2.0)
+      {
         printf(" !!!!! ");
         result = false;
       }
     }
-    else {
+    else
+    {
       // For all hashes larger than 32 bits, _any_ collisions are a failure.
 
-      if (collcount > 0) {
+      if (collcount > 0)
+      {
         printf(" !!!!! ");
         result = false;
       }
@@ -227,7 +244,8 @@ bool TestHashList(std::vector<hashtype> &hashes,
 
   //----------
 
-  if (testDist) {
+  if (testDist)
+  {
     TestDistribution(hashes, drawDiagram);
   }
 
@@ -261,7 +279,8 @@ bool TestKeyList(hashfunc<hashtype> hash,
 
   printf("Hashing");
 
-  for (int i = 0; i < keycount; i++) {
+  for (int i = 0; i < keycount; i++)
+  {
     if (i % (keycount / 10) == 0)
       printf(".");
 
@@ -289,7 +308,8 @@ bool TestKeyList(hashfunc<hashtype> hash,
 // I'm not sure it's that useful (and hash functions that fail this test but
 // pass the normal distribution test still work well in practice)
 
-template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtype> &hashes, bool drawDiagram)
+template<typename hashtype>
+double TestDistributionBytepairs(std::vector<hashtype> &hashes, bool drawDiagram)
 {
   const int nbytes = sizeof(hashtype);
   const int hashbits = nbytes * 8;
@@ -300,7 +320,8 @@ template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtyp
 
   double worst = 0;
 
-  for (int a = 0; a < hashbits; a++) {
+  for (int a = 0; a < hashbits; a++)
+  {
     if (drawDiagram)
       if ((a % 8 == 0) && (a > 0))
         printf("\n");
@@ -308,7 +329,8 @@ template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtyp
     if (drawDiagram)
       printf("[");
 
-    for (int b = 0; b < hashbits; b++) {
+    for (int b = 0; b < hashbits; b++)
+    {
       if (drawDiagram)
         if ((b % 8 == 0) && (b > 0))
           printf(" ");
@@ -316,7 +338,8 @@ template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtyp
       bins.clear();
       bins.resize(nbins, 0);
 
-      for (size_t i = 0; i < hashes.size(); i++) {
+      for (size_t i = 0; i < hashes.size(); i++)
+      {
         hashtype &hash = hashes[i];
 
         uint32_t pa = window(&hash, sizeof(hash), a, 8);
@@ -330,7 +353,8 @@ template<typename hashtype> double TestDistributionBytepairs(std::vector<hashtyp
       if (drawDiagram)
         plot(s);
 
-      if (s > worst) {
+      if (s > worst)
+      {
         worst = s;
       }
     }
@@ -356,11 +380,13 @@ void TestDistributionFast(std::vector<hashtype> &hashes, double &dworst, double 
   dworst = -1.0e90;
   davg = 0;
 
-  for (int start = 0; start < hashbits; start += 8) {
+  for (int start = 0; start < hashbits; start += 8)
+  {
     bins.clear();
     bins.resize(nbins, 0);
 
-    for (size_t j = 0; j < hashes.size(); j++) {
+    for (size_t j = 0; j < hashes.size(); j++)
+    {
       hashtype &hash = hashes[j];
 
       uint32_t index = window(&hash, sizeof(hash), start, 16);

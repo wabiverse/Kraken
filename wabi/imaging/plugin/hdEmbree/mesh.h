@@ -69,7 +69,8 @@ struct HdEmbreeInstanceContext;
 /// embree scene), so that object population and existence aren't tied to
 /// each other.
 ///
-class HdEmbreeMesh final : public HdMesh {
+class HdEmbreeMesh final : public HdMesh
+{
  public:
   HF_MALLOC_TAG_NEW("new HdEmbreeMesh");
 
@@ -238,7 +239,8 @@ class HdEmbreeMesh final : public HdMesh {
   // the actual primvar buffer, and "interpolation" is the interpolation mode
   // to be used. This cache is used in _PopulateRtMesh to populate the
   // primvar sampler map in the prototype context, which is used for shading.
-  struct PrimvarSource {
+  struct PrimvarSource
+  {
     VtValue data;
     HdInterpolation interpolation;
   };

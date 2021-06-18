@@ -30,7 +30,8 @@ WABI_NAMESPACE_BEGIN
 
 // Helper class for getting the TfScopeDescription stacks as human readable text
 // for crash reporting.
-class Tf_ScopeDescriptionStackReportLock {
+class Tf_ScopeDescriptionStackReportLock
+{
   Tf_ScopeDescriptionStackReportLock(Tf_ScopeDescriptionStackReportLock const &) = delete;
   Tf_ScopeDescriptionStackReportLock &operator=(Tf_ScopeDescriptionStackReportLock const &) = delete;
 

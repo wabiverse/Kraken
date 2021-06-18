@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 /// A bundle of state describing an argument to a command. See \c
 /// HdCommandDescriptor for more information about commands.
 ///
-struct HdCommandArgDescriptor {
+struct HdCommandArgDescriptor
+{
   HdCommandArgDescriptor();
 
   HdCommandArgDescriptor(const TfToken &argName, const VtValue &defaultValue_)
@@ -73,7 +74,8 @@ using HdCommandArgs = VtDictionary;
 /// A bundle of state describing a "command". A command is simply a token
 /// that can be invoked and delivered to the render delegate.
 ///
-struct HdCommandDescriptor {
+struct HdCommandDescriptor
+{
   HdCommandDescriptor();
 
   explicit HdCommandDescriptor(const TfToken &name_,

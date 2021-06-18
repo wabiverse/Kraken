@@ -75,9 +75,12 @@ static size_t Arch_ObtainCacheLineSize()
   std::unique_ptr<INFO[]> buffer(new INFO[total]);
 
   size_t lineSize = 0;
-  if (::GetLogicalProcessorInformation(&buffer[0], &bufferSize)) {
-    for (size_t current = 0; current != total; ++current) {
-      if (buffer[current].Relationship == RelationCache && 1 == buffer[current].Cache.Level) {
+  if (::GetLogicalProcessorInformation(&buffer[0], &bufferSize))
+  {
+    for (size_t current = 0; current != total; ++current)
+    {
+      if (buffer[current].Relationship == RelationCache && 1 == buffer[current].Cache.Level)
+      {
         lineSize = buffer[current].Cache.LineSize;
         break;
       }
@@ -93,7 +96,10 @@ static size_t Arch_ObtainCacheLineSize()
 ARCH_HIDDEN
 void Arch_ValidateAssumptions()
 {
-  enum SomeEnum { BLAH };
+  enum SomeEnum
+  {
+    BLAH
+  };
 
   /*
    * We do an atomic compare-and-swap on enum's, treating then as ints,
@@ -116,7 +122,8 @@ void Arch_ValidateAssumptions()
   /*
    * Check the demangler on a very simple type.
    */
-  if (ArchGetDemangled<int>() != "int") {
+  if (ArchGetDemangled<int>() != "int")
+  {
     ARCH_WARNING("C++ demangling appears badly broken.");
   }
 
@@ -134,8 +141,10 @@ void Arch_ValidateAssumptions()
    */
   const size_t ROSETTA_WORKAROUND_CACHE_LINE_SIZE = 128;
   NXArchInfo const *archInfo = NXGetLocalArchInfo();
-  if (archInfo && ((archInfo->cputype & ~CPU_ARCH_MASK) == CPU_TYPE_ARM)) {
-    if ((cacheLineSize != ROSETTA_WORKAROUND_CACHE_LINE_SIZE)) {
+  if (archInfo && ((archInfo->cputype & ~CPU_ARCH_MASK) == CPU_TYPE_ARM))
+  {
+    if ((cacheLineSize != ROSETTA_WORKAROUND_CACHE_LINE_SIZE))
+    {
       ARCH_WARNING("Cache-line size mismatch may negatively impact performance.");
     }
     cacheLineSize = ARCH_CACHE_LINE_SIZE;
@@ -146,7 +155,8 @@ void Arch_ValidateAssumptions()
    * Make sure that the ARCH_CACHE_LINE_SIZE constant is set as expected
    * on the current hardware architecture.
    */
-  if (ARCH_CACHE_LINE_SIZE != cacheLineSize) {
+  if (ARCH_CACHE_LINE_SIZE != cacheLineSize)
+  {
     ARCH_WARNING("ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()");
   }
 }

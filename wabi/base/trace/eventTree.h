@@ -62,7 +62,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceEventTree);
 /// values over time.
 ///
 ///
-class TraceEventTree : public TfRefBase, public TfWeakBase {
+class TraceEventTree : public TfRefBase, public TfWeakBase
+{
  public:
   using CounterValues = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
   using CounterValuesMap = std::unordered_map<TfToken, CounterValues, TfToken::HashFunctor>;
@@ -121,7 +122,8 @@ class TraceEventTree : public TfRefBase, public TfWeakBase {
   TRACE_API TraceEventTreeRefPtr Add(const TraceCollection &collection);
 
  private:
-  TraceEventTree(TraceEventNodeRefPtr root) : _root(root)
+  TraceEventTree(TraceEventNodeRefPtr root)
+    : _root(root)
   {}
 
   TraceEventTree(TraceEventNodeRefPtr root, CounterValuesMap counters, MarkerValuesMap markers)

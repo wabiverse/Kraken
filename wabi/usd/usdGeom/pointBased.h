@@ -55,7 +55,8 @@ class SdfAssetPath;
 /// Base class for all UsdGeomGprims that possess points,
 /// providing common attributes such as normals and velocities.
 ///
-class UsdGeomPointBased : public UsdGeomGprim {
+class UsdGeomPointBased : public UsdGeomGprim
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -71,13 +72,15 @@ class UsdGeomPointBased : public UsdGeomGprim {
   /// Equivalent to UsdGeomPointBased::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPointBased(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim)
+  explicit UsdGeomPointBased(const UsdPrim &prim = UsdPrim())
+    : UsdGeomGprim(prim)
   {}
 
   /// Construct a UsdGeomPointBased on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPointBased(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPointBased(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj)
+  explicit UsdGeomPointBased(const UsdSchemaBase &schemaObj)
+    : UsdGeomGprim(schemaObj)
   {}
 
   /// Destructor.

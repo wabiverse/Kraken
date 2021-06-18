@@ -57,7 +57,8 @@ static HdRenderPassStateSharedPtr _InitIdRenderPassState(HdRenderIndex *index)
 {
   HdRenderPassStateSharedPtr rps = index->GetRenderDelegate()->CreateRenderPassState();
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(rps.get())) {
+  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(rps.get()))
+  {
     extendedState->SetRenderPassShader(
       std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassPickingShader()));
   }
@@ -67,7 +68,8 @@ static HdRenderPassStateSharedPtr _InitIdRenderPassState(HdRenderIndex *index)
 
 static bool _IsPhoenixRenderer(HdRenderDelegate *renderDelegate)
 {
-  if (!dynamic_cast<HdPhRenderDelegate *>(renderDelegate)) {
+  if (!dynamic_cast<HdPhRenderDelegate *>(renderDelegate))
+  {
     return false;
   }
 
@@ -92,8 +94,10 @@ HdxPickTask::~HdxPickTask() = default;
 //
 void HdxPickTask::_InitIfNeeded(GfVec2i const &size)
 {
-  if (_drawTarget) {
-    if (size != _drawTarget->GetSize()) {
+  if (_drawTarget)
+  {
+    if (size != _drawTarget->GetSize())
+    {
       GlfSharedGLContextScopeHolder sharedContextHolder;
 
       _drawTarget->Bind();
@@ -193,16 +197,19 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
 {
   GLF_GROUP_FUNCTION();
 
-  if (!_IsPhoenixRenderer(delegate->GetRenderIndex().GetRenderDelegate())) {
+  if (!_IsPhoenixRenderer(delegate->GetRenderIndex().GetRenderDelegate()))
+  {
     return;
   }
 
   // Gather params from the scene and the task context.
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
+  {
     _GetTaskParams(delegate, &_params);
   }
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags)
+  {
     _renderTags = _GetTaskRenderTags(delegate);
   }
 
@@ -213,13 +220,15 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
 
   // Make sure we're in a sane GL state before attempting anything.
   GlfGLContextSharedPtr context = GlfGLContext::GetCurrentGLContext();
-  if (!TF_VERIFY(context)) {
+  if (!TF_VERIFY(context))
+  {
     TF_RUNTIME_ERROR("Invalid GL context");
     return;
   }
 
   // Make sure the GL context is at least OpenGL 2.0.
-  if (GlfContextCaps::GetInstance().glVersion < 200) {
+  if (GlfContextCaps::GetInstance().glVersion < 200)
+  {
     TF_RUNTIME_ERROR("framebuffer object not supported");
     return;
   }
@@ -228,7 +237,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
   // initialization is necessary.
   _InitIfNeeded(_contextParams.resolution);
 
-  if (!TF_VERIFY(_pickableRenderPass) || !TF_VERIFY(_occluderRenderPass)) {
+  if (!TF_VERIFY(_pickableRenderPass) || !TF_VERIFY(_occluderRenderPass))
+  {
     return;
   }
 
@@ -242,8 +252,10 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
   GfVec4i viewport(0, 0, size[0], size[1]);
 
   // Update the renderpass states.
-  for (auto &state : states) {
-    if (needStencilConditioning) {
+  for (auto &state : states)
+  {
+    if (needStencilConditioning)
+    {
       state->SetStencilEnabled(true);
       state->SetStencil(HdCmpFuncLess,
                         /*ref=*/0,
@@ -252,7 +264,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
                         /*sPassZFail*/ HdStencilOpKeep,
                         /*sPassZPass*/ HdStencilOpKeep);
     }
-    else {
+    else
+    {
       state->SetStencilEnabled(false);
     }
 
@@ -269,7 +282,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
 
     // If scene materials are disabled in this environment then
     // let's setup the override shader
-    if (HdPhRenderPassState *extState = dynamic_cast<HdPhRenderPassState *>(state.get())) {
+    if (HdPhRenderPassState *extState = dynamic_cast<HdPhRenderPassState *>(state.get()))
+    {
       extState->SetCameraFramingState(
         _contextParams.viewMatrix, _contextParams.projectionMatrix, viewport, _contextParams.clipPlanes);
       extState->SetUseSceneMaterials(_params.enableSceneMaterials);
@@ -285,7 +299,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
   //
   // (ii) [mandatory] id render for "pickable" prims: This writes out the
   // various id's for prims that pass the depth test.
-  if (_UseOcclusionPass()) {
+  if (_UseOcclusionPass())
+  {
     // Pass (i) from above
     HdRprimCollection occluderCol = _contextParams.collection.CreateInverseCollection();
     _occluderRenderPass->SetRprimCollection(occluderCol);
@@ -294,7 +309,8 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
   // Pass (ii) from above
   _pickableRenderPass->SetRprimCollection(_contextParams.collection);
 
-  if (_UseOcclusionPass()) {
+  if (_UseOcclusionPass())
+  {
     _occluderRenderPass->Sync();
   }
   _pickableRenderPass->Sync();
@@ -304,11 +320,13 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
 
 void HdxPickTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
-  if (!_drawTarget) {
+  if (!_drawTarget)
+  {
     return;
   }
 
-  if (_UseOcclusionPass()) {
+  if (_UseOcclusionPass())
+  {
     _occluderRenderPassState->Prepare(renderIndex->GetResourceRegistry());
   }
   _pickableRenderPassState->Prepare(renderIndex->GetResourceRegistry());
@@ -318,7 +336,8 @@ void HdxPickTask::Execute(HdTaskContext *ctx)
 {
   GLF_GROUP_FUNCTION();
 
-  if (!_drawTarget) {
+  if (!_drawTarget)
+  {
     return;
   }
 
@@ -365,7 +384,8 @@ void HdxPickTask::Execute(HdTaskContext *ctx)
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  if (_contextParams.depthMaskCallback != nullptr) {
+  if (_contextParams.depthMaskCallback != nullptr)
+  {
     _ConditionStencilWithGLCallback(_contextParams.depthMaskCallback);
   }
 
@@ -373,18 +393,21 @@ void HdxPickTask::Execute(HdTaskContext *ctx)
   // Enable conservative rasterization, if available.
   //
   bool convRstr = GARCH_GLAPI_HAS(NV_conservative_raster);
-  if (convRstr) {
+  if (convRstr)
+  {
     glEnable(GL_CONSERVATIVE_RASTERIZATION_NV);
   }
 
-  if (_UseOcclusionPass()) {
+  if (_UseOcclusionPass())
+  {
     _occluderRenderPass->Execute(_occluderRenderPassState, GetRenderTags());
   }
   _pickableRenderPass->Execute(_pickableRenderPassState, GetRenderTags());
 
   glDisable(GL_STENCIL_TEST);
 
-  if (convRstr) {
+  if (convRstr)
+  {
     glDisable(GL_CONSERVATIVE_RASTERIZATION_NV);
   }
 
@@ -455,19 +478,24 @@ void HdxPickTask::Execute(HdTaskContext *ctx)
                        subRect);
 
   // Resolve!
-  if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter) {
+  if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter)
+  {
     result.ResolveNearestToCenter(_contextParams.outHits);
   }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera) {
+  else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
+  {
     result.ResolveNearestToCamera(_contextParams.outHits);
   }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique) {
+  else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
+  {
     result.ResolveUnique(_contextParams.outHits);
   }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveAll) {
+  else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
+  {
     result.ResolveAll(_contextParams.outHits);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unrecognized interesection mode '%s'", _contextParams.resolveMode.GetText());
   }
 }
@@ -526,7 +554,8 @@ HdxPickResult &HdxPickResult::operator=(HdxPickResult &&) = default;
 bool HdxPickResult::IsValid() const
 {
   // Make sure we have at least a primId buffer and a depth buffer.
-  if (!_depths || !_primIds) {
+  if (!_depths || !_primIds)
+  {
     return false;
   }
 
@@ -536,7 +565,8 @@ bool HdxPickResult::IsValid() const
 GfVec3f HdxPickResult::_GetNormal(int index) const
 {
   GfVec3f normal = GfVec3f(0);
-  if (_neyes != nullptr) {
+  if (_neyes != nullptr)
+  {
     GfVec3f neye = HdVec4f_2_10_10_10_REV(_neyes[index]).GetAsVec<GfVec3f>();
     normal = _eyeToWorld.TransformDir(neye);
   }
@@ -548,14 +578,16 @@ bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hi
   int primId = _GetPrimId(index);
   hit->objectId = _index->GetRprimPathFromPrimId(primId);
 
-  if (!hit->IsValid()) {
+  if (!hit->IsValid())
+  {
     return false;
   }
 
   bool rprimValid = _index->GetSceneDelegateAndInstancerIds(
     hit->objectId, &(hit->delegateId), &(hit->instancerId));
 
-  if (!TF_VERIFY(rprimValid, "%s\n", hit->objectId.GetText())) {
+  if (!TF_VERIFY(rprimValid, "%s\n", hit->objectId.GetText()))
+  {
     return false;
   }
 
@@ -572,7 +604,8 @@ bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hi
   hit->edgeIndex = _GetEdgeId(index);
   hit->pointIndex = _GetPointId(index);
 
-  if (TfDebug::IsEnabled(HDX_INTERSECT)) {
+  if (TfDebug::IsEnabled(HDX_INTERSECT))
+  {
     std::cout << *hit << std::endl;
   }
 
@@ -584,13 +617,16 @@ size_t HdxPickResult::_GetHash(int index) const
   size_t hash = 0;
   boost::hash_combine(hash, _GetPrimId(index));
   boost::hash_combine(hash, _GetInstanceId(index));
-  if (_pickTarget == HdxPickTokens->pickFaces) {
+  if (_pickTarget == HdxPickTokens->pickFaces)
+  {
     boost::hash_combine(hash, _GetElementId(index));
   }
-  if (_pickTarget == HdxPickTokens->pickEdges) {
+  if (_pickTarget == HdxPickTokens->pickEdges)
+  {
     boost::hash_combine(hash, _GetEdgeId(index));
   }
-  if (_pickTarget == HdxPickTokens->pickPoints) {
+  if (_pickTarget == HdxPickTokens->pickPoints)
+  {
     boost::hash_combine(hash, _GetPointId(index));
   }
   return hash;
@@ -612,7 +648,8 @@ void HdxPickResult::ResolveNearestToCamera(HdxPickHitVector *allHits) const
 {
   TRACE_FUNCTION();
 
-  if (!IsValid() || !allHits) {
+  if (!IsValid() || !allHits)
+  {
     return;
   }
 
@@ -625,10 +662,13 @@ void HdxPickResult::ResolveNearestToCamera(HdxPickHitVector *allHits) const
   // prim. The last part is important since the depth buffer may be
   // populated with occluders (which aren't picked, and thus won't update any
   // of the ID buffers)
-  for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y) {
-    for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x) {
+  for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y)
+  {
+    for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x)
+    {
       int i = y * _bufferSize[0] + x;
-      if (_IsValidHit(i) && (zMinIndex == -1 || _depths[i] < zMin)) {
+      if (_IsValidHit(i) && (zMinIndex == -1 || _depths[i] < zMin))
+      {
         xMin = x;
         yMin = y;
         zMin = _depths[i];
@@ -637,13 +677,15 @@ void HdxPickResult::ResolveNearestToCamera(HdxPickHitVector *allHits) const
     }
   }
 
-  if (zMinIndex == -1) {
+  if (zMinIndex == -1)
+  {
     // We didn't find any valid hits.
     return;
   }
 
   HdxPickHit hit;
-  if (_ResolveHit(zMinIndex, xMin, yMin, zMin, &hit)) {
+  if (_ResolveHit(zMinIndex, xMin, yMin, zMin, &hit))
+  {
     allHits->push_back(hit);
   }
 }
@@ -652,7 +694,8 @@ void HdxPickResult::ResolveNearestToCenter(HdxPickHitVector *allHits) const
 {
   TRACE_FUNCTION();
 
-  if (!IsValid() || !allHits) {
+  if (!IsValid() || !allHits)
+  {
     return;
   }
 
@@ -661,30 +704,38 @@ void HdxPickResult::ResolveNearestToCenter(HdxPickHitVector *allHits) const
 
   int midH = height / 2;
   int midW = width / 2;
-  if (height % 2 == 0) {
+  if (height % 2 == 0)
+  {
     midH--;
   }
-  if (width % 2 == 0) {
+  if (width % 2 == 0)
+  {
     midW--;
   }
 
   // Return the first valid hit that's closest to the center of the draw
   // target by walking from the center outwards.
-  for (int w = midW, h = midH; w >= 0 && h >= 0; w--, h--) {
-    for (int ww = w; ww < width - w; ww++) {
-      for (int hh = h; hh < height - h; hh++) {
+  for (int w = midW, h = midH; w >= 0 && h >= 0; w--, h--)
+  {
+    for (int ww = w; ww < width - w; ww++)
+    {
+      for (int hh = h; hh < height - h; hh++)
+      {
         int x = ww + _subRect[0];
         int y = hh + _subRect[1];
         int i = y * _bufferSize[0] + x;
-        if (_IsValidHit(i)) {
+        if (_IsValidHit(i))
+        {
           HdxPickHit hit;
-          if (_ResolveHit(i, x, y, _depths[i], &hit)) {
+          if (_ResolveHit(i, x, y, _depths[i], &hit))
+          {
             allHits->push_back(hit);
           }
           return;
         }
         // Skip pixels we've already visited and jump to the boundary
-        if (!(ww == w || ww == width - w - 1) && hh == h) {
+        if (!(ww == w || ww == width - w - 1) && hh == h)
+        {
           hh = std::max(hh, height - h - 2);
         }
       }
@@ -696,18 +747,22 @@ void HdxPickResult::ResolveAll(HdxPickHitVector *allHits) const
 {
   TRACE_FUNCTION();
 
-  if (!IsValid() || !allHits) {
+  if (!IsValid() || !allHits)
+  {
     return;
   }
 
-  for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y) {
-    for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x) {
+  for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y)
+  {
+    for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x)
+    {
       int i = y * _bufferSize[0] + x;
       if (!_IsValidHit(i))
         continue;
 
       HdxPickHit hit;
-      if (_ResolveHit(i, x, y, _depths[i], &hit)) {
+      if (_ResolveHit(i, x, y, _depths[i], &hit))
+      {
         allHits->push_back(hit);
       }
     }
@@ -718,7 +773,8 @@ void HdxPickResult::ResolveUnique(HdxPickHitVector *allHits) const
 {
   TRACE_FUNCTION();
 
-  if (!IsValid() || !allHits) {
+  if (!IsValid() || !allHits)
+  {
     return;
   }
 
@@ -726,8 +782,10 @@ void HdxPickResult::ResolveUnique(HdxPickHitVector *allHits) const
   {
     HD_TRACE_SCOPE("unique indices");
     size_t previousHash = 0;
-    for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y) {
-      for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x) {
+    for (int y = _subRect[1]; y < _subRect[1] + _subRect[3]; ++y)
+    {
+      for (int x = _subRect[0]; x < _subRect[0] + _subRect[2]; ++x)
+      {
         int i = y * _bufferSize[0] + x;
         if (!_IsValidHit(i))
           continue;
@@ -738,7 +796,8 @@ void HdxPickResult::ResolveUnique(HdxPickHitVector *allHits) const
         // Adjacent indices are likely enough to have the same prim,
         // instance and if relevant, the same subprim ids, that this can
         // be a significant improvement.
-        if (hitIndices.empty() || hash != previousHash) {
+        if (hitIndices.empty() || hash != previousHash)
+        {
           hitIndices.insert(std::make_pair(hash, GfVec2i(x, y)));
           previousHash = hash;
         }
@@ -749,13 +808,15 @@ void HdxPickResult::ResolveUnique(HdxPickHitVector *allHits) const
   {
     HD_TRACE_SCOPE("resolve");
 
-    for (auto const &pair : hitIndices) {
+    for (auto const &pair : hitIndices)
+    {
       int x = pair.second[0];
       int y = pair.second[1];
       int i = y * _bufferSize[0] + x;
 
       HdxPickHit hit;
-      if (_ResolveHit(i, x, y, _depths[i], &hit)) {
+      if (_ResolveHit(i, x, y, _depths[i], &hit))
+      {
         allHits->push_back(hit);
       }
     }
@@ -869,7 +930,8 @@ std::ostream &operator<<(std::ostream &out, HdxPickTaskContextParams const &p)
   out << "PickTask Context Params: (...) " << p.resolution << " " << p.pickTarget << " " << p.resolveMode
       << " " << p.doUnpickablesOcclude << " " << p.viewMatrix << " " << p.projectionMatrix << " "
       << depthMask << " " << p.collection << " " << p.outHits;
-  for (auto const &a : p.clipPlanes) {
+  for (auto const &a : p.clipPlanes)
+  {
     out << a << " ";
   }
   return out;

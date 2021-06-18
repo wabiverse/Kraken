@@ -59,7 +59,8 @@ constexpr double Usd_ClipTimesLatest = std::numeric_limits<double>::max();
 /// Represents a clip from which time samples may be read during
 /// value resolution.
 ///
-struct Usd_Clip {
+struct Usd_Clip
+{
   Usd_Clip(Usd_Clip const &) = delete;
   Usd_Clip &operator=(Usd_Clip const &) = delete;
 
@@ -88,7 +89,8 @@ struct Usd_Clip {
   /// offsetting or scaling the animation.
   typedef double ExternalTime;
   typedef double InternalTime;
-  struct TimeMapping {
+  struct TimeMapping
+  {
     ExternalTime externalTime;
     InternalTime internalTime;
     bool isJumpDiscontinuity;
@@ -119,7 +121,8 @@ struct Usd_Clip {
 
   SdfPropertySpecHandle GetPropertyAtPath(const SdfPath &path) const;
 
-  template<class T> bool HasField(const SdfPath &path, const TfToken &field, T *value) const
+  template<class T>
+  bool HasField(const SdfPath &path, const TfToken &field, T *value) const
   {
     return _GetLayerForClip()->HasField(_TranslatePathToClip(path), field, value);
   }

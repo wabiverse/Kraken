@@ -48,7 +48,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bool _Initialize()
 {
@@ -60,7 +61,8 @@ static bool _Initialize2(const std::string &captureTag)
 {
   string reason;
   bool result = TfMallocTag::Initialize(&reason);
-  if (result) {
+  if (result)
+  {
     TfMallocTag::SetCapturedMallocStacksMatchList(captureTag);
   }
   return result;
@@ -79,14 +81,16 @@ static std::vector<std::string> _GetCallStacks()
 
   // Cache address to function name map, one lookup per address.
   std::map<uintptr_t, std::string> functionNames;
-  TF_FOR_ALL(stack, stacks)
+  TF_FOR_ALL (stack, stacks)
   {
-    TF_FOR_ALL(func, *stack)
+    TF_FOR_ALL (func, *stack)
     {
       std::string &name = functionNames[*func];
-      if (name.empty()) {
+      if (name.empty())
+      {
         ArchGetAddressInfo(reinterpret_cast<void *>(*func), NULL, NULL, &name, NULL);
-        if (name.empty()) {
+        if (name.empty())
+        {
           name = "<unknown>";
         }
       }
@@ -94,11 +98,11 @@ static std::vector<std::string> _GetCallStacks()
   }
 
   std::vector<std::string> result;
-  TF_FOR_ALL(stack, stacks)
+  TF_FOR_ALL (stack, stacks)
   {
     result.push_back(std::string());
     std::string &trace = result.back();
-    TF_FOR_ALL(func, *stack)
+    TF_FOR_ALL (func, *stack)
     {
       trace += TfStringPrintf("  0x%016lx: %s\n", (unsigned long)*func, functionNames[*func].c_str());
     }

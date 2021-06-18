@@ -40,7 +40,8 @@ class PcpNodeRef;
 /// A classification of PcpPrimIndex->PcpSite dependencies
 /// by composition structure.
 ///
-enum PcpDependencyType {
+enum PcpDependencyType
+{
   /// No type of dependency.
   PcpDependencyTypeNone = 0,
 
@@ -97,7 +98,8 @@ enum PcpDependencyType {
 typedef unsigned int PcpDependencyFlags;
 
 /// Description of a dependency.
-struct PcpDependency {
+struct PcpDependency
+{
   /// The path in this PcpCache's root layer stack that depends
   /// on the site.
   SdfPath indexPath;

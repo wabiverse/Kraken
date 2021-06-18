@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 /// \hideinitializer
 #define TF_CALL_CONTEXT TfCallContext(__ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, __ARCH_PRETTY_FUNCTION__)
 
-class TfCallContext {
+class TfCallContext
+{
  public:
   constexpr TfCallContext()
     : _file(nullptr),

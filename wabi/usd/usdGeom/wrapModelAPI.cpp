@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -234,12 +236,14 @@ void wrapUsdGeomModelAPI()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static object _GetExtentsHint(const UsdGeomModelAPI &self, const UsdTimeCode &time)
 {
   VtVec3fArray extents;
-  if (!self.GetExtentsHint(&extents, time)) {
+  if (!self.GetExtentsHint(&extents, time))
+  {
     return object();
   }
 
@@ -249,7 +253,8 @@ static object _GetExtentsHint(const UsdGeomModelAPI &self, const UsdTimeCode &ti
 static bool _SetExtentsHint(UsdGeomModelAPI &self, const TfPyObjWrapper pyVal, const UsdTimeCode &timeVal)
 {
   VtValue value = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Float3Array);
-  if (!value.IsHolding<VtVec3fArray>()) {
+  if (!value.IsHolding<VtVec3fArray>())
+  {
     TF_CODING_ERROR("Improper value for 'extentsHint' on %s", UsdDescribe(self.GetPrim()).c_str());
     return false;
   }

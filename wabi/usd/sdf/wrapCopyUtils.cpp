@@ -41,7 +41,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 VtValue _GetValueForField(const SdfLayerHandle &layer,
                           const TfToken &field,
@@ -52,12 +53,14 @@ VtValue _GetValueForField(const SdfLayerHandle &layer,
   // XXX: See also wrapSpec.cpp. Perhaps this logic should live in
   // pyUtils.h?
   const VtValue &fallback = layer->GetSchema().GetFallback(field);
-  if (fallback.IsHolding<TfTokenVector>()) {
+  if (fallback.IsHolding<TfTokenVector>())
+  {
     return VtValue(extract<TfTokenVector>(obj)());
   }
 
   VtValue v = extract<VtValue>(obj)();
-  if (!fallback.IsEmpty()) {
+  if (!fallback.IsEmpty())
+  {
     v.CastToTypeOf(fallback);
   }
   return v;
@@ -97,13 +100,16 @@ bool _ShouldCopyValue(const Py_SdfShouldCopyValueFn &pyFunc,
 {
   object result = pyFunc(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
 
-  if (PyBool_Check(result.ptr())) {
+  if (PyBool_Check(result.ptr()))
+  {
     return extract<bool>(result)();
   }
 
   extract<tuple> getTuple(result);
-  if (getTuple.check()) {
-    if (PyBool_Check(object(result[0]).ptr())) {
+  if (getTuple.check())
+  {
+    if (PyBool_Check(object(result[0]).ptr()))
+    {
       const bool status = extract<bool>(result[0])();
       *value = _GetValueForField(srcLayer, field, result[1]);
       return status;
@@ -127,13 +133,16 @@ bool _ShouldCopyChildren(const Py_SdfShouldCopyChildrenFn &pyFunc,
 {
   object result = pyFunc(field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
 
-  if (PyBool_Check(result.ptr())) {
+  if (PyBool_Check(result.ptr()))
+  {
     return extract<bool>(result)();
   }
 
   extract<tuple> getTuple(result);
-  if (getTuple.check()) {
-    if (PyBool_Check(object(result[0]).ptr())) {
+  if (getTuple.check())
+  {
+    if (PyBool_Check(object(result[0]).ptr()))
+    {
       const bool status = extract<bool>(result[0])();
       *srcChildren = _GetValueForField(srcLayer, field, result[1]);
       *dstChildren = _GetValueForField(srcLayer, field, result[2]);

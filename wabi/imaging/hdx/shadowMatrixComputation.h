@@ -36,7 +36,8 @@ class CameraUtilFraming;
 
 // Interface class for computing the shadow matrix
 // for a given viewport.
-class HdxShadowMatrixComputation {
+class HdxShadowMatrixComputation
+{
  public:
   // For legacy clients using viewport, will be removed eventually.
   virtual std::vector<GfMatrix4d> Compute(const GfVec4f &viewport, CameraUtilConformWindowPolicy policy) = 0;

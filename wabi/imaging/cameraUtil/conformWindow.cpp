@@ -124,7 +124,8 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 static double _SafeDivOne(const double a, const double b)
 {
-  if (b != 0.0) {
+  if (b != 0.0)
+  {
     return a / b;
   }
 
@@ -133,7 +134,8 @@ static double _SafeDivOne(const double a, const double b)
 
 static double _SafeDiv(const double a, const double b)
 {
-  if (b != 0.0) {
+  if (b != 0.0)
+  {
     return a / b;
   }
 
@@ -144,13 +146,15 @@ static CameraUtilConformWindowPolicy _ResolveConformWindowPolicy(const GfVec2d &
                                                                  CameraUtilConformWindowPolicy policy,
                                                                  double targetAspect)
 {
-  if ((policy == CameraUtilMatchVertically) || (policy == CameraUtilMatchHorizontally)) {
+  if ((policy == CameraUtilMatchVertically) || (policy == CameraUtilMatchHorizontally))
+  {
     return policy;
   }
 
   const double aspect = _SafeDivOne(size[0], size[1]);
 
-  if ((policy == CameraUtilFit) ^ (aspect > targetAspect)) {
+  if ((policy == CameraUtilFit) ^ (aspect > targetAspect))
+  {
     return CameraUtilMatchVertically;
   }
   return CameraUtilMatchHorizontally;
@@ -165,17 +169,20 @@ GfVec2d CameraUtilConformedWindow(const GfVec2d &window,
                                   CameraUtilConformWindowPolicy policy,
                                   double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return window;
   }
 
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
     window, policy, targetAspect);
 
-  if (resolvedPolicy == CameraUtilMatchHorizontally) {
+  if (resolvedPolicy == CameraUtilMatchHorizontally)
+  {
     return GfVec2d(window[0], _SafeDiv(window[0], targetAspect));
   }
-  else {
+  else
+  {
     return GfVec2d(window[1] * targetAspect, window[1]);
   }
 }
@@ -184,7 +191,8 @@ GfRange2d CameraUtilConformedWindow(const GfRange2d &window,
                                     CameraUtilConformWindowPolicy policy,
                                     double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return window;
   }
 
@@ -194,13 +202,15 @@ GfRange2d CameraUtilConformedWindow(const GfRange2d &window,
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
     size, policy, targetAspect);
 
-  if (resolvedPolicy == CameraUtilMatchHorizontally) {
+  if (resolvedPolicy == CameraUtilMatchHorizontally)
+  {
     const double height = _SafeDiv(size[0], targetAspect);
 
     return GfRange2d(GfVec2d(window.GetMin()[0], center[1] - height / 2.0),
                      GfVec2d(window.GetMax()[0], center[1] + height / 2.0));
   }
-  else {
+  else
+  {
     const double width = size[1] * targetAspect;
 
     return GfRange2d(GfVec2d(center[0] - width / 2.0, window.GetMin()[1]),
@@ -212,7 +222,8 @@ GfVec4d CameraUtilConformedWindow(const GfVec4d &window,
                                   CameraUtilConformWindowPolicy policy,
                                   double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return window;
   }
 
@@ -225,7 +236,8 @@ GfVec4d CameraUtilConformedWindow(const GfVec4d &window,
 
 static double _Sign(const double x)
 {
-  if (x < 0.0) {
+  if (x < 0.0)
+  {
     return -1.0;
   }
 
@@ -236,7 +248,8 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
                                      CameraUtilConformWindowPolicy policy,
                                      double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return projectionMatrix;
   }
 
@@ -259,7 +272,8 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
   const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
     window, policy, targetAspect);
 
-  if (resolvedPolicy == CameraUtilMatchHorizontally) {
+  if (resolvedPolicy == CameraUtilMatchHorizontally)
+  {
     // Adjust vertical size
     result[1][1] = _Sign(projectionMatrix[1][1]) * window[1] * targetAspect;
 
@@ -274,7 +288,8 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
     // This one is important for orthographic:
     result[3][1] *= scaleFactor;
   }
-  else {
+  else
+  {
     // As above, but horizontally.
     result[0][0] = _Sign(projectionMatrix[0][0]) * _SafeDiv(window[0], targetAspect);
 
@@ -289,7 +304,8 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
 
 void CameraUtilConformWindow(GfCamera *camera, CameraUtilConformWindowPolicy policy, double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return;
   }
 
@@ -302,7 +318,8 @@ void CameraUtilConformWindow(GfCamera *camera, CameraUtilConformWindowPolicy pol
 
 void CameraUtilConformWindow(GfFrustum *frustum, CameraUtilConformWindowPolicy policy, double targetAspect)
 {
-  if (_DoesNotRequireAdjustment(policy)) {
+  if (_DoesNotRequireAdjustment(policy))
+  {
     return;
   }
 

@@ -27,7 +27,8 @@ WABI_NAMESPACE_BEGIN
 /// \class RprUsd_BaseRuntimeNode
 ///
 /// The node output of which is always rpr::MaterialNode*.
-class RprUsd_BaseRuntimeNode : public RprUsd_MaterialNode {
+class RprUsd_BaseRuntimeNode : public RprUsd_MaterialNode
+{
  public:
   RprUsd_BaseRuntimeNode(rpr::MaterialNodeType type, RprUsd_MaterialBuilderContext *ctx);
 

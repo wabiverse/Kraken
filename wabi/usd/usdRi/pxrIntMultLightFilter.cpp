@@ -57,7 +57,8 @@ UsdRiPxrIntMultLightFilter::~UsdRiPxrIntMultLightFilter()
 /* static */
 UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrIntMultLightFilter();
   }
@@ -68,7 +69,8 @@ UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Get(const UsdStagePtr &st
 UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiIntMultLightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrIntMultLightFilter();
   }
@@ -139,7 +141,8 @@ UsdAttribute UsdRiPxrIntMultLightFilter::CreateColorSaturationAttr(VtValue const
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

@@ -40,11 +40,13 @@ class PxOsdSubdivTags;
 ///
 /// Delegate support for UsdGeomMesh.
 ///
-class UsdImagingMeshAdapter : public UsdImagingGprimAdapter {
+class UsdImagingMeshAdapter : public UsdImagingGprimAdapter
+{
  public:
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingMeshAdapter() : UsdImagingGprimAdapter()
+  UsdImagingMeshAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   ~UsdImagingMeshAdapter() override;

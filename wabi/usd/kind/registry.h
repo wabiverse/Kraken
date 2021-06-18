@@ -71,7 +71,8 @@ TF_DECLARE_PUBLIC_TOKENS(KindTokens, KIND_API, KIND_TOKENS);
 /// To make this robust, KindRegistry exposes no means to mutate the registry.
 /// All extensions must be accomplished via plugInfo.json files, which are
 /// consumed once during the registry initialization (See \ref kind_extensions )
-class KindRegistry : public TfWeakBase, boost::noncopyable {
+class KindRegistry : public TfWeakBase, boost::noncopyable
+{
  public:
   /// Return the single \c KindRegistry instance.
   KIND_API static KindRegistry &GetInstance();
@@ -119,7 +120,8 @@ class KindRegistry : public TfWeakBase, boost::noncopyable {
 
   void _RegisterDefaults();
 
-  struct _KindData {
+  struct _KindData
+  {
     TfToken baseKind;
   };
 

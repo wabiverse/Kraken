@@ -65,7 +65,8 @@ class UsdGeomXformCache;
 /// \todo Provide API for extracting prim or property path from a target's
 /// namespaced name.
 ///
-class UsdGeomConstraintTarget {
+class UsdGeomConstraintTarget
+{
  public:
   // Default constructor returns an invalid ConstraintTarget.  Exists for
   // container classes

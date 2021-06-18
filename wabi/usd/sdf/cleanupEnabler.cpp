@@ -37,7 +37,8 @@ SdfCleanupEnabler::SdfCleanupEnabler()
 
 SdfCleanupEnabler::~SdfCleanupEnabler()
 {
-  if (GetStack().size() == 1) {
+  if (GetStack().size() == 1)
+  {
     // The last CleanupEnabler is being removed from the stack, so notify
     // the CleanupTracker that it's time to clean up any specs it collected.
     Sdf_CleanupTracker::GetInstance().CleanupSpecs();

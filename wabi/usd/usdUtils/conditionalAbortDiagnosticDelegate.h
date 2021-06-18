@@ -41,7 +41,8 @@ class TfPatternMatcher;
 /// of the error/warning
 /// codePathFilters: matching and filtering will be done on errors/warnings
 /// coming from a specific usd code path
-class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters {
+class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters
+{
  public:
   UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters()
   {}
@@ -95,7 +96,8 @@ class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters {
 ///         excludeFilters);
 /// \endcode
 ///
-class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Delegate {
+class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Delegate
+{
  public:
   /// Constructor to initialize conditionalAbortDiagnosticDelegate.
   /// Responsible for adding this delegate instance to TfDiagnosticMgr and

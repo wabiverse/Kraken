@@ -8,7 +8,8 @@
 #include <string>
 #include <vector>
 
-namespace Zep {
+namespace Zep
+{
 
 ZepSyntax_Tree::ZepSyntax_Tree(ZepBuffer &buffer,
                                const std::unordered_set<std::string> &keywords,
@@ -45,19 +46,23 @@ void ZepSyntax_Tree::UpdateSyntax()
   };
 
   // Walk backwards to previous delimiter
-  while (itrCurrent != itrEnd) {
-    if (m_stop == true) {
+  while (itrCurrent != itrEnd)
+  {
+    if (m_stop == true)
+    {
       return;
     }
 
     // Update start location
     m_processedChar = long(itrCurrent - buffer.begin());
 
-    if (*itrCurrent == '~' || *itrCurrent == '+') {
+    if (*itrCurrent == '~' || *itrCurrent == '+')
+    {
       mark(itrCurrent, itrCurrent + 1, ThemeColor::CursorNormal, ThemeColor::None);
       itrCurrent++;
       auto itrNext = itrCurrent;
-      while (itrNext != itrEnd && *itrNext != '\n') {
+      while (itrNext != itrEnd && *itrNext != '\n')
+      {
         itrNext++;
       }
       mark(itrCurrent, itrNext, ThemeColor::Comment, ThemeColor::None);

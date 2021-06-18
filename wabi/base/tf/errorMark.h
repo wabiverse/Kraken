@@ -63,7 +63,8 @@ WABI_NAMESPACE_BEGIN
 ///      }
 /// \endcode
 ///
-class TfErrorMark : boost::noncopyable {
+class TfErrorMark : boost::noncopyable
+{
  public:
   typedef TfDiagnosticMgr::ErrorIterator Iterator;
 
@@ -110,7 +111,8 @@ class TfErrorMark : boost::noncopyable {
   {
     TfDiagnosticMgr &mgr = TfDiagnosticMgr::GetInstance();
     auto b = GetBegin(), e = mgr.GetErrorEnd();
-    if (b != e) {
+    if (b != e)
+    {
       mgr.EraseRange(b, e);
       return true;
     }

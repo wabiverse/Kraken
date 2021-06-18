@@ -68,12 +68,15 @@ static void _InvokeTraceFns(TfPyTraceInfo const &info)
 
   // Walk the fns, and invoke them if they're present, erase them if they're
   // not.
-  for (TraceFnList::iterator i = local.begin(); i != local.end();) {
-    if (TfPyTraceFnId ptr = i->lock()) {
+  for (TraceFnList::iterator i = local.begin(); i != local.end();)
+  {
+    if (TfPyTraceFnId ptr = i->lock())
+    {
       (*ptr)(info);
       ++i;
     }
-    else {
+    else
+    {
       local.erase(i++);
     }
   }
@@ -93,11 +96,13 @@ static int _TracePythonFn(PyObject *, PyFrameObject *frame, int what, PyObject *
 static void _SetTraceFnEnabled(bool enable)
 {
   // NOTE! mutex must be locked by caller!
-  if (enable && !_traceFnInstalled && Py_IsInitialized()) {
+  if (enable && !_traceFnInstalled && Py_IsInitialized())
+  {
     _traceFnInstalled = true;
     PyEval_SetTrace(_TracePythonFn, NULL);
   }
-  else if (!enable && _traceFnInstalled) {
+  else if (!enable && _traceFnInstalled)
+  {
     _traceFnInstalled = false;
     PyEval_SetTrace(NULL, NULL);
   }

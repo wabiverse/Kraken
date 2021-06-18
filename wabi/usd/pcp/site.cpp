@@ -44,9 +44,11 @@ PcpSite::PcpSite(const PcpLayerStackIdentifier &layerStackIdentifier_, const Sdf
   // Do nothing
 }
 
-PcpSite::PcpSite(const PcpLayerStackPtr &layerStack, const SdfPath &path_) : path(path_)
+PcpSite::PcpSite(const PcpLayerStackPtr &layerStack, const SdfPath &path_)
+  : path(path_)
 {
-  if (layerStack) {
+  if (layerStack)
+  {
     layerStackIdentifier = layerStack->GetIdentifier();
   }
 }
@@ -58,9 +60,11 @@ PcpSite::PcpSite(const SdfLayerHandle &layer, const SdfPath &path_)
   // Do nothing
 }
 
-PcpSite::PcpSite(const PcpLayerStackSite &site) : path(site.path)
+PcpSite::PcpSite(const PcpLayerStackSite &site)
+  : path(site.path)
 {
-  if (site.layerStack) {
+  if (site.layerStack)
+  {
     layerStackIdentifier = site.layerStack->GetIdentifier();
   }
 }

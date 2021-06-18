@@ -49,7 +49,8 @@ using namespace boost;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static boost::python::tuple _TestIntersection(UsdImagingGLEngine &self,
                                               const GfMatrix4d &viewMatrix,
@@ -77,7 +78,8 @@ static boost::python::tuple _TestIntersection(UsdImagingGLEngine &self,
 
   SdfPath topLevelPath = SdfPath::EmptyPath();
   int topLevelInstanceIndex = -1;
-  if (hitInstancerContext.size() > 0) {
+  if (hitInstancerContext.size() > 0)
+  {
     topLevelPath = hitInstancerContext[0].first;
     topLevelInstanceIndex = hitInstancerContext[0].second;
   }
@@ -97,10 +99,12 @@ static void _SetLightingState(UsdImagingGLEngine &self,
 void _SetOverrideWindowPolicy(UsdImagingGLEngine &self, const object &pyObj)
 {
   extract<CameraUtilConformWindowPolicy> extractor(pyObj);
-  if (extractor.check()) {
+  if (extractor.check())
+  {
     self.SetOverrideWindowPolicy({true, extractor()});
   }
-  else {
+  else
+  {
     self.SetOverrideWindowPolicy({false, CameraUtilFit});
   }
 }

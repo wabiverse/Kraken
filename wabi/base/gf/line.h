@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// The line is kept in a parametric represention, p = p0 + t * dir.
 ///
-class GfLine {
+class GfLine
+{
 
  public:
   /// The default constructor leaves line parameters undefined.

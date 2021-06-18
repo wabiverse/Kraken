@@ -39,7 +39,8 @@
 #include <wabi/imaging/hd/vertexAdjacency.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Scene;
 class Mesh;
 class Object;
@@ -55,7 +56,8 @@ class HdCyclesRenderParam;
  * @brief HdCycles Mesh Rprim mapped to Cycles mesh
  *
  */
-class HdCyclesMesh final : public HdMesh {
+class HdCyclesMesh final : public HdMesh
+{
  public:
   HF_MALLOC_TAG_NEW("new HdCyclesMesh")
 
@@ -170,7 +172,8 @@ class HdCyclesMesh final : public HdMesh {
                        const SdfPath &id);
 
  private:
-  struct PrimvarSource {
+  struct PrimvarSource
+  {
     VtValue data;
     HdInterpolation interpolation;
   };
@@ -236,7 +239,8 @@ class HdCyclesMesh final : public HdMesh {
    */
   void _PopulateGenerated(ccl::Scene *scene);
 
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     DirtyTangents = HdChangeTracker::CustomBitsBegin,
   };
 

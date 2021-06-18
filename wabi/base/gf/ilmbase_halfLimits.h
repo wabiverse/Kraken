@@ -48,9 +48,12 @@
 #include "wabi/base/gf/ilmbase_half.h"
 #include <limits>
 
-namespace std {
+namespace std
+{
 
-template<> class numeric_limits<WABI_NS::wabi_half::half> {
+template<>
+class numeric_limits<WABI_NS::wabi_half::half>
+{
  private:
   using half = WABI_NS::wabi_half::half;
 

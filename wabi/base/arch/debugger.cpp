@@ -81,7 +81,8 @@ static void Arch_DebuggerTrapHandler(int)
   // reconfigure to not wait the next time then wait for the
   // debugger to continue us.
   bool oldVal = true;
-  if (_archDebuggerWait.compare_exchange_strong(oldVal, false)) {
+  if (_archDebuggerWait.compare_exchange_strong(oldVal, false))
+  {
     raise(SIGSTOP);
   }
 }
@@ -99,18 +100,22 @@ static void Arch_DebuggerInitPosix()
   sigemptyset(&act.sa_mask);
   act.sa_flags = SA_NODEFER;
   act.sa_handler = Arch_DebuggerTrapHandler;
-  if (sigaction(SIGTRAP, &act, 0)) {
+  if (sigaction(SIGTRAP, &act, 0))
+  {
     ARCH_WARNING(
       "Failed to set SIGTRAP handler;  "
       "debug trap not enabled");
     _archDebuggerEnabled = false;
   }
-  else {
+  else
+  {
     _archDebuggerEnabled = true;
   }
 }
-namespace {
-struct InitPosix {
+namespace
+{
+struct InitPosix
+{
   InitPosix()
   {
     Arch_DebuggerInitPosix();
@@ -175,10 +180,12 @@ static int nonLockingFork()
   typedef int (*ForkFunc)(void);
   extern ForkFunc Arch_nonLockingFork;
 
-  if (Arch_nonLockingFork != NULL) {
+  if (Arch_nonLockingFork != NULL)
+  {
     return (Arch_nonLockingFork)();
   }
-  else {
+  else
+  {
     return fork();
   }
 }
@@ -196,21 +203,24 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
   // Open a pipe for communicating success failure from descendant
   // processes.
   int ready[2];
-  if (pipe(ready) == -1) {
+  if (pipe(ready) == -1)
+  {
     return false;
   }
 
   // Fork so the child is not a process group leader and is in the
   // background.
   pid_t pid = nonLockingFork();
-  if (pid == -1) {
+  if (pid == -1)
+  {
     // fork failed!
     close(ready[0]);
     close(ready[1]);
     return false;
   }
 
-  if (pid > 0) {
+  if (pid > 0)
+  {
     // This is the parent.
     close(ready[1]);
 
@@ -218,7 +228,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
     // entire result but we only care if we get any data or not.
     int result;
     ssize_t n = read(ready[0], &result, 1);
-    while (n == -1) {
+    while (n == -1)
+    {
       n = read(ready[0], &result, 1);
     }
 
@@ -246,7 +257,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
 
   // Create a new session and set this process as the process group
   // leader.  In addition, the process has no controlling terminal.
-  if (setsid() == -1) {
+  if (setsid() == -1)
+  {
     int result = errno;
     write(ready[1], &result, sizeof(result));
     _exit(1);
@@ -271,13 +283,15 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
   signal(SIGHUP, SIG_IGN);
 
   pid = nonLockingFork();
-  if (pid == -1) {
+  if (pid == -1)
+  {
     // fork failed!
     int result = errno;
     write(ready[1], &result, sizeof(result));
     _exit(2);
   }
-  if (pid > 0) {
+  if (pid > 0)
+  {
     // This is the parent.
     _exit(0);
   }
@@ -287,7 +301,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
 
   // Close all open file descriptors
   int result = ArchCloseAllFiles(1, &ready[1]);
-  if (result == -1) {
+  if (result == -1)
+  {
     write(ready[1], &result, sizeof(result));
     _exit(3);
   }
@@ -297,7 +312,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
   // in automounted file systems which may try to go away.
   //
   result = chdir("/");
-  if (result == -1) {
+  if (result == -1)
+  {
     write(ready[1], &result, sizeof(result));
     _exit(4);
   }
@@ -312,7 +328,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
 
   // Arrange for the ready pipe to close on exec.
   long arg = FD_CLOEXEC;
-  if (fcntl(ready[1], F_SETFD, arg) == -1) {
+  if (fcntl(ready[1], F_SETFD, arg) == -1)
+  {
     // We can't close on exec so we can't indicate success of exec.
     int result = errno;
     write(ready[1], &result, sizeof(result));
@@ -321,7 +338,8 @@ bool Arch_DebuggerRunUnrelatedProcessPosix(bool (*cb)(void *), void *data)
 
   // Invoke callback.  If this calls execve() then ready[1] will close
   // automatically without us writing to it, indicating success.
-  if (!cb(data)) {
+  if (!cb(data))
+  {
     result = errno;
     write(ready[1], &result, sizeof(result));
     _exit(6);
@@ -347,23 +365,27 @@ static bool Arch_DebuggerIsAttachedPosix()
   // Check for a ptrace based debugger by trying to ptrace.
   pid_t parent = getpid();
   pid_t pid = nonLockingFork();
-  if (pid < 0) {
+  if (pid < 0)
+  {
     // fork failed.  We'll guess there's no debugger.
     return false;
   }
 
   // Child process.
-  if (pid == 0) {
+  if (pid == 0)
+  {
     // Attach to the parent with ptrace() this will fail if the
     // parent is already being traced.
-    if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) == -1) {
+    if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) == -1)
+    {
       // A debugger is probably attached if the error is EPERM.
       _exit(errno == EPERM ? 1 : 0);
     }
 
     // Wait for the parent to stop as a result of the attach.
     int status;
-    while (waitpid(parent, &status, 0) == -1 && errno == EINTR) {
+    while (waitpid(parent, &status, 0) == -1 && errno == EINTR)
+    {
       // Do nothing
     }
 
@@ -376,10 +398,12 @@ static bool Arch_DebuggerIsAttachedPosix()
 
   // Parent process
   int status;
-  while (waitpid(pid, &status, 0) == -1 && errno == EINTR) {
+  while (waitpid(pid, &status, 0) == -1 && errno == EINTR)
+  {
     // Do nothing
   }
-  if (WIFEXITED(status)) {
+  if (WIFEXITED(status))
+  {
     return WEXITSTATUS(status) != 0;
   }
   return false;
@@ -430,7 +454,8 @@ static bool Arch_DebuggerAttach()
   // the stack is available but there's only so much we can do about that.
 
   // We assume Arch_DebuggerInit() has been called.
-  if (!_archDebuggerEnabled) {
+  if (!_archDebuggerEnabled)
+  {
     return false;
   }
 
@@ -464,11 +489,13 @@ static bool Arch_DebuggerAttach()
   // use that new name in the environment variable above instead of
   // "Terminal".
 
-  if (_archDebuggerAttachArgs) {
+  if (_archDebuggerAttachArgs)
+  {
     // We need to start a process unrelated to this process so the
     // debugger's parent process is init, not this process (you can't
     // debug an ancestor process).
-    if (Arch_DebuggerRunUnrelatedProcessPosix(Arch_DebuggerAttachExecPosix, _archDebuggerAttachArgs)) {
+    if (Arch_DebuggerRunUnrelatedProcessPosix(Arch_DebuggerAttachExecPosix, _archDebuggerAttachArgs))
+    {
       // Give the debugger a chance to attach.  We have no way of
       // blocking to wait for that and we can't be sure the client
       // is even going to start a debugger so we simply sleep for
@@ -498,27 +525,33 @@ void Arch_InitDebuggerAttach()
   // store the result.  This way we can avoid using the heap or tricky
   // stack allocations when launching the debugger.
   char *e = getenv("ARCH_DEBUGGER");
-  if (e && e[0]) {
+  if (e && e[0])
+  {
     std::string link;
 
     // Compute the length of the string.
     size_t n = 0;
-    for (char *i = e; *i; ++i) {
-      if (i[0] == '%' && i[1] == 'p') {
+    for (char *i = e; *i; ++i)
+    {
+      if (i[0] == '%' && i[1] == 'p')
+      {
         n += _decimalPidLength;
         ++i;
       }
-      else if (i[0] == '%' && i[1] == 'e') {
+      else if (i[0] == '%' && i[1] == 'e')
+      {
         // Get the symlink in the proc filesystem if we haven't
         // yet.
-        if (link.empty()) {
+        if (link.empty())
+        {
           link = ArchGetExecutablePath();
         }
 
         n += link.size();
         ++i;
       }
-      else {
+      else
+      {
         ++n;
       }
     }
@@ -532,20 +565,24 @@ void Arch_InitDebuggerAttach()
 
     // Build the command string.
     char *a = _archDebuggerAttachArgs[2];
-    for (char *i = e; *i; ++i) {
-      if (i[0] == '%' && i[1] == 'p') {
+    for (char *i = e; *i; ++i)
+    {
+      if (i[0] == '%' && i[1] == 'p')
+      {
         // Write the process id.
         sprintf(a, "%d", (int)getpid());
 
         // Skip past the written process id.
-        while (*a) {
+        while (*a)
+        {
           ++a;
         }
 
         // Skip over the '%p'.
         ++i;
       }
-      else if (i[0] == '%' && i[1] == 'e') {
+      else if (i[0] == '%' && i[1] == 'e')
+      {
         // Write the executable path
         strcat(a, link.c_str());
 
@@ -555,7 +592,8 @@ void Arch_InitDebuggerAttach()
         // Skip over the '%e'.
         ++i;
       }
-      else {
+      else
+      {
         // Copy the character.
         *a++ = *i;
       }
@@ -566,7 +604,8 @@ void Arch_InitDebuggerAttach()
   }
 #elif defined(ARCH_OS_WINDOWS)
   // If ARCH_DEBUGGER is in the environment then enable attaching.
-  if (getenv("ARCH_DEBUGGER")) {
+  if (getenv("ARCH_DEBUGGER"))
+  {
     _archDebuggerAttachArgs = (char **)&_archDebuggerAttachArgs;
   }
 #endif
@@ -576,8 +615,10 @@ void ArchDebuggerTrap()
 {
   // Trap if a debugger is attached or we try and fail to attach one.
   // If we attach one we assume it will automatically stop this process.
-  if (ArchDebuggerIsAttached() || !Arch_DebuggerAttach()) {
-    if (_archDebuggerEnabled) {
+  if (ArchDebuggerIsAttached() || !Arch_DebuggerAttach())
+  {
+    if (_archDebuggerEnabled)
+    {
 #if defined(ARCH_OS_WINDOWS)
       DebugBreak();
 #elif defined(ARCH_CPU_INTEL)
@@ -594,7 +635,8 @@ void ArchDebuggerWait(bool wait)
   _archDebuggerWait = wait;
 }
 
-namespace {
+namespace
+{
 bool _ArchAvoidJIT()
 {
   return (getenv("ARCH_AVOID_JIT") != nullptr);
@@ -621,8 +663,10 @@ bool ArchDebuggerIsAttached()
 
 void ArchAbort(bool logging)
 {
-  if (!_ArchAvoidJIT() || ArchDebuggerIsAttached()) {
-    if (!logging) {
+  if (!_ArchAvoidJIT() || ArchDebuggerIsAttached())
+  {
+    if (!logging)
+    {
 #if !defined(ARCH_OS_WINDOWS)
       // Remove signal handler.
       struct sigaction act;

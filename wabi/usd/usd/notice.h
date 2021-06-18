@@ -39,10 +39,12 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Container class for Usd notices
 ///
-class UsdNotice {
+class UsdNotice
+{
  public:
   /// Base class for UsdStage notices.
-  class StageNotice : public TfNotice {
+  class StageNotice : public TfNotice
+  {
    public:
     USD_API
     StageNotice(const UsdStageWeakPtr &stage);
@@ -71,9 +73,11 @@ class UsdNotice {
   /// values for properties or metadata.  It does not \em necessarily imply
   /// invalidation of UsdPrim s.
   ///
-  class StageContentsChanged : public StageNotice {
+  class StageContentsChanged : public StageNotice
+  {
    public:
-    explicit StageContentsChanged(const UsdStageWeakPtr &stage) : StageNotice(stage)
+    explicit StageContentsChanged(const UsdStageWeakPtr &stage)
+      : StageNotice(stage)
     {}
     USD_API virtual ~StageContentsChanged();
   };
@@ -105,7 +109,8 @@ class UsdNotice {
   /// changes as a whole should use the GetResyncedPaths() and
   /// GetChangedInfoOnlyPaths() methods.
   ///
-  class ObjectsChanged : public StageNotice {
+  class ObjectsChanged : public StageNotice
+  {
     using _PathsToChangesMap = std::map<SdfPath, std::vector<const SdfChangeList::Entry *>>;
 
     friend class UsdStage;
@@ -146,15 +151,18 @@ class UsdNotice {
     /// Users may use this object in range-based for loops, or use the
     /// iterators to access additional information about each changed
     /// object.
-    class PathRange {
+    class PathRange
+    {
      public:
       /// \class iterator
       class iterator : public boost::iterator_adaptor<iterator,                            // crtp base,
                                                       _PathsToChangesMap::const_iterator,  // base iterator
                                                       const SdfPath &                      // value type
-                                                      > {
+                                                      >
+      {
        public:
-        iterator() : iterator_adaptor_(base_type())
+        iterator()
+          : iterator_adaptor_(base_type())
         {}
 
         /// Return the set of changed fields in layers that affected
@@ -173,7 +181,8 @@ class UsdNotice {
         friend class PathRange;
         friend class boost::iterator_core_access;
 
-        iterator(base_type baseIter) : iterator_adaptor_(baseIter)
+        iterator(base_type baseIter)
+          : iterator_adaptor_(baseIter)
         {}
         inline reference dereference() const
         {
@@ -183,7 +192,8 @@ class UsdNotice {
 
       using const_iterator = iterator;
 
-      PathRange() : _changes(nullptr)
+      PathRange()
+        : _changes(nullptr)
       {}
 
       /// Explicit conversion to SdfPathVector for convenience
@@ -238,7 +248,8 @@ class UsdNotice {
 
      private:
       friend class ObjectsChanged;
-      explicit PathRange(const _PathsToChangesMap *changes) : _changes(changes)
+      explicit PathRange(const _PathsToChangesMap *changes)
+        : _changes(changes)
       {}
 
       const _PathsToChangesMap *_changes;
@@ -293,9 +304,11 @@ class UsdNotice {
   /// Notice sent when a stage's EditTarget has changed.  Sent in the
   /// thread that changed the target.
   ///
-  class StageEditTargetChanged : public StageNotice {
+  class StageEditTargetChanged : public StageNotice
+  {
    public:
-    explicit StageEditTargetChanged(const UsdStageWeakPtr &stage) : StageNotice(stage)
+    explicit StageEditTargetChanged(const UsdStageWeakPtr &stage)
+      : StageNotice(stage)
     {}
     USD_API virtual ~StageEditTargetChanged();
   };
@@ -314,7 +327,8 @@ class UsdNotice {
   /// muting/unmuting layer does not belong to the current stage, or is a
   /// layer that does belong to the current stage but is not yet loaded
   /// because it is behind an unloaded payload or unselected variant.
-  class LayerMutingChanged : public StageNotice {
+  class LayerMutingChanged : public StageNotice
+  {
    public:
     explicit LayerMutingChanged(const UsdStageWeakPtr &stage,
                                 const std::vector<std::string> &mutedLayers,

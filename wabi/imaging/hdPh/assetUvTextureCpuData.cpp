@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 // For texture debug string
 static const char *_ToString(const HioImage::SourceColorSpace s)
 {
-  switch (s) {
+  switch (s)
+  {
     case HioImage::Raw:
       return "Raw";
     case HioImage::SRGB:
@@ -60,7 +61,8 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
 
   // Open all mips for the image.
   const std::vector<HioImageSharedPtr> mips = HdPhTextureUtils::GetAllMipImages(filePath, sourceColorSpace);
-  if (mips.empty()) {
+  if (mips.empty())
+  {
     return;
   }
 
@@ -74,7 +76,8 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
   // RED/RGBA) and give function to convert data if necessary.
   _textureDesc.format = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
 
-  if (_textureDesc.format == HgiFormatInvalid) {
+  if (_textureDesc.format == HgiFormatInvalid)
+  {
     TF_WARN("Unsupported texture format for UV texture");
     return;
   }
@@ -103,15 +106,18 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
   // dimension to be suitable as mip for the GPU.
   size_t numUsableMips = 1;
   while (firstMip + numUsableMips < mips.size() &&
-         _GetDimensions(mips[firstMip + numUsableMips]) == mipInfos[numUsableMips].dimensions) {
+         _GetDimensions(mips[firstMip + numUsableMips]) == mipInfos[numUsableMips].dimensions)
+  {
     numUsableMips++;
   }
 
-  if (numUsableMips > 1) {
+  if (numUsableMips > 1)
+  {
     // We have authored mips we can use, so use them.
     _textureDesc.mipLevels = numUsableMips;
   }
-  else {
+  else
+  {
     // No authored mips, generate the mipmaps from the image.
     _generateMipmaps = true;
     _textureDesc.mipLevels = mipInfos.size();
@@ -131,13 +137,15 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
     // contiguous memory.
     TRACE_FUNCTION_SCOPE("filling in image data");
 
-    for (size_t i = 0; i < numUsableMips; ++i) {
+    for (size_t i = 0; i < numUsableMips; ++i)
+    {
       if (!HdPhTextureUtils::ReadAndConvertImage(mips[firstMip + i],
                                                  /* flipped = */ originLocation == HioImage::OriginLowerLeft,
                                                  premultiplyAlpha,
                                                  mipInfos[i],
                                                  /* layer = */ 0,
-                                                 _rawBuffer.get())) {
+                                                 _rawBuffer.get()))
+      {
         TF_WARN("Unable to read Texture '%s'.", filePath.c_str());
         return;
       }
@@ -145,7 +153,8 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
   }
 
   // Handle grayscale textures by expanding value to green and blue.
-  if (HgiGetComponentCount(_textureDesc.format) == 1) {
+  if (HgiGetComponentCount(_textureDesc.format) == 1)
+  {
     _textureDesc.componentMapping = {
       HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
   }
@@ -166,8 +175,10 @@ HdPhAssetUvTextureCpuData::~HdPhAssetUvTextureCpuData() = default;
 static HdWrap _GetWrapMode(HioImageSharedPtr const &image, const HioAddressDimension d)
 {
   HioAddressMode mode;
-  if (image->GetSamplerMetadata(d, &mode)) {
-    switch (mode) {
+  if (image->GetSamplerMetadata(d, &mode))
+  {
+    switch (mode)
+    {
       case HioAddressModeClampToEdge:
         return HdWrapClamp;
       case HioAddressModeMirrorClampToEdge:

@@ -41,15 +41,18 @@ string TfPyExceptionState::GetExceptionString() const
   // Save the exception state so we can restore it -- getting the exception
   // string should not affect the exception state.
   TfPyExceptionStateScope exceptionStateScope;
-  try {
+  try
+  {
     object tbModule(handle<>(PyImport_ImportModule("traceback")));
     object exception = tbModule.attr("format_exception")(_type, _value, _trace);
     boost::python::ssize_t size = len(exception);
-    for (boost::python::ssize_t i = 0; i < size; ++i) {
+    for (boost::python::ssize_t i = 0; i < size; ++i)
+    {
       s += extract<string>(exception[i]);
     }
   }
-  catch (boost::python::error_already_set const &) {
+  catch (boost::python::error_already_set const &)
+  {
     // Just ignore the exception.
   }
   return s;

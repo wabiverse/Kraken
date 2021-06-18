@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// part and a vector of three imaginary values. Quaternions are used by the
 /// \c GfRotation class to represent arbitrary-axis rotations.
 ///
-class GfQuaternion {
+class GfQuaternion
+{
  public:
   /// The default constructor leaves the quaternion undefined.
   GfQuaternion()
@@ -66,11 +67,15 @@ class GfQuaternion {
   /// Since quaternions typically need to be normalized, the only reasonable
   /// values for \p realVal are -1, 0, or 1.  Other values are legal but are
   /// likely to be meaningless.
-  explicit GfQuaternion(int realVal) : _real(realVal), _imaginary(0)
+  explicit GfQuaternion(int realVal)
+    : _real(realVal),
+      _imaginary(0)
   {}
 
   /// This constructor initializes the real and imaginary parts.
-  GfQuaternion(double real, const GfVec3d &imaginary) : _real(real), _imaginary(imaginary)
+  GfQuaternion(double real, const GfVec3d &imaginary)
+    : _real(real),
+      _imaginary(imaginary)
   {}
 
   /// Sets the real part of the quaternion.

@@ -48,7 +48,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
 {

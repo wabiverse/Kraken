@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 
 HoudiniOpenvdbLoader::~HoudiniOpenvdbLoader()
 {
-  if (m_sopVolLibHandle) {
+  if (m_sopVolLibHandle)
+  {
     ArchLibraryClose(m_sopVolLibHandle);
   }
 }
@@ -41,7 +42,8 @@ HoudiniOpenvdbLoader::~HoudiniOpenvdbLoader()
 
 openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath, const char *name) const
 {
-  if (!m_vdbGetter) {
+  if (!m_vdbGetter)
+  {
     return nullptr;
   }
   auto vdbPrim = reinterpret_cast<GT_PrimVDB *>((*m_vdbGetter)(filepath, name));
@@ -50,18 +52,23 @@ openvdb::GridBase const *HoudiniOpenvdbLoader::GetGrid(const char *filepath, con
 
 HoudiniOpenvdbLoader::HoudiniOpenvdbLoader()
 {
-  if (auto hfs = std::getenv("HFS")) {
+  if (auto hfs = std::getenv("HFS"))
+  {
     auto sopVdbLibPath = hfs + std::string("/houdini/dso/USD_SopVol") + ARCH_LIBRARY_SUFFIX;
     m_sopVolLibHandle = ArchLibraryOpen(sopVdbLibPath, ARCH_LIBRARY_LAZY);
-    if (m_sopVolLibHandle) {
+    if (m_sopVolLibHandle)
+    {
       m_vdbGetter = (sopVdbGetterFunction)GETSYM(m_sopVolLibHandle, "SOPgetVDBVolumePrimitive");
-      if (!m_vdbGetter) {
+      if (!m_vdbGetter)
+      {
         TF_RUNTIME_ERROR("USD_SopVol missing required symbol: SOPgetVDBVolumePrimitive");
       }
     }
-    else {
+    else
+    {
       auto err = ArchLibraryError();
-      if (err.empty()) {
+      if (err.empty())
+      {
         err = "unknown reason";
       }
       TF_RUNTIME_ERROR("Failed to load USD_SopVol library: %s", err.c_str());

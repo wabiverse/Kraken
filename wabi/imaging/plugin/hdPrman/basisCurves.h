@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_BasisCurves final : public HdPrman_Gprim<HdBasisCurves> {
+class HdPrman_BasisCurves final : public HdPrman_Gprim<HdBasisCurves>
+{
  public:
   typedef HdPrman_Gprim<HdBasisCurves> BASE;
   HF_MALLOC_TAG_NEW("new HdPrman_BasisCurves");

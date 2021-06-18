@@ -45,7 +45,8 @@ bool Hd_ExtComputationContextInternal::GetOutputValue(const TfToken &name, VtVal
 {
   ValueMap::const_iterator it = m_outputs.find(name);
 
-  if (it == m_outputs.end()) {
+  if (it == m_outputs.end())
+  {
     TF_WARN("output not specified: %s", name.GetText());
 
     return false;
@@ -69,7 +70,8 @@ const VtValue &Hd_ExtComputationContextInternal::GetInputValue(const TfToken &na
 {
   ValueMap::const_iterator it = m_inputs.find(name);
 
-  if (it == m_inputs.end()) {
+  if (it == m_inputs.end())
+  {
     TF_CODING_ERROR("Asking for invalid input %s", name.GetText());
     static VtValue ERROR_VT_VALUE;
 
@@ -83,7 +85,8 @@ const VtValue *Hd_ExtComputationContextInternal::GetOptionalInputValuePtr(const 
 {
   ValueMap::const_iterator it = m_inputs.find(name);
 
-  if (it == m_inputs.end()) {
+  if (it == m_inputs.end())
+  {
     return nullptr;
   }
 

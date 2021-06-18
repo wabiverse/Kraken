@@ -53,7 +53,8 @@ UsdLuxShadowAPI::~UsdLuxShadowAPI()
 /* static */
 UsdLuxShadowAPI UsdLuxShadowAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxShadowAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdLuxShadowAPI::_GetSchemaType() const
 /* static */
 UsdLuxShadowAPI UsdLuxShadowAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdLuxShadowAPI>()) {
+  if (prim.ApplyAPI<UsdLuxShadowAPI>())
+  {
     return UsdLuxShadowAPI(prim);
   }
   return UsdLuxShadowAPI();
@@ -177,7 +179,8 @@ UsdAttribute UsdLuxShadowAPI::CreateShadowFalloffGammaAttr(VtValue const &defaul
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

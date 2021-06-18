@@ -39,14 +39,18 @@
 WABI_NAMESPACE_BEGIN
 
 // For use by \c PLUG_REGISTER_INTERFACE_SINGLETON_TYPE.
-class Plug_InterfaceFactory {
+class Plug_InterfaceFactory
+{
  public:
-  struct Base : public TfType::FactoryBase {
+  struct Base : public TfType::FactoryBase
+  {
    public:
     virtual void *New() = 0;
   };
 
-  template<class Interface, class Implementation> struct SingletonFactory : public Base {
+  template<class Interface, class Implementation>
+  struct SingletonFactory : public Base
+  {
    public:
     virtual void *New()
     {

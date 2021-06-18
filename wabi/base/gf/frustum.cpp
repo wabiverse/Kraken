@@ -126,17 +126,20 @@ void GfFrustum::SetPerspective(double fieldOfView,
   double xDist = 1.0;
 
   // Check for 0, use 1 in that case
-  if (aspectRatio == 0.0) {
+  if (aspectRatio == 0.0)
+  {
     aspectRatio = 1.0;
   }
 
-  if (isFovVertical) {
+  if (isFovVertical)
+  {
     // vertical is taken from the given field of view
     yDist = tan(GfDegreesToRadians(fieldOfView / 2.0)) * GetReferencePlaneDepth();
     // horizontal is determined by aspect ratio
     xDist = yDist * aspectRatio;
   }
-  else {
+  else
+  {
     // horizontal is taken from the given field of view
     xDist = tan(GfDegreesToRadians(fieldOfView / 2.0)) * GetReferencePlaneDepth();
     // vertical is determined by aspect ratio
@@ -170,10 +173,12 @@ bool GfFrustum::GetPerspective(bool isFovVertical,
 
   GfVec2d winSize = _window.GetSize();
 
-  if (isFovVertical) {
+  if (isFovVertical)
+  {
     *fieldOfView = 2.0 * GfRadiansToDegrees(atan(winSize[1] / (2.0 * GetReferencePlaneDepth())));
   }
-  else {
+  else
+  {
     *fieldOfView = 2.0 * GfRadiansToDegrees(atan(winSize[0] / (2.0 * GetReferencePlaneDepth())));
   }
   *aspectRatio = winSize[0] / winSize[1];
@@ -188,7 +193,8 @@ double GfFrustum::GetFOV(bool isFovVertical /* = false */)
 {
   double result = 0.0;
 
-  if (GetProjectionType() == GfFrustum::Perspective) {
+  if (GetProjectionType() == GfFrustum::Perspective)
+  {
     double aspectRatio;
     double nearDistance;
     double farDistance;
@@ -245,13 +251,15 @@ void GfFrustum::FitToSphere(const GfVec3d &center, double radius, double slack)
   // and top) coordinates of the frustum as necessary.
   //
 
-  if (_projectionType == GfFrustum::Orthographic) {
+  if (_projectionType == GfFrustum::Orthographic)
+  {
     // Set the distance so the viewpoint is outside the sphere.
     _viewDistance = radius + slack;
     // Set the camera window to enclose the sphere.
     _window = GfRange2d(GfVec2d(-radius, -radius), GfVec2d(radius, radius));
   }
-  else {
+  else
+  {
     // Find the plane coordinate to use to compute the view.
     // Assuming symmetry, it should be the half-size of the
     // smaller of the two viewing angles. If asymmetric in a
@@ -262,25 +270,31 @@ void GfFrustum::FitToSphere(const GfVec3d &center, double radius, double slack)
     double min = _window.GetMin()[whichDim];
     double max = _window.GetMax()[whichDim];
     double halfSize;
-    if (min > 0.0) {
+    if (min > 0.0)
+    {
       halfSize = max;
     }
-    else if (max < 0.0) {
+    else if (max < 0.0)
+    {
       // CODE_COVERAGE_OFF_GCOV_BUG - seems to be hit but gcov disagrees
       halfSize = min;
       // CODE_COVERAGE_ON_GCOV_BUG
     }
-    else if (-min > max) {
+    else if (-min > max)
+    {
       halfSize = min;
     }
-    else {
+    else
+    {
       halfSize = max;
     }
 
-    if (halfSize < 0.0) {
+    if (halfSize < 0.0)
+    {
       halfSize = -halfSize;
     }
-    else if (halfSize == 0.0) {
+    else if (halfSize == 0.0)
+    {
       halfSize = 1.0;  // Why not?
     }
 
@@ -481,7 +495,8 @@ GfFrustum &GfFrustum::Transform(const GfMatrix4d &matrix)
   // y coordinates can be directly used to construct the new
   // transformed reference plane.  Skip the scaling step for an
   // orthographic projection, though.
-  if (_projectionType == Perspective) {
+  if (_projectionType == Perspective)
+  {
     leftBottom /= scale;
     rightTop /= scale;
   }
@@ -494,11 +509,13 @@ GfFrustum &GfFrustum::Transform(const GfMatrix4d &matrix)
   GfVec2d wMin = frustum._window.GetMin();
   GfVec2d wMax = frustum._window.GetMax();
   // Make sure left < right
-  if (wMin[0] > wMax[0]) {
+  if (wMin[0] > wMax[0])
+  {
     std::swap(wMin[0], wMax[0]);
   }
   // Make sure bottom < top
-  if (wMin[1] > wMax[1]) {
+  if (wMin[1] > wMax[1])
+  {
     std::swap(wMin[1], wMax[1]);
   }
   frustum._window.SetMin(wMin);
@@ -561,7 +578,8 @@ GfMatrix4d GfFrustum::ComputeProjectionMatrix() const
   const double tb = t - b;
   const double fn = f - n;
 
-  if (_projectionType == GfFrustum::Orthographic) {
+  if (_projectionType == GfFrustum::Orthographic)
+  {
     matrix[0][0] = 2.0 / rl;
     matrix[1][1] = 2.0 / tb;
     matrix[2][2] = -2.0 / fn;
@@ -569,7 +587,8 @@ GfMatrix4d GfFrustum::ComputeProjectionMatrix() const
     matrix[3][1] = -(t + b) / tb;
     matrix[3][2] = -(f + n) / fn;
   }
-  else {
+  else
+  {
     // Perspective:
     // The window coordinates are specified with respect to the
     // reference plane (near == 1).
@@ -610,7 +629,8 @@ vector<GfVec3d> GfFrustum::ComputeCorners() const
   vector<GfVec3d> corners;
   corners.reserve(8);
 
-  if (_projectionType == Perspective) {
+  if (_projectionType == Perspective)
+  {
     // Compute the eye-space corners of the near-plane and
     // far-plane frustum rectangles using similar triangles. The
     // reference plane in which the window rectangle is defined is
@@ -628,7 +648,8 @@ vector<GfVec3d> GfFrustum::ComputeCorners() const
     corners.push_back(GfVec3d(far * winMin[0], far * winMax[1], -far));
     corners.push_back(GfVec3d(far * winMax[0], far * winMax[1], -far));
   }
-  else {
+  else
+  {
     // Just use the reference plane rectangle as is, translated to
     // the near and far planes.
     corners.push_back(GfVec3d(winMin[0], winMin[1], -near));
@@ -658,14 +679,16 @@ vector<GfVec3d> GfFrustum::ComputeCornersAtDistance(double d) const
   vector<GfVec3d> corners;
   corners.reserve(4);
 
-  if (_projectionType == Perspective) {
+  if (_projectionType == Perspective)
+  {
     // Similar to ComputeCorners
     corners.push_back(GfVec3d(d * winMin[0], d * winMin[1], -d));
     corners.push_back(GfVec3d(d * winMax[0], d * winMin[1], -d));
     corners.push_back(GfVec3d(d * winMin[0], d * winMax[1], -d));
     corners.push_back(GfVec3d(d * winMax[0], d * winMax[1], -d));
   }
-  else {
+  else
+  {
     corners.push_back(GfVec3d(winMin[0], winMin[1], -d));
     corners.push_back(GfVec3d(winMax[0], winMin[1], -d));
     corners.push_back(GfVec3d(winMin[0], winMax[1], -d));
@@ -696,7 +719,8 @@ GfFrustum GfFrustum::ComputeNarrowedFrustum(const GfVec3d &worldPoint, const GfV
 {
   // Map the point from worldspace onto the frustum's window
   GfVec3d lclPt = ComputeViewMatrix().Transform(worldPoint);
-  if (lclPt[2] >= 0) {
+  if (lclPt[2] >= 0)
+  {
     TF_WARN("Given worldPoint is behind or at the eye");
     // Start with this frustum
     return *this;
@@ -756,11 +780,13 @@ static GfRay _ComputeUntransformedRay(GfFrustum::ProjectionType projectionType,
   // direction (toward the point on the window).
   GfVec3d pos;
   GfVec3d dir;
-  if (projectionType == GfFrustum::Perspective) {
+  if (projectionType == GfFrustum::Perspective)
+  {
     pos = GfVec3d(0);
     dir = GfVec3d(winX, winY, -1.0).GetNormalized();
   }
-  else {
+  else
+  {
     pos.Set(winX, winY, 0.0);
     dir = -GfVec3d::ZAxis();
   }
@@ -796,11 +822,13 @@ GfRay GfFrustum::ComputeRay(const GfVec3d &worldSpacePos) const
   // direction (toward the point camSpaceToPos).
   GfVec3d pos;
   GfVec3d dir;
-  if (_projectionType == Perspective) {
+  if (_projectionType == Perspective)
+  {
     pos = GfVec3d(0);
     dir = camSpaceToPos.GetNormalized();
   }
-  else {
+  else
+  {
     pos.Set(camSpaceToPos[0], camSpaceToPos[1], 0.0);
     dir = -GfVec3d::ZAxis();
   }
@@ -822,11 +850,13 @@ GfRay GfFrustum::ComputePickRay(const GfVec3d &worldSpacePos) const
   // direction (toward the point camSpaceToPos).
   GfVec3d pos;
   GfVec3d dir;
-  if (_projectionType == Perspective) {
+  if (_projectionType == Perspective)
+  {
     pos = GfVec3d(0);
     dir = camSpaceToPos.GetNormalized();
   }
-  else {
+  else
+  {
     pos.Set(camSpaceToPos[0], camSpaceToPos[1], 0.0);
     dir = -GfVec3d::ZAxis();
   }
@@ -866,9 +896,11 @@ bool GfFrustum::Intersects(const GfBBox3d &bbox) const
   // Test the bbox against each of the frustum planes, transforming
   // the plane by the inverse of the matrix to bring it into the
   // bbox's local space.
-  for (GfPlane localPlane : *_planes) {
+  for (GfPlane localPlane : *_planes)
+  {
     localPlane.Transform(worldToLocal);
-    if (!localPlane.IntersectsPositiveHalfSpace(localBBox)) {
+    if (!localPlane.IntersectsPositiveHalfSpace(localBBox))
+    {
       return false;
     }
   }
@@ -883,8 +915,10 @@ bool GfFrustum::Intersects(const GfVec3d &point) const
 
   // Determine if the point is inside/intersecting the frustum. Quit early
   // if the point is outside of any of the frustum planes.
-  for (GfPlane plane : *_planes) {
-    if (!plane.IntersectsPositiveHalfSpace(point)) {
+  for (GfPlane plane : *_planes)
+  {
+    if (!plane.IntersectsPositiveHalfSpace(point))
+    {
       return false;
     }
   }
@@ -930,7 +964,8 @@ bool GfFrustum::_SegmentIntersects(GfVec3d const &p0,
   GfVec3d v = p1 - p0;
 
   auto const &planes = *_planes;
-  for (size_t i = 0; i < planes.size(); ++i) {
+  for (size_t i = 0; i < planes.size(); ++i)
+  {
     const GfPlane &plane = planes[i];
     const uint32_t planeBit = 1 << i;
 
@@ -954,11 +989,13 @@ bool GfFrustum::_SegmentIntersects(GfVec3d const &p0,
 
     // If p0 is inside and p1 is outside, replace t1. Otherwise,
     // replace t0.
-    if (p0Bit) {
+    if (p0Bit)
+    {
       if (t < t1)
         t1 = t;
     }
-    else {
+    else
+    {
       if (t > t0)
         t0 = t;
     }
@@ -1039,18 +1076,21 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
   uint32_t nearBit = (1 << 4);
   uint32_t farBit = (1 << 5);
   if ((p0Mask & nearBit) && (p1Mask & nearBit) && (p2Mask & nearBit) && (p0Mask & farBit) &&
-      (p1Mask & farBit) && (p2Mask & farBit)) {
+      (p1Mask & farBit) && (p2Mask & farBit))
+  {
     numCornersToCheck = 1;
   }
 
-  for (size_t i = 0; i < numCornersToCheck; ++i) {
+  for (size_t i = 0; i < numCornersToCheck; ++i)
+  {
     GfVec2d pickPoint = (i == 0) ? GfVec2d(-1.0, -1.0) :
                         (i == 1) ? GfVec2d(-1.0, 1.0) :
                         (i == 2) ? GfVec2d(1.0, 1.0) :
                                    GfVec2d(1.0, -1.0);
     GfRay pickRay = ComputePickRay(pickPoint);
     double distance;
-    if (pickRay.Intersect(p0, p1, p2, &distance, NULL, NULL)) {
+    if (pickRay.Intersect(p0, p1, p2, &distance, NULL, NULL))
+    {
       return true;
     }
   }
@@ -1067,7 +1107,8 @@ void GfFrustum::_DirtyFrustumPlanes()
 void GfFrustum::_CalculateFrustumPlanes() const
 {
   auto *planes = _planes.load();
-  if (planes) {
+  if (planes)
+  {
     return;
   }
 
@@ -1086,7 +1127,8 @@ void GfFrustum::_CalculateFrustumPlanes() const
   // corners of the near-plane frustum rectangle to define the 4
   // planes forming the left, right, top, and bottom sides of the
   // frustum.
-  if (_projectionType == GfFrustum::Perspective) {
+  if (_projectionType == GfFrustum::Perspective)
+  {
 
     //
     // Get the eye-space viewpoint (the origin) and the four corners
@@ -1154,7 +1196,8 @@ void GfFrustum::_CalculateFrustumPlanes() const
   // of the near-plane frustum rectangle and the view direction to
   // define the 4 planes forming the left, right, top, and bottom
   // sides of the frustum.
-  else {
+  else
+  {
 
     //
     // The math here is much easier than in the perspective case,
@@ -1216,7 +1259,8 @@ void GfFrustum::_CalculateFrustumPlanes() const
   newPlanes[5] = GfPlane(-newPlanes[4].GetNormal(), -(newPlanes[4].GetDistanceFromOrigin() + (far - near)));
 
   // Now attempt to set the planes.
-  if (_planes.compare_exchange_strong(planes, &newPlanes)) {
+  if (_planes.compare_exchange_strong(planes, &newPlanes))
+  {
     // We set the _planes, so don't delete them.
     newPlanesOwner.release();
   }
@@ -1251,7 +1295,8 @@ bool GfFrustum::IntersectsViewVolume(const GfBBox3d &bbox, const GfMatrix4d &vie
   points[7] = GfVec4d(localMax[0], localMax[1], localMax[2], 1);
 
   // Transform bbox local space points into clip space
-  for (int i = 0; i < 8; ++i) {
+  for (int i = 0; i < 8; ++i)
+  {
     points[i] = points[i] * bbox.GetMatrix() * viewProjMat;
   }
 
@@ -1259,7 +1304,8 @@ bool GfFrustum::IntersectsViewVolume(const GfBBox3d &bbox, const GfMatrix4d &vie
   // or one per frustum plane.  If the points overlap the
   // clip volume in any axis, then clipFlags will be 0x3f (0b111111).
   int clipFlags = 0;
-  for (int i = 0; i < 8; ++i) {
+  for (int i = 0; i < 8; ++i)
+  {
     GfVec4d clipPos = points[i];
 
     // flag is used as a 6-bit shift register, as we append
@@ -1267,7 +1313,8 @@ bool GfFrustum::IntersectsViewVolume(const GfBBox3d &bbox, const GfMatrix4d &vie
     // combines all the records of what plane-side the points
     // have been on.
     int flag = 0;
-    for (int j = 0; j < 3; ++j) {
+    for (int j = 0; j < 3; ++j)
+    {
       // We use +/-clipPos[3] as the interval bound instead of
       // 1,-1 because these coordinates are not normalized.
       flag = (flag << 1) | (clipPos[j] < clipPos[3]);
@@ -1284,7 +1331,8 @@ void GfFrustum::SetPositionAndRotationFromMatrix(const GfMatrix4d &camToWorldXf)
   // First conform matrix to be...
   GfMatrix4d conformedXf = camToWorldXf;
   // ... right handed
-  if (!conformedXf.IsRightHanded()) {
+  if (!conformedXf.IsRightHanded())
+  {
     static GfMatrix4d flip(GfVec4d(-1.0, 1.0, 1.0, 1.0));
     conformedXf = flip * conformedXf;
   }

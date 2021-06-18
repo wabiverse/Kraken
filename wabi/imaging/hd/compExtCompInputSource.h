@@ -42,7 +42,8 @@ using HdExtCompCpuComputationSharedPtr = std::shared_ptr<HdExtCompCpuComputation
 /// An Hd Buffer Source Computation that is used to bind an ExtComputation input
 /// to a specific output of another ExtComputation.
 ///
-class Hd_CompExtCompInputSource final : public Hd_ExtCompInputSource {
+class Hd_CompExtCompInputSource final : public Hd_ExtCompInputSource
+{
  public:
   /// Constructs the computation, binding inputName to sourceOutputName
   /// on buffer source representation of the source computation.

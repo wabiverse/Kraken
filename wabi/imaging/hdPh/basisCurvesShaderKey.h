@@ -53,15 +53,18 @@ WABI_NAMESPACE_BEGIN
 /// example ORIENTED only makes sense with RIBBON. In the future, we hope to
 /// eliminate NormalStyle, perhaps by merging the (RIBBON, ROUND) mode into a
 /// more automatic HALFTUBE and by relying more on materials for HAIR.
-struct HdPh_BasisCurvesShaderKey : public HdPh_ShaderKey {
-  enum DrawStyle {
+struct HdPh_BasisCurvesShaderKey : public HdPh_ShaderKey
+{
+  enum DrawStyle
+  {
     POINTS,   // Draws only the control vertices.
     WIRE,     // Draws as lines or isolines, tessellated along length
     RIBBON,   // Draws as patch, tessellated along length only
     HALFTUBE  // Draws as patch, displaced into a half tube shape
   };
 
-  enum NormalStyle {
+  enum NormalStyle
+  {
     ORIENTED,  // Orient to user supplied normals
     HAIR,      // Generated camera oriented normal
     ROUND      // Generated camera oriented normal as a tube

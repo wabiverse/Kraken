@@ -41,7 +41,8 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 ///
 /// Specialization of HdExtComputation which manages inputs as GPU resources.
 ///
-class HdPhExtComputation : public HdExtComputation {
+class HdPhExtComputation : public HdExtComputation
+{
  public:
   /// Construct a new ExtComputation identified by id.
   HDPH_API

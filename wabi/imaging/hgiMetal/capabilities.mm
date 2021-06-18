@@ -37,29 +37,35 @@ WABI_NAMESPACE_BEGIN
 
 HgiMetalCapabilities::HgiMetalCapabilities(id<MTLDevice> device)
 {
-  if (@available(macOS 10.14.5, ios 12.0, *)) {
+  if (@available(macOS 10.14.5, ios 12.0, *))
+  {
     concurrentDispatchSupported = true;
   }
-  else {
+  else
+  {
     concurrentDispatchSupported = false;
   }
 
   defaultStorageMode = MTLResourceStorageModeShared;
-  if (@available(macOS 100.100, ios 12.0, *)) {
+  if (@available(macOS 100.100, ios 12.0, *))
+  {
     unifiedMemory = true;
   }
-  else if (@available(macOS 10.15, ios 13.0, *)) {
+  else if (@available(macOS 10.15, ios 13.0, *))
+  {
 #if defined(ARCH_OS_IOS) || (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15)
     unifiedMemory = [device hasUnifiedMemory];
 #else
     unifiedMemory = [device isLowPower];
 #endif
   }
-  else {
+  else
+  {
     unifiedMemory = false;
   }
 
-  if (!unifiedMemory) {
+  if (!unifiedMemory)
+  {
     defaultStorageMode = MTLResourceStorageModeManaged;
   }
 }

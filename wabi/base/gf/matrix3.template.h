@@ -39,7 +39,8 @@
 }
 class GfRotation;
 class GfQuaternion;
-class GfQuat {
+class GfQuat
+{
   {
     SCL[0]
   }

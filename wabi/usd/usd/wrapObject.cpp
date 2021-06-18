@@ -48,7 +48,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static TfPyObjWrapper _GetMetadata(const UsdObject &self, const TfToken &key)
 {
@@ -96,7 +97,8 @@ static void _SetCustomData(UsdObject &self, object obj)
 {
   VtValue value;
   if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, TfToken(), obj, &value) &&
-      value.IsHolding<VtDictionary>()) {
+      value.IsHolding<VtDictionary>())
+  {
     self.SetCustomData(value.UncheckedGet<VtDictionary>());
   }
 }
@@ -104,7 +106,8 @@ static void _SetCustomData(UsdObject &self, object obj)
 static void _SetCustomDataByKey(UsdObject &self, const TfToken &keyPath, object obj)
 {
   VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value)) {
+  if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value))
+  {
     self.SetCustomDataByKey(keyPath, value);
   }
 }
@@ -123,7 +126,8 @@ static void _SetAssetInfo(UsdObject &self, object obj)
 {
   VtValue value;
   if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, TfToken(), obj, &value) &&
-      value.IsHolding<VtDictionary>()) {
+      value.IsHolding<VtDictionary>())
+  {
     self.SetAssetInfo(value.UncheckedGet<VtDictionary>());
   }
 }
@@ -131,7 +135,8 @@ static void _SetAssetInfo(UsdObject &self, object obj)
 static void _SetAssetInfoByKey(UsdObject &self, const TfToken &keyPath, object obj)
 {
   VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value)) {
+  if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value))
+  {
     self.SetAssetInfoByKey(keyPath, value);
   }
 }
@@ -157,11 +162,13 @@ static object __getattribute__(object selfObj, const char *name)
   if ((name[0] == '_' && name[1] == '_') || extract<UsdObject &>(selfObj)().GetPrim().IsValid() ||
       strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 || strcmp(name, "GetPrim") == 0 ||
       strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
-      strcmp(name, "IsPseudoRoot") == 0) {
+      strcmp(name, "IsPseudoRoot") == 0)
+  {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   }
-  else {
+  else
+  {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed %s", TfPyRepr(selfObj).c_str()));
   }

@@ -69,7 +69,9 @@ WABI_NAMESPACE_BEGIN
 /// \endcode
 ///
 /// \see \ref ArResolver_scopedCache "Scoped Resolution Cache"
-template<class CachedType> class ArThreadLocalScopedCache {
+template<class CachedType>
+class ArThreadLocalScopedCache
+{
  public:
   using CachePtr = std::shared_ptr<CachedType>;
 
@@ -78,20 +80,25 @@ template<class CachedType> class ArThreadLocalScopedCache {
     // Since this is intended to be used by ArResolver implementations,
     // we expect cacheScopeData to never be NULL and to either be empty
     // or holding a cache pointer that we've filled in previously.
-    if (!cacheScopeData || (!cacheScopeData->IsEmpty() && !cacheScopeData->IsHolding<CachePtr>())) {
+    if (!cacheScopeData || (!cacheScopeData->IsEmpty() && !cacheScopeData->IsHolding<CachePtr>()))
+    {
       TF_CODING_ERROR("Unexpected cache scope data");
       return;
     }
 
     _CachePtrStack &cacheStack = _threadCacheStack.local();
-    if (cacheScopeData->IsHolding<CachePtr>()) {
+    if (cacheScopeData->IsHolding<CachePtr>())
+    {
       cacheStack.push_back(cacheScopeData->UncheckedGet<CachePtr>());
     }
-    else {
-      if (cacheStack.empty()) {
+    else
+    {
+      if (cacheStack.empty())
+      {
         cacheStack.push_back(std::make_shared<CachedType>());
       }
-      else {
+      else
+      {
         cacheStack.push_back(cacheStack.back());
       }
     }
@@ -101,7 +108,8 @@ template<class CachedType> class ArThreadLocalScopedCache {
   void EndCacheScope(VtValue *cacheScopeData)
   {
     _CachePtrStack &cacheStack = _threadCacheStack.local();
-    if (TF_VERIFY(!cacheStack.empty())) {
+    if (TF_VERIFY(!cacheStack.empty()))
+    {
       cacheStack.pop_back();
     }
   }

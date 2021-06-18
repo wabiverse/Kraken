@@ -76,7 +76,8 @@ WABI_NAMESPACE_BEGIN
 /// // called, and the temporary file is removed.
 /// \endcode
 ///
-class TfAtomicOfstreamWrapper : boost::noncopyable {
+class TfAtomicOfstreamWrapper : boost::noncopyable
+{
  public:
   /// Constructor.
   TF_API explicit TfAtomicOfstreamWrapper(const std::string &filePath);

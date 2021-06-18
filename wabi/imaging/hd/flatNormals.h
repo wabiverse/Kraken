@@ -46,7 +46,8 @@ class HdMeshTopology;
 /// flat per-face normals.  It does this by breaking each face into
 /// a triangle fan centered at vertex 0, and averaging triangle normals.
 ///
-class Hd_FlatNormals final {
+class Hd_FlatNormals final
+{
  public:
   /// Computes the flat normals result using the supplied face coord
   /// information and points data. Returns an array of the same size and
@@ -71,7 +72,8 @@ class Hd_FlatNormals final {
 ///
 /// Flat normal computation CPU.
 ///
-class Hd_FlatNormalsComputation : public HdComputedBufferSource {
+class Hd_FlatNormalsComputation : public HdComputedBufferSource
+{
  public:
   HD_API
   Hd_FlatNormalsComputation(HdMeshTopology const *topology,

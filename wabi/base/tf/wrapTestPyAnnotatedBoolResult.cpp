@@ -32,9 +32,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Tf_TestAnnotatedBoolResult : TfPyAnnotatedBoolResult<std::string> {
+struct Tf_TestAnnotatedBoolResult : TfPyAnnotatedBoolResult<std::string>
+{
   Tf_TestAnnotatedBoolResult(bool value, const std::string &annotation)
     : TfPyAnnotatedBoolResult<std::string>(value, annotation)
   {}

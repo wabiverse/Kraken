@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This is similar to \c boost::python::arg, except it's not opaque and
 /// provides more fields for documentation purposes.
-class TfPyArg {
+class TfPyArg
+{
  public:
   /// Create a TfPyArg representing an argument with the given \p name.
   /// \p typeDoc and \p defaultValueDoc are optional documentation strings

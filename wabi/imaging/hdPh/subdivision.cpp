@@ -37,7 +37,8 @@ HdPh_Subdivision::~HdPh_Subdivision()
 bool HdPh_Subdivision::RefinesToTriangles(TfToken const &scheme)
 {
   // XXX: Ideally we'd like to delegate this to the concrete class.
-  if (scheme == PxOsdOpenSubdivTokens->loop) {
+  if (scheme == PxOsdOpenSubdivTokens->loop)
+  {
     return true;
   }
   return false;
@@ -52,7 +53,8 @@ bool HdPh_Subdivision::RefinesToBoxSplineTrianglePatches(TfToken const &scheme)
 {
 #if OPENSUBDIV_VERSION_NUMBER >= 30400
   // v3.4.0 added support for limit surface patches for loop meshes
-  if (scheme == PxOsdOpenSubdivTokens->loop) {
+  if (scheme == PxOsdOpenSubdivTokens->loop)
+  {
     return true;
   }
 #endif
@@ -84,14 +86,16 @@ HdPh_OsdIndexComputation::HdPh_OsdIndexComputation(HdPh_MeshTopology *topology,
 /*virtual*/
 void HdPh_OsdIndexComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
 {
-  if (_topology->RefinesToBSplinePatches()) {
+  if (_topology->RefinesToBSplinePatches())
+  {
     // bi-cubic bspline patches
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32, 16});
     // 3+1 (includes sharpness)
     specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32Vec4, 1});
     specs->emplace_back(HdTokens->edgeIndices, HdTupleType{HdTypeInt32Vec2, 1});
   }
-  else if (_topology->RefinesToBoxSplineTrianglePatches()) {
+  else if (_topology->RefinesToBoxSplineTrianglePatches())
+  {
     // quartic box spline triangle patches
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32, 12});
     // 3+1 (includes sharpness)
@@ -99,14 +103,16 @@ void HdPh_OsdIndexComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
     // int will suffice, but this unifies it for all the cases
     specs->emplace_back(HdTokens->edgeIndices, HdTupleType{HdTypeInt32Vec2, 1});
   }
-  else if (HdPh_Subdivision::RefinesToTriangles(_topology->GetScheme())) {
+  else if (HdPh_Subdivision::RefinesToTriangles(_topology->GetScheme()))
+  {
     // triangles (loop)
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec3, 1});
     specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32Vec3, 1});
     // int will suffice, but this unifies it for all the cases
     specs->emplace_back(HdTokens->edgeIndices, HdTupleType{HdTypeInt32Vec2, 1});
   }
-  else {
+  else
+  {
     // quads (catmark, bilinear)
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec4, 1});
     specs->emplace_back(HdTokens->primitiveParam, HdTupleType{HdTypeInt32Vec3, 1});
@@ -176,13 +182,16 @@ int HdPh_OsdRefineComputationGPU::GetNumOutputElements() const
   HdPh_Subdivision const *subdivision = _topology->GetSubdivision();
   if (!TF_VERIFY(subdivision))
     return 0;
-  if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) {
+  if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX)
+  {
     return subdivision->GetNumVertices();
   }
-  else if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) {
+  else if (_interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING)
+  {
     return subdivision->GetNumVarying();
   }
-  else {
+  else
+  {
     return subdivision->GetMaxNumFaceVarying();
   }
 }

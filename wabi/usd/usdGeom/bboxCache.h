@@ -90,7 +90,8 @@ class UsdGeomModelAPI;
 ///  * Plugins may be loaded in order to compute extents for prim types provided
 ///    by that plugin.  See UsdGeomBoundable::ComputeExtentFromPlugins
 ///
-class UsdGeomBBoxCache {
+class UsdGeomBBoxCache
+{
  public:
   /// Construct a new BBoxCache for a specific \p time and set of
   /// \p includedPurposes.
@@ -396,7 +397,8 @@ class UsdGeomBBoxCache {
   // always be empty for prims that aren't prototypes or children of
   // prototypes, meaning that prims not in prototypes will only have one
   // context each.
-  struct _PrimContext {
+  struct _PrimContext
+  {
     // The prim itself
     UsdPrim prim;
 
@@ -450,8 +452,12 @@ class UsdGeomBBoxCache {
   // component-relative space.
   void _ResolvePrim(_BBoxTask *task, const _PrimContext &prim, const GfMatrix4d &inverseComponentCtm);
 
-  struct _Entry {
-    _Entry() : isComplete(false), isVarying(false), isIncluded(false)
+  struct _Entry
+  {
+    _Entry()
+      : isComplete(false),
+        isVarying(false),
+        isIncluded(false)
     {}
 
     // The cached bboxes for the various values of purpose token.
@@ -505,7 +511,8 @@ class UsdGeomBBoxCache {
   // Optionally this can recursively compute and cache the purposes for any
   // existing parent entries in the cache that haven't had their purposes
   // computed yet.
-  template<bool IsRecursive> void _ComputePurposeInfo(_Entry *entry, const _PrimContext &prim);
+  template<bool IsRecursive>
+  void _ComputePurposeInfo(_Entry *entry, const _PrimContext &prim);
 
   // Helper to determine if we should use extents hints for \p prim.
   inline bool _UseExtentsHintForPrim(UsdPrim const &prim) const;

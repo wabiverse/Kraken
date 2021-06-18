@@ -42,7 +42,10 @@ WABI_NAMESPACE_BEGIN
 
 TF_INSTANTIATE_SINGLETON(Tf_NoticeRegistry);
 
-Tf_NoticeRegistry::Tf_NoticeRegistry() : _userCount(0), _doProbing(false), _globalBlockCount(0)
+Tf_NoticeRegistry::Tf_NoticeRegistry()
+  : _userCount(0),
+    _doProbing(false),
+    _globalBlockCount(0)
 {
   /*
    * lib/tf's diagnostic-reporting mechanisms are based on sending
@@ -70,7 +73,8 @@ void Tf_NoticeRegistry::_VerifyFailedCast(const type_info &toType,
 {
   string typeName = ArchGetDemangled(typeid(notice));
 
-  if (castNotice) {
+  if (castNotice)
+  {
     {
       _Lock lock(_warnMutex);
       if (_warnedBadCastTypes.count(typeName))
@@ -130,9 +134,10 @@ void Tf_NoticeRegistry::_BeginSend(const TfNotice &notice,
                                    const std::type_info &senderType,
                                    const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL(i, probes)
+  TF_FOR_ALL (i, probes)
   {
-    if (*i) {
+    if (*i)
+    {
       (*i)->BeginSend(notice, sender, senderType);
     }
   }
@@ -140,9 +145,10 @@ void Tf_NoticeRegistry::_BeginSend(const TfNotice &notice,
 
 void Tf_NoticeRegistry::_EndSend(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL(i, probes)
+  TF_FOR_ALL (i, probes)
   {
-    if (*i) {
+    if (*i)
+    {
       (*i)->EndSend();
     }
   }
@@ -155,9 +161,10 @@ void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
                                        const std::type_info &listenerType,
                                        const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL(i, probes)
+  TF_FOR_ALL (i, probes)
   {
-    if (*i) {
+    if (*i)
+    {
       (*i)->BeginDelivery(notice, sender, senderType, listener, listenerType);
     }
   }
@@ -165,9 +172,10 @@ void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
 
 void Tf_NoticeRegistry::_EndDelivery(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL(i, probes)
+  TF_FOR_ALL (i, probes)
   {
-    if (*i) {
+    if (*i)
+    {
       (*i)->EndDelivery();
     }
   }
@@ -179,7 +187,8 @@ TfNotice::Key Tf_NoticeRegistry::_Register(TfNotice::_DelivererBase *deliverer)
 
   TfType noticeType = deliverer->GetNoticeType();
 
-  if (noticeType.IsUnknown()) {
+  if (noticeType.IsUnknown())
+  {
     TF_FATAL_ERROR("notice type is undefined in the TfType system");
   }
 
@@ -197,12 +206,14 @@ void Tf_NoticeRegistry::_Revoke(TfNotice::Key &key)
 {
   _Lock lock(_userCountMutex);
 
-  if (_userCount == 0) {
+  if (_userCount == 0)
+  {
     // If no other execution context is traversing the registry, we
     // can remove the deliverer immediately.
     _FreeDeliverer(key._deliverer);
   }
-  else {
+  else
+  {
     // Otherwise deactivate it.
     key._deliverer->_Deactivate();
   }
@@ -217,8 +228,10 @@ size_t Tf_NoticeRegistry::_Send(const TfNotice &n,
   // Check the global block count to avoid the overhead of looking
   // up the thread-specific data in the 99.9% case where a block
   // is not present.
-  if (_globalBlockCount > 0) {
-    if (_perThreadBlockCount.local() > 0) {
+  if (_globalBlockCount > 0)
+  {
+    if (_perThreadBlockCount.local() > 0)
+    {
       return 0;
     }
   }
@@ -229,27 +242,33 @@ size_t Tf_NoticeRegistry::_Send(const TfNotice &n,
 
   vector<TfNotice::WeakProbePtr> probeList;
   bool doProbing = _doProbing;
-  if (doProbing) {
+  if (doProbing)
+  {
     // Copy off a list of the probes.
     _Lock lock(_probeMutex);
     probeList.reserve(_probes.size());
-    TF_FOR_ALL(i, _probes)
+    TF_FOR_ALL (i, _probes)
     {
-      if (*i) {
+      if (*i)
+      {
         probeList.push_back(*i);
       }
     }
     doProbing = !probeList.empty();
-    if (doProbing) {
+    if (doProbing)
+    {
       _BeginSend(n, s, senderType, probeList);
     }
   }
 
   // Deliver notice, walking up the chain of base types.
   TfType t = noticeType;
-  do {
-    if (_DelivererContainer *container = _GetDelivererContainer(t)) {
-      if (s) {
+  do
+  {
+    if (_DelivererContainer *container = _GetDelivererContainer(t))
+    {
+      if (s)
+      {
         // Do per-sender listeners
         nSent += _Deliver(
           n, noticeType, s, senderUniqueId, senderType, probeList, _GetHeadForSender(container, s));
@@ -260,12 +279,14 @@ size_t Tf_NoticeRegistry::_Send(const TfNotice &n,
 
     // Chain up base types to find listeners interested in them
     size_t numParents = t.GetNBaseTypes(&t, 1);
-    if (numParents != 1) {
+    if (numParents != 1)
+    {
       _BadTypeFatalMsg(t, typeid(n));
     }
   } while (t != TfType::GetRoot());
 
-  if (doProbing) {
+  if (doProbing)
+  {
     _EndSend(probeList);
   }
 
@@ -274,8 +295,10 @@ size_t Tf_NoticeRegistry::_Send(const TfNotice &n,
   {
     _Lock lock(_userCountMutex);
 
-    if (_userCount == 1 && !_deadEntries.empty()) {
-      for (size_t i = 0, n = _deadEntries.size(); i != n; ++i) {
+    if (_userCount == 1 && !_deadEntries.empty())
+    {
+      for (size_t i = 0, n = _deadEntries.size(); i != n; ++i)
+      {
         _FreeDeliverer(_deadEntries[i]);
       }
       _deadEntries.clear();
@@ -301,15 +324,19 @@ int Tf_NoticeRegistry::_Deliver(const TfNotice &n,
 
   int nSent = 0;
   _DelivererList::iterator i = entry.second;
-  while (i != dlist->end()) {
+  while (i != dlist->end())
+  {
     _DelivererList::value_type deliverer = *i;
     if (deliverer->_IsActive() &&
-        deliverer->_SendToListener(n, type, s, senderUniqueId, senderType, probes)) {
+        deliverer->_SendToListener(n, type, s, senderUniqueId, senderType, probes))
+    {
       ++nSent;
     }
-    else {
+    else
+    {
       _Lock lock(_userCountMutex);
-      if (!deliverer->_IsMarkedForRemoval()) {
+      if (!deliverer->_IsMarkedForRemoval())
+      {
         deliverer->_Deactivate();
         deliverer->_MarkForRemoval();
         _deadEntries.push_back(TfCreateWeakPtr(deliverer));
@@ -322,7 +349,8 @@ int Tf_NoticeRegistry::_Deliver(const TfNotice &n,
 
 void Tf_NoticeRegistry::_FreeDeliverer(const TfNotice::_DelivererWeakPtr &d)
 {
-  if (d) {
+  if (d)
+  {
     _DelivererList *list = d->_list;
     _DelivererList::iterator iter = d->_listIter;
     delete get_pointer(d);
@@ -335,19 +363,22 @@ void Tf_NoticeRegistry::_BadTypeFatalMsg(const TfType &t, const std::type_info &
   const vector<TfType> &baseTypes = t.GetBaseTypes();
   string msg;
 
-  if (t.IsUnknown()) {
+  if (t.IsUnknown())
+  {
     msg = TfStringPrintf(
       "Class %s (derived from TfNotice) is "
       "undefined in the TfType system",
       ArchGetDemangled(ti).c_str());
   }
-  else if (!baseTypes.empty()) {
+  else if (!baseTypes.empty())
+  {
     msg = TfStringPrintf(
       "TfNotice type '%s' has multiple base types;\n"
       "it must have a unique parent in the TfType system",
       t.GetTypeName().c_str());
   }
-  else {
+  else
+  {
     msg = TfStringPrintf(
       "TfNotice type '%s' has NO base types;\n"
       "this should be impossible.",

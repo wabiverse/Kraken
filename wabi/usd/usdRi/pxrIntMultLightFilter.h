@@ -64,7 +64,8 @@ class SdfAssetPath;
 /// Multiplies the intensity of a given light.
 ///
 ///
-class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter {
+class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -80,13 +81,15 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter {
   /// Equivalent to UsdRiPxrIntMultLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrIntMultLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim)
+  explicit UsdRiPxrIntMultLightFilter(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLightFilter(prim)
   {}
 
   /// Construct a UsdRiPxrIntMultLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrIntMultLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrIntMultLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
+  explicit UsdRiPxrIntMultLightFilter(const UsdSchemaBase &schemaObj)
+    : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.

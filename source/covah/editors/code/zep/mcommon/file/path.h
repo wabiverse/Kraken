@@ -7,16 +7,20 @@
 #include <sstream>
 #include <system_error>
 
-namespace Zep {
+namespace Zep
+{
 
 typedef std::chrono::system_clock::time_point file_time_type;
-class ZepPath {
+class ZepPath
+{
  public:
   typedef std::vector<std::string>::const_iterator const_iterator;
-  ZepPath(const std::string &strPath = std::string()) : m_strPath(strPath)
+  ZepPath(const std::string &strPath = std::string())
+    : m_strPath(strPath)
   {}
 
-  ZepPath(const char *pszZepPath) : m_strPath(pszZepPath)
+  ZepPath(const char *pszZepPath)
+    : m_strPath(pszZepPath)
   {}
 
   bool empty() const
@@ -28,7 +32,8 @@ class ZepPath {
   {
     auto str = filename().string();
     size_t dot = str.find_last_of(".");
-    if (dot != std::string::npos) {
+    if (dot != std::string::npos)
+    {
       return str.substr(0, dot);
     }
     return str;
@@ -39,31 +44,37 @@ class ZepPath {
   ZepPath filename() const
   {
     // https://stackoverflow.com/a/43283887/18942
-    if (m_strPath.empty()) {
+    if (m_strPath.empty())
+    {
       return {};
     }
 
     auto len = m_strPath.length();
     auto index = m_strPath.find_last_of("/\\");
 
-    if (index == std::string::npos) {
+    if (index == std::string::npos)
+    {
       return m_strPath;
     }
 
-    if (index + 1 >= len) {
+    if (index + 1 >= len)
+    {
 
       len--;
       index = m_strPath.substr(0, len).find_last_of("/\\");
 
-      if (len == 0) {
+      if (len == 0)
+      {
         return m_strPath;
       }
 
-      if (index == 0) {
+      if (index == 0)
+      {
         return m_strPath.substr(1, len - 1);
       }
 
-      if (index == std::string::npos) {
+      if (index == std::string::npos)
+      {
         return m_strPath.substr(0, len);
       }
 
@@ -95,7 +106,8 @@ class ZepPath {
 
     auto str = filename().string();
     size_t dot = str.find_last_of(".");
-    if (dot != std::string::npos) {
+    if (dot != std::string::npos)
+    {
       return str.substr(dot, str.length() - dot);
     }
     return ZepPath();
@@ -105,7 +117,8 @@ class ZepPath {
   {
     std::string strSplit;
     size_t sep = m_strPath.find_last_of("\\/");
-    if (sep != std::string::npos) {
+    if (sep != std::string::npos)
+    {
       return m_strPath.substr(0, sep);
     }
     return ZepPath("");
@@ -114,10 +127,12 @@ class ZepPath {
   ZepPath &replace_extension(const std::string &extension)
   {
     size_t dot = m_strPath.find_last_of(".");
-    if (dot != std::string::npos) {
+    if (dot != std::string::npos)
+    {
       m_strPath = m_strPath.substr(0, dot - 1) + extension;
     }
-    else {
+    else
+    {
       m_strPath += extension;
     }
     return *this;
@@ -146,7 +161,8 @@ class ZepPath {
   {
     std::string temp = m_strPath;
     RTrim(temp, "\\/");
-    if (temp.empty()) {
+    if (temp.empty())
+    {
       return ZepPath(rhs.string());
     }
     return ZepPath(temp + "/" + rhs.string());

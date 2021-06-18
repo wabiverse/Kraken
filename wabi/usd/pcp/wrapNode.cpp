@@ -34,7 +34,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 #define PCP_GET_NODE_FN(nodeFn) \
   static boost::python::object _##nodeFn(const PcpNodeRef &node) \

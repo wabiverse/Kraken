@@ -16,12 +16,14 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-HdRprField::HdRprField(SdfPath const &id) : HdField(id)
+HdRprField::HdRprField(SdfPath const &id)
+  : HdField(id)
 {}
 
 void HdRprField::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
-  if (*dirtyBits & DirtyParams) {
+  if (*dirtyBits & DirtyParams)
+  {
     auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
     rprRenderParam->NotifyVolumesAboutFieldChange(sceneDelegate, GetId());
   }

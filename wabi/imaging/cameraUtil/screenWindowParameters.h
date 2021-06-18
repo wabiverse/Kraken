@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 /// Given a camera object, compute parameters suitable for setting up
 /// RenderMan.
 ///
-class CameraUtilScreenWindowParameters {
+class CameraUtilScreenWindowParameters
+{
  public:
   /// Constructs screenwindow parameter. The optional \p fitDirection
   /// indicates in which direction the screenwindow will have length 2.

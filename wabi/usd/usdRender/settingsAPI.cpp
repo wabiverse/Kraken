@@ -53,7 +53,8 @@ UsdRenderSettingsAPI::~UsdRenderSettingsAPI()
 /* static */
 UsdRenderSettingsAPI UsdRenderSettingsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettingsAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdRenderSettingsAPI::_GetSchemaType() const
 /* static */
 UsdRenderSettingsAPI UsdRenderSettingsAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRenderSettingsAPI>()) {
+  if (prim.ApplyAPI<UsdRenderSettingsAPI>())
+  {
     return UsdRenderSettingsAPI(prim);
   }
   return UsdRenderSettingsAPI();

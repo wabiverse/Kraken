@@ -43,14 +43,17 @@ void ED_code_run(bool *show)
 
   flags |= ANCHOR_WindowFlags_MenuBar;
 
-  if (!ANCHOR::Begin("Code Editor", show, flags)) {
+  if (!ANCHOR::Begin("Code Editor", show, flags))
+  {
     /** Early out if window is collapsed. */
     ANCHOR::End();
     return;
   }
 
-  if (ANCHOR::BeginMenuBar()) {
-    if (ANCHOR::BeginMenu("File")) {
+  if (ANCHOR::BeginMenuBar())
+  {
+    if (ANCHOR::BeginMenu("File"))
+    {
       ANCHOR::MenuItem("New File", NULL, &show_new_file);
       ANCHOR::EndMenu();
     }

@@ -50,7 +50,8 @@ class HdPhDynamicUvTextureImplementation;
 /// a client has created the texture before the texture commit phase
 /// is finished.
 ///
-class HdPhDynamicUvTextureObject final : public HdPhUvTextureObject {
+class HdPhDynamicUvTextureObject final : public HdPhUvTextureObject
+{
  public:
   HDPH_API
   HdPhDynamicUvTextureObject(const HdPhTextureIdentifier &textureId,

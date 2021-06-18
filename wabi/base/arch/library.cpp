@@ -42,7 +42,8 @@
 WABI_NAMESPACE_BEGIN
 
 #if defined(ARCH_OS_WINDOWS)
-namespace {
+namespace
+{
 DWORD arch_lastLibraryError = 0;
 }
 #endif
@@ -51,10 +52,12 @@ void *ArchLibraryOpen(const std::string &filename, int flag)
 {
 #if defined(ARCH_OS_WINDOWS)
   arch_lastLibraryError = 0;
-  if (void *result = LoadLibrary(filename.c_str())) {
+  if (void *result = LoadLibrary(filename.c_str()))
+  {
     return result;
   }
-  else {
+  else
+  {
     arch_lastLibraryError = GetLastError();
     return nullptr;
   }
@@ -83,7 +86,8 @@ int ArchLibraryClose(void *handle)
   // dlclose() returns 0 on success and non-zero on error, the opposite of
   // FreeLibrary().
   int status = ::FreeLibrary(reinterpret_cast<HMODULE>(handle)) ? 0 : -1;
-  if (status) {
+  if (status)
+  {
     arch_lastLibraryError = GetLastError();
   }
 #else

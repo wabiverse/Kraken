@@ -46,9 +46,11 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Tf_TokenFromPythonString {
+struct Tf_TokenFromPythonString
+{
   Tf_TokenFromPythonString()
   {
     bp::converter::registry::insert(&convertible, &construct, bp::type_id<TfToken>());
@@ -67,7 +69,8 @@ struct Tf_TokenFromPythonString {
   }
 };
 
-struct Tf_TokenToPythonString {
+struct Tf_TokenToPythonString
+{
   static PyObject *convert(TfToken const &val)
   {
     return bp::incref(bp::str(val.GetString()).ptr());

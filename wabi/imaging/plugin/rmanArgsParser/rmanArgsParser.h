@@ -102,7 +102,8 @@ struct SdrShaderRepresentation;
 /// attributes mean, see the Renderman documentation on the Args format. Items
 /// marked with a '!' are deprecated and will output a warning.
 ///
-class RmanArgsParserPlugin : public NdrParserPlugin {
+class RmanArgsParserPlugin : public NdrParserPlugin
+{
  public:
   RMAN_ARGS_PARSER_API
   RmanArgsParserPlugin();

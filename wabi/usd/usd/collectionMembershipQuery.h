@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 /// retrieve a collection from scene description.  A
 /// UsdCollectionMembershipQuery object can be used to answer queries about
 /// membership of paths in the collection efficiently.
-class UsdCollectionMembershipQuery {
+class UsdCollectionMembershipQuery
+{
  public:
   /// Holds an unordered map describing membership of paths in this collection
   /// and the associated expansionRule for how the paths are to be expanded.
@@ -137,7 +138,8 @@ class UsdCollectionMembershipQuery {
   }
 
   /// Hash functor
-  struct Hash {
+  struct Hash
+  {
     USD_API
     size_t operator()(UsdCollectionMembershipQuery const &query) const;
   };

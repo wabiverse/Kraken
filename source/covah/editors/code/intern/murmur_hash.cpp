@@ -17,7 +17,8 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
   // Mix 4 bytes at a time into the hash
   const unsigned char *data = (const unsigned char *)key;
 
-  while (len >= 4) {
+  while (len >= 4)
+  {
 #ifdef PLATFORM_BIG_ENDIAN
     unsigned int k = (data[0]) + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
 #else
@@ -37,7 +38,8 @@ uint32_t murmur_hash(const void *key, int len, uint32_t seed)
 
   // Handle the last few bytes of the input array
 
-  switch (len) {
+  switch (len)
+  {
     case 3:
       h ^= data[2] << 16;
     case 2:
@@ -108,7 +110,8 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
   const uint64_t *data = (const uint64_t *)key;
   const uint64_t *end = data + (len / 8);
 
-  while (data != end) {
+  while (data != end)
+  {
 #ifdef PLATFORM_BIG_ENDIAN
     uint64 k = *data++;
     char *p = (char *)&k;
@@ -139,7 +142,8 @@ uint64_t murmur_hash_64(const void *key, uint32_t len, uint64_t seed)
 
   const unsigned char *data2 = (const unsigned char *)data;
 
-  switch (len & 7) {
+  switch (len & 7)
+  {
     case 7:
       h ^= uint64_t(data2[6]) << 48;
     case 6:

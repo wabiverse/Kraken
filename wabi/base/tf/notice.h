@@ -90,7 +90,8 @@ class Tf_NoticeRegistry;
 ///
 /// For more on using notices in Python, see the Editor With Notices tutorial.
 ///
-class TfNotice {
+class TfNotice
+{
  private:
   class _DelivererBase;
   typedef TfWeakPtr<_DelivererBase> _DelivererWeakPtr;
@@ -190,7 +191,8 @@ class TfNotice {
   /// Probe interface class which may be implemented and then registered via
   /// \c InsertProbe to introspect about notices as they are sent and
   /// delivered.
-  class Probe : public TfWeakBase {
+  class Probe : public TfWeakBase
+  {
    public:
     TF_API
     virtual ~Probe() = 0;
@@ -228,7 +230,8 @@ class TfNotice {
   /// type \c TfNotice::Key is returned; this key object can be given to \c
   /// Revoke() to subsequently unregister the listener with respect to that
   /// particular notice type and callback method.
-  class Key {
+  class Key
+  {
    public:
     Key()
     {}
@@ -251,7 +254,8 @@ class TfNotice {
     }
 
    private:
-    Key(const _DelivererWeakPtr &d) : _deliverer(d)
+    Key(const _DelivererWeakPtr &d)
+      : _deliverer(d)
     {}
 
     _DelivererWeakPtr _deliverer;
@@ -333,7 +337,8 @@ class TfNotice {
   ///
   /// To reverse the registration, call \c Key::Revoke() on the \c Key
   /// object returned by this call.
-  template<class LPtr, class MethodPtr> static TfNotice::Key Register(LPtr const &listener, MethodPtr method)
+  template<class LPtr, class MethodPtr>
+  static TfNotice::Key Register(LPtr const &listener, MethodPtr method)
   {
     return _Register(_MakeDeliverer(listener, method));
   }
@@ -403,7 +408,8 @@ class TfNotice {
   /// listeners. Note that a listener is called in the thread in which \c
   /// Send() is called and \e not necessarily in the thread that \c
   /// Register() was called in.
-  template<typename SenderPtr> size_t Send(SenderPtr const &s) const;
+  template<typename SenderPtr>
+  size_t Send(SenderPtr const &s) const;
 
   /// Variant of Send() that takes a specific sender in the form of a
   /// TfWeakBase pointer and a typeid.
@@ -427,7 +433,8 @@ class TfNotice {
   /// TfNotice::Send in the current thread will be silently ignored.  This
   /// will continue until all \c TfNotice::Block objects are destroyed.
   /// Notices that are sent when blocking is active will *not* be resent.
-  class Block {
+  class Block
+  {
    public:
     TF_API Block();
     TF_API ~Block();
@@ -436,9 +443,13 @@ class TfNotice {
  private:
   // Abstract base class for calling listeners.
   // A typed-version derives (via templating) off this class.
-  class _DelivererBase : public TfWeakBase {
+  class _DelivererBase : public TfWeakBase
+  {
    public:
-    _DelivererBase() : _list(0), _active(true), _markedForRemoval(false)
+    _DelivererBase()
+      : _list(0),
+        _active(true),
+        _markedForRemoval(false)
     {}
 
     TF_API
@@ -503,8 +514,10 @@ class TfNotice {
     {
       // Dynamic casting in deliverers is significant overhead, so only
       // do error checking in debug builds.
-      if (TF_DEV_BUILD) {
-        if (!dynamic_cast<ToNoticeType const *>(from)) {
+      if (TF_DEV_BUILD)
+      {
+        if (!dynamic_cast<ToNoticeType const *>(from))
+        {
           ToNoticeType const *castNotice = TfSafeDynamic_cast<ToNoticeType const *>(from);
           // this will abort with a clear error message if
           // castNotice is NULL
@@ -525,7 +538,9 @@ class TfNotice {
     friend class Tf_NoticeRegistry;
   };
 
-  template<class Derived> class _StandardDeliverer : public _DelivererBase {
+  template<class Derived>
+  class _StandardDeliverer : public _DelivererBase
+  {
    public:
     virtual ~_StandardDeliverer()
     {}
@@ -570,8 +585,10 @@ class TfNotice {
       typedef typename Derived::NoticeType NoticeType;
       ListenerType *listener = get_pointer(derived->_listener);
 
-      if (listener && !derived->_sender.IsInvalid()) {
-        if (ARCH_UNLIKELY(!probes.empty())) {
+      if (listener && !derived->_sender.IsInvalid())
+      {
+        if (ARCH_UNLIKELY(!probes.empty()))
+        {
           TfWeakBase const *senderWeakBase = GetSenderWeakBase(),
                            *listenerWeakBase = derived->_listener.GetWeakBase();
           _BeginDelivery(notice,
@@ -606,7 +623,8 @@ class TfNotice {
   };
 
   template<typename LPtr, typename SPtr, typename Method, typename Notice>
-  class _Deliverer : public _StandardDeliverer<_Deliverer<LPtr, SPtr, Method, Notice>> {
+  class _Deliverer : public _StandardDeliverer<_Deliverer<LPtr, SPtr, Method, Notice>>
+  {
    public:
     typedef Notice NoticeType;
     typedef typename LPtr::DataType ListenerType;
@@ -637,7 +655,8 @@ class TfNotice {
   };
 
   template<class LPtr, class Method>
-  class _RawDeliverer : public _StandardDeliverer<_RawDeliverer<LPtr, Method>> {
+  class _RawDeliverer : public _StandardDeliverer<_RawDeliverer<LPtr, Method>>
+  {
    public:
     typedef TfNotice NoticeType;
     typedef typename LPtr::DataType ListenerType;
@@ -675,7 +694,8 @@ class TfNotice {
   };
 
   template<class LPtr, class SPtr, class Method, class Notice>
-  class _DelivererWithSender : public _StandardDeliverer<_DelivererWithSender<LPtr, SPtr, Method, Notice>> {
+  class _DelivererWithSender : public _StandardDeliverer<_DelivererWithSender<LPtr, SPtr, Method, Notice>>
+  {
    public:
     typedef Notice NoticeType;
     typedef Method MethodPtr;
@@ -734,7 +754,8 @@ class TfNotice {
   friend class Tf_PyNotice;
 };
 
-template<typename SenderPtr> size_t TfNotice::Send(SenderPtr const &s) const
+template<typename SenderPtr>
+size_t TfNotice::Send(SenderPtr const &s) const
 {
   const TfWeakBase *senderWeakBase = s ? s.GetWeakBase() : NULL;
   return _Send(senderWeakBase,

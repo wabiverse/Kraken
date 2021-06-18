@@ -68,7 +68,8 @@ class SdfAssetPath;
 /// \see \ref usdLux_PluginSchemas
 ///
 ///
-class UsdLuxPluginLight : public UsdLuxLight {
+class UsdLuxPluginLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -84,13 +85,15 @@ class UsdLuxPluginLight : public UsdLuxLight {
   /// Equivalent to UsdLuxPluginLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxPluginLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxPluginLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxPluginLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxPluginLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxPluginLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxPluginLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

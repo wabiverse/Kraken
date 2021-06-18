@@ -53,7 +53,8 @@ using UsdSkelAnimMapperRefPtr = std::shared_ptr<class UsdSkelAnimMapper>;
 ///
 /// Helper class for remapping vectorized animation data from
 /// one ordering of tokens to another.
-class UsdSkelAnimMapper {
+class UsdSkelAnimMapper
+{
  public:
   /// Construct a null mapper.
   USDSKEL_API
@@ -153,7 +154,8 @@ class UsdSkelAnimMapper {
                      int elementSize,
                      const VtValue &defaultValue) const;
 
-  template<typename T> static void _ResizeContainer(VtArray<T> *array, size_t size, const T &defaultValue);
+  template<typename T>
+  static void _ResizeContainer(VtArray<T> *array, size_t size, const T &defaultValue);
 
   template<typename Container>
   static void _ResizeContainer(Container *container,
@@ -188,7 +190,8 @@ void UsdSkelAnimMapper::_ResizeContainer(VtArray<T> *array, size_t size, const T
   const size_t prevSize = array->size();
   array->resize(size);
   auto span = TfMakeSpan(*array);
-  for (size_t i = prevSize; i < size; ++i) {
+  for (size_t i = prevSize; i < size; ++i)
+  {
     span[i] = defaultValue;
   }
 }
@@ -201,11 +204,13 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
 {
   using _ValueType = typename Container::value_type;
 
-  if (!target) {
+  if (!target)
+  {
     TF_CODING_ERROR("'target' is null");
     return false;
   }
-  if (elementSize <= 0) {
+  if (elementSize <= 0)
+  {
     TF_WARN(
       "Invalid elementSize [%d]: "
       "size must be greater than zero.",
@@ -215,7 +220,8 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
 
   const size_t targetArraySize = _targetSize * elementSize;
 
-  if (IsIdentity() && source.size() == targetArraySize) {
+  if (IsIdentity() && source.size() == targetArraySize)
+  {
     // Can make copy of the array.
     *target = source;
     return true;
@@ -224,15 +230,18 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
   // Resize the target array to the expected size.
   _ResizeContainer(target, targetArraySize, defaultValue ? *defaultValue : _ValueType());
 
-  if (IsNull()) {
+  if (IsNull())
+  {
     return true;
   }
-  else if (_IsOrdered()) {
+  else if (_IsOrdered())
+  {
 
     size_t copyCount = std::min(source.size(), targetArraySize - _offset * elementSize);
     std::copy(source.cdata(), source.cdata() + copyCount, target->data() + _offset * elementSize);
   }
-  else {
+  else
+  {
 
     const _ValueType *sourceData = source.cdata();
 
@@ -241,9 +250,11 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
 
     const int *indexMap = _indexMap.data();
 
-    for (size_t i = 0; i < copyCount; ++i) {
+    for (size_t i = 0; i < copyCount; ++i)
+    {
       int targetIdx = indexMap[i];
-      if (targetIdx >= 0 && static_cast<size_t>(targetIdx) < target->size()) {
+      if (targetIdx >= 0 && static_cast<size_t>(targetIdx) < target->size())
+      {
         TF_DEV_AXIOM(i * elementSize < source.size());
         TF_DEV_AXIOM((i + 1) * elementSize <= source.size());
         TF_DEV_AXIOM(static_cast<size_t>((targetIdx + 1) * elementSize) <= target->size());

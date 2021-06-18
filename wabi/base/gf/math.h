@@ -68,7 +68,8 @@ inline double GfDegreesToRadians(double degrees)
 /// Returns the inner product of \c x with itself: specifically, \c x*x.
 /// Defined for \c int, \c float, \c double, and all \c GfVec types.
 /// \ingroup group_gf_BasicMath
-template<class T> inline double GfSqr(const T &x)
+template<class T>
+inline double GfSqr(const T &x)
 {
   return x * x;
 }
@@ -79,7 +80,8 @@ template<class T> inline double GfSqr(const T &x)
 /// zero only if value neither positive, nor negative.
 ///
 /// \ingroup group_gf_BasicMath
-template<typename T> inline T GfSgn(T v)
+template<typename T>
+inline T GfSgn(T v)
 {
   return (v < 0) ? -1 : ((v > 0) ? 1 : 0);
 }
@@ -270,45 +272,54 @@ float GfMod(float a, float b);
 /// \endcode
 ///
 /// \ingroup group_gf_BasicMath
-template<class T> inline T GfLerp(double alpha, const T &a, const T &b)
+template<class T>
+inline T GfLerp(double alpha, const T &a, const T &b)
 {
   return (1 - alpha) * a + alpha * b;
 }
 
 /// Returns the smallest of the given \c values.
 /// \ingroup group_gf_BasicMath
-template<class T> inline T GfMin(T a1, T a2)
+template<class T>
+inline T GfMin(T a1, T a2)
 {
   return (a1 < a2 ? a1 : a2);
 }
-template<class T> inline T GfMin(T a1, T a2, T a3)
+template<class T>
+inline T GfMin(T a1, T a2, T a3)
 {
   return GfMin(GfMin(a1, a2), a3);
 }
-template<class T> inline T GfMin(T a1, T a2, T a3, T a4)
+template<class T>
+inline T GfMin(T a1, T a2, T a3, T a4)
 {
   return GfMin(GfMin(a1, a2, a3), a4);
 }
-template<class T> inline T GfMin(T a1, T a2, T a3, T a4, T a5)
+template<class T>
+inline T GfMin(T a1, T a2, T a3, T a4, T a5)
 {
   return GfMin(GfMin(a1, a2, a3, a4), a5);
 }
 
 /// Returns the largest of the given \c values.
 /// \ingroup group_gf_BasicMath
-template<class T> inline T GfMax(T a1, T a2)
+template<class T>
+inline T GfMax(T a1, T a2)
 {
   return (a1 < a2 ? a2 : a1);
 }
-template<class T> inline T GfMax(T a1, T a2, T a3)
+template<class T>
+inline T GfMax(T a1, T a2, T a3)
 {
   return GfMax(GfMax(a1, a2), a3);
 }
-template<class T> inline T GfMax(T a1, T a2, T a3, T a4)
+template<class T>
+inline T GfMax(T a1, T a2, T a3, T a4)
 {
   return GfMax(GfMax(a1, a2, a3), a4);
 }
-template<class T> inline T GfMax(T a1, T a2, T a3, T a4, T a5)
+template<class T>
+inline T GfMax(T a1, T a2, T a3, T a4, T a5)
 {
   return GfMax(GfMax(a1, a2, a3, a4), a5);
 }

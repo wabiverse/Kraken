@@ -46,7 +46,8 @@ UsdGeomMotionAPI::~UsdGeomMotionAPI()
 /* static */
 UsdGeomMotionAPI UsdGeomMotionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomMotionAPI();
   }
@@ -68,7 +69,8 @@ UsdSchemaKind UsdGeomMotionAPI::_GetSchemaType() const
 /* static */
 UsdGeomMotionAPI UsdGeomMotionAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdGeomMotionAPI>()) {
+  if (prim.ApplyAPI<UsdGeomMotionAPI>())
+  {
     return UsdGeomMotionAPI(prim);
   }
   return UsdGeomMotionAPI();
@@ -109,7 +111,8 @@ UsdAttribute UsdGeomMotionAPI::CreateVelocityScaleAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -154,9 +157,11 @@ float UsdGeomMotionAPI::ComputeVelocityScale(UsdTimeCode time) const
   UsdPrim pseudoRoot = prim.GetStage()->GetPseudoRoot();
   float velocityScale = 1.0;
 
-  while (prim != pseudoRoot) {
+  while (prim != pseudoRoot)
+  {
     UsdAttribute vsAttr = prim.GetAttribute(UsdGeomTokens->motionVelocityScale);
-    if (vsAttr.HasAuthoredValue() && vsAttr.Get(&velocityScale, time)) {
+    if (vsAttr.HasAuthoredValue() && vsAttr.Get(&velocityScale, time))
+    {
       return velocityScale;
     }
     prim = prim.GetParent();

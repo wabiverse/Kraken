@@ -52,7 +52,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> struct GfIsGfMatrix<class GfMatrix3d> {
+template<>
+struct GfIsGfMatrix<class GfMatrix3d>
+{
   static const bool value = true;
 };
 
@@ -87,7 +89,8 @@ class GfQuatd;
 ///        matrix and S represents a scale matrix, the
 ///        product R*S  will rotate a row vector, then scale
 ///        it.
-class GfMatrix3d {
+class GfMatrix3d
+{
  public:
   typedef double ScalarType;
 

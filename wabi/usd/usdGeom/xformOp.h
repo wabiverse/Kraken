@@ -96,10 +96,12 @@ TF_DECLARE_PUBLIC_TOKENS(UsdGeomXformOpTypes, USDGEOM_API, USDGEOM_XFORM_OP_TYPE
 /// the order in which their corresponding elements are consumed by the
 /// rotation, not how they are laid out.
 ///
-class UsdGeomXformOp {
+class UsdGeomXformOp
+{
  public:
   /// Enumerates the set of all transformation operation types.
-  enum Type {
+  enum Type
+  {
     TypeInvalid,    ///< Represents an invalid xformOp.
     TypeTranslate,  ///< XYZ translation.
     TypeScale,      ///< XYZ scale.
@@ -123,7 +125,8 @@ class UsdGeomXformOp {
   };
 
   /// Precision with which the value of the tranformation operation is encoded.
-  enum Precision {
+  enum Precision
+  {
     PrecisionDouble,  ///< Double precision
     PrecisionFloat,   ///< Floating-point precision
     PrecisionHalf     ///< Half-float precision
@@ -248,14 +251,17 @@ class UsdGeomXformOp {
   /// an error to be emitted.
   ///
   /// \note the requested type \p T must be constructable by assignment
-  template<typename T> bool GetAs(T *value, UsdTimeCode time) const
+  template<typename T>
+  bool GetAs(T *value, UsdTimeCode time) const
   {
     VtValue v;
-    if (!Get(&v, time)) {
+    if (!Get(&v, time))
+    {
       return false;
     }
     v.Cast<T>();
-    if (v.IsEmpty()) {
+    if (v.IsEmpty())
+    {
       TfType thisType = GetTypeName().GetType();
       TF_CODING_ERROR(
         "Unable to convert xformOp %s's value from %s to "
@@ -387,7 +393,8 @@ class UsdGeomXformOp {
   ///
   /// \note For inverted ops, this returns the raw, uninverted value.
   ///
-  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return boost::apply_visitor(_Get<T>(value, time), _attr);
   }
@@ -398,11 +405,13 @@ class UsdGeomXformOp {
   /// an inverse xform operation, a coding error is issued and no value is
   /// authored.
   ///
-  template<typename T> bool Set(T const &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Set(T const &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     // Issue a coding error and return without setting value,
     // if this is an inverse op.
-    if (_isInverseOp) {
+    if (_isInverseOp)
+    {
       TF_CODING_ERROR(
         "Cannot set a value on the inverse xformOp '%s'. "
         "Please set value on the paired non-inverse xformOp instead.",
@@ -434,7 +443,8 @@ class UsdGeomXformOp {
   }
 
  private:
-  struct _ValidAttributeTagType {
+  struct _ValidAttributeTagType
+  {
   };
 
  public:
@@ -506,8 +516,12 @@ class UsdGeomXformOp {
   bool _isInverseOp;
 
   // Visitor for getting xformOp value.
-  template<class T> struct _Get : public boost::static_visitor<bool> {
-    _Get(T *value_, UsdTimeCode time_ = UsdTimeCode::Default()) : value(value_), time(time_)
+  template<class T>
+  struct _Get : public boost::static_visitor<bool>
+  {
+    _Get(T *value_, UsdTimeCode time_ = UsdTimeCode::Default())
+      : value(value_),
+        time(time_)
     {}
 
     bool operator()(const UsdAttribute &attr) const
@@ -525,7 +539,8 @@ class UsdGeomXformOp {
   };
 
   // Visitor for getting a const-reference to the UsdAttribute.
-  struct _GetAttr : public boost::static_visitor<const UsdAttribute &> {
+  struct _GetAttr : public boost::static_visitor<const UsdAttribute &>
+  {
 
     _GetAttr()
     {}
@@ -542,9 +557,11 @@ class UsdGeomXformOp {
   };
 
   // Visitor for getting all the time samples.
-  struct _GetTimeSamples : public boost::static_visitor<bool> {
+  struct _GetTimeSamples : public boost::static_visitor<bool>
+  {
 
-    _GetTimeSamples(std::vector<double> *times_) : times(times_)
+    _GetTimeSamples(std::vector<double> *times_)
+      : times(times_)
     {}
 
     bool operator()(const UsdAttribute &attr) const
@@ -561,7 +578,8 @@ class UsdGeomXformOp {
   };
 
   // Visitor for getting all the time samples within a given interval.
-  struct _GetTimeSamplesInInterval : public boost::static_visitor<bool> {
+  struct _GetTimeSamplesInInterval : public boost::static_visitor<bool>
+  {
 
     _GetTimeSamplesInInterval(const GfInterval &interval_, std::vector<double> *times_)
       : interval(interval_),
@@ -583,7 +601,8 @@ class UsdGeomXformOp {
   };
 
   // Visitor for getting the number of time samples.
-  struct _GetNumTimeSamples : public boost::static_visitor<size_t> {
+  struct _GetNumTimeSamples : public boost::static_visitor<size_t>
+  {
 
     _GetNumTimeSamples()
     {}
@@ -600,7 +619,8 @@ class UsdGeomXformOp {
   };
 
   // Visitor for determining whether the op might vary over time.
-  struct _GetMightBeTimeVarying : public boost::static_visitor<bool> {
+  struct _GetMightBeTimeVarying : public boost::static_visitor<bool>
+  {
 
     _GetMightBeTimeVarying()
     {}

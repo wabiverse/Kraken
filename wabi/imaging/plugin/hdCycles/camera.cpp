@@ -34,7 +34,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 template<typename T>
 bool EvalCameraParam(T *value,
                      const TfToken &paramName,
@@ -43,11 +44,13 @@ bool EvalCameraParam(T *value,
                      T defaultValue)
 {
   VtValue vtval = sceneDelegate->GetCameraParamValue(primPath, paramName);
-  if (vtval.IsEmpty()) {
+  if (vtval.IsEmpty())
+  {
     *value = defaultValue;
     return false;
   }
-  if (!vtval.IsHolding<T>()) {
+  if (!vtval.IsHolding<T>())
+  {
     *value = defaultValue;
     TF_CODING_ERROR("%s: type mismatch - %s", paramName.GetText(), vtval.GetTypeName().c_str());
     return false;
@@ -145,7 +148,8 @@ HdCyclesCamera::HdCyclesCamera(SdfPath const &id, HdCyclesRenderDelegate *a_rend
   config.motion_blur.eval(m_useMotionBlur, true);
 
   bool use_motion_blur = m_renderDelegate->GetCyclesRenderParam()->GetCyclesScene()->integrator->motion_blur;
-  if (use_motion_blur) {
+  if (use_motion_blur)
+  {
     m_useMotionBlur = true;
   }
 }
@@ -158,7 +162,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!TF_VERIFY(sceneDelegate != nullptr)) {
+  if (!TF_VERIFY(sceneDelegate != nullptr))
+  {
     return;
   }
 
@@ -168,8 +173,10 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
 
   /* ----- Cycles setup clipping range. ------ */
   const auto clippingRange = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->clippingRange);
-  if (*dirtyBits & HdCamera::DirtyClipPlanes) {
-    if (clippingRange.IsHolding<GfRange1f>()) {
+  if (*dirtyBits & HdCamera::DirtyClipPlanes)
+  {
+    if (clippingRange.IsHolding<GfRange1f>())
+    {
       const auto &range = clippingRange.UncheckedGet<GfRange1f>();
       EvalCameraParam(&m_clippingRange,
                       HdCameraTokens->clippingRange,
@@ -177,13 +184,15 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
                       id,
                       GfRange1f(range.GetMin(), range.GetMax()));
     }
-    else {
+    else
+    {
       EvalCameraParam(
         &m_clippingRange, HdCameraTokens->clippingRange, sceneDelegate, id, GfRange1f(0.1f, 100000.0f));
     }
   }
 
-  if (*dirtyBits & HdCamera::DirtyParams) {
+  if (*dirtyBits & HdCamera::DirtyParams)
+  {
     m_needsUpdate = true;
 
     // TODO:
@@ -226,7 +235,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       m_focalLength = focalLength * 10.0f;
 
     /** Cycles projection matrix */
-    if (*dirtyBits & HdCamera::DirtyProjMatrix) {
+    if (*dirtyBits & HdCamera::DirtyProjMatrix)
+    {
       const auto &projMatrix = GetProjectionMatrix();
       const auto fov = static_cast<float>(GfRadiansToDegrees(atan(1.0 / projMatrix[0][0]) * 2.0));
       m_fov = fov;
@@ -241,18 +251,22 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     // TODO: has_focusDistance
     (void)has_focusDistance;
 
-    if (std::isnan(m_focalLength)) {
+    if (std::isnan(m_focalLength))
+    {
       has_focalLength = false;
     }
 
-    if (std::isnan(m_fStop) || m_fStop < 0.000001f) {
+    if (std::isnan(m_fStop) || m_fStop < 0.000001f)
+    {
       has_fStop = false;
     }
 
     // Depth of field
 
-    if (m_useDof && has_fStop) {
-      if (has_focalLength) {
+    if (m_useDof && has_fStop)
+    {
+      if (has_focalLength)
+      {
         if (m_projectionType == UsdGeomTokens->orthographic)
           m_apertureSize = 1.0f / (2.0f * m_fStop);
         else
@@ -263,7 +277,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       m_blades = 0;
       m_bladesRotation = 0.0f;
     }
-    else {
+    else
+    {
       m_apertureSize = 0.0f;
       m_blades = 0;
       m_bladesRotation = 0.0f;
@@ -275,7 +290,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     TfToken motionPosition = _HdCyclesGetCameraParam<TfToken>(
       sceneDelegate, id, HdCyclesTokens->cyclesCameraMotionPosition, HdCyclesTokens->center);
 
-    if (m_motionPosition != MOTION_POSITION_CONVERSION[motionPosition]) {
+    if (m_motionPosition != MOTION_POSITION_CONVERSION[motionPosition])
+    {
       m_motionPosition = MOTION_POSITION_CONVERSION[motionPosition];
     }
 
@@ -283,7 +299,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     TfToken rollingShutterType = _HdCyclesGetCameraParam<TfToken>(
       sceneDelegate, id, HdCyclesTokens->cyclesCameraRollingShutterType, HdCyclesTokens->none);
 
-    if (m_rollingShutterType != ROLLING_SHUTTER_TYPE_CONVERSION[rollingShutterType]) {
+    if (m_rollingShutterType != ROLLING_SHUTTER_TYPE_CONVERSION[rollingShutterType])
+    {
       m_rollingShutterType = ROLLING_SHUTTER_TYPE_CONVERSION[rollingShutterType];
     }
 
@@ -291,7 +308,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     TfToken panoramaType = _HdCyclesGetCameraParam<TfToken>(
       sceneDelegate, id, HdCyclesTokens->cyclesCameraPanoramaType, HdCyclesTokens->equirectangular);
 
-    if (m_panoramaType != PANORAMA_TYPE_CONVERSION[panoramaType]) {
+    if (m_panoramaType != PANORAMA_TYPE_CONVERSION[panoramaType])
+    {
       m_panoramaType = PANORAMA_TYPE_CONVERSION[panoramaType];
     }
 
@@ -299,7 +317,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     TfToken stereoEye = _HdCyclesGetCameraParam<TfToken>(
       sceneDelegate, id, HdCyclesTokens->cyclesCameraStereoEye, HdCyclesTokens->none);
 
-    if (m_stereoEye != STEREO_EYE_CONVERSION[stereoEye]) {
+    if (m_stereoEye != STEREO_EYE_CONVERSION[stereoEye])
+    {
       m_stereoEye = STEREO_EYE_CONVERSION[stereoEye];
     }
 
@@ -310,10 +329,12 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     shutterCurve = _HdCyclesGetCameraParam<VtFloatArray>(
       sceneDelegate, id, HdCyclesTokens->cyclesCameraShutterCurve, shutterCurve);
 
-    if (shutterCurve.size() > 0) {
+    if (shutterCurve.size() > 0)
+    {
       m_shutterCurve.resize(shutterCurve.size());
 
-      for (size_t i = 0; i < shutterCurve.size(); i++) {
+      for (size_t i = 0; i < shutterCurve.size(); i++)
+      {
         m_shutterCurve[i] = shutterCurve[i];
       }
     }
@@ -377,14 +398,16 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       sceneDelegate, id, HdCyclesTokens->cyclesCameraPoleMergeAngleTo, m_poleMergeAngleTo);
   }
 
-  if (*dirtyBits & HdCamera::DirtyProjMatrix) {
+  if (*dirtyBits & HdCamera::DirtyProjMatrix)
+  {
     EvalCameraParam(&m_projMtx, HdCameraTokens->projectionMatrix, sceneDelegate, id);
 
     sceneDelegate->SampleTransform(id, &m_transformSamples);
     SetTransform(m_projMtx);
   }
 
-  if (*dirtyBits & HdCamera::DirtyViewMatrix) {
+  if (*dirtyBits & HdCamera::DirtyViewMatrix)
+  {
     // Convert right-handed Y-up camera space (USD, Hydra) to
     // left-handed Y-up (Cycles) coordinates. This just amounts to
     // flipping the Z axis.
@@ -393,7 +416,8 @@ void HdCyclesCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     SetTransform(m_projMtx);
   }
 
-  if (m_needsUpdate) {
+  if (m_needsUpdate)
+  {
     m_cyclesCamera->tag_update();
     m_cyclesCamera->need_update = true;
     param->Interrupt();
@@ -450,10 +474,12 @@ bool HdCyclesCamera::ApplyCameraSettings(ccl::Camera *a_camera)
   a_camera->motion_position = static_cast<ccl::MotionPosition>(m_motionPosition);
   a_camera->stereo_eye = static_cast<ccl::Camera::StereoEye>(m_stereoEye);
 
-  if (m_projectionType == UsdGeomTokens->orthographic) {
+  if (m_projectionType == UsdGeomTokens->orthographic)
+  {
     a_camera->type = ccl::CameraType::CAMERA_ORTHOGRAPHIC;
   }
-  else {
+  else
+  {
     a_camera->type = ccl::CameraType::CAMERA_PERSPECTIVE;
   }
 
@@ -465,12 +491,15 @@ bool HdCyclesCamera::ApplyCameraSettings(ccl::Camera *a_camera)
   // TODO:
   // We likely need to ensure motion_position is respected when
   // populating the camera->motion array.
-  if (m_useMotionBlur) {
+  if (m_useMotionBlur)
+  {
     a_camera->motion.clear();
     a_camera->motion.resize(m_transformSamples.count, ccl::transform_identity());
 
-    for (size_t i = 0; i < m_transformSamples.count; i++) {
-      if (m_transformSamples.times.data()[i] == 0.0f) {
+    for (size_t i = 0; i < m_transformSamples.count; i++)
+    {
+      if (m_transformSamples.times.data()[i] == 0.0f)
+      {
         a_camera->matrix = mat4d_to_transform(ConvertCameraTransform(m_transformSamples.values.data()[i]));
       }
 
@@ -486,7 +515,8 @@ HdDirtyBits HdCyclesCamera::GetInitialDirtyBitsMask() const
   return HdCamera::AllDirty;
 }
 
-template<class T> static const T *_GetDictItem(const VtDictionary &dict, const TfToken &key)
+template<class T>
+static const T *_GetDictItem(const VtDictionary &dict, const TfToken &key)
 {
   const VtValue *v = TfMapLookupPtr(dict, key.GetString());
   return v && v->IsHolding<T>() ? &v->UncheckedGet<T>() : nullptr;
@@ -494,7 +524,8 @@ template<class T> static const T *_GetDictItem(const VtDictionary &dict, const T
 
 bool HdCyclesCamera::GetApertureSize(GfVec2f *v) const
 {
-  if (!std::isnan(m_horizontalAperture) && !std::isnan(m_verticalAperture)) {
+  if (!std::isnan(m_horizontalAperture) && !std::isnan(m_verticalAperture))
+  {
     *v = {m_horizontalAperture, m_verticalAperture};
     return true;
   }
@@ -503,7 +534,8 @@ bool HdCyclesCamera::GetApertureSize(GfVec2f *v) const
 
 bool HdCyclesCamera::GetApertureOffset(GfVec2f *v) const
 {
-  if (!std::isnan(m_horizontalApertureOffset) && !std::isnan(m_verticalApertureOffset)) {
+  if (!std::isnan(m_horizontalApertureOffset) && !std::isnan(m_verticalApertureOffset))
+  {
     *v = {m_horizontalApertureOffset, m_verticalApertureOffset};
     return true;
   }
@@ -512,7 +544,8 @@ bool HdCyclesCamera::GetApertureOffset(GfVec2f *v) const
 
 bool HdCyclesCamera::GetFocalLength(float *v) const
 {
-  if (!std::isnan(m_focalLength)) {
+  if (!std::isnan(m_focalLength))
+  {
     *v = m_focalLength;
     return true;
   }
@@ -521,7 +554,8 @@ bool HdCyclesCamera::GetFocalLength(float *v) const
 
 bool HdCyclesCamera::GetFStop(float *v) const
 {
-  if (!std::isnan(m_fStop)) {
+  if (!std::isnan(m_fStop))
+  {
     *v = m_fStop;
     return true;
   }
@@ -530,7 +564,8 @@ bool HdCyclesCamera::GetFStop(float *v) const
 
 bool HdCyclesCamera::GetFocusDistance(float *v) const
 {
-  if (!std::isnan(m_focusDistance)) {
+  if (!std::isnan(m_focusDistance))
+  {
     *v = m_focusDistance;
     return true;
   }
@@ -539,7 +574,8 @@ bool HdCyclesCamera::GetFocusDistance(float *v) const
 
 bool HdCyclesCamera::GetShutterOpen(double *v) const
 {
-  if (!std::isnan(m_shutterOpen)) {
+  if (!std::isnan(m_shutterOpen))
+  {
     *v = m_shutterOpen;
     return true;
   }
@@ -548,7 +584,8 @@ bool HdCyclesCamera::GetShutterOpen(double *v) const
 
 bool HdCyclesCamera::GetShutterClose(double *v) const
 {
-  if (!std::isnan(m_shutterClose)) {
+  if (!std::isnan(m_shutterClose))
+  {
     *v = m_shutterClose;
     return true;
   }
@@ -557,7 +594,8 @@ bool HdCyclesCamera::GetShutterClose(double *v) const
 
 bool HdCyclesCamera::GetClippingRange(GfRange1f *v) const
 {
-  if (!std::isnan(m_clippingRange.GetMin()) && !std::isnan(m_clippingRange.GetMax())) {
+  if (!std::isnan(m_clippingRange.GetMin()) && !std::isnan(m_clippingRange.GetMax()))
+  {
     *v = m_clippingRange;
     return true;
   }
@@ -566,7 +604,8 @@ bool HdCyclesCamera::GetClippingRange(GfRange1f *v) const
 
 bool HdCyclesCamera::GetProjectionType(TfToken *v) const
 {
-  if (!m_projectionType.IsEmpty()) {
+  if (!m_projectionType.IsEmpty())
+  {
     *v = m_projectionType;
     return true;
   }
@@ -582,7 +621,8 @@ void HdCyclesCamera::SetTransform(const GfMatrix4d a_projectionMatrix)
 {
   GfMatrix4d viewToWorldCorrectionMatrix(1.0);
 
-  if (m_projectionType == UsdGeomTokens->orthographic) {
+  if (m_projectionType == UsdGeomTokens->orthographic)
+  {
     double left = -(1 + a_projectionMatrix[3][0]) / a_projectionMatrix[0][0];
     double right = (1 - a_projectionMatrix[3][0]) / a_projectionMatrix[0][0];
     double bottom = -(1 - a_projectionMatrix[3][1]) / a_projectionMatrix[1][1];

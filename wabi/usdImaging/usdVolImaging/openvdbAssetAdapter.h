@@ -45,11 +45,13 @@ class UsdPrim;
 ///
 /// Adapter class for fields of type OpenVDBAsset
 ///
-class UsdImagingOpenVDBAssetAdapter : public UsdImagingFieldAdapter {
+class UsdImagingOpenVDBAssetAdapter : public UsdImagingFieldAdapter
+{
  public:
   using BaseAdapter = UsdImagingFieldAdapter;
 
-  UsdImagingOpenVDBAssetAdapter() : UsdImagingFieldAdapter()
+  UsdImagingOpenVDBAssetAdapter()
+    : UsdImagingFieldAdapter()
   {}
 
   USDVOLIMAGING_API

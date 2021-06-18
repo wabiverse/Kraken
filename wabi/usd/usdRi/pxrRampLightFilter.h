@@ -71,7 +71,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdRiTokens->rightHanded
 /// as the value.
 ///
-class UsdRiPxrRampLightFilter : public UsdLuxLightFilter {
+class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -87,13 +88,15 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter {
   /// Equivalent to UsdRiPxrRampLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrRampLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim)
+  explicit UsdRiPxrRampLightFilter(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLightFilter(prim)
   {}
 
   /// Construct a UsdRiPxrRampLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrRampLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrRampLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
+  explicit UsdRiPxrRampLightFilter(const UsdSchemaBase &schemaObj)
+    : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.

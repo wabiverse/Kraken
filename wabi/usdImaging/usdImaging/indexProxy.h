@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 /// This proxy class exposes a subset of the private Delegate API to
 /// PrimAdapters.
 ///
-class UsdImagingIndexProxy {
+class UsdImagingIndexProxy
+{
  public:
   /// A note on paths/prims: the core function of UsdImagingIndexProxy and
   /// UsdImagingDelegate is to maintain a set of mappings between USD prims
@@ -219,7 +220,8 @@ class UsdImagingIndexProxy {
 
   void _AddTask(SdfPath const &usdPath);
 
-  struct _TypeAndPath {
+  struct _TypeAndPath
+  {
     TfToken primType;
     SdfPath cachePath;
   };

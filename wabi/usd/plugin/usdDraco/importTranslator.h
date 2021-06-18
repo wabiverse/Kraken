@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Translates Draco mesh to USD mesh.
 ///
-class UsdDracoImportTranslator {
+class UsdDracoImportTranslator
+{
  public:
   /// Translates Draco mesh to USD mesh and returns USD layer with mesh.
   static SdfLayerRefPtr Translate(const draco::Mesh &dracoMesh);

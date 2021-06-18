@@ -28,7 +28,8 @@
 
 #include <tbb/concurrent_vector.h>
 
-namespace ccl {
+namespace ccl
+{
 class Scene;
 }
 
@@ -36,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdCyclesRenderDelegate;
 
-class HdCyclesResourceRegistry final : public HdResourceRegistry {
+class HdCyclesResourceRegistry final : public HdResourceRegistry
+{
  public:
   explicit HdCyclesResourceRegistry(HdCyclesRenderDelegate *renderDelegate);
 

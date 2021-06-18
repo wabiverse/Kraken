@@ -62,7 +62,8 @@ class SdfAssetPath;
 /// Light emitted outward from a geometric prim (UsdGeomGprim),
 /// which is typically a mesh.
 ///
-class UsdLuxGeometryLight : public UsdLuxLight {
+class UsdLuxGeometryLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -78,13 +79,15 @@ class UsdLuxGeometryLight : public UsdLuxLight {
   /// Equivalent to UsdLuxGeometryLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxGeometryLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxGeometryLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxGeometryLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxGeometryLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxGeometryLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxGeometryLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

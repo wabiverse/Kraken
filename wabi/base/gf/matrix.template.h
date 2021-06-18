@@ -60,13 +60,16 @@
 
   WABI_NAMESPACE_BEGIN
 
-  template<> struct GfIsGfMatrix<class {{MAT}}> {
+  template<>
+  struct GfIsGfMatrix<class {{MAT}}>
+  {
     static const bool value = true;
   };
 
   {% for S in SCALARS %
   }
-  class GfMatrix {
+  class GfMatrix
+  {
     {
       DIM
     }
@@ -84,7 +87,8 @@
   { % block classDocs % } {
     % endblock %
   }
-  class {
+  class
+  {
     {
       MAT
     }
@@ -611,7 +615,8 @@
     {
       % if SCL == 'float' %
     }
-    friend class GfMatrix {
+    friend class GfMatrix
+    {
       {
         DIM
       }
@@ -619,7 +624,8 @@
     { % endif % } {
       % if SCL == 'double' %
     }
-    friend class GfMatrix {
+    friend class GfMatrix
+    {
       {
         DIM
       }

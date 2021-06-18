@@ -46,7 +46,8 @@ TF_DECLARE_REF_PTRS(GlfBindingMap);
 ///
 /// A shader that supports simple lighting functionality.
 ///
-class HdPhSimpleLightingShader : public HdPhLightingShader {
+class HdPhSimpleLightingShader : public HdPhLightingShader
+{
  public:
   HDPH_API
   HdPhSimpleLightingShader();

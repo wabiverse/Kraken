@@ -57,7 +57,8 @@ UsdLuxDomeLight::~UsdLuxDomeLight()
 /* static */
 UsdLuxDomeLight UsdLuxDomeLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDomeLight();
   }
@@ -68,7 +69,8 @@ UsdLuxDomeLight UsdLuxDomeLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxDomeLight UsdLuxDomeLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("DomeLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDomeLight();
   }
@@ -148,7 +150,8 @@ UsdRelationship UsdLuxDomeLight::CreatePortalsRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -193,13 +196,16 @@ WABI_NAMESPACE_BEGIN
 
 void UsdLuxDomeLight::OrientToStageUpAxis() const
 {
-  if (UsdGeomGetStageUpAxis(GetPrim().GetStage()) == UsdGeomTokens->z) {
+  if (UsdGeomGetStageUpAxis(GetPrim().GetStage()) == UsdGeomTokens->z)
+  {
     UsdGeomXformOp::Type const opType = UsdGeomXformOp::TypeRotateX;
     TfToken const &opSuffix = UsdLuxTokens->orientToStageUpAxis;
     TfToken const opName = UsdGeomXformOp::GetOpName(opType, opSuffix);
     bool resetsXformStack;
-    for (UsdGeomXformOp const &op : GetOrderedXformOps(&resetsXformStack)) {
-      if (op.GetName() == opName) {
+    for (UsdGeomXformOp const &op : GetOrderedXformOps(&resetsXformStack))
+    {
+      if (op.GetName() == opName)
+      {
         // Op already exists.
         return;
       }

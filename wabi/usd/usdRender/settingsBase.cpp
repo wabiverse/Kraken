@@ -50,7 +50,8 @@ UsdRenderSettingsBase::~UsdRenderSettingsBase()
 /* static */
 UsdRenderSettingsBase UsdRenderSettingsBase::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettingsBase();
   }
@@ -180,7 +181,8 @@ UsdRelationship UsdRenderSettingsBase::CreateCameraRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

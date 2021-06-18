@@ -61,7 +61,8 @@ class VtValue;
 /// asset resolution behavior by implementing a subclass of ArResolver.
 /// Clients may use #ArGetResolver to access the configured asset resolver.
 ///
-class ArResolver {
+class ArResolver
+{
  public:
   AR_API
   virtual ~ArResolver();

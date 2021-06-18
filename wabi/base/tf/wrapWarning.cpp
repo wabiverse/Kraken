@@ -40,7 +40,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static void _Warn(string const &msg,
                   string const &moduleName,

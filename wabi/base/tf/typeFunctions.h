@@ -50,7 +50,9 @@ WABI_NAMESPACE_BEGIN
 /// (see refPtr.h for an example). Essentially, this is the inverse of
 /// TfTypeFunctions<T>::GetRawPtr.
 ///
-template<class T, class ENABLE = void> struct TfTypeFunctions {
+template<class T, class ENABLE = void>
+struct TfTypeFunctions
+{
 #if 0
     static T* GetRawPtr(T& t) {
         return &t;
@@ -78,7 +80,9 @@ template<class T, class ENABLE = void> struct TfTypeFunctions {
   {}
 };
 
-template<class T> struct TfTypeFunctions<T *> {
+template<class T>
+struct TfTypeFunctions<T *>
+{
   static T *GetRawPtr(T *t)
   {
     return t;
@@ -100,7 +104,9 @@ template<class T> struct TfTypeFunctions<T *> {
   {}
 };
 
-template<class T> struct TfTypeFunctions<const T *> {
+template<class T>
+struct TfTypeFunctions<const T *>
+{
   static const T *GetRawPtr(const T *t)
   {
     return t;
@@ -127,14 +133,18 @@ template<class T> struct TfTypeFunctions<const T *> {
 /// points to newly constructed dynamic space, which the caller must free.
 /// Otherwise, the returned value is the address of \p v.
 ///
-template<class T> struct TfCopyIfNotReference {
+template<class T>
+struct TfCopyIfNotReference
+{
   static T *Apply(T value)
   {
     return new T(value);
   }
 };
 
-template<class T> struct TfCopyIfNotReference<T &> {
+template<class T>
+struct TfCopyIfNotReference<T &>
+{
   static T *Apply(T &value)
   {
     return &value;

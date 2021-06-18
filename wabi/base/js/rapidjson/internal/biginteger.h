@@ -23,29 +23,35 @@
 #endif
 
 RAPIDJSON_NAMESPACE_BEGIN
-namespace internal {
+namespace internal
+{
 
-class BigInteger {
+class BigInteger
+{
  public:
   typedef uint64_t Type;
 
-  BigInteger(const BigInteger &rhs) : count_(rhs.count_)
+  BigInteger(const BigInteger &rhs)
+    : count_(rhs.count_)
   {
     std::memcpy(digits_, rhs.digits_, count_ * sizeof(Type));
   }
 
-  explicit BigInteger(uint64_t u) : count_(1)
+  explicit BigInteger(uint64_t u)
+    : count_(1)
   {
     digits_[0] = u;
   }
 
-  BigInteger(const char *decimals, size_t length) : count_(1)
+  BigInteger(const char *decimals, size_t length)
+    : count_(1)
   {
     RAPIDJSON_ASSERT(length > 0);
     digits_[0] = 0;
     size_t i = 0;
     const size_t kMaxDigitPerIteration = 19;  // 2^64 = 18446744073709551616 > 10^19
-    while (length >= kMaxDigitPerIteration) {
+    while (length >= kMaxDigitPerIteration)
+    {
       AppendDecimal64(decimals + i, decimals + i + kMaxDigitPerIteration);
       length -= kMaxDigitPerIteration;
       i += kMaxDigitPerIteration;
@@ -57,7 +63,8 @@ class BigInteger {
 
   BigInteger &operator=(const BigInteger &rhs)
   {
-    if (this != &rhs) {
+    if (this != &rhs)
+    {
       count_ = rhs.count_;
       std::memcpy(digits_, rhs.digits_, count_ * sizeof(Type));
     }
@@ -75,7 +82,8 @@ class BigInteger {
   {
     Type backup = digits_[0];
     digits_[0] += u;
-    for (size_t i = 0; i < count_ - 1; i++) {
+    for (size_t i = 0; i < count_ - 1; i++)
+    {
       if (digits_[i] >= backup)
         return *this;  // no carry
       backup = digits_[i + 1];
@@ -99,7 +107,8 @@ class BigInteger {
       return *this = u;
 
     uint64_t k = 0;
-    for (size_t i = 0; i < count_; i++) {
+    for (size_t i = 0; i < count_; i++)
+    {
       uint64_t hi;
       digits_[i] = MulAdd64(digits_[i], u, k, &hi);
       k = hi;
@@ -121,7 +130,8 @@ class BigInteger {
       return *this = u;
 
     uint64_t k = 0;
-    for (size_t i = 0; i < count_; i++) {
+    for (size_t i = 0; i < count_; i++)
+    {
       const uint64_t c = digits_[i] >> 32;
       const uint64_t d = digits_[i] & 0xFFFFFFFF;
       const uint64_t uc = u * c;
@@ -147,11 +157,13 @@ class BigInteger {
     size_t interShift = shift % kTypeBit;
     RAPIDJSON_ASSERT(count_ + offset <= kCapacity);
 
-    if (interShift == 0) {
+    if (interShift == 0)
+    {
       std::memmove(&digits_[count_ - 1 + offset], &digits_[count_ - 1], count_ * sizeof(Type));
       count_ += offset;
     }
-    else {
+    else
+    {
       digits_[count_] = 0;
       for (size_t i = count_; i > 0; i--)
         digits_[i + offset] = (digits_[i] << interShift) | (digits_[i - 1] >> (kTypeBit - interShift));
@@ -209,19 +221,22 @@ class BigInteger {
     RAPIDJSON_ASSERT(cmp != 0);
     const BigInteger *a, *b;  // Makes a > b
     bool ret;
-    if (cmp < 0) {
+    if (cmp < 0)
+    {
       a = &rhs;
       b = this;
       ret = true;
     }
-    else {
+    else
+    {
       a = this;
       b = &rhs;
       ret = false;
     }
 
     Type borrow = 0;
-    for (size_t i = 0; i < a->count_; i++) {
+    for (size_t i = 0; i < a->count_; i++)
+    {
       Type d = a->digits_[i] - borrow;
       if (i < b->count_)
         d -= b->digits_[i];
@@ -266,7 +281,8 @@ class BigInteger {
     uint64_t u = ParseUint64(begin, end);
     if (IsZero())
       *this = u;
-    else {
+    else
+    {
       unsigned exp = static_cast<unsigned>(end - begin);
       (MultiplyPow5(exp) <<= exp) += u;  // *this = *this * 10^exp + u
     }
@@ -281,7 +297,8 @@ class BigInteger {
   static uint64_t ParseUint64(const char *begin, const char *end)
   {
     uint64_t r = 0;
-    for (const char *p = begin; p != end; ++p) {
+    for (const char *p = begin; p != end; ++p)
+    {
       RAPIDJSON_ASSERT(*p >= '0' && *p <= '9');
       r = r * 10u + static_cast<unsigned>(*p - '0');
     }

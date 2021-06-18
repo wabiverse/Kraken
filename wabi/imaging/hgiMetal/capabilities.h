@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Reports the capabilities of the Metal device.
 ///
-class HgiMetalCapabilities final {
+class HgiMetalCapabilities final
+{
  public:
   HGIMETAL_API
   ~HgiMetalCapabilities();

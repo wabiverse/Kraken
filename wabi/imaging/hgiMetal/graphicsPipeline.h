@@ -47,7 +47,8 @@ class HgiMetal;
 ///
 /// Metal implementation of HgiGraphicsPipeline.
 ///
-class HgiMetalGraphicsPipeline final : public HgiGraphicsPipeline {
+class HgiMetalGraphicsPipeline final : public HgiGraphicsPipeline
+{
  public:
   HGIMETAL_API
   HgiMetalGraphicsPipeline(HgiMetal *hgi, HgiGraphicsPipelineDesc const &desc);

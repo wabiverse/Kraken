@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Contains information about a resolved asset.
 ///
-class ArAssetInfo {
+class ArAssetInfo
+{
  public:
   /// Version of the resolved asset, if any.
   std::string version;

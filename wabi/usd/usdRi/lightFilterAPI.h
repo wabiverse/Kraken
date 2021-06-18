@@ -70,7 +70,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdRiTokens->rightHanded
 /// as the value.
 ///
-class UsdRiLightFilterAPI : public UsdAPISchemaBase {
+class UsdRiLightFilterAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -86,13 +87,15 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiLightFilterAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiLightFilterAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiLightFilterAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiLightFilterAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiLightFilterAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiLightFilterAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiLightFilterAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

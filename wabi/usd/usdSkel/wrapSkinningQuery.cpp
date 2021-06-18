@@ -49,13 +49,15 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 object _ComputeJointInfluences(const UsdSkelSkinningQuery &self, UsdTimeCode time)
 {
   VtIntArray indices;
   VtFloatArray weights;
-  if (self.ComputeJointInfluences(&indices, &weights, time)) {
+  if (self.ComputeJointInfluences(&indices, &weights, time))
+  {
     return boost::python::make_tuple(indices, weights);
   }
   return object();
@@ -65,7 +67,8 @@ object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self, size_t n
 {
   VtIntArray indices;
   VtFloatArray weights;
-  if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time)) {
+  if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time))
+  {
     return boost::python::make_tuple(indices, weights);
   }
   return object();

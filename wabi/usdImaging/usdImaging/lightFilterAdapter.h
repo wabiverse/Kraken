@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Base class for all light filters.
 ///
-class UsdImagingLightFilterAdapter : public UsdImagingPrimAdapter {
+class UsdImagingLightFilterAdapter : public UsdImagingPrimAdapter
+{
  public:
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingLightFilterAdapter() : UsdImagingPrimAdapter()
+  UsdImagingLightFilterAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

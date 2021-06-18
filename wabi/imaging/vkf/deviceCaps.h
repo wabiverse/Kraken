@@ -58,7 +58,8 @@ WABI_NAMESPACE_BEGIN
  * of defaults, based on VkDevice Feature minumums, is
  * provided. */
 
-class VkfDeviceCaps {
+class VkfDeviceCaps
+{
  public:
   /**
    * InitInstance queries the VkInstance's VkDevice for its properties,

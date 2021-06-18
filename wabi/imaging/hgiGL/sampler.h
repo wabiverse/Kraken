@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// OpenGL implementation of HgiSampler
 ///
-class HgiGLSampler final : public HgiSampler {
+class HgiGLSampler final : public HgiSampler
+{
  public:
   HGIGL_API
   ~HgiGLSampler() override;

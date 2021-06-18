@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdxPrmanRenderBuffer : public HdRenderBuffer {
+class HdxPrmanRenderBuffer : public HdRenderBuffer
+{
  public:
   HdxPrmanRenderBuffer(SdfPath const &id);
   ~HdxPrmanRenderBuffer();

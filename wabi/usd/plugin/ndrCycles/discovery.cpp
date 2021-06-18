@@ -74,7 +74,8 @@ NdrNodeDiscoveryResultVec NdrCyclesDiscoveryPlugin::DiscoverNodes(const Context 
   temp_nodes.push_back("emission");
   temp_nodes.push_back("displacement");
 
-  for (const std::string &n : temp_nodes) {
+  for (const std::string &n : temp_nodes)
+  {
     std::string cycles_id = "cycles_" + n;
     ret.emplace_back(NdrIdentifier(TfStringPrintf("%s", cycles_id.c_str())),  // identifier
                      NdrVersion(1, 0),                                        // version

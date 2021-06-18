@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// Interface class that defines the execution environment for the client
 /// to run a computation.
 ///
-class HdExtComputationContext {
+class HdExtComputationContext
+{
  public:
   HdExtComputationContext() = default;
   virtual ~HdExtComputationContext();

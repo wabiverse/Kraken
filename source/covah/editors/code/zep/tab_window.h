@@ -3,17 +3,25 @@
 #include "buffer.h"
 #include <deque>
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepWindow;
 class ZepDisplay;
 struct Region;
 
-enum class WindowMotion { Left, Right, Up, Down };
+enum class WindowMotion
+{
+  Left,
+  Right,
+  Up,
+  Down
+};
 
 // Display state for a single pane of text.
 // Editor operations such as select and change are local to a displayed pane
-class ZepTabWindow : public ZepComponent {
+class ZepTabWindow : public ZepComponent
+{
  public:
   ZepTabWindow(ZepEditor &editor);
   virtual ~ZepTabWindow();

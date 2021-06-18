@@ -50,7 +50,8 @@ class HdExtComputation;
 /// use of the code generation and resource binding system to generate a
 /// shader program.
 ///
-class HdPh_ExtCompComputeShader final : public HdPhShaderCode {
+class HdPh_ExtCompComputeShader final : public HdPhShaderCode
+{
  public:
   HDPH_API
   HdPh_ExtCompComputeShader(HdExtComputation const *extComp);

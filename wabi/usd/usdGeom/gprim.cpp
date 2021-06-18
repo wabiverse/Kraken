@@ -43,7 +43,8 @@ UsdGeomGprim::~UsdGeomGprim()
 /* static */
 UsdGeomGprim UsdGeomGprim::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomGprim();
   }
@@ -142,7 +143,8 @@ UsdAttribute UsdGeomGprim::CreateOrientationAttr(VtValue const &defaultValue, bo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

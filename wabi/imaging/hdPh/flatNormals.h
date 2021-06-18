@@ -38,7 +38,8 @@ class Hd_FaceCoords;
 /// flat normal computation GPU
 ///
 ///
-class HdPh_FlatNormalsComputationGPU : public HdComputation {
+class HdPh_FlatNormalsComputationGPU : public HdComputation
+{
  public:
   /// Constructor
   HDPH_API

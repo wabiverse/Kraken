@@ -49,30 +49,37 @@ class JsWriter;
 ///
 /// This class holds data that can be stored in TraceEvents.
 ///
-class TraceEventData {
+class TraceEventData
+{
  public:
   /// Ctor for Invalid type.
-  TraceEventData() : _data(_NoData())
+  TraceEventData()
+    : _data(_NoData())
   {}
 
   /// Ctor for Bool type.
-  explicit TraceEventData(bool b) : _data(b)
+  explicit TraceEventData(bool b)
+    : _data(b)
   {}
 
   /// Ctor for Int type.
-  explicit TraceEventData(int64_t i) : _data(i)
+  explicit TraceEventData(int64_t i)
+    : _data(i)
   {}
 
   /// Ctor for UInt type.
-  explicit TraceEventData(uint64_t i) : _data(i)
+  explicit TraceEventData(uint64_t i)
+    : _data(i)
   {}
 
   /// Ctor for Float type.
-  explicit TraceEventData(double d) : _data(d)
+  explicit TraceEventData(double d)
+    : _data(d)
   {}
 
   /// Ctor for String type.
-  explicit TraceEventData(const std::string &s) : _data(s)
+  explicit TraceEventData(const std::string &s)
+    : _data(s)
   {}
 
   /// Returns the Type of the data stored.
@@ -98,7 +105,8 @@ class TraceEventData {
 
  private:
   // Type that represents no data was stored in an event.
-  struct _NoData {
+  struct _NoData
+  {
   };
 
   using Variant = boost::variant<_NoData, std::string, bool, int64_t, uint64_t, double>;

@@ -46,7 +46,8 @@ class JsWriter;
 /// This class contains methods to read and write TraceCollections in JSON
 /// format.  This JSON format for a TraceCollection is an extension of the
 /// Chrome Tracing format.
-class Trace_JSONSerialization {
+class Trace_JSONSerialization
+{
  public:
   /// Write a JSON representation of \p collections.
   static bool WriteCollectionsToJSON(JsWriter &js,

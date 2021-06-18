@@ -46,17 +46,21 @@
 WABI_NAMESPACE_BEGIN
 
 // Helper for TfMapLookup().  Uses std::map API to get a value by key.
-template<class T> struct Tf_MapLookupHelper {
+template<class T>
+struct Tf_MapLookupHelper
+{
   typedef T Container;
 
   template<class Key, class Result>
   static bool Lookup(Container const &map, Key const &key, Result *valuePtr)
   {
     typename Container::const_iterator i = map.find(key);
-    if (i == map.end()) {
+    if (i == map.end())
+    {
       return false;
     }
-    else {
+    else
+    {
       *valuePtr = i->second;
       return true;
     }
@@ -113,10 +117,12 @@ template<class Container, class Key, class Result>
 const Result TfMapLookupByValue(Container const &map, Key const &key, const Result &defaultValue)
 {
   typename Container::const_iterator i = map.find(key);
-  if (i == map.end()) {
+  if (i == map.end())
+  {
     return defaultValue;
   }
-  else {
+  else
+  {
     return i->second;
   }
 }
@@ -159,7 +165,8 @@ typename Container::mapped_type const *TfMapLookupPtr(Container const &map, Key 
 /// always written (a,b) with a < b.
 ///
 /// \ingroup group_tf_Stl
-template<typename T> inline std::pair<T, T> TfOrderedPair(T a, T b)
+template<typename T>
+inline std::pair<T, T> TfOrderedPair(T a, T b)
 {
   return (a < b) ? std::pair<T, T>(a, b) : std::pair<T, T>(b, a);
 }
@@ -181,7 +188,8 @@ template<typename T> inline std::pair<T, T> TfOrderedPair(T a, T b)
 /// This function requires that the expression T().swap(obj) where obj is of
 /// type T& be valid.  This is true for many classes, including the standard
 /// containers.
-template<class T> inline void TfReset(T &obj)
+template<class T>
+inline void TfReset(T &obj)
 {
   T().swap(obj);
 }
@@ -254,7 +262,8 @@ void TfOrderedSetDifference(InputIterator1 first1,
 
   // Walk [first1, last1).  If the element is in set2, skip it, and remove one
   // of those elements from set2, otherwise output it.
-  for (InputIterator1 i = first1; i != last1; ++i) {
+  for (InputIterator1 i = first1; i != last1; ++i)
+  {
     typename SetType::iterator j = set2.find(*i);
     if (j != set2.end())
       set2.erase(j);
@@ -355,11 +364,13 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
   size_t half;
   ForwardIterator middle;
 
-  while (len > 0) {
+  while (len > 0)
+  {
     half = len >> 1;
     middle = first;
     std::advance(middle, half);
-    if (pred(*middle)) {
+    if (pred(*middle))
+    {
       first = middle;
       ++first;
       len = len - half - 1;
@@ -382,11 +393,15 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
 /// \endcode
 ///
 /// \ingroup group_tf_Stl
-template<size_t N> class TfGet {
+template<size_t N>
+class TfGet
+{
  public:
-  template<class PairOrTuple> using return_type = typename std::tuple_element<N, PairOrTuple>::type;
+  template<class PairOrTuple>
+  using return_type = typename std::tuple_element<N, PairOrTuple>::type;
 
-  template<class PairOrTuple> constexpr return_type<PairOrTuple> &operator()(PairOrTuple &p) const
+  template<class PairOrTuple>
+  constexpr return_type<PairOrTuple> &operator()(PairOrTuple &p) const
   {
     return std::get<N>(p);
   }
@@ -397,7 +412,8 @@ template<size_t N> class TfGet {
     return std::get<N>(p);
   }
 
-  template<class PairOrTuple> constexpr return_type<PairOrTuple> &&operator()(PairOrTuple &&p) const
+  template<class PairOrTuple>
+  constexpr return_type<PairOrTuple> &&operator()(PairOrTuple &&p) const
   {
     return std::get<N>(std::move(p));
   }

@@ -159,7 +159,8 @@ class SdfAssetPath;
  * as the value.
  */
 
-class UsdCollectionAPI : public UsdAPISchemaBase {
+class UsdCollectionAPI : public UsdAPISchemaBase
+{
  public:
   /**
    * Compile time constant representing what kind of schema this class is.

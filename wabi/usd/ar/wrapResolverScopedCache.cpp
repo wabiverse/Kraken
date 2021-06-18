@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-class _PyResolverScopedCache : public boost::noncopyable {
+class _PyResolverScopedCache : public boost::noncopyable
+{
  public:
   _PyResolverScopedCache()
   {}

@@ -51,26 +51,31 @@ std::ostream &operator<<(std::ostream &out, const HgiGraphicsCmdsDesc &desc)
 {
   out << "HgiGraphicsCmdsDesc: {";
 
-  for (HgiAttachmentDesc const &a : desc.colorAttachmentDescs) {
+  for (HgiAttachmentDesc const &a : desc.colorAttachmentDescs)
+  {
     out << a;
   }
 
-  for (size_t i = 0; i < desc.colorTextures.size(); i++) {
+  for (size_t i = 0; i < desc.colorTextures.size(); i++)
+  {
     out << "colorTexture" << i << " ";
     out << "dimensions:" << desc.colorTextures[i]->GetDescriptor().dimensions << ", ";
   }
 
-  for (size_t i = 0; i < desc.colorResolveTextures.size(); i++) {
+  for (size_t i = 0; i < desc.colorResolveTextures.size(); i++)
+  {
     out << "colorResolveTexture" << i << ", ";
   }
 
-  if (desc.depthTexture) {
+  if (desc.depthTexture)
+  {
     out << desc.depthAttachmentDesc;
     out << "depthTexture ";
     out << "dimensions:" << desc.depthTexture->GetDescriptor().dimensions;
   }
 
-  if (desc.depthResolveTexture) {
+  if (desc.depthResolveTexture)
+  {
     out << "depthResolveTexture";
   }
 

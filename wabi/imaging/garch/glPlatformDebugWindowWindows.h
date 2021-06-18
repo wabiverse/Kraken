@@ -40,7 +40,8 @@ class GarchGLDebugWindow;
 
 /// \class Garch_GLPlatformDebugWindow
 ///
-class Garch_GLPlatformDebugWindow {
+class Garch_GLPlatformDebugWindow
+{
  public:
   Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w);
 

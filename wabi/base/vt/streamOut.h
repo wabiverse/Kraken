@@ -47,7 +47,8 @@ inline auto Vt_StreamOutImpl(T const &obj, std::ostream &stream, int) -> decltyp
 }
 
 // Function used in the case that T does not have a stream insertion operator.
-template<class T> inline std::ostream &Vt_StreamOutImpl(T const &obj, std::ostream &stream, long)
+template<class T>
+inline std::ostream &Vt_StreamOutImpl(T const &obj, std::ostream &stream, long)
 {
   return Vt_StreamOutGeneric(typeid(T), static_cast<void const *>(&obj), stream);
 }
@@ -76,7 +77,8 @@ VT_API std::ostream &VtStreamOut(signed char const &, std::ostream &);
 VT_API std::ostream &VtStreamOut(float const &, std::ostream &);
 VT_API std::ostream &VtStreamOut(double const &, std::ostream &);
 
-class VtStreamOutIterator {
+class VtStreamOutIterator
+{
  public:
   VT_API virtual ~VtStreamOutIterator();
   virtual void Next(std::ostream &) = 0;

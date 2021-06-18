@@ -38,7 +38,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Ar_PythonConverterRegistry {
+class Ar_PythonConverterRegistry
+{
  public:
   std::vector<Ar_MakeResolverContextFromPythonFn> _convertFromPython;
   std::vector<Ar_ResolverContextToPythonFn> _convertToPython;
@@ -60,9 +61,10 @@ void Ar_RegisterResolverContextPythonConversion(const Ar_MakeResolverContextFrom
 bool Ar_CanConvertResolverContextFromPython(PyObject *pyObj)
 {
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL(canMakeContextFrom, reg._convertFromPython)
+  TF_FOR_ALL (canMakeContextFrom, reg._convertFromPython)
   {
-    if ((*canMakeContextFrom)(pyObj, NULL)) {
+    if ((*canMakeContextFrom)(pyObj, NULL))
+    {
       return true;
     }
   }
@@ -74,9 +76,10 @@ ArResolverContext Ar_ConvertResolverContextFromPython(PyObject *pyObj)
   ArResolverContext context;
 
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL(makeContextFrom, reg._convertFromPython)
+  TF_FOR_ALL (makeContextFrom, reg._convertFromPython)
   {
-    if ((*makeContextFrom)(pyObj, &context)) {
+    if ((*makeContextFrom)(pyObj, &context))
+    {
       break;
     }
   }
@@ -88,9 +91,10 @@ TfPyObjWrapper Ar_ConvertResolverContextToPython(const ArResolverContext &contex
   TfPyObjWrapper pyObj;
 
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL(convertToPython, reg._convertToPython)
+  TF_FOR_ALL (convertToPython, reg._convertToPython)
   {
-    if ((*convertToPython)(context, &pyObj)) {
+    if ((*convertToPython)(context, &pyObj))
+    {
       break;
     }
   }

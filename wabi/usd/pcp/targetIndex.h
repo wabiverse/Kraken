@@ -43,7 +43,8 @@ class PcpPropertyIndex;
 /// the result; it does not retain all of the input arguments used
 /// in computing the index, such as the owning property.
 ///
-struct PcpTargetIndex {
+struct PcpTargetIndex
+{
   SdfPathVector paths;
   PcpErrorVector localErrors;
   bool hasTargetOpinions = false;

@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Base class for all USD fields.
 ///
-class UsdImagingFieldAdapter : public UsdImagingPrimAdapter {
+class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingFieldAdapter() : UsdImagingPrimAdapter()
+  UsdImagingFieldAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

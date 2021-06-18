@@ -56,7 +56,9 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec2d;
 
-template<> struct GfIsGfVec<class GfVec2d> {
+template<>
+struct GfIsGfVec<class GfVec2d>
+{
   static const bool value = true;
 };
 
@@ -68,7 +70,8 @@ template<> struct GfIsGfVec<class GfVec2d> {
 /// Represents a vector of 2 components of type \c double.
 /// It is intended to be fast and simple.
 ///
-class GfVec2d {
+class GfVec2d
+{
  public:
   /// Scalar element type and dimension.
   typedef double ScalarType;
@@ -78,15 +81,19 @@ class GfVec2d {
   GfVec2d() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec2d(double value) : _data{value, value}
+  constexpr explicit GfVec2d(double value)
+    : _data{value, value}
   {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec2d(double s0, double s1) : _data{s0, s1}
+  constexpr GfVec2d(double s0, double s1)
+    : _data{s0, s1}
   {}
 
   /// Construct with pointer to values.
-  template<class Scl> constexpr explicit GfVec2d(Scl const *p) : _data{p[0], p[1]}
+  template<class Scl>
+  constexpr explicit GfVec2d(Scl const *p)
+    : _data{p[0], p[1]}
   {}
 
   /// Implicitly convert from GfVec2f.

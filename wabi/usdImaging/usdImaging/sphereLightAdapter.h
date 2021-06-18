@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type SphereLight
 ///
-class UsdImagingSphereLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingSphereLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingSphereLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingSphereLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

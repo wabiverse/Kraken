@@ -57,7 +57,8 @@ TF_DECLARE_REF_PTRS(TraceEventNode);
 /// useful for timeline views of a trace.
 ///
 
-class TraceEventNode : public TfRefBase {
+class TraceEventNode : public TfRefBase
+{
  public:
   using TimeStamp = TraceEvent::TimeStamp;
   using AttributeData = TraceEventData;

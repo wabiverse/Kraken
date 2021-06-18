@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 /// \class Hd_UnitTestNullRenderPass
 /// Implements the sync part of the render pass, but not the draw part, for
 /// core hydra unit tests.
-class Hd_UnitTestNullRenderPass : public HdRenderPass {
+class Hd_UnitTestNullRenderPass : public HdRenderPass
+{
  public:
   Hd_UnitTestNullRenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
     : HdRenderPass(index, collection)

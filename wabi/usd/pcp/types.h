@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Describes the type of arc connecting two nodes in the prim index.
 ///
-enum PcpArcType {
+enum PcpArcType
+{
   // The root arc is a special value used for the root node of
   // the prim index. Unlike the following arcs, it has no parent node.
   PcpArcTypeRoot,
@@ -60,7 +61,8 @@ enum PcpArcType {
 };
 
 /// \enum PcpRangeType
-enum PcpRangeType {
+enum PcpRangeType
+{
   // Range including just the root node.
   PcpRangeTypeRoot,
 
@@ -115,7 +117,8 @@ inline bool PcpIsClassBasedArc(PcpArcType arcType)
 /// Used to keep track of which sites have been visited and through
 /// what type of arcs.
 ///
-struct PcpSiteTrackerSegment {
+struct PcpSiteTrackerSegment
+{
   PcpSiteStr site;
   PcpArcType arcType;
 };
@@ -127,8 +130,11 @@ struct PcpSiteTrackerSegment {
 typedef std::vector<PcpSiteTrackerSegment> PcpSiteTracker;
 
 // Internal type for Sd sites.
-struct Pcp_SdSiteRef : boost::totally_ordered<Pcp_SdSiteRef> {
-  Pcp_SdSiteRef(const SdfLayerRefPtr &layer_, const SdfPath &path_) : layer(layer_), path(path_)
+struct Pcp_SdSiteRef : boost::totally_ordered<Pcp_SdSiteRef>
+{
+  Pcp_SdSiteRef(const SdfLayerRefPtr &layer_, const SdfPath &path_)
+    : layer(layer_),
+      path(path_)
   {
     // Do nothing
   }
@@ -150,7 +156,8 @@ struct Pcp_SdSiteRef : boost::totally_ordered<Pcp_SdSiteRef> {
 };
 
 // Internal type for Sd sites.
-struct Pcp_CompressedSdSite {
+struct Pcp_CompressedSdSite
+{
   Pcp_CompressedSdSite(size_t nodeIndex_, size_t layerIndex_)
     : nodeIndex(static_cast<uint16_t>(nodeIndex_)),
       layerIndex(static_cast<uint16_t>(layerIndex_))

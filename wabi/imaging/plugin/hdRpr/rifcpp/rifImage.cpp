@@ -15,21 +15,25 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-namespace rif {
+namespace rif
+{
 
-Image::Image(rif_image imageHandle) : Object(imageHandle)
+Image::Image(rif_image imageHandle)
+  : Object(imageHandle)
 {}
 
 rif_image_desc Image::GetDesc(uint32_t width, uint32_t height, HdFormat format)
 {
-  if (format == HdFormatInt32) {
+  if (format == HdFormatInt32)
+  {
     // Emulate integer images using 4 component unsigned char images
     format = HdFormatUNorm8Vec4;
   }
 
   rif_image_desc imageDesc = {};
   imageDesc.num_components = HdGetComponentCount(format);
-  switch (HdGetComponentFormat(format)) {
+  switch (HdGetComponentFormat(format))
+  {
     case HdFormatUNorm8:
       imageDesc.type = RIF_COMPONENT_TYPE_UINT8;
       break;

@@ -57,7 +57,8 @@ UsdSkelRoot::~UsdSkelRoot()
 /* static */
 UsdSkelRoot UsdSkelRoot::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelRoot();
   }
@@ -68,7 +69,8 @@ UsdSkelRoot UsdSkelRoot::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdSkelRoot UsdSkelRoot::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SkelRoot");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelRoot();
   }
@@ -144,8 +146,10 @@ WABI_NAMESPACE_BEGIN
 
 UsdSkelRoot UsdSkelRoot::Find(const UsdPrim &prim)
 {
-  for (UsdPrim p = prim; p; p = p.GetParent()) {
-    if (p.IsA<UsdSkelRoot>()) {
+  for (UsdPrim p = prim; p; p = p.GetParent())
+  {
+    if (p.IsA<UsdSkelRoot>())
+    {
       return UsdSkelRoot(p);
     }
   }
@@ -159,7 +163,8 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
                            VtVec3fArray *extent)
 {
   const UsdSkelRoot skelRoot(boundable);
-  if (!TF_VERIFY(skelRoot)) {
+  if (!TF_VERIFY(skelRoot))
+  {
     return false;
   }
 
@@ -168,7 +173,8 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
 
   std::vector<UsdSkelBinding> bindings;
   if (!skelCache.ComputeSkelBindings(skelRoot, &bindings, UsdTraverseInstanceProxies()) ||
-      bindings.size() == 0) {
+      bindings.size() == 0)
+  {
 
     // XXX: The extent of a SkelRoot is intended to bound the set of
     // skinnable prims only. If we have no bindings, then there are no
@@ -185,7 +191,8 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
   GfRange3d bbox;
   VtVec3fArray skelExtent;
 
-  for (const UsdSkelBinding &binding : bindings) {
+  for (const UsdSkelBinding &binding : bindings)
+  {
 
     UsdSkelSkeletonQuery skelQuery = skelCache.GetSkelQuery(binding.GetSkeleton());
     if (!TF_VERIFY(skelQuery))
@@ -202,9 +209,11 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
     // skinned by this skeleton.
     float padding = 0;
     VtMatrix4dArray skelRestXforms;
-    if (skelQuery.ComputeJointSkelTransforms(&skelRestXforms, time, /*atRest*/ true)) {
+    if (skelQuery.ComputeJointSkelTransforms(&skelRestXforms, time, /*atRest*/ true))
+    {
 
-      for (const auto &skinningQuery : binding.GetSkinningTargets()) {
+      for (const auto &skinningQuery : binding.GetSkinningTargets())
+      {
 
         const UsdPrim &skinnedPrim = skinningQuery.GetPrim();
 
@@ -219,7 +228,8 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
     bool resetXformStack = false;
     GfMatrix4d skelRootXform = xfCache.ComputeRelativeTransform(
       binding.GetSkeleton().GetPrim(), skelRoot.GetPrim(), &resetXformStack);
-    if (!resetXformStack && transform) {
+    if (!resetXformStack && transform)
+    {
       skelRootXform *= *transform;
     }
     UsdSkelComputeJointsExtent(skelXforms, &skelExtent, padding, &skelRootXform);

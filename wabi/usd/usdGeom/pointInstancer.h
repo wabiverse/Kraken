@@ -266,7 +266,8 @@ class SdfAssetPath;
 /// \endcode
 ///
 ///
-class UsdGeomPointInstancer : public UsdGeomBoundable {
+class UsdGeomPointInstancer : public UsdGeomBoundable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -282,13 +283,15 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// Equivalent to UsdGeomPointInstancer::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPointInstancer(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim)
+  explicit UsdGeomPointInstancer(const UsdPrim &prim = UsdPrim())
+    : UsdGeomBoundable(prim)
   {}
 
   /// Construct a UsdGeomPointInstancer on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPointInstancer(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPointInstancer(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj)
+  explicit UsdGeomPointInstancer(const UsdSchemaBase &schemaObj)
+    : UsdGeomBoundable(schemaObj)
   {}
 
   /// Destructor.
@@ -796,7 +799,8 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   ///
   /// Encodes whether to include each prototype's root prim's transformation
   /// as the most-local component of computed instance transforms.
-  enum ProtoXformInclusion {
+  enum ProtoXformInclusion
+  {
     IncludeProtoXform,  //!< Include the transform on the proto's root
     ExcludeProtoXform   //!< Exclude the transform on the proto's root
   };
@@ -806,7 +810,8 @@ class UsdGeomPointInstancer : public UsdGeomBoundable {
   /// Encodes whether to evaluate and apply the PointInstancer's
   /// mask to computed results.
   /// \sa ComputeMaskAtTime()
-  enum MaskApplication {
+  enum MaskApplication
+  {
     ApplyMask,  //!< Compute and apply the PointInstancer mask
     IgnoreMask  //!< Ignore the PointInstancer mask
   };
@@ -1090,15 +1095,18 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
                                              VtArray<T> *dataArray,
                                              const int elementSize)
 {
-  if (!dataArray) {
+  if (!dataArray)
+  {
     TF_CODING_ERROR("NULL dataArray.");
     return false;
   }
   size_t maskSize = mask.size();
-  if (maskSize == 0 || dataArray->size() == (size_t)elementSize) {
+  if (maskSize == 0 || dataArray->size() == (size_t)elementSize)
+  {
     return true;
   }
-  else if ((maskSize * elementSize) != dataArray->size()) {
+  else if ((maskSize * elementSize) != dataArray->size())
+  {
     TF_WARN(
       "Input mask's size (%zu) is not compatible with the "
       "input dataArray (%zu) and elementSize (%d).",
@@ -1111,17 +1119,21 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
   T *beginData = dataArray->data();
   T *currData = beginData;
   size_t numPreserved = 0;
-  for (size_t i = 0; i < maskSize; ++i) {
+  for (size_t i = 0; i < maskSize; ++i)
+  {
     // XXX Could add a fast-path for elementSize == 1 ?
-    if (mask[i]) {
-      for (int j = 0; j < elementSize; ++j) {
+    if (mask[i])
+    {
+      for (int j = 0; j < elementSize; ++j)
+      {
         *currData = beginData[i + j];
         ++currData;
       }
       numPreserved += elementSize;
     }
   }
-  if (numPreserved < dataArray->size()) {
+  if (numPreserved < dataArray->size())
+  {
     dataArray->resize(numPreserved);
   }
   return true;

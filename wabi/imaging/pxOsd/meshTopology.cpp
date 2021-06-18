@@ -131,7 +131,8 @@ bool PxOsdMeshTopology::operator==(PxOsdMeshTopology const &other) const
 PxOsdMeshTopologyValidation PxOsdMeshTopology::Validate() const
 {
   TRACE_FUNCTION();
-  if (_validated.value) {
+  if (_validated.value)
+  {
     return PxOsdMeshTopologyValidation();
   }
 

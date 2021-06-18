@@ -43,20 +43,25 @@ class Sdf_ValueTypeImpl;
 ///
 /// Represents the shape of a value type (or that of an element in an array).
 ///
-struct SdfTupleDimensions {
+struct SdfTupleDimensions
+{
  public:
-  SdfTupleDimensions() : size(0)
+  SdfTupleDimensions()
+    : size(0)
   {}
-  SdfTupleDimensions(size_t m) : size(1)
+  SdfTupleDimensions(size_t m)
+    : size(1)
   {
     d[0] = m;
   }
-  SdfTupleDimensions(size_t m, size_t n) : size(2)
+  SdfTupleDimensions(size_t m, size_t n)
+    : size(2)
   {
     d[0] = m;
     d[1] = n;
   }
-  SdfTupleDimensions(const size_t (&s)[2]) : size(2)
+  SdfTupleDimensions(const size_t (&s)[2])
+    : size(2)
   {
     d[0] = s[0];
     d[1] = s[1];
@@ -95,7 +100,8 @@ struct SdfTupleDimensions {
 /// \c SdfSchemaBase::FindType() and shouldn't otherwise need the string.
 /// Aliases compare equal, even if registered by different schemas.
 ///
-class SdfValueTypeName {
+class SdfValueTypeName
+{
  public:
   /// Constructs an invalid type name.
   SDF_API
@@ -231,7 +237,8 @@ class SdfValueTypeName {
 };
 
 /// Functor for hashing a \c SdfValueTypeName.
-struct SdfValueTypeNameHash {
+struct SdfValueTypeNameHash
+{
   size_t operator()(const SdfValueTypeName &x) const
   {
     return x.GetHash();

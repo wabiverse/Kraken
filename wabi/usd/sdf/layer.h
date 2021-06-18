@@ -93,7 +93,8 @@ struct Sdf_AssetInfo;
 /// \todo
 /// \li Should have validate... methods for rootPrims
 ///
-class SdfLayer : public TfRefBase, public TfWeakBase {
+class SdfLayer : public TfRefBase, public TfWeakBase
+{
  public:
   /// Destructor
   SDF_API
@@ -553,16 +554,19 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   /// Returns \c true if the object has a non-empty value with name
   /// \p name and type \p T.  If value ptr is provided, returns the
   /// value found.
-  template<class T> bool HasField(const SdfPath &path, const TfToken &name, T *value) const
+  template<class T>
+  bool HasField(const SdfPath &path, const TfToken &name, T *value) const
   {
-    if (!value) {
+    if (!value)
+    {
       return HasField(path, name, static_cast<VtValue *>(NULL));
     }
 
     SdfAbstractDataTypedValue<T> outValue(value);
     const bool hasValue = HasField(path, name, static_cast<SdfAbstractDataValue *>(&outValue));
 
-    if (std::is_same<T, SdfValueBlock>::value) {
+    if (std::is_same<T, SdfValueBlock>::value)
+    {
       return hasValue && outValue.isValueBlock;
     }
 
@@ -597,7 +601,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   template<class T>
   bool HasFieldDictKey(const SdfPath &path, const TfToken &name, const TfToken &keyPath, T *value) const
   {
-    if (!value) {
+    if (!value)
+    {
       return HasFieldDictKey(path, name, keyPath, static_cast<VtValue *>(NULL));
     }
 
@@ -633,7 +638,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   void SetField(const SdfPath &path, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
 
   /// Set the value of the given \a path and \a fieldName.
-  template<class T> void SetField(const SdfPath &path, const TfToken &fieldName, const T &val)
+  template<class T>
+  void SetField(const SdfPath &path, const TfToken &fieldName, const T &val)
   {
     // Ideally, this would make use of the SdfAbstractDataConstValue
     // API to avoid unnecessarily copying the value into a VtValue.
@@ -1314,16 +1320,19 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   SDF_API
   bool QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const;
 
-  template<class T> bool QueryTimeSample(const SdfPath &path, double time, T *data) const
+  template<class T>
+  bool QueryTimeSample(const SdfPath &path, double time, T *data) const
   {
-    if (!data) {
+    if (!data)
+    {
       return QueryTimeSample(path, time);
     }
 
     SdfAbstractDataTypedValue<T> outValue(data);
     const bool hasValue = QueryTimeSample(path, time, static_cast<SdfAbstractDataValue *>(&outValue));
 
-    if (std::is_same<T, SdfValueBlock>::value) {
+    if (std::is_same<T, SdfValueBlock>::value)
+    {
       return hasValue && outValue.isValueBlock;
     }
 
@@ -1335,7 +1344,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   SDF_API
   void SetTimeSample(const SdfPath &path, double time, const SdfAbstractDataConstValue &value);
 
-  template<class T> void SetTimeSample(const SdfPath &path, double time, const T &value)
+  template<class T>
+  void SetTimeSample(const SdfPath &path, double time, const T &value)
   {
     const SdfAbstractDataConstTypedValue<T> inValue(&value);
     const SdfAbstractDataConstValue &untypedInValue = inValue;
@@ -1417,7 +1427,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
 
   // Returns a handle to the spec at the given path if it exists and matches
   // type T.
-  template<class T> SdfHandle<T> _GetSpecAtPath(const SdfPath &path);
+  template<class T>
+  SdfHandle<T> _GetSpecAtPath(const SdfPath &path);
 
   // Returns true if a spec can be retrieved at the given path, false
   // otherwise. This function will return the canonicalized path to the
@@ -1561,12 +1572,19 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
                                   const TfToken &fieldName);
 
   // Set a value.
-  template<class T> void _SetValue(const TfToken &key, T value);
+  template<class T>
+  void _SetValue(const TfToken &key, T value);
 
   // Get a value.
-  template<class T> T _GetValue(const TfToken &key) const;
+  template<class T>
+  T _GetValue(const TfToken &key) const;
 
-  enum _ReloadResult { _ReloadFailed, _ReloadSucceeded, _ReloadSkipped };
+  enum _ReloadResult
+  {
+    _ReloadFailed,
+    _ReloadSucceeded,
+    _ReloadSkipped
+  };
   _ReloadResult _Reload(bool force);
 
   // Reads contents of asset specified by \p identifier with resolved
@@ -1659,7 +1677,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
 
   // Helper method for Traverse. Visits the children of \a path using the
   // specified \a ChildPolicy.
-  template<typename ChildPolicy> void _TraverseChildren(const SdfPath &path, const TraversalFunction &func);
+  template<typename ChildPolicy>
+  void _TraverseChildren(const SdfPath &path, const TraversalFunction &func);
 
  private:
   SdfLayerHandle _self;
@@ -1728,7 +1747,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase {
   friend class Sdf_ChangeManager;
 
   // Allow access to _CreateSpec and _DeleteSpec and _MoveSpec
-  template<class ChildPolicy> friend class Sdf_ChildrenUtils;
+  template<class ChildPolicy>
+  friend class Sdf_ChildrenUtils;
 
   // Give the file format access to our data.  Limit breaking encapsulation
   // to the base SdFileFormat class so we don't have to friend every

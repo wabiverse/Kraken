@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 /// GfMultiInterval represents a subset of the real number line as an
 /// ordered set of non-intersecting GfIntervals.
 ///
-class GfMultiInterval {
+class GfMultiInterval
+{
  public:
   typedef std::set<GfInterval> Set;
   typedef Set::const_iterator const_iterator;

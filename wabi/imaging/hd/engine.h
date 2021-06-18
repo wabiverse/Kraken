@@ -45,7 +45,8 @@ using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 ///
 /// The application-facing entry point top-level entry point for accessing Hydra.
 /// Typically the application would only create one of these.
-class HdEngine {
+class HdEngine
+{
  public:
   HD_API
   HdEngine();

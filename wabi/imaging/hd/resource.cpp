@@ -25,7 +25,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdResource::HdResource(TfToken const &role) : _role(role), _size(0)
+HdResource::HdResource(TfToken const &role)
+  : _role(role),
+    _size(0)
 {
   /*NOTHING*/
 }

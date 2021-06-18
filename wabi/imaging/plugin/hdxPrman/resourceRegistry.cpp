@@ -38,7 +38,8 @@ HdxPrman_ResourceRegistry::~HdxPrman_ResourceRegistry()
 
 void HdxPrman_ResourceRegistry::ReloadResource(TfToken const &resourceType, std::string const &path)
 {
-  if (resourceType == HdResourceTypeTokens->texture) {
+  if (resourceType == HdResourceTypeTokens->texture)
+  {
     _context->ri->InvalidateTexture(RtUString(path.c_str()));
   }
 

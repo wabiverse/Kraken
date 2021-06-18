@@ -49,7 +49,8 @@ using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader
 /// OIT render tasks coordinate with the resolve task through
 /// HdxOitResolveTask::OitBufferAccessor.
 ///
-class HdxOitResolveTask : public HdTask {
+class HdxOitResolveTask : public HdTask
+{
  public:
   HDX_API
   static bool IsOitEnabled();

@@ -130,7 +130,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomMesh : public UsdGeomPointBased {
+class UsdGeomMesh : public UsdGeomPointBased
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -146,13 +147,15 @@ class UsdGeomMesh : public UsdGeomPointBased {
   /// Equivalent to UsdGeomMesh::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomMesh(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim)
+  explicit UsdGeomMesh(const UsdPrim &prim = UsdPrim())
+    : UsdGeomPointBased(prim)
   {}
 
   /// Construct a UsdGeomMesh on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomMesh(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomMesh(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj)
+  explicit UsdGeomMesh(const UsdSchemaBase &schemaObj)
+    : UsdGeomPointBased(schemaObj)
   {}
 
   /// Destructor.

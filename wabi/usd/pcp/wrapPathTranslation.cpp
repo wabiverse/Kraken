@@ -34,7 +34,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfPath TranslatePathFromNodeToRoot(const PcpNodeRef &sourceNode, const SdfPath &pathInNodeNamespace)
 {

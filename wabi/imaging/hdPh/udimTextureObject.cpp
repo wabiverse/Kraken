@@ -49,7 +49,8 @@ bool HdPhIsSupportedUdimTexture(std::string const &imageFilePath)
 ///////////////////////////////////////////////////////////////////////////////
 // Udim texture
 
-namespace {
+namespace
+{
 
 static const char UDIM_PATTERN[] = "<UDIM>";
 static const int UDIM_START_TILE = 1001;
@@ -63,7 +64,8 @@ static std::pair<std::string, std::string> _SplitUdimPattern(const std::string &
 
   const std::string::size_type pos = path.find(pattern);
 
-  if (pos != std::string::npos) {
+  if (pos != std::string::npos)
+  {
     return {path.substr(0, pos), path.substr(pos + pattern.size())};
   }
 
@@ -94,19 +96,22 @@ static std::vector<std::tuple<int, TfToken>> _FindUdimTiles(const std::string &f
 
   // Get prefix and suffix from udim pattern.
   const std::pair<std::string, std::string> splitPath = _SplitUdimPattern(filePath);
-  if (splitPath.first.empty() && splitPath.second.empty()) {
+  if (splitPath.first.empty() && splitPath.second.empty())
+  {
     TF_WARN("Expected udim pattern but got '%s'.", filePath.c_str());
     return result;
   }
 
   ArResolver &resolver = ArGetResolver();
 
-  for (int i = UDIM_START_TILE; i < UDIM_END_TILE; i++) {
+  for (int i = UDIM_START_TILE; i < UDIM_END_TILE; i++)
+  {
     // Add integer between prefix and suffix and see whether
     // the tile exists by consulting the resolver.
     const std::string resolvedPath = resolver.Resolve(splitPath.first + std::to_string(i) +
                                                       splitPath.second);
-    if (!resolvedPath.empty()) {
+    if (!resolvedPath.empty())
+    {
       // Record pair in result.
       result.emplace_back(i - UDIM_START_TILE, resolvedPath);
     }
@@ -131,11 +136,14 @@ HdPhUdimTextureObject::~HdPhUdimTextureObject()
 
 void HdPhUdimTextureObject::_DestroyTextures()
 {
-  if (Hgi *hgi = _GetHgi()) {
-    if (_texelTexture) {
+  if (Hgi *hgi = _GetHgi())
+  {
+    if (_texelTexture)
+    {
       hgi->DestroyTexture(&_texelTexture);
     }
-    if (_layoutTexture) {
+    if (_layoutTexture)
+    {
       hgi->DestroyTexture(&_layoutTexture);
     }
   }
@@ -144,8 +152,10 @@ void HdPhUdimTextureObject::_DestroyTextures()
 static const HioImageSharedPtr &_GetSmallestImageLargerThan(const std::vector<HioImageSharedPtr> &images,
                                                             const GfVec3i &dimensions)
 {
-  for (auto it = images.rbegin(); it != images.rend(); ++it) {
-    if (dimensions[0] <= (*it)->GetWidth() && dimensions[1] <= (*it)->GetHeight()) {
+  for (auto it = images.rbegin(); it != images.rend(); ++it)
+  {
+    if (dimensions[0] <= (*it)->GetWidth() && dimensions[1] <= (*it)->GetHeight())
+    {
       return *it;
     }
   }
@@ -155,7 +165,8 @@ static const HioImageSharedPtr &_GetSmallestImageLargerThan(const std::vector<Hi
 void HdPhUdimTextureObject::_Load()
 {
   const std::vector<std::tuple<int, TfToken>> tiles = _FindUdimTiles(GetTextureIdentifier().GetFilePath());
-  if (tiles.empty()) {
+  if (tiles.empty())
+  {
     return;
   }
 
@@ -164,7 +175,8 @@ void HdPhUdimTextureObject::_Load()
   const HioImage::SourceColorSpace sourceColorSpace = _GetSourceColorSpace(subId);
   const std::vector<HioImageSharedPtr> firstImageMips = HdPhTextureUtils::GetAllMipImages(
     std::get<1>(tiles[0]), sourceColorSpace);
-  if (firstImageMips.empty()) {
+  if (firstImageMips.empty())
+  {
     return;
   }
 
@@ -173,7 +185,8 @@ void HdPhUdimTextureObject::_Load()
   const bool premultiplyAlpha = _GetPremultiplyAlpha(subId);
   _hgiFormat = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
 
-  if (_hgiFormat == HgiFormatInvalid || HgiIsCompressed(_hgiFormat)) {
+  if (_hgiFormat == HgiFormatInvalid || HgiIsCompressed(_hgiFormat))
+  {
     TF_WARN("Unsupported texture format for UDIM");
     return;
   }
@@ -199,15 +212,18 @@ void HdPhUdimTextureObject::_Load()
   WorkParallelForN(
     tiles.size(),
     [&](size_t begin, size_t end) {
-      for (size_t tileId = begin; tileId < end; ++tileId) {
+      for (size_t tileId = begin; tileId < end; ++tileId)
+      {
         std::tuple<int, TfToken> const &tile = tiles[tileId];
         _layoutData[std::get<0>(tile)] = tileId + 1;
         const std::vector<HioImageSharedPtr> images = HdPhTextureUtils::GetAllMipImages(std::get<1>(tile),
                                                                                         sourceColorSpace);
-        if (images.empty()) {
+        if (images.empty())
+        {
           continue;
         }
-        for (const HgiMipInfo &mipInfo : mipInfos) {
+        for (const HgiMipInfo &mipInfo : mipInfos)
+        {
           HioImageSharedPtr const &image = _GetSmallestImageLargerThan(images, mipInfo.dimensions);
           HdPhTextureUtils::ReadAndConvertImage(image,
                                                 /* flipped = */ true,
@@ -225,12 +241,14 @@ void HdPhUdimTextureObject::_Commit()
 {
   TRACE_FUNCTION();
 
-  if (_hgiFormat == HgiFormatInvalid) {
+  if (_hgiFormat == HgiFormatInvalid)
+  {
     return;
   }
 
   Hgi *const hgi = _GetHgi();
-  if (!TF_VERIFY(hgi)) {
+  if (!TF_VERIFY(hgi))
+  {
     return;
   }
 

@@ -41,7 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace HdArnoldLight {
+namespace HdArnoldLight
+{
 
 /// Returns an instance of HdArnoldLight for handling point lights.
 ///

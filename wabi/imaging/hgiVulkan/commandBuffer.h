@@ -50,7 +50,8 @@ using HgiVulkanCompletedHandlerVector = std::vector<HgiVulkanCompletedHandler>;
 /// Represents a primary command buffer in Vulkan.
 /// Command buffers are managed by the CommandQueue.
 ///
-class HgiVulkanCommandBuffer final {
+class HgiVulkanCommandBuffer final
+{
  public:
   HGIVULKAN_API
   HgiVulkanCommandBuffer(HgiVulkanDevice *device, VkCommandPool pool);

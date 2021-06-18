@@ -45,9 +45,12 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (print)(message));
 ////////////////////////////////////////////////////////////////
 // Null Prims
 
-class Hd_NullRprim final : public HdRprim {
+class Hd_NullRprim final : public HdRprim
+{
  public:
-  Hd_NullRprim(TfToken const &typeId, SdfPath const &id) : HdRprim(id), _typeId(typeId)
+  Hd_NullRprim(TfToken const &typeId, SdfPath const &id)
+    : HdRprim(id),
+      _typeId(typeId)
   {}
 
   virtual ~Hd_NullRprim() = default;
@@ -70,51 +73,62 @@ class Hd_NullRprim final : public HdRprim {
 
     // PrimId dirty bit is internal to Hydra.
 
-    if (HdChangeTracker::IsExtentDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsExtentDirty(*dirtyBits, id))
+    {
       GetExtent(delegate);
     }
 
-    if (HdChangeTracker::IsDisplayStyleDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsDisplayStyleDirty(*dirtyBits, id))
+    {
       delegate->GetDisplayStyle(id);
     }
 
     // Points is a primvar
 
-    if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, id))
+    {
       _SyncPrimvars(delegate, *dirtyBits);
     }
 
     // Material Id doesn't have a change tracker test
-    if (*dirtyBits & HdChangeTracker::DirtyMaterialId) {
+    if (*dirtyBits & HdChangeTracker::DirtyMaterialId)
+    {
       delegate->GetMaterialId(id);
     }
 
-    if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id))
+    {
       // The topology getter depends on prim type
-      if (_typeId == HdPrimTypeTokens->mesh) {
+      if (_typeId == HdPrimTypeTokens->mesh)
+      {
         delegate->GetMeshTopology(id);
       }
-      else if (_typeId == HdPrimTypeTokens->basisCurves) {
+      else if (_typeId == HdPrimTypeTokens->basisCurves)
+      {
         delegate->GetBasisCurvesTopology(id);
       }
       // Other prim types don't have a topology
     }
 
-    if (HdChangeTracker::IsTransformDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsTransformDirty(*dirtyBits, id))
+    {
       delegate->GetTransform(id);
     }
 
-    if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id))
+    {
       delegate->GetVisible(id);
     }
 
     // Normals is a primvar
 
-    if (HdChangeTracker::IsDoubleSidedDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsDoubleSidedDirty(*dirtyBits, id))
+    {
       delegate->GetDoubleSided(id);
     }
 
-    if (HdChangeTracker::IsCullStyleDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsCullStyleDirty(*dirtyBits, id))
+    {
       delegate->GetCullStyle(id);
     }
 
@@ -125,18 +139,21 @@ class Hd_NullRprim final : public HdRprim {
 
     // Widths is a primvar
 
-    if (HdChangeTracker::IsInstancerDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsInstancerDirty(*dirtyBits, id))
+    {
       // Instancer Dirty doesn't have a corrispoinding scene delegate pull
     }
 
     // InstanceIndex applies to Instancer's not Rprim
 
-    if (HdChangeTracker::IsReprDirty(*dirtyBits, id)) {
+    if (HdChangeTracker::IsReprDirty(*dirtyBits, id))
+    {
       delegate->GetReprSelector(id);
     }
 
     // RenderTag doesn't have a change tracker test
-    if (*dirtyBits & HdChangeTracker::DirtyRenderTag) {
+    if (*dirtyBits & HdChangeTracker::DirtyRenderTag)
+    {
       delegate->GetRenderTag(id);
     }
 
@@ -161,7 +178,8 @@ class Hd_NullRprim final : public HdRprim {
   virtual void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override
   {
     _ReprVector::iterator it = std::find_if(_reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
-    if (it == _reprs.end()) {
+    if (it == _reprs.end())
+    {
       _reprs.emplace_back(reprToken, HdReprSharedPtr());
     }
   }
@@ -173,15 +191,18 @@ class Hd_NullRprim final : public HdRprim {
   {
     SdfPath const &id = GetId();
     for (size_t interpolation = HdInterpolationConstant; interpolation < HdInterpolationCount;
-         ++interpolation) {
+         ++interpolation)
+    {
       HdPrimvarDescriptorVector primvars = GetPrimvarDescriptors(
         delegate, static_cast<HdInterpolation>(interpolation));
 
       size_t numPrimVars = primvars.size();
-      for (size_t primVarNum = 0; primVarNum < numPrimVars; ++primVarNum) {
+      for (size_t primVarNum = 0; primVarNum < numPrimVars; ++primVarNum)
+      {
         HdPrimvarDescriptor const &primvar = primvars[primVarNum];
 
-        if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, primvar.name)) {
+        if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, primvar.name))
+        {
           GetPrimvar(delegate, primvar.name);
         }
       }
@@ -193,9 +214,11 @@ class Hd_NullRprim final : public HdRprim {
   Hd_NullRprim &operator=(const Hd_NullRprim &) = delete;
 };
 
-class Hd_NullMaterial final : public HdMaterial {
+class Hd_NullMaterial final : public HdMaterial
+{
  public:
-  Hd_NullMaterial(SdfPath const &id) : HdMaterial(id)
+  Hd_NullMaterial(SdfPath const &id)
+    : HdMaterial(id)
   {}
   virtual ~Hd_NullMaterial() = default;
 
@@ -217,9 +240,11 @@ class Hd_NullMaterial final : public HdMaterial {
   Hd_NullMaterial &operator=(const Hd_NullMaterial &) = delete;
 };
 
-class Hd_NullCoordSys final : public HdCoordSys {
+class Hd_NullCoordSys final : public HdCoordSys
+{
  public:
-  Hd_NullCoordSys(SdfPath const &id) : HdCoordSys(id)
+  Hd_NullCoordSys(SdfPath const &id)
+    : HdCoordSys(id)
   {}
   virtual ~Hd_NullCoordSys() = default;
 
@@ -241,9 +266,11 @@ class Hd_NullCoordSys final : public HdCoordSys {
   Hd_NullCoordSys &operator=(const Hd_NullCoordSys &) = delete;
 };
 
-class Hd_NullCamera final : public HdCamera {
+class Hd_NullCamera final : public HdCamera
+{
  public:
-  Hd_NullCamera(SdfPath const &id) : HdCamera(id)
+  Hd_NullCamera(SdfPath const &id)
+    : HdCamera(id)
   {}
   virtual ~Hd_NullCamera() override = default;
 
@@ -329,16 +356,20 @@ void Hd_UnitTestNullRenderDelegate::DestroyRprim(HdRprim *rPrim)
 
 HdSprim *Hd_UnitTestNullRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
-  if (typeId == HdPrimTypeTokens->material) {
+  if (typeId == HdPrimTypeTokens->material)
+  {
     return new Hd_NullMaterial(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->coordSys) {
+  else if (typeId == HdPrimTypeTokens->coordSys)
+  {
     return new Hd_NullCoordSys(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->camera) {
+  else if (typeId == HdPrimTypeTokens->camera)
+  {
     return new Hd_NullCamera(sprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
   return nullptr;
@@ -346,16 +377,20 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateSprim(TfToken const &typeId, SdfPa
 
 HdSprim *Hd_UnitTestNullRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
 {
-  if (typeId == HdPrimTypeTokens->material) {
+  if (typeId == HdPrimTypeTokens->material)
+  {
     return new Hd_NullMaterial(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->coordSys) {
+  else if (typeId == HdPrimTypeTokens->coordSys)
+  {
     return new Hd_NullCoordSys(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->camera) {
+  else if (typeId == HdPrimTypeTokens->camera)
+  {
     return new Hd_NullCamera(SdfPath::EmptyPath());
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -401,9 +436,11 @@ HdCommandDescriptors Hd_UnitTestNullRenderDelegate::GetCommandDescriptors() cons
 
 bool Hd_UnitTestNullRenderDelegate::InvokeCommand(const TfToken &command, const HdCommandArgs &args)
 {
-  if (command == _tokens->print) {
+  if (command == _tokens->print)
+  {
     HdCommandArgs::const_iterator it = args.find(_tokens->message);
-    if (it == args.end()) {
+    if (it == args.end())
+    {
       TF_WARN("No argument 'message' argument found.");
       return false;
     }

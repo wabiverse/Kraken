@@ -76,7 +76,8 @@ class SdfAssetPath;
 /// This is a non-applied API schema.
 ///
 ///
-class UsdShadeCoordSysAPI : public UsdAPISchemaBase {
+class UsdShadeCoordSysAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -92,13 +93,15 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdShadeCoordSysAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeCoordSysAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdShadeCoordSysAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdShadeCoordSysAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeCoordSysAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeCoordSysAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdShadeCoordSysAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -163,7 +166,8 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase {
   /// A coordinate system binding.
   /// Binds a name to a coordSysPrim for the bindingPrim
   /// (and its descendants, unless overriden).
-  typedef struct {
+  typedef struct
+  {
     TfToken name;
     SdfPath bindingRelPath;
     SdfPath coordSysPrimPath;

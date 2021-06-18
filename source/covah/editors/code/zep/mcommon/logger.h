@@ -23,32 +23,44 @@ __declspec(dllimport) void __stdcall OutputDebugStringA(_In_opt_ const char *psz
 
 #undef ERROR
 
-namespace Zep {
+namespace Zep
+{
 
-enum class ZLT { NONE, DBG, INFO, WARNING, ERROR };
+enum class ZLT
+{
+  NONE,
+  DBG,
+  INFO,
+  WARNING,
+  ERROR
+};
 
-struct ZLogger {
+struct ZLogger
+{
   bool headers = false;
   ZLT level = ZLT::WARNING;
 };
 
 extern ZLogger logger;
 
-class ZLog {
+class ZLog
+{
  public:
   ZLog()
   {}
   ZLog(ZLT type)
   {
     msglevel = type;
-    if (logger.headers && msglevel >= logger.level) {
+    if (logger.headers && msglevel >= logger.level)
+    {
       operator<<("[" + getLabel(type) + "] ");
     }
     out << "(T:" << std::this_thread::get_id() << ") ";
   }
   ~ZLog()
   {
-    if (opened) {
+    if (opened)
+    {
       out << std::endl;
 #ifdef WIN32
       OutputDebugStringA(out.str().c_str());
@@ -58,7 +70,8 @@ class ZLog {
     }
     opened = false;
   }
-  template<class T> ZLog &operator<<(const T &msg)
+  template<class T>
+  ZLog &operator<<(const T &msg)
   {
     if (disabled || msglevel < logger.level)
       return *this;
@@ -75,7 +88,8 @@ class ZLog {
   inline std::string getLabel(ZLT type)
   {
     std::string label;
-    switch (type) {
+    switch (type)
+    {
       case ZLT::DBG:
         label = "DEBUG";
         break;

@@ -65,12 +65,14 @@ SdrShaderNode::SdrShaderNode(const NdrIdentifier &identifier,
             sourceCode)
 {
   // Cast inputs to shader inputs
-  for (const auto &input : _inputs) {
+  for (const auto &input : _inputs)
+  {
     _shaderInputs[input.first] = dynamic_cast<SdrShaderPropertyConstPtr>(input.second);
   }
 
   // ... and the same for outputs
-  for (const auto &output : _outputs) {
+  for (const auto &output : _outputs)
+  {
     _shaderOutputs[output.first] = dynamic_cast<SdrShaderPropertyConstPtr>(output.second);
   }
 
@@ -90,10 +92,12 @@ void SdrShaderNode::_PostProcessProperties()
 
   // Declare the input type to be vstruct if it's a vstruct head, and update
   // the default value
-  for (const TfToken &inputName : _inputNames) {
+  for (const TfToken &inputName : _inputNames)
+  {
     NdrTokenVec::const_iterator it = std::find(vsNames.begin(), vsNames.end(), inputName);
 
-    if (it != vsNames.end()) {
+    if (it != vsNames.end())
+    {
       SdrShaderPropertyConstPtr input = _shaderInputs.at(inputName);
 
       const_cast<SdrShaderProperty *>(input)->_type = SdrPropertyTypes->Vstruct;
@@ -104,10 +108,12 @@ void SdrShaderNode::_PostProcessProperties()
 
   // Declare the output type to be vstruct if it's a vstruct head, and update
   // the default value
-  for (const TfToken &outputName : _outputNames) {
+  for (const TfToken &outputName : _outputNames)
+  {
     NdrTokenVec::const_iterator it = std::find(vsNames.begin(), vsNames.end(), outputName);
 
-    if (it != vsNames.end()) {
+    if (it != vsNames.end())
+    {
       SdrShaderPropertyConstPtr output = _shaderOutputs.at(outputName);
 
       const_cast<SdrShaderProperty *>(output)->_type = SdrPropertyTypes->Vstruct;
@@ -130,9 +136,12 @@ SdrShaderPropertyConstPtr SdrShaderNode::GetShaderOutput(const TfToken &outputNa
 NdrTokenVec SdrShaderNode::GetAssetIdentifierInputNames() const
 {
   NdrTokenVec result;
-  for (const auto &inputName : GetInputNames()) {
-    if (auto input = GetShaderInput(inputName)) {
-      if (input->IsAssetIdentifier()) {
+  for (const auto &inputName : GetInputNames())
+  {
+    if (auto input = GetShaderInput(inputName))
+    {
+      if (input->IsAssetIdentifier())
+      {
         result.push_back(input->GetName());
       }
     }
@@ -143,9 +152,12 @@ NdrTokenVec SdrShaderNode::GetAssetIdentifierInputNames() const
 SdrShaderPropertyConstPtr SdrShaderNode::GetDefaultInput() const
 {
   std::vector<SdrShaderPropertyConstPtr> result;
-  for (const auto &inputName : GetInputNames()) {
-    if (auto input = GetShaderInput(inputName)) {
-      if (input->IsDefaultInput()) {
+  for (const auto &inputName : GetInputNames())
+  {
+    if (auto input = GetShaderInput(inputName))
+    {
+      if (input->IsDefaultInput())
+      {
         return input;
       }
     }
@@ -172,11 +184,13 @@ NdrTokenVec SdrShaderNode::GetPropertyNamesForPage(const std::string &pageName) 
 {
   NdrTokenVec propertyNames;
 
-  for (const NdrPropertyUniquePtr &property : _properties) {
+  for (const NdrPropertyUniquePtr &property : _properties)
+  {
     const SdrShaderPropertyConstPtr shaderProperty = dynamic_cast<const SdrShaderPropertyConstPtr>(
       property.get());
 
-    if (shaderProperty->GetPage() == pageName) {
+    if (shaderProperty->GetPage() == pageName)
+    {
       propertyNames.push_back(shaderProperty->GetName());
     }
   }
@@ -188,26 +202,32 @@ NdrTokenVec SdrShaderNode::GetAllVstructNames() const
 {
   std::unordered_set<std::string> vstructs;
 
-  for (const auto &input : _shaderInputs) {
-    if (!input.second->IsVStructMember()) {
+  for (const auto &input : _shaderInputs)
+  {
+    if (!input.second->IsVStructMember())
+    {
       continue;
     }
 
     const TfToken &head = input.second->GetVStructMemberOf();
 
-    if (_shaderInputs.count(head)) {
+    if (_shaderInputs.count(head))
+    {
       vstructs.insert(head);
     }
   }
 
-  for (const auto &output : _shaderOutputs) {
-    if (!output.second->IsVStructMember()) {
+  for (const auto &output : _shaderOutputs)
+  {
+    if (!output.second->IsVStructMember())
+    {
       continue;
     }
 
     const TfToken &head = output.second->GetVStructMemberOf();
 
-    if (_shaderOutputs.count(head)) {
+    if (_shaderOutputs.count(head))
+    {
       vstructs.insert(head);
     }
   }
@@ -225,15 +245,19 @@ void SdrShaderNode::_InitializePrimvars()
   // of properties whose values contain additional primvar names
   const NdrStringVec rawPrimvars = StringVecVal(SdrNodeMetadata->Primvars, _metadata);
 
-  for (const std::string &primvar : rawPrimvars) {
-    if (TfStringStartsWith(primvar, "$")) {
+  for (const std::string &primvar : rawPrimvars)
+  {
+    if (TfStringStartsWith(primvar, "$"))
+    {
       const std::string propertyName = TfStringTrimLeft(primvar, "$");
       const SdrShaderPropertyConstPtr input = GetShaderInput(TfToken(propertyName));
 
-      if (input && (input->GetType() == SdrPropertyTypes->String)) {
+      if (input && (input->GetType() == SdrPropertyTypes->String))
+      {
         primvarNamingProperties.emplace_back(TfToken(std::move(propertyName)));
       }
-      else {
+      else
+      {
         TF_DEBUG(NDR_PARSING)
           .Msg(
             "Found a node [%s] whose metadata "
@@ -243,7 +267,8 @@ void SdrShaderNode::_InitializePrimvars()
             primvar.c_str());
       }
     }
-    else {
+    else
+    {
       primvars.emplace_back(TfToken(primvar));
     }
   }
@@ -256,12 +281,14 @@ NdrTokenVec SdrShaderNode::_ComputePages() const
 {
   NdrTokenVec pages;
 
-  for (const NdrPropertyUniquePtr &property : _properties) {
+  for (const NdrPropertyUniquePtr &property : _properties)
+  {
     auto sdrProperty = static_cast<SdrShaderPropertyPtr>(property.get());
     const TfToken &page = sdrProperty->GetPage();
 
     // Exclude duplicate pages
-    if (std::find(pages.begin(), pages.end(), page) != pages.end()) {
+    if (std::find(pages.begin(), pages.end(), page) != pages.end())
+    {
       continue;
     }
 

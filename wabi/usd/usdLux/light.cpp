@@ -50,7 +50,8 @@ UsdLuxLight::~UsdLuxLight()
 /* static */
 UsdLuxLight UsdLuxLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLight();
   }
@@ -221,7 +222,8 @@ UsdRelationship UsdLuxLight::CreateFiltersRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -274,7 +276,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-class UsdLuxLight_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior {
+class UsdLuxLight_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
+{
   bool CanConnectInputToSource(const UsdShadeInput &input,
                                const UsdAttribute &source,
                                std::string *reason) override
@@ -299,7 +302,8 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
   UsdShadeRegisterConnectableAPIBehavior<UsdLuxLight, UsdLuxLight_ConnectableAPIBehavior>();
 }
 
-UsdLuxLight::UsdLuxLight(const UsdShadeConnectableAPI &connectable) : UsdLuxLight(connectable.GetPrim())
+UsdLuxLight::UsdLuxLight(const UsdShadeConnectableAPI &connectable)
+  : UsdLuxLight(connectable.GetPrim())
 {}
 
 UsdShadeConnectableAPI UsdLuxLight::ConnectableAPI() const
@@ -355,9 +359,11 @@ GfVec3f UsdLuxLight::ComputeBaseEmission() const
 
   bool enableColorTemp = false;
   GetEnableColorTemperatureAttr().Get(&enableColorTemp);
-  if (enableColorTemp) {
+  if (enableColorTemp)
+  {
     float colorTemp = 6500;
-    if (GetColorTemperatureAttr().Get(&colorTemp)) {
+    if (GetColorTemperatureAttr().Get(&colorTemp))
+    {
       e = GfCompMult(e, UsdLuxBlackbodyTemperatureAsRgb(colorTemp));
     }
   }

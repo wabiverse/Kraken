@@ -66,7 +66,8 @@ class SdfAssetPath;
 /// Represents a ris bxdf object. One of these is assigned at one time.
 ///
 ///
-class UsdRiRisBxdf : public UsdRiRisObject {
+class UsdRiRisBxdf : public UsdRiRisObject
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -82,13 +83,15 @@ class UsdRiRisBxdf : public UsdRiRisObject {
   /// Equivalent to UsdRiRisBxdf::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRisBxdf(const UsdPrim &prim = UsdPrim()) : UsdRiRisObject(prim)
+  explicit UsdRiRisBxdf(const UsdPrim &prim = UsdPrim())
+    : UsdRiRisObject(prim)
   {}
 
   /// Construct a UsdRiRisBxdf on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRisBxdf(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRisBxdf(const UsdSchemaBase &schemaObj) : UsdRiRisObject(schemaObj)
+  explicit UsdRiRisBxdf(const UsdSchemaBase &schemaObj)
+    : UsdRiRisObject(schemaObj)
   {}
 
   /// Destructor.

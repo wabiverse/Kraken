@@ -56,7 +56,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GlfUniformBlock);
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleLightingContext);
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleShadowArray);
 
-class GlfSimpleLightingContext : public TfRefBase, public TfWeakBase {
+class GlfSimpleLightingContext : public TfRefBase, public TfWeakBase
+{
  public:
   typedef GlfSimpleLightingContext This;
 

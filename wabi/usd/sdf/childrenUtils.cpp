@@ -45,7 +45,9 @@ WABI_NAMESPACE_BEGIN
 // ChildrenUtils
 //
 
-template<class ChildPolicy> struct Sdf_IsValidPathComponent {
+template<class ChildPolicy>
+struct Sdf_IsValidPathComponent
+{
   bool operator()(const SdfPath &newComponent)
   {
     return true;
@@ -54,7 +56,8 @@ template<class ChildPolicy> struct Sdf_IsValidPathComponent {
   {
     return ChildPolicy::IsValidIdentifier(newComponent);
   }
-  template<class T> bool operator()(const T &newComponent)
+  template<class T>
+  bool operator()(const T &newComponent)
   {
     return false;
   }
@@ -64,7 +67,8 @@ template<class ChildPolicy> struct Sdf_IsValidPathComponent {
 template<class ChildPolicy>
 static SdfPath _ComputeMovedPath(const SdfPath &path, const typename ChildPolicy::FieldType &newName)
 {
-  if (!Sdf_IsValidPathComponent<ChildPolicy>()(newName)) {
+  if (!Sdf_IsValidPathComponent<ChildPolicy>()(newName))
+  {
     return SdfPath();
   }
 
@@ -86,7 +90,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(SdfLayer *layer,
 {
   // Create the spec in the layer. Note that this will fail if a spec already
   // exists at the given path.
-  if (specType == SdfSpecTypeUnknown) {
+  if (specType == SdfSpecTypeUnknown)
+  {
     TF_CODING_ERROR("Invalid object type");
     return false;
   }
@@ -95,7 +100,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CreateSpec(SdfLayer *layer,
   // treated atomically.
   SdfChangeBlock block;
 
-  if (!layer->_CreateSpec(childPath, specType, inert)) {
+  if (!layer->_CreateSpec(childPath, specType, inert))
+  {
     TF_CODING_ERROR("Failed to create spec of type \'%s\' at <%s>",
                     TfEnum::GetName(specType).c_str(),
                     childPath.GetText());
@@ -122,14 +128,17 @@ static void _FilterDuplicatePreexistingChildren(std::vector<typename ChildPolicy
   typedef typename ChildPolicy::FieldType FieldType;
   std::set<FieldType> keySet;
 
-  TF_FOR_ALL(it, original)
+  TF_FOR_ALL (it, original)
   {
-    if (*it) {
+    if (*it)
+    {
       const FieldType key(ChildPolicy::GetKey(*it));
-      if (!keySet.insert(key).second) {
+      if (!keySet.insert(key).second)
+      {
         // Key already exists; filter it out if the value it
         // corresponds to is already a child of the given parent path.
-        if ((*it)->GetPath().GetParentPath() == parentPath) {
+        if ((*it)->GetPath().GetParentPath() == parentPath)
+        {
           continue;
         }
       }
@@ -174,21 +183,24 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
 
   // Build up the new vector of names and check for duplicates or
   // other error conditions.
-  TF_FOR_ALL(i, values)
+  TF_FOR_ALL (i, values)
   {
-    if (!*i) {
+    if (!*i)
+    {
       TF_CODING_ERROR("Invalid child");
       return false;
     }
 
     const FieldType key(ChildPolicy::GetKey(*i));
     newNames.push_back(key);
-    if (!newNamesSet.insert(key).second) {
+    if (!newNamesSet.insert(key).second)
+    {
       TF_CODING_ERROR("Duplicate child");
       return false;
     }
 
-    if ((*i)->GetLayer() != layer) {
+    if ((*i)->GetLayer() != layer)
+    {
       TF_CODING_ERROR("Cannot reparent to another layer");
       return false;
     }
@@ -197,7 +209,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
     // (e.g., attempting to insert /A/B into /A/B/C's children) is an error.
     // However, if this value is already a child of the given path, that's
     // a no-op, not an error.
-    if (path != (*i)->GetPath().GetParentPath() && path.HasPrefix((*i)->GetPath())) {
+    if (path != (*i)->GetPath().GetParentPath() && path.HasPrefix((*i)->GetPath()))
+    {
       TF_CODING_ERROR("Cannot reparent child under itself");
       return false;
     }
@@ -208,9 +221,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
   SdfChangeBlock block;
 
   // Delete Specs that aren't in the new set.
-  TF_FOR_ALL(i, childNames)
+  TF_FOR_ALL (i, childNames)
   {
-    if (newNamesSet.find(*i) == newNamesSet.end()) {
+    if (newNamesSet.find(*i) == newNamesSet.end())
+    {
       SdfPath childPath = ChildPolicy::GetChildPath(path, *i);
       layer->_DeleteSpec(childPath);
     }
@@ -220,7 +234,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
   std::set<FieldType> oldKeys(childNames.begin(), childNames.end());
 
   // Perform the edits
-  TF_FOR_ALL(i, values)
+  TF_FOR_ALL (i, values)
   {
     // Get the key and construct the new path
     const FieldType key(ChildPolicy::GetKey(*i));
@@ -228,12 +242,14 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
 
     // If this is already a child, then there's nothing to do.
     const SdfPath oldParentPath = ChildPolicy::GetParentPath((*i)->GetPath());
-    if (oldParentPath == path) {
+    if (oldParentPath == path)
+    {
       continue;
     }
 
     // If there was previously a spec at that path then first delete it.
-    if (oldKeys.find(key) != oldKeys.end()) {
+    if (oldKeys.find(key) != oldKeys.end())
+    {
       layer->_DeleteSpec(newPath);
     }
 
@@ -247,7 +263,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
 
     typename std::vector<FieldType>::iterator oldNameIter = std::find(
       oldSiblings.begin(), oldSiblings.end(), key);
-    if (oldNameIter == oldSiblings.end()) {
+    if (oldNameIter == oldSiblings.end())
+    {
       TF_CODING_ERROR(
         "An object was not in its parent's list of "
         "children");
@@ -255,10 +272,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
     }
 
     oldSiblings.erase(oldNameIter);
-    if (oldSiblings.empty()) {
+    if (oldSiblings.empty())
+    {
       layer->EraseField(oldParentPath, oldChildrenKey);
     }
-    else {
+    else
+    {
       layer->SetField(oldParentPath, oldChildrenKey, oldSiblings);
     }
 
@@ -266,10 +285,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
   }
 
   // Store the new vector of keys and update this object's internal state.
-  if (newNames.empty()) {
+  if (newNames.empty())
+  {
     layer->EraseField(path, childrenKey);
   }
-  else {
+  else
+  {
     layer->SetField(path, childrenKey, newNames);
   }
 
@@ -285,19 +306,22 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
 
-  if (!value) {
+  if (!value)
+  {
     TF_CODING_ERROR("Invalid child");
     return false;
   }
 
-  if (value->GetLayer() != layer) {
+  if (value->GetLayer() != layer)
+  {
     TF_CODING_ERROR("Cannot reparent to another layer");
     return false;
   }
 
   // Attempting to insert a value that is already a child of the spec at
   // path is considered a no-op, even if the index is different.
-  if (ChildPolicy::GetParentPath(value->GetPath()) == path) {
+  if (ChildPolicy::GetParentPath(value->GetPath()) == path)
+  {
     return true;
   }
 
@@ -307,7 +331,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
 
   // Attempting to insert a value that is a parent of the desired spec path
   // (e.g., attempting to insert /A/B into /A/B/C's children) is an error.
-  if (newPath.HasPrefix(value->GetPath())) {
+  if (newPath.HasPrefix(value->GetPath()))
+  {
     TF_CODING_ERROR("Cannot reparent child under itself");
     return false;
   }
@@ -315,19 +340,22 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(path, childrenKey);
 
   // If the index is -1, insert the child at the end.
-  if (index == -1) {
+  if (index == -1)
+  {
     index = childNames.size();
   }
 
-  if ((size_t)index > childNames.size()) {
+  if ((size_t)index > childNames.size())
+  {
     TF_CODING_ERROR("Attempt to insert spec %s at an invalid index %d", newPath.GetText(), index);
     return false;
   }
 
   // Check to make sure there's not already a spec with the new key
-  TF_FOR_ALL(i, childNames)
+  TF_FOR_ALL (i, childNames)
   {
-    if (*i == key) {
+    if (*i == key)
+    {
       TF_CODING_ERROR("Attempt to insert duplicate spec %s", newPath.GetText());
       return false;
     }
@@ -345,7 +373,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   typename std::vector<FieldType>::iterator oldNameIter = std::find(
     oldSiblingNames.begin(), oldSiblingNames.end(), key);
 
-  if (oldNameIter == oldSiblingNames.end()) {
+  if (oldNameIter == oldSiblingNames.end())
+  {
     TF_CODING_ERROR("An object was not in its parent's list of children");
     return false;
   }
@@ -356,10 +385,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
 
   // Remove the prim from the old parent's list
   oldSiblingNames.erase(oldNameIter);
-  if (oldSiblingNames.empty()) {
+  if (oldSiblingNames.empty())
+  {
     layer->EraseField(oldParentPath, oldChildrenKey);
   }
-  else {
+  else
+  {
     layer->SetField(oldParentPath, oldChildrenKey, oldSiblingNames);
   }
 
@@ -372,7 +403,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
 
   // Notify the CleanupTracker that a spec was removed from the old parent
   // path so the old parent can be cleaned up if it is left inert
-  if (SdfSpecHandle spec = layer->GetObjectAtPath(oldParentPath)) {
+  if (SdfSpecHandle spec = layer->GetObjectAtPath(oldParentPath))
+  {
     Sdf_CleanupTracker::GetInstance().AddSpecIfTracking(spec);
   }
 
@@ -394,21 +426,26 @@ bool Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(const SdfLayerHandle &layer,
   SdfChangeBlock block;
 
   FieldType fieldKey(key);
-  for (auto i = childNames.begin(), e = childNames.end(); i != e; ++i) {
-    if (*i == fieldKey) {
+  for (auto i = childNames.begin(), e = childNames.end(); i != e; ++i)
+  {
+    if (*i == fieldKey)
+    {
       SdfPath childPath = ChildPolicy::GetChildPath(path, fieldKey);
       layer->_DeleteSpec(childPath);
       childNames.erase(i);
-      if (childNames.empty()) {
+      if (childNames.empty())
+      {
         layer->EraseField(path, childrenKey);
       }
-      else {
+      else
+      {
         layer->SetField(path, childrenKey, childNames);
       }
 
       // Notify the CleanupTracker that a child spec was removed so that
       // this spec can be cleaned up if it is left inert
-      if (SdfSpecHandle spec = layer->GetObjectAtPath(path)) {
+      if (SdfSpecHandle spec = layer->GetObjectAtPath(path))
+      {
         Sdf_CleanupTracker::GetInstance().AddSpecIfTracking(spec);
       }
 
@@ -433,7 +470,8 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
   SdfPath newPath = _ComputeMovedPath<ChildPolicy>(path, newName);
 
   // Just return if nothing is changing.
-  if (newPath == value->GetPath() && index == SdfNamespaceEdit::Same) {
+  if (newPath == value->GetPath() && index == SdfNamespaceEdit::Same)
+  {
     return true;
   }
 
@@ -443,10 +481,12 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
   // Fix up the index.
   FieldType oldKey((ChildPolicy::GetKey(value)));
   SdfPath oldParentPath = ChildPolicy::GetParentPath(value->GetPath());
-  if (index == SdfNamespaceEdit::Same && oldParentPath == path) {
+  if (index == SdfNamespaceEdit::Same && oldParentPath == path)
+  {
     index = std::find(childNames.begin(), childNames.end(), oldKey) - childNames.begin();
   }
-  else if ((size_t)index > childNames.size()) {
+  else if ((size_t)index > childNames.size())
+  {
     // This catches all negative indexes.
     index = childNames.size();
   }
@@ -464,18 +504,22 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
 
   // Remove the prim from the old parent's child name list or, if we're
   // reordering, from the prim's child name list.
-  if (oldParentPath == path) {
+  if (oldParentPath == path)
+  {
     // If the name isn't changing then we can bail early if the
     // child isn't going to move.
-    if (oldKey == newName) {
+    if (oldKey == newName)
+    {
       int oldIndex = oldNameIter - oldSiblingNames.begin();
-      if (oldIndex == index || oldIndex + 1 == index) {
+      if (oldIndex == index || oldIndex + 1 == index)
+      {
         return true;
       }
     }
 
     typedef typename std::vector<FieldType>::difference_type Diff;
-    if (oldNameIter - oldSiblingNames.begin() < static_cast<Diff>(index)) {
+    if (oldNameIter - oldSiblingNames.begin() < static_cast<Diff>(index))
+    {
       // Index must be shifted down because we're removing an
       // earlier name.
       --index;
@@ -484,19 +528,23 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
     // Erase the old name.
     childNames.erase(std::find(childNames.begin(), childNames.end(), oldKey));
   }
-  else {
+  else
+  {
     oldSiblingNames.erase(oldNameIter);
-    if (oldSiblingNames.empty()) {
+    if (oldSiblingNames.empty())
+    {
       layer->EraseField(oldParentPath, oldChildrenKey);
 
       // Notify the CleanupTracker that a spec was removed from the old
       // parent path so the old parent can be cleaned up if it is left
       // inert.
-      if (SdfSpecHandle spec = layer->GetObjectAtPath(oldParentPath)) {
+      if (SdfSpecHandle spec = layer->GetObjectAtPath(oldParentPath))
+      {
         Sdf_CleanupTracker::GetInstance().AddSpecIfTracking(spec);
       }
     }
-    else {
+    else
+    {
       layer->SetField(oldParentPath, oldChildrenKey, oldSiblingNames);
     }
   }
@@ -523,29 +571,37 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
 
-  if (!layer->PermissionToEdit()) {
-    if (whyNot) {
+  if (!layer->PermissionToEdit())
+  {
+    if (whyNot)
+    {
       *whyNot = "Layer is not editable";
     }
     return false;
   }
 
-  if (!value) {
-    if (whyNot) {
+  if (!value)
+  {
+    if (whyNot)
+    {
       *whyNot = "Object does not exist";
     }
     return false;
   }
-  if (value->GetLayer() != layer) {
-    if (whyNot) {
+  if (value->GetLayer() != layer)
+  {
+    if (whyNot)
+    {
       *whyNot = "Cannot reparent to another layer";
     }
     return false;
   }
 
   SdfPath newPath = _ComputeMovedPath<ChildPolicy>(path, newName);
-  if (newPath.IsEmpty()) {
-    if (whyNot) {
+  if (newPath.IsEmpty())
+  {
+    if (whyNot)
+    {
       *whyNot = "Invalid name";
     }
     return false;
@@ -560,14 +616,17 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
   */
 
   // Renaming to the same name or reordering will work.
-  if (ChildPolicy::GetParentPath(value->GetPath()) == path) {
+  if (ChildPolicy::GetParentPath(value->GetPath()) == path)
+  {
     return true;
   }
 
   // Attempting to insert a value that is a parent of the desired spec path
   // (e.g., attempting to insert /A/B into /A/B/C's children) is an error.
-  if (newPath.HasPrefix(value->GetPath())) {
-    if (whyNot) {
+  if (newPath.HasPrefix(value->GetPath()))
+  {
+    if (whyNot)
+    {
       *whyNot = "Cannot reparent object under itself";
     }
     return false;
@@ -576,13 +635,16 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
   std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(path, childrenKey);
 
   // If the index is AtEnd, insert the child at the end.
-  if (index == SdfNamespaceEdit::AtEnd) {
+  if (index == SdfNamespaceEdit::AtEnd)
+  {
     index = childNames.size();
   }
 
   // Any index not in the child name range other than Same is invalid.
-  if (index != SdfNamespaceEdit::Same && (size_t)index > childNames.size()) {
-    if (whyNot) {
+  if (index != SdfNamespaceEdit::Same && (size_t)index > childNames.size())
+  {
+    if (whyNot)
+    {
       *whyNot = "Invalid index";
     }
     return false;
@@ -596,8 +658,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
                                                                                      oldChildrenKey);
   typename std::vector<FieldType>::iterator oldNameIter = std::find(
     oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
-  if (oldNameIter == oldSiblingNames.end()) {
-    if (whyNot) {
+  if (oldNameIter == oldSiblingNames.end())
+  {
+    if (whyNot)
+    {
       *whyNot = "Coding error: Object is not in its parent's children";
     }
     return false;
@@ -616,8 +680,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
   typedef typename ChildPolicy::FieldType FieldType;
   const TfToken childrenKey = ChildPolicy::GetChildrenToken(path);
 
-  if (!layer->PermissionToEdit()) {
-    if (whyNot) {
+  if (!layer->PermissionToEdit())
+  {
+    if (whyNot)
+    {
       *whyNot = "Layer is not editable";
     }
     return false;
@@ -625,8 +691,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
 
   std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(path, childrenKey);
   typename std::vector<FieldType>::iterator i = std::find(childNames.begin(), childNames.end(), key);
-  if (i == childNames.end()) {
-    if (whyNot) {
+  if (i == childNames.end())
+  {
+    if (whyNot)
+    {
       *whyNot = "Object does not exist";
     }
     return false;
@@ -635,12 +703,14 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
   return true;
 }
 
-template<class ChildPolicy> bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const FieldType &newName)
+template<class ChildPolicy>
+bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const FieldType &newName)
 {
   return ChildPolicy::IsValidIdentifier(newName);
 }
 
-template<class ChildPolicy> bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const std::string &newName)
+template<class ChildPolicy>
+bool Sdf_ChildrenUtils<ChildPolicy>::IsValidName(const std::string &newName)
 {
   return ChildPolicy::IsValidIdentifier(newName);
 }
@@ -649,20 +719,24 @@ template<class ChildPolicy>
 SdfAllowed Sdf_ChildrenUtils<ChildPolicy>::CanRename(const SdfSpec &spec,
                                                      const typename ChildPolicy::FieldType &newName)
 {
-  if (!spec.GetLayer()->PermissionToEdit()) {
+  if (!spec.GetLayer()->PermissionToEdit())
+  {
     return "Layer is not editable";
   }
-  if (!IsValidName(newName)) {
+  if (!IsValidName(newName))
+  {
     return TfStringPrintf(
       "Cannot rename %s to invalid name '%s'", spec.GetPath().GetText(), newName.GetText());
   }
 
   SdfPath newPath = _ComputeRenamedPath<ChildPolicy>(spec.GetPath(), newName);
-  if (newPath == spec.GetPath()) {
+  if (newPath == spec.GetPath())
+  {
     // Allow renaming to the same name.
     return true;
   }
-  if (newPath.IsEmpty() || spec.GetLayer()->HasSpec(newPath)) {
+  if (newPath.IsEmpty() || spec.GetLayer()->HasSpec(newPath))
+  {
     return SdfAllowed("An object with that name already exists");
   }
   return true;
@@ -674,17 +748,20 @@ bool Sdf_ChildrenUtils<ChildPolicy>::Rename(const SdfSpec &spec,
 {
   SdfPath oldPath = spec.GetPath();
 
-  if (!IsValidName(newName)) {
+  if (!IsValidName(newName))
+  {
     TF_CODING_ERROR("Cannot rename %s to invalid name '%s'", oldPath.GetText(), newName.GetText());
     return false;
   }
 
   SdfPath newPath = _ComputeRenamedPath<ChildPolicy>(oldPath, newName);
-  if (newPath.IsEmpty()) {
+  if (newPath.IsEmpty())
+  {
     return false;
   }
 
-  if (newPath == spec.GetPath()) {
+  if (newPath == spec.GetPath())
+  {
     // Attempting to rename to the same name is considered a no-op.
     return true;
   }
@@ -697,9 +774,10 @@ bool Sdf_ChildrenUtils<ChildPolicy>::Rename(const SdfSpec &spec,
 
   std::vector<FieldType> childNames = layer->GetFieldAs<std::vector<FieldType>>(parentPath, childrenKey);
 
-  TF_FOR_ALL(i, childNames)
+  TF_FOR_ALL (i, childNames)
   {
-    if (*i == newName) {
+    if (*i == newName)
+    {
       TF_CODING_ERROR(
         "Cannot rename %s to %s because a sibling "
         "with that name already exists",
@@ -714,14 +792,16 @@ bool Sdf_ChildrenUtils<ChildPolicy>::Rename(const SdfSpec &spec,
   SdfChangeBlock block;
 
   // First move the spec and all the fields under it.
-  if (!layer->_MoveSpec(oldPath, newPath)) {
+  if (!layer->_MoveSpec(oldPath, newPath))
+  {
     return false;
   }
 
   // Now update the parent's children list
-  TF_FOR_ALL(i, childNames)
+  TF_FOR_ALL (i, childNames)
   {
-    if (*i == oldPath.GetNameToken()) {
+    if (*i == oldPath.GetNameToken())
+    {
       *i = TfToken(newName);
       break;
     }
@@ -743,7 +823,8 @@ SdfAllowed Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::CanRename(const SdfSpec &sp
   return SdfAllowed("Cannot rename mappers");
 }
 
-template<> bool Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::Rename(const SdfSpec &spec, const SdfPath &newName)
+template<>
+bool Sdf_ChildrenUtils<Sdf_MapperChildPolicy>::Rename(const SdfSpec &spec, const SdfPath &newName)
 {
   TF_CODING_ERROR("Cannot rename mappers");
   return false;

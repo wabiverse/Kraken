@@ -60,7 +60,8 @@ class SdfAssetPath;
 ///
 /// Base class for field primitives.
 ///
-class UsdVolFieldBase : public UsdGeomBoundable {
+class UsdVolFieldBase : public UsdGeomBoundable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -76,13 +77,15 @@ class UsdVolFieldBase : public UsdGeomBoundable {
   /// Equivalent to UsdVolFieldBase::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolFieldBase(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim)
+  explicit UsdVolFieldBase(const UsdPrim &prim = UsdPrim())
+    : UsdGeomBoundable(prim)
   {}
 
   /// Construct a UsdVolFieldBase on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolFieldBase(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolFieldBase(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj)
+  explicit UsdVolFieldBase(const UsdSchemaBase &schemaObj)
+    : UsdGeomBoundable(schemaObj)
   {}
 
   /// Destructor.

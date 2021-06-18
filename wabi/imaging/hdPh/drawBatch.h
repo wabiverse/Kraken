@@ -56,7 +56,8 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 /// aggregated drawing resources dispatched with a minimal number of draw
 /// calls.
 ///
-class HdPh_DrawBatch {
+class HdPh_DrawBatch
+{
  public:
   HDPH_API
   HdPh_DrawBatch(HdPhDrawItemInstance *drawItemInstance);
@@ -75,7 +76,12 @@ class HdPh_DrawBatch {
   HDPH_API
   bool Rebuild();
 
-  enum class ValidationResult { ValidBatch = 0, RebuildBatch, RebuildAllBatches };
+  enum class ValidationResult
+  {
+    ValidBatch = 0,
+    RebuildBatch,
+    RebuildAllBatches
+  };
 
   /// Validates whether the  batch can be reused (i.e., submitted) as-is, or
   /// if it needs to be rebuilt, or if all batches need to be rebuilt.
@@ -108,7 +114,8 @@ class HdPh_DrawBatch {
   /// This wraps glsl code generation and keeps track of
   /// binding assigments for bindable resources.
   ///
-  class _DrawingProgram {
+  class _DrawingProgram
+  {
    public:
     _DrawingProgram()
     {}
@@ -178,7 +185,8 @@ class HdPh_DrawBatch {
     HdPhShaderCodeSharedPtrVector GetComposedShaders() const
     {
       HdPhShaderCodeSharedPtrVector shaders = _shaders;
-      if (_surfaceShader) {
+      if (_surfaceShader)
+      {
         shaders.push_back(_surfaceShader);
       }
       return shaders;

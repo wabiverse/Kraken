@@ -43,9 +43,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct UsdApolloRendererSetting {
+struct UsdApolloRendererSetting
+{
 
-  enum Type { TYPE_FLAG, TYPE_INT, TYPE_FLOAT, TYPE_STRING };
+  enum Type
+  {
+    TYPE_FLAG,
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+  };
 
   std::string name;
   TfToken key;

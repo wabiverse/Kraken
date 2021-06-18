@@ -45,7 +45,8 @@ struct HdPrman_Context;
 ///
 /// A representation for light filters.
 ///
-class HdPrmanLightFilter final : public HdSprim {
+class HdPrmanLightFilter final : public HdSprim
+{
  public:
   HdPrmanLightFilter(SdfPath const &id, TfToken const &lightFilterType);
   virtual ~HdPrmanLightFilter();

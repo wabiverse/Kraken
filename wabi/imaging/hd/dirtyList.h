@@ -98,7 +98,8 @@ using HdDirtyListSharedPtr = std::shared_ptr<class HdDirtyList>;
 ///   render index, this traversal has already been optimized
 ///   using the Gather utility.
 ///
-class HdDirtyList {
+class HdDirtyList
+{
  public:
   HD_API
   HdDirtyList(HdRprimCollection const &collection, HdRenderIndex &index);

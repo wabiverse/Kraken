@@ -35,7 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Hd_DispatchBufferArrayRange : public HdPhBufferArrayRange {
+class Hd_DispatchBufferArrayRange : public HdPhBufferArrayRange
+{
  public:
   /// Constructor.
   Hd_DispatchBufferArrayRange(HdPhResourceRegistry *resourceRegistry, HdPhDispatchBuffer *buffer)
@@ -277,12 +278,14 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::GetResource() const
   if (_resourceList.empty())
     return HdPhBufferResourceSharedPtr();
 
-  if (TfDebug::IsEnabled(HD_SAFE_MODE)) {
+  if (TfDebug::IsEnabled(HD_SAFE_MODE))
+  {
     // make sure this buffer array has only one resource.
     HgiBufferHandle const &buffer = _resourceList.begin()->second->GetHandle();
-    TF_FOR_ALL(it, _resourceList)
+    TF_FOR_ALL (it, _resourceList)
     {
-      if (it->second->GetHandle() != buffer) {
+      if (it->second->GetHandle() != buffer)
+      {
         TF_CODING_ERROR(
           "GetResource(void) called on"
           "HdBufferArray having multiple GPU resources");
@@ -300,7 +303,8 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::GetResource(TfToken const &name)
 
   // linear search.
   // The number of buffer resources should be small (<10 or so).
-  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it) {
+  for (HdPhBufferResourceNamedList::iterator it = _resourceList.begin(); it != _resourceList.end(); ++it)
+  {
     if (it->first == name)
       return it->second;
   }
@@ -314,10 +318,12 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::_AddResource(TfToken const &name
 {
   HD_TRACE_FUNCTION();
 
-  if (TfDebug::IsEnabled(HD_SAFE_MODE)) {
+  if (TfDebug::IsEnabled(HD_SAFE_MODE))
+  {
     // duplication check
     HdPhBufferResourceSharedPtr bufferRes = GetResource(name);
-    if (!TF_VERIFY(!bufferRes)) {
+    if (!TF_VERIFY(!bufferRes))
+    {
       return bufferRes;
     }
   }

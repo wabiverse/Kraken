@@ -47,7 +47,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for Hydra Volumes.
-class HdArnoldVolume : public HdVolume {
+class HdArnoldVolume : public HdVolume
+{
  public:
 #if WABI_VERSION >= 2102
   /// Constructor for HdArnoldVolume.
@@ -126,12 +127,15 @@ class HdArnoldVolume : public HdVolume {
   ///
   /// @tparam F Generic type for the function.
   /// @param f Function to run on the volumes.
-  template<typename F> void _ForEachVolume(F &&f)
+  template<typename F>
+  void _ForEachVolume(F &&f)
   {
-    for (auto *v : _volumes) {
+    for (auto *v : _volumes)
+    {
       f(v);
     }
-    for (auto *v : _inMemoryVolumes) {
+    for (auto *v : _inMemoryVolumes)
+    {
       f(v);
     }
   }

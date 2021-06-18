@@ -46,7 +46,8 @@ class Hd_VertexAdjacency;
 /// smooth per-vertex normals.  It does this by averaging face normals of
 /// faces surrounding a vertex.
 ///
-class Hd_SmoothNormals final {
+class Hd_SmoothNormals final
+{
  public:
   /// Computes the smooth normals result using the supplied adjacency
   /// information and points data. Returns an array of the same size and
@@ -77,7 +78,8 @@ class Hd_SmoothNormals final {
 ///
 /// Smooth normal computation CPU.
 ///
-class Hd_SmoothNormalsComputation : public HdComputedBufferSource {
+class Hd_SmoothNormalsComputation : public HdComputedBufferSource
+{
  public:
   HD_API
   Hd_SmoothNormalsComputation(Hd_VertexAdjacency const *adjacency,

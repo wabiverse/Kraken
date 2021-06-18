@@ -41,7 +41,9 @@ class TfToken;
 ///
 /// Interface for private implementations used by SdfMapEditProxy.
 ///
-template<class MapType> class Sdf_MapEditor {
+template<class MapType>
+class Sdf_MapEditor
+{
  public:
   typedef typename MapType::key_type key_type;
   typedef typename MapType::mapped_type mapped_type;

@@ -44,12 +44,19 @@ WABI_NAMESPACE_BEGIN
 /// HdReprSelector allows these opinions to compose/merge into a final composite
 /// representation to be used for rendering.
 ///
-class HdReprSelector {
+class HdReprSelector
+{
  public:
-  explicit HdReprSelector() : refinedToken(), unrefinedToken(), pointsToken()
+  explicit HdReprSelector()
+    : refinedToken(),
+      unrefinedToken(),
+      pointsToken()
   {}
 
-  explicit HdReprSelector(TfToken const &token) : refinedToken(token), unrefinedToken(), pointsToken()
+  explicit HdReprSelector(TfToken const &token)
+    : refinedToken(token),
+      unrefinedToken(),
+      pointsToken()
   {}
 
   explicit HdReprSelector(TfToken const &refined, TfToken const &unrefined)
@@ -114,7 +121,8 @@ class HdReprSelector {
 
  private:
   // TfHash support.
-  template<class HashState> friend void TfHashAppend(HashState &h, HdReprSelector const &rs)
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, HdReprSelector const &rs)
   {
     h.Append(rs.refinedToken, rs.unrefinedToken, rs.pointsToken);
   }
@@ -140,7 +148,8 @@ class HdReprSelector {
 /// When multiple topological representations are required for an rprim, we use
 /// HdReprSelector to compose the individual representations.
 ///
-class HdRepr final {
+class HdRepr final
+{
  public:
   using DrawItemUniquePtr = std::unique_ptr<HdDrawItem>;
   using DrawItemUniquePtrVector = std::vector<DrawItemUniquePtr>;

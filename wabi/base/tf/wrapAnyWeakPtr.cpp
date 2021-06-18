@@ -44,9 +44,11 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Tf_AnyWeakPtrToPython {
+struct Tf_AnyWeakPtrToPython
+{
 
   Tf_AnyWeakPtrToPython()
   {

@@ -19,7 +19,8 @@ limitations under the License.
 #include <memory>
 #include <string>
 
-namespace rpr {
+namespace rpr
+{
 class Context;
 }
 
@@ -28,9 +29,11 @@ WABI_NAMESPACE_BEGIN
 struct RprUsdContextMetadata;
 class HdRprApiFramebuffer;
 
-namespace rif {
+namespace rif
+{
 
-class Context {
+class Context
+{
  public:
   static std::unique_ptr<Context> Create(rpr::Context *rprContext,
                                          RprUsdContextMetadata const &rprContextMetadata,

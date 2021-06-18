@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 /// Note: This class simply stores the light parameters and relies on an
 /// external task (HdxSimpleLightTask) to upload them to the GPU.
 ///
-class HdPhLight final : public HdLight {
+class HdPhLight final : public HdLight
+{
  public:
   HDPH_API
   HdPhLight(SdfPath const &id, TfToken const &lightType);

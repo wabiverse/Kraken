@@ -74,8 +74,10 @@ HdPh_GeometricShader::HdPh_GeometricShader(std::string const &glslfxString,
   // the base class (HdPhShaderCode) at the end of refactoring, to be able to
   // use same machinery other than geometric shaders.
 
-  if (TfDebug::IsEnabled(HDPH_DUMP_GLSLFX_CONFIG)) {
-    std::cout << debugId << "\n" << glslfxString << "\n";
+  if (TfDebug::IsEnabled(HDPH_DUMP_GLSLFX_CONFIG))
+  {
+    std::cout << debugId << "\n"
+              << glslfxString << "\n";
   }
 
   std::stringstream ss(glslfxString);
@@ -111,44 +113,56 @@ void HdPh_GeometricShader::BindResources(const int program,
                                          HdPh_ResourceBinder const &binder,
                                          HdRenderPassState const &state)
 {
-  if (_useHardwareFaceCulling) {
-    switch (_cullStyle) {
+  if (_useHardwareFaceCulling)
+  {
+    switch (_cullStyle)
+    {
       case HdCullStyleFront:
         glEnable(GL_CULL_FACE);
-        if (_hasMirroredTransform) {
+        if (_hasMirroredTransform)
+        {
           glCullFace(GL_BACK);
         }
-        else {
+        else
+        {
           glCullFace(GL_FRONT);
         }
         break;
       case HdCullStyleFrontUnlessDoubleSided:
-        if (!_doubleSided) {
+        if (!_doubleSided)
+        {
           glEnable(GL_CULL_FACE);
-          if (_hasMirroredTransform) {
+          if (_hasMirroredTransform)
+          {
             glCullFace(GL_BACK);
           }
-          else {
+          else
+          {
             glCullFace(GL_FRONT);
           }
         }
         break;
       case HdCullStyleBack:
         glEnable(GL_CULL_FACE);
-        if (_hasMirroredTransform) {
+        if (_hasMirroredTransform)
+        {
           glCullFace(GL_FRONT);
         }
-        else {
+        else
+        {
           glCullFace(GL_BACK);
         }
         break;
       case HdCullStyleBackUnlessDoubleSided:
-        if (!_doubleSided) {
+        if (!_doubleSided)
+        {
           glEnable(GL_CULL_FACE);
-          if (_hasMirroredTransform) {
+          if (_hasMirroredTransform)
+          {
             glCullFace(GL_FRONT);
           }
-          else {
+          else
+          {
             glCullFace(GL_BACK);
           }
         }
@@ -162,42 +176,51 @@ void HdPh_GeometricShader::BindResources(const int program,
         // combinations of parameters that require extra handling
         HdCullStyle cullstyle = state.GetCullStyle();
         if (_doubleSided && (cullstyle == HdCullStyleBackUnlessDoubleSided ||
-                             cullstyle == HdCullStyleFrontUnlessDoubleSided)) {
+                             cullstyle == HdCullStyleFrontUnlessDoubleSided))
+        {
           glDisable(GL_CULL_FACE);
         }
         else if (_hasMirroredTransform &&
-                 (cullstyle == HdCullStyleBack || cullstyle == HdCullStyleBackUnlessDoubleSided)) {
+                 (cullstyle == HdCullStyleBack || cullstyle == HdCullStyleBackUnlessDoubleSided))
+        {
           glEnable(GL_CULL_FACE);
           glCullFace(GL_FRONT);
         }
         else if (_hasMirroredTransform &&
-                 (cullstyle == HdCullStyleFront || cullstyle == HdCullStyleFrontUnlessDoubleSided)) {
+                 (cullstyle == HdCullStyleFront || cullstyle == HdCullStyleFrontUnlessDoubleSided))
+        {
           glEnable(GL_CULL_FACE);
           glCullFace(GL_BACK);
         }
         break;
     }
   }
-  else {
+  else
+  {
     // Use fragment shader culling via discard.
     glDisable(GL_CULL_FACE);
 
-    if (_cullStyle != HdCullStyleDontCare) {
+    if (_cullStyle != HdCullStyleDontCare)
+    {
       unsigned int cullStyle = _cullStyle;
       binder.BindUniformui(HdShaderTokens->cullStyle, 1, &cullStyle);
     }
-    else {
+    else
+    {
       // don't care -- use renderPass's fallback
     }
   }
 
-  if (GetPrimitiveMode() == GL_PATCHES) {
+  if (GetPrimitiveMode() == GL_PATCHES)
+  {
     glPatchParameteri(GL_PATCH_VERTICES, GetPrimitiveIndexSize());
   }
 
-  if (_polygonMode == HdPolygonModeLine) {
+  if (_polygonMode == HdPolygonModeLine)
+  {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    if (_lineWidth > 0) {
+    if (_lineWidth > 0)
+    {
       glLineWidth(_lineWidth);
     }
   }
@@ -207,13 +230,15 @@ void HdPh_GeometricShader::UnbindResources(const int program,
                                            HdPh_ResourceBinder const &binder,
                                            HdRenderPassState const &state)
 {
-  if (_polygonMode == HdPolygonModeLine) {
+  if (_polygonMode == HdPolygonModeLine)
+  {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
   // Restore renderPass culling opinions
   HdCullStyle cullstyle = state.GetCullStyle();
-  switch (cullstyle) {
+  switch (cullstyle)
+  {
     case HdCullStyleFront:
     case HdCullStyleFrontUnlessDoubleSided:
       glEnable(GL_CULL_FACE);
@@ -242,7 +267,8 @@ GLenum HdPh_GeometricShader::GetPrimitiveMode() const
 {
   GLenum primMode = GL_POINTS;
 
-  switch (_primType) {
+  switch (_primType)
+  {
     case PrimitiveType::PRIM_POINTS:
       primMode = GL_POINTS;
       break;
@@ -273,7 +299,8 @@ int HdPh_GeometricShader::GetPrimitiveIndexSize() const
 {
   int primIndexSize = 1;
 
-  switch (_primType) {
+  switch (_primType)
+  {
     case PrimitiveType::PRIM_POINTS:
       primIndexSize = 1;
       break;
@@ -306,7 +333,8 @@ int HdPh_GeometricShader::GetNumPatchEvalVerts() const
 {
   int numPatchEvalVerts = 0;
 
-  switch (_primType) {
+  switch (_primType)
+  {
     case PrimitiveType::PRIM_BASIS_CURVES_LINEAR_PATCHES:
       numPatchEvalVerts = 2;
       break;
@@ -331,7 +359,8 @@ int HdPh_GeometricShader::GetNumPrimitiveVertsForGeometryShader() const
 {
   int numPrimVerts = 1;
 
-  switch (_primType) {
+  switch (_primType)
+  {
     case PrimitiveType::PRIM_POINTS:
       numPrimVerts = 1;
       break;
@@ -366,7 +395,8 @@ HdPh_GeometricShaderSharedPtr HdPh_GeometricShader::Create(
   HdInstance<HdPh_GeometricShaderSharedPtr> geometricShaderInstance =
     resourceRegistry->RegisterGeometricShader(shaderKey.ComputeHash());
 
-  if (geometricShaderInstance.IsFirstInstance()) {
+  if (geometricShaderInstance.IsFirstInstance())
+  {
     geometricShaderInstance.SetValue(
       std::make_shared<HdPh_GeometricShader>(shaderKey.GetGlslfxString(),
                                              shaderKey.GetPrimitiveType(),

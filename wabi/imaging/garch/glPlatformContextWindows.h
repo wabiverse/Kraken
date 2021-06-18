@@ -37,13 +37,17 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GarchWGLContextState {
+class GarchWGLContextState
+{
  public:
   /// Construct with the current state.
   GARCH_API
   GarchWGLContextState();
 
-  enum class NullState { nullstate };
+  enum class NullState
+  {
+    nullstate
+  };
 
   /// Construct with the null state.
   GARCH_API

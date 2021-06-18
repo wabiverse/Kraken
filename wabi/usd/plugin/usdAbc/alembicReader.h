@@ -52,7 +52,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// An alembic reader suitable for an SdfAbstractData.
 ///
-class UsdAbc_AlembicDataReader : boost::noncopyable {
+class UsdAbc_AlembicDataReader : boost::noncopyable
+{
  public:
   typedef int64_t Index;
 
@@ -102,7 +103,8 @@ class UsdAbc_AlembicDataReader : boost::noncopyable {
 
   /// The type holds a set of Usd times and can return an Alembic index
   /// for each time.
-  class TimeSamples {
+  class TimeSamples
+  {
     typedef std::vector<double> _UsdTimeCodes;
 
    public:
@@ -141,7 +143,8 @@ class UsdAbc_AlembicDataReader : boost::noncopyable {
     bool Bracket(double usdTime, double *tLower, double *tUpper) const;
 
     /// Returns the times bracketing \p time.
-    template<class T> static bool Bracket(const T &, double usdTime, double *tLower, double *tUpper);
+    template<class T>
+    static bool Bracket(const T &, double usdTime, double *tLower, double *tUpper);
 
    private:
     // The monotonically increasing Usd times.

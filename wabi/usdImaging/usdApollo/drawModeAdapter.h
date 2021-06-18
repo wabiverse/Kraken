@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
  *
  * Delegate support for the drawMode attribute on UsdGeomModelAPI. */
 
-class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter {
+class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter
+{
 
  public:
   using BaseAdapter = UsdImagingPrimAdapter;

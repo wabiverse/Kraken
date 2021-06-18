@@ -3,13 +3,17 @@
 #include "gap_buffer.h"
 #include "zep/mcommon/utf8/unchecked.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepBuffer;
 
 using ByteIndex = long;
-struct ByteRange {
-  ByteRange(ByteIndex a = 0, ByteIndex b = 0) : first(a), second(b)
+struct ByteRange
+{
+  ByteRange(ByteIndex a = 0, ByteIndex b = 0)
+    : first(a),
+      second(b)
   {}
   ByteIndex first;
   ByteIndex second;
@@ -19,7 +23,8 @@ struct ByteRange {
   }
 };
 
-enum class LineLocation {
+enum class LineLocation
+{
   None,                // Not any specific location
   LineFirstGraphChar,  // First non blank character
   LineLastGraphChar,   // Last non blank character
@@ -33,7 +38,8 @@ enum class LineLocation {
 // walk the gap buffer and skip along in multi byte characters.
 // This is the main 'pointer' into the text, used everywhere
 // It will clamp automatically and is usually valid if not in the default uninitialized state
-class GlyphIterator {
+class GlyphIterator
+{
  public:
   explicit GlyphIterator(const ZepBuffer *buffer = nullptr, unsigned long offset = 0);
   GlyphIterator(const GlyphIterator &itr);
@@ -76,7 +82,8 @@ inline long CodePointDistance(const GlyphIterator &itr1, const GlyphIterator &it
 {
   long count = 0;
   auto start = itr1;
-  while (start != itr2) {
+  while (start != itr2)
+  {
     count++;
     start++;
   }
@@ -88,7 +95,8 @@ inline long ByteDistance(const GlyphIterator &itr1, const GlyphIterator &itr2)
   return itr2.Index() - itr1.Index();
 }
 
-struct GlyphRange {
+struct GlyphRange
+{
   GlyphIterator first;
   GlyphIterator second;
 

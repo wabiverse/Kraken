@@ -27,7 +27,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPoints::HdPoints(SdfPath const &id) : HdRprim(id)
+HdPoints::HdPoints(SdfPath const &id)
+  : HdRprim(id)
 {
   /*NOTHING*/
 }

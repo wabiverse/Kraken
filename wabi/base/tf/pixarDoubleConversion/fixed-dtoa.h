@@ -38,7 +38,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 // Produces digits necessary to print a given number with
 // 'fractional_count' digits after the decimal point.

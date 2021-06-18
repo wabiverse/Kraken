@@ -20,13 +20,16 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-namespace rif {
+namespace rif
+{
 
 class Context;
 
-class Object {
+class Object
+{
  public:
-  Object(void *objectHandle) : m_rifObjectHandle(objectHandle)
+  Object(void *objectHandle)
+    : m_rifObjectHandle(objectHandle)
   {}
 
   Object() = default;
@@ -35,7 +38,8 @@ class Object {
 
   void Delete()
   {
-    if (m_rifObjectHandle) {
+    if (m_rifObjectHandle)
+    {
       rifObjectDelete(m_rifObjectHandle);
     }
     m_rifObjectHandle = nullptr;

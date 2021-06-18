@@ -48,7 +48,9 @@ SDF_DECLARE_HANDLES(SdfSpec);
 /// Base class for list editor implementations in which list editing operations
 /// are stored in data field(s) associated with an owning spec.
 ///
-template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
+template<class TypePolicy>
+class Sdf_ListEditor : public boost::noncopyable
+{
  private:
   typedef Sdf_ListEditor<TypePolicy> This;
 
@@ -78,13 +80,16 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
 
   bool HasKeys() const
   {
-    if (IsExplicit()) {
+    if (IsExplicit())
+    {
       return true;
     }
-    else if (IsOrderedOnly()) {
+    else if (IsOrderedOnly())
+    {
       return !_GetOperations(SdfListOpTypeOrdered).empty();
     }
-    else {
+    else
+    {
       return (
         !_GetOperations(SdfListOpTypeAdded).empty() || !_GetOperations(SdfListOpTypePrepended).empty() ||
         !_GetOperations(SdfListOpTypeAppended).empty() || !_GetOperations(SdfListOpTypeDeleted).empty() ||
@@ -97,11 +102,13 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
 
   virtual SdfAllowed PermissionToEdit(SdfListOpType op) const
   {
-    if (!_owner) {
+    if (!_owner)
+    {
       return SdfAllowed("List editor is expired");
     }
 
-    if (!_owner->PermissionToEdit()) {
+    if (!_owner->PermissionToEdit())
+    {
       return SdfAllowed("Permission denied");
     }
 
@@ -164,7 +171,8 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
     const value_vector_type &vec = _GetOperations(op);
     typename value_vector_type::const_iterator findIt = std::find(
       vec.begin(), vec.end(), _typePolicy.Canonicalize(val));
-    if (findIt != vec.end()) {
+    if (findIt != vec.end())
+    {
       return std::distance(vec.begin(), findIt);
     }
 
@@ -227,14 +235,18 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
     typename value_vector_type::const_iterator oldValuesTail = oldValues.begin(),
                                                newValuesTail = newValues.begin();
     auto oldEnd = oldValues.end(), newEnd = newValues.end();
-    while (oldValuesTail != oldEnd && newValuesTail != newEnd && *oldValuesTail == *newValuesTail) {
+    while (oldValuesTail != oldEnd && newValuesTail != newEnd && *oldValuesTail == *newValuesTail)
+    {
       ++oldValuesTail, ++newValuesTail;
     }
 
-    for (auto i = newValuesTail; i != newEnd; ++i) {
+    for (auto i = newValuesTail; i != newEnd; ++i)
+    {
       // Have to check unmatched new items for dupes.
-      for (auto j = newValues.begin(); j != i; ++j) {
-        if (*i == *j) {
+      for (auto j = newValues.begin(); j != i; ++j)
+      {
+        if (*i == *j)
+        {
           TF_CODING_ERROR(
             "Duplicate item '%s' not allowed for "
             "field '%s' on <%s>",
@@ -248,14 +260,19 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
 
     // Ensure that all new values are valid for this field.
     const SdfSchema::FieldDefinition *fieldDef = _owner->GetSchema().GetFieldDefinition(_field);
-    if (!fieldDef) {
+    if (!fieldDef)
+    {
       TF_CODING_ERROR("No field definition for field '%s'", _field.GetText());
     }
-    else {
-      for (auto i = newValuesTail; i != newEnd; ++i) {
-        if (SdfAllowed isValid = fieldDef->IsValidListValue(*i)) {
+    else
+    {
+      for (auto i = newValuesTail; i != newEnd; ++i)
+      {
+        if (SdfAllowed isValid = fieldDef->IsValidListValue(*i))
+        {
         }
-        else {
+        else
+        {
           TF_CODING_ERROR("%s", isValid.GetWhyNot().c_str());
           return false;
         }
@@ -278,16 +295,20 @@ template<class TypePolicy> class Sdf_ListEditor : public boost::noncopyable {
   TypePolicy _typePolicy;
 };
 
-template<class TypePolicy> std::ostream &operator<<(std::ostream &s, const Sdf_ListEditor<TypePolicy> &x)
+template<class TypePolicy>
+std::ostream &operator<<(std::ostream &s, const Sdf_ListEditor<TypePolicy> &x)
 {
-  struct Util {
+  struct Util
+  {
     typedef typename Sdf_ListEditor<TypePolicy>::value_vector_type value_vector_type;
 
     static void _Write(std::ostream &s, const value_vector_type &v)
     {
       s << '[';
-      for (size_t i = 0, n = v.size(); i < n; ++i) {
-        if (i != 0) {
+      for (size_t i = 0, n = v.size(); i < n; ++i)
+      {
+        if (i != 0)
+        {
           s << ", ";
         }
         s << v[i];
@@ -296,16 +317,20 @@ template<class TypePolicy> std::ostream &operator<<(std::ostream &s, const Sdf_L
     }
   };
 
-  if (!x.IsValid()) {
+  if (!x.IsValid())
+  {
     return s;
   }
-  else if (x.IsExplicit()) {
+  else if (x.IsExplicit())
+  {
     Util::_Write(s, x.GetVector(SdfListOpTypeExplicit));
     return s;
   }
-  else {
+  else
+  {
     s << "{ ";
-    if (!x.IsOrderedOnly()) {
+    if (!x.IsOrderedOnly())
+    {
       s << "'added': ";
       Util::_Write(s, x.GetVector(SdfListOpTypeAdded));
       s << "'prepended': ";

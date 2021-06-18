@@ -51,7 +51,9 @@ WABI_NAMESPACE_BEGIN
 #  define AR_DECLARE_RESOLVER_CONTEXT(ContextObject)
 #else
 #  define AR_DECLARE_RESOLVER_CONTEXT(context) \
-    template<> struct ArIsContextObject<context> { \
+    template<> \
+    struct ArIsContextObject<context> \
+    { \
       static const bool value = true; \
     }
 #endif

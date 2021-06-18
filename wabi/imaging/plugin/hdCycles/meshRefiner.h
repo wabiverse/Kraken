@@ -28,7 +28,8 @@
 
 #include <util/util_types.h>
 
-namespace ccl {
+namespace ccl
+{
 class Mesh;
 }
 
@@ -49,7 +50,8 @@ class SdfPath;
 ///  * topology refinement - triangulation
 //// * primvar refinement - data conversion to float and refinement
 ///
-class HdCyclesMeshRefiner {
+class HdCyclesMeshRefiner
+{
  public:
   virtual ~HdCyclesMeshRefiner();
 
@@ -97,7 +99,8 @@ class HdCyclesMeshRefiner {
 ///
 /// Hd Blackbird topology
 ///
-class HdBbMeshTopology : public HdMeshTopology {
+class HdBbMeshTopology : public HdMeshTopology
+{
  public:
   HdBbMeshTopology(const SdfPath &id, const HdMeshTopology &src, int refine_level);
 
@@ -120,7 +123,8 @@ inline VtValue HdCyclesMeshRefiner::Refine(const TfToken &name,
                                            const VtValue &value,
                                            const HdInterpolation &interpolation) const
 {
-  switch (interpolation) {
+  switch (interpolation)
+  {
     case HdInterpolationConstant:
       return RefineConstantData(name, role, value);
     case HdInterpolationUniform:

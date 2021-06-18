@@ -57,7 +57,8 @@ UsdLuxCylinderLight::~UsdLuxCylinderLight()
 /* static */
 UsdLuxCylinderLight UsdLuxCylinderLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxCylinderLight();
   }
@@ -68,7 +69,8 @@ UsdLuxCylinderLight UsdLuxCylinderLight::Get(const UsdStagePtr &stage, const Sdf
 UsdLuxCylinderLight UsdLuxCylinderLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("CylinderLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxCylinderLight();
   }
@@ -153,7 +155,8 @@ UsdAttribute UsdLuxCylinderLight::CreateTreatAsLineAttr(VtValue const &defaultVa
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

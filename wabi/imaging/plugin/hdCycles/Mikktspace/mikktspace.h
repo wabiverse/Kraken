@@ -58,7 +58,8 @@ extern "C" {
 typedef int tbool;
 typedef struct SMikkTSpaceContext SMikkTSpaceContext;
 
-typedef struct {
+typedef struct
+{
   // Returns the number of faces (triangles/quads) on the mesh to be processed.
   int (*m_getNumFaces)(const SMikkTSpaceContext *pContext);
 
@@ -118,10 +119,11 @@ typedef struct {
                       const int iVert);
 } SMikkTSpaceInterface;
 
-struct SMikkTSpaceContext {
+struct SMikkTSpaceContext
+{
   SMikkTSpaceInterface *m_pInterface;  // initialized with callback functions
-  void *m_pUserData;  // pointer to client side mesh data etc. (passed as the first parameter with
-                      // every interface call)
+  void *m_pUserData;                   // pointer to client side mesh data etc. (passed as the first parameter with
+                                       // every interface call)
 };
 
 // these are both thread safe!

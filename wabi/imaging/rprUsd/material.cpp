@@ -26,28 +26,34 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
 
   fail |= RPR_ERROR_CHECK(mesh->SetVolumeMaterial(m_volumeNode), "Failed to set shape volume material");
 
-  if (displacementEnabled && m_displacementNode) {
+  if (displacementEnabled && m_displacementNode)
+  {
     size_t dummy;
     int subdFactor;
     if (RPR_ERROR_CHECK(mesh->GetInfo(RPR_SHAPE_SUBDIVISION_FACTOR, sizeof(subdFactor), &subdFactor, &dummy),
-                        "Failed to query mesh subdivision factor")) {
+                        "Failed to query mesh subdivision factor"))
+    {
       subdFactor = 0;
     }
 
-    if (subdFactor == 0) {
+    if (subdFactor == 0)
+    {
       TF_WARN(
         "Displacement material requires subdivision to be enabled. The subdivision will be "
         "enabled with refine level of 1");
-      if (!RPR_ERROR_CHECK(mesh->SetSubdivisionFactor(1), "Failed to set mesh subdividion")) {
+      if (!RPR_ERROR_CHECK(mesh->SetSubdivisionFactor(1), "Failed to set mesh subdividion"))
+      {
         subdFactor = 1;
       }
     }
-    if (subdFactor > 0) {
+    if (subdFactor > 0)
+    {
       fail |= RPR_ERROR_CHECK(mesh->SetDisplacementMaterial(m_displacementNode),
                               "Failed to set shape displacement material");
 
       GfVec2f displacementScale(0.0f, 1.0f);
-      if (m_displacementScale.IsHolding<GfVec2f>()) {
+      if (m_displacementScale.IsHolding<GfVec2f>())
+      {
         displacementScale = m_displacementScale.UncheckedGet<GfVec2f>();
       }
 
@@ -55,7 +61,8 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
                               "Failed to set shape displacement scale");
     }
   }
-  else {
+  else
+  {
     fail |= RPR_ERROR_CHECK(mesh->SetDisplacementMaterial(nullptr),
                             "Failed to unset shape displacement material");
   }

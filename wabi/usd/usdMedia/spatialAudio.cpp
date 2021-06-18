@@ -57,7 +57,8 @@ UsdMediaSpatialAudio::~UsdMediaSpatialAudio()
 /* static */
 UsdMediaSpatialAudio UsdMediaSpatialAudio::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdMediaSpatialAudio();
   }
@@ -68,7 +69,8 @@ UsdMediaSpatialAudio UsdMediaSpatialAudio::Get(const UsdStagePtr &stage, const S
 UsdMediaSpatialAudio UsdMediaSpatialAudio::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SpatialAudio");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdMediaSpatialAudio();
   }
@@ -214,7 +216,8 @@ UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue, b
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

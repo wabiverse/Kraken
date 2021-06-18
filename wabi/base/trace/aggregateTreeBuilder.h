@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 /// TraceCollection instances.
 ///
 ///
-class Trace_AggregateTreeBuilder : private TraceCollection::Visitor {
+class Trace_AggregateTreeBuilder : private TraceCollection::Visitor
+{
  public:
   static void AddEventTreeToAggregate(TraceAggregateTree *aggregateTree,
                                       const TraceEventTreeRefPtr &eventTree,

@@ -4,9 +4,11 @@
 
 #include "zep/mcommon/animation/timer.h"
 
-namespace Zep {
+namespace Zep
+{
 
-struct TimedSection {
+struct TimedSection
+{
   uint64_t elapsed = 0;
   uint64_t count;
 };
@@ -56,10 +58,12 @@ double timer_to_ms(uint64_t value)
   return double(value / 1000.0);
 }
 
-ProfileBlock::ProfileBlock(const char *timer) : strTimer(timer)
+ProfileBlock::ProfileBlock(const char *timer)
+  : strTimer(timer)
 {
   timer_start(blockTimer);
-  if (globalProfiler.timerData.find(timer) == globalProfiler.timerData.end()) {
+  if (globalProfiler.timerData.find(timer) == globalProfiler.timerData.end())
+  {
     globalProfiler.timerData[timer] = profile_value{};
   }
 }

@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 // most derived UsdObject subclass.  This way, a wrapped C++ function that
 // returns a UsdObject, for instance, will produce a UsdPrim or a UsdAttribute
 // or a UsdRelationship in python, instead of a UsdObject.
-struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass> {
+struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass>
+{
   friend class boost::python::def_visitor_access;
 
   // Function pointer type for downcasting UsdObject * to a more-derived type.
@@ -48,7 +49,8 @@ struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass> {
   // UsdObject types to their most derived type.  For example, when converting
   // a UsdProperty to python, we downcast it to either UsdAttribute or
   // UsdRelationship, as appropriate.
-  template<typename CLS> void visit(CLS &c) const
+  template<typename CLS>
+  void visit(CLS &c) const
   {
     typedef typename CLS::wrapped_type Type;
     _ReplaceConverter(
@@ -57,13 +59,15 @@ struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass> {
 
  private:
   // Converter implementation for UsdObject subclass T.
-  template<class T> static PyObject *_Convert(const void *in)
+  template<class T>
+  static PyObject *_Convert(const void *in)
   {
     return _ConvertHelper(static_cast<const T *>(in));
   }
 
   // Downcast UsdObject to T.
-  template<class T> static const void *_Downcast(const UsdObject *in)
+  template<class T>
+  static const void *_Downcast(const UsdObject *in)
   {
     return static_cast<const T *>(in);
   }

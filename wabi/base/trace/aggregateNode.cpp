@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id, const TfToken &key, TimeStamp ts, int c, int xc)
 {
   TraceAggregateNodeRefPtr n = GetChild(key);
-  if (n) {
+  if (n)
+  {
     n->_id = id;
     n->_ts += ts;
     n->_count += c;
@@ -49,7 +50,8 @@ TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id, const TfToken &key, T
     n->_exclusiveTs += ts;
     n->_recursiveExclusiveTs += ts;
   }
-  else {
+  else
+  {
     n = TraceAggregateNode::New(id, key, ts, c, xc);
     _children.push_back(n);
     _childrenByKey[key] = _children.size() - 1;
@@ -65,7 +67,8 @@ TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id, const TfToken &key, T
 void TraceAggregateNode::Append(TraceAggregateNodeRefPtr child)
 {
   TraceAggregateNodeRefPtr n = GetChild(child->GetKey());
-  if (n) {
+  if (n)
+  {
     n->_id = child->_id;
     n->_ts += child->_ts;
     n->_count += child->_count;
@@ -74,17 +77,20 @@ void TraceAggregateNode::Append(TraceAggregateNodeRefPtr child)
     n->_exclusiveTs += child->_ts;
     n->_recursiveExclusiveTs += child->_ts;
 
-    for (const _CounterValues::value_type &p : child->_counterValues) {
+    for (const _CounterValues::value_type &p : child->_counterValues)
+    {
       _CounterValue &c = n->_counterValues[p.first];
       c.inclusive += p.second.inclusive;
       c.exclusive += p.second.exclusive;
     }
 
-    for (TraceAggregateNodeRefPtr &c : child->_children) {
+    for (TraceAggregateNodeRefPtr &c : child->_children)
+    {
       n->Append(c);
     }
   }
-  else {
+  else
+  {
     _children.push_back(child);
     _childrenByKey[child->GetKey()] = _children.size() - 1;
   }
@@ -124,18 +130,23 @@ double TraceAggregateNode::GetExclusiveCounterValue(int index) const
 TraceAggregateNodeRefPtr TraceAggregateNode::GetChild(const TfToken &key)
 {
   _ChildDictionary::const_iterator i = _childrenByKey.find(key);
-  if (i != _childrenByKey.end()) {
+  if (i != _childrenByKey.end())
+  {
     return _children[i->second];
   }
-  else {
+  else
+  {
     return TraceAggregateNodeRefPtr(0);
   }
 }
 
 // This stack node is a convenient container for the data we need to keep
 // track of during an iterative post-order traversal of our tree.
-struct _StackNode {
-  _StackNode(TraceAggregateNodePtr node, int parentIdx) : eventNode(node), parentIdx(parentIdx)
+struct _StackNode
+{
+  _StackNode(TraceAggregateNodePtr node, int parentIdx)
+    : eventNode(node),
+      parentIdx(parentIdx)
   {
     remainingChildren = node->GetChildrenRef().size();
   }
@@ -163,7 +174,8 @@ void TraceAggregateNode::MarkRecursiveChildren()
   // Push root node on the stack
   stack.push_back(_StackNode(TraceAggregateNodePtr(this), -1));
 
-  while (stack.size()) {
+  while (stack.size())
+  {
     TraceAggregateNodePtr curNode = stack.back().eventNode;
     int numKids = stack.back().remainingChildren;
     int parentIdx = stack.back().parentIdx;
@@ -175,12 +187,15 @@ void TraceAggregateNode::MarkRecursiveChildren()
     // If our current node does not have kids, process it.  Processing
     // the node means to seach the parent stack for an existing key and
     // if found, merge with it and mark ourselves as a simple marker.
-    if (numKids == 0) {
+    if (numKids == 0)
+    {
       // Look for a matching key on the parent stack.
       int p = parentIdx;
 
-      while (p != -1) {
-        if (p > static_cast<int>(stack.size())) {
+      while (p != -1)
+      {
+        if (p > static_cast<int>(stack.size()))
+        {
           // CODE_COVERAGE_OFF
           TF_CODING_ERROR("Corrupt stack state.");
           // CODE_COVERAGE_ON
@@ -188,13 +203,15 @@ void TraceAggregateNode::MarkRecursiveChildren()
 
         TraceAggregateNodePtr parentNode = stack[p].eventNode;
 
-        if (!parentNode) {
+        if (!parentNode)
+        {
           // CODE_COVERAGE_OFF
           TF_CODING_ERROR("Invalid stack state.");
           // CODE_COVERAGE_ON
         }
 
-        if (curNode->GetKey() == parentNode->GetKey()) {
+        if (curNode->GetKey() == parentNode->GetKey())
+        {
           // We found the key, now merge up with that parent, and
           // leave a marker in our place.
           parentNode->_MergeRecursive(curNode);
@@ -210,12 +227,14 @@ void TraceAggregateNode::MarkRecursiveChildren()
         stack[parentIdx].remainingChildren -= 1;
       stack.pop_back();
     }
-    else {
+    else
+    {
       // Here our node has children, so before we go on, we must
       // push our children on the child stack.  This gives us the
       // post-order traversal we need.
       int parent = stack.size() - 1;
-      for (int i = 0; i < numKids; i++) {
+      for (int i = 0; i < numKids; i++)
+      {
         // Only process nodes that have not been previously processed
         // (by a previous call to Report() for example).  If a node
         // has already been processed, decrement it from our remaining
@@ -233,10 +252,12 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
 {
   // Merge our times with this node's times.  Note that here we only
   // use the recursion data in order to keep the original state intact.
-  if (IsRecursionMarker()) {
+  if (IsRecursionMarker())
+  {
     // If we are a recursion marker, what we actually intend is to
     // merge with our parent (i.e. the head of the recursive call).
-    if (!_recursionParent) {
+    if (!_recursionParent)
+    {
       // CODE_COVERAGE_OFF
       TF_CODING_ERROR("Marker has no or expired parent.");
       return;
@@ -245,7 +266,8 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
     _recursionParent->_MergeRecursive(node);
     return;
   }
-  else {
+  else
+  {
     _recursiveCount += node->GetCount(true /* recursion */);
     _recursiveExclusiveTs += node->GetExclusiveTime(true /* recursion */);
   }
@@ -256,10 +278,12 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
 
   // Now merge our children.
   size_t size = node->_children.size();
-  for (size_t i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i)
+  {
     const TraceAggregateNodeRefPtr child = node->_children[i];
 
-    if (!child) {
+    if (!child)
+    {
       // CODE_COVERAGE_OFF
       TF_CODING_ERROR("NULL child is not allowed.");
       // CODE_COVERAGE_OFF_GCOV_BUG - gcov thinks this is hit but it's not
@@ -271,7 +295,8 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
     TfToken key = child->GetKey();
     TraceAggregateNodeRefPtr n = GetChild(key);
 
-    if (!n) {
+    if (!n)
+    {
       // Create an empty node to merge with.
       n = TraceAggregateNode::New(
         child->GetId(), child->GetKey(), child->GetInclusiveTime(), 0, child->GetExclusiveCount());
@@ -293,7 +318,8 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
         // We always want to merge new nodes.
         n->_MergeRecursive(child);
     }
-    else {
+    else
+    {
       // This key already exists, determine if we want to merge it in.
 
       // We have to make sure that we are not merging in recursion markers
@@ -318,7 +344,8 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
       //      trivial case, two markers with the same key are as good as
       //      one marker for that key.
 
-      if (nonMarkerIntoNonMarker || nonMarkerIntoMarker) {
+      if (nonMarkerIntoNonMarker || nonMarkerIntoMarker)
+      {
         n->_MergeRecursive(child);
       }
     }
@@ -329,7 +356,8 @@ void TraceAggregateNode::_SetAsRecursionMarker(TraceAggregateNodePtr parent)
 {
   _isRecursionMarker = true;
   _recursionParent = parent;
-  if (!parent) {
+  if (!parent)
+  {
     // CODE_COVERAGE_OFF
     TF_CODING_ERROR("Marker has no or expired parent.");
     // CODE_COVERAGE_ON
@@ -341,18 +369,23 @@ void TraceAggregateNode::_SetAsRecursionMarker(TraceAggregateNodePtr parent)
 
 void TraceAggregateNode::CalculateInclusiveCounterValues()
 {
-  for (TraceAggregateNodeRefPtr &c : _children) {
+  for (TraceAggregateNodeRefPtr &c : _children)
+  {
     c->CalculateInclusiveCounterValues();
   }
 
   // Rest the inclusive count to the exclusive count. Then accumulate inclusive
   // counts of children.
-  for (_CounterValues::value_type &v : _counterValues) {
+  for (_CounterValues::value_type &v : _counterValues)
+  {
     v.second.inclusive = v.second.exclusive;
   }
-  for (TraceAggregateNodeRefPtr &c : _children) {
-    for (_CounterValues::value_type &cv : c->_counterValues) {
-      if (cv.second.inclusive != 0) {
+  for (TraceAggregateNodeRefPtr &c : _children)
+  {
+    for (_CounterValues::value_type &cv : c->_counterValues)
+    {
+      if (cv.second.inclusive != 0)
+      {
         _CounterValue &values = _counterValues[cv.first];
         values.inclusive += cv.second.inclusive;
       }

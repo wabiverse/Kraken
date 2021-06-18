@@ -65,7 +65,8 @@ typedef std::vector<std::pair<SdfPath, int>> HdInstancerContext;
 /// executing a specific render pass, the following data structure is passed
 /// back to the delegate to drive synchronization.
 ///
-struct HdSyncRequestVector {
+struct HdSyncRequestVector
+{
   // The Prims to synchronize in this request.
   SdfPathVector IDs;
 
@@ -77,7 +78,8 @@ struct HdSyncRequestVector {
 ///
 /// Describes how the geometry of a prim should be displayed.
 ///
-struct HdDisplayStyle {
+struct HdDisplayStyle
+{
   /// The prim refine level, in the range [0, 8].
   int refineLevel;
 
@@ -118,10 +120,12 @@ struct HdDisplayStyle {
       displacementEnabled(displacement),
       occludedSelectionShowsThrough(occludedSelectionShowsThrough_)
   {
-    if (refineLevel_ < 0) {
+    if (refineLevel_ < 0)
+    {
       TF_CODING_ERROR("negative refine level is not supported");
     }
-    else if (refineLevel_ > 8) {
+    else if (refineLevel_ > 8)
+    {
       TF_CODING_ERROR("refine level > 8 is not supported");
     }
   }
@@ -144,7 +148,8 @@ struct HdDisplayStyle {
 /// \struct HdPrimvarDescriptor
 ///
 /// Describes a primvar.
-struct HdPrimvarDescriptor {
+struct HdPrimvarDescriptor
+{
   /// Name of the primvar.
   TfToken name;
   /// Interpolation (data-sampling rate) of the primvar.
@@ -189,7 +194,8 @@ typedef std::vector<HdPrimvarDescriptor> HdPrimvarDescriptorVector;
 /// render index, the name of an output from that computation from which
 /// the primvar will take data along with a valueType which describes
 /// the type of the expected data.
-struct HdExtComputationPrimvarDescriptor : public HdPrimvarDescriptor {
+struct HdExtComputationPrimvarDescriptor : public HdPrimvarDescriptor
+{
   SdfPath sourceComputationId;
   TfToken sourceComputationOutputName;
   HdTupleType valueType;
@@ -228,7 +234,8 @@ typedef std::vector<HdExtComputationPrimvarDescriptor> HdExtComputationPrimvarDe
 /// The structure contains the name of the input and the id of the
 /// source ExtComputation in the render index, and which output of
 /// that computation to bind the input to.
-struct HdExtComputationInputDescriptor {
+struct HdExtComputationInputDescriptor
+{
   TfToken name;
   SdfPath sourceComputationId;
   TfToken sourceComputationOutputName;
@@ -262,7 +269,8 @@ typedef std::vector<HdExtComputationInputDescriptor> HdExtComputationInputDescri
 ///
 /// The structure contains the name of the output along with a valueType
 /// which describes the type of the computation output data.
-struct HdExtComputationOutputDescriptor {
+struct HdExtComputationOutputDescriptor
+{
   TfToken name;
   HdTupleType valueType;
 
@@ -289,7 +297,8 @@ typedef std::vector<HdExtComputationOutputDescriptor> HdExtComputationOutputDesc
 ///
 /// Description of a single field related to a volume primitive.
 ///
-struct HdVolumeFieldDescriptor {
+struct HdVolumeFieldDescriptor
+{
   TfToken fieldName;
   TfToken fieldPrimType;
   SdfPath fieldId;
@@ -309,7 +318,8 @@ typedef std::vector<HdVolumeFieldDescriptor> HdVolumeFieldDescriptorVector;
 ///
 /// Adapter class providing data exchange with the client scene graph.
 ///
-class HdSceneDelegate {
+class HdSceneDelegate
+{
  public:
   /// Constructor used for nested delegate objects which share a RenderIndex.
   HD_API
@@ -459,7 +469,8 @@ class HdSceneDelegate {
   void SampleTransform(SdfPath const &id, HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
   {
     size_t authoredSamples = SampleTransform(id, CAPACITY, sa->times.data(), sa->values.data());
-    if (authoredSamples > CAPACITY) {
+    if (authoredSamples > CAPACITY)
+    {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleTransform(
         id, authoredSamples, sa->times.data(), sa->values.data());
@@ -492,7 +503,8 @@ class HdSceneDelegate {
   {
     size_t authoredSamples = SampleInstancerTransform(
       instancerId, CAPACITY, sa->times.data(), sa->values.data());
-    if (authoredSamples > CAPACITY) {
+    if (authoredSamples > CAPACITY)
+    {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleInstancerTransform(
         instancerId, authoredSamples, sa->times.data(), sa->values.data());
@@ -719,7 +731,8 @@ class HdSceneDelegate {
     size_t authoredSamples = SampleExtComputationInput(
       computationId, input, CAPACITY, sa->times.data(), sa->values.data());
 
-    if (authoredSamples > CAPACITY) {
+    if (authoredSamples > CAPACITY)
+    {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleExtComputationInput(
         computationId, input, authoredSamples, sa->times.data(), sa->values.data());
@@ -778,7 +791,8 @@ void HdSceneDelegate::SamplePrimvar(SdfPath const &id,
                                     HdTimeSampleArray<VtValue, CAPACITY> *sa)
 {
   size_t authoredSamples = SamplePrimvar(id, key, CAPACITY, sa->times.data(), sa->values.data());
-  if (authoredSamples > CAPACITY) {
+  if (authoredSamples > CAPACITY)
+  {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt = SamplePrimvar(
       id, key, authoredSamples, sa->times.data(), sa->values.data());
@@ -796,7 +810,8 @@ void HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
 {
   size_t authoredSamples = SampleIndexedPrimvar(
     id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
-  if (authoredSamples > CAPACITY) {
+  if (authoredSamples > CAPACITY)
+  {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt = SampleIndexedPrimvar(
       id, key, authoredSamples, sa->times.data(), sa->values.data(), sa->indices.data());

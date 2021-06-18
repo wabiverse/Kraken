@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Metal implementation of HgiShaderProgram
 ///
-class HgiMetalShaderProgram final : public HgiShaderProgram {
+class HgiMetalShaderProgram final : public HgiShaderProgram
+{
  public:
   HGIMETAL_API
   ~HgiMetalShaderProgram() override;

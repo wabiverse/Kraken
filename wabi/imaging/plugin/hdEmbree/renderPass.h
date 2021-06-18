@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This class does so by raycasting into the embree scene via HdEmbreeRenderer.
 ///
-class HdEmbreeRenderPass final : public HdRenderPass {
+class HdEmbreeRenderPass final : public HdRenderPass
+{
  public:
   /// Renderpass constructor.
   ///   \param index The render index containing scene data to render.

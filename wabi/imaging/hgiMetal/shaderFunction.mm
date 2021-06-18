@@ -45,7 +45,8 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
   : HgiShaderFunction(desc),
     _shaderId(nil)
 {
-  if (desc.shaderCode) {
+  if (desc.shaderCode)
+  {
     id<MTLDevice> device = hgi->GetPrimaryDevice();
 
     HgiMetalShaderGenerator shaderGenerator{desc, device};
@@ -65,7 +66,8 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
                                                                      error:&error];
 
     NSString *entryPoint = nullptr;
-    switch (_descriptor.shaderStage) {
+    switch (_descriptor.shaderStage)
+    {
       case HgiShaderStageVertex:
         entryPoint = @"vertexEntryPoint";
         break;
@@ -84,12 +86,14 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
 
     // Load the function into the library
     _shaderId = [library newFunctionWithName:entryPoint];
-    if (!_shaderId) {
+    if (!_shaderId)
+    {
       NSString *err = [error localizedDescription];
       TF_WARN("Failed to compile shader: \n%s", [err UTF8String]);
       TF_WARN("%s", shaderStr.c_str());
     }
-    else {
+    else
+    {
       HGIMETAL_DEBUG_LABEL(_shaderId, _descriptor.debugName.c_str());
     }
 

@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPh_ExtCompComputeShader::HdPh_ExtCompComputeShader(HdExtComputation const *extComp) : _extComp(extComp)
+HdPh_ExtCompComputeShader::HdPh_ExtCompComputeShader(HdExtComputation const *extComp)
+  : _extComp(extComp)
 {}
 
 HdPh_ExtCompComputeShader::~HdPh_ExtCompComputeShader() = default;
@@ -48,8 +49,10 @@ HdPh_ExtCompComputeShader::~HdPh_ExtCompComputeShader() = default;
 /*virtual*/
 std::string HdPh_ExtCompComputeShader::GetSource(TfToken const &shaderStageKey) const
 {
-  if (shaderStageKey == HdShaderTokens->computeShader) {
-    if (TF_VERIFY(_extComp)) {
+  if (shaderStageKey == HdShaderTokens->computeShader)
+  {
+    if (TF_VERIFY(_extComp))
+    {
       return _extComp->GetGpuKernelSource();
     }
   }
@@ -85,7 +88,8 @@ void HdPh_ExtCompComputeShader::AddBindings(HdBindingRequestVector *customBindin
 /*virtual*/
 HdPhShaderCode::ID HdPh_ExtCompComputeShader::ComputeHash() const
 {
-  if (!TF_VERIFY(_extComp)) {
+  if (!TF_VERIFY(_extComp))
+  {
     return 0;
   }
 
@@ -97,7 +101,8 @@ HdPhShaderCode::ID HdPh_ExtCompComputeShader::ComputeHash() const
 
 SdfPath const &HdPh_ExtCompComputeShader::GetExtComputationId() const
 {
-  if (!TF_VERIFY(_extComp)) {
+  if (!TF_VERIFY(_extComp))
+  {
     return SdfPath::EmptyPath();
   }
   return _extComp->GetId();

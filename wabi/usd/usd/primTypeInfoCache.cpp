@@ -33,14 +33,17 @@ void Usd_PrimTypeInfoCache::ComputeInvalidPrimTypeToFallbackMap(
   // The dictionary is expected to map prim type name strings each to a
   // VtTokenArray containing the ordered list of fallback types to use if
   // the given type name is not valid.
-  for (const auto &valuePair : fallbackPrimTypesDict) {
+  for (const auto &valuePair : fallbackPrimTypesDict)
+  {
     // if the type has a valid schema, we don't need a fallback so
     // just skip it.
     const TfToken typeName(valuePair.first);
-    if (FindOrCreatePrimTypeInfo(TypeId(typeName))->GetSchemaType()) {
+    if (FindOrCreatePrimTypeInfo(TypeId(typeName))->GetSchemaType())
+    {
       continue;
     }
-    if (!valuePair.second.IsHolding<VtTokenArray>()) {
+    if (!valuePair.second.IsHolding<VtTokenArray>())
+    {
       TF_WARN(
         "Value for key '%s' in fallbackPrimTypes metadata "
         "dictionary is not a VtTokenArray.",
@@ -51,8 +54,10 @@ void Usd_PrimTypeInfoCache::ComputeInvalidPrimTypeToFallbackMap(
 
     // Go through the list of fallbacks for the invalid type and choose
     // the first one that produces a valid schema type.
-    for (const TfToken &fallbackName : fallbackNames) {
-      if (FindOrCreatePrimTypeInfo(TypeId(fallbackName))->GetSchemaType()) {
+    for (const TfToken &fallbackName : fallbackNames)
+    {
+      if (FindOrCreatePrimTypeInfo(TypeId(fallbackName))->GetSchemaType())
+      {
         // Map the invalid type to the valid fallback type.
         typeToFallbackTypeMap->insert(std::make_pair(typeName, fallbackName));
         break;

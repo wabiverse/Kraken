@@ -38,7 +38,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static size_t __hash__(UsdStageCache::Id id)
 {

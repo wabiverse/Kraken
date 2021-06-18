@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 /// the existing contents of the old file.  If we overwrote the file itself,
 /// then those other processes would see undefined, possibly partially updated
 /// content.
-class TfSafeOutputFile {
+class TfSafeOutputFile
+{
   TfSafeOutputFile(TfSafeOutputFile const &) = delete;
   TfSafeOutputFile &operator=(TfSafeOutputFile const &) = delete;
 

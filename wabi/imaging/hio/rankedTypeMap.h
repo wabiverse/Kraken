@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Holds a token-to-type map with support for precedence per type.
 ///
-class HioRankedTypeMap {
+class HioRankedTypeMap
+{
  public:
   typedef TfToken key_type;
   typedef TfType mapped_type;
@@ -70,9 +71,11 @@ class HioRankedTypeMap {
   /// value is the unknown type.
   void Add(const key_type &key, const mapped_type &type, Precedence precedence)
   {
-    if (type) {
+    if (type)
+    {
       auto i = _typeMap.find(key);
-      if (i == _typeMap.end() || i->second.precedence < precedence) {
+      if (i == _typeMap.end() || i->second.precedence < precedence)
+      {
         _typeMap[key] = {type, precedence};
       }
     }
@@ -87,7 +90,8 @@ class HioRankedTypeMap {
   }
 
  private:
-  struct _Mapped {
+  struct _Mapped
+  {
     TfType type;
     Precedence precedence;
   };
@@ -111,10 +115,12 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
 
   const std::vector<std::string> restrictions = TfStringSplit(includeList, ",");
 
-  for (auto type : types) {
+  for (auto type : types)
+  {
     // Get the plugin.
     PlugPluginPtr plugin = plugReg.GetPluginForType(type);
-    if (!plugin) {
+    if (!plugin)
+    {
       TF_DEBUG(debugType).Msg(
         "[PluginDiscover] Plugin could not be loaded "
         "for TfType '%s'\n",
@@ -123,14 +129,18 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     }
 
     // Check the includeList.
-    if (!restrictions.empty()) {
+    if (!restrictions.empty())
+    {
       bool goodPlugin = false;
-      for (const auto &restriction : restrictions) {
-        if (type.GetTypeName() == restriction) {
+      for (const auto &restriction : restrictions)
+      {
+        if (type.GetTypeName() == restriction)
+        {
           goodPlugin = true;
         }
       }
-      if (!goodPlugin) {
+      if (!goodPlugin)
+      {
         TF_DEBUG(debugType).Msg("[PluginDiscover] Skipping restricted plugin: '%s'\n",
                                 type.GetTypeName().c_str());
         continue;
@@ -140,7 +150,8 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     JsObject const &metadata = plugin->GetMetadataForType(type);
 
     JsObject::const_iterator keyIt = metadata.find(keyMetadataName);
-    if (keyIt == metadata.end()) {
+    if (keyIt == metadata.end())
+    {
       TF_RUNTIME_ERROR(
         "[PluginDiscover] '%s' metadata "
         "was not present for plugin '%s'\n",
@@ -154,14 +165,17 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     int precedence = 1;
 
     JsObject::const_iterator precedenceIt = metadata.find("precedence");
-    if (precedenceIt != metadata.end()) {
-      if (!precedenceIt->second.Is<int>()) {
+    if (precedenceIt != metadata.end())
+    {
+      if (!precedenceIt->second.Is<int>())
+      {
         TF_RUNTIME_ERROR(
           "[PluginDiscover] 'precedence' metadata "
           "can not be read for plugin '%s'\n",
           type.GetTypeName().c_str());
       }
-      else {
+      else
+      {
         precedence = precedenceIt->second.Get<int>();
       }
     }
@@ -169,14 +183,17 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
     TF_DEBUG(debugType).Msg("[PluginDiscover] Plugin discovered '%s'\n", type.GetTypeName().c_str());
 
     typedef std::string Name;
-    if (keyIt->second.Is<Name>()) {
+    if (keyIt->second.Is<Name>())
+    {
       // single name
       Name const &name = keyIt->second.Get<Name>();
       Add(TfToken(name), type, precedence);
     }
-    else if (keyIt->second.IsArrayOf<Name>()) {
+    else if (keyIt->second.IsArrayOf<Name>())
+    {
       // list of names
-      for (const auto &name : keyIt->second.GetArrayOf<Name>()) {
+      for (const auto &name : keyIt->second.GetArrayOf<Name>())
+      {
         Add(TfToken(name), type, precedence);
       }
     }

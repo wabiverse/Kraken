@@ -72,7 +72,8 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
   // Do not reset the session yet
   HdRenderPassAovBindingVector aovBindings = renderPassState->GetAovBindings();
   const bool aovBindingsHaveChanged = renderParam->GetAovBindings() != aovBindings;
-  if (aovBindingsHaveChanged) {
+  if (aovBindingsHaveChanged)
+  {
     renderParam->SetAovBindings(aovBindings);
   }
 
@@ -80,13 +81,15 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
   bool shouldUpdate = false;
   auto hdCam = const_cast<HdCyclesCamera *>(
     dynamic_cast<HdCyclesCamera const *>(renderPassState->GetCamera()));
-  if (hdCam) {
+  if (hdCam)
+  {
     GfMatrix4d projMtx = renderPassState->GetProjectionMatrix();
     GfMatrix4d viewMtx = renderPassState->GetWorldToViewMatrix();
 
     ccl::Camera *active_camera = renderParam->GetCyclesSession()->scene->camera;
 
-    if (projMtx != m_projMtx || viewMtx != m_viewMtx) {
+    if (projMtx != m_projMtx || viewMtx != m_viewMtx)
+    {
       m_projMtx = projMtx;
       m_viewMtx = viewMtx;
 
@@ -96,18 +99,21 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
       shouldUpdate = true;
     }
 
-    if (!shouldUpdate) {
+    if (!shouldUpdate)
+    {
       shouldUpdate = hdCam->IsDirty();
     }
 
-    if (shouldUpdate) {
+    if (shouldUpdate)
+    {
       hdCam->ApplyCameraSettings(active_camera);
 
       // Needed for now, as houdini looks through a generated camera
       // and doesn't copy the projection type (as of 18.0.532)
       bool is_ortho = round(m_projMtx[3][3]) == 1.0;
 
-      if (is_ortho) {
+      if (is_ortho)
+      {
         active_camera->type = ccl::CameraType::CAMERA_ORTHOGRAPHIC;
       }
       else
@@ -125,7 +131,8 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
   const auto width = static_cast<int>(viewport[2]);
   const auto height = static_cast<int>(viewport[3]);
 
-  if (width != m_width || height != m_height) {
+  if (width != m_width || height != m_height)
+  {
     m_width = width;
     m_height = height;
 
@@ -136,13 +143,15 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
     renderParam->SetViewport(m_width, m_height);
 
     // TODO: This is very hacky... But stops the tiled render double render issue...
-    if (renderParam->IsTiledRender()) {
+    if (renderParam->IsTiledRender())
+    {
       renderParam->StartRender();
     }
 
     renderParam->Interrupt();
   }
-  else if (aovBindingsHaveChanged) {
+  else if (aovBindingsHaveChanged)
+  {
     renderParam->DirectReset();
     renderParam->Interrupt();
   }

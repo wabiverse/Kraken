@@ -85,7 +85,8 @@ class UsdImagingDelegate;
  * The UsdApolloEngine is the main entry point API for rendering
  * full scale USD scenes with VULKAN. */
 
-class UsdApolloEngine {
+class UsdApolloEngine
+{
  public:
   /**
    * ---------------------------------------------------------------------

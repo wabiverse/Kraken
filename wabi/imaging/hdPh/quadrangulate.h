@@ -107,7 +107,8 @@ class HdPh_MeshTopology;
 ///
 /// Quad info computation.
 ///
-class HdPh_QuadInfoBuilderComputation : public HdNullBufferSource {
+class HdPh_QuadInfoBuilderComputation : public HdNullBufferSource
+{
  public:
   HdPh_QuadInfoBuilderComputation(HdPh_MeshTopology *topology, SdfPath const &id);
   virtual bool Resolve() override;
@@ -139,7 +140,8 @@ class HdPh_QuadInfoBuilderComputation : public HdNullBufferSource {
 // ... |     m0    |     m1    | ...    primitive param buffer (coarse face index)
 // ----+-----------+-----------+------
 
-class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource {
+class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource
+{
  public:
   HdPh_QuadIndexBuilderComputation(HdPh_MeshTopology *topology,
                                    HdPh_QuadInfoBuilderComputationSharedPtr const &quadInfoBuilder,
@@ -165,7 +167,8 @@ class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource {
 ///
 /// Quadrangulate table computation (for GPU quadrangulation).
 ///
-class HdPh_QuadrangulateTableComputation : public HdComputedBufferSource {
+class HdPh_QuadrangulateTableComputation : public HdComputedBufferSource
+{
  public:
   HdPh_QuadrangulateTableComputation(HdPh_MeshTopology *topology,
                                      HdBufferSourceSharedPtr const &quadInfoBuilder);
@@ -185,7 +188,8 @@ class HdPh_QuadrangulateTableComputation : public HdComputedBufferSource {
 ///
 /// CPU quadrangulation.
 ///
-class HdPh_QuadrangulateComputation : public HdComputedBufferSource {
+class HdPh_QuadrangulateComputation : public HdComputedBufferSource
+{
  public:
   HdPh_QuadrangulateComputation(HdPh_MeshTopology *topology,
                                 HdBufferSourceSharedPtr const &source,
@@ -212,7 +216,8 @@ class HdPh_QuadrangulateComputation : public HdComputedBufferSource {
 ///
 /// CPU face-varying quadrangulation.
 ///
-class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource {
+class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource
+{
  public:
   HdPh_QuadrangulateFaceVaryingComputation(HdPh_MeshTopology *topolgoy,
                                            HdBufferSourceSharedPtr const &source,
@@ -234,7 +239,8 @@ class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource {
 ///
 /// GPU quadrangulation.
 ///
-class HdPh_QuadrangulateComputationGPU : public HdComputation {
+class HdPh_QuadrangulateComputationGPU : public HdComputation
+{
  public:
   /// This computaion doesn't generate buffer source (i.e. 2nd phase)
   HdPh_QuadrangulateComputationGPU(HdPh_MeshTopology *topology,

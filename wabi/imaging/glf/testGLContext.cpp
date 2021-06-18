@@ -38,7 +38,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Glf_TestGLContextPrivate {
+class Glf_TestGLContextPrivate
+{
  public:
   Glf_TestGLContextPrivate(Glf_TestGLContextPrivate const *other = NULL);
 
@@ -99,7 +100,8 @@ Glf_TestGLContextPrivate::Glf_TestGLContextPrivate(Glf_TestGLContextPrivate cons
 
   _sharedContext = other ? other : this;
 
-  if (!_win) {
+  if (!_win)
+  {
     XVisualInfo *vi = glXGetVisualFromFBConfig(_dpy, fbConfigs[0]);
 
     XSetWindowAttributes swa;
@@ -160,7 +162,8 @@ Glf_TestGLContextPrivate *_GetSharedContext()
 // GlfTestGLContextRegistrationInterface
 //
 
-class GlfTestGLContextRegistrationInterface : public GlfGLContextRegistrationInterface {
+class GlfTestGLContextRegistrationInterface : public GlfGLContextRegistrationInterface
+{
  public:
   GlfTestGLContextRegistrationInterface();
   virtual ~GlfTestGLContextRegistrationInterface();
@@ -187,7 +190,8 @@ GlfGLContextSharedPtr GlfTestGLContextRegistrationInterface::GetShared()
 
 GlfGLContextSharedPtr GlfTestGLContextRegistrationInterface::GetCurrent()
 {
-  if (const Glf_TestGLContextPrivate *context = Glf_TestGLContextPrivate::currentContext()) {
+  if (const Glf_TestGLContextPrivate *context = Glf_TestGLContextPrivate::currentContext())
+  {
     return GlfGLContextSharedPtr(new GlfTestGLContext(context));
   }
   return GlfGLContextSharedPtr();
@@ -238,7 +242,8 @@ bool GlfTestGLContext::_IsSharing(GlfGLContextSharedPtr const &otherContext) con
 
 bool GlfTestGLContext::_IsEqual(GlfGLContextSharedPtr const &rhs) const
 {
-  if (const GlfTestGLContext *rhsRaw = dynamic_cast<const GlfTestGLContext *>(rhs.get())) {
+  if (const GlfTestGLContext *rhsRaw = dynamic_cast<const GlfTestGLContext *>(rhs.get()))
+  {
     return *_context == *rhsRaw->_context;
   }
   return false;

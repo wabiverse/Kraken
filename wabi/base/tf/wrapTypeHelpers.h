@@ -35,22 +35,26 @@
 WABI_NAMESPACE_BEGIN
 
 // Private implementation namespace; public types are exposed below.
-namespace TfType_WrapHelpers {
+namespace TfType_WrapHelpers
+{
 
 using namespace boost::python;
 
-struct _PythonClass : def_visitor<_PythonClass> {
+struct _PythonClass : def_visitor<_PythonClass>
+{
   friend class def_visitor_access;
 
  private:
-  template<class CLS, class T> void _Visit(CLS &c, T *) const
+  template<class CLS, class T>
+  void _Visit(CLS &c, T *) const
   {
     if (TfType t = TfType::Find<T>())
       t.DefinePythonClass(c);
   }
 
  public:
-  template<class CLS> void visit(CLS &c) const
+  template<class CLS>
+  void visit(CLS &c) const
   {
     // Use function template resolution to wrap the type
     // appropriately depending on whether it is a polymorphic
@@ -72,7 +76,8 @@ struct _PythonClass : def_visitor<_PythonClass> {
 ///     .def( TfTypePythonClass() )
 /// \endcode
 ///
-struct TfTypePythonClass : public TfType_WrapHelpers::_PythonClass {
+struct TfTypePythonClass : public TfType_WrapHelpers::_PythonClass
+{
 };
 
 /// A helper for wrapping C++ types.

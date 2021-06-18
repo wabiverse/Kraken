@@ -47,7 +47,9 @@ class SdfSpec;
 /// It primarily specifies how to map between keys (such as the name of
 /// an object) and values (such as SpecHandles for those objects).
 ///
-template<class ChildPolicy> class Sdf_Children {
+template<class ChildPolicy>
+class Sdf_Children
+{
  public:
   typedef typename ChildPolicy::KeyPolicy KeyPolicy;
   typedef typename ChildPolicy::KeyType KeyType;

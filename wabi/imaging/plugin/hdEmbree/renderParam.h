@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 /// to each prim during Sync(). HdEmbree uses this class to pass top-level
 /// embree state around.
 ///
-class HdEmbreeRenderParam final : public HdRenderParam {
+class HdEmbreeRenderParam final : public HdRenderParam
+{
  public:
   HdEmbreeRenderParam(RTCDevice device,
                       RTCScene scene,

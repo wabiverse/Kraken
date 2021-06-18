@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type PortalLight
 ///
-class UsdImagingPortalLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingPortalLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingPortalLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingPortalLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

@@ -18,15 +18,19 @@
 #include "../rapidjson.h"
 
 RAPIDJSON_NAMESPACE_BEGIN
-namespace internal {
+namespace internal
+{
 
-class Double {
+class Double
+{
  public:
   Double()
   {}
-  Double(double d) : d_(d)
+  Double(double d)
+    : d_(d)
   {}
-  Double(uint64_t u) : u_(u)
+  Double(uint64_t u)
+    : u_(u)
   {}
 
   double Value() const
@@ -110,7 +114,8 @@ class Double {
   static const uint64_t kSignificandMask = RAPIDJSON_UINT64_C2(0x000FFFFF, 0xFFFFFFFF);
   static const uint64_t kHiddenBit = RAPIDJSON_UINT64_C2(0x00100000, 0x00000000);
 
-  union {
+  union
+  {
     double d_;
     uint64_t u_;
   };

@@ -51,7 +51,8 @@ class HdRenderIndex;
 ///
 /// Parameters are expressed as GL states, uniforms or shaders.
 ///
-class HdPhRenderPassState : public HdRenderPassState {
+class HdPhRenderPassState : public HdRenderPassState
+{
  public:
   HDPH_API
   HdPhRenderPassState();

@@ -54,13 +54,16 @@ HgiMetalGraphicsPipeline::HgiMetalGraphicsPipeline(HgiMetal *hgi, HgiGraphicsPip
 
 HgiMetalGraphicsPipeline::~HgiMetalGraphicsPipeline()
 {
-  if (_renderPipelineState) {
+  if (_renderPipelineState)
+  {
     [_renderPipelineState release];
   }
-  if (_depthStencilState) {
+  if (_depthStencilState)
+  {
     [_depthStencilState release];
   }
-  if (_vertexDescriptor) {
+  if (_vertexDescriptor)
+  {
     [_vertexDescriptor release];
   }
 }
@@ -70,7 +73,8 @@ void HgiMetalGraphicsPipeline::_CreateVertexDescriptor()
   _vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
   int index = 0;
-  for (HgiVertexBufferDesc const &vbo : _descriptor.vertexBuffers) {
+  for (HgiVertexBufferDesc const &vbo : _descriptor.vertexBuffers)
+  {
 
     HgiVertexAttributeDescVector const &vas = vbo.vertexAttributes;
 
@@ -79,7 +83,8 @@ void HgiMetalGraphicsPipeline::_CreateVertexDescriptor()
     _vertexDescriptor.layouts[index].stride = vbo.vertexStride;
 
     // Describe each vertex attribute in the vertex buffer
-    for (size_t loc = 0; loc < vas.size(); loc++) {
+    for (size_t loc = 0; loc < vas.size(); loc++)
+    {
       HgiVertexAttributeDesc const &va = vas[loc];
 
       uint32_t idx = va.shaderBindLocation;
@@ -106,22 +111,26 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
 
   stateDesc.vertexFunction = metalProgram->GetVertexFunction();
   id<MTLFunction> fragFunction = metalProgram->GetFragmentFunction();
-  if (fragFunction && _descriptor.rasterizationState.rasterizerEnabled) {
+  if (fragFunction && _descriptor.rasterizationState.rasterizerEnabled)
+  {
     stateDesc.fragmentFunction = fragFunction;
     stateDesc.rasterizationEnabled = YES;
   }
-  else {
+  else
+  {
     stateDesc.rasterizationEnabled = NO;
   }
 
   // Color attachments
-  for (size_t i = 0; i < _descriptor.colorAttachmentDescs.size(); i++) {
+  for (size_t i = 0; i < _descriptor.colorAttachmentDescs.size(); i++)
+  {
     HgiAttachmentDesc const &hgiColorAttachment = _descriptor.colorAttachmentDescs[i];
     MTLRenderPipelineColorAttachmentDescriptor *metalColorAttachment = stateDesc.colorAttachments[i];
 
     metalColorAttachment.pixelFormat = HgiMetalConversions::GetPixelFormat(hgiColorAttachment.format);
 
-    if (hgiColorAttachment.blendEnabled) {
+    if (hgiColorAttachment.blendEnabled)
+    {
       metalColorAttachment.blendingEnabled = YES;
 
       metalColorAttachment.sourceRGBBlendFactor = HgiMetalConversions::GetBlendFactor(
@@ -139,7 +148,8 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
       metalColorAttachment.alphaBlendOperation = HgiMetalConversions::GetBlendEquation(
         hgiColorAttachment.alphaBlendOp);
     }
-    else {
+    else
+    {
       metalColorAttachment.blendingEnabled = NO;
     }
   }
@@ -149,10 +159,12 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   stateDesc.depthAttachmentPixelFormat = HgiMetalConversions::GetPixelFormat(hgiDepthAttachment.format);
 
   stateDesc.sampleCount = _descriptor.multiSampleState.sampleCount;
-  if (_descriptor.multiSampleState.alphaToCoverageEnable) {
+  if (_descriptor.multiSampleState.alphaToCoverageEnable)
+  {
     stateDesc.alphaToCoverageEnabled = YES;
   }
-  else {
+  else
+  {
     stateDesc.alphaToCoverageEnabled = NO;
   }
 
@@ -162,7 +174,8 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   _renderPipelineState = [device newRenderPipelineStateWithDescriptor:stateDesc error:&error];
   [stateDesc release];
 
-  if (!_renderPipelineState) {
+  if (!_renderPipelineState)
+  {
     NSString *err = [error localizedDescription];
     TF_WARN("Failed to created pipeline state, error %s", [err UTF8String]);
   }
@@ -174,27 +187,33 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
 
   HGIMETAL_DEBUG_LABEL(depthStencilStateDescriptor, _descriptor.debugName.c_str());
 
-  if (_descriptor.depthState.depthWriteEnabled) {
+  if (_descriptor.depthState.depthWriteEnabled)
+  {
     depthStencilStateDescriptor.depthWriteEnabled = YES;
   }
-  else {
+  else
+  {
     depthStencilStateDescriptor.depthWriteEnabled = NO;
   }
-  if (_descriptor.depthState.depthTestEnabled) {
+  if (_descriptor.depthState.depthTestEnabled)
+  {
     MTLCompareFunction depthFn = HgiMetalConversions::GetDepthCompareFunction(
       _descriptor.depthState.depthCompareFn);
     depthStencilStateDescriptor.depthCompareFunction = depthFn;
   }
-  else {
+  else
+  {
     // Even if there is no depth attachment, some drivers may still perform
     // the depth test. So we pick Always over Never.
     depthStencilStateDescriptor.depthCompareFunction = MTLCompareFunctionAlways;
   }
 
-  if (_descriptor.depthState.stencilTestEnabled) {
+  if (_descriptor.depthState.stencilTestEnabled)
+  {
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
   }
-  else {
+  else
+  {
     depthStencilStateDescriptor.backFaceStencil = nil;
     depthStencilStateDescriptor.frontFaceStencil = nil;
   }

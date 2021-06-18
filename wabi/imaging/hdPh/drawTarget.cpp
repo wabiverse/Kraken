@@ -29,7 +29,10 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(HdPhDrawTargetTokens, HDPH_DRAW_TARGET_TOKENS);
 
-HdPhDrawTarget::HdPhDrawTarget(SdfPath const &id) : HdSprim(id), _enabled(true), _resolution(512, 512)
+HdPhDrawTarget::HdPhDrawTarget(SdfPath const &id)
+  : HdSprim(id),
+    _enabled(true),
+    _resolution(512, 512)
 {}
 
 HdPhDrawTarget::~HdPhDrawTarget() = default;
@@ -43,25 +46,29 @@ void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
   TF_UNUSED(renderParam);
 
   SdfPath const &id = GetId();
-  if (!TF_VERIFY(sceneDelegate != nullptr)) {
+  if (!TF_VERIFY(sceneDelegate != nullptr))
+  {
     return;
   }
 
   const HdDirtyBits bits = *dirtyBits;
 
-  if (bits & DirtyDTEnable) {
+  if (bits & DirtyDTEnable)
+  {
     const VtValue vtValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->enable);
 
     // Optional attribute.
     _enabled = vtValue.GetWithDefault<bool>(true);
   }
 
-  if (bits & DirtyDTCamera) {
+  if (bits & DirtyDTCamera)
+  {
     const VtValue vtValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->camera);
     _drawTargetRenderPassState.SetCamera(vtValue.Get<SdfPath>());
   }
 
-  if (bits & DirtyDTResolution) {
+  if (bits & DirtyDTResolution)
+  {
     const VtValue vtValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->resolution);
 
     // The resolution is needed to set the viewport and compute the
@@ -77,19 +84,22 @@ void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     _resolution = vtValue.Get<GfVec2i>();
   }
 
-  if (bits & DirtyDTAovBindings) {
+  if (bits & DirtyDTAovBindings)
+  {
     const VtValue aovBindingsValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->aovBindings);
     _drawTargetRenderPassState.SetAovBindings(
       aovBindingsValue.GetWithDefault<HdRenderPassAovBindingVector>({}));
   }
 
-  if (bits & DirtyDTDepthPriority) {
+  if (bits & DirtyDTDepthPriority)
+  {
     const VtValue depthPriorityValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->depthPriority);
     _drawTargetRenderPassState.SetDepthPriority(
       depthPriorityValue.GetWithDefault<HdDepthPriority>(HdDepthPriorityNearest));
   }
 
-  if (bits & DirtyDTCollection) {
+  if (bits & DirtyDTCollection)
+  {
     const VtValue vtValue = sceneDelegate->Get(id, HdPhDrawTargetTokens->collection);
 
     const HdRprimCollection collection = vtValue.Get<HdRprimCollection>();
@@ -98,7 +108,8 @@ void HdPhDrawTarget::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
 
     HdChangeTracker &changeTracker = sceneDelegate->GetRenderIndex().GetChangeTracker();
 
-    if (_collection.GetName() != collectionName) {
+    if (_collection.GetName() != collectionName)
+    {
       // Make sure collection has been added to change tracker
       changeTracker.AddCollection(collectionName);
     }
@@ -126,15 +137,18 @@ void HdPhDrawTarget::GetDrawTargets(HdRenderIndex *const renderIndex,
 {
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!renderIndex->IsSprimTypeSupported(HdPrimTypeTokens->drawTarget)) {
+  if (!renderIndex->IsSprimTypeSupported(HdPrimTypeTokens->drawTarget))
+  {
     return;
   }
 
   const SdfPathVector paths = renderIndex->GetSprimSubtree(HdPrimTypeTokens->drawTarget,
                                                            SdfPath::AbsoluteRootPath());
 
-  for (const SdfPath &path : paths) {
-    if (HdSprim *const drawTarget = renderIndex->GetSprim(HdPrimTypeTokens->drawTarget, path)) {
+  for (const SdfPath &path : paths)
+  {
+    if (HdSprim *const drawTarget = renderIndex->GetSprim(HdPrimTypeTokens->drawTarget, path))
+    {
       drawTargets->push_back(static_cast<HdPhDrawTarget *>(drawTarget));
     }
   }

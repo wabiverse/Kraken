@@ -46,7 +46,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-enum class UsdImagingGLDrawMode {
+enum class UsdImagingGLDrawMode
+{
   DRAW_POINTS,
   DRAW_WIREFRAME,
   DRAW_WIREFRAME_ON_SURFACE,
@@ -59,7 +60,8 @@ enum class UsdImagingGLDrawMode {
 
 // Note: some assumptions are made about the order of these enums, so please
 // be careful when updating them.
-enum class UsdImagingGLCullStyle {
+enum class UsdImagingGLCullStyle
+{
   CULL_STYLE_NO_OPINION,
   CULL_STYLE_NOTHING,
   CULL_STYLE_BACK,
@@ -73,7 +75,8 @@ enum class UsdImagingGLCullStyle {
 ///
 /// Used as an arguments class for various methods in UsdImagingGLEngine.
 ///
-class UsdImagingGLRenderParams {
+class UsdImagingGLRenderParams
+{
  public:
   typedef std::vector<GfVec4d> ClipPlanesVector;
 

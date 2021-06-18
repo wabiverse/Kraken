@@ -29,7 +29,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdArnoldBasisCurves : public HdArnoldRprim<HdBasisCurves> {
+class HdArnoldBasisCurves : public HdArnoldRprim<HdBasisCurves>
+{
  public:
 #if WABI_VERSION >= 2102
   /// Constructor for HdArnoldBasisCurves.

@@ -28,14 +28,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Vt_WrapArray {
+namespace Vt_WrapArray
+{
 
 // The following bit of preprocessor code produces specializations of
 // GetVtArrayName (declared above) for each VtArray type.  The function bodies
 // simply return the "common name" for the VtArray.  For instance,
 // GetVtArrayName<VtArray<int> >() -> "VtIntArray".
 #define MAKE_NAME_FUNC(r, unused, elem) \
-  template<> VT_API string GetVtArrayName<VT_TYPE(elem)>() \
+  template<> \
+  VT_API string GetVtArrayName<VT_TYPE(elem)>() \
   { \
     return TF_PP_STRINGIZE(VT_TYPE_NAME(elem)); \
   }

@@ -63,7 +63,8 @@ bool HdBufferArray::TryAssignRange(HdBufferArrayRangeSharedPtr &range)
   // contiguous, so we only ever need to insert at end.
   size_t allocIdx = _rangeCount++;
 
-  if (allocIdx >= _maxNumRanges) {
+  if (allocIdx >= _maxNumRanges)
+  {
     // Make sure out range count remains clamp at _maxNumRanges.
     // It's ok if multiple threads race to set this to the same value
     // (other than the cache line bouncing)
@@ -81,7 +82,8 @@ bool HdBufferArray::TryAssignRange(HdBufferArrayRangeSharedPtr &range)
   {
     std::lock_guard<std::mutex> lock(_rangeListLock);
 
-    if (newSize > _rangeList.size()) {
+    if (newSize > _rangeList.size())
+    {
       _rangeList.resize(newSize);
     }
     _rangeList[allocIdx] = range;
@@ -100,8 +102,10 @@ void HdBufferArray::RemoveUnusedRanges()
   // Local copy, because we don't want to perform atomic ops
   size_t numRanges = _rangeCount;
   size_t idx = 0;
-  while (idx < numRanges) {
-    if (_rangeList[idx].expired()) {
+  while (idx < numRanges)
+  {
+    if (_rangeList[idx].expired())
+    {
       // Order of range objects doesn't matter so use range at end to fill
       // gap.
       _rangeList[idx] = _rangeList[numRanges - 1];
@@ -112,7 +116,8 @@ void HdBufferArray::RemoveUnusedRanges()
       // Don't increment idx as we need to check the value we just moved
       // into the slot.
     }
-    else {
+    else
+    {
       ++idx;
     }
   }
@@ -137,7 +142,7 @@ void HdBufferArray::_SetRangeList(std::vector<HdBufferArrayRangeSharedPtr> const
   _rangeList.clear();
   _rangeList.assign(ranges.begin(), ranges.end());
   _rangeCount = _rangeList.size();
-  TF_FOR_ALL(it, ranges)
+  TF_FOR_ALL (it, ranges)
   {
     (*it)->SetBufferArray(this);
   }

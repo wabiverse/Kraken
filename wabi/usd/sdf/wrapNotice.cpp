@@ -35,7 +35,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::Base, TfNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayersDidChange, SdfNotice::Base);

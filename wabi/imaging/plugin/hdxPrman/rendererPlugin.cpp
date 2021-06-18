@@ -31,7 +31,8 @@ HDPRMAN_LOADER_CREATE_DELEGATE
 {
   // Prman only supports one delegate at a time
   std::shared_ptr<HdxPrman_InteractiveContext> context = std::make_shared<HdxPrman_InteractiveContext>();
-  if (!context->IsValid()) {
+  if (!context->IsValid())
+  {
     TF_WARN(
       "Failed to create HdPrman render delegate due to invalid "
       "HdxPrman_InteractiveContext");

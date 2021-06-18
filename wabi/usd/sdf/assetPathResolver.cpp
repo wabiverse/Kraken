@@ -59,22 +59,28 @@ bool operator==(const Sdf_AssetInfo &lhs, const Sdf_AssetInfo &rhs)
 
 bool Sdf_CanCreateNewLayerWithIdentifier(const string &identifier, string *whyNot)
 {
-  if (identifier.empty()) {
-    if (whyNot) {
+  if (identifier.empty())
+  {
+    if (whyNot)
+    {
       *whyNot = "cannot use empty identifier.";
     }
     return false;
   }
 
-  if (Sdf_IsAnonLayerIdentifier(identifier)) {
-    if (whyNot) {
+  if (Sdf_IsAnonLayerIdentifier(identifier))
+  {
+    if (whyNot)
+    {
       *whyNot = "cannot use anonymous layer identifier.";
     }
     return false;
   }
 
-  if (Sdf_IdentifierContainsArguments(identifier)) {
-    if (whyNot) {
+  if (Sdf_IdentifierContainsArguments(identifier))
+  {
+    if (whyNot)
+    {
       *whyNot = "cannot use arguments in the identifier.";
     }
     return false;
@@ -103,7 +109,8 @@ ArResolvedPath Sdf_ComputeFilePath(const string &layerPath, ArAssetInfo *assetIn
   TRACE_FUNCTION();
 
   ArResolvedPath resolvedPath = Sdf_ResolvePath(layerPath, assetInfo);
-  if (resolvedPath.empty()) {
+  if (resolvedPath.empty())
+  {
 #if AR_VERSION == 1
     // If we can't resolve layerPath, it means no layer currently
     // exists at that location. Compute the local path to figure
@@ -116,7 +123,8 @@ ArResolvedPath Sdf_ComputeFilePath(const string &layerPath, ArAssetInfo *assetIn
     // because otherwise we may compute a confusing real path
     // for these layers.
     ArResolver &resolver = ArGetResolver();
-    if (!resolver.IsSearchPath(layerPath)) {
+    if (!resolver.IsSearchPath(layerPath))
+    {
       resolvedPath = ArResolvedPath(resolver.ComputeLocalPath(layerPath));
     }
 #else
@@ -147,25 +155,29 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
                           filePath.c_str(),
                           fileVersion.c_str());
 
-  if (Sdf_IsAnonLayerIdentifier(identifier)) {
+  if (Sdf_IsAnonLayerIdentifier(identifier))
+  {
     // If the identifier is an anonymous layer identifier, don't
     // normalize, and also don't set any of the other assetInfo fields.
     // Anonymous layers do not have repository, overlay, or real paths.
     assetInfo->identifier = identifier;
   }
-  else {
+  else
+  {
 #if AR_VERSION == 1
     assetInfo->identifier = ArGetResolver().ComputeNormalizedPath(identifier);
 #else
     assetInfo->identifier = identifier;
 #endif
 
-    if (filePath.empty()) {
+    if (filePath.empty())
+    {
       string layerPath, arguments;
       Sdf_SplitIdentifier(assetInfo->identifier, &layerPath, &arguments);
       assetInfo->resolvedPath = Sdf_ComputeFilePath(layerPath, &resolveInfo);
     }
-    else {
+    else
+    {
       assetInfo->resolvedPath = ArResolvedPath(filePath);
     }
 
@@ -214,12 +226,14 @@ string Sdf_GetAnonLayerDisplayName(const string &identifier)
   // We want to find the second occurence of ':', traversing from the left,
   // in our identifier which is of the form anon:0x4rfs23:displayName
   auto fst = std::find(identifier.begin(), identifier.end(), ':');
-  if (fst == identifier.end()) {
+  if (fst == identifier.end())
+  {
     return std::string();
   }
 
   auto snd = std::find(fst + 1, identifier.end(), ':');
-  if (snd == identifier.end()) {
+  if (snd == identifier.end())
+  {
     return std::string();
   }
 
@@ -243,7 +257,8 @@ static string Sdf_EncodeArguments(const SdfLayer::FileFormatArguments &args)
 {
   const char *delimiter = _Tokens->ArgsDelimiter.GetText();
   string argString;
-  for (const auto &entry : args) {
+  for (const auto &entry : args)
+  {
     argString += delimiter;
     argString += entry.first;
     argString += '=';
@@ -257,22 +272,26 @@ static string Sdf_EncodeArguments(const SdfLayer::FileFormatArguments &args)
 
 static bool Sdf_DecodeArguments(const string &argString, SdfLayer::FileFormatArguments *args)
 {
-  if (argString.empty() || argString.size() == _Tokens->ArgsDelimiter.size()) {
+  if (argString.empty() || argString.size() == _Tokens->ArgsDelimiter.size())
+  {
     args->clear();
     return true;
   }
 
   const size_t argStringLength = argString.size();
-  if (!TF_VERIFY(argStringLength > _Tokens->ArgsDelimiter.size())) {
+  if (!TF_VERIFY(argStringLength > _Tokens->ArgsDelimiter.size()))
+  {
     return false;
   }
 
   SdfLayer::FileFormatArguments tmpArgs;
 
   size_t startIdx = _Tokens->ArgsDelimiter.size();
-  while (startIdx < argStringLength) {
+  while (startIdx < argStringLength)
+  {
     const size_t eqIdx = argString.find('=', startIdx);
-    if (eqIdx == string::npos) {
+    if (eqIdx == string::npos)
+    {
       TF_CODING_ERROR("Invalid file format arguments: %s", argString.c_str());
       return false;
     }
@@ -281,11 +300,13 @@ static bool Sdf_DecodeArguments(const string &argString, SdfLayer::FileFormatArg
     startIdx = eqIdx + 1;
 
     const size_t sepIdx = argString.find('&', startIdx);
-    if (sepIdx == string::npos) {
+    if (sepIdx == string::npos)
+    {
       tmpArgs[key] = argString.substr(startIdx);
       break;
     }
-    else {
+    else
+    {
       tmpArgs[key] = argString.substr(startIdx, sepIdx - startIdx);
       startIdx = sepIdx + 1;
     }
@@ -303,7 +324,8 @@ string Sdf_CreateIdentifier(const string &layerPath, const SdfLayer::FileFormatA
 bool Sdf_SplitIdentifier(const string &identifier, string *layerPath, string *arguments)
 {
   size_t argPos = identifier.find(_Tokens->ArgsDelimiter.GetString());
-  if (argPos == string::npos) {
+  if (argPos == string::npos)
+  {
     argPos = identifier.size();
   }
 
@@ -315,11 +337,13 @@ bool Sdf_SplitIdentifier(const string &identifier, string *layerPath, string *ar
 bool Sdf_SplitIdentifier(const string &identifier, string *layerPath, SdfLayer::FileFormatArguments *args)
 {
   string tmpLayerPath, tmpArgs;
-  if (!Sdf_SplitIdentifier(identifier, &tmpLayerPath, &tmpArgs)) {
+  if (!Sdf_SplitIdentifier(identifier, &tmpLayerPath, &tmpArgs))
+  {
     return false;
   }
 
-  if (!Sdf_DecodeArguments(tmpArgs, args)) {
+  if (!Sdf_DecodeArguments(tmpArgs, args))
+  {
     return false;
   }
 
@@ -338,7 +362,8 @@ string Sdf_GetLayerDisplayName(const string &identifier)
   string layerPath, arguments;
   Sdf_SplitIdentifier(identifier, &layerPath, &arguments);
 
-  if (Sdf_IsAnonLayerIdentifier(layerPath)) {
+  if (Sdf_IsAnonLayerIdentifier(layerPath))
+  {
     return Sdf_GetAnonLayerDisplayName(layerPath);
   }
 
@@ -348,7 +373,8 @@ string Sdf_GetLayerDisplayName(const string &identifier)
   //    "/tmp/asset.package[sub/dir/file.sdf]",
   // we want:
   //    "asset.package[sub/dir/file.sdf]".
-  if (ArIsPackageRelativePath(layerPath)) {
+  if (ArIsPackageRelativePath(layerPath))
+  {
     std::pair<std::string, std::string> packagePath = ArSplitPackageRelativePathOuter(layerPath);
     packagePath.first = TfGetBaseName(packagePath.first);
     return ArJoinPackageRelativePath(packagePath);
@@ -365,7 +391,8 @@ string Sdf_GetExtension(const string &identifier)
   std::string dummyArgs;
   Sdf_SplitIdentifier(identifier, &assetPath, &dummyArgs);
 
-  if (Sdf_IsAnonLayerIdentifier(assetPath)) {
+  if (Sdf_IsAnonLayerIdentifier(assetPath))
+  {
     // Strip off the "anon:0x...:" portion of the anonymous layer
     // identifier and look for an extension in the remainder. This
     // allows clients to create anonymous layers using tags that
@@ -378,7 +405,8 @@ string Sdf_GetExtension(const string &identifier)
   // a temporary name so that the path we pass to Ar is not
   // interpreted as a directory name. This is legacy behavior that
   // should be fixed.
-  if (!assetPath.empty() && assetPath[0] == '.') {
+  if (!assetPath.empty() && assetPath[0] == '.')
+  {
     assetPath = "temp_file_name" + assetPath;
   }
 
@@ -406,7 +434,8 @@ string Sdf_CanonicalizeRealPath(const string &realPath)
   // If realPath is a package-relative path, absolutize just the
   // outer path; the packaged path has a specific format defined in
   // Ar that we don't want to modify.
-  if (ArIsPackageRelativePath(realPath)) {
+  if (ArIsPackageRelativePath(realPath))
+  {
     pair<string, string> packagePath = ArSplitPackageRelativePathOuter(realPath);
     return TfIsRelativePath(packagePath.first) ?
              realPath :

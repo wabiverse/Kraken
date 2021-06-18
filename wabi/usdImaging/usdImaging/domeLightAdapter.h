@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type DomeLight
 ///
-class UsdImagingDomeLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingDomeLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingDomeLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingDomeLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

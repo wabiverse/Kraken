@@ -233,7 +233,8 @@ std::set<std::string> SdfFileFormat::GetExternalAssetDependencies(const SdfLayer
 /* static */
 std::string SdfFileFormat::GetFileExtension(const std::string &s)
 {
-  if (s.empty()) {
+  if (s.empty())
+  {
     return s;
   }
 
@@ -266,14 +267,18 @@ SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &path,
   // Find a file format that can handle this extension and the
   // specified target (if any).
   const std::string *targets = TfMapLookupPtr(args, SdfFileFormatTokens->TargetArg);
-  if (targets) {
-    for (std::string &target : TfStringTokenize(*targets, ",")) {
+  if (targets)
+  {
+    for (std::string &target : TfStringTokenize(*targets, ","))
+    {
       target = TfStringTrim(target);
-      if (target.empty()) {
+      if (target.empty())
+      {
         continue;
       }
 
-      if (const SdfFileFormatConstPtr format = SdfFileFormat::FindByExtension(path, target)) {
+      if (const SdfFileFormatConstPtr format = SdfFileFormat::FindByExtension(path, target))
+      {
         return format;
       }
     }
@@ -315,10 +320,12 @@ void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data, 
   // been set, not what its held value is.
   //
   const bool layerIsLoadingAsNew = !layer->_initializationWasSuccessful;
-  if (layerIsLoadingAsNew) {
+  if (layerIsLoadingAsNew)
+  {
     layer->_SwapData(data);
   }
-  else {
+  else
+  {
     layer->_SetData(data);
   }
 

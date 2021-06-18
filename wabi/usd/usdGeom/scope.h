@@ -56,7 +56,8 @@ class SdfAssetPath;
 /// through a Scope successfully - it is just a guaranteed no-op from a
 /// transformability perspective.
 ///
-class UsdGeomScope : public UsdGeomImageable {
+class UsdGeomScope : public UsdGeomImageable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -72,13 +73,15 @@ class UsdGeomScope : public UsdGeomImageable {
   /// Equivalent to UsdGeomScope::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomScope(const UsdPrim &prim = UsdPrim()) : UsdGeomImageable(prim)
+  explicit UsdGeomScope(const UsdPrim &prim = UsdPrim())
+    : UsdGeomImageable(prim)
   {}
 
   /// Construct a UsdGeomScope on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomScope(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomScope(const UsdSchemaBase &schemaObj) : UsdGeomImageable(schemaObj)
+  explicit UsdGeomScope(const UsdSchemaBase &schemaObj)
+    : UsdGeomImageable(schemaObj)
   {}
 
   /// Destructor.

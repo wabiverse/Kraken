@@ -73,7 +73,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// The cost of copying should be mitigated by the copy semantics of VtArray and
 /// TfToken.
-class PxOsdMeshTopology {
+class PxOsdMeshTopology
+{
 
  public:
   typedef uint64_t ID;
@@ -244,14 +245,18 @@ class PxOsdMeshTopology {
 
   PxOsdSubdivTags _subdivTags;
 
-  struct _Validated {
+  struct _Validated
+  {
     std::atomic<bool> value;
 
-    _Validated() : value(false)
+    _Validated()
+      : value(false)
     {}
-    _Validated(const _Validated &other) : value(other.value.load())
+    _Validated(const _Validated &other)
+      : value(other.value.load())
     {}
-    _Validated(_Validated &&other) : value(other.value.load())
+    _Validated(_Validated &&other)
+      : value(other.value.load())
     {
       other.value = false;
     }

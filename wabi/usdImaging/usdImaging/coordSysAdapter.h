@@ -36,11 +36,13 @@ class UsdPrim;
 
 /// \class UsdImagingCoordSysAdapter
 ///
-class UsdImagingCoordSysAdapter : public UsdImagingPrimAdapter {
+class UsdImagingCoordSysAdapter : public UsdImagingPrimAdapter
+{
  public:
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingCoordSysAdapter() : UsdImagingPrimAdapter()
+  UsdImagingCoordSysAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

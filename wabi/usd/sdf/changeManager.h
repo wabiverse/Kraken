@@ -53,7 +53,8 @@ class SdfSpec;
 ///
 /// For now this class uses TfNotices to represent invalidations.
 ///
-class Sdf_ChangeManager : boost::noncopyable {
+class Sdf_ChangeManager : boost::noncopyable
+{
  public:
   SDF_API
   static Sdf_ChangeManager &Get()
@@ -98,7 +99,8 @@ class Sdf_ChangeManager : boost::noncopyable {
   SdfChangeList &_GetListFor(SdfLayerChangeListVec &changeList, SdfLayerHandle const &layer);
 
  private:
-  struct _Data {
+  struct _Data
+  {
     _Data();
     SdfLayerChangeListVec changes;
     int changeBlockDepth;

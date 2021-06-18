@@ -43,7 +43,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static boost::python::tuple _ComputeLayerStack(PcpCache &cache, const PcpLayerStackIdentifier &identifier)
 {
@@ -81,7 +82,8 @@ static boost::python::tuple _ComputePrimIndex(PcpCache &cache, const SdfPath &pa
 
 static boost::python::object _FindPrimIndex(PcpCache &cache, const SdfPath &path)
 {
-  if (const PcpPrimIndex *primIndex = cache.FindPrimIndex(path)) {
+  if (const PcpPrimIndex *primIndex = cache.FindPrimIndex(path))
+  {
     // Wrap the prim index to python as an internal reference on cache.
     // The return_internal_reference<> says that the result is owned
     // by the first argument, the PcpCache, and shouldn't be destroyed
@@ -110,7 +112,8 @@ static const PcpPropertyIndex &_WrapPropertyIndex(PcpCache &, const PcpPropertyI
 
 static boost::python::object _FindPropertyIndex(PcpCache &cache, const SdfPath &path)
 {
-  if (const PcpPropertyIndex *propIndex = cache.FindPropertyIndex(path)) {
+  if (const PcpPropertyIndex *propIndex = cache.FindPropertyIndex(path))
+  {
     // Wrap the index to python as an internal reference on cache.
     // The return_internal_reference<> says that the result is owned
     // by the first argument, the PcpCache, and shouldn't be destroyed
@@ -154,7 +157,8 @@ static boost::python::tuple _ComputeAttributeConnectionPaths(PcpCache &cache,
 static void _SetVariantFallbacks(PcpCache &cache, const dict &d)
 {
   PcpVariantFallbackMap fallbacks;
-  if (PcpVariantFallbackMapFromPython(d, &fallbacks)) {
+  if (PcpVariantFallbackMapFromPython(d, &fallbacks))
+  {
     cache.SetVariantFallbacks(fallbacks);
   }
 }

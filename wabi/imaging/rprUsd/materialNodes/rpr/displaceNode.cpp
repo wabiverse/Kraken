@@ -30,15 +30,19 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (minscale)(maxscale)(in));
 ///   - `minscale` and `maxscale` inputs are expected to be of float type and correspond to
 ///   `rprShapeSetDisplacementScale`
 ///
-class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
+class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode
+{
  public:
-  RprUsd_RprDisplaceNode(RprUsd_MaterialBuilderContext *ctx) : m_ctx(ctx), m_displacementScale(0, 1)
+  RprUsd_RprDisplaceNode(RprUsd_MaterialBuilderContext *ctx)
+    : m_ctx(ctx),
+      m_displacementScale(0, 1)
   {}
   ~RprUsd_RprDisplaceNode() override = default;
 
   VtValue GetOutput(TfToken const &outputId) override
   {
-    if (m_output.IsEmpty()) {
+    if (m_output.IsEmpty())
+    {
       return VtValue();
     }
 
@@ -48,36 +52,47 @@ class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
 
   bool SetInput(TfToken const &inputId, VtValue const &value) override
   {
-    if (inputId == _tokens->minscale) {
-      if (value.IsHolding<float>()) {
+    if (inputId == _tokens->minscale)
+    {
+      if (value.IsHolding<float>())
+      {
         m_displacementScale[0] = value.UncheckedGet<float>();
       }
-      else {
+      else
+      {
         TF_RUNTIME_ERROR("Input `minscale` has invalid type: %s, expected - float",
                          value.GetTypeName().c_str());
         m_displacementScale[0] = 0.0f;
         return false;
       }
     }
-    else if (inputId == _tokens->maxscale) {
-      if (value.IsHolding<float>()) {
+    else if (inputId == _tokens->maxscale)
+    {
+      if (value.IsHolding<float>())
+      {
         m_displacementScale[1] = value.UncheckedGet<float>();
       }
-      else {
+      else
+      {
         TF_RUNTIME_ERROR("Input `maxscale` has invalid type: %s, expected - float",
                          value.GetTypeName().c_str());
         m_displacementScale[1] = 1.0f;
         return false;
       }
     }
-    else if (inputId == _tokens->in) {
-      if (value.IsHolding<std::shared_ptr<rpr::MaterialNode>>()) {
+    else if (inputId == _tokens->in)
+    {
+      if (value.IsHolding<std::shared_ptr<rpr::MaterialNode>>())
+      {
         m_output = value;
       }
-      else {
+      else
+      {
         auto vec = GetRprFloat(value);
-        if (!GfIsEqual(vec, GfVec4f(0.0f))) {
-          if (!m_scalarDisplaceNode) {
+        if (!GfIsEqual(vec, GfVec4f(0.0f)))
+        {
+          if (!m_scalarDisplaceNode)
+          {
             m_scalarDisplaceNode.reset(
               new RprUsd_BaseRuntimeNode(RPR_MATERIAL_NODE_CONSTANT_TEXTURE, m_ctx));
           }
@@ -85,7 +100,8 @@ class RprUsd_RprDisplaceNode : public RprUsd_MaterialNode {
           m_scalarDisplaceNode->SetInput(RPR_MATERIAL_INPUT_VALUE, value);
           m_output = VtValue(m_scalarDisplaceNode);
         }
-        else {
+        else
+        {
           m_scalarDisplaceNode = nullptr;
           m_output = VtValue();
         }

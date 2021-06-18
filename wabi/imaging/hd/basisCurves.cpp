@@ -32,7 +32,8 @@ TF_DEFINE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_BASISCURVES_REPR_DESC_TO
 
 TF_DEFINE_ENV_SETTING(HD_ENABLE_REFINED_CURVES, 0, "Force curves to always be refined.");
 
-HdBasisCurves::HdBasisCurves(SdfPath const &id) : HdRprim(id)
+HdBasisCurves::HdBasisCurves(SdfPath const &id)
+  : HdRprim(id)
 {
   /*NOTHING*/
 }
@@ -63,7 +64,8 @@ void HdBasisCurves::ConfigureRepr(TfToken const &reprName, HdBasisCurvesReprDesc
 {
   HD_TRACE_FUNCTION();
 
-  if (IsEnabledForceRefinedCurves()) {
+  if (IsEnabledForceRefinedCurves())
+  {
     desc.geomStyle = HdBasisCurvesGeomStylePatch;
   }
 

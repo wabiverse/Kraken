@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 /// return the same result.
 ///
 /// \see \ref ArResolver_scopedCache "Scoped Resolution Cache"
-class ArResolverScopedCache {
+class ArResolverScopedCache
+{
  public:
   // Disallow copies
   ArResolverScopedCache(const ArResolverScopedCache &) = delete;

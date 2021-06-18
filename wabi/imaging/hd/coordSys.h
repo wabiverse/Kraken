@@ -61,7 +61,8 @@ class HdSceneDelegate;
 /// of the transform from its local space to world space.  In other
 /// words, it has the same interpretation as the transform for rprims.
 ///
-class HdCoordSys : public HdSprim {
+class HdCoordSys : public HdSprim
+{
  public:
   HD_API
   HdCoordSys(SdfPath const &id);
@@ -69,7 +70,12 @@ class HdCoordSys : public HdSprim {
   virtual ~HdCoordSys();
 
   // Change tracking for HdCoordSys
-  enum DirtyBits : HdDirtyBits { Clean = 0, DirtyTransform = 1 << 0, AllDirty = DirtyTransform };
+  enum DirtyBits : HdDirtyBits
+  {
+    Clean = 0,
+    DirtyTransform = 1 << 0,
+    AllDirty = DirtyTransform
+  };
 
   /// Returns the name bound to this coordinate system.
   ///

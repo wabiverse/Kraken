@@ -50,7 +50,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          // Collection names
                          (testCollection));
 
-class HdPh_DrawTask final : public HdTask {
+class HdPh_DrawTask final : public HdTask
+{
  public:
   HdPh_DrawTask(HdRenderPassSharedPtr const &renderPass,
                 HdPhRenderPassStateSharedPtr const &renderPassState,
@@ -63,7 +64,8 @@ class HdPh_DrawTask final : public HdTask {
     _renderTags.reserve(2);
     _renderTags.push_back(HdRenderTagTokens->geometry);
 
-    if (withGuides) {
+    if (withGuides)
+    {
       _renderTags.push_back(HdRenderTagTokens->guide);
     }
   }
@@ -98,7 +100,8 @@ class HdPh_DrawTask final : public HdTask {
   HdPh_DrawTask &operator=(const HdPh_DrawTask &) = delete;
 };
 
-template<typename T> static VtArray<T> _BuildArray(T values[], int numValues)
+template<typename T>
+static VtArray<T> _BuildArray(T values[], int numValues)
 {
   VtArray<T> result(numValues);
   std::copy(values, values + numValues, result.begin());
@@ -118,10 +121,12 @@ HdPh_TestDriver::HdPh_TestDriver()
     _collection(_tokens->testCollection, HdReprSelector())
 {
   if (TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "CPU" ||
-      TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "GPU") {
+      TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "GPU")
+  {
     _Init(HdReprSelector(HdReprTokens->smoothHull));
   }
-  else {
+  else
+  {
     _Init(HdReprSelector(HdReprTokens->hull));
   }
 }
@@ -232,7 +237,8 @@ void HdPh_TestDriver::SetCullStyle(HdCullStyle cullStyle)
 
 HdRenderPassSharedPtr const &HdPh_TestDriver::GetRenderPass()
 {
-  if (!_renderPass) {
+  if (!_renderPass)
+  {
     _renderPass = HdRenderPassSharedPtr(new HdPh_RenderPass(&_sceneDelegate->GetRenderIndex(), _collection));
   }
   return _renderPass;
@@ -304,7 +310,8 @@ std::string HdPh_TestLightingShader::GetSource(TfToken const &shaderStageKey) co
 void HdPh_TestLightingShader::SetCamera(GfMatrix4d const &worldToViewMatrix,
                                         GfMatrix4d const &projectionMatrix)
 {
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < 2; ++i)
+  {
     _lights[i].eyeDir = worldToViewMatrix.TransformDir(_lights[i].dir).GetNormalized();
   }
 }
@@ -344,7 +351,8 @@ void HdPh_TestLightingShader::SetSceneAmbient(GfVec3f const &color)
 
 void HdPh_TestLightingShader::SetLight(int light, GfVec3f const &dir, GfVec3f const &color)
 {
-  if (light < 2) {
+  if (light < 2)
+  {
     _lights[light].dir = dir;
     _lights[light].eyeDir = dir;
     _lights[light].color = color;

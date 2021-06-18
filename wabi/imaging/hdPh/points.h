@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Points.
 ///
-class HdPhPoints final : public HdPoints {
+class HdPhPoints final : public HdPoints
+{
  public:
   HF_MALLOC_TAG_NEW("new HdPhPoints");
 
@@ -85,7 +86,10 @@ class HdPhPoints final : public HdPoints {
 
   bool _displayOpacity;
 
-  enum DrawingCoord { InstancePrimvar = HdDrawingCoord::CustomSlotsBegin };
+  enum DrawingCoord
+  {
+    InstancePrimvar = HdDrawingCoord::CustomSlotsBegin
+  };
 
   void _UpdateDrawItem(HdSceneDelegate *sceneDelegate,
                        HdRenderParam *renderParam,

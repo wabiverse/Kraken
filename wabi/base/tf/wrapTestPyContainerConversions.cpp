@@ -38,14 +38,17 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-class Tf_TestPyContainerConversions {
+class Tf_TestPyContainerConversions
+{
  public:
   static vector<double> GetVectorTimesTwo(const vector<int> &inVec)
   {
     vector<double> ret;
-    for (size_t i = 0; i < inVec.size(); i++) {
+    for (size_t i = 0; i < inVec.size(); i++)
+    {
       ret.push_back(inVec[i] * 2.0);
     }
 

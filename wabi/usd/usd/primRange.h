@@ -115,7 +115,8 @@ WABI_NAMESPACE_BEGIN
 /// provide the \em python \em only methods GetCurrentPrim() and IsValid(),
 /// documented in the python help system.
 ///
-class UsdPrimRange {
+class UsdPrimRange
+{
  public:
   class iterator;
 
@@ -123,10 +124,12 @@ class UsdPrimRange {
   ///
   /// This class lets us represent past-the-end without the full weight of an
   /// iterator.
-  class EndSentinel {
+  class EndSentinel
+  {
    private:
     friend class UsdPrimRange;
-    explicit EndSentinel(UsdPrimRange const *range) : _range(range)
+    explicit EndSentinel(UsdPrimRange const *range)
+      : _range(range)
     {}
     friend class UsdPrimRange::iterator;
     UsdPrimRange const *_range;
@@ -144,11 +147,14 @@ class UsdPrimRange {
                                                   UsdPrim>                       // reference type.
   {
    public:
-    iterator() : iterator_adaptor_(nullptr)
+    iterator()
+      : iterator_adaptor_(nullptr)
     {}
 
     /// Allow implicit conversion from EndSentinel.
-    iterator(EndSentinel e) : iterator_adaptor_(e._range->_end), _range(e._range)
+    iterator(EndSentinel e)
+      : iterator_adaptor_(e._range->_end),
+        _range(e._range)
     {}
 
     /// Return true if the iterator points to a prim visited the second time
@@ -221,7 +227,11 @@ class UsdPrimRange {
 
   using const_iterator = iterator;
 
-  UsdPrimRange() : _begin(nullptr), _end(nullptr), _initDepth(0), _postOrder(false)
+  UsdPrimRange()
+    : _begin(nullptr),
+      _end(nullptr),
+      _initDepth(0),
+      _postOrder(false)
   {}
 
   /// Construct a PrimRange that traverses the subtree rooted at \p start in
@@ -405,7 +415,8 @@ class UsdPrimRange {
 
     // Advance to the first prim that passes the predicate.
     iterator b = begin();
-    if (b.base() != _end && !Usd_EvalPredicate(_predicate, b.base(), proxyPrimPath)) {
+    if (b.base() != _end && !Usd_EvalPredicate(_predicate, b.base(), proxyPrimPath))
+    {
       b._pruneChildrenFlag = true;
       set_begin(++b);
     }

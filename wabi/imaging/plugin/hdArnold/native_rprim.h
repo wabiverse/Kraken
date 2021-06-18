@@ -26,7 +26,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim> {
+class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim>
+{
  public:
 #if WABI_VERSION >= 2102
   HDARNOLD_API

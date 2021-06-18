@@ -89,7 +89,8 @@ typedef std::unordered_set<std::string> NdrStringSet;
 typedef std::pair<SdfValueTypeName, TfToken> SdfTypeIndicator;
 
 // Version
-class NdrVersion {
+class NdrVersion
+{
  public:
   /// Create an invalid version.
   NDR_API
@@ -203,7 +204,10 @@ class NdrVersion {
   }
 
  private:
-  NdrVersion(const NdrVersion &x, bool) : _major(x._major), _minor(x._minor), _isDefault(true)
+  NdrVersion(const NdrVersion &x, bool)
+    : _major(x._major),
+      _minor(x._minor),
+      _isDefault(true)
   {}
 
  private:
@@ -212,7 +216,12 @@ class NdrVersion {
 };
 
 /// Enumeration used to select nodes by version.
-enum NdrVersionFilter { NdrVersionFilterDefaultOnly, NdrVersionFilterAllVersions, NdrNumVersionFilters };
+enum NdrVersionFilter
+{
+  NdrVersionFilterDefaultOnly,
+  NdrVersionFilterAllVersions,
+  NdrNumVersionFilters
+};
 
 WABI_NAMESPACE_END
 

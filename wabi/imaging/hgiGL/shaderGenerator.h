@@ -44,7 +44,8 @@ using HgiGLShaderSectionUniquePtrVector = std::vector<std::unique_ptr<HgiGLShade
 ///
 /// Takes in a descriptor and spits out GLSL code through it's execute function.
 ///
-class HgiGLShaderGenerator final : public HgiShaderGenerator {
+class HgiGLShaderGenerator final : public HgiShaderGenerator
+{
  public:
   HGIGL_API
   explicit HgiGLShaderGenerator(const HgiShaderFunctionDesc &descriptor);

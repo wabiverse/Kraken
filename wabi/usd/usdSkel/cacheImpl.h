@@ -57,7 +57,8 @@ WABI_NAMESPACE_BEGIN
 class UsdGeomXformCache;
 class UsdSkelRoot;
 
-struct UsdSkel_HashPrim {
+struct UsdSkel_HashPrim
+{
   inline size_t operator()(const UsdPrim &prim) const
   {
     return hash_value(prim);
@@ -75,11 +76,13 @@ struct UsdSkel_HashPrim {
 };
 
 /// Internal cache implementation.
-class UsdSkel_CacheImpl {
+class UsdSkel_CacheImpl
+{
  public:
   using RWMutex = tbb::queuing_rw_mutex;
 
-  struct _SkinningQueryKey {
+  struct _SkinningQueryKey
+  {
     UsdAttribute jointIndicesAttr;
     UsdAttribute jointWeightsAttr;
     UsdAttribute geomBindTransformAttr;
@@ -91,7 +94,8 @@ class UsdSkel_CacheImpl {
 
   /// Scope for performing read-only operations on the cache.
   /// Any thread-safe operations should be called here.
-  struct ReadScope {
+  struct ReadScope
+  {
     ReadScope(UsdSkel_CacheImpl *cache);
 
     // Getters for properties with a direct prim association.
@@ -135,7 +139,8 @@ class UsdSkel_CacheImpl {
 
   /// Scope for performing write operations on the cache.
   /// This is used for non-threadsafe operations, like cache clearing.
-  struct WriteScope {
+  struct WriteScope
+  {
     WriteScope(UsdSkel_CacheImpl *cache);
 
     void Clear();

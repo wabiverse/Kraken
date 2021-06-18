@@ -52,7 +52,8 @@ using TopologyToPrimvarVector = std::vector<std::pair<VtIntArray, std::vector<Tf
 //   +--HdRprimSharedData  <---'
 //
 
-struct HdRprimSharedData {
+struct HdRprimSharedData
+{
   HdRprimSharedData(int barContainerSize)
     : barContainer(barContainerSize),
       bounds(),

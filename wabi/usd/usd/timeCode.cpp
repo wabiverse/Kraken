@@ -44,13 +44,16 @@ void UsdTimeCode::_IssueGetValueOnDefaultError() const
 
 std::ostream &operator<<(std::ostream &os, const UsdTimeCode &time)
 {
-  if (time.IsDefault()) {
+  if (time.IsDefault())
+  {
     os << UsdTimeCodeTokens->DEFAULT;
   }
-  else if (time.IsEarliestTime()) {
+  else if (time.IsEarliestTime())
+  {
     os << UsdTimeCodeTokens->EARLIEST;
   }
-  else {
+  else
+  {
     os << time.GetValue();
   }
 
@@ -63,18 +66,23 @@ std::istream &operator>>(std::istream &is, UsdTimeCode &time)
   is >> valueString;
   const TfToken valueToken(valueString);
 
-  if (valueToken == UsdTimeCodeTokens->DEFAULT) {
+  if (valueToken == UsdTimeCodeTokens->DEFAULT)
+  {
     time = UsdTimeCode::Default();
   }
-  else if (valueToken == UsdTimeCodeTokens->EARLIEST) {
+  else if (valueToken == UsdTimeCodeTokens->EARLIEST)
+  {
     time = UsdTimeCode::EarliestTime();
   }
-  else {
-    try {
+  else
+  {
+    try
+    {
       const double value = std::stod(valueString);
       time = UsdTimeCode(value);
     }
-    catch (const std::exception & /* e */) {
+    catch (const std::exception & /* e */)
+    {
       // Leave time unchanged on error.
     }
   }

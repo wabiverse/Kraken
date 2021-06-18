@@ -46,7 +46,8 @@ using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
 ///
 /// A central registry for resources.
 ///
-class HdResourceRegistry {
+class HdResourceRegistry
+{
  public:
   HF_MALLOC_TAG_NEW("new HdResourceRegistry");
 

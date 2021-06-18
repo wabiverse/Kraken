@@ -47,7 +47,8 @@ using VkDescriptorSetLayoutVector = std::vector<VkDescriptorSetLayout>;
 ///
 /// Vulkan implementation of HgiComputePipeline.
 ///
-class HgiVulkanComputePipeline final : public HgiComputePipeline {
+class HgiVulkanComputePipeline final : public HgiComputePipeline
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanComputePipeline() override;

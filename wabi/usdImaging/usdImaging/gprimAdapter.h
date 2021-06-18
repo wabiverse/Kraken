@@ -44,11 +44,13 @@ class UsdGeomGprim;
 /// Gprim data support, such as visibility, doubleSided, extent, displayColor,
 /// displayOpacity, purpose, and transform.
 ///
-class UsdImagingGprimAdapter : public UsdImagingPrimAdapter {
+class UsdImagingGprimAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingGprimAdapter() : UsdImagingPrimAdapter()
+  UsdImagingGprimAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

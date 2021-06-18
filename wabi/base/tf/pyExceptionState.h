@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct TfPyExceptionState {
+struct TfPyExceptionState
+{
   TfPyExceptionState(boost::python::handle<> const &type,
                      boost::python::handle<> const &value,
                      boost::python::handle<> const &trace)

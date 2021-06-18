@@ -55,7 +55,8 @@ using HdPh_DrawBatchSharedPtrVector = std::vector<HdPh_DrawBatchSharedPtr>;
 /// them for correctness (e.g. alpha transparency) and efficiency (e.g. the
 /// fewest number of GPU state changes).
 ///
-class HdPhCommandBuffer {
+class HdPhCommandBuffer
+{
  public:
   HDPH_API
   HdPhCommandBuffer();

@@ -48,7 +48,8 @@ class HioRankedTypeMap;
 ///
 /// Manages plugin registration and loading for HioImage subclasses.
 ///
-class HioImageRegistry : public TfSingleton<HioImageRegistry> {
+class HioImageRegistry : public TfSingleton<HioImageRegistry>
+{
  public:
   HIO_API
   static HioImageRegistry &GetInstance();

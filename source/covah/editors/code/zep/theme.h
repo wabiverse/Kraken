@@ -5,9 +5,11 @@
 
 #include "zep/mcommon/math/math.h"
 
-namespace Zep {
+namespace Zep
+{
 
-enum class ThemeColor {
+enum class ThemeColor
+{
   None,
   TabBorder,
   HiddenText,
@@ -67,9 +69,14 @@ enum class ThemeColor {
   UniqueColorLast,
 };
 
-enum class ThemeType { Dark, Light };
+enum class ThemeType
+{
+  Dark,
+  Light
+};
 
-class ZepTheme {
+class ZepTheme
+{
  public:
   ZepTheme();
   virtual ~ZepTheme()

@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
  * @class HgiVkInstance
  *
  * Initializes the Vulkan library and contains the apps Vulkan state. */
-class HgiVulkanInstance final {
+class HgiVulkanInstance final
+{
  public:
   HGIVULKAN_API
   HgiVulkanInstance();

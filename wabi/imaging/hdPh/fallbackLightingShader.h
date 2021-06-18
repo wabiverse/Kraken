@@ -40,7 +40,8 @@ class HioGlslfx;
 ///
 /// A shader that provides fallback lighting behavior.
 ///
-class HdPh_FallbackLightingShader : public HdPhLightingShader {
+class HdPh_FallbackLightingShader : public HdPhLightingShader
+{
  public:
   HDPH_API
   HdPh_FallbackLightingShader();

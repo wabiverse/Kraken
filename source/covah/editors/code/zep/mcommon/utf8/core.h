@@ -32,7 +32,8 @@ DEALINGS IN THE SOFTWARE.
 #define OVERRIDE override
 #define NOEXCEPT noexcept
 
-namespace utf8 {
+namespace utf8
+{
 // The typedefs for 8-bit, 16-bit and 32-bit unsigned integers
 // You may need to change them to match your system.
 // These typedefs have the same names as ones from cstdint, or boost/cstdint
@@ -42,7 +43,8 @@ typedef unsigned int uint32_t;
 
 // Helper code - not intended to be directly called by the library users. May be changed at any
 // time
-namespace internal {
+namespace internal
+{
 // Unicode constants
 // Leading (high) surrogates: 0xd800 - 0xdbff
 // Trailing (low) surrogates: 0xdc00 - 0xdfff
@@ -57,35 +59,42 @@ const uint32_t SURROGATE_OFFSET =
 // Maximum valid value for a Unicode code point
 const uint32_t CODE_POINT_MAX = 0x0010ffffu;
 
-template<typename octet_type> inline uint8_t mask8(octet_type oc)
+template<typename octet_type>
+inline uint8_t mask8(octet_type oc)
 {
   return static_cast<uint8_t>(0xff & oc);
 }
-template<typename u16_type> inline uint16_t mask16(u16_type oc)
+template<typename u16_type>
+inline uint16_t mask16(u16_type oc)
 {
   return static_cast<uint16_t>(0xffff & oc);
 }
-template<typename octet_type> inline bool is_trail(octet_type oc)
+template<typename octet_type>
+inline bool is_trail(octet_type oc)
 {
   return ((utf8::internal::mask8(oc) >> 6) == 0x2);
 }
 
-template<typename u16> inline bool is_lead_surrogate(u16 cp)
+template<typename u16>
+inline bool is_lead_surrogate(u16 cp)
 {
   return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
 }
 
-template<typename u16> inline bool is_trail_surrogate(u16 cp)
+template<typename u16>
+inline bool is_trail_surrogate(u16 cp)
 {
   return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
 }
 
-template<typename u16> inline bool is_surrogate(u16 cp)
+template<typename u16>
+inline bool is_surrogate(u16 cp)
 {
   return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
 }
 
-template<typename u32> inline bool is_code_point_valid(u32 cp)
+template<typename u32>
+inline bool is_code_point_valid(u32 cp)
 {
   return (cp <= CODE_POINT_MAX && !utf8::internal::is_surrogate(cp));
 }
@@ -109,15 +118,18 @@ inline typename std::iterator_traits<octet_iterator>::difference_type sequence_l
 template<typename octet_difference_type>
 inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length)
 {
-  if (cp < 0x80) {
+  if (cp < 0x80)
+  {
     if (length != 1)
       return true;
   }
-  else if (cp < 0x800) {
+  else if (cp < 0x800)
+  {
     if (length != 2)
       return true;
   }
-  else if (cp < 0x10000) {
+  else if (cp < 0x10000)
+  {
     if (length != 3)
       return true;
   }
@@ -125,7 +137,8 @@ inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length)
   return false;
 }
 
-enum utf_error {
+enum utf_error
+{
   UTF8_OK,
   NOT_ENOUGH_ROOM,
   INVALID_LEAD,
@@ -135,7 +148,8 @@ enum utf_error {
 };
 
 /// Helper for get_sequence_x
-template<typename octet_iterator> utf_error increase_safely(octet_iterator &it, octet_iterator end)
+template<typename octet_iterator>
+utf_error increase_safely(octet_iterator &it, octet_iterator end)
 {
   if (++it == end)
     return NOT_ENOUGH_ROOM;
@@ -241,7 +255,8 @@ utf_error validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_p
 
   // Get trail octets and calculate the code point
   utf_error err = UTF8_OK;
-  switch (length) {
+  switch (length)
+  {
     case 0:
       return INVALID_LEAD;
     case 1:
@@ -258,10 +273,13 @@ utf_error validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_p
       break;
   }
 
-  if (err == UTF8_OK) {
+  if (err == UTF8_OK)
+  {
     // Decoding succeeded. Now, security checks...
-    if (utf8::internal::is_code_point_valid(cp)) {
-      if (!utf8::internal::is_overlong_sequence(cp, length)) {
+    if (utf8::internal::is_code_point_valid(cp))
+    {
+      if (!utf8::internal::is_overlong_sequence(cp, length))
+      {
         // Passed! Return here.
         code_point = cp;
         ++it;
@@ -279,7 +297,8 @@ utf_error validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_p
   return err;
 }
 
-template<typename octet_iterator> inline utf_error validate_next(octet_iterator &it, octet_iterator end)
+template<typename octet_iterator>
+inline utf_error validate_next(octet_iterator &it, octet_iterator end)
 {
   uint32_t ignored;
   return utf8::internal::validate_next(it, end, ignored);
@@ -292,10 +311,12 @@ template<typename octet_iterator> inline utf_error validate_next(octet_iterator 
 // Byte order mark
 const uint8_t bom[] = {0xef, 0xbb, 0xbf};
 
-template<typename octet_iterator> octet_iterator find_invalid(octet_iterator start, octet_iterator end)
+template<typename octet_iterator>
+octet_iterator find_invalid(octet_iterator start, octet_iterator end)
 {
   octet_iterator result = start;
-  while (result != end) {
+  while (result != end)
+  {
     utf8::internal::utf_error err_code = utf8::internal::validate_next(result, end);
     if (err_code != internal::UTF8_OK)
       return result;
@@ -303,12 +324,14 @@ template<typename octet_iterator> octet_iterator find_invalid(octet_iterator sta
   return result;
 }
 
-template<typename octet_iterator> inline bool is_valid(octet_iterator start, octet_iterator end)
+template<typename octet_iterator>
+inline bool is_valid(octet_iterator start, octet_iterator end)
 {
   return (utf8::find_invalid(start, end) == end);
 }
 
-template<typename octet_iterator> inline bool starts_with_bom(octet_iterator it, octet_iterator end)
+template<typename octet_iterator>
+inline bool starts_with_bom(octet_iterator it, octet_iterator end)
 {
   return (((it != end) && (utf8::internal::mask8(*it++)) == bom[0]) &&
           ((it != end) && (utf8::internal::mask8(*it++)) == bom[1]) &&

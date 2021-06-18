@@ -37,7 +37,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for the point instancer.
-class HdArnoldInstancer : public HdInstancer {
+class HdArnoldInstancer : public HdInstancer
+{
  public:
 #if WABI_VERSION >= 2102
   /// Creates an instance of HdArnoldInstancer.

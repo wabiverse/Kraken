@@ -92,9 +92,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_half {
+namespace wabi_half
+{
 
-class half {
+class half
+{
  public:
   //-------------
   // Constructors
@@ -203,7 +205,8 @@ class half {
   GF_API void setBits(unsigned short bits);
 
  public:
-  union uif {
+  union uif
+  {
     unsigned int i;
     float f;
   };
@@ -251,7 +254,7 @@ GF_API void printBits(char c[35], float f);
 #  define WABI_HALF_MAX 65504.0f  // Largest positive half
 
 #  define WABI_HALF_EPSILON \
-    0.00097656f  // Smallest positive e for which
+    0.00097656f  // Smallest positive e for which \
                  // half (1.0 + e) != half (1.0)
 #else
 
@@ -266,43 +269,43 @@ GF_API void printBits(char c[35], float f);
 #endif
 
 #define WABI_HALF_MANT_DIG \
-  11  // Number of digits in mantissa
+  11  // Number of digits in mantissa \
       // (significand + hidden leading 1)
 
 //
 // floor( (WABI_HALF_MANT_DIG - 1) * log10(2) ) => 3.01... -> 3
 #define WABI_HALF_DIG \
-  3  // Number of base 10 digits that
+  3  // Number of base 10 digits that \
      // can be represented without change
 
 // ceil(WABI_HALF_MANT_DIG * log10(2) + 1) => 4.31... -> 5
 #define WABI_HALF_DECIMAL_DIG \
-  5  // Number of base-10 digits that are
-     // necessary to uniquely represent all
+  5  // Number of base-10 digits that are \
+     // necessary to uniquely represent all \
      // distinct values
 
 #define WABI_HALF_RADIX 2  // Base of the exponent
 
 #define WABI_HALF_MIN_EXP \
-  -13  // Minimum negative integer such that
-       // WABI_HALF_RADIX raised to the power of
-       // one less than that integer is a
+  -13  // Minimum negative integer such that \
+       // WABI_HALF_RADIX raised to the power of \
+       // one less than that integer is a \
        // normalized half
 
 #define WABI_HALF_MAX_EXP \
-  16  // Maximum positive integer such that
-      // WABI_HALF_RADIX raised to the power of
-      // one less than that integer is a
+  16  // Maximum positive integer such that \
+      // WABI_HALF_RADIX raised to the power of \
+      // one less than that integer is a \
       // normalized half
 
 #define WABI_HALF_MIN_10_EXP \
-  -4  // Minimum positive integer such
-      // that 10 raised to that power is
+  -4  // Minimum positive integer such \
+      // that 10 raised to that power is \
       // a normalized half
 
 #define WABI_HALF_MAX_10_EXP \
-  4  // Maximum positive integer such
-     // that 10 raised to that power is
+  4  // Maximum positive integer such \
+     // that 10 raised to that power is \
      // a normalized half
 
 //---------------------------------------------------------------------------
@@ -426,7 +429,8 @@ inline half::half(float f)
 
   x.f = f;
 
-  if (f == 0) {
+  if (f == 0)
+  {
     //
     // Common special case - zero.
     // Preserve the zero's sign bit.
@@ -434,7 +438,8 @@ inline half::half(float f)
 
     _h = (x.i >> 16);
   }
-  else {
+  else
+  {
     //
     // We extract the combined sign and exponent, e, from our
     // floating-point number, f.  Then we convert e to the sign
@@ -455,7 +460,8 @@ inline half::half(float f)
 
     e = _eLut[e];
 
-    if (e) {
+    if (e)
+    {
       //
       // Simple case - round the significand, m, to 10
       // bits and combine it with the sign and exponent.
@@ -464,7 +470,8 @@ inline half::half(float f)
       int m = x.i & 0x007fffff;
       _h = e + ((m + 0x00000fff + ((m >> 13) & 1)) >> 13);
     }
-    else {
+    else
+    {
       //
       // Difficult case - call a function.
       //
@@ -519,7 +526,8 @@ inline half half::round(unsigned int n) const
   // Check for exponent overflow.
   //
 
-  if (e >= 0x7c00) {
+  if (e >= 0x7c00)
+  {
     //
     // Overflow occurred -- truncate instead of rounding.
     //

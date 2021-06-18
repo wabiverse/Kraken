@@ -37,7 +37,9 @@ WABI_NAMESPACE_BEGIN
 WORK_API
 bool Work_ShouldSynchronizeAsyncDestroyCalls();
 
-template<class T> struct Work_AsyncMoveDestroyHelper {
+template<class T>
+struct Work_AsyncMoveDestroyHelper
+{
   void operator()() const
   { /* do nothing */
   }
@@ -46,13 +48,16 @@ template<class T> struct Work_AsyncMoveDestroyHelper {
 
 // Helper for swap-based asynchronous destruction that synthesizes move
 // construction and assignment using swap.
-template<class T> struct Work_AsyncSwapDestroyHelper {
+template<class T>
+struct Work_AsyncSwapDestroyHelper
+{
   Work_AsyncSwapDestroyHelper() = default;
 
   Work_AsyncSwapDestroyHelper(Work_AsyncSwapDestroyHelper const &) = delete;
   Work_AsyncSwapDestroyHelper &operator=(Work_AsyncSwapDestroyHelper const &) = delete;
 
-  Work_AsyncSwapDestroyHelper(Work_AsyncSwapDestroyHelper &&other) : obj()
+  Work_AsyncSwapDestroyHelper(Work_AsyncSwapDestroyHelper &&other)
+    : obj()
   {
     using std::swap;
     swap(obj, other.obj);
@@ -78,7 +83,8 @@ template<class T> struct Work_AsyncSwapDestroyHelper {
 /// be true, for example, if obj's destructor might try to update some other
 /// data structure that could be destroyed by the time obj's destruction occurs.
 /// Be careful.
-template<class T> void WorkSwapDestroyAsync(T &obj)
+template<class T>
+void WorkSwapDestroyAsync(T &obj)
 {
   using std::swap;
   Work_AsyncSwapDestroyHelper<T> helper;
@@ -89,7 +95,8 @@ template<class T> void WorkSwapDestroyAsync(T &obj)
 
 /// Like WorkSwapDestroyAsync() but instead, move from \p obj, leaving it
 /// in a moved-from state instead of a default constructed state.
-template<class T> void WorkMoveDestroyAsync(T &obj)
+template<class T>
+void WorkMoveDestroyAsync(T &obj)
 {
   Work_AsyncMoveDestroyHelper<T> helper{std::move(obj)};
   if (!Work_ShouldSynchronizeAsyncDestroyCalls())

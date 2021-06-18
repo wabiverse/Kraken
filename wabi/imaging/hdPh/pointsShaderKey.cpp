@@ -46,7 +46,8 @@ TF_DEFINE_PRIVATE_TOKENS(
   // instancing
   ((instancing, "Instancing.Transform")));
 
-HdPh_PointsShaderKey::HdPh_PointsShaderKey() : glslfx(_tokens->baseGLSLFX)
+HdPh_PointsShaderKey::HdPh_PointsShaderKey()
+  : glslfx(_tokens->baseGLSLFX)
 {
   VS[0] = _tokens->instancing;
   VS[1] = _tokens->mainVS;

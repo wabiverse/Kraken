@@ -38,11 +38,13 @@ class UsdGeomCylinder;
 ///
 /// Delegate support for UsdGeomCylinder.
 ///
-class UsdImagingCylinderAdapter : public UsdImagingGprimAdapter {
+class UsdImagingCylinderAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingCylinderAdapter() : UsdImagingGprimAdapter()
+  UsdImagingCylinderAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   virtual ~UsdImagingCylinderAdapter();

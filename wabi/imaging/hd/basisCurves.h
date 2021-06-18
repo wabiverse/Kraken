@@ -39,7 +39,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_API, HD_BASISCURVES_REP
 ///
 /// Descriptor to configure a drawItem for a repr.
 ///
-struct HdBasisCurvesReprDesc {
+struct HdBasisCurvesReprDesc
+{
   HdBasisCurvesReprDesc(HdBasisCurvesGeomStyle geomStyle = HdBasisCurvesGeomStyleInvalid,
                         TfToken shadingTerminal = HdBasisCurvesReprDescTokens->surfaceShader)
     : geomStyle(geomStyle),
@@ -59,7 +60,8 @@ struct HdBasisCurvesReprDesc {
 
 /// Hydra Schema for a collection of curves using a particular basis.
 ///
-class HdBasisCurves : public HdRprim {
+class HdBasisCurves : public HdRprim
+{
  public:
   HD_API
   virtual ~HdBasisCurves();

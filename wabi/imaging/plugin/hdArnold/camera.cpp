@@ -26,11 +26,13 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 );
 // clang-format on
 
-HdArnoldCamera::HdArnoldCamera(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id) : HdCamera(id)
+HdArnoldCamera::HdArnoldCamera(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
+  : HdCamera(id)
 {
   // We create a persp_camera by default and optionally replace the node in ::Sync.
   _camera = AiNode(renderDelegate->GetUniverse(), str::persp_camera);
-  if (!id.IsEmpty()) {
+  if (!id.IsEmpty())
+  {
     AiNodeSetStr(_camera, str::name, AtString(id.GetText()));
   }
 }
@@ -47,7 +49,8 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
   HdCamera::Sync(sceneDelegate, renderParam, &oldBits);
 
   // We can change between perspective and orthographic camera.
-  if (*dirtyBits & HdCamera::DirtyProjMatrix) {
+  if (*dirtyBits & HdCamera::DirtyProjMatrix)
+  {
     param->Interrupt();
     // If 3, 3 is zero then it's a perspective matrix.
     // TODO(pal): Add support for orthographic cameras.
@@ -56,46 +59,55 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     AiNodeSetFlt(_camera, str::fov, fov);
   }
 
-  if (*dirtyBits & HdCamera::DirtyViewMatrix) {
+  if (*dirtyBits & HdCamera::DirtyViewMatrix)
+  {
     param->Interrupt();
     HdArnoldSetTransform(_camera, sceneDelegate, GetId());
   }
 
   // TODO(pal): Investigate how horizontalAperture, verticalAperture, horizontalApertureOffset and
   //  verticalApertureOffset should be used.
-  if (*dirtyBits & HdCamera::DirtyParams) {
+  if (*dirtyBits & HdCamera::DirtyParams)
+  {
     param->Interrupt();
     const auto &id = GetId();
     const auto getFloat = [&](const VtValue &value, float defaultValue) -> float {
-      if (value.IsHolding<float>()) {
+      if (value.IsHolding<float>())
+      {
         return value.UncheckedGet<float>();
       }
-      else if (value.IsHolding<double>()) {
+      else if (value.IsHolding<double>())
+      {
         return static_cast<float>(value.UncheckedGet<double>());
       }
-      else {
+      else
+      {
         return defaultValue;
       }
     };
     const auto focalLength = getFloat(sceneDelegate->GetCameraParamValue(id, HdCameraTokens->focalLength),
                                       0.0f);
     const auto fStop = getFloat(sceneDelegate->GetCameraParamValue(id, HdCameraTokens->fStop), 0.0f);
-    if (GfIsClose(fStop, 0.0f, AI_EPSILON)) {
+    if (GfIsClose(fStop, 0.0f, AI_EPSILON))
+    {
       AiNodeSetFlt(_camera, str::aperture_size, 0.0f);
     }
-    else {
+    else
+    {
       AiNodeSetFlt(_camera, str::aperture_size, focalLength / (2.0f * fStop));
       AiNodeSetFlt(_camera,
                    str::focus_distance,
                    getFloat(sceneDelegate->GetCameraParamValue(id, HdCameraTokens->focusDistance), 0.0f));
     }
     const auto clippingRange = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->clippingRange);
-    if (clippingRange.IsHolding<GfRange1f>()) {
+    if (clippingRange.IsHolding<GfRange1f>())
+    {
       const auto &range = clippingRange.UncheckedGet<GfRange1f>();
       AiNodeSetFlt(_camera, str::near_clip, range.GetMin());
       AiNodeSetFlt(_camera, str::far_clip, range.GetMax());
     }
-    else {
+    else
+    {
       AiNodeSetFlt(_camera, str::near_clip, 0.0f);
       AiNodeSetFlt(_camera, str::far_clip, AI_INFINITE);
     }
@@ -120,19 +132,23 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
                                     "aperture_aspect_ratio",
                                     "flat_field_focus",
                                     "lens_tilt_angle",
-                                    "lens_shift"}) {
+                                    "lens_shift"})
+      {
         ret.emplace_back(TfToken(TfStringPrintf("primvars:arnold:%s", paramName)), AtString(paramName));
       }
       return ret;
     }();
     const auto *nodeEntry = AiNodeGetNodeEntry(_camera);
-    for (const auto &paramDesc : cameraParams) {
+    for (const auto &paramDesc : cameraParams)
+    {
       const auto paramValue = sceneDelegate->GetCameraParamValue(id, std::get<0>(paramDesc));
-      if (paramValue.IsEmpty()) {
+      if (paramValue.IsEmpty())
+      {
         continue;
       }
       const auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, std::get<1>(paramDesc));
-      if (Ai_likely(paramEntry != nullptr)) {
+      if (Ai_likely(paramEntry != nullptr))
+      {
         HdArnoldSetParameter(_camera, paramEntry, paramValue);
       }
     }

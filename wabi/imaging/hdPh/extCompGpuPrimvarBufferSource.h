@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 /// \class HdPhExtCompGpuPrimvarBufferSource
 /// A buffer source mapped to an output of an ExtComp CPU computation.
 ///
-class HdPhExtCompGpuPrimvarBufferSource final : public HdNullBufferSource {
+class HdPhExtCompGpuPrimvarBufferSource final : public HdNullBufferSource
+{
  public:
   HdPhExtCompGpuPrimvarBufferSource(TfToken const &name,
                                     HdTupleType const &valueType,

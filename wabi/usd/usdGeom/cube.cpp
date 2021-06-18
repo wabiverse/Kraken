@@ -50,7 +50,8 @@ UsdGeomCube::~UsdGeomCube()
 /* static */
 UsdGeomCube UsdGeomCube::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCube();
   }
@@ -61,7 +62,8 @@ UsdGeomCube UsdGeomCube::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomCube UsdGeomCube::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Cube");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCube();
   }
@@ -130,7 +132,8 @@ UsdAttribute UsdGeomCube::CreateExtentAttr(VtValue const &defaultValue, bool wri
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -203,19 +206,23 @@ static bool _ComputeExtentForCube(const UsdGeomBoundable &boundable,
                                   VtVec3fArray *extent)
 {
   const UsdGeomCube cubeSchema(boundable);
-  if (!TF_VERIFY(cubeSchema)) {
+  if (!TF_VERIFY(cubeSchema))
+  {
     return false;
   }
 
   double size;
-  if (!cubeSchema.GetSizeAttr().Get(&size, time)) {
+  if (!cubeSchema.GetSizeAttr().Get(&size, time))
+  {
     return false;
   }
 
-  if (transform) {
+  if (transform)
+  {
     return UsdGeomCube::ComputeExtent(size, *transform, extent);
   }
-  else {
+  else
+  {
     return UsdGeomCube::ComputeExtent(size, extent);
   }
 }

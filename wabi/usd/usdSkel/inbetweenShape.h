@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 /// shape, while for weight values less than or equal to 0.5, the shape is
 /// resolved by linearly interpolating between the inbetween shape and the
 /// primary shape.
-class UsdSkelInbetweenShape {
+class UsdSkelInbetweenShape
+{
  public:
   /// Default constructor returns an invalid inbetween shape.
   UsdSkelInbetweenShape()

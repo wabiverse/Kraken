@@ -22,7 +22,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdRprApi;
 
-class HdRprRenderBuffer final : public HdRenderBuffer {
+class HdRprRenderBuffer final : public HdRenderBuffer
+{
  public:
   HdRprRenderBuffer(SdfPath const &id, HdRprApi *api = nullptr);
   ~HdRprRenderBuffer() override = default;

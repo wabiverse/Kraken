@@ -53,7 +53,8 @@ class SdfAssetPath;
 ///
 /// Concrete prim schema for a transform, which implements Xformable
 ///
-class UsdGeomXform : public UsdGeomXformable {
+class UsdGeomXform : public UsdGeomXformable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -69,13 +70,15 @@ class UsdGeomXform : public UsdGeomXformable {
   /// Equivalent to UsdGeomXform::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomXform(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim)
+  explicit UsdGeomXform(const UsdPrim &prim = UsdPrim())
+    : UsdGeomXformable(prim)
   {}
 
   /// Construct a UsdGeomXform on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomXform(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomXform(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj)
+  explicit UsdGeomXform(const UsdSchemaBase &schemaObj)
+    : UsdGeomXformable(schemaObj)
   {}
 
   /// Destructor.

@@ -59,7 +59,8 @@ WABI_NAMESPACE_BEGIN
 /// over the target prim, and then the referencing prim is composited over
 /// the result.
 ///
-class SdfVariantSetSpec : public SdfSpec {
+class SdfVariantSetSpec : public SdfSpec
+{
   SDF_DECLARE_SPEC(SdfVariantSetSpec, SdfSpec);
 
  public:

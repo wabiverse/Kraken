@@ -55,7 +55,8 @@ using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
 /// Base class for a texture object. The actual GPU resources will be
 /// allocated during the commit phase.
 ///
-class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject> {
+class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
+{
  public:
   /// Get texture identifier
   ///
@@ -152,7 +153,8 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
 ///
 /// A base class for uv textures.
 ///
-class HdPhUvTextureObject : public HdPhTextureObject {
+class HdPhUvTextureObject : public HdPhTextureObject
+{
  public:
   ~HdPhUvTextureObject() override;
 
@@ -199,7 +201,8 @@ class HdPhUvTextureObject : public HdPhTextureObject {
 ///
 /// A uv texture loading the asset identified by the texture identifier.
 ///
-class HdPhAssetUvTextureObject final : public HdPhUvTextureObject {
+class HdPhAssetUvTextureObject final : public HdPhUvTextureObject
+{
  public:
   HDPH_API
   HdPhAssetUvTextureObject(const HdPhTextureIdentifier &textureId,
@@ -223,7 +226,8 @@ class HdPhAssetUvTextureObject final : public HdPhUvTextureObject {
 ///
 /// A uvw texture with a bounding box describing how to transform it.
 ///
-class HdPhFieldTextureObject final : public HdPhTextureObject {
+class HdPhFieldTextureObject final : public HdPhTextureObject
+{
  public:
   HDPH_API
   HdPhFieldTextureObject(const HdPhTextureIdentifier &textureId,
@@ -279,7 +283,8 @@ class HdPhFieldTextureObject final : public HdPhTextureObject {
   HgiTextureHandle _gpuTexture;
 };
 
-template<HdTextureType textureType> struct HdPh_TypedTextureObjectHelper;
+template<HdTextureType textureType>
+struct HdPh_TypedTextureObjectHelper;
 
 /// \class HdPhTypedTextureObject
 ///
@@ -289,11 +294,15 @@ template<HdTextureType textureType> struct HdPh_TypedTextureObjectHelper;
 template<HdTextureType textureType>
 using HdPhTypedTextureObject = typename HdPh_TypedTextureObjectHelper<textureType>::type;
 
-template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Uv> {
+template<>
+struct HdPh_TypedTextureObjectHelper<HdTextureType::Uv>
+{
   using type = HdPhUvTextureObject;
 };
 
-template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Field> {
+template<>
+struct HdPh_TypedTextureObjectHelper<HdTextureType::Field>
+{
   using type = HdPhFieldTextureObject;
 };
 

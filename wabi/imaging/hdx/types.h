@@ -35,7 +35,8 @@
 WABI_NAMESPACE_BEGIN
 
 // Struct used to send shader inputs from Presto and send them to Hydra
-struct HdxShaderInputs {
+struct HdxShaderInputs
+{
   VtDictionary parameters;
   VtDictionary textures;
   VtDictionary textureFallbackValues;

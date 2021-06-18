@@ -62,8 +62,12 @@ WABI_NAMESPACE_BEGIN
 //                   pointsOffset
 //                       <----- numAdditionalPoints  ---->
 
-struct HdQuadInfo {
-  HdQuadInfo() : pointsOffset(0), numAdditionalPoints(0), maxNumVert(0)
+struct HdQuadInfo
+{
+  HdQuadInfo()
+    : pointsOffset(0),
+      numAdditionalPoints(0),
+      maxNumVert(0)
   {}
 
   /// Returns true if the mesh is all-quads.
@@ -83,9 +87,12 @@ struct HdQuadInfo {
 /// A collection of utility algorithms for generating triangulation
 /// and quadrangulation of an input topology.
 
-class HdMeshUtil {
+class HdMeshUtil
+{
  public:
-  HdMeshUtil(HdMeshTopology const *topology, SdfPath const &id) : _topology(topology), _id(id)
+  HdMeshUtil(HdMeshTopology const *topology, SdfPath const &id)
+    : _topology(topology),
+      _id(id)
   {}
   virtual ~HdMeshUtil()
   {}
@@ -262,7 +269,8 @@ class HdMeshUtil {
 /// drawing order and requires minimal additional GPU data.
 ///
 ///
-class HdMeshEdgeIndexTable {
+class HdMeshEdgeIndexTable
+{
  public:
   explicit HdMeshEdgeIndexTable(HdMeshTopology const *topology);
   ~HdMeshEdgeIndexTable();
@@ -275,11 +283,15 @@ class HdMeshEdgeIndexTable {
   bool GetEdgeIndices(GfVec2i const &edgeVertices, std::vector<int> *edgeIndicesOut) const;
 
  private:
-  struct _Edge {
-    _Edge(GfVec2i const &verts_ = GfVec2i(-1), int index_ = -1) : verts(verts_), index(index_)
+  struct _Edge
+  {
+    _Edge(GfVec2i const &verts_ = GfVec2i(-1), int index_ = -1)
+      : verts(verts_),
+        index(index_)
     {
       // Simplify sorting and searching by keeping the vertices ordered.
-      if (verts[0] > verts[1]) {
+      if (verts[0] > verts[1])
+      {
         std::swap(verts[0], verts[1]);
       }
     }
@@ -287,20 +299,23 @@ class HdMeshEdgeIndexTable {
     int index;
   };
 
-  struct _CompareEdgeVertices {
+  struct _CompareEdgeVertices
+  {
     bool operator()(_Edge const &lhs, _Edge const &rhs) const
     {
       return (lhs.verts[0] < rhs.verts[0] || (lhs.verts[0] == rhs.verts[0] && lhs.verts[1] < rhs.verts[1]));
     }
   };
 
-  struct _EdgeVerticesHash {
+  struct _EdgeVerticesHash
+  {
     // Use a custom hash so that edges (a,b) and (b,a) are equivalent
     inline size_t operator()(GfVec2i const &v) const
     {
       // Triangular numbers for 2-d hash.
       int theMin = v[0], theMax = v[1];
-      if (theMin > theMax) {
+      if (theMin > theMax)
+      {
         std::swap(theMin, theMax);
       }
       size_t x = theMin;

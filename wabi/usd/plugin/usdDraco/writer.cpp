@@ -55,7 +55,8 @@ bool UsdDraco_WriteDraco(const UsdGeomMesh &usdMesh,
     UsdDracoFlag<bool>::MakeBooleanFlag(preservePolygons),
     UsdDracoFlag<bool>::MakeBooleanFlag(preservePositionOrder),
     UsdDracoFlag<bool>::MakeBooleanFlag(preserveHoles));
-  if (!success) {
+  if (!success)
+  {
     std::cout << "Could not translate USD mesh to Draco mesh." << std::endl;
     return false;
   }
@@ -73,14 +74,16 @@ bool UsdDraco_WriteDraco(const UsdGeomMesh &usdMesh,
 
   const int speed = 10 - cl;
   encoder.SetSpeedOptions(speed, speed);
-  if (!encoder.EncodeMeshToBuffer(dracoMesh, &buffer).ok()) {
+  if (!encoder.EncodeMeshToBuffer(dracoMesh, &buffer).ok())
+  {
     std::cout << "Could not encode mesh." << std::endl;
     return false;
   }
 
   // Write encoded Draco mesh to file.
   std::ofstream fout(fileName.c_str(), std::ios::binary);
-  if (!fout.is_open()) {
+  if (!fout.is_open())
+  {
     std::cout << "Failed to open file " << fileName << std::endl;
     return false;
   }

@@ -59,7 +59,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 typedef TfWeakPtr<PlugRegistry> PlugRegistryPtr;
 
@@ -98,14 +99,17 @@ static std::vector<TfType> _GetAllDerivedTypes(TfType const &type)
 typedef bool PluginPredicateSig(PlugPluginPtr);
 typedef std::function<PluginPredicateSig> PluginPredicateFn;
 
-struct SharedState : boost::noncopyable {
+struct SharedState : boost::noncopyable
+{
 
   void ThreadTask()
   {
-    while (true) {
+    while (true)
+    {
       // Try to take the next plugin to load.
       size_t cur = nextAvailable;
-      while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1)) {
+      while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1))
+      {
         cur = nextAvailable;
       }
 
@@ -123,7 +127,8 @@ struct SharedState : boost::noncopyable {
   std::atomic<size_t> nextAvailable;
 };
 
-template<class Range> string PluginNames(Range const &range)
+template<class Range>
+string PluginNames(Range const &range)
 {
   using std::distance;
   vector<string> names(distance(boost::begin(range), boost::end(range)));
@@ -148,7 +153,8 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
     plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
 
   // Report any already loaded plugins as skipped.
-  if (verbose && alreadyLoaded != plugins.end()) {
+  if (verbose && alreadyLoaded != plugins.end())
+  {
     printf("Skipping already-loaded plugins: %s\n",
            PluginNames(make_pair(alreadyLoaded, plugins.end())).c_str());
   }
@@ -156,7 +162,8 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
   // Trim the already loaded plugins from the vector.
   plugins.erase(alreadyLoaded, plugins.end());
 
-  if (plugins.empty()) {
+  if (plugins.empty())
+  {
     if (verbose)
       printf("No plugins to load.\n");
     return;
@@ -169,7 +176,8 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
   numThreads = numThreads ? numThreads : std::min(hwThreads, (unsigned int)plugins.size());
 
   // Report what we're doing.
-  if (verbose) {
+  if (verbose)
+  {
     printf("Loading %zu plugins concurrently: %s\n", plugins.size(), PluginNames(plugins).c_str());
   }
 
@@ -180,16 +188,19 @@ void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool ve
 
   // Load in multiple threads.
   std::vector<std::thread> threads;
-  for (size_t i = 0; i != numThreads; ++i) {
+  for (size_t i = 0; i != numThreads; ++i)
+  {
     threads.emplace_back([&state]() { state.ThreadTask(); });
   }
 
   // Wait for threads.
-  for (auto &thread : threads) {
+  for (auto &thread : threads)
+  {
     thread.join();
   }
 
-  if (verbose) {
+  if (verbose)
+  {
     printf("Used %zu threads.\n", numThreads);
   }
 }

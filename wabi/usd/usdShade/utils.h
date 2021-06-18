@@ -45,7 +45,8 @@ class UsdShadeOutput;
 /// This class contains a set of utility functions used when authoring and
 /// querying shading networks.
 ///
-class UsdShadeUtils {
+class UsdShadeUtils
+{
  public:
   /// Returns the namespace prefix of the USD attribute associated with the
   /// given shading attribute type.

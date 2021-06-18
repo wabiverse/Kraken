@@ -44,7 +44,8 @@ class VtValue;
 ///
 /// Provides Metal/GL interop
 ///
-class HgiInteropMetal final {
+class HgiInteropMetal final
+{
  public:
   HGIINTEROP_API
   HgiInteropMetal(Hgi *hgi);
@@ -62,14 +63,16 @@ class HgiInteropMetal final {
  private:
   HgiInteropMetal() = delete;
 
-  enum {
+  enum
+  {
     ShaderContextColor,
     ShaderContextColorDepth,
 
     ShaderContextCount
   };
 
-  struct ShaderContext {
+  struct ShaderContext
+  {
     uint32_t program;
     uint32_t vao;
     uint32_t vbo;
@@ -80,7 +83,8 @@ class HgiInteropMetal final {
     uint32_t blitTexSizeUniform;
   };
 
-  struct VertexAttribState {
+  struct VertexAttribState
+  {
     int32_t enabled;
     int32_t size;
     int32_t type;

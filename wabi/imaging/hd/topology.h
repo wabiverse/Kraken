@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdTopology {
+class HdTopology
+{
  public:
   typedef uint64_t ID;
 

@@ -2,9 +2,11 @@
 #include "zep/buffer.h"
 #include "zep/editor.h"
 
-namespace Zep {
+namespace Zep
+{
 
-RangeMarker::RangeMarker(ZepBuffer &buffer) : m_buffer(buffer)
+RangeMarker::RangeMarker(ZepBuffer &buffer)
+  : m_buffer(buffer)
 {
   onPreBufferInsert = buffer.sigPreInsert.connect(
     [=](ZepBuffer &buffer, const GlyphIterator &itrStart, const std::string &str) {
@@ -108,21 +110,26 @@ void RangeMarker::HandleBufferInsert(ZepBuffer &buffer,
                                      const GlyphIterator &itrStart,
                                      const std::string &str)
 {
-  if (!m_enabled) {
+  if (!m_enabled)
+  {
     return;
   }
 
-  if (itrStart.Index() > GetRange().second) {
+  if (itrStart.Index() > GetRange().second)
+  {
     return;
   }
-  else {
+  else
+  {
     auto itrEnd = itrStart + long(str.size());
-    if (itrEnd.Index() <= (GetRange().first + 1)) {
+    if (itrEnd.Index() <= (GetRange().first + 1))
+    {
       auto distance = itrEnd.Index() - itrStart.Index();
       auto currentRange = GetRange();
       SetRange(ByteRange(currentRange.first + distance, currentRange.second + distance));
     }
-    else {
+    else
+    {
       buffer.ClearRangeMarker(shared_from_this());
       m_enabled = false;
     }
@@ -133,23 +140,28 @@ void RangeMarker::HandleBufferDelete(ZepBuffer &buffer,
                                      const GlyphIterator &itrStart,
                                      const GlyphIterator &itrEnd)
 {
-  if (!m_enabled) {
+  if (!m_enabled)
+  {
     return;
   }
 
-  if (itrStart.Index() > GetRange().second) {
+  if (itrStart.Index() > GetRange().second)
+  {
     return;
   }
-  else {
+  else
+  {
     ZLOG(INFO, "Range: " << itrStart.Index() << ", " << itrEnd.Index() << " : mark: " << GetRange().first);
 
     // It's OK to move on the first char; since that is like a shove
-    if (itrEnd.Index() < (GetRange().first + 1)) {
+    if (itrEnd.Index() < (GetRange().first + 1))
+    {
       auto distance = std::min(itrEnd.Index(), GetRange().first) - itrStart.Index();
       auto currentRange = GetRange();
       SetRange(ByteRange(currentRange.first - distance, currentRange.second - distance));
     }
-    else {
+    else
+    {
       buffer.ClearRangeMarker(shared_from_this());
       m_enabled = false;
     }

@@ -78,7 +78,8 @@ void UsdImagingCylinderAdapter::TrackVariability(UsdPrim const &prim,
   // base adapter invocation) that might result in the bit being set, we need
   // to be careful not to reset it.  Translation: only check _IsVarying for a
   // given cause IFF the bit wasn't already set by a previous invocation.
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->height,
                HdChangeTracker::DirtyPoints,
@@ -86,7 +87,8 @@ void UsdImagingCylinderAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->radius,
                HdChangeTracker::DirtyPoints,
@@ -94,7 +96,8 @@ void UsdImagingCylinderAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
+  {
     _IsVarying(prim,
                UsdGeomTokens->axis,
                HdChangeTracker::DirtyPoints,
@@ -109,7 +112,8 @@ HdDirtyBits UsdImagingCylinderAdapter::ProcessPropertyChange(UsdPrim const &prim
                                                              TfToken const &propertyName)
 {
   if (propertyName == UsdGeomTokens->height || propertyName == UsdGeomTokens->radius ||
-      propertyName == UsdGeomTokens->axis) {
+      propertyName == UsdGeomTokens->axis)
+  {
     return HdChangeTracker::DirtyPoints;
   }
 
@@ -130,15 +134,18 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
 
   double height = 2.0;
   UsdGeomSphere sphere(prim);
-  if (!cylinder.GetHeightAttr().Get(&height, time)) {
+  if (!cylinder.GetHeightAttr().Get(&height, time))
+  {
     TF_WARN("Could not evaluate double-valued height attribute on prim %s", prim.GetPath().GetText());
   }
   double radius = 1.0;
-  if (!cylinder.GetRadiusAttr().Get(&radius, time)) {
+  if (!cylinder.GetRadiusAttr().Get(&radius, time))
+  {
     TF_WARN("Could not evaluate double-valued radius attribute on prim %s", prim.GetPath().GetText());
   }
   TfToken axis = UsdGeomTokens->z;
-  if (!cylinder.GetAxisAttr().Get(&axis, time)) {
+  if (!cylinder.GetAxisAttr().Get(&axis, time))
+  {
     TF_WARN("Could not evaluate token-valued axis attribute on prim %s", prim.GetPath().GetText());
   }
 
@@ -151,7 +158,8 @@ VtValue UsdImagingCylinderAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCod
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitCylinderMeshPoints();
   GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
-  for (GfVec3f &pt : points) {
+  for (GfVec3f &pt : points)
+  {
     pt = scale.Transform(pt);
   }
 

@@ -35,7 +35,8 @@ class HdPhDrawItem;
 
 /// Represents a Volume Prim.
 ///
-class HdPhVolume final : public HdVolume {
+class HdPhVolume final : public HdVolume
+{
  public:
   HDPH_API
   HdPhVolume(SdfPath const &id);

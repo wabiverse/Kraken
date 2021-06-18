@@ -83,7 +83,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (mtlx));
 
 using HdPhResourceRegistryWeakPtr = std::weak_ptr<HdPhResourceRegistry>;
 
-namespace {
+namespace
+{
 
 //
 // Map from Hgi instances to resource registries.
@@ -91,7 +92,8 @@ namespace {
 // An entry is kept alive until the last shared_ptr to a resource
 // registry is dropped.
 //
-class _HgiToResourceRegistryMap final {
+class _HgiToResourceRegistryMap final
+{
  public:
   // Map is a singleton.
   static _HgiToResourceRegistryMap &GetInstance()
@@ -108,7 +110,8 @@ class _HgiToResourceRegistryMap final {
 
     // Previous entry exists, use it.
     auto it = _map.find(hgi);
-    if (it != _map.end()) {
+    if (it != _map.end())
+    {
       HdPhResourceRegistryWeakPtr const &registry = it->second;
       return HdPhResourceRegistrySharedPtr(registry);
     }
@@ -151,7 +154,8 @@ class _HgiToResourceRegistryMap final {
 
 }  // namespace
 
-HdPhRenderDelegate::HdPhRenderDelegate() : HdPhRenderDelegate(HdRenderSettingsMap())
+HdPhRenderDelegate::HdPhRenderDelegate()
+  : HdPhRenderDelegate(HdRenderSettingsMap())
 {}
 
 HdPhRenderDelegate::HdPhRenderDelegate(HdRenderSettingsMap const &settingsMap)
@@ -188,7 +192,8 @@ VtDictionary HdPhRenderDelegate::GetRenderStats() const
   VtDictionary ra = _resourceRegistry->GetResourceAllocation();
 
   const VtDictionary::iterator gpuMemIt = ra.find(HdPerfTokens->gpuMemoryUsed.GetString());
-  if (gpuMemIt != ra.end()) {
+  if (gpuMemIt != ra.end())
+  {
     // If we find gpuMemoryUsed, add the texture memory to it.
     // XXX: We should look into fixing this in the resource registry itself
     size_t texMem = VtDictionaryGet<size_t>(ra, HdPerfTokens->textureMemory.GetString(), VtDefault = 0);
@@ -203,14 +208,17 @@ HdPhRenderDelegate::~HdPhRenderDelegate() = default;
 
 void HdPhRenderDelegate::SetDrivers(HdDriverVector const &drivers)
 {
-  if (_resourceRegistry) {
+  if (_resourceRegistry)
+  {
     TF_CODING_ERROR("Cannot set HdDriver twice for a render delegate.");
     return;
   }
 
   // For Phoenix we want to use the Hgi driver, so extract it.
-  for (HdDriver *hdDriver : drivers) {
-    if (hdDriver->name == HgiTokens->renderDriver && hdDriver->driver.IsHolding<Hgi *>()) {
+  for (HdDriver *hdDriver : drivers)
+  {
+    if (hdDriver->name == HgiTokens->renderDriver && hdDriver->driver.IsHolding<Hgi *>())
+    {
       _hgi = hdDriver->driver.UncheckedGet<Hgi *>();
       break;
     }
@@ -236,7 +244,8 @@ static TfTokenVector _ComputeSupportedBprimTypes()
   TfTokenVector result;
   result.push_back(HdPrimTypeTokens->renderBuffer);
 
-  for (const TfToken &primType : HdPhField::GetSupportedBprimTypes()) {
+  for (const TfToken &primType : HdPhField::GetSupportedBprimTypes())
+  {
     result.push_back(primType);
   }
 
@@ -263,11 +272,13 @@ HdAovDescriptor HdPhRenderDelegate::GetDefaultAovDescriptor(TfToken const &name)
 {
   const bool colorDepthMSAA = true;  // GL requires color/depth to be matching.
 
-  if (name == HdAovTokens->color) {
+  if (name == HdAovTokens->color)
+  {
     HdFormat colorFormat = HdFormatFloat16Vec4;
     return HdAovDescriptor(colorFormat, colorDepthMSAA, VtValue(GfVec4f(0)));
   }
-  else if (HdAovHasDepthSemantic(name)) {
+  else if (HdAovHasDepthSemantic(name))
+  {
     return HdAovDescriptor(HdFormatFloat32, colorDepthMSAA, VtValue(1.0f));
   }
 
@@ -297,19 +308,24 @@ void HdPhRenderDelegate::DestroyInstancer(HdInstancer *instancer)
 
 HdRprim *HdPhRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const &rprimId)
 {
-  if (typeId == HdPrimTypeTokens->mesh) {
+  if (typeId == HdPrimTypeTokens->mesh)
+  {
     return new HdPhMesh(rprimId);
   }
-  else if (typeId == HdPrimTypeTokens->basisCurves) {
+  else if (typeId == HdPrimTypeTokens->basisCurves)
+  {
     return new HdPhBasisCurves(rprimId);
   }
-  else if (typeId == HdPrimTypeTokens->points) {
+  else if (typeId == HdPrimTypeTokens->points)
+  {
     return new HdPhPoints(rprimId);
   }
-  else if (typeId == HdPrimTypeTokens->volume) {
+  else if (typeId == HdPrimTypeTokens->volume)
+  {
     return new HdPhVolume(rprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
 
@@ -323,23 +339,29 @@ void HdPhRenderDelegate::DestroyRprim(HdRprim *rPrim)
 
 HdSprim *HdPhRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdCamera(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->drawTarget) {
+  else if (typeId == HdPrimTypeTokens->drawTarget)
+  {
     return new HdPhDrawTarget(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->extComputation) {
+  else if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdPhExtComputation(sprimId);
   }
-  else if (typeId == HdPrimTypeTokens->material) {
+  else if (typeId == HdPrimTypeTokens->material)
+  {
     return new HdPhMaterial(sprimId);
   }
   else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
-           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight) {
+           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
+  {
     return new HdPhLight(sprimId, typeId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -348,23 +370,29 @@ HdSprim *HdPhRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &s
 
 HdSprim *HdPhRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
 {
-  if (typeId == HdPrimTypeTokens->camera) {
+  if (typeId == HdPrimTypeTokens->camera)
+  {
     return new HdCamera(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->drawTarget) {
+  else if (typeId == HdPrimTypeTokens->drawTarget)
+  {
     return new HdPhDrawTarget(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->extComputation) {
+  else if (typeId == HdPrimTypeTokens->extComputation)
+  {
     return new HdPhExtComputation(SdfPath::EmptyPath());
   }
-  else if (typeId == HdPrimTypeTokens->material) {
+  else if (typeId == HdPrimTypeTokens->material)
+  {
     return _CreateFallbackMaterialPrim();
   }
   else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
-           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight) {
+           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
+  {
     return new HdPhLight(SdfPath::EmptyPath(), typeId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -378,13 +406,16 @@ void HdPhRenderDelegate::DestroySprim(HdSprim *sPrim)
 
 HdBprim *HdPhRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &bprimId)
 {
-  if (HdPhField::IsSupportedBprimType(typeId)) {
+  if (HdPhField::IsSupportedBprimType(typeId))
+  {
     return new HdPhField(bprimId, typeId);
   }
-  else if (typeId == HdPrimTypeTokens->renderBuffer) {
+  else if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdPhRenderBuffer(_resourceRegistry.get(), bprimId);
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
 
@@ -393,13 +424,16 @@ HdBprim *HdPhRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &b
 
 HdBprim *HdPhRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
 {
-  if (HdPhField::IsSupportedBprimType(typeId)) {
+  if (HdPhField::IsSupportedBprimType(typeId))
+  {
     return new HdPhField(SdfPath::EmptyPath(), typeId);
   }
-  else if (typeId == HdPrimTypeTokens->renderBuffer) {
+  else if (typeId == HdPrimTypeTokens->renderBuffer)
+  {
     return new HdPhRenderBuffer(_resourceRegistry.get(), SdfPath::EmptyPath());
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
 
@@ -443,7 +477,8 @@ void HdPhRenderDelegate::CommitResources(HdChangeTracker *tracker)
   _resourceRegistry->Commit();
 
   HdPhRenderParam *stRenderParam = _renderParam.get();
-  if (stRenderParam->IsGarbageCollectionNeeded()) {
+  if (stRenderParam->IsGarbageCollectionNeeded())
+  {
     _resourceRegistry->GarbageCollect();
     stRenderParam->ClearGarbageCollectionNeeded();
   }

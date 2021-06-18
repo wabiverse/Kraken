@@ -46,7 +46,8 @@ class HgiMetal;
 ///
 /// Metal implementation of HgiShaderFunction
 ///
-class HgiMetalShaderFunction final : public HgiShaderFunction {
+class HgiMetalShaderFunction final : public HgiShaderFunction
+{
  public:
   HGIMETAL_API
   ~HgiMetalShaderFunction() override;

@@ -55,19 +55,24 @@ VtValue UsdImagingOpenVDBAssetAdapter::Get(UsdPrim const &prim,
 {
   if (key == UsdVolTokens->filePath || key == UsdVolTokens->fieldName || key == UsdVolTokens->fieldIndex ||
       key == UsdVolTokens->fieldDataType || key == UsdVolTokens->vectorDataRoleHint ||
-      key == UsdVolTokens->fieldClass) {
+      key == UsdVolTokens->fieldClass)
+  {
 
-    if (UsdAttribute const &attr = prim.GetAttribute(key)) {
+    if (UsdAttribute const &attr = prim.GetAttribute(key))
+    {
       VtValue value;
-      if (attr.Get(&value, time)) {
+      if (attr.Get(&value, time))
+      {
         return value;
       }
     }
 
-    if (key == UsdVolTokens->filePath) {
+    if (key == UsdVolTokens->filePath)
+    {
       return VtValue(SdfAssetPath());
     }
-    if (key == UsdVolTokens->fieldIndex) {
+    if (key == UsdVolTokens->fieldIndex)
+    {
       constexpr int def = 0;
       return VtValue(def);
     }

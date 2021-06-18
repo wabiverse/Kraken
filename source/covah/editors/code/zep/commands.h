@@ -2,9 +2,11 @@
 
 #include "zep/buffer.h"
 
-namespace Zep {
+namespace Zep
+{
 
-class ZepCommand {
+class ZepCommand
+{
  public:
   ZepCommand(ZepBuffer &currentMode,
              const GlyphIterator &cursorBefore = GlyphIterator(),
@@ -36,23 +38,28 @@ class ZepCommand {
   ChangeRecord m_changeRecord;
 };
 
-class ZepCommand_GroupMarker : public ZepCommand {
+class ZepCommand_GroupMarker : public ZepCommand
+{
  public:
-  ZepCommand_GroupMarker(ZepBuffer &currentMode) : ZepCommand(currentMode)
+  ZepCommand_GroupMarker(ZepBuffer &currentMode)
+    : ZepCommand(currentMode)
   {}
   virtual void Redo() override{};
   virtual void Undo() override{};
 };
 
-class ZepCommand_EndGroup : public ZepCommand {
+class ZepCommand_EndGroup : public ZepCommand
+{
  public:
-  ZepCommand_EndGroup(ZepBuffer &currentMode) : ZepCommand(currentMode)
+  ZepCommand_EndGroup(ZepBuffer &currentMode)
+    : ZepCommand(currentMode)
   {}
   virtual void Redo() override{};
   virtual void Undo() override{};
 };
 
-class ZepCommand_DeleteRange : public ZepCommand {
+class ZepCommand_DeleteRange : public ZepCommand
+{
  public:
   ZepCommand_DeleteRange(ZepBuffer &buffer,
                          const GlyphIterator &startIndex,
@@ -68,7 +75,8 @@ class ZepCommand_DeleteRange : public ZepCommand {
   GlyphIterator m_endIndex;
 };
 
-class ZepCommand_ReplaceRange : public ZepCommand {
+class ZepCommand_ReplaceRange : public ZepCommand
+{
  public:
   ZepCommand_ReplaceRange(ZepBuffer &buffer,
                           ReplaceRangeMode replaceMode,
@@ -90,7 +98,8 @@ class ZepCommand_ReplaceRange : public ZepCommand {
   ChangeRecord m_deleteStepChange;
 };
 
-class ZepCommand_Insert : public ZepCommand {
+class ZepCommand_Insert : public ZepCommand
+{
  public:
   ZepCommand_Insert(ZepBuffer &buffer,
                     const GlyphIterator &startIndex,

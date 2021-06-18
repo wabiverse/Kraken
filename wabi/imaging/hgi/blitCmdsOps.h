@@ -70,7 +70,8 @@ WABI_NAMESPACE_BEGIN
 ///   Size of the destination buffer (in bytes)</li>
 /// </ul>
 ///
-struct HgiTextureGpuToCpuOp {
+struct HgiTextureGpuToCpuOp
+{
   HgiTextureGpuToCpuOp()
     : gpuSourceTexture(),
       sourceTexelOffset(GfVec3i(0)),
@@ -112,7 +113,8 @@ struct HgiTextureGpuToCpuOp {
 ///   The GPU texture to upload the data into.</li>
 /// </ul>
 ///
-struct HgiTextureCpuToGpuOp {
+struct HgiTextureCpuToGpuOp
+{
   HgiTextureCpuToGpuOp()
     : cpuSourceBuffer(nullptr),
       bufferByteSize(0),
@@ -151,7 +153,8 @@ struct HgiTextureCpuToGpuOp {
 ///   The byte offset in destination buffer where to start copying the data to.</li>
 /// </ul>
 ///
-struct HgiBufferGpuToGpuOp {
+struct HgiBufferGpuToGpuOp
+{
   HgiBufferGpuToGpuOp()
     : gpuSourceBuffer(),
       sourceByteOffset(0),
@@ -189,7 +192,8 @@ struct HgiBufferGpuToGpuOp {
 ///   The size in bytes to copy.</li>
 /// </ul>
 ///
-struct HgiBufferCpuToGpuOp {
+struct HgiBufferCpuToGpuOp
+{
   HgiBufferCpuToGpuOp()
     : cpuSourceBuffer(nullptr),
       sourceByteOffset(0),
@@ -228,7 +232,8 @@ struct HgiBufferCpuToGpuOp {
 ///   The byte offset in destination buffer where to start copying the data to.</li>
 /// </ul>
 ///
-struct HgiBufferGpuToCpuOp {
+struct HgiBufferGpuToCpuOp
+{
   HgiBufferGpuToCpuOp()
     : gpuSourceBuffer(),
       sourceByteOffset(0),
@@ -267,7 +272,8 @@ struct HgiBufferGpuToCpuOp {
 ///   Size of the data (in bytes) to copy</li>
 /// </ul>
 ///
-struct HgiTextureToBufferOp {
+struct HgiTextureToBufferOp
+{
   HgiTextureToBufferOp()
     : gpuSourceTexture(),
       sourceTexelOffset(GfVec3i(0)),
@@ -310,7 +316,8 @@ struct HgiTextureToBufferOp {
 ///   Size of the data (in bytes) to copy</li>
 /// </ul>
 ///
-struct HgiBufferToTextureOp {
+struct HgiBufferToTextureOp
+{
   HgiBufferToTextureOp()
     : gpuSourceBuffer(),
       sourceByteOffset(0),

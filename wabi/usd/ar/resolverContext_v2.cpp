@@ -45,28 +45,33 @@ ArResolverContext::_Untyped::~_Untyped()
 
 ArResolverContext::ArResolverContext(const std::vector<ArResolverContext> &ctxs)
 {
-  for (const ArResolverContext &ctx : ctxs) {
+  for (const ArResolverContext &ctx : ctxs)
+  {
     _Add(ctx);
   }
 }
 
 void ArResolverContext::_Add(const ArResolverContext &ctx)
 {
-  for (const auto &obj : ctx._contexts) {
+  for (const auto &obj : ctx._contexts)
+  {
     _Add(std::shared_ptr<_Untyped>(obj->Clone()));
   }
 }
 
 bool ArResolverContext::operator==(const ArResolverContext &rhs) const
 {
-  if (_contexts.size() != rhs._contexts.size()) {
+  if (_contexts.size() != rhs._contexts.size())
+  {
     return false;
   }
 
-  for (size_t i = 0; i < _contexts.size(); ++i) {
+  for (size_t i = 0; i < _contexts.size(); ++i)
+  {
     const auto &lhsContext = _contexts[i];
     const auto &rhsContext = rhs._contexts[i];
-    if (!lhsContext->IsHolding(rhsContext->GetTypeid()) || !lhsContext->Equals(*rhsContext)) {
+    if (!lhsContext->IsHolding(rhsContext->GetTypeid()) || !lhsContext->Equals(*rhsContext))
+    {
       return false;
     }
   }
@@ -76,25 +81,32 @@ bool ArResolverContext::operator==(const ArResolverContext &rhs) const
 
 bool ArResolverContext::operator<(const ArResolverContext &rhs) const
 {
-  if (_contexts.size() < rhs._contexts.size()) {
+  if (_contexts.size() < rhs._contexts.size())
+  {
     return true;
   }
-  else if (_contexts.size() > rhs._contexts.size()) {
+  else if (_contexts.size() > rhs._contexts.size())
+  {
     return false;
   }
 
-  for (size_t i = 0; i < _contexts.size(); ++i) {
+  for (size_t i = 0; i < _contexts.size(); ++i)
+  {
     const auto &lhsContext = _contexts[i];
     const auto &rhsContext = rhs._contexts[i];
-    if (lhsContext->IsHolding(rhsContext->GetTypeid())) {
-      if (lhsContext->LessThan(*rhsContext)) {
+    if (lhsContext->IsHolding(rhsContext->GetTypeid()))
+    {
+      if (lhsContext->LessThan(*rhsContext))
+      {
         return true;
       }
-      else if (!lhsContext->Equals(*rhsContext)) {
+      else if (!lhsContext->Equals(*rhsContext))
+      {
         return false;
       }
     }
-    else {
+    else
+    {
       return std::type_index(lhsContext->GetTypeid()) < std::type_index(rhsContext->GetTypeid());
     }
   }
@@ -112,7 +124,8 @@ void ArResolverContext::_Add(std::shared_ptr<_Untyped> &&context)
       return std::type_index(a->GetTypeid()) < std::type_index(b->GetTypeid());
     });
 
-  if (insertIt != _contexts.end() && (*insertIt)->IsHolding(context->GetTypeid())) {
+  if (insertIt != _contexts.end() && (*insertIt)->IsHolding(context->GetTypeid()))
+  {
     return;
   }
 
@@ -122,7 +135,8 @@ void ArResolverContext::_Add(std::shared_ptr<_Untyped> &&context)
 std::string ArResolverContext::GetDebugString() const
 {
   std::string s;
-  for (const auto &context : _contexts) {
+  for (const auto &context : _contexts)
+  {
     s += context->GetDebugString();
     s += "\n";
   }

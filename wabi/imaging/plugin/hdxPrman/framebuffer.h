@@ -42,9 +42,11 @@ WABI_NAMESPACE_BEGIN
 /// This lives in a separate small library so it can be accessible to
 /// both the hdPrman hydra plgin at the d_hydra display driver plugin,
 /// without requiring either to know about the other.
-class HdxPrmanFramebuffer {
+class HdxPrmanFramebuffer
+{
  public:
-  struct HdPrmanAov {
+  struct HdPrmanAov
+  {
     TfToken name;
     HdFormat format;
     VtValue clearValue;

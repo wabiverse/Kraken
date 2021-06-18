@@ -39,7 +39,8 @@ bool Sdf_CanCastToTypeCheckSchema(const SdfSpec &spec, const std::type_info &des
   return Sdf_SpecType::CanCast(spec, destType);
 }
 
-template<> SdfHandleTo<SdfLayer>::Handle SdfCreateHandle(SdfLayer *p)
+template<>
+SdfHandleTo<SdfLayer>::Handle SdfCreateHandle(SdfLayer *p)
 {
   return SdfHandleTo<SdfLayer>::Handle(p);
 }

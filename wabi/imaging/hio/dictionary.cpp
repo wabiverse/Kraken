@@ -52,11 +52,13 @@ TF_REGISTRY_FUNCTION(TfDebug)
 
 static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *errorStr)
 {
-  if (input.empty()) {
+  if (input.empty())
+  {
     const char *errorMsg = "Cannot create VtDictionary from empty string";
     TF_DEBUG(HIO_DEBUG_DICTIONARY).Msg("%s", errorMsg);
 
-    if (errorStr) {
+    if (errorStr)
+    {
       *errorStr = errorMsg;
     }
     return VtDictionary();
@@ -68,7 +70,8 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
   // XXX: This may not be worth the cost.
   //
   std::vector<std::string> filtered = TfStringSplit(input, "\n");
-  for (auto &line : filtered) {
+  for (auto &line : filtered)
+  {
     // Clear comment lines but keep them to maintain line numbers for errors
     if (line.find('#') < line.find_first_not_of(" \t#"))
       line.clear();
@@ -77,14 +80,17 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
   JsParseError error;
   JsValue jsdict = JsParseString(TfStringJoin(filtered, "\n"), &error);
 
-  if (jsdict.IsNull()) {
-    if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY)) {
+  if (jsdict.IsNull())
+  {
+    if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY))
+    {
       std::string errorMessageStr = TfStringPrintf(
         "Failed to extract dictionary from input (line %d, col %d): %s",
         error.line,
         error.column,
         error.reason.c_str());
-      if (errorStr) {
+      if (errorStr)
+      {
         *errorStr = errorMessageStr;
       }
       TF_DEBUG(HIO_DEBUG_DICTIONARY).Msg("%s", errorMessageStr.c_str());
@@ -92,11 +98,14 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
     return VtDictionary();
   }
 
-  if (!jsdict.IsObject()) {
-    if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY)) {
+  if (!jsdict.IsObject())
+  {
+    if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY))
+    {
       std::string errorMessageStr = TfStringPrintf(
         "Input string did not evaluate to a JSON dictionary:\n%s\n", input.c_str());
-      if (errorStr) {
+      if (errorStr)
+      {
         *errorStr = errorMessageStr;
       }
       TF_DEBUG(HIO_DEBUG_DICTIONARY).Msg("%s", errorMessageStr.c_str());
@@ -113,14 +122,16 @@ VtDictionary Hio_GetDictionaryFromInput(const string &input, const string &filen
   std::string jsError;
   VtDictionary ret = _Hio_GetDictionaryFromJSON(input, &jsError);
 
-  if (jsError.empty()) {
+  if (jsError.empty())
+  {
     // JSON succeeded, great, we're done.
     return ret;
   }
 
   // If the file has errors, report the errors from JSON as that is the new
   // format that we're expected to conform to.
-  if (errorStr) {
+  if (errorStr)
+  {
     *errorStr = jsError;
   }
   return VtDictionary();

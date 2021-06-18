@@ -47,9 +47,11 @@ WABI_NAMESPACE_BEGIN
 
 TF_INSTANTIATE_SINGLETON(VkfDeviceCaps);
 
-namespace {
+namespace
+{
 
-struct _QueueFamilyIndices {
+struct _QueueFamilyIndices
+{
   std::optional<uint32_t> graphicsFamily;
 
   bool IsComplete()
@@ -69,12 +71,15 @@ _QueueFamilyIndices _FindQueueFamilies(VkPhysicalDevice device)
   vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
   int i = 0;
-  for (const auto &queueFamily : queueFamilies) {
-    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+  for (const auto &queueFamily : queueFamilies)
+  {
+    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+    {
       indices.graphicsFamily = i;
     }
 
-    if (indices.IsComplete()) {
+    if (indices.IsComplete())
+    {
       break;
     }
 
@@ -105,7 +110,8 @@ std::vector<const char *> _GetRequiredExtensions()
 
 const char *_GetVendorFromID(uint32_t id)
 {
-  switch (id) {
+  switch (id)
+  {
     case VK_VENDOR_ID_CODEPLAY:
       return "CODEPLAY";
 
@@ -128,7 +134,8 @@ const char *_GetVendorFromID(uint32_t id)
 
 const char *_GetDeviceTypeFromID(uint32_t id)
 {
-  switch (id) {
+  switch (id)
+  {
     case VK_PHYSICAL_DEVICE_TYPE_OTHER:
       return "OTHER";
 
@@ -180,7 +187,8 @@ const VkfDeviceCaps &VkfDeviceCaps::GetInstance()
 {
   VkfDeviceCaps &caps = TfSingleton<VkfDeviceCaps>::GetInstance();
 
-  if (caps.apiVersion == 0) {
+  if (caps.apiVersion == 0)
+  {
     TF_CODING_ERROR("VkfDeviceCaps has not been initialized");
   }
 
@@ -233,14 +241,17 @@ void VkfDeviceCaps::VULKANDEVICE_LoadCaps()
 
   std::vector<VkPhysicalDevice> devices(deviceCount);
   vkEnumeratePhysicalDevices(vkInstance, &deviceCount, devices.data());
-  for (const auto &device : devices) {
-    if (_IsDeviceSuitable(device)) {
+  for (const auto &device : devices)
+  {
+    if (_IsDeviceSuitable(device))
+    {
       physicalDevice = device;
       break;
     }
   }
 
-  if (physicalDevice == VK_NULL_HANDLE) {
+  if (physicalDevice == VK_NULL_HANDLE)
+  {
     TF_CODING_ERROR("Failed to find a suitable GPU");
   }
 
@@ -257,7 +268,8 @@ void VkfDeviceCaps::VULKANDEVICE_LoadCaps()
   strcpy(deviceName, props.deviceName);
   memcpy(pipelineCacheUUID, props.pipelineCacheUUID, sizeof(uint8_t) * VK_UUID_SIZE);
 
-  if (TfDebug::IsEnabled(VKF_DEBUG_DEVICE_CAPS)) {
+  if (TfDebug::IsEnabled(VKF_DEBUG_DEVICE_CAPS))
+  {
     std::cout << "VkfDeviceCaps: \n"
               << "  APPLICATION NAME  = " << TfStringify(appInfo.pApplicationName) << "\n"
               << "  ENGINE NAME       = " << TfStringify(appInfo.pEngineName) << "\n"

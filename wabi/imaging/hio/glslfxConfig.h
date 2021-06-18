@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// HioGlslfxConfig provides an API for querying the configuration of a
 /// glslfx file
 ///
-class HioGlslfxConfig {
+class HioGlslfxConfig
+{
  public:
   /// Enumerates Roles that parameters can have.
   ///
@@ -59,7 +60,8 @@ class HioGlslfxConfig {
   ///     <li><b><c> RoleColor = 1</c></b>   Color: the role of a color
   /// </ul>
   ///
-  enum Role {
+  enum Role
+  {
     RoleNone = 0,
     RoleColor = 1,
   };
@@ -68,7 +70,8 @@ class HioGlslfxConfig {
   ///
   /// A class representing a parameter.
   ///
-  class Parameter {
+  class Parameter
+  {
    public:
     Parameter(std::string const &name,
               VtValue const &defaultValue,
@@ -92,7 +95,8 @@ class HioGlslfxConfig {
   ///
   /// A class representing a texture.
   ///
-  class Texture {
+  class Texture
+  {
    public:
     Texture(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
       : name(name),
@@ -111,7 +115,8 @@ class HioGlslfxConfig {
   ///
   /// A class representing an attribute.
   ///
-  class Attribute {
+  class Attribute
+  {
    public:
     Attribute(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
       : name(name),

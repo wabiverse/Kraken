@@ -54,7 +54,8 @@ TF_DECLARE_REF_PTRS(UsdSkel_AnimQueryImpl);
 /// \class UsdSkelAnimQuery
 ///
 /// Class providing efficient queries of primitives that provide skel animation.
-class UsdSkelAnimQuery {
+class UsdSkelAnimQuery
+{
  public:
   USDSKEL_API
   UsdSkelAnimQuery()
@@ -188,7 +189,8 @@ class UsdSkelAnimQuery {
   std::string GetDescription() const;
 
  private:
-  UsdSkelAnimQuery(const UsdSkel_AnimQueryImplRefPtr &impl) : _impl(impl)
+  UsdSkelAnimQuery(const UsdSkel_AnimQueryImplRefPtr &impl)
+    : _impl(impl)
   {}
 
   UsdSkel_AnimQueryImplRefPtr _impl;

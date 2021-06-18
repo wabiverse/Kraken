@@ -5044,8 +5044,10 @@ typedef void (*GLVULKANPROCNV)(void);
 #    define GL_MAX_TIMELINE_SEMAPHORE_VALUE_DIFFERENCE_NV 0x95B6
 
 WABI_NAMESPACE_BEGIN
-namespace internal {
-namespace GLApi {
+namespace internal
+{
+namespace GLApi
+{
 
 typedef void (*PFNGLACCUMPROC)(GLenum op, GLfloat value);
 typedef void (*PFNGLACTIVEPROGRAMEXTPROC)(GLuint program);

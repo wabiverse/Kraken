@@ -40,16 +40,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-class _FunctionRegistry : public TfWeakBase {
+class _FunctionRegistry : public TfWeakBase
+{
  public:
   static _FunctionRegistry &GetInstance()
   {
     return TfSingleton<_FunctionRegistry>::GetInstance();
   }
 
-  _FunctionRegistry() : _initialized(false)
+  _FunctionRegistry()
+    : _initialized(false)
   {
     // Calling SubscribeTo may cause functions to be registered
     // while we're still in the c'tor, so make sure to call
@@ -73,7 +76,8 @@ class _FunctionRegistry : public TfWeakBase {
       didInsert = _registry.emplace(schemaType, fn).second;
     }
 
-    if (!didInsert) {
+    if (!didInsert)
+    {
       TF_CODING_ERROR(
         "UsdGeomComputeExtentFunction already registered for "
         "prim type '%s'",
@@ -87,7 +91,8 @@ class _FunctionRegistry : public TfWeakBase {
 
     // Get the actual schema type from the prim definition.
     const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
-    if (!primSchemaType) {
+    if (!primSchemaType)
+    {
       TF_CODING_ERROR("Could not find prim type '%s' for prim %s",
                       prim.GetTypeName().GetText(),
                       UsdDescribe(prim).c_str());
@@ -95,7 +100,8 @@ class _FunctionRegistry : public TfWeakBase {
     }
 
     UsdGeomComputeExtentFunction fn = nullptr;
-    if (_FindFunctionForType(primSchemaType, &fn)) {
+    if (_FindFunctionForType(primSchemaType, &fn))
+    {
       return fn;
     }
 
@@ -103,16 +109,20 @@ class _FunctionRegistry : public TfWeakBase {
       primSchemaType);
 
     auto i = primSchemaTypeAndBases.cbegin();
-    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i) {
+    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
+    {
       const TfType &type = *i;
-      if (_FindFunctionForType(type, &fn)) {
+      if (_FindFunctionForType(type, &fn))
+      {
         break;
       }
 
-      if (_LoadPluginForType(type)) {
+      if (_LoadPluginForType(type))
+      {
         // If we loaded the plugin for this type, a new function may
         // have been registered so look again.
-        if (_FindFunctionForType(type, &fn)) {
+        if (_FindFunctionForType(type, &fn))
+        {
           break;
         }
       }
@@ -123,7 +133,8 @@ class _FunctionRegistry : public TfWeakBase {
     // also be nullptr if no function was found; we cache this
     // as well to avoid looking it up again.
     _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
-    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it) {
+    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
+    {
       _registry.emplace(*it, fn);
     }
 
@@ -134,7 +145,8 @@ class _FunctionRegistry : public TfWeakBase {
   // Wait until initialization of the singleton is completed.
   void _WaitUntilInitialized()
   {
-    while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire))) {
+    while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire)))
+    {
       std::this_thread::yield();
     }
   }
@@ -163,12 +175,14 @@ class _FunctionRegistry : public TfWeakBase {
 
     const JsValue implementsComputeExtent = plugReg.GetDataFromPluginMetaData(type,
                                                                               "implementsComputeExtent");
-    if (!implementsComputeExtent.Is<bool>() || !implementsComputeExtent.Get<bool>()) {
+    if (!implementsComputeExtent.Is<bool>() || !implementsComputeExtent.Get<bool>())
+    {
       return false;
     }
 
     const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
-    if (!pluginForType) {
+    if (!pluginForType)
+    {
       TF_CODING_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
       return false;
     }
@@ -210,7 +224,8 @@ static bool _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable,
                                       const GfMatrix4d *transform,
                                       VtVec3fArray *extent)
 {
-  if (!boundable) {
+  if (!boundable)
+  {
     TF_CODING_ERROR("Invalid UsdGeomBoundable %s", UsdDescribe(boundable.GetPrim()).c_str());
     return false;
   }
@@ -237,12 +252,14 @@ bool UsdGeomBoundable::ComputeExtentFromPlugins(const UsdGeomBoundable &boundabl
 
 void UsdGeomRegisterComputeExtentFunction(const TfType &primType, const UsdGeomComputeExtentFunction &fn)
 {
-  if (!primType.IsA<UsdGeomBoundable>()) {
+  if (!primType.IsA<UsdGeomBoundable>())
+  {
     TF_CODING_ERROR("Prim type '%s' must derive from UsdGeomBoundable", primType.GetTypeName().c_str());
     return;
   }
 
-  if (!fn) {
+  if (!fn)
+  {
     TF_CODING_ERROR("Invalid function registered for prim type '%s'", primType.GetTypeName().c_str());
     return;
   }

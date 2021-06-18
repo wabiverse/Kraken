@@ -49,7 +49,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GlfSimpleLight final {
+class GlfSimpleLight final
+{
  public:
   GLF_API
   GlfSimpleLight(GfVec4f const &position = GfVec4f(0.0, 0.0, 0.0, 1.0));

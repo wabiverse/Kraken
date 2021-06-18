@@ -49,7 +49,8 @@ HgiGLShaderFunction::HgiGLShaderFunction(HgiShaderFunctionDesc const &desc)
 
   _shaderId = glCreateShader(stages[0]);
 
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     glObjectLabel(GL_SHADER, _shaderId, -1, _descriptor.debugName.c_str());
   }
 
@@ -64,7 +65,8 @@ HgiGLShaderFunction::HgiGLShaderFunction(HgiShaderFunctionDesc const &desc)
   // Grab compile errors
   GLint status;
   glGetShaderiv(_shaderId, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
+  if (status != GL_TRUE)
+  {
     int logSize = 0;
     glGetShaderiv(_shaderId, GL_INFO_LOG_LENGTH, &logSize);
     _errors.resize(logSize + 1);

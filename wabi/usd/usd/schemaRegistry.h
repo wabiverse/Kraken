@@ -61,7 +61,8 @@ class UsdPrimDefinition;
 /// classes, to enumerate all properties for a given schema class, and finally
 /// to provide fallback values for unauthored built-in properties.
 ///
-class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
+class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable
+{
  public:
   USD_API
   static UsdSchemaRegistry &GetInstance()
@@ -76,7 +77,8 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable {
 
   /// Return the type name in the USD schema for prims or API schemas of the
   /// given registered \p SchemaType.
-  template<class SchemaType> static TfToken GetSchemaTypeName()
+  template<class SchemaType>
+  static TfToken GetSchemaTypeName()
   {
     return GetSchemaTypeName(SchemaType::_GetStaticTfType());
   }

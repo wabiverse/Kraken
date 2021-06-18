@@ -23,7 +23,8 @@ WABI_NAMESPACE_BEGIN
 /// \class RprUsd_RprArithmeticNode
 ///
 /// Wrapper over RPR_MATERIAL_NODE_ARITHMETIC
-class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode {
+class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode
+{
  public:
   static std::unique_ptr<RprUsd_RprArithmeticNode> Create(rpr::MaterialNodeArithmeticOperation operation,
                                                           RprUsd_MaterialBuilderContext *ctx,
@@ -45,7 +46,8 @@ class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode {
   bool SetInput(int index, VtValue const &value);
 
  protected:
-  RprUsd_RprArithmeticNode(RprUsd_MaterialBuilderContext *ctx) : m_ctx(ctx)
+  RprUsd_RprArithmeticNode(RprUsd_MaterialBuilderContext *ctx)
+    : m_ctx(ctx)
   {}
 
   // Provided by concrete operation node

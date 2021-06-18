@@ -49,7 +49,8 @@ HdPhDynamicUvTextureImplementation *HdPhDynamicUvTextureObject::_GetImpl() const
   const HdPhDynamicUvSubtextureIdentifier *const subId =
     dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(
       GetTextureIdentifier().GetSubtextureIdentifier());
-  if (!TF_VERIFY(subId)) {
+  if (!TF_VERIFY(subId))
+  {
     return nullptr;
   }
 
@@ -58,7 +59,8 @@ HdPhDynamicUvTextureImplementation *HdPhDynamicUvTextureObject::_GetImpl() const
 
 bool HdPhDynamicUvTextureObject::IsValid() const
 {
-  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl()) {
+  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl())
+  {
     return impl->IsValid(this);
   }
   return true;
@@ -66,14 +68,16 @@ bool HdPhDynamicUvTextureObject::IsValid() const
 
 void HdPhDynamicUvTextureObject::_Load()
 {
-  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl()) {
+  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl())
+  {
     impl->Load(this);
   }
 }
 
 void HdPhDynamicUvTextureObject::_Commit()
 {
-  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl()) {
+  if (HdPhDynamicUvTextureImplementation *const impl = _GetImpl())
+  {
     impl->Commit(this);
   }
 }

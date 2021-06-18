@@ -50,7 +50,8 @@ class PcpSite;
 ///
 /// Types of changes per layer stack.
 ///
-class PcpLayerStackChanges {
+class PcpLayerStackChanges
+{
  public:
   /// Must rebuild the layer tree.  Implies didChangeLayerOffsets.
   bool didChangeLayers;
@@ -94,9 +95,14 @@ class PcpLayerStackChanges {
 ///
 /// Types of changes per cache.
 ///
-class PcpCacheChanges {
+class PcpCacheChanges
+{
  public:
-  enum TargetType { TargetTypeConnection = 1 << 0, TargetTypeRelationshipTarget = 1 << 1 };
+  enum TargetType
+  {
+    TargetTypeConnection = 1 << 0,
+    TargetTypeRelationshipTarget = 1 << 1
+  };
 
   /// Must rebuild the indexes at and below each path.  This
   /// implies rebuilding the prim/property stacks at
@@ -135,7 +141,8 @@ class PcpCacheChanges {
 
 /// Structure used to temporarily retain layers and layerStacks within
 /// a code block.  Analogous to the autorelease pool in obj-c.
-class PcpLifeboat {
+class PcpLifeboat
+{
  public:
   PcpLifeboat();
   ~PcpLifeboat();
@@ -167,7 +174,8 @@ class PcpLifeboat {
 /// computes what changes would be necessary to Pcp to reflect the Sd
 /// changes.
 ///
-class PcpChanges {
+class PcpChanges
+{
  public:
   PCP_API PcpChanges();
   PCP_API ~PcpChanges();
@@ -324,7 +332,11 @@ class PcpChanges {
                             const _PathEditMap *pathChanges);
 
   // Sublayer change type for _DidChangeSublayer.
-  enum _SublayerChangeType { _SublayerAdded, _SublayerRemoved };
+  enum _SublayerChangeType
+  {
+    _SublayerAdded,
+    _SublayerRemoved
+  };
 
   // Helper function for loading a sublayer of \p layer at \p sublayerPath
   // for processing changes described by \p sublayerChange.

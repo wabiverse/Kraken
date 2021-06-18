@@ -48,7 +48,8 @@ using HgiBits = uint32_t;
 ///   The device must be capable of presenting graphics to screen</li>
 /// </ul>
 ///
-enum HgiDeviceCapabilitiesBits : HgiBits {
+enum HgiDeviceCapabilitiesBits : HgiBits
+{
   HgiDeviceCapabilitiesBitsPresentation = 1 << 0,
 };
 
@@ -71,7 +72,8 @@ using HgiDeviceCapabilities = HgiBits;
 ///   An array of two-dimensional textures.</li>
 /// </ul>
 ///
-enum HgiTextureType {
+enum HgiTextureType
+{
   HgiTextureType1D = 0,
   HgiTextureType2D,
   HgiTextureType3D,
@@ -105,7 +107,8 @@ enum HgiTextureType {
 ///   specific  bits to the usage bit. </li>
 /// </ul>
 ///
-enum HgiTextureUsageBits : HgiBits {
+enum HgiTextureUsageBits : HgiBits
+{
   HgiTextureUsageBitsColorTarget = 1 << 0,
   HgiTextureUsageBitsDepthTarget = 1 << 1,
   HgiTextureUsageBitsStencilTarget = 1 << 2,
@@ -121,7 +124,8 @@ using HgiTextureUsage = HgiBits;
 ///
 /// Various modes used during sampling of a texture.
 ///
-enum HgiSamplerAddressMode {
+enum HgiSamplerAddressMode
+{
   HgiSamplerAddressModeClampToEdge = 0,
   HgiSamplerAddressModeMirrorClampToEdge,
   HgiSamplerAddressModeRepeat,
@@ -142,7 +146,8 @@ enum HgiSamplerAddressMode {
 ///   Combines the values of multiple mipmap levels.</li>
 /// </ul>
 ///
-enum HgiSamplerFilter {
+enum HgiSamplerFilter
+{
   HgiSamplerFilterNearest = 0,
   HgiSamplerFilterLinear = 1,
 
@@ -162,7 +167,8 @@ enum HgiSamplerFilter {
 ///   Linear interpolates the values of up to two mipmap levels.</li>
 /// </ul>
 ///
-enum HgiMipFilter {
+enum HgiMipFilter
+{
   HgiMipFilterNotMipmapped = 0,
   HgiMipFilterNearest = 1,
   HgiMipFilterLinear = 2,
@@ -174,7 +180,8 @@ enum HgiMipFilter {
 ///
 /// Sample count for multi-sampling
 ///
-enum HgiSampleCount {
+enum HgiSampleCount
+{
   HgiSampleCount1 = 1,
   HgiSampleCount2 = 2,
   HgiSampleCount4 = 4,
@@ -197,7 +204,8 @@ enum HgiSampleCount {
 ///   Previous pixel data is loaded into attachment prior to rendering.</li>
 /// </ul>
 ///
-enum HgiAttachmentLoadOp {
+enum HgiAttachmentLoadOp
+{
   HgiAttachmentLoadOpDontCare = 0,
   HgiAttachmentLoadOpClear,
   HgiAttachmentLoadOpLoad,
@@ -216,7 +224,8 @@ enum HgiAttachmentLoadOp {
 ///   The attachment pixel data is stored in memory.</li>
 /// </ul>
 ///
-enum HgiAttachmentStoreOp {
+enum HgiAttachmentStoreOp
+{
   HgiAttachmentStoreOpDontCare = 0,
   HgiAttachmentStoreOpStore,
 
@@ -242,7 +251,8 @@ enum HgiAttachmentStoreOp {
 ///   specific  bits to the usage bit. </li>
 /// </ul>
 ///
-enum HgiBufferUsageBits : HgiBits {
+enum HgiBufferUsageBits : HgiBits
+{
   HgiBufferUsageUniform = 1 << 0,
   HgiBufferUsageIndex32 = 1 << 1,
   HgiBufferUsageVertex = 1 << 2,
@@ -274,7 +284,8 @@ using HgiBufferUsage = HgiBits;
 ///   Governs the processing of Primitives.</li>
 /// </ul>
 ///
-enum HgiShaderStageBits : HgiBits {
+enum HgiShaderStageBits : HgiBits
+{
   HgiShaderStageVertex = 1 << 0,
   HgiShaderStageFragment = 1 << 1,
   HgiShaderStageCompute = 1 << 2,
@@ -310,7 +321,8 @@ using HgiShaderStage = HgiBits;
 ///   Shader storage buffer (SSBO).</li>
 /// </ul>
 ///
-enum HgiBindResourceType {
+enum HgiBindResourceType
+{
   HgiBindResourceTypeSampler = 0,
   HgiBindResourceTypeSampledImage,
   HgiBindResourceTypeCombinedSamplerImage,
@@ -334,7 +346,8 @@ enum HgiBindResourceType {
 ///   Polygon vertices are drawn as points.</li>
 /// </ul>
 ///
-enum HgiPolygonMode {
+enum HgiPolygonMode
+{
   HgiPolygonModeFill = 0,
   HgiPolygonModeLine,
   HgiPolygonModePoint,
@@ -357,7 +370,8 @@ enum HgiPolygonMode {
 ///   All primitive are discarded.</li>
 /// </ul>
 ///
-enum HgiCullMode {
+enum HgiCullMode
+{
   HgiCullModeNone = 0,
   HgiCullModeFront,
   HgiCullModeBack,
@@ -377,7 +391,8 @@ enum HgiCullMode {
 ///   Primitives with counter-clockwise vertex-order are front facing.</li>
 /// </ul>
 ///
-enum HgiWinding {
+enum HgiWinding
+{
   HgiWindingClockwise = 0,
   HgiWindingCounterClockwise,
 
@@ -388,7 +403,8 @@ enum HgiWinding {
 ///
 /// Blend operations
 ///
-enum HgiBlendOp {
+enum HgiBlendOp
+{
   HgiBlendOpAdd = 0,
   HgiBlendOpSubtract,
   HgiBlendOpReverseSubtract,
@@ -402,7 +418,8 @@ enum HgiBlendOp {
 ///
 /// Blend factors
 ///
-enum HgiBlendFactor {
+enum HgiBlendFactor
+{
   HgiBlendFactorZero = 0,
   HgiBlendFactorOne,
   HgiBlendFactorSrcColor,
@@ -430,7 +447,8 @@ enum HgiBlendFactor {
 ///
 /// Compare functions.
 ///
-enum HgiCompareFunction {
+enum HgiCompareFunction
+{
   HgiCompareFunctionNever = 0,
   HgiCompareFunctionLess,
   HgiCompareFunctionEqual,
@@ -447,7 +465,8 @@ enum HgiCompareFunction {
 ///
 /// Swizzle for a component.
 ///
-enum HgiComponentSwizzle {
+enum HgiComponentSwizzle
+{
   HgiComponentSwizzleZero = 0,
   HgiComponentSwizzleOne,
   HgiComponentSwizzleR,
@@ -476,7 +495,8 @@ enum HgiComponentSwizzle {
 ///   points, lines, or triangles.</li>
 /// </ul>
 ///
-enum HgiPrimitiveType {
+enum HgiPrimitiveType
+{
   HgiPrimitiveTypePointList = 0,
   HgiPrimitiveTypeLineList,
   HgiPrimitiveTypeLineStrip,
@@ -497,7 +517,8 @@ enum HgiPrimitiveType {
 ///   The CPU waits ("blocked") until the GPU has consumed the cmds.</li>
 /// </ul>
 ///
-enum HgiSubmitWaitType {
+enum HgiSubmitWaitType
+{
   HgiSubmitWaitTypeNoWait = 0,
   HgiSubmitWaitTypeWaitUntilCompleted,
 };
@@ -513,7 +534,11 @@ enum HgiSubmitWaitType {
 ///   The barrier affects all memory writes and reads.</li>
 /// </ul>
 ///
-enum HgiMemoryBarrierBits { HgiMemoryBarrierNone = 0, HgiMemoryBarrierAll = 1 << 0 };
+enum HgiMemoryBarrierBits
+{
+  HgiMemoryBarrierNone = 0,
+  HgiMemoryBarrierAll = 1 << 0
+};
 using HgiMemoryBarrier = HgiBits;
 
 WABI_NAMESPACE_END

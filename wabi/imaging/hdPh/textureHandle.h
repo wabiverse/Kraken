@@ -53,7 +53,8 @@ class HdPh_TextureHandleRegistry;
 /// sampler handle for bindless or changing texture metadata such as a
 /// field bounding box for volumes.
 ///
-class HdPhTextureHandle {
+class HdPhTextureHandle
+{
  public:
   /// See HdPhResourceRegistry::AllocateTextureHandle for details.
   HDPH_API

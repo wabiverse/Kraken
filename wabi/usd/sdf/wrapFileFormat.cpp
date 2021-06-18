@@ -38,11 +38,13 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // File format factory wrapper.  Python will give us a file format type
 // and we must provide a factory to return instances of it.
-class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase {
+class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase
+{
  public:
   typedef std::unique_ptr<Sdf_PyFileFormatFactory> Ptr;
 
@@ -57,7 +59,8 @@ class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase {
   }
 
  private:
-  Sdf_PyFileFormatFactory(const object &classObject) : _factory(classObject)
+  Sdf_PyFileFormatFactory(const object &classObject)
+    : _factory(classObject)
   {
     // Do nothing
   }
@@ -75,7 +78,8 @@ void _RegisterFileFormat(object classObject)
 
   TfType fileFormatType = TfType_DefinePythonTypeAndBases(classObject);
 
-  if (fileFormatType.IsUnknown()) {
+  if (fileFormatType.IsUnknown())
+  {
     // CODE_COVERAGE_OFF - The code above registers this TfType, and
     // currently never fails.
     TF_CODING_ERROR("Could not define Python type for %s.", typeName.c_str());

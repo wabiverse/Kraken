@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Specifies the type of a shading attribute.
 ///
-enum class UsdShadeAttributeType {
+enum class UsdShadeAttributeType
+{
   Invalid,
   Input,
   Output,
@@ -50,7 +51,12 @@ enum class UsdShadeAttributeType {
 /// there is a choice between prepending and appending to said list, which will
 /// be represented by Usd's list editing operations.
 ///
-enum class UsdShadeConnectionModification { Replace, Prepend, Append };
+enum class UsdShadeConnectionModification
+{
+  Replace,
+  Prepend,
+  Append
+};
 
 /// \typedef UsdShadeAttributeVector
 ///

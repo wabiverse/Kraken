@@ -44,7 +44,8 @@ TfToken UsdImaging_CollectionCache::UpdateCollection(UsdCollectionAPI const &c)
   SdfPath path = c.GetCollectionPath();
   UsdCollectionAPI::MembershipQuery query = c.ComputeMembershipQuery();
 
-  if (_IsQueryTrivial(query)) {
+  if (_IsQueryTrivial(query))
+  {
     TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: trivial for <%s>\n", path.GetText());
     return TfToken();
   }
@@ -52,14 +53,16 @@ TfToken UsdImaging_CollectionCache::UpdateCollection(UsdCollectionAPI const &c)
   // Establish Id <=> Query mapping.
   TfToken id;
   auto const &idForQueryEntry = _idForQuery.find(query);
-  if (idForQueryEntry == _idForQuery.end()) {
+  if (idForQueryEntry == _idForQuery.end())
+  {
     // Assign new id.  Use token form of collection path.
     id = path.GetToken();
     _idForQuery[query] = id;
     _queryForId[id] = query;
     TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: Assigned new id '%s'\n", id.GetText());
   }
-  else {
+  else
+  {
     // Share an existing query id.
     id = idForQueryEntry->second;
     TF_DEBUG(USDIMAGING_COLLECTIONS)
@@ -79,7 +82,8 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
 
   SdfPath path = c.GetCollectionPath();
   auto const &pathEntry = _idForPath.find(path);
-  if (pathEntry == _idForPath.end()) {
+  if (pathEntry == _idForPath.end())
+  {
     // No pathEntry -- bail.  This can happen if the collection was
     // trivial; see _IsQueryTrivial().
     return;
@@ -89,7 +93,8 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
   _idForPath.erase(pathEntry);
 
   auto const &queryEntry = _queryForId.find(id);
-  if (!TF_VERIFY(queryEntry != _queryForId.end())) {
+  if (!TF_VERIFY(queryEntry != _queryForId.end()))
+  {
     return;
   }
   UsdCollectionAPI::MembershipQuery const &queryRef = queryEntry->second;
@@ -101,7 +106,8 @@ void UsdImaging_CollectionCache::RemoveCollection(UsdCollectionAPI const &c)
 
   // Reap _pathsForQuery entries when the last path is removed.
   // This also reaps the associated identifier.
-  if (pathsForQueryEntry->second.empty()) {
+  if (pathsForQueryEntry->second.empty())
+  {
     _pathsForQuery.erase(pathsForQueryEntry);
     _idForQuery.erase(queryRef);
     _queryForId.erase(queryEntry);
@@ -113,7 +119,8 @@ TfToken UsdImaging_CollectionCache::GetIdForCollection(UsdCollectionAPI const &c
 {
   SdfPath path = c.GetCollectionPath();
   auto const &pathEntry = _idForPath.find(path);
-  if (pathEntry == _idForPath.end()) {
+  if (pathEntry == _idForPath.end())
+  {
     // No entry, so assume this was cached as the trivial default.
     return TfToken();
   }
@@ -124,8 +131,10 @@ VtArray<TfToken> UsdImaging_CollectionCache::ComputeCollectionsContainingPath(Sd
 {
   TRACE_FUNCTION();
   VtArray<TfToken> result;
-  for (auto const &entry : _queryForId) {
-    if (entry.second.IsPathIncluded(path)) {
+  for (auto const &entry : _queryForId)
+  {
+    if (entry.second.IsPathIncluded(path))
+    {
       result.push_back(entry.first);
     }
   }

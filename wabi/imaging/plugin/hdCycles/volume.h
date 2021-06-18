@@ -36,7 +36,8 @@
 #  include <openvdb/openvdb.h>
 #endif
 
-namespace ccl {
+namespace ccl
+{
 class Mesh;
 class Scene;
 class Object;
@@ -52,7 +53,8 @@ class HdCyclesRenderDelegate;
  * @brief USD Volume mapped to Cycles Volume
  *
  */
-class HdCyclesVolume final : public HdVolume {
+class HdCyclesVolume final : public HdVolume
+{
  public:
   /**
    * @brief Construct a new HdCycles Volume object

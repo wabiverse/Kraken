@@ -61,7 +61,8 @@ WABI_NAMESPACE_BEGIN
 /// 'sourcePoints' of type vec3. HdPhCodeGen generated the corresponding
 /// accessor allowing the kernel to use it.
 /// \see HdPhExtCompGpuComputation
-class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource {
+class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource
+{
  public:
   /// Constructs a GPU ExtComputation buffer source.
   /// \param[in] inputs the vector of HdBufferSource that are inputs to the

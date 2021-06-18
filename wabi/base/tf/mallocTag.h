@@ -46,7 +46,8 @@ struct Tf_MallocPathNode;
 /// Top-down memory tagging system.
 ///
 /// See \ref page_tf_MallocTag for a detailed description.
-class TfMallocTag {
+class TfMallocTag
+{
  public:
   struct CallStackInfo;
 
@@ -56,7 +57,8 @@ class TfMallocTag {
   /// The \c CallTree structure is used to deliver a snapshot of the current
   /// malloc usage.  It is accessible as publicly modifiable data because it
   /// is simply a returned snapshot of the current memory state.
-  struct CallTree {
+  struct CallTree
+  {
     /// \struct PathNode
     /// Node in the call tree structure.
     ///
@@ -76,7 +78,8 @@ class TfMallocTag {
     /// themselves and any of their children (\c nBytes).  The name of a
     /// node (\c siteName) corresponds to the tag name of the final tag in
     /// the path.
-    struct PathNode {
+    struct PathNode
+    {
       size_t nBytes,                   ///< Allocated bytes by this or descendant nodes.
         nBytesDirect;                  ///< Allocated bytes (only for this node).
       size_t nAllocations;             ///< The number of allocations for this node.
@@ -92,7 +95,8 @@ class TfMallocTag {
     /// outstanding for all memory allocations made under a given
     /// call-site are recorded in \c nBytes, while the name of the call
     /// site is available as \c name.
-    struct CallSite {
+    struct CallSite
+    {
       std::string name;  ///< Tag name.
       size_t nBytes;     ///< Allocated bytes.
     };
@@ -100,7 +104,8 @@ class TfMallocTag {
     // Note: enum below must be kept in sync with tfmodule/mallocCallTree.h
 
     /// Specify which parts of the report to print.
-    enum PrintSetting {
+    enum PrintSetting
+    {
       TREE = 0,   ///< Print the full call tree
       CALLSITES,  ///< Print just the call sites > 0.1%
       BOTH        ///< Print both tree and call sites
@@ -154,7 +159,8 @@ class TfMallocTag {
   /// \struct CallStackInfo
   /// This struct is used to represent a call stack taken for an allocation
   /// that was  billed under a specific malloc tag.
-  struct CallStackInfo {
+  struct CallStackInfo
+  {
     /// The stack frame pointers.
     std::vector<uintptr_t> stack;
 
@@ -220,7 +226,8 @@ class TfMallocTag {
  private:
   // Enum describing whether allocations are being tagged in an associated
   // thread.
-  enum _Tagging {
+  enum _Tagging
+  {
     _TaggingEnabled,   // Allocations are being tagged
     _TaggingDisabled,  // Allocations are not being tagged
 
@@ -253,7 +260,8 @@ class TfMallocTag {
   /// simply locking a mutex; typically, pushing or popping the call stack
   /// does not actually cause any memory allocation unless this is the first
   /// time that the given named tag has been encountered.
-  class Auto {
+  class Auto
+  {
    public:
     Auto(const Auto &) = delete;
     Auto &operator=(const Auto &) = delete;
@@ -272,7 +280,8 @@ class TfMallocTag {
     /// you can't create your object as a local variable, you can make
     /// manual calls to \c TfMallocTag::Push() and \c TfMallocTag::Pop(),
     /// though you should do this only as a last resort.
-    Auto(const char *name) : _threadData(0)
+    Auto(const char *name)
+      : _threadData(0)
     {
       if (TfMallocTag::_doTagging)
         _Begin(name);
@@ -294,7 +303,8 @@ class TfMallocTag {
     /// you can't create your object as a local variable, you can make
     /// manual calls to \c TfMallocTag::Push() and \c TfMallocTag::Pop(),
     /// though you should do this only as a last resort.
-    Auto(const std::string &name) : _threadData(0)
+    Auto(const std::string &name)
+      : _threadData(0)
     {
       if (TfMallocTag::_doTagging)
         _Begin(name);
@@ -312,7 +322,8 @@ class TfMallocTag {
     /// exceptions.
     inline void Release()
     {
-      if (_threadData) {
+      if (_threadData)
+      {
         _End();
         _threadData = NULL;
       }
@@ -344,18 +355,23 @@ class TfMallocTag {
   /// Scoped (i.e. local) object for creating/destroying memory tags.
   ///
   /// Auto2 is just like Auto, except it pushes two tags onto the stack.
-  class Auto2 {
+  class Auto2
+  {
    public:
     /// Push two memory tags onto the local-call stack.
     ///
     /// \see TfMallocTag::Auto(const char* name).
-    Auto2(const char *name1, const char *name2) : _tag1(name1), _tag2(name2)
+    Auto2(const char *name1, const char *name2)
+      : _tag1(name1),
+        _tag2(name2)
     {}
 
     /// Push two memory tags onto the local-call stack.
     ///
     /// \see TfMallocTag::Auto(const std::string& name).
-    Auto2(const std::string &name1, const std::string &name2) : _tag1(name1), _tag2(name2)
+    Auto2(const std::string &name1, const std::string &name2)
+      : _tag1(name1),
+        _tag2(name2)
     {}
 
     /// Pop two memory tags from the local-call stack.
@@ -462,7 +478,8 @@ class TfMallocTag {
  private:
   friend struct Tf_MallocGlobalData;
 
-  class _TemporaryTaggingState {
+  class _TemporaryTaggingState
+  {
    public:
     explicit _TemporaryTaggingState(_Tagging state);
     ~_TemporaryTaggingState();

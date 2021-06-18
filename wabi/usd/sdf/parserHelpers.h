@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 
 bool Sdf_BoolFromString(const std::string &, bool *parseOk);
 
-namespace Sdf_ParserHelpers {
+namespace Sdf_ParserHelpers
+{
 
 // Internal variant type.
 typedef boost::variant<uint64_t, int64_t, double, std::string, TfToken, SdfAssetPath> _Variant;
@@ -55,7 +56,9 @@ typedef boost::variant<uint64_t, int64_t, double, std::string, TfToken, SdfAsset
 // various types.
 
 // General Get case, requires exact match.
-template<class T, class Enable = void> struct _GetImpl {
+template<class T, class Enable = void>
+struct _GetImpl
+{
   typedef const T &ResultType;
   static const T &Visit(_Variant const &variant)
   {
@@ -68,7 +71,8 @@ template<class T, class Enable = void> struct _GetImpl {
 // throw bad_get for non-finite doubles.  Throw bad_get for out-of-range
 // integral values.
 template<class T>
-struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost::static_visitor<T> {
+struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost::static_visitor<T>
+{
   typedef T ResultType;
 
   T Visit(_Variant const &variant)
@@ -77,7 +81,8 @@ struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost:
   }
 
   // Fallback case: throw bad_get.
-  template<class Held> T operator()(Held held)
+  template<class Held>
+  T operator()(Held held)
   {
     throw boost::bad_get();
   }
@@ -101,12 +106,15 @@ struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost:
   }
 
  private:
-  template<class In> T _Cast(In in)
+  template<class In>
+  T _Cast(In in)
   {
-    try {
+    try
+    {
       return boost::numeric_cast<T>(in);
     }
-    catch (const boost::bad_numeric_cast &) {
+    catch (const boost::bad_numeric_cast &)
+    {
       throw boost::bad_get();
     }
   }
@@ -118,7 +126,8 @@ struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost:
 // Also handles strings like "inf", "-inf", and "nan" to produce +/- infinity
 // and a quiet NaN.
 template<class T>
-struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public boost::static_visitor<T> {
+struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public boost::static_visitor<T>
+{
   typedef T ResultType;
 
   T Visit(_Variant const &variant)
@@ -127,7 +136,8 @@ struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public 
   }
 
   // Fallback case: throw bad_get.
-  template<class Held> T operator()(Held held)
+  template<class Held>
+  T operator()(Held held)
   {
     throw boost::bad_get();
   }
@@ -169,12 +179,15 @@ struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public 
     throw boost::bad_get();
   }
 
-  template<class In> T _Cast(In in)
+  template<class In>
+  T _Cast(In in)
   {
-    try {
+    try
+    {
       return boost::numeric_cast<T>(in);
     }
-    catch (const boost::bad_numeric_cast &) {
+    catch (const boost::bad_numeric_cast &)
+    {
       throw boost::bad_get();
     }
   }
@@ -183,7 +196,9 @@ struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public 
 ////////////////////////////////////////////////////////////////////////
 
 // Get an asset path: converts string to asset path, otherwise throw bad_get.
-template<> struct _GetImpl<SdfAssetPath> {
+template<>
+struct _GetImpl<SdfAssetPath>
+{
   typedef SdfAssetPath ResultType;
 
   SdfAssetPath Visit(_Variant const &variant)
@@ -197,7 +212,9 @@ template<> struct _GetImpl<SdfAssetPath> {
 // Get a bool.  Numbers are considered true if nonzero, false otherwise.
 // Strings and tokens get parsed via Sdf_BoolFromString.  Otherwise throw
 // bad_get.
-template<> struct _GetImpl<bool> : public boost::static_visitor<bool> {
+template<>
+struct _GetImpl<bool> : public boost::static_visitor<bool>
+{
   typedef bool ResultType;
 
   bool Visit(_Variant const &variant)
@@ -222,13 +239,15 @@ template<> struct _GetImpl<bool> : public boost::static_visitor<bool> {
   }
 
   // For numbers, return true if not zero.
-  template<class Number> std::enable_if_t<std::is_arithmetic<Number>::value, bool> operator()(Number val)
+  template<class Number>
+  std::enable_if_t<std::is_arithmetic<Number>::value, bool> operator()(Number val)
   {
     return val != static_cast<Number>(0);
   }
 
   // For anything else, throw bad_get().
-  template<class T> std::enable_if_t<!std::is_arithmetic<T>::value, bool> operator()(T)
+  template<class T>
+  std::enable_if_t<!std::is_arithmetic<T>::value, bool> operator()(T)
   {
     throw boost::bad_get();
   }
@@ -257,7 +276,8 @@ template<> struct _GetImpl<bool> : public boost::static_visitor<bool> {
 // and so on.  As a special case of this, '-0' is stored as a double, since it
 // is the only way to preserve a signed zero (integral types have no signed
 // zero).
-struct Value {
+struct Value
+{
   // Default constructor leaves the value in an undefined state.
   Value()
   {}
@@ -265,12 +285,15 @@ struct Value {
   // Construct and implicitly convert from an integral type \p Int.  If \p Int
   // is signed, the resulting value holds an 'int64_t' internally.  If \p Int
   // is unsigned, the result value holds an 'uint64_t'.
-  template<class Int> Value(Int in, std::enable_if_t<std::is_integral<Int>::value> * = 0)
+  template<class Int>
+  Value(Int in, std::enable_if_t<std::is_integral<Int>::value> * = 0)
   {
-    if (std::is_signed<Int>::value) {
+    if (std::is_signed<Int>::value)
+    {
       _variant = static_cast<int64_t>(in);
     }
-    else {
+    else
+    {
       _variant = static_cast<uint64_t>(in);
     }
   }
@@ -283,43 +306,51 @@ struct Value {
   {}
 
   // Construct and implicitly convert from std::string.
-  Value(const std::string &in) : _variant(in)
+  Value(const std::string &in)
+    : _variant(in)
   {}
 
   // Construct and implicitly convert from TfToken.
-  Value(const TfToken &in) : _variant(in)
+  Value(const TfToken &in)
+    : _variant(in)
   {}
 
   // Construct and implicitly convert from SdfAssetPath.
-  Value(const SdfAssetPath &in) : _variant(in)
+  Value(const SdfAssetPath &in)
+    : _variant(in)
   {}
 
   // Attempt to get a value of type T from this Value, applying appropriate
   // conversions.  If this value cannot be converted to T, throw
   // boost::bad_get.
-  template<class T> typename _GetImpl<T>::ResultType Get() const
+  template<class T>
+  typename _GetImpl<T>::ResultType Get() const
   {
     return _GetImpl<T>().Visit(_variant);
   }
 
   // Hopefully short-lived API that applies an external visitor to the held
   // variant type.
-  template<class Visitor> typename Visitor::result_type ApplyVisitor(const Visitor &visitor)
+  template<class Visitor>
+  typename Visitor::result_type ApplyVisitor(const Visitor &visitor)
   {
     return boost::apply_visitor(visitor, _variant);
   }
 
-  template<class Visitor> typename Visitor::result_type ApplyVisitor(Visitor &visitor)
+  template<class Visitor>
+  typename Visitor::result_type ApplyVisitor(Visitor &visitor)
   {
     return boost::apply_visitor(visitor, _variant);
   }
 
-  template<class Visitor> typename Visitor::result_type ApplyVisitor(const Visitor &visitor) const
+  template<class Visitor>
+  typename Visitor::result_type ApplyVisitor(const Visitor &visitor) const
   {
     return _variant.apply_visitor(visitor);
   }
 
-  template<class Visitor> typename Visitor::result_type ApplyVisitor(Visitor &visitor) const
+  template<class Visitor>
+  typename Visitor::result_type ApplyVisitor(Visitor &visitor) const
   {
     return _variant.apply_visitor(visitor);
   }
@@ -332,7 +363,8 @@ typedef std::function<
   VtValue(std::vector<unsigned int> const &, std::vector<Value> const &, size_t &, std::string *)>
   ValueFactoryFunc;
 
-struct ValueFactory {
+struct ValueFactory
+{
   ValueFactory()
   {}
 

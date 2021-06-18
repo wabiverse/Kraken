@@ -46,7 +46,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 TfPyObjWrapper _Remap(const UsdSkelAnimMapper &self,
                       const VtValue &source,

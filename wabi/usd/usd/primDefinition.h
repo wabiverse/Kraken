@@ -44,7 +44,8 @@ class UsdPrim;
 /// properties and metadata of a prim whose type is defined by this definition.
 ///
 /// Instances of this class can only be created by the UsdSchemaRegistry.
-class UsdPrimDefinition {
+class UsdPrimDefinition
+{
  public:
   ~UsdPrimDefinition() = default;
 
@@ -66,7 +67,8 @@ class UsdPrimDefinition {
   /// SdfSpecTypeUnknown.
   SdfSpecType GetSpecType(const TfToken &propName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
+    {
       return _GetSchematics()->GetSpecType(*path);
     }
     return SdfSpecTypeUnknown;
@@ -77,7 +79,8 @@ class UsdPrimDefinition {
   /// if there is no such property spec.
   SdfPropertySpecHandle GetSchemaPropertySpec(const TfToken &propName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
+    {
       return _GetSchematics()->GetPropertyAtPath(*path);
     }
     return TfNullPtr;
@@ -88,7 +91,8 @@ class UsdPrimDefinition {
   ///     GetSchemaPropertySpec(primType, attrName));
   SdfAttributeSpecHandle GetSchemaAttributeSpec(const TfToken &attrName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, attrName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, attrName))
+    {
       return _GetSchematics()->GetAttributeAtPath(*path);
     }
     return TfNullPtr;
@@ -99,7 +103,8 @@ class UsdPrimDefinition {
   ///     GetSchemaPropertySpec(primType, relName));
   SdfRelationshipSpecHandle GetSchemaRelationshipSpec(const TfToken &relName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, relName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, relName))
+    {
       return _GetSchematics()->GetRelationshipAtPath(*path);
     }
     return TfNullPtr;
@@ -110,7 +115,8 @@ class UsdPrimDefinition {
   ///
   /// Returns true if the attribute exists in this prim definition and it has
   /// a fallback value defined. Returns false otherwise.
-  template<class T> bool GetAttributeFallbackValue(const TfToken &attrName, T *value) const
+  template<class T>
+  bool GetAttributeFallbackValue(const TfToken &attrName, T *value) const
   {
     return _HasField(attrName, SdfFieldKeys->Default, value);
   }
@@ -128,9 +134,11 @@ class UsdPrimDefinition {
   ///
   /// Returns true if a fallback value is defined for the given metadata
   /// \p key. Returns false otherwise.
-  template<class T> bool GetMetadata(const TfToken &key, T *value) const
+  template<class T>
+  bool GetMetadata(const TfToken &key, T *value) const
   {
-    if (UsdSchemaRegistry::IsDisallowedField(key)) {
+    if (UsdSchemaRegistry::IsDisallowedField(key))
+    {
       return false;
     }
     return _HasField(TfToken(), key, value);
@@ -144,9 +152,11 @@ class UsdPrimDefinition {
   /// Returns true if a fallback dictionary value is defined for the given
   /// metadata \p key and it contains a value at \p keyPath. Returns false
   /// otherwise.
-  template<class T> bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
+  template<class T>
+  bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
   {
-    if (UsdSchemaRegistry::IsDisallowedField(key)) {
+    if (UsdSchemaRegistry::IsDisallowedField(key))
+    {
       return false;
     }
     return _HasFieldDictKey(TfToken(), key, keyPath, value);
@@ -171,9 +181,11 @@ class UsdPrimDefinition {
   ///
   /// Returns true if a fallback value is defined for the given metadata
   /// \p key for the named property. Returns false otherwise.
-  template<class T> bool GetPropertyMetadata(const TfToken &propName, const TfToken &key, T *value) const
+  template<class T>
+  bool GetPropertyMetadata(const TfToken &propName, const TfToken &key, T *value) const
   {
-    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key)) {
+    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key))
+    {
       return false;
     }
     return _HasField(propName, key, value);
@@ -193,7 +205,8 @@ class UsdPrimDefinition {
                                     const TfToken &keyPath,
                                     T *value) const
   {
-    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key)) {
+    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key))
+    {
       return false;
     }
     return _HasFieldDictKey(propName, key, keyPath, value);
@@ -271,9 +284,11 @@ class UsdPrimDefinition {
   /// It is preferable to use the _HasField and _HasFieldDictKey methods to
   /// access property field values, as opposed to getting a spec handle from
   /// the GetSchemaXXXSpec functions, as these methods are faster.
-  template<class T> bool _HasField(const TfToken &propName, const TfToken &fieldName, T *value) const
+  template<class T>
+  bool _HasField(const TfToken &propName, const TfToken &fieldName, T *value) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
+    {
       return _GetSchematics()->HasField(*path, fieldName, value);
     }
     return false;
@@ -285,7 +300,8 @@ class UsdPrimDefinition {
                         const TfToken &keyPath,
                         T *value) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
+    {
       return _GetSchematics()->HasFieldDictKey(*path, fieldName, keyPath, value);
     }
     return false;
@@ -318,10 +334,12 @@ class UsdPrimDefinition {
     // already exists, but makes sure we don't end up with duplicate names
     // in the property names list.
     auto it = _propPathMap.insert(std::make_pair(name, schemaPath));
-    if (it.second) {
+    if (it.second)
+    {
       _properties.push_back(name);
     }
-    else {
+    else
+    {
       it.first->second = schemaPath;
     }
   }

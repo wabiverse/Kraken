@@ -51,10 +51,12 @@ class UsdProperty;
 /// retained UsdObjects only then and otherwise use them without validity
 /// checking.
 ///
-class UsdProperty : public UsdObject {
+class UsdProperty : public UsdObject
+{
  public:
   /// Construct an invalid property.
-  UsdProperty() : UsdObject(_Null<UsdProperty>())
+  UsdProperty()
+    : UsdObject(_Null<UsdProperty>())
   {}
 
   // --------------------------------------------------------------------- //
@@ -275,7 +277,9 @@ class UsdProperty : public UsdObject {
   UsdProperty FlattenTo(const UsdProperty &property) const;
 
  protected:
-  template<class Derived> UsdProperty(_Null<Derived>) : UsdObject(_Null<Derived>())
+  template<class Derived>
+  UsdProperty(_Null<Derived>)
+    : UsdObject(_Null<Derived>())
   {}
 
   // Gets the targets of the given spec type. Returns true if an authored

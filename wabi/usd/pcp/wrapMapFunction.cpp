@@ -37,19 +37,23 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string _Repr(const PcpMapFunction &f)
 {
-  if (f.IsIdentity()) {
+  if (f.IsIdentity())
+  {
     return "Pcp.MapFunction.Identity()";
   }
   string s = "Pcp.MapFunction(";
-  if (!f.IsNull()) {
+  if (!f.IsNull())
+  {
     const boost::python::dict sourceToTargetMap = TfPyCopyMapToDictionary(f.GetSourceToTargetMap());
 
     s += TfPyObjectRepr(sourceToTargetMap);
-    if (f.GetTimeOffset() != SdfLayerOffset()) {
+    if (f.GetTimeOffset() != SdfLayerOffset())
+    {
       s += ", ";
       s += TfPyRepr(f.GetTimeOffset());
     }
@@ -67,7 +71,8 @@ static PcpMapFunction *_Create(const boost::python::dict &sourceToTargetMap, Sdf
 {
   PcpMapFunction::PathMap pathMap;
   boost::python::list keys = sourceToTargetMap.keys();
-  for (int i = 0; i < boost::python::len(keys); ++i) {
+  for (int i = 0; i < boost::python::len(keys); ++i)
+  {
     // Just blindly try to extract SdfPaths.
     // If the dict is not holding the right types,
     // we'll raise a boost exception, which boost

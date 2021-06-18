@@ -146,18 +146,22 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   TF_VERIFY(cubic || linear);
 
   // The order of the clauses below matters!
-  if (drawStyle == HdPh_BasisCurvesShaderKey::POINTS) {
+  if (drawStyle == HdPh_BasisCurvesShaderKey::POINTS)
+  {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_POINTS;
   }
-  else if (cubic) {
+  else if (cubic)
+  {
     // cubic curves get drawn via isolines in a tessellation shader
     // even in wire mode.
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_CUBIC_PATCHES;
   }
-  else if (drawThick) {
+  else if (drawThick)
+  {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_LINEAR_PATCHES;
   }
-  else {
+  else
+  {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_LINES;
   }
 
@@ -169,7 +173,8 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   VS[vsIndex++] = _tokens->instancing;
   VS[vsIndex++] = drawThick ? _tokens->curvesVertexPatch : _tokens->curvesVertexWire;
   VS[vsIndex++] = oriented ? _tokens->curvesVertexNormalOriented : _tokens->curvesVertexNormalImplicit;
-  if (isPrimTypePoints) {
+  if (isPrimTypePoints)
+  {
     // Add mixins that allow for picking and sel highlighting of points.
     // Even though these are more "render pass-ish", we do this here to
     // reduce the shader code generated when the points repr isn't used.
@@ -177,14 +182,17 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
     VS[vsIndex++] = _tokens->pointIdSelDecodeUtilsVS;
     VS[vsIndex++] = _tokens->pointIdSelPointSelVS;
   }
-  else {
+  else
+  {
     VS[vsIndex++] = _tokens->pointIdNoneVS;
   }
   VS[vsIndex] = TfToken();
 
   // Setup Tessellation
-  if (linear) {
-    switch (drawStyle) {
+  if (linear)
+  {
+    switch (drawStyle)
+    {
       case HdPh_BasisCurvesShaderKey::POINTS:
       case HdPh_BasisCurvesShaderKey::WIRE: {
         TCS[0] = TfToken();
@@ -225,8 +233,10 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
         TF_CODING_ERROR("Unhandled drawstyle for basis curves");
     }
   }
-  else {  // cubic
-    switch (drawStyle) {
+  else
+  {  // cubic
+    switch (drawStyle)
+    {
       case HdPh_BasisCurvesShaderKey::POINTS: {
         TCS[0] = TfToken();
         TES[0] = TfToken();
@@ -289,13 +299,16 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   // Common must be first as it defines terminal interfaces
   uint8_t fsIndex = 0;
   FS[fsIndex++] = _tokens->commonFS;
-  if (shadingTerminal == HdBasisCurvesReprDescTokens->hullColor) {
+  if (shadingTerminal == HdBasisCurvesReprDescTokens->hullColor)
+  {
     FS[fsIndex++] = _tokens->hullColorFS;
   }
-  else if (shadingTerminal == HdBasisCurvesReprDescTokens->pointColor) {
+  else if (shadingTerminal == HdBasisCurvesReprDescTokens->pointColor)
+  {
     FS[fsIndex++] = _tokens->pointColorFS;
   }
-  else {
+  else
+  {
     FS[fsIndex++] = _tokens->surfaceFS;
   }
   FS[fsIndex++] = _tokens->scalarOverrideFS;
@@ -304,41 +317,48 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
 
   FS[fsIndex++] = hasAuthoredTopologicalVisibility ? _tokens->topVisFS : _tokens->topVisFallbackFS;
 
-  if (drawStyle == HdPh_BasisCurvesShaderKey::WIRE || drawStyle == HdPh_BasisCurvesShaderKey::POINTS) {
+  if (drawStyle == HdPh_BasisCurvesShaderKey::WIRE || drawStyle == HdPh_BasisCurvesShaderKey::POINTS)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentWire;
     FS[fsIndex++] = TfToken();
   }
   else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ORIENTED) {
+           normalStyle == HdPh_BasisCurvesShaderKey::ORIENTED)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentRibbonOriented;
     FS[fsIndex++] = TfToken();
   }
   else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ROUND) {
+           normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentRibbonRound;
     FS[fsIndex++] = TfToken();
   }
   else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::HAIR) {
+           normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHair;
     FS[fsIndex++] = TfToken();
   }
   else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ROUND) {
+           normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHalfTube;
     FS[fsIndex++] = TfToken();
   }
   else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
-           normalStyle == HdPh_BasisCurvesShaderKey::HAIR) {
+           normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
+  {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHair;
     FS[fsIndex++] = TfToken();
   }
-  else {
+  else
+  {
     TF_WARN(
       "Cannot setup fragment shaders for invalid combination of \
                  basis curves shader key settings.");

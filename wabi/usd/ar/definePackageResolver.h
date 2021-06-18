@@ -63,13 +63,16 @@ WABI_NAMESPACE_BEGIN
       Ar_DefinePackageResolver<__VA_ARGS__>(); \
     }
 
-class Ar_PackageResolverFactoryBase : public TfType::FactoryBase {
+class Ar_PackageResolverFactoryBase : public TfType::FactoryBase
+{
  public:
   AR_API
   virtual ArPackageResolver *New() const = 0;
 };
 
-template<class T> class Ar_PackageResolverFactory : public Ar_PackageResolverFactoryBase {
+template<class T>
+class Ar_PackageResolverFactory : public Ar_PackageResolverFactoryBase
+{
  public:
   virtual ArPackageResolver *New() const override
   {
@@ -77,7 +80,8 @@ template<class T> class Ar_PackageResolverFactory : public Ar_PackageResolverFac
   }
 };
 
-template<class PackageResolver, class... Bases> void Ar_DefinePackageResolver()
+template<class PackageResolver, class... Bases>
+void Ar_DefinePackageResolver()
 {
   TfType::Define<PackageResolver, TfType::Bases<Bases...>>()
     .template SetFactory<Ar_PackageResolverFactory<PackageResolver>>();

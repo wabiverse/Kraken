@@ -36,7 +36,8 @@ using _ListEditImpl = Usd_ListEditImpl<UsdReferences, SdfReferencesProxy>;
 
 // The implementation doesn't define this function as it needs to be specialized
 // so we implement it here.
-template<> SdfReferencesProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
+template<>
+SdfReferencesProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
 {
   return spec->GetReferenceList();
 }

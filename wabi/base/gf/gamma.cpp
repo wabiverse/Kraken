@@ -98,12 +98,14 @@ unsigned char GfApplyGamma(const unsigned char &v, double g)
   return (unsigned char)(pow((v / 255.0), g) * 255);
 }
 
-template<class T> static T Gf_ConvertLinearToDisplay(const T &v)
+template<class T>
+static T Gf_ConvertLinearToDisplay(const T &v)
 {
   return GfApplyGamma(v, 1.0 / _DisplayGamma);
 }
 
-template<class T> static T Gf_ConvertDisplayToLinear(const T &v)
+template<class T>
+static T Gf_ConvertDisplayToLinear(const T &v)
 {
   return GfApplyGamma(v, _DisplayGamma);
 }

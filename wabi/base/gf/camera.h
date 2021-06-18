@@ -53,16 +53,22 @@ class GfFrustum;
 /// This class provides a thin wrapper on the camera data model,
 /// with a small number of computations.
 ///
-class GfCamera {
+class GfCamera
+{
  public:
   /// Projection type.
-  enum Projection {
+  enum Projection
+  {
     Perspective = 0,
     Orthographic,
   };
 
   /// Direction used for Field of View or orthographic size
-  enum FOVDirection { FOVHorizontal = 0, FOVVertical };
+  enum FOVDirection
+  {
+    FOVHorizontal = 0,
+    FOVVertical
+  };
 
   /// The unit for horizontal and vertical aperture is one tenth of the
   /// world unit. Thus, if the world unit is assumed to be cm, the horizontal

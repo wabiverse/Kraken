@@ -40,7 +40,8 @@ class VtValue;
 ///
 /// Provides Vulkan/GL interop.
 ///
-class HgiInteropVulkan final {
+class HgiInteropVulkan final
+{
  public:
   HGIINTEROP_API
   HgiInteropVulkan(Hgi *hgiVulkan);

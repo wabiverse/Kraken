@@ -48,7 +48,9 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This predicate is compiled out.
 ///
-template<class T> class SdfChildrenViewTrivialPredicate {
+template<class T>
+class SdfChildrenViewTrivialPredicate
+{
  public:
   bool operator()(const T &x) const
   {
@@ -60,7 +62,9 @@ template<class T> class SdfChildrenViewTrivialPredicate {
 ///
 /// Special case adapter that does no conversions.
 ///
-template<class T> class SdfChildrenViewTrivialAdapter {
+template<class T>
+class SdfChildrenViewTrivialAdapter
+{
  public:
   typedef T PrivateType;
   typedef T PublicType;
@@ -77,17 +81,22 @@ template<class T> class SdfChildrenViewTrivialAdapter {
 /// A specialization of the traits for trivial predicates allows the
 /// internal iterator to be used directly.
 ///
-template<typename _Owner, typename _InnerIterator, typename _DummyPredicate> class Sdf_ChildrenViewTraits {
+template<typename _Owner, typename _InnerIterator, typename _DummyPredicate>
+class Sdf_ChildrenViewTraits
+{
  private:
   // Internal predicate object which will be passed to the filter
   // iterator. This just calls through to the owner's predicate.
-  class _Predicate {
+  class _Predicate
+  {
    public:
     typedef typename _Owner::value_type value_type;
 
-    _Predicate() : _owner(NULL)
+    _Predicate()
+      : _owner(NULL)
     {}
-    _Predicate(const _Owner *owner) : _owner(owner)
+    _Predicate(const _Owner *owner)
+      : _owner(owner)
     {}
 
     bool operator()(const value_type &x) const
@@ -124,7 +133,8 @@ template<typename _Owner, typename _InnerIterator, typename _DummyPredicate> cla
 template<typename _Owner, typename _InnerIterator>
 class Sdf_ChildrenViewTraits<_Owner,
                              _InnerIterator,
-                             SdfChildrenViewTrivialPredicate<typename _Owner::ChildPolicy::ValueType>> {
+                             SdfChildrenViewTrivialPredicate<typename _Owner::ChildPolicy::ValueType>>
+{
  private:
  public:
   typedef _InnerIterator const_iterator;
@@ -164,7 +174,8 @@ class Sdf_ChildrenViewTraits<_Owner,
 template<typename _ChildPolicy,
          typename _Predicate = SdfChildrenViewTrivialPredicate<typename _ChildPolicy::ValueType>,
          typename _Adapter = SdfChildrenViewTrivialAdapter<typename _ChildPolicy::ValueType>>
-class SdfChildrenView {
+class SdfChildrenView
+{
  public:
   typedef SdfChildrenView<_ChildPolicy, _Predicate, _Adapter> This;
 
@@ -185,15 +196,20 @@ class SdfChildrenView {
   // which is important for providing both Gd and Lsd backed storage.
   class _InnerIterator
     : public boost::
-        iterator_facade<_InnerIterator, value_type, std::random_access_iterator_tag, value_type> {
+        iterator_facade<_InnerIterator, value_type, std::random_access_iterator_tag, value_type>
+  {
    public:
     typedef value_type reference;
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
 
-    _InnerIterator() : _owner(NULL), _pos(0)
+    _InnerIterator()
+      : _owner(NULL),
+        _pos(0)
     {}
-    _InnerIterator(const This *owner, const size_t &pos) : _owner(owner), _pos(pos)
+    _InnerIterator(const This *owner, const size_t &pos)
+      : _owner(owner),
+        _pos(pos)
     {}
 
    private:
@@ -260,7 +276,9 @@ class SdfChildrenView {
       _predicate(predicate)
   {}
 
-  SdfChildrenView(const SdfChildrenView &other) : _children(other._children), _predicate(other._predicate)
+  SdfChildrenView(const SdfChildrenView &other)
+    : _children(other._children),
+      _predicate(other._predicate)
   {}
 
   template<class OtherAdapter>
@@ -379,7 +397,8 @@ class SdfChildrenView {
   }
 
   /// Returns the elements, in order.
-  template<typename V> V values_as() const
+  template<typename V>
+  V values_as() const
   {
     V x;
     std::copy(begin(), end(), std::inserter(x, x.begin()));
@@ -391,24 +410,28 @@ class SdfChildrenView {
   {
     std::vector<key_type> result;
     result.reserve(size());
-    for (const_iterator i = begin(), n = end(); i != n; ++i) {
+    for (const_iterator i = begin(), n = end(); i != n; ++i)
+    {
       result.push_back(key(i));
     }
     return result;
   }
 
   /// Returns the keys for all elements, in order.
-  template<typename V> V keys_as() const
+  template<typename V>
+  V keys_as() const
   {
     std::vector<key_type> k = keys();
     return V(k.begin(), k.end());
   }
 
   /// Returns the elements as a dictionary.
-  template<typename Dict> Dict items_as() const
+  template<typename Dict>
+  Dict items_as() const
   {
     Dict result;
-    for (const_iterator i = begin(), n = end(); i != n; ++i) {
+    for (const_iterator i = begin(), n = end(); i != n; ++i)
+    {
       result.insert(std::make_pair(key(i), *i));
     }
     return result;
@@ -438,7 +461,8 @@ class SdfChildrenView {
   value_type get(const key_type &x) const
   {
     size_t index = _children.Find(x);
-    if (index == _GetSize()) {
+    if (index == _GetSize())
+    {
       return value_type();
     }
     return _Get(index);
@@ -449,7 +473,8 @@ class SdfChildrenView {
   value_type get(const key_type &x, const value_type &fallback) const
   {
     size_t index = _children.Find(x);
-    if (index == _GetSize()) {
+    if (index == _GetSize())
+    {
       return fallback;
     }
     return _Get(index);
@@ -509,14 +534,17 @@ class SdfChildrenView {
   }
 
  private:
-  template<class V, class P, class A> friend class SdfChildrenView;
+  template<class V, class P, class A>
+  friend class SdfChildrenView;
   ChildrenType _children;
   Predicate _predicate;
 };
 
 /// Helper class to convert a given view of type \c _View to an
 /// adapted view using \c _Adapter as the adapter class.
-template<class _View, class _Adapter> struct SdfAdaptedChildrenViewCreator {
+template<class _View, class _Adapter>
+struct SdfAdaptedChildrenViewCreator
+{
   typedef _View OriginalView;
   typedef SdfChildrenView<typename _View::ChildPolicy, typename _View::Predicate, _Adapter> AdaptedView;
 
@@ -528,9 +556,12 @@ template<class _View, class _Adapter> struct SdfAdaptedChildrenViewCreator {
 
 // Allow TfIteration over children views.
 template<typename C, typename P, typename A>
-struct Tf_ShouldIterateOverCopy<SdfChildrenView<C, P, A>> : boost::true_type {
+struct Tf_ShouldIterateOverCopy<SdfChildrenView<C, P, A>> : boost::true_type
+{
 };
-template<typename C, typename P, typename A> struct Tf_IteratorInterface<SdfChildrenView<C, P, A>, false> {
+template<typename C, typename P, typename A>
+struct Tf_IteratorInterface<SdfChildrenView<C, P, A>, false>
+{
   typedef SdfChildrenView<C, P, A> Type;
   typedef typename Type::const_iterator IteratorType;
   static IteratorType Begin(Type const &c)
@@ -542,7 +573,9 @@ template<typename C, typename P, typename A> struct Tf_IteratorInterface<SdfChil
     return c.end();
   }
 };
-template<typename C, typename P, typename A> struct Tf_IteratorInterface<SdfChildrenView<C, P, A>, true> {
+template<typename C, typename P, typename A>
+struct Tf_IteratorInterface<SdfChildrenView<C, P, A>, true>
+{
   typedef SdfChildrenView<C, P, A> Type;
   typedef typename Type::const_reverse_iterator IteratorType;
   static IteratorType Begin(Type const &c)

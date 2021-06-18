@@ -46,7 +46,8 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdNotice::LayerMutingChanged, TfType::Bases<UsdNotice::StageNotice>>();
 }
 
-UsdNotice::StageNotice::StageNotice(const UsdStageWeakPtr &stage) : _stage(stage)
+UsdNotice::StageNotice::StageNotice(const UsdStageWeakPtr &stage)
+  : _stage(stage)
 {}
 
 UsdNotice::StageNotice::~StageNotice()
@@ -64,7 +65,8 @@ UsdNotice::LayerMutingChanged::~LayerMutingChanged()
 TfTokenVector UsdNotice::ObjectsChanged::PathRange::const_iterator::GetChangedFields() const
 {
   TfTokenVector fields;
-  for (const SdfChangeList::Entry *entry : base()->second) {
+  for (const SdfChangeList::Entry *entry : base()->second)
+  {
     fields.insert(fields.end(),
                   make_transform_iterator(entry->infoChanged.begin(), TfGet<0>()),
                   make_transform_iterator(entry->infoChanged.end(), TfGet<0>()));
@@ -77,8 +79,10 @@ TfTokenVector UsdNotice::ObjectsChanged::PathRange::const_iterator::GetChangedFi
 
 bool UsdNotice::ObjectsChanged::PathRange::const_iterator::HasChangedFields() const
 {
-  for (const SdfChangeList::Entry *entry : base()->second) {
-    if (!entry->infoChanged.empty()) {
+  for (const SdfChangeList::Entry *entry : base()->second)
+  {
+    if (!entry->infoChanged.empty())
+    {
       return true;
     }
   }
@@ -121,13 +125,15 @@ TfTokenVector UsdNotice::ObjectsChanged::GetChangedFields(const SdfPath &path) c
 {
   PathRange range = GetResyncedPaths();
   PathRange::const_iterator it = range.find(path);
-  if (it != range.end()) {
+  if (it != range.end())
+  {
     return it.GetChangedFields();
   }
 
   range = GetChangedInfoOnlyPaths();
   it = range.find(path);
-  if (it != range.end()) {
+  if (it != range.end())
+  {
     return it.GetChangedFields();
   }
 
@@ -143,13 +149,15 @@ bool UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath &path) const
 {
   PathRange range = GetResyncedPaths();
   PathRange::const_iterator it = range.find(path);
-  if (it != range.end()) {
+  if (it != range.end())
+  {
     return it.HasChangedFields();
   }
 
   range = GetChangedInfoOnlyPaths();
   it = range.find(path);
-  if (it != range.end()) {
+  if (it != range.end())
+  {
     return it.HasChangedFields();
   }
 

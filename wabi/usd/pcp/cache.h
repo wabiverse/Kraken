@@ -89,7 +89,8 @@ SDF_DECLARE_HANDLES(SdfSpec);
 /// These include computing a layer stack from a PcpLayerStackIdentifier,
 /// computing a prim index or prim stack, and computing a property index.
 ///
-class PcpCache {
+class PcpCache
+{
   PcpCache(PcpCache const &) = delete;
   PcpCache &operator=(PcpCache const &) = delete;
 
@@ -604,12 +605,16 @@ class PcpCache {
   // typecast and predicate invocation, and pass that function pointer into
   // the implementation.  There is no heap allocation, no predicate copy, no
   // argument marshalling, etc.
-  struct _UntypedIndexingChildrenPredicate {
-    _UntypedIndexingChildrenPredicate() : pred(nullptr), invoke(nullptr)
+  struct _UntypedIndexingChildrenPredicate
+  {
+    _UntypedIndexingChildrenPredicate()
+      : pred(nullptr),
+        invoke(nullptr)
     {}
     template<class Pred>
-    explicit _UntypedIndexingChildrenPredicate(const Pred *pred) : pred(pred),
-                                                                   invoke(_Invoke<Pred>)
+    explicit _UntypedIndexingChildrenPredicate(const Pred *pred)
+      : pred(pred),
+        invoke(_Invoke<Pred>)
     {}
 
     inline bool operator()(const PcpPrimIndex &index, TfTokenVector *childNamesToCompose) const
@@ -629,10 +634,12 @@ class PcpCache {
 
   // See doc for _UntypedIndexingChildrenPredicate above.  This does the same
   // for the payload inclusion predicate.
-  struct _UntypedIndexingPayloadPredicate {
+  struct _UntypedIndexingPayloadPredicate
+  {
     template<class Pred>
-    explicit _UntypedIndexingPayloadPredicate(const Pred *pred) : pred(pred),
-                                                                  invoke(_Invoke<Pred>)
+    explicit _UntypedIndexingPayloadPredicate(const Pred *pred)
+      : pred(pred),
+        invoke(_Invoke<Pred>)
     {}
 
     inline bool operator()(const SdfPath &path) const
@@ -641,7 +648,8 @@ class PcpCache {
     }
 
    private:
-    template<class Pred> static bool _Invoke(const void *pred, const SdfPath &path)
+    template<class Pred>
+    static bool _Invoke(const void *pred, const SdfPath &path)
     {
       return (*static_cast<const Pred *>(pred))(path);
     }

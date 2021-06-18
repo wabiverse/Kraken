@@ -25,9 +25,11 @@ limitations under the License.
 #include <string>
 
 #define RPR_ERROR_CHECK_THROW(status, msg, ...) \
-  do { \
+  do \
+  { \
     auto st = status; \
-    if (st != RPR_SUCCESS) { \
+    if (st != RPR_SUCCESS) \
+    { \
       assert(false); \
       throw RprUsdError(st, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, ##__VA_ARGS__); \
     } \
@@ -52,19 +54,23 @@ inline std::string RprUsdConstructErrorMessage(rpr::Status errorStatus,
                                                rpr::Context *context = nullptr)
 {
   auto rprErrorString = [errorStatus, context]() -> std::string {
-    if (context) {
+    if (context)
+    {
       size_t lastErrorMessageSize = 0;
       auto status = context->GetInfo(RPR_CONTEXT_LAST_ERROR_MESSAGE, 0, nullptr, &lastErrorMessageSize);
-      if (status == RPR_SUCCESS && lastErrorMessageSize > 1) {
+      if (status == RPR_SUCCESS && lastErrorMessageSize > 1)
+      {
         std::string message(lastErrorMessageSize, '\0');
         status = context->GetInfo(RPR_CONTEXT_LAST_ERROR_MESSAGE, message.size(), &message[0], nullptr);
-        if (status == RPR_SUCCESS) {
+        if (status == RPR_SUCCESS)
+        {
           return message;
         }
       }
     }
 
-    switch (errorStatus) {
+    switch (errorStatus)
+    {
       case RPR_ERROR_INVALID_API_VERSION:
         return "invalid api version";
       case RPR_ERROR_INVALID_PARAMETER:
@@ -86,10 +92,12 @@ inline std::string RprUsdConstructErrorMessage(rpr::Status errorStatus,
 #ifdef RPR_GIT_SHORT_HASH
   suffix += TfStringPrintf("(%s)", RPR_GIT_SHORT_HASH);
 #endif  // RPR_GIT_SHORT_HASH
-  if (errorStatus == RPR_SUCCESS) {
+  if (errorStatus == RPR_SUCCESS)
+  {
     return TfStringPrintf("[RPR ERROR] %s%s", messageOnFail.c_str(), suffix.c_str());
   }
-  else {
+  else
+  {
     auto errorStr = rprErrorString();
     return TfStringPrintf("[RPR ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());
   }
@@ -102,11 +110,13 @@ inline bool RprUsdFailed(rpr::Status status,
                          size_t line,
                          rpr::Context *context = nullptr)
 {
-  if (RPR_SUCCESS == status) {
+  if (RPR_SUCCESS == status)
+  {
     return false;
   }
   if ((status == RPR_ERROR_UNSUPPORTED || status == RPR_ERROR_UNIMPLEMENTED) &&
-      !TfDebug::IsEnabled(RPR_USD_DEBUG_CORE_UNSUPPORTED_ERROR)) {
+      !TfDebug::IsEnabled(RPR_USD_DEBUG_CORE_UNSUPPORTED_ERROR))
+  {
     return true;
   }
 
@@ -115,7 +125,8 @@ inline bool RprUsdFailed(rpr::Status status,
   return true;
 }
 
-class RprUsdError : public std::runtime_error {
+class RprUsdError : public std::runtime_error
+{
  public:
   RprUsdError(rpr::Status errorStatus,
               const char *messageOnFail,
@@ -127,7 +138,8 @@ class RprUsdError : public std::runtime_error {
         RprUsdConstructErrorMessage(errorStatus, messageOnFail, file, function, line, context))
   {}
 
-  RprUsdError(std::string const &errorMesssage) : std::runtime_error(errorMesssage)
+  RprUsdError(std::string const &errorMesssage)
+    : std::runtime_error(errorMesssage)
   {}
 };
 

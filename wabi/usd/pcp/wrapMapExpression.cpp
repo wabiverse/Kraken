@@ -33,7 +33,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string _Str(const PcpMapExpression &e)
 {

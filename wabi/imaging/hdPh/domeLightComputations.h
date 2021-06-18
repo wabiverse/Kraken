@@ -48,7 +48,8 @@ using HdPhSimpleLightingShaderPtr = std::weak_ptr<class HdPhSimpleLightingShader
 /// will only be created by the computation with level = 0 and the
 /// computations with level > 0 will use the same texture.
 ///
-class HdPh_DomeLightComputationGPU : public HdComputation {
+class HdPh_DomeLightComputationGPU : public HdComputation
+{
  public:
   /// Constructor
   HDPH_API

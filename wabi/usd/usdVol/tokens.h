@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdVolTokens->bool_);
 /// \endcode
-struct UsdVolTokensType {
+struct UsdVolTokensType
+{
   USDVOL_API UsdVolTokensType();
   /// \brief "bool"
   ///

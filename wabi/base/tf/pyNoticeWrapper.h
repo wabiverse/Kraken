@@ -47,12 +47,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Tf_PyNoticeObjectGenerator {
+struct Tf_PyNoticeObjectGenerator
+{
   typedef Tf_PyNoticeObjectGenerator This;
   typedef boost::python::object (*MakeObjectFunc)(TfNotice const &);
 
   // Register the generator for notice type T.
-  template<typename T> static void Register()
+  template<typename T>
+  static void Register()
   {
     // XXX this stuff should be keyed directly off TfType now
     (*_generators)[typeid(T).name()] = This::_Generate<T>;
@@ -62,7 +64,8 @@ struct Tf_PyNoticeObjectGenerator {
   TF_API static boost::python::object Invoke(TfNotice const &n);
 
  private:
-  template<typename T> static boost::python::object _Generate(TfNotice const &n)
+  template<typename T>
+  static boost::python::object _Generate(TfNotice const &n)
   {
     // Python locking is left to the caller.
     return boost::python::object(static_cast<T const &>(n));
@@ -73,12 +76,15 @@ struct Tf_PyNoticeObjectGenerator {
   TF_API static TfStaticData<std::map<std::string, MakeObjectFunc>> _generators;
 };
 
-struct TfPyNoticeWrapperBase : public TfType::PyPolymorphicBase {
+struct TfPyNoticeWrapperBase : public TfType::PyPolymorphicBase
+{
   TF_API virtual ~TfPyNoticeWrapperBase();
   virtual boost::python::handle<> GetNoticePythonObject() const = 0;
 };
 
-template<class Notice> struct Tf_PyNoticeObjectFinder : public Tf_PyObjectFinderBase {
+template<class Notice>
+struct Tf_PyNoticeObjectFinder : public Tf_PyObjectFinderBase
+{
   virtual ~Tf_PyNoticeObjectFinder()
   {}
   virtual boost::python::object Find(void const *objPtr) const
@@ -91,7 +97,8 @@ template<class Notice> struct Tf_PyNoticeObjectFinder : public Tf_PyObjectFinder
 };
 
 template<typename NoticeType, typename BaseType>
-struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase {
+struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase
+{
  private:
   static_assert(std::is_base_of<TfNotice, NoticeType>::value || std::is_same<TfNotice, NoticeType>::value,
                 "Notice type must be derived from or equal to TfNotice.");
@@ -118,7 +125,8 @@ struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase {
   static ClassType Wrap(std::string const &name = std::string())
   {
     std::string wrappedName = name;
-    if (wrappedName.empty()) {
+    if (wrappedName.empty())
+    {
       // Assume they want the last bit of a qualified name.
       wrappedName = TfType::Find<NoticeType>().GetTypeName();
       if (!TfStringGetSuffix(wrappedName, ':').empty())
@@ -140,8 +148,9 @@ struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase {
   // Arbitrary argument constructor (with a leading PyObject *) which
   // forwards to the base Notice class's constructor.
   template<typename... Args>
-  TfPyNoticeWrapper(PyObject *self, Args... args) : NoticeType(args...),
-                                                    _self(self)
+  TfPyNoticeWrapper(PyObject *self, Args... args)
+    : NoticeType(args...),
+      _self(self)
   {}
 
  private:

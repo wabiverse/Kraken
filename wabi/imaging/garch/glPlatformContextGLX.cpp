@@ -78,17 +78,20 @@ bool GarchGLXContextState::IsValid() const
 
 void GarchGLXContextState::MakeCurrent()
 {
-  if (IsValid()) {
+  if (IsValid())
+  {
     glXMakeCurrent(display, drawable, context);
   }
-  else if (_defaultCtor) {
+  else if (_defaultCtor)
+  {
     DoneCurrent();
   }
 }
 
 void GarchGLXContextState::DoneCurrent()
 {
-  if (Display *display = glXGetCurrentDisplay()) {
+  if (Display *display = glXGetCurrentDisplay())
+  {
     glXMakeCurrent(display, None, NULL);
   }
 }

@@ -106,7 +106,8 @@ void MurmurHash3_x86_32(const void *key, int len, uint32_t seed, void *out)
 
   const uint32_t *blocks = (const uint32_t *)(data + nblocks * 4);
 
-  for (int i = -nblocks; i; i++) {
+  for (int i = -nblocks; i; i++)
+  {
     uint32_t k1 = getblock32(blocks, i);
 
     k1 *= c1;
@@ -125,7 +126,8 @@ void MurmurHash3_x86_32(const void *key, int len, uint32_t seed, void *out)
 
   uint32_t k1 = 0;
 
-  switch (len & 3) {
+  switch (len & 3)
+  {
     case 3:
       k1 ^= tail[2] << 16;
     case 2:
@@ -170,7 +172,8 @@ void MurmurHash3_x86_128(const void *key, const int len, uint32_t seed, void *ou
 
   const uint32_t *blocks = (const uint32_t *)(data + nblocks * 16);
 
-  for (int i = -nblocks; i; i++) {
+  for (int i = -nblocks; i; i++)
+  {
     uint32_t k1 = getblock32(blocks, i * 4 + 0);
     uint32_t k2 = getblock32(blocks, i * 4 + 1);
     uint32_t k3 = getblock32(blocks, i * 4 + 2);
@@ -223,7 +226,8 @@ void MurmurHash3_x86_128(const void *key, const int len, uint32_t seed, void *ou
   uint32_t k3 = 0;
   uint32_t k4 = 0;
 
-  switch (len & 15) {
+  switch (len & 15)
+  {
     case 15:
       k4 ^= tail[14] << 16;
     case 14:
@@ -326,7 +330,8 @@ void MurmurHash3_x64_128(const void *key, const int len, const uint32_t seed, vo
 
   const uint64_t *blocks = (const uint64_t *)(data);
 
-  for (int i = 0; i < nblocks; i++) {
+  for (int i = 0; i < nblocks; i++)
+  {
     uint64_t k1 = getblock64(blocks, i * 2 + 0);
     uint64_t k2 = getblock64(blocks, i * 2 + 1);
 
@@ -357,7 +362,8 @@ void MurmurHash3_x64_128(const void *key, const int len, const uint32_t seed, vo
   uint64_t k1 = 0;
   uint64_t k2 = 0;
 
-  switch (len & 15) {
+  switch (len & 15)
+  {
     case 15:
       k2 ^= ((uint64_t)tail[14]) << 48;
     case 14:

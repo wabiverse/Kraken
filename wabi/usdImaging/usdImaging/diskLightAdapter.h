@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type DiskLight
 ///
-class UsdImagingDiskLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingDiskLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingDiskLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingDiskLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

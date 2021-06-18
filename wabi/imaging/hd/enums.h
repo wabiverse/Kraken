@@ -33,7 +33,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Abstraction of the Graphics compare functions.
 ///
-enum HdCompareFunction {
+enum HdCompareFunction
+{
   HdCmpFuncNever,
   HdCmpFuncLess,
   HdCmpFuncEqual,
@@ -50,7 +51,8 @@ enum HdCompareFunction {
 ///
 /// Abstraction of the Graphics stencil test operations.
 ///
-enum HdStencilOp {
+enum HdStencilOp
+{
   HdStencilOpKeep,
   HdStencilOpZero,
   HdStencilOpReplace,
@@ -67,7 +69,8 @@ enum HdStencilOp {
 ///
 /// Abstraction of the Graphics blend operations.
 ///
-enum HdBlendOp {
+enum HdBlendOp
+{
   HdBlendOpAdd,
   HdBlendOpSubtract,
   HdBlendOpReverseSubtract,
@@ -81,7 +84,8 @@ enum HdBlendOp {
 ///
 /// Abstraction of the Graphics blend factors.
 ///
-enum HdBlendFactor {
+enum HdBlendFactor
+{
   HdBlendFactorZero,
   HdBlendFactorOne,
   HdBlendFactorSrcColor,
@@ -115,7 +119,8 @@ enum HdBlendFactor {
 /// BackUnlessDoubleSided and FrontUnlessDoubleSided will only cull back or
 /// front faces if prim isn't marked as doubleSided.
 ///
-enum HdCullStyle {
+enum HdCullStyle
+{
   HdCullStyleDontCare,
   HdCullStyleNothing,
   HdCullStyleBack,
@@ -129,13 +134,18 @@ enum HdCullStyle {
 HD_API
 HdCullStyle HdInvertCullStyle(HdCullStyle cs);
 
-enum HdPolygonMode { HdPolygonModeFill, HdPolygonModeLine };
+enum HdPolygonMode
+{
+  HdPolygonModeFill,
+  HdPolygonModeLine
+};
 
 /// \enum HdMeshGeomStyle
 ///
 /// Hydra native geom styles.
 ///
-enum HdMeshGeomStyle {
+enum HdMeshGeomStyle
+{
   HdMeshGeomStyleInvalid,
   HdMeshGeomStyleSurf,
   HdMeshGeomStyleEdgeOnly,
@@ -146,14 +156,19 @@ enum HdMeshGeomStyle {
   HdMeshGeomStylePoints
 };
 
-enum HdBasisCurvesGeomStyle {
+enum HdBasisCurvesGeomStyle
+{
   HdBasisCurvesGeomStyleInvalid,
   HdBasisCurvesGeomStyleWire,
   HdBasisCurvesGeomStylePatch,
   HdBasisCurvesGeomStylePoints
 };
 
-enum HdPointsGeomStyle { HdPointsGeomStyleInvalid, HdPointsGeomStylePoints };
+enum HdPointsGeomStyle
+{
+  HdPointsGeomStyleInvalid,
+  HdPointsGeomStylePoints
+};
 
 ///
 /// \enum HdInterpolation
@@ -179,7 +194,8 @@ enum HdPointsGeomStyle { HdPointsGeomStyleInvalid, HdPointsGeomStylePoints };
 ///
 /// Instance:    One value remains constant across each instance.
 ///
-enum HdInterpolation {
+enum HdInterpolation
+{
   HdInterpolationConstant = 0,
   HdInterpolationUniform,
   HdInterpolationVarying,
@@ -205,7 +221,13 @@ enum HdInterpolation {
 ///        tile width of 10 and sample all the udim tiles found in the
 ///        file system.
 ///
-enum class HdTextureType { Uv, Field, Ptex, Udim };
+enum class HdTextureType
+{
+  Uv,
+  Field,
+  Ptex,
+  Udim
+};
 
 /// \enum HdDepthPriority
 /// Sets the priorities for a depth based operation
@@ -215,7 +237,8 @@ enum class HdTextureType { Uv, Field, Ptex, Udim };
 ///     <li>HdDepthPriorityFarthest    Prioritize objects farthest from the camera</li>
 /// </ul>
 ///
-enum HdDepthPriority {
+enum HdDepthPriority
+{
   HdDepthPriorityNearest = 0,
   HdDepthPriorityFarthest,
 

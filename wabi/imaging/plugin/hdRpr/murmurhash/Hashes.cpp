@@ -17,7 +17,8 @@ void BadHash(const void *key, int len, uint32_t seed, void *out)
 
   const uint8_t *data = (const uint8_t *)key;
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     h ^= h >> 3;
     h ^= h << 5;
     h ^= data[i];
@@ -32,7 +33,8 @@ void sumhash(const void *key, int len, uint32_t seed, void *out)
 
   const uint8_t *data = (const uint8_t *)key;
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     h += data[i];
   }
 
@@ -45,7 +47,8 @@ void sumhash32(const void *key, int len, uint32_t seed, void *out)
 
   const uint32_t *data = (const uint32_t *)key;
 
-  for (int i = 0; i < len / 4; i++) {
+  for (int i = 0; i < len / 4; i++)
+  {
     h += data[i];
   }
 
@@ -64,7 +67,8 @@ uint32_t MurmurOAAT(const void *key, int len, uint32_t seed)
 
   uint32_t h = seed;
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     h ^= data[i];
     h *= 0x5bd1e995;
     h ^= h >> 15;
@@ -88,7 +92,8 @@ void FNV(const void *key, int len, uint32_t seed, void *out)
 
   h ^= BIG_CONSTANT(2166136261);
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     h ^= data[i];
     h *= 16777619;
   }
@@ -102,7 +107,8 @@ uint32_t x17(const void *key, int len, uint32_t h)
 {
   const uint8_t *data = (const uint8_t *)key;
 
-  for (int i = 0; i < len; ++i) {
+  for (int i = 0; i < len; ++i)
+  {
     h = 17 * h + (data[i] - ' ');
   }
 
@@ -115,7 +121,8 @@ void Bernstein(const void *key, int len, uint32_t seed, void *out)
 {
   const uint8_t *data = (const uint8_t *)key;
 
-  for (int i = 0; i < len; ++i) {
+  for (int i = 0; i < len; ++i)
+  {
     seed = 33 * seed + data[i];
   }
 
@@ -143,15 +150,18 @@ uint32_t Crap8(const uint8_t *key, uint32_t len, uint32_t seed)
   uint32_t h = len + seed, k = n + len;
   uint64_t p;
 
-  while (len >= 8) {
+  while (len >= 8)
+  {
     c8mix(key4[0]) c8mix(key4[1]) key4 += 2;
     len -= 8;
   }
-  if (len >= 4) {
+  if (len >= 4)
+  {
     c8mix(key4[0]) key4 += 1;
     len -= 4;
   }
-  if (len) {
+  if (len)
+  {
     c8mix(key4[0] & ((1 << (len * 8)) - 1))
   }
   c8fold(h ^ k, n, k, k) return k;

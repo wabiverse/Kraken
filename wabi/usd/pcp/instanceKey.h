@@ -51,7 +51,8 @@ class PcpPrimIndex;
 /// properties beneath those name children. They are NOT guaranteed to have
 /// the same opinions for direct properties of the prim indexes themselves.
 ///
-class PcpInstanceKey {
+class PcpInstanceKey
+{
  public:
   PCP_API
   PcpInstanceKey();
@@ -76,7 +77,8 @@ class PcpInstanceKey {
   ///
   /// Hash functor.
   ///
-  struct Hash {
+  struct Hash
+  {
     inline size_t operator()(const PcpInstanceKey &key) const
     {
       return key._hash;
@@ -91,7 +93,8 @@ class PcpInstanceKey {
  private:
   struct _Collector;
 
-  struct _Arc {
+  struct _Arc
+  {
     explicit _Arc(const PcpNodeRef &node)
       : _arcType(node.GetArcType()),
         _sourceSite(node.GetSite()),

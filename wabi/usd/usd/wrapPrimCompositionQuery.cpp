@@ -35,11 +35,13 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-template<typename ProxyType> tuple _GetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
+template<typename ProxyType>
+tuple _GetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
 {
   ProxyType editor;
   typename ProxyType::value_type value;
-  if (arc.GetIntroducingListEditor(&editor, &value)) {
+  if (arc.GetIntroducingListEditor(&editor, &value))
+  {
     return make_tuple(object(editor), object(value));
   }
   TF_CODING_ERROR(
@@ -50,7 +52,8 @@ template<typename ProxyType> tuple _GetIntroducingListEditor(const UsdPrimCompos
 
 static tuple _WrapGetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
 {
-  switch (arc.GetArcType()) {
+  switch (arc.GetArcType())
+  {
     case PcpArcTypeReference:
       return _GetIntroducingListEditor<SdfReferenceEditorProxy>(arc);
     case PcpArcTypePayload:

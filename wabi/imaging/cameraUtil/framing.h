@@ -83,7 +83,8 @@ WABI_NAMESPACE_BEGIN
 /// the widget size but use a dataWindow and displayWindow that only fills
 /// the render buffer horizontally to have slates at the top and bottom.
 ///
-class CameraUtilFraming final {
+class CameraUtilFraming final
+{
  public:
   /// Creates an invalid framing, i.e., with empty display and data
   /// window.

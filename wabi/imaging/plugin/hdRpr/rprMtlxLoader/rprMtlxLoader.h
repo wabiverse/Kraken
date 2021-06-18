@@ -6,7 +6,8 @@
 #include <MaterialXCore/Document.h>
 #include <MaterialXFormat/File.h>
 
-class RPRMtlxLoader {
+class RPRMtlxLoader
+{
  public:
   RPRMtlxLoader();
 
@@ -16,7 +17,8 @@ class RPRMtlxLoader {
     return _stdlib;
   }
 
-  enum class LogLevel : int {
+  enum class LogLevel : int
+  {
     None,
     Error,
     Warning,
@@ -32,7 +34,8 @@ class RPRMtlxLoader {
     _sceneDistanceUnit = unit;
   }
 
-  enum OutputType {
+  enum OutputType
+  {
     kOutputNone = -1,
     kOutputSurface,
     kOutputDisplacement,
@@ -40,14 +43,16 @@ class RPRMtlxLoader {
     kOutputAny = kOutputsTotal
   };
 
-  struct RenderableElements {
+  struct RenderableElements
+  {
     /// A range of name paths to renderable elements per OutputType,
     /// an actual MaterialX::Element may be resolved with MaterialX::Document::getDescendant
     std::vector<std::string> namePaths[kOutputsTotal];
   };
   static RenderableElements GetRenderableElements(MaterialX::Document const *mtlxDocument);
 
-  struct Result {
+  struct Result
+  {
     /// All rpr nodes that form a material graph
     rpr_material_node *nodes = nullptr;
 
@@ -57,7 +62,8 @@ class RPRMtlxLoader {
     size_t rootNodeIndices[kOutputsTotal];
     static const size_t kInvalidRootNodeIndex = size_t(-1);
 
-    struct ImageNode {
+    struct ImageNode
+    {
       /// MaterialX type
       std::string type;
 
@@ -112,17 +118,21 @@ class RPRMtlxLoader {
   /// Reference function on how properly to release RPRMtlxLoader::Result
   static void Release(Result *result)
   {
-    if (!result || !result->nodes) {
+    if (!result || !result->nodes)
+    {
       return;
     }
 
-    for (size_t i = 0; i < result->numNodes; ++i) {
-      if (result->nodes[i]) {
+    for (size_t i = 0; i < result->numNodes; ++i)
+    {
+      if (result->nodes[i])
+      {
         rprObjectDelete(result->nodes[i]);
       }
     }
     delete[] result->nodes;
-    if (result->imageNodes) {
+    if (result->imageNodes)
+    {
       delete[] result->imageNodes;
     }
 

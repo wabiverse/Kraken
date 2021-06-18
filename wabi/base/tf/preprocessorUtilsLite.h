@@ -198,7 +198,9 @@
 /// Expand to the \p n'th argument of the arguments following \p n,
 /// zero-indexed.  For example, TF_PP_VARIADIC_ELEM(0, a, b, c) expands to a,
 /// and TF_PP_VARIADIC_ELEM(1, a, b, c) expands to b.
-#  define TF_PP_VARIADIC_ELEM(n, ...) TF_PP_CAT(TF_PP_VAE_, n)(__VA_ARGS__, )
+#  define TF_PP_VARIADIC_ELEM(n, ...) \
+    TF_PP_CAT(TF_PP_VAE_, n) \
+    (__VA_ARGS__, )
 
 #endif  // ARCH_COMPILER_MSVC
 

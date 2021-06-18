@@ -46,7 +46,8 @@ class PcpPrimIndex;
 /// instance key are guaranteed to have the same opinions for name children
 /// and properties and thus can share the same prototype.
 ///
-class Usd_InstanceKey {
+class Usd_InstanceKey
+{
  public:
   Usd_InstanceKey();
 

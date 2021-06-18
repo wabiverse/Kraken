@@ -47,9 +47,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -131,7 +133,8 @@ void wrapUsdLuxListAPI()
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/usd/usd/primRange.h"
 
-namespace {
+namespace
+{
 
 WRAP_CUSTOM
 {

@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 /// This class owns lists of TraceEvent instances per thread, and allows
 /// read access to them.
 ///
-class TraceCollection {
+class TraceCollection
+{
  public:
   TF_MALLOC_TAG_NEW("Trace", "TraceCollection");
 
@@ -86,7 +87,8 @@ class TraceCollection {
   ///
   /// This interface provides a way to access data a TraceCollection.
   ///
-  class Visitor {
+  class Visitor
+  {
    public:
     /// Destructor
     TRACE_API virtual ~Visitor();
@@ -131,7 +133,8 @@ class TraceCollection {
 
   // Iterate through events in either forward or reverse order, depending on
   // the templated arguments
-  template<class I> void _IterateEvents(Visitor &, KeyTokenCache &, const TraceThreadId &, I, I) const;
+  template<class I>
+  void _IterateEvents(Visitor &, KeyTokenCache &, const TraceThreadId &, I, I) const;
 
   using EventTable = std::map<TraceThreadId, EventListPtr>;
 

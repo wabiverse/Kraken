@@ -50,7 +50,8 @@ UsdGeomNurbsCurves::~UsdGeomNurbsCurves()
 /* static */
 UsdGeomNurbsCurves UsdGeomNurbsCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsCurves();
   }
@@ -61,7 +62,8 @@ UsdGeomNurbsCurves UsdGeomNurbsCurves::Get(const UsdStagePtr &stage, const SdfPa
 UsdGeomNurbsCurves UsdGeomNurbsCurves::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("NurbsCurves");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsCurves();
   }
@@ -145,7 +147,8 @@ UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue, b
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

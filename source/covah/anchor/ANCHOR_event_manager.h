@@ -28,7 +28,8 @@
 
 class ANCHOR_IEventConsumer;
 
-class ANCHOR_EventManager {
+class ANCHOR_EventManager
+{
  public:
   /**
    * Constructor. */

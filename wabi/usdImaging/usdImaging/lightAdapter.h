@@ -38,14 +38,16 @@ class UsdPrim;
 ///
 /// Base class for all lights.
 ///
-class UsdImagingLightAdapter : public UsdImagingPrimAdapter {
+class UsdImagingLightAdapter : public UsdImagingPrimAdapter
+{
  public:
   typedef UsdImagingPrimAdapter BaseAdapter;
 
   USDIMAGING_API
   static bool IsEnabledSceneLights();
 
-  UsdImagingLightAdapter() : UsdImagingPrimAdapter()
+  UsdImagingLightAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

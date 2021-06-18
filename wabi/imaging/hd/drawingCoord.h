@@ -80,7 +80,8 @@ WABI_NAMESPACE_BEGIN
 /// instance level=1 ---> [k+1]
 /// instance level=2 ---> [k+2]
 ///
-class HdDrawingCoord {
+class HdDrawingCoord
+{
  public:
   static const int CustomSlotsBegin = 8;
   static const int DefaultNumSlots = 3; /* Constant, Vertex, Topology */

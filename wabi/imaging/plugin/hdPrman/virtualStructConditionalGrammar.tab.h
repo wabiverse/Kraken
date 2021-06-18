@@ -60,7 +60,8 @@
 #define YYTOKENTYPE
 /* Put the tokens into the symbol table, so that GDB and other debuggers
    know about them.  */
-enum yytokentype {
+enum yytokentype
+{
   NUMBER = 258,
   STRING = 259,
   PARAM = 260,
@@ -88,7 +89,8 @@ enum yytokentype {
 #endif
 
 #if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE {
+typedef union YYSTYPE
+{
 
 /* Line 1676 of yacc.c  */
 #line 456 "hdPrman/virtualStructConditionalGrammar.yy"
@@ -108,7 +110,8 @@ typedef union YYSTYPE {
 #endif
 
 #if !defined YYLTYPE && !defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE {
+typedef struct YYLTYPE
+{
   int first_line;
   int first_column;
   int last_line;

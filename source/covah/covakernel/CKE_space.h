@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-enum eSpaceWindowType {
+enum eSpaceWindowType
+{
   SPACE_WINDOW_DEFAULT = 0,
   SPACE_WINDOW_VIEW3D,
   SPACE_WINDOW_CODE,
@@ -48,7 +49,8 @@ enum eSpaceWindowType {
   SPACE_KEYMAP_CUSTOM3
 };
 
-enum class eSpaceKeymapType {
+enum class eSpaceKeymapType
+{
   SPACE_KEYMAP_VIEW3D,
   SPACE_KEYMAP_NODES,
   SPACE_KEYMAP_TIMELINE,
@@ -60,7 +62,8 @@ enum class eSpaceKeymapType {
   SPACE_KEYMAP_CUSTOM3,
 };
 
-struct SpaceArea {
+struct SpaceArea
+{
   /** Coordinates of region. */
   GfVec2i win_coords;
   /** Size. */
@@ -77,7 +80,8 @@ struct SpaceArea {
   bool fullscreen;
 };
 
-struct SpaceWindow {
+struct SpaceWindow
+{
   /** Window identifier, for which to subclass this window from. */
   int spaceid;
   /** Keymap identifier, to add keymaps to this window. */

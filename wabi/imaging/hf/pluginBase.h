@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 /// functionality other than to serve as a polymorphic type for the
 /// plugin registry.
 ///
-class HfPluginBase {
+class HfPluginBase
+{
  public:
   HF_API
   virtual ~HfPluginBase();  // = default: See workaround in cpp file

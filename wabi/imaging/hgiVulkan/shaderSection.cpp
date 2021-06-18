@@ -49,22 +49,27 @@ void HgiVulkanShaderSection::WriteDeclaration(std::ostream &ss) const
   // identifiers and indicies
   const HgiShaderSectionAttributeVector &attributes = GetAttributes();
 
-  if (!attributes.empty()) {
+  if (!attributes.empty())
+  {
     ss << "layout(";
-    for (size_t i = 0; i < attributes.size(); ++i) {
+    for (size_t i = 0; i < attributes.size(); ++i)
+    {
       const HgiShaderSectionAttribute &a = attributes[i];
-      if (i > 0) {
+      if (i > 0)
+      {
         ss << ", ";
       }
       ss << a.identifier;
-      if (!a.index.empty()) {
+      if (!a.index.empty())
+      {
         ss << " = " << a.index;
       }
     }
     ss << ") ";
   }
   // If it has a storage qualifier, declare it
-  if (!_storageQualifier.empty()) {
+  if (!_storageQualifier.empty())
+  {
     ss << _storageQualifier << " ";
   }
   WriteType(ss);
@@ -158,7 +163,8 @@ bool HgiVulkanBlockShaderSection::VisitGlobalMemberDeclarations(std::ostream &ss
   WriteIdentifier(ss);
   ss << "\n";
   ss << "{\n";
-  for (const HgiShaderFunctionParamDesc &param : _parameters) {
+  for (const HgiShaderFunctionParamDesc &param : _parameters)
+  {
     ss << "    " << param.type << " " << param.nameInShader << ";\n";
   }
   ss << "\n};";
@@ -179,7 +185,8 @@ HgiVulkanTextureShaderSection::~HgiVulkanTextureShaderSection() = default;
 
 void HgiVulkanTextureShaderSection::WriteType(std::ostream &ss) const
 {
-  if (_dimensions < 1 || _dimensions > 3) {
+  if (_dimensions < 1 || _dimensions > 3)
+  {
     TF_CODING_ERROR("Invalid texture dimension");
   }
   ss << "sampler" << _dimensions << "D";
@@ -206,7 +213,8 @@ bool HgiVulkanTextureShaderSection::VisitGlobalFunctionDefinitions(std::ostream 
   ss << "}";
 
   // Same except for texelfetch
-  if (_dimensions != 2) {
+  if (_dimensions != 2)
+  {
     return true;
   }
 
@@ -243,15 +251,19 @@ bool HgiVulkanBufferShaderSection::VisitGlobalMemberDeclarations(std::ostream &s
   // identifiers and indicies
   const HgiShaderSectionAttributeVector &attributes = GetAttributes();
 
-  if (!attributes.empty()) {
+  if (!attributes.empty())
+  {
     ss << "layout(";
-    for (size_t i = 0; i < attributes.size(); i++) {
-      if (i > 0) {
+    for (size_t i = 0; i < attributes.size(); i++)
+    {
+      if (i > 0)
+      {
         ss << ", ";
       }
       const HgiShaderSectionAttribute &a = attributes[i];
       ss << a.identifier;
-      if (!a.index.empty()) {
+      if (!a.index.empty())
+      {
         ss << " = " << a.index;
       }
     }

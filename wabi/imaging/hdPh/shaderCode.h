@@ -63,7 +63,8 @@ class HdPhResourceRegistry;
 ///
 /// This interface provides a simple way for clients to affect the
 /// composition of shading programs used for a render pass.
-class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode> {
+class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode>
+{
  public:
   typedef size_t ID;
 
@@ -123,7 +124,8 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode> {
   /// Information necessary to bind textures and create accessor
   /// for the texture.
   ///
-  struct NamedTextureHandle {
+  struct NamedTextureHandle
+  {
     /// Name by which the texture will be accessed, i.e., the name
     /// of the accesor for thexture will be HdGet_name(...).
     ///
@@ -183,7 +185,8 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode> {
   ///
   /// The context available in implementations of
   /// AddResourcesFromTextures.
-  class ResourceContext {
+  class ResourceContext
+  {
    public:
     HDPH_API
     void AddSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source);

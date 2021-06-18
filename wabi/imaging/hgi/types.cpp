@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 
 size_t HgiGetComponentCount(const HgiFormat f)
 {
-  switch (f) {
+  switch (f)
+  {
     case HgiFormatUNorm8:
     case HgiFormatSNorm8:
     case HgiFormatFloat16:
@@ -90,14 +91,17 @@ size_t HgiGetComponentCount(const HgiFormat f)
 
 size_t HgiGetDataSizeOfFormat(const HgiFormat f, size_t *const blockWidth, size_t *const blockHeight)
 {
-  if (blockWidth) {
+  if (blockWidth)
+  {
     *blockWidth = 1;
   }
-  if (blockHeight) {
+  if (blockHeight)
+  {
     *blockHeight = 1;
   }
 
-  switch (f) {
+  switch (f)
+  {
     case HgiFormatUNorm8:
     case HgiFormatSNorm8:
       return 1;
@@ -146,10 +150,12 @@ size_t HgiGetDataSizeOfFormat(const HgiFormat f, size_t *const blockWidth, size_
     case HgiFormatBC7UNorm8Vec4srgb:
     case HgiFormatBC1UNorm8Vec4:
     case HgiFormatBC3UNorm8Vec4:
-      if (blockWidth) {
+      if (blockWidth)
+      {
         *blockWidth = 4;
       }
-      if (blockHeight) {
+      if (blockHeight)
+      {
         *blockHeight = 4;
       }
       return 16;
@@ -164,7 +170,8 @@ size_t HgiGetDataSizeOfFormat(const HgiFormat f, size_t *const blockWidth, size_
 
 bool HgiIsCompressed(const HgiFormat f)
 {
-  switch (f) {
+  switch (f)
+  {
     case HgiFormatBC6FloatVec3:
     case HgiFormatBC6UFloatVec3:
     case HgiFormatBC7UNorm8Vec4:
@@ -189,9 +196,11 @@ uint16_t _ComputeNumMipLevels(const GfVec3i &dimensions)
 {
   const int dim = std::max({dimensions[0], dimensions[1], dimensions[2]});
 
-  for (uint16_t i = 1; i < 8 * sizeof(int) - 1; i++) {
+  for (uint16_t i = 1; i < 8 * sizeof(int) - 1; i++)
+  {
     const int powerTwo = 1 << i;
-    if (powerTwo > dim) {
+    if (powerTwo > dim)
+    {
       return i;
     }
   }
@@ -206,7 +215,8 @@ std::vector<HgiMipInfo> HgiGetMipInfos(const HgiFormat format,
                                        const size_t dataByteSize)
 {
   const bool is2DArray = layerCount > 1;
-  if (is2DArray && dimensions[2] != 1) {
+  if (is2DArray && dimensions[2] != 1)
+  {
     TF_CODING_ERROR("An array of 3D textures is invalid");
   }
 
@@ -218,13 +228,15 @@ std::vector<HgiMipInfo> HgiGetMipInfos(const HgiFormat format,
   size_t byteOffset = 0;
   GfVec3i size = dimensions;
 
-  for (uint16_t mipLevel = 0; mipLevel < numMips; mipLevel++) {
+  for (uint16_t mipLevel = 0; mipLevel < numMips; mipLevel++)
+  {
     const size_t byteSize = HgiGetDataSize(format, size);
 
     result.push_back({byteOffset, size, byteSize});
 
     byteOffset += byteSize * layerCount;
-    if (byteOffset >= dataByteSize) {
+    if (byteOffset >= dataByteSize)
+    {
       break;
     }
 

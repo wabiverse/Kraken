@@ -50,7 +50,8 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi, HgiVulkanDevice *device, HgiBuf
     _stagingBuffer(nullptr),
     _cpuStagingAddress(nullptr)
 {
-  if (desc.byteSize == 0) {
+  if (desc.byteSize == 0)
+  {
     TF_CODING_ERROR("The size of buffer [%p] is zero.", this);
     return;
   }
@@ -74,12 +75,14 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkan *hgi, HgiVulkanDevice *device, HgiBuf
   TF_VERIFY(vmaCreateBuffer(vma, &bi, &ai, &_vkBuffer, &_vmaAllocation, 0) == VK_SUCCESS);
 
   // Debug label
-  if (!_descriptor.debugName.empty()) {
+  if (!_descriptor.debugName.empty())
+  {
     std::string debugLabel = "Buffer " + _descriptor.debugName;
     HgiVulkanSetDebugName(device, (uint64_t)_vkBuffer, VK_OBJECT_TYPE_BUFFER, debugLabel.c_str());
   }
 
-  if (desc.initialData) {
+  if (desc.initialData)
+  {
     // Use a 'staging buffer' to schedule uploading the 'initialData' to
     // the device-local GPU buffer.
     HgiVulkanBuffer *stagingBuffer = CreateStagingBuffer(_device, desc);
@@ -121,7 +124,8 @@ HgiVulkanBuffer::HgiVulkanBuffer(HgiVulkanDevice *device,
 
 HgiVulkanBuffer::~HgiVulkanBuffer()
 {
-  if (_cpuStagingAddress && _stagingBuffer) {
+  if (_cpuStagingAddress && _stagingBuffer)
+  {
     vmaUnmapMemory(_device->GetVulkanMemoryAllocator(), _stagingBuffer->GetVulkanMemoryAllocation());
     _cpuStagingAddress = nullptr;
   }
@@ -144,13 +148,15 @@ uint64_t HgiVulkanBuffer::GetRawResource() const
 
 void *HgiVulkanBuffer::GetCPUStagingAddress()
 {
-  if (!_stagingBuffer) {
+  if (!_stagingBuffer)
+  {
     HgiBufferDesc desc = _descriptor;
     desc.initialData = nullptr;
     _stagingBuffer = CreateStagingBuffer(_device, desc);
   }
 
-  if (!_cpuStagingAddress) {
+  if (!_cpuStagingAddress)
+  {
     TF_VERIFY(vmaMapMemory(_device->GetVulkanMemoryAllocator(),
                            _stagingBuffer->GetVulkanMemoryAllocation(),
                            &_cpuStagingAddress) == VK_SUCCESS);
@@ -211,7 +217,8 @@ HgiVulkanBuffer *HgiVulkanBuffer::CreateStagingBuffer(HgiVulkanDevice *device, H
   TF_VERIFY(vmaCreateBuffer(vma, &bi, &ai, &buffer, &alloc, 0) == VK_SUCCESS);
 
   // Map the (HOST_VISIBLE) buffer and upload data
-  if (desc.initialData) {
+  if (desc.initialData)
+  {
     void *map;
     TF_VERIFY(vmaMapMemory(vma, alloc, &map) == VK_SUCCESS);
     memcpy(map, desc.initialData, desc.byteSize);

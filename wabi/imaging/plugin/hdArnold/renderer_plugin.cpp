@@ -58,11 +58,13 @@ HdRenderDelegate *HdArnoldRendererPlugin::CreateRenderDelegate(const HdRenderSet
   if (houdiniRenderer != nullptr &&
       ((houdiniRenderer->IsHolding<TfToken>() && houdiniRenderer->UncheckedGet<TfToken>() == str::t_husk) ||
        (houdiniRenderer->IsHolding<std::string>() &&
-        houdiniRenderer->UncheckedGet<std::string>() == str::t_husk.GetString()))) {
+        houdiniRenderer->UncheckedGet<std::string>() == str::t_husk.GetString())))
+  {
     context = HdArnoldRenderContext::Husk;
   }
   auto *delegate = new HdArnoldRenderDelegate(context);
-  for (const auto &setting : settingsMap) {
+  for (const auto &setting : settingsMap)
+  {
     delegate->SetRenderSetting(setting.first, setting.second);
   }
   return delegate;

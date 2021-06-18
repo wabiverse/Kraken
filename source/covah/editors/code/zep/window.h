@@ -7,7 +7,8 @@
 #include "buffer.h"
 #include "zep/mcommon/utf8/unchecked.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepTabWindow;
 class ZepDisplay;
@@ -15,7 +16,8 @@ class Scroller;
 
 struct Region;
 
-struct LineCharInfo {
+struct LineCharInfo
+{
   NVec2f pos;
   NVec2f size;
   GlyphIterator iterator;
@@ -24,15 +26,16 @@ struct LineCharInfo {
 class ZepFont;
 // Line information, calculated during display update.
 // A collection of spans that show split lines on the display
-struct SpanInfo {
-  ByteRange lineByteRange;  // Begin/end range of the text buffer for this line, as always end is
-                            // one beyond the end.
+struct SpanInfo
+{
+  ByteRange lineByteRange;                   // Begin/end range of the text buffer for this line, as always end is
+                                             // one beyond the end.
   std::vector<LineCharInfo> lineCodePoints;  // Codepoints
   long bufferLineNumber = 0;                 // Line in the original buffer, not the screen line
-  float yOffsetPx = 0.0f;  // Position in the buffer in pixels, if the screen was as big as the buffer.
-  NVec2f lineTextSizePx = NVec2f(0.0f);  // Pixel size of the text
-  int spanLineIndex = 0;                 // The index of this line in spans; might be more than buffer index
-  NVec2f padding = NVec2f(1.0f, 1.0f);   // Padding above and below the line
+  float yOffsetPx = 0.0f;                    // Position in the buffer in pixels, if the screen was as big as the buffer.
+  NVec2f lineTextSizePx = NVec2f(0.0f);      // Pixel size of the text
+  int spanLineIndex = 0;                     // The index of this line in spans; might be more than buffer index
+  NVec2f padding = NVec2f(1.0f, 1.0f);       // Padding above and below the line
   bool isSplitContinuation = false;
   NVec2f lineWidgetHeights;
   ZepFont *pFont = nullptr;
@@ -57,18 +60,32 @@ struct SpanInfo {
 
 inline bool operator<(const SpanInfo &lhs, const SpanInfo &rhs)
 {
-  if (lhs.lineByteRange.first != rhs.lineByteRange.first) {
+  if (lhs.lineByteRange.first != rhs.lineByteRange.first)
+  {
     return lhs.lineByteRange.first < rhs.lineByteRange.first;
   }
   return lhs.lineByteRange.second < rhs.lineByteRange.second;
 }
 
-enum class CursorType { None, Normal, Insert, Visual, LineMarker };
+enum class CursorType
+{
+  None,
+  Normal,
+  Insert,
+  Visual,
+  LineMarker
+};
 
-enum class DisplayMode { Normal, Vim };
+enum class DisplayMode
+{
+  Normal,
+  Vim
+};
 
-namespace WindowFlags {
-enum {
+namespace WindowFlags
+{
+enum
+{
   None = (0),
   ShowWhiteSpace = (1 << 0),
   ShowCR = (1 << 1),
@@ -82,19 +99,22 @@ enum {
 };
 }
 
-struct AirBox {
+struct AirBox
+{
   std::string text;
   NVec4f background;
 };
 
-struct Airline {
+struct Airline
+{
   std::vector<AirBox> leftBoxes;
   std::vector<AirBox> rightBoxes;
 };
 
 // Message to request a tooltip.
 // Clients should return the marker information if appropriate
-struct ToolTipMessage : public ZepMessage {
+struct ToolTipMessage : public ZepMessage
+{
   ToolTipMessage(ZepBuffer *pBuff, const NVec2f &pos, const GlyphIterator &loc = GlyphIterator())
     : ZepMessage(Msg::ToolTip, pos),
       pBuffer(pBuff),
@@ -110,7 +130,8 @@ struct ToolTipMessage : public ZepMessage {
 // Window shows a buffer, and is parented by a TabWindow
 // The buffer can change, but the window must always have an active buffer
 // Editor operations such as select and change are local to a displayed pane
-class ZepWindow : public ZepComponent {
+class ZepWindow : public ZepComponent
+{
  public:
   ZepWindow(ZepTabWindow &window, ZepBuffer *buffer);
   virtual ~ZepWindow();
@@ -157,7 +178,13 @@ class ZepWindow : public ZepComponent {
   void ScrollToCursor();
   bool IsInsideVisibleText(NVec2i pos) const;
 
-  enum class SpecialChar { None, Hidden, Tab, Space };
+  enum class SpecialChar
+  {
+    None,
+    Hidden,
+    Tab,
+    Space
+  };
   void GetCharPointer(GlyphIterator loc,
                       const uint8_t *&pBegin,
                       const uint8_t *&pEnd,

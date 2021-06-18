@@ -62,7 +62,8 @@ using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 /// collection, and determining what HdPhShaderCode instances are
 /// affecting by (re-)committing a texture.
 ///
-class HdPh_TextureHandleRegistry final {
+class HdPh_TextureHandleRegistry final
+{
  public:
   HDPH_API
   explicit HdPh_TextureHandleRegistry(HdPhResourceRegistry *registry);

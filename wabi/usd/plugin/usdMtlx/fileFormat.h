@@ -45,7 +45,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdMtlxFileFormat);
 
 /// \class UsdMtlxFileFormat
 ///
-class UsdMtlxFileFormat : public SdfFileFormat {
+class UsdMtlxFileFormat : public SdfFileFormat
+{
  public:
   // SdfFileFormat overrides
   SdfAbstractDataRefPtr InitData(const FileFormatArguments &) const override;

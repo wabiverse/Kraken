@@ -66,7 +66,7 @@ WABI_NAMESPACE_BEGIN
   (mesh)(basisCurves)(points)(volume) \
 \
     /* Sprims */ \
-    (camera)(drawTarget)(material)(coordSys) /* Sprims Lights */ \
+    (camera)(drawTarget)(material)(coordSys)                                                                                  /* Sprims Lights */ \
     (simpleLight)(cylinderLight)(diskLight)(distantLight)(domeLight)(light)(lightFilter)(pluginLight)(rectLight)(sphereLight) /* Sprims ExtComputations */ \
     (extComputation) \
 \
@@ -86,59 +86,44 @@ WABI_NAMESPACE_BEGIN
    * fragment RGBA color. For correct compositing \
    * using Hydra, it should have pre-multiplied alpha. \
    */ \
-  (color)                                     \
-    /* HdAovTokens->depth represents the clip-space
-     * depth of the final fragment.
-     */                                         \
-    (depth)                                     \
-    /* HdAovTokens->cameraDepth represents the camera-space
-     * depth of the final fragment.
-     */                                         \
-    (cameraDepth)                               \
-    /* ID rendering - these tokens represent the
-     * prim, instance, and subprim ids of the final
-     * fragment.
-     */                                         \
-    (primId)                                    \
-    (instanceId)                                \
-    (elementId)                                 \
-    (edgeId)                                    \
-    (pointId)                                   \
-    /* Geometric data */                        \
-    (Peye)                                      \
-    (Neye)                                      \
-    (patchCoord)                                \
-    (primitiveParam)                            \
-    (normal)                                    \
-    /* Others we might want to add:
-     * https://rmanwiki.pixar.com/display/REN/Arbitrary+Output+Variables
-     * - curvature
-     * - tangent
-     * - velocity
-     */                                         \
-    /* Primvars:
-     *   The tokens don't try to enumerate primvars,
-     *   but instead provide an identifying namespace.
-     *   The "color" primvar is addressable as "primvars:color".
-     */                                         \
-    ((primvars, "primvars:"))                   \
-    /* Light path expressions:
-     *   Applicable only to raytracers, these tell
-     *   the renderer to output specific shading
-     *   components for specific classes of lightpath.
-     *
-     *   Lightpath syntax is defined here:
-     *   https://rmanwiki.pixar.com/display/REN/Light+Path+Expressions
-     *   ... so for example, you could specify
-     *   "lpe:CD[<L.>O]"
-     */                                         \
-    ((lpe, "lpe:"))                             \
-    /* Shader signals:
-     *   This tells the renderer to output a partial shading signal,
-     *   whether from the BXDF (e.g. bxdf.diffuse) or from an intermediate
-     *   shading node (e.g. fractal.rgb).
-     *   XXX: The exact format is TBD.
-     */                                         \
+  (color)                                            /* HdAovTokens->depth represents the clip-space \
+                                                      * depth of the final fragment. \
+                                                      */ \
+    (depth)                                          /* HdAovTokens->cameraDepth represents the camera-space \
+                                                      * depth of the final fragment. \
+                                                      */ \
+    (cameraDepth)                                    /* ID rendering - these tokens represent the \
+                                                      * prim, instance, and subprim ids of the final \
+                                                      * fragment. \
+                                                      */ \
+    (primId)(instanceId)(elementId)(edgeId)(pointId) /* Geometric data */ \
+    (Peye)(Neye)(patchCoord)(primitiveParam)(normal) /* Others we might want to add: \
+                                                      * https://rmanwiki.pixar.com/display/REN/Arbitrary+Output+Variables \
+                                                      * - curvature \
+                                                      * - tangent \
+                                                      * - velocity \
+                                                      */ \
+    /* Primvars: \
+     *   The tokens don't try to enumerate primvars, \
+     *   but instead provide an identifying namespace. \
+     *   The "color" primvar is addressable as "primvars:color". \
+     */ \
+    ((primvars, "primvars:")) /* Light path expressions: \
+                               *   Applicable only to raytracers, these tell \
+                               *   the renderer to output specific shading \
+                               *   components for specific classes of lightpath. \
+                               * \
+                               *   Lightpath syntax is defined here: \
+                               *   https://rmanwiki.pixar.com/display/REN/Light+Path+Expressions \
+                               *   ... so for example, you could specify \
+                               *   "lpe:CD[<L.>O]" \
+                               */ \
+    ((lpe, "lpe:"))           /* Shader signals: \
+                               *   This tells the renderer to output a partial shading signal, \
+                               *   whether from the BXDF (e.g. bxdf.diffuse) or from an intermediate \
+                               *   shading node (e.g. fractal.rgb). \
+                               *   XXX: The exact format is TBD. \
+                               */ \
     ((shader, "shader:"))
 
 HD_API

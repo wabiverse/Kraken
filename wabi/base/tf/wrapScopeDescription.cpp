@@ -43,7 +43,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // This class lets us expose TfScopeDescription to python for use as a "context
 // manager" object.  That is, for use with the 'with'-statement.  For example:
@@ -54,18 +55,22 @@ namespace {
 // This class uses a small helper that holds a TfScopeDescription because
 // TfScopeDescription declares, but doesn't define the ordinary new/delete
 // operators to help prevent clients from creating them on the heap.
-class Tf_PyScopeDescription {
+class Tf_PyScopeDescription
+{
   // This is used to avoid new/delete on TfScopeDescription directly, which is
   // disallowed.
-  struct _Holder {
-    explicit _Holder(string const &description) : _scopeDescription(description)
+  struct _Holder
+  {
+    explicit _Holder(string const &description)
+      : _scopeDescription(description)
     {}
     TfScopeDescription _scopeDescription;
   };
 
  public:
   // Construct with a description string.
-  Tf_PyScopeDescription(string const &description) : _description(description)
+  Tf_PyScopeDescription(string const &description)
+    : _description(description)
   {}
 
   // Enter creates a description object, pushing onto the stack.
@@ -83,7 +88,8 @@ class Tf_PyScopeDescription {
   void SetDescription(const string &description)
   {
     _description = description;
-    if (_descriptionHolder) {
+    if (_descriptionHolder)
+    {
       _descriptionHolder->_scopeDescription.SetDescription(_description);
     }
   }

@@ -35,8 +35,10 @@ WABI_NAMESPACE_BEGIN
 class UsdStageCache;
 
 // Private helper wrapper class, holds a const reference to a stage cache.
-struct Usd_NonPopulatingStageCacheWrapper {
-  explicit Usd_NonPopulatingStageCacheWrapper(const UsdStageCache &cache) : cache(cache)
+struct Usd_NonPopulatingStageCacheWrapper
+{
+  explicit Usd_NonPopulatingStageCacheWrapper(const UsdStageCache &cache)
+    : cache(cache)
   {}
   const UsdStageCache &cache;
 };
@@ -49,12 +51,14 @@ struct Usd_NonPopulatingStageCacheWrapper {
 /// Calls to UsdStage::Open() will attempt to find stages in \p cache when a
 /// UsdStageCacheContext is present on the stack.  See UsdStageCacheContext for
 /// more details and example use.
-template<class StageCache> Usd_NonPopulatingStageCacheWrapper UsdUseButDoNotPopulateCache(StageCache &cache)
+template<class StageCache>
+Usd_NonPopulatingStageCacheWrapper UsdUseButDoNotPopulateCache(StageCache &cache)
 {
   return Usd_NonPopulatingStageCacheWrapper(cache);
 }
 
-enum UsdStageCacheContextBlockType {
+enum UsdStageCacheContextBlockType
+{
   /// Indicate that a UsdStageCacheContext should ignore all currently bound
   /// UsdStageCacheContexts, preventing reading from or writing to their
   /// UsdStageCaches.  See UsdStageCache for more details and example use.
@@ -135,7 +139,8 @@ TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
 
   /// Disable cache use completely (with UsdBlockStageCaches) or only
   /// for writing (with UsdBlockStageCacheWrites).
-  explicit UsdStageCacheContext(UsdStageCacheContextBlockType blockType) : _blockType(blockType)
+  explicit UsdStageCacheContext(UsdStageCacheContextBlockType blockType)
+    : _blockType(blockType)
   {}
 
  private:
@@ -146,7 +151,8 @@ TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
   static std::vector<UsdStageCache *> _GetWritableCaches();
 
   // A blocking context is encoded with both members variables null.
-  union {
+  union
+  {
     UsdStageCache *_rwCache;
     const UsdStageCache *_roCache;
   };

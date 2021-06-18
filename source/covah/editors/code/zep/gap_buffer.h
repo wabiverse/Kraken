@@ -35,7 +35,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #ifdef _DEBUG
 #  define DEBUG_FILL_GAP \
-    for (auto *pCh = m_pGapStart; pCh < m_pGapEnd; pCh++) { \
+    for (auto *pCh = m_pGapStart; pCh < m_pGapEnd; pCh++) \
+    { \
       *pCh = '@'; \
     }
 #else
@@ -51,7 +52,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 // efficiently manage an edit buffer. For the curious, you can ask emacs for the gap position and
 // fixed_size by evaluating (gap-fixed_size), (gap-position)
 
-template<class T, class A = std::allocator<T>> class GapBuffer {
+template<class T, class A = std::allocator<T>>
+class GapBuffer
+{
  public:
   static const int DEFAULT_GAP = 1000;
 
@@ -70,7 +73,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   A _alloc;                  // The memory allocator to use
 
   // An iterator used to walk the buffer
-  class iterator {
+  class iterator
+  {
    public:
     typedef typename std::allocator_traits<A>::difference_type difference_type;
     typedef typename std::allocator_traits<A>::value_type value_type;
@@ -85,9 +89,15 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     GapBuffer<T> &buffer;
 
-    iterator(GapBuffer<T> &buff, size_t ptr, bool skip = true) : skipGap(skip), p(ptr), buffer(buff)
+    iterator(GapBuffer<T> &buff, size_t ptr, bool skip = true)
+      : skipGap(skip),
+        p(ptr),
+        buffer(buff)
     {}
-    iterator(const iterator &rhs) : skipGap(rhs.skipGap), p(rhs.p), buffer(rhs.buffer)
+    iterator(const iterator &rhs)
+      : skipGap(rhs.skipGap),
+        p(rhs.p),
+        buffer(rhs.buffer)
     {}
     ~iterator()
     {}
@@ -188,7 +198,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     }
   };
 
-  class const_iterator {
+  class const_iterator
+  {
    public:
     typedef typename std::allocator_traits<A>::difference_type difference_type;
     typedef typename std::allocator_traits<A>::value_type value_type;
@@ -205,9 +216,15 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
         p(ptr),
         buffer(buff)
     {}
-    const_iterator(const iterator &rhs) : skipGap(rhs.skipGap), p(rhs.p), buffer(rhs.buffer)
+    const_iterator(const iterator &rhs)
+      : skipGap(rhs.skipGap),
+        p(rhs.p),
+        buffer(rhs.buffer)
     {}
-    const_iterator(const const_iterator &rhs) : skipGap(rhs.skipGap), p(rhs.p), buffer(rhs.buffer)
+    const_iterator(const const_iterator &rhs)
+      : skipGap(rhs.skipGap),
+        p(rhs.p),
+        buffer(rhs.buffer)
     {}
     ~const_iterator()
     {}
@@ -370,12 +387,15 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   }
 
   // No assign/copy for now
-  GapBuffer(int size = 0, int gapSize = DEFAULT_GAP) : m_defaultGap(gapSize)
+  GapBuffer(int size = 0, int gapSize = DEFAULT_GAP)
+    : m_defaultGap(gapSize)
   {
-    if (size == 0) {
+    if (size == 0)
+    {
       clear();
     }
-    else {
+    else
+    {
       resize(size);
     }
   }
@@ -407,14 +427,16 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   void resize(size_t newSize)
   {
     auto sizeIncrease = (int64_t)newSize - (int64_t)size();
-    if (sizeIncrease == 0) {
+    if (sizeIncrease == 0)
+    {
       return;
     }
 
     // If the buffer is shrunk, we move the gap to the end and make it bigger
     // Thus we don't make the buffer smaller, we make the gap bigger instead.
     // From the outside the fixed_size() is the smaller fixed_size.
-    if (sizeIncrease < 0) {
+    if (sizeIncrease < 0)
+    {
       // Move the gap to the end
       MoveGap(size());
       m_pGapStart += sizeIncrease;
@@ -430,12 +452,14 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     memcpy(pNewStart, m_pStart, CurrentSizeWithGap() * sizeof(T));
 
     // First section, before gap - copy into place
-    if ((m_pGapStart - m_pStart) > 0) {
+    if ((m_pGapStart - m_pStart) > 0)
+    {
       memcpy(pNewStart, m_pStart, (m_pGapStart - m_pStart) * sizeof(T));
     }
 
     // Free the old memory
-    if (m_pStart) {
+    if (m_pStart)
+    {
       get_allocator().deallocate(m_pStart, CurrentSizeWithGap());
     }
 
@@ -451,7 +475,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   void resizeGap(size_t newGapSize)
   {
     auto sizeIncrease = int64_t(newGapSize) - int64_t(CurrentGapSize());
-    if (sizeIncrease <= 0) {
+    if (sizeIncrease <= 0)
+    {
       // We never shrink the gap
       return;
     }
@@ -463,7 +488,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     auto pNewStart = get_allocator().allocate((const size_t)bufferSize);
 
     // First section, before gap - copy into place
-    if ((m_pGapStart - m_pStart) > 0) {
+    if ((m_pGapStart - m_pStart) > 0)
+    {
       memcpy(pNewStart, m_pStart, (m_pGapStart - m_pStart) * sizeof(T));
     }
 
@@ -472,12 +498,14 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     // Last section - copy into place
     auto pNewGapStart = m_pGapStart + (pNewStart - m_pStart);
     auto pNewGapEnd = pNewGapStart + newGapSize;
-    if (m_pGapEnd < m_pEnd) {
+    if (m_pGapEnd < m_pEnd)
+    {
       memcpy(pNewGapEnd, m_pGapEnd, (m_pEnd - m_pGapEnd) * sizeof(T));
     }
 
     // Free the old memory
-    if (m_pStart) {
+    if (m_pStart)
+    {
       get_allocator().deallocate(m_pStart, CurrentSizeWithGap());
     }
 
@@ -496,23 +524,27 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   {
     std::string str;
 
-    if (m_pGapStart - m_pStart) {
+    if (m_pGapStart - m_pStart)
+    {
       str.append((const char *)m_pStart, (size_type)(m_pGapStart - m_pStart));
     }
 
-    if (showGap) {
+    if (showGap)
+    {
       str.append("|");
       str.append(std::to_string(CurrentGapSize()));
       str.append("|");
     }
-    if (m_pEnd - m_pGapEnd) {
+    if (m_pEnd - m_pGapEnd)
+    {
       str.append((const char *)m_pGapEnd, (size_type)(m_pEnd - m_pGapEnd));
     }
     return str;
   }
 
   // Assign the whole buffer to this range of values
-  template<class iter> void assign(iter srcBegin, iter srcEnd)
+  template<class iter>
+  void assign(iter srcBegin, iter srcEnd)
   {
     auto spaceRequired = std::distance(srcBegin, srcEnd);
     if (spaceRequired < 0)
@@ -546,7 +578,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
 
     // Copy to the front of the buffer, leave the gap at that back
     T *p = m_pStart;
-    while (p != m_pEnd) {
+    while (p != m_pEnd)
+    {
       *p = value;
       p++;
     }
@@ -561,7 +594,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     DEBUG_FILL_GAP;
   }
 
-  template<class iter> iterator insert(const_iterator pt, iter srcStart, iter srcEnd)
+  template<class iter>
+  iterator insert(const_iterator pt, iter srcStart, iter srcEnd)
   {
     // Insert backwards - test it?
     auto spaceRequired = std::distance(srcStart, srcEnd);
@@ -703,13 +737,17 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   // Here we split the find into 2 seperate searches; because we can be smart and search
   // either side of the gap.  This is more efficient that using an iterator which will keep
   // checking for the gap and trying to jump it
-  template<class ForwardIt> T *find_first_of(T *pStart, T *pEnd, ForwardIt s_first, ForwardIt s_last) const
+  template<class ForwardIt>
+  T *find_first_of(T *pStart, T *pEnd, ForwardIt s_first, ForwardIt s_last) const
   {
     assert(pEnd <= m_pEnd);
     assert(pStart <= pEnd);
-    while (pStart < m_pGapStart && pStart < pEnd) {
-      for (ForwardIt it = s_first; it != s_last; ++it) {
-        if (*pStart == *it) {
+    while (pStart < m_pGapStart && pStart < pEnd)
+    {
+      for (ForwardIt it = s_first; it != s_last; ++it)
+      {
+        if (*pStart == *it)
+        {
           assert(pStart <= pEnd);
           return pStart;
         }
@@ -718,13 +756,17 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
     }
 
     // Skip the gap
-    if (pStart >= m_pGapStart && pStart < m_pGapEnd) {
+    if (pStart >= m_pGapStart && pStart < m_pGapEnd)
+    {
       pStart = m_pGapEnd;
     }
 
-    while (pStart < pEnd) {
-      for (ForwardIt it = s_first; it != s_last; ++it) {
-        if (*pStart == *it) {
+    while (pStart < pEnd)
+    {
+      for (ForwardIt it = s_first; it != s_last; ++it)
+      {
+        if (*pStart == *it)
+        {
           assert(pStart <= pEnd);
           return pStart;
         }
@@ -739,34 +781,43 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   T *find_first_not_of(T *pStart, T *pEnd, ForwardIt s_first, ForwardIt s_last) const
   {
     bool found;
-    while (pStart < m_pGapStart && pStart < pEnd) {
+    while (pStart < m_pGapStart && pStart < pEnd)
+    {
       found = false;
-      for (ForwardIt it = s_first; it != s_last; ++it) {
-        if (*pStart == *it) {
+      for (ForwardIt it = s_first; it != s_last; ++it)
+      {
+        if (*pStart == *it)
+        {
           found = true;
           break;
         }
       }
-      if (!found) {
+      if (!found)
+      {
         return pStart;
       }
       pStart++;
     }
 
     // Skip the gap
-    if (pStart >= m_pGapStart && pStart < m_pGapEnd) {
+    if (pStart >= m_pGapStart && pStart < m_pGapEnd)
+    {
       pStart = m_pGapEnd;
     }
 
-    while (pStart < pEnd) {
+    while (pStart < pEnd)
+    {
       found = false;
-      for (ForwardIt it = s_first; it != s_last; ++it) {
-        if (*pStart == *it) {
+      for (ForwardIt it = s_first; it != s_last; ++it)
+      {
+        if (*pStart == *it)
+        {
           found = true;
           break;
         }
       }
-      if (!found) {
+      if (!found)
+      {
         return pStart;
       }
       pStart++;
@@ -834,7 +885,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   // Note that clear() is like free, but also keeps an allocated Gap Buffer
   void Free()
   {
-    if (m_pStart) {
+    if (m_pStart)
+    {
       // Free all memory, including the gap
       get_allocator().deallocate(m_pStart, m_pEnd - m_pStart);
     }
@@ -848,7 +900,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   inline T *GetBufferPtr(size_t offset, bool skipGap = true) const
   {
     T *pos = m_pStart + offset;
-    if (skipGap && pos >= m_pGapStart) {
+    if (skipGap && pos >= m_pGapStart)
+    {
       pos += m_pGapEnd - m_pGapStart;
     }
 
@@ -861,7 +914,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   {
     MoveGap(p);
 
-    if ((m_pGapEnd - m_pGapStart) < int64_t(size)) {
+    if ((m_pGapEnd - m_pGapStart) < int64_t(size))
+    {
       resizeGap(size + m_defaultGap);
     }
   }
@@ -870,7 +924,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   inline T *GetGaplessPtr(size_t offset) const
   {
     T *pos = m_pStart + offset;
-    if (pos >= m_pGapStart) {
+    if (pos >= m_pGapStart)
+    {
       pos += m_pGapEnd - m_pGapStart;
     }
     return pos;
@@ -880,7 +935,8 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   inline size_t GetGaplessOffset(T *p) const
   {
     size_t offset = p - m_pStart;
-    if (p >= m_pGapStart) {
+    if (p >= m_pGapStart)
+    {
       offset -= (m_pGapEnd - m_pGapStart);
     }
     return offset;
@@ -906,24 +962,28 @@ template<class T, class A = std::allocator<T>> class GapBuffer {
   {
     // Get a pointer, skip the gap
     T *pPos = m_pStart + pos;
-    if (pPos >= m_pGapStart) {
+    if (pPos >= m_pGapStart)
+    {
       pPos += (m_pGapEnd - m_pGapStart);
     }
 
     // We are in the right place
-    if (pPos == m_pGapEnd) {
+    if (pPos == m_pGapEnd)
+    {
       DEBUG_FILL_GAP;
       return;
     }
 
     // Move gap towards the left
-    if (pPos < m_pGapStart) {
+    if (pPos < m_pGapStart)
+    {
       // Move the gap start over by gapsize.
       memmove(pPos + (m_pGapEnd - m_pGapStart), pPos, m_pGapStart - pPos);
       m_pGapEnd -= (m_pGapStart - pPos);
       m_pGapStart = pPos;
     }
-    else {
+    else
+    {
       // Since we are moving after the gap, find distance
       // between m_pGapEnd and target and that's how
       // much we move from m_pGapEnd to m_pGapStart.

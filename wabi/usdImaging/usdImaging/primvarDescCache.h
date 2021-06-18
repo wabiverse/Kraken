@@ -43,18 +43,22 @@ WABI_NAMESPACE_BEGIN
 ///
 /// A cache for primvar descriptors.
 ///
-class UsdImagingPrimvarDescCache {
+class UsdImagingPrimvarDescCache
+{
  public:
   UsdImagingPrimvarDescCache(const UsdImagingPrimvarDescCache &) = delete;
   UsdImagingPrimvarDescCache &operator=(const UsdImagingPrimvarDescCache &) = delete;
 
-  class Key {
+  class Key
+  {
     friend class UsdImagingPrimvarDescCache;
     SdfPath _path;
     TfToken _attribute;
 
    public:
-    Key(SdfPath const &path, TfToken const &attr) : _path(path), _attribute(attr)
+    Key(SdfPath const &path, TfToken const &attr)
+      : _path(path),
+        _attribute(attr)
     {}
 
     inline bool operator==(Key const &rhs) const
@@ -66,7 +70,8 @@ class UsdImagingPrimvarDescCache {
       return !(*this == rhs);
     }
 
-    struct Hash {
+    struct Hash
+    {
       inline size_t operator()(Key const &key) const
       {
         size_t hash = key._path.GetHash();
@@ -83,11 +88,14 @@ class UsdImagingPrimvarDescCache {
     }
   };
 
-  UsdImagingPrimvarDescCache() : _locked(false)
+  UsdImagingPrimvarDescCache()
+    : _locked(false)
   {}
 
  private:
-  template<typename Element> struct _TypedCache {
+  template<typename Element>
+  struct _TypedCache
+  {
     typedef tbb::concurrent_unordered_map<Key, Element, Key::Hash> _MapType;
     typedef typename _MapType::iterator _MapIt;
     typedef typename _MapType::const_iterator _MapConstIt;
@@ -99,7 +107,8 @@ class UsdImagingPrimvarDescCache {
 
   /// Locates the requested \p key then populates \p value and returns true if
   /// found.
-  template<typename T> bool _Find(Key const &key, T *value) const
+  template<typename T>
+  bool _Find(Key const &key, T *value) const
   {
     typedef _TypedCache<T> Cache_t;
 
@@ -107,7 +116,8 @@ class UsdImagingPrimvarDescCache {
 
     _GetCache(&cache);
     typename Cache_t::_MapConstIt it = cache->_map.find(key);
-    if (it == cache->_map.end()) {
+    if (it == cache->_map.end())
+    {
       return false;
     }
     *value = it->second;
@@ -121,9 +131,11 @@ class UsdImagingPrimvarDescCache {
   /// to perform the actual deletion.
   /// Note: second hit on same key will be sucessful, but return whatever
   /// value was passed into the first _Extract.
-  template<typename T> bool _Extract(Key const &key, T *value)
+  template<typename T>
+  bool _Extract(Key const &key, T *value)
   {
-    if (!TF_VERIFY(!_locked)) {
+    if (!TF_VERIFY(!_locked))
+    {
       return false;
     }
 
@@ -133,7 +145,8 @@ class UsdImagingPrimvarDescCache {
     _GetCache(&cache);
     typename Cache_t::_MapIt it = cache->_map.find(key);
 
-    if (it == cache->_map.end()) {
+    if (it == cache->_map.end())
+    {
       return false;
     }
 
@@ -145,9 +158,11 @@ class UsdImagingPrimvarDescCache {
 
   /// Erases the given key from the value cache.
   /// Not thread safe
-  template<typename T> void _Erase(Key const &key)
+  template<typename T>
+  void _Erase(Key const &key)
   {
-    if (!TF_VERIFY(!_locked)) {
+    if (!TF_VERIFY(!_locked))
+    {
       return;
     }
 
@@ -161,7 +176,8 @@ class UsdImagingPrimvarDescCache {
   /// Returns a reference to the held value for \p key. Note that the entry
   /// for \p key will created with a default-constructed instance of T if
   /// there was no pre-existing entry.
-  template<typename T> T &_Get(Key const &key) const
+  template<typename T>
+  T &_Get(Key const &key) const
   {
     typedef _TypedCache<T> Cache_t;
 
@@ -177,13 +193,15 @@ class UsdImagingPrimvarDescCache {
   /// Removes items from the cache that are marked for deletion.
   /// This is not thread-safe and designed to be called after
   /// all the worker threads have been joined.
-  template<typename T> void _GarbageCollect(_TypedCache<T> &cache)
+  template<typename T>
+  void _GarbageCollect(_TypedCache<T> &cache)
   {
     typedef _TypedCache<T> Cache_t;
 
     typename Cache_t::_MapIt it;
 
-    while (cache._deferredDeleteQueue.try_pop(it)) {
+    while (cache._deferredDeleteQueue.try_pop(it))
+    {
       cache._map.unsafe_erase(it);
     }
   }

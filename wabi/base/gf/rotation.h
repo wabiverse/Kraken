@@ -59,7 +59,8 @@ WABI_NAMESPACE_BEGIN
 /// vector appears counter-clockwise when looking from the end of the vector
 /// toward the origin.
 ///
-class GfRotation {
+class GfRotation
+{
 
  public:
   /// The default constructor leaves the rotation undefined.

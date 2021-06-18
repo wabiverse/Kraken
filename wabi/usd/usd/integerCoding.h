@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Usd_IntegerCompression {
+class Usd_IntegerCompression
+{
  public:
   // Return the max compression buffer size required for \p numInts 32-bit
   // integers.
@@ -83,7 +84,8 @@ class Usd_IntegerCompression {
                                      char *workingSpace = nullptr);
 };
 
-class Usd_IntegerCompression64 {
+class Usd_IntegerCompression64
+{
  public:
   // Return the max compression buffer size required for \p numInts 64-bit
   // integers.

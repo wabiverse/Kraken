@@ -37,7 +37,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLResourceBindings::HgiGLResourceBindings(HgiResourceBindingsDesc const &desc) : HgiResourceBindings(desc)
+HgiGLResourceBindings::HgiGLResourceBindings(HgiResourceBindingsDesc const &desc)
+  : HgiResourceBindings(desc)
 {}
 
 HgiGLResourceBindings::~HgiGLResourceBindings() = default;
@@ -55,62 +56,72 @@ void HgiGLResourceBindings::BindResources()
   //
   // Bind Textures, images and samplers
   //
-  for (HgiTextureBindDesc const &texDesc : _descriptor.textures) {
+  for (HgiTextureBindDesc const &texDesc : _descriptor.textures)
+  {
     // OpenGL does not support arrays-of-textures bound to a unit.
     // (Which is different from texture-arrays. See Vulkan/Metal)
     if (!TF_VERIFY(texDesc.textures.size() == 1))
       continue;
 
     uint32_t unit = texDesc.bindingIndex;
-    if (textures.size() <= unit) {
+    if (textures.size() <= unit)
+    {
       textures.resize(unit + 1, 0);
       samplers.resize(unit + 1, 0);
       images.resize(unit + 1, 0);
     }
 
     if (texDesc.resourceType == HgiBindResourceTypeSampledImage ||
-        texDesc.resourceType == HgiBindResourceTypeCombinedSamplerImage) {
+        texDesc.resourceType == HgiBindResourceTypeCombinedSamplerImage)
+    {
       // Texture sampling (for graphics pipeline)
       hasTex = true;
       HgiTextureHandle const &texHandle = texDesc.textures.front();
       HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
       textures[texDesc.bindingIndex] = glTex->GetTextureId();
     }
-    else if (texDesc.resourceType == HgiBindResourceTypeStorageImage) {
+    else if (texDesc.resourceType == HgiBindResourceTypeStorageImage)
+    {
       // Image load/store (usually for compute pipeline)
       hasImage = true;
       HgiTextureHandle const &texHandle = texDesc.textures.front();
       HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
       images[texDesc.bindingIndex] = glTex->GetTextureId();
     }
-    else {
+    else
+    {
       TF_CODING_ERROR("Unsupported texture bind resource type");
     }
 
     // 'StorageImage' types do not need a sampler, so check if we have one.
-    if (!texDesc.samplers.empty()) {
+    if (!texDesc.samplers.empty())
+    {
       hasSampler = true;
       HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
       HgiGLSampler *glSmp = static_cast<HgiGLSampler *>(smpHandle.Get());
       samplers[texDesc.bindingIndex] = glSmp->GetSamplerId();
     }
-    else {
+    else
+    {
       // A sampler MUST be provided for sampler image textures (Hgi rule).
       TF_VERIFY(texDesc.resourceType != HgiBindResourceTypeSampledImage);
     }
   }
 
-  if (hasTex) {
+  if (hasTex)
+  {
     glBindTextures(0, textures.size(), textures.data());
   }
 
-  if (hasSampler) {
+  if (hasSampler)
+  {
     glBindSamplers(0, samplers.size(), samplers.data());
   }
 
   // 'texture units' are separate from 'texture image units' in OpenGL.
   // glBindImageTextures should not reset textures bound with glBindTextures.
-  if (hasImage) {
+  if (hasImage)
+  {
     glBindImageTextures(0, images.size(), images.data());
   }
 
@@ -124,7 +135,8 @@ void HgiGLResourceBindings::BindResources()
   std::vector<uint32_t> ubos(_descriptor.buffers.size(), 0);
   std::vector<uint32_t> sbos(_descriptor.buffers.size(), 0);
 
-  for (HgiBufferBindDesc const &bufDesc : _descriptor.buffers) {
+  for (HgiBufferBindDesc const &bufDesc : _descriptor.buffers)
+  {
     // OpenGL does not support arrays-of-buffers bound to a unit.
     // (Which is different from buffer-arrays. See Vulkan/Metal)
     if (!TF_VERIFY(bufDesc.buffers.size() == 1))
@@ -134,18 +146,22 @@ void HgiGLResourceBindings::BindResources()
 
     std::vector<uint32_t> *dst = nullptr;
 
-    if (bufDesc.resourceType == HgiBindResourceTypeUniformBuffer) {
+    if (bufDesc.resourceType == HgiBindResourceTypeUniformBuffer)
+    {
       dst = &ubos;
     }
-    else if (bufDesc.resourceType == HgiBindResourceTypeStorageBuffer) {
+    else if (bufDesc.resourceType == HgiBindResourceTypeStorageBuffer)
+    {
       dst = &sbos;
     }
-    else {
+    else
+    {
       TF_CODING_ERROR("Unknown buffer type to bind");
       continue;
     }
 
-    if (dst->size() <= unit) {
+    if (dst->size() <= unit)
+    {
       dst->resize(unit + 1, 0);
     }
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
@@ -154,11 +170,13 @@ void HgiGLResourceBindings::BindResources()
     (*dst)[bufDesc.bindingIndex] = glbuffer->GetBufferId();
   }
 
-  if (!ubos.empty()) {
+  if (!ubos.empty())
+  {
     glBindBuffersBase(GL_UNIFORM_BUFFER, 0, ubos.size(), ubos.data());
   }
 
-  if (!sbos.empty()) {
+  if (!sbos.empty())
+  {
     glBindBuffersBase(GL_SHADER_STORAGE_BUFFER, 0, sbos.size(), sbos.data());
   }
 

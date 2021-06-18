@@ -50,7 +50,8 @@ class UsdImagingGL_UnitTestWindow;
 ///
 /// A helper class for unit tests which need to perform GL drawing.
 ///
-class UsdImagingGL_UnitTestGLDrawing {
+class UsdImagingGL_UnitTestGLDrawing
+{
  public:
   UsdImagingGL_UnitTestGLDrawing();
   virtual ~UsdImagingGL_UnitTestGLDrawing();

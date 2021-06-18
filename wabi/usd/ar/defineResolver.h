@@ -63,13 +63,16 @@ WABI_NAMESPACE_BEGIN
     }
 #endif  // doxygen
 
-class Ar_ResolverFactoryBase : public TfType::FactoryBase {
+class Ar_ResolverFactoryBase : public TfType::FactoryBase
+{
  public:
   AR_API
   virtual ArResolver *New() const = 0;
 };
 
-template<class T> class Ar_ResolverFactory : public Ar_ResolverFactoryBase {
+template<class T>
+class Ar_ResolverFactory : public Ar_ResolverFactoryBase
+{
  public:
   virtual ArResolver *New() const override
   {
@@ -77,7 +80,8 @@ template<class T> class Ar_ResolverFactory : public Ar_ResolverFactoryBase {
   }
 };
 
-template<class Resolver, class... Bases> void Ar_DefineResolver()
+template<class Resolver, class... Bases>
+void Ar_DefineResolver()
 {
   TfType::Define<Resolver, TfType::Bases<Bases...>>().template SetFactory<Ar_ResolverFactory<Resolver>>();
 }

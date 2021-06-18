@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Represents an OpenGL GPU buffer resource.
 ///
-class HgiGLBuffer final : public HgiBuffer {
+class HgiGLBuffer final : public HgiBuffer
+{
  public:
   HGIGL_API
   ~HgiGLBuffer() override;

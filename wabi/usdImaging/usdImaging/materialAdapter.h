@@ -35,11 +35,13 @@ struct HdMaterialNetworkMap;
 
 /// \class UsdImagingMaterialAdapter
 /// \brief Provides information that can be used to generate a material.
-class UsdImagingMaterialAdapter : public UsdImagingPrimAdapter {
+class UsdImagingMaterialAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingMaterialAdapter() : UsdImagingPrimAdapter()
+  UsdImagingMaterialAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

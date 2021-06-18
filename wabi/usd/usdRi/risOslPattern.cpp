@@ -57,7 +57,8 @@ UsdRiRisOslPattern::~UsdRiRisOslPattern()
 /* static */
 UsdRiRisOslPattern UsdRiRisOslPattern::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisOslPattern();
   }
@@ -68,7 +69,8 @@ UsdRiRisOslPattern UsdRiRisOslPattern::Get(const UsdStagePtr &stage, const SdfPa
 UsdRiRisOslPattern UsdRiRisOslPattern::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisOslPattern");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisOslPattern();
   }
@@ -137,7 +139,8 @@ UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue, 
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

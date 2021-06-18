@@ -62,10 +62,12 @@ TF_REGISTRY_FUNCTION(TfType)
 
 static int _GetAPIVersion()
 {
-  if (@available(macOS 10.15, ios 13.0, *)) {
+  if (@available(macOS 10.15, ios 13.0, *))
+  {
     return APIVersion_Metal3_0;
   }
-  if (@available(macOS 10.13, ios 11.0, *)) {
+  if (@available(macOS 10.13, ios 11.0, *))
+  {
     return APIVersion_Metal2_0;
   }
 
@@ -79,12 +81,15 @@ HgiMetal::HgiMetal(id<MTLDevice> device)
     _apiVersion(_GetAPIVersion()),
     _workToFlush(false)
 {
-  if (!_device) {
-    if (TfGetenvBool("HGIMETAL_USE_INTEGRATED_GPU", false)) {
+  if (!_device)
+  {
+    if (TfGetenvBool("HGIMETAL_USE_INTEGRATED_GPU", false))
+    {
       _device = MTLCopyAllDevices()[1];
     }
 
-    if (!_device) {
+    if (!_device)
+    {
       _device = MTLCreateSystemDefaultDevice();
     }
   }
@@ -121,7 +126,8 @@ HgiGraphicsCmdsUniquePtr HgiMetal::CreateGraphicsCmds(HgiGraphicsCmdsDesc const 
 {
   // XXX We should TF_CODING_ERROR here when there are no attachments, but
   // during the Hgi transition we allow it to render to global gl framebuffer.
-  if (!desc.HasAttachments()) {
+  if (!desc.HasAttachments())
+  {
     // TF_CODING_ERROR("Graphics encoder desc has no attachments");
     return nullptr;
   }
@@ -134,7 +140,8 @@ HgiGraphicsCmdsUniquePtr HgiMetal::CreateGraphicsCmds(HgiGraphicsCmdsDesc const 
 HgiComputeCmdsUniquePtr HgiMetal::CreateComputeCmds()
 {
   HgiComputeCmds *computeCmds = new HgiMetalComputeCmds(this);
-  if (!_currentCmds) {
+  if (!_currentCmds)
+  {
     _currentCmds = computeCmds;
   }
   return HgiComputeCmdsUniquePtr(computeCmds);
@@ -143,7 +150,8 @@ HgiComputeCmdsUniquePtr HgiMetal::CreateComputeCmds()
 HgiBlitCmdsUniquePtr HgiMetal::CreateBlitCmds()
 {
   HgiMetalBlitCmds *blitCmds = new HgiMetalBlitCmds(this);
-  if (!_currentCmds) {
+  if (!_currentCmds)
+  {
     _currentCmds = blitCmds;
   }
   return HgiBlitCmdsUniquePtr(blitCmds);
@@ -161,7 +169,8 @@ void HgiMetal::DestroyTexture(HgiTextureHandle *texHandle)
 
 HgiTextureViewHandle HgiMetal::CreateTextureView(HgiTextureViewDesc const &desc)
 {
-  if (!desc.sourceTexture) {
+  if (!desc.sourceTexture)
+  {
     TF_CODING_ERROR("Source texture is null");
   }
 
@@ -258,10 +267,12 @@ TfToken const &HgiMetal::GetAPIName() const
 
 void HgiMetal::StartFrame()
 {
-  if (_frameDepth++ == 0) {
+  if (_frameDepth++ == 0)
+  {
     [_captureScopeFullFrame beginScope];
 
-    if ([[MTLCaptureManager sharedCaptureManager] isCapturing]) {
+    if ([[MTLCaptureManager sharedCaptureManager] isCapturing])
+    {
       // We need to grab a new command buffer otherwise the previous one
       // (if it was allocated at the end of the last frame) won't appear in
       // this frame's capture, and it will confuse us!
@@ -272,7 +283,8 @@ void HgiMetal::StartFrame()
 
 void HgiMetal::EndFrame()
 {
-  if (--_frameDepth == 0) {
+  if (--_frameDepth == 0)
+  {
     [_captureScopeFullFrame endScope];
   }
 }
@@ -284,12 +296,15 @@ id<MTLCommandQueue> HgiMetal::GetQueue() const
 
 id<MTLCommandBuffer> HgiMetal::GetPrimaryCommandBuffer(bool flush)
 {
-  if (_workToFlush) {
-    if (_currentCmds) {
+  if (_workToFlush)
+  {
+    if (_currentCmds)
+    {
       return nil;
     }
   }
-  if (flush) {
+  if (flush)
+  {
     _workToFlush = true;
   }
   return _commandBuffer;
@@ -314,7 +329,8 @@ HgiMetalCapabilities const &HgiMetal::GetCapabilities() const
 
 void HgiMetal::CommitPrimaryCommandBuffer(CommitCommandBufferWaitType waitType, bool forceNewBuffer)
 {
-  if (!_workToFlush && !forceNewBuffer) {
+  if (!_workToFlush && !forceNewBuffer)
+  {
     return;
   }
 
@@ -330,10 +346,12 @@ void HgiMetal::CommitSecondaryCommandBuffer(id<MTLCommandBuffer> commandBuffer,
                                             CommitCommandBufferWaitType waitType)
 {
   [commandBuffer commit];
-  if (waitType == CommitCommandBuffer_WaitUntilScheduled) {
+  if (waitType == CommitCommandBuffer_WaitUntilScheduled)
+  {
     [commandBuffer waitUntilScheduled];
   }
-  else if (waitType == CommitCommandBuffer_WaitUntilCompleted) {
+  else if (waitType == CommitCommandBuffer_WaitUntilCompleted)
+  {
     [commandBuffer waitUntilCompleted];
   }
 }
@@ -347,9 +365,11 @@ bool HgiMetal::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
 {
   TRACE_FUNCTION();
 
-  if (cmds) {
+  if (cmds)
+  {
     _workToFlush = Hgi::_SubmitCmds(cmds, wait);
-    if (cmds == _currentCmds) {
+    if (cmds == _currentCmds)
+    {
       _currentCmds = nullptr;
     }
   }

@@ -11,34 +11,45 @@
 #include "zep/mcommon/animation/timer.h"
 #include "zep/mcommon/math/math.h"
 
-namespace Zep {
+namespace Zep
+{
 
 enum class ThemeColor;
 
-struct CommentEntry {
+struct CommentEntry
+{
   bool isStart;
   bool isMultiLine;
   uint32_t location;
   uint32_t entries;
 };
 
-namespace ZepSyntaxFlags {
-enum { CaseInsensitive = (1 << 0), IgnoreLineHighlight = (1 << 1), LispLike = (1 << 2) };
+namespace ZepSyntaxFlags
+{
+enum
+{
+  CaseInsensitive = (1 << 0),
+  IgnoreLineHighlight = (1 << 1),
+  LispLike = (1 << 2)
+};
 };
 
-struct SyntaxData {
+struct SyntaxData
+{
   ThemeColor foreground = ThemeColor::Normal;
   ThemeColor background = ThemeColor::None;
   bool underline = false;
 };
 
-struct SyntaxResult : SyntaxData {
+struct SyntaxResult : SyntaxData
+{
   NVec4f customBackgroundColor;
   NVec4f customForegroundColor;
 };
 
 class ZepSyntaxAdorn;
-class ZepSyntax : public ZepComponent {
+class ZepSyntax : public ZepComponent
+{
  public:
   ZepSyntax(ZepBuffer &buffer,
             const std::unordered_set<std::string> &keywords = std::unordered_set<std::string>{},
@@ -86,7 +97,8 @@ class ZepSyntax : public ZepComponent {
   ByteRange m_activeLineRange = {0, 0};
 };
 
-class ZepSyntaxAdorn : public ZepComponent {
+class ZepSyntaxAdorn : public ZepComponent
+{
  public:
   ZepSyntaxAdorn(ZepSyntax &syntax, ZepBuffer &buffer)
     : ZepComponent(syntax.GetEditor()),

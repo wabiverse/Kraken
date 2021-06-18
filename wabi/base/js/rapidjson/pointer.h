@@ -32,7 +32,8 @@ static const SizeType kPointerInvalidIndex = ~SizeType(
 /*! \ingroup RAPIDJSON_ERRORS
     \see GenericPointer::GenericPointer, GenericPointer::GetParseErrorCode
 */
-enum PointerParseErrorCode {
+enum PointerParseErrorCode
+{
   kPointerParseErrorNone = 0,  //!< The parse is successful
 
   kPointerParseErrorTokenMustBeginWithSolidus,  //!< A token must begin with a '/'
@@ -74,7 +75,9 @@ enum PointerParseErrorCode {
     \note GenericPointer uses same encoding of ValueType.
     However, Allocator of GenericPointer is independent of Allocator of Value.
 */
-template<typename ValueType, typename Allocator = CrtAllocator> class GenericPointer {
+template<typename ValueType, typename Allocator = CrtAllocator>
+class GenericPointer
+{
  public:
   typedef typename ValueType::EncodingType EncodingType;  //!< Encoding type from Value
   typedef typename ValueType::Ch Ch;                      //!< Character type from Value
@@ -92,7 +95,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       This struct is public so that user can create a Pointer without parsing and
       allocation, using a special constructor.
   */
-  struct Token {
+  struct Token
+  {
     const Ch *name;   //!< Name of the token. It has null character at the end but it can contain
                       //!< null character.
     SizeType length;  //!< Length of the name.
@@ -229,7 +233,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   //! Assignment operator.
   GenericPointer &operator=(const GenericPointer &rhs)
   {
-    if (this != &rhs) {
+    if (this != &rhs)
+    {
       // Do not delete ownAllcator
       if (nameBuffer_)
         Allocator::Free(tokens_);
@@ -240,7 +245,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
       if (rhs.nameBuffer_)
         CopyFromRaw(rhs);  // Normally parsed tokens.
-      else {
+      else
+      {
         tokens_ = rhs.tokens_;  // User supplied const tokens.
         nameBuffer_ = 0;
       }
@@ -325,11 +331,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     SizeType length = static_cast<SizeType>(end - buffer);
     buffer[length] = '\0';
 
-    if (sizeof(Ch) == 1) {
+    if (sizeof(Ch) == 1)
+    {
       Token token = {reinterpret_cast<Ch *>(buffer), length, index};
       return Append(token, allocator);
     }
-    else {
+    else
+    {
       Ch name[21];
       for (size_t i = 0; i <= length; i++)
         name[i] = buffer[i];
@@ -348,7 +356,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   {
     if (token.IsString())
       return Append(token.GetString(), token.GetStringLength(), allocator);
-    else {
+    else
+    {
       RAPIDJSON_ASSERT(token.IsUint64());
       RAPIDJSON_ASSERT(token.GetUint64() <= SizeType(~0));
       return Append(static_cast<SizeType>(token.GetUint64()), allocator);
@@ -413,10 +422,12 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     if (!IsValid() || !rhs.IsValid() || tokenCount_ != rhs.tokenCount_)
       return false;
 
-    for (size_t i = 0; i < tokenCount_; i++) {
+    for (size_t i = 0; i < tokenCount_; i++)
+    {
       if (tokens_[i].index != rhs.tokens_[i].index || tokens_[i].length != rhs.tokens_[i].length ||
           (tokens_[i].length != 0 &&
-           std::memcmp(tokens_[i].name, rhs.tokens_[i].name, sizeof(Ch) * tokens_[i].length) != 0)) {
+           std::memcmp(tokens_[i].name, rhs.tokens_[i].name, sizeof(Ch) * tokens_[i].length) != 0))
+      {
         return false;
       }
     }
@@ -443,7 +454,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam OutputStream Type of output stream.
       \param os The output stream.
   */
-  template<typename OutputStream> bool Stringify(OutputStream &os) const
+  template<typename OutputStream>
+  bool Stringify(OutputStream &os) const
   {
     return Stringify<false, OutputStream>(os);
   }
@@ -453,7 +465,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam OutputStream Type of output stream.
       \param os The output stream.
   */
-  template<typename OutputStream> bool StringifyUriFragment(OutputStream &os) const
+  template<typename OutputStream>
+  bool StringifyUriFragment(OutputStream &os) const
   {
     return Stringify<true, OutputStream>(os);
   }
@@ -486,24 +499,31 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     RAPIDJSON_ASSERT(IsValid());
     ValueType *v = &root;
     bool exist = true;
-    for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-      if (v->IsArray() && t->name[0] == '-' && t->length == 1) {
+    for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t)
+    {
+      if (v->IsArray() && t->name[0] == '-' && t->length == 1)
+      {
         v->PushBack(ValueType().Move(), allocator);
         v = &((*v)[v->Size() - 1]);
         exist = false;
       }
-      else {
-        if (t->index == kPointerInvalidIndex) {  // must be object name
+      else
+      {
+        if (t->index == kPointerInvalidIndex)
+        {  // must be object name
           if (!v->IsObject())
             v->SetObject();  // Change to Object
         }
-        else {  // object name or array index
+        else
+        {  // object name or array index
           if (!v->IsArray() && !v->IsObject())
             v->SetArray();  // Change to Array
         }
 
-        if (v->IsArray()) {
-          if (t->index >= v->Size()) {
+        if (v->IsArray())
+        {
+          if (t->index >= v->Size())
+          {
             v->Reserve(t->index + 1, allocator);
             while (t->index >= v->Size())
               v->PushBack(ValueType().Move(), allocator);
@@ -511,9 +531,11 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
           }
           v = &((*v)[t->index]);
         }
-        else {
+        else
+        {
           typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
-          if (m == v->MemberEnd()) {
+          if (m == v->MemberEnd())
+          {
             v->AddMember(ValueType(t->name, t->length, allocator).Move(), ValueType().Move(), allocator);
             v = &(--v->MemberEnd())->value;  // Assumes AddMember() appends at the end
             exist = false;
@@ -568,8 +590,10 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   {
     RAPIDJSON_ASSERT(IsValid());
     ValueType *v = &root;
-    for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-      switch (v->GetType()) {
+    for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t)
+    {
+      switch (v->GetType())
+      {
         case kObjectType: {
           typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd())
@@ -849,14 +873,17 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
     ValueType *v = &root;
     const Token *last = tokens_ + (tokenCount_ - 1);
-    for (const Token *t = tokens_; t != last; ++t) {
-      switch (v->GetType()) {
+    for (const Token *t = tokens_; t != last; ++t)
+    {
+      switch (v->GetType())
+      {
         case kObjectType: {
           typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd())
             return false;
           v = &m->value;
-        } break;
+        }
+        break;
         case kArrayType:
           if (t->index == kPointerInvalidIndex || t->index >= v->Size())
             return false;
@@ -867,7 +894,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       }
     }
 
-    switch (v->GetType()) {
+    switch (v->GetType())
+    {
       case kObjectType:
         return v->EraseMember(GenericStringRef<Ch>(last->name, last->length));
       case kArrayType:
@@ -955,32 +983,39 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
     // Detect if it is a URI fragment
     bool uriFragment = false;
-    if (source[i] == '#') {
+    if (source[i] == '#')
+    {
       uriFragment = true;
       i++;
     }
 
-    if (i != length && source[i] != '/') {
+    if (i != length && source[i] != '/')
+    {
       parseErrorCode_ = kPointerParseErrorTokenMustBeginWithSolidus;
       goto error;
     }
 
-    while (i < length) {
+    while (i < length)
+    {
       RAPIDJSON_ASSERT(source[i] == '/');
       i++;  // consumes '/'
 
       token->name = name;
       bool isNumber = true;
 
-      while (i < length && source[i] != '/') {
+      while (i < length && source[i] != '/')
+      {
         Ch c = source[i];
-        if (uriFragment) {
+        if (uriFragment)
+        {
           // Decoding percent-encoding for URI fragment
-          if (c == '%') {
+          if (c == '%')
+          {
             PercentDecodeStream is(&source[i], source + length);
             GenericInsituStringStream<EncodingType> os(name);
             Ch *begin = os.PutBegin();
-            if (!Transcoder<UTF8<>, EncodingType>().Validate(is, os) || !is.IsValid()) {
+            if (!Transcoder<UTF8<>, EncodingType>().Validate(is, os) || !is.IsValid())
+            {
               parseErrorCode_ = kPointerParseErrorInvalidPercentEncoding;
               goto error;
             }
@@ -988,14 +1023,16 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
             i += is.Tell() - 1;
             if (len == 1)
               c = *name;
-            else {
+            else
+            {
               name += len;
               isNumber = false;
               i++;
               continue;
             }
           }
-          else if (NeedPercentEncode(c)) {
+          else if (NeedPercentEncode(c))
+          {
             parseErrorCode_ = kPointerParseErrorCharacterMustPercentEncode;
             goto error;
           }
@@ -1004,20 +1041,24 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
         i++;
 
         // Escaping "~0" -> '~', "~1" -> '/'
-        if (c == '~') {
-          if (i < length) {
+        if (c == '~')
+        {
+          if (i < length)
+          {
             c = source[i];
             if (c == '0')
               c = '~';
             else if (c == '1')
               c = '/';
-            else {
+            else
+            {
               parseErrorCode_ = kPointerParseErrorInvalidEscape;
               goto error;
             }
             i++;
           }
-          else {
+          else
+          {
             parseErrorCode_ = kPointerParseErrorInvalidEscape;
             goto error;
           }
@@ -1040,10 +1081,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
       // String to SizeType conversion
       SizeType n = 0;
-      if (isNumber) {
-        for (size_t j = 0; j < token->length; j++) {
+      if (isNumber)
+      {
+        for (size_t j = 0; j < token->length; j++)
+        {
           SizeType m = n * 10 + static_cast<SizeType>(token->name[j] - '0');
-          if (m < n) {  // overflow detection
+          if (m < n)
+          {  // overflow detection
             isNumber = false;
             break;
           }
@@ -1073,26 +1117,32 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       \tparam uriFragment True for stringifying to URI fragment representation. False for string
      representation. \tparam OutputStream type of output stream. \param os The output stream.
   */
-  template<bool uriFragment, typename OutputStream> bool Stringify(OutputStream &os) const
+  template<bool uriFragment, typename OutputStream>
+  bool Stringify(OutputStream &os) const
   {
     RAPIDJSON_ASSERT(IsValid());
 
     if (uriFragment)
       os.Put('#');
 
-    for (Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
+    for (Token *t = tokens_; t != tokens_ + tokenCount_; ++t)
+    {
       os.Put('/');
-      for (size_t j = 0; j < t->length; j++) {
+      for (size_t j = 0; j < t->length; j++)
+      {
         Ch c = t->name[j];
-        if (c == '~') {
+        if (c == '~')
+        {
           os.Put('~');
           os.Put('0');
         }
-        else if (c == '/') {
+        else if (c == '/')
+        {
           os.Put('~');
           os.Put('1');
         }
-        else if (uriFragment && NeedPercentEncode(c)) {
+        else if (uriFragment && NeedPercentEncode(c))
+        {
           // Transcode to UTF8 sequence
           GenericStringStream<typename ValueType::EncodingType> source(&t->name[j]);
           PercentEncodeStream<OutputStream> target(os);
@@ -1113,7 +1163,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
       If it encounters invalid characters, it sets output code unit as 0 and
       mark invalid, and to be checked by IsValid().
   */
-  class PercentDecodeStream {
+  class PercentDecodeStream
+  {
    public:
     typedef typename ValueType::Ch Ch;
 
@@ -1131,13 +1182,15 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 
     Ch Take()
     {
-      if (*src_ != '%' || src_ + 3 > end_) {  // %XY triplet
+      if (*src_ != '%' || src_ + 3 > end_)
+      {  // %XY triplet
         valid_ = false;
         return 0;
       }
       src_++;
       Ch c = 0;
-      for (int j = 0; j < 2; j++) {
+      for (int j = 0; j < 2; j++)
+      {
         c <<= 4;
         Ch h = *src_;
         if (h >= '0' && h <= '9')
@@ -1146,7 +1199,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
           c += h - 'A' + 10;
         else if (h >= 'a' && h <= 'f')
           c += h - 'a' + 10;
-        else {
+        else
+        {
           valid_ = false;
           return 0;
         }
@@ -1172,9 +1226,12 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
   };
 
   //! A helper stream to encode character (UTF-8 code unit) into percent-encoded sequence.
-  template<typename OutputStream> class PercentEncodeStream {
+  template<typename OutputStream>
+  class PercentEncodeStream
+  {
    public:
-    PercentEncodeStream(OutputStream &os) : os_(os)
+    PercentEncodeStream(OutputStream &os)
+      : os_(os)
     {}
     void Put(char c)
     {  // UTF-8 must be byte
@@ -1666,7 +1723,8 @@ typename DocumentType::ValueType &SwapValueByPointer(DocumentType &document,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename T> bool EraseValueByPointer(T &root, const GenericPointer<typename T::ValueType> &pointer)
+template<typename T>
+bool EraseValueByPointer(T &root, const GenericPointer<typename T::ValueType> &pointer)
 {
   return pointer.Erase(root);
 }

@@ -120,7 +120,8 @@ class SdfAssetPath;
  * schema, it evaluates to true only if the application of the API schema has
  * been recorded on the prim via a call to the auto-generated Apply() method. */
 
-class UsdAPISchemaBase : public UsdSchemaBase {
+class UsdAPISchemaBase : public UsdSchemaBase
+{
  public:
   /**
    * Compile time constant representing what kind of schema this class is.
@@ -139,14 +140,16 @@ class UsdAPISchemaBase : public UsdSchemaBase {
    * UsdAPISchemaBase::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
    * @p prim. */
-  explicit UsdAPISchemaBase(const UsdPrim &prim = UsdPrim()) : UsdSchemaBase(prim)
+  explicit UsdAPISchemaBase(const UsdPrim &prim = UsdPrim())
+    : UsdSchemaBase(prim)
   {}
 
   /**
    * Construct a UsdAPISchemaBase on the prim held by @p schemaObj .
    * Should be preferred over UsdAPISchemaBase(schemaObj.GetPrim()),
    * as it preserves SchemaBase state. */
-  explicit UsdAPISchemaBase(const UsdSchemaBase &schemaObj) : UsdSchemaBase(schemaObj)
+  explicit UsdAPISchemaBase(const UsdSchemaBase &schemaObj)
+    : UsdSchemaBase(schemaObj)
   {}
 
   /**
@@ -255,7 +258,8 @@ class UsdAPISchemaBase : public UsdSchemaBase {
   template<typename APISchemaType>
   static APISchemaType _ApplyAPISchema(const UsdPrim &prim, const TfToken &apiSchemaName)
   {
-    if (prim.ApplyAPI<APISchemaType>()) {
+    if (prim.ApplyAPI<APISchemaType>())
+    {
       return APISchemaType(prim);
     }
     return APISchemaType();
@@ -290,7 +294,8 @@ class UsdAPISchemaBase : public UsdSchemaBase {
                                                const TfToken &apiSchemaName,
                                                const TfToken &instanceName)
   {
-    if (prim.ApplyAPI<APISchemaType>(instanceName)) {
+    if (prim.ApplyAPI<APISchemaType>(instanceName))
+    {
       return APISchemaType(prim, instanceName);
     }
     return APISchemaType();

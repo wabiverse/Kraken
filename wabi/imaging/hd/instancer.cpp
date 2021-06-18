@@ -46,7 +46,8 @@ int HdInstancer::GetInstancerNumLevels(HdRenderIndex &index, HdRprim const &rpri
   int instancerLevels = 0;
   SdfPath parent = rprim.GetInstancerId();
   HdInstancer *instancer = nullptr;
-  while (!parent.IsEmpty()) {
+  while (!parent.IsEmpty())
+  {
     instancerLevels++;
     instancer = index.GetInstancer(parent);
     TF_VERIFY(instancer);
@@ -75,15 +76,18 @@ void HdInstancer::_SyncInstancerAndParents(HdRenderIndex &renderIndex, SdfPath c
 {
   HdRenderParam *renderParam = renderIndex.GetRenderDelegate()->GetRenderParam();
   SdfPath id = instancerId;
-  while (!id.IsEmpty()) {
+  while (!id.IsEmpty())
+  {
     HdInstancer *instancer = renderIndex.GetInstancer(id);
-    if (!TF_VERIFY(instancer)) {
+    if (!TF_VERIFY(instancer))
+    {
       return;
     }
 
     HdDirtyBits dirtyBits = renderIndex.GetChangeTracker().GetInstancerDirtyBits(id);
 
-    if (dirtyBits != HdChangeTracker::Clean) {
+    if (dirtyBits != HdChangeTracker::Clean)
+    {
       std::lock_guard<std::mutex> lock(instancer->_instanceLock);
       dirtyBits = renderIndex.GetChangeTracker().GetInstancerDirtyBits(id);
       instancer->Sync(instancer->GetDelegate(), renderParam, &dirtyBits);
@@ -96,19 +100,23 @@ void HdInstancer::_SyncInstancerAndParents(HdRenderIndex &renderIndex, SdfPath c
 
 void HdInstancer::_UpdateInstancer(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits)
 {
-  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, GetId())) {
+  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, GetId()))
+  {
     SdfPath const &parentId = delegate->GetInstancerId(GetId());
-    if (parentId == _parentId) {
+    if (parentId == _parentId)
+    {
       return;
     }
 
     // If we have a new instancer ID, we need to update the dependency
     // map and also update the stored instancer ID.
     HdChangeTracker &tracker = delegate->GetRenderIndex().GetChangeTracker();
-    if (!_parentId.IsEmpty()) {
+    if (!_parentId.IsEmpty())
+    {
       tracker.RemoveInstancerInstancerDependency(_parentId, GetId());
     }
-    if (!parentId.IsEmpty()) {
+    if (!parentId.IsEmpty())
+    {
       tracker.AddInstancerInstancerDependency(parentId, GetId());
     }
     _parentId = parentId;

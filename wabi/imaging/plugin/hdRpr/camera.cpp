@@ -20,7 +20,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(HdRprCameraTokens, (apertureBlades));
 
-namespace {
+namespace
+{
 
 template<typename T>
 bool EvalCameraParam(T *value,
@@ -30,11 +31,13 @@ bool EvalCameraParam(T *value,
                      T defaultValue)
 {
   VtValue vtval = sceneDelegate->GetCameraParamValue(primPath, paramName);
-  if (vtval.IsEmpty()) {
+  if (vtval.IsEmpty())
+  {
     *value = defaultValue;
     return false;
   }
-  if (!vtval.IsHolding<T>()) {
+  if (!vtval.IsHolding<T>())
+  {
     *value = defaultValue;
     TF_CODING_ERROR("%s: type mismatch - %s", paramName.GetText(), vtval.GetTypeName().c_str());
     return false;
@@ -83,7 +86,8 @@ void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPara
 
   m_rprDirtyBits |= *dirtyBits;
 
-  if (*dirtyBits & HdCamera::DirtyParams) {
+  if (*dirtyBits & HdCamera::DirtyParams)
+  {
     SdfPath const &id = GetId();
 
     EvalCameraParam(&m_focalLength, HdCameraTokens->focalLength, sceneDelegate, id);
@@ -112,10 +116,12 @@ void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPara
 #else
     TfToken hdCamProjection;
     EvalCameraParam(&hdCamProjection, UsdGeomTokens->projection, sceneDelegate, id, TfToken());
-    if (hdCamProjection == UsdGeomTokens->orthographic) {
+    if (hdCamProjection == UsdGeomTokens->orthographic)
+    {
       m_projection = Orthographic;
     }
-    else {
+    else
+    {
       m_projection = Perspective;
     }
 #endif
@@ -123,7 +129,8 @@ void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPara
     EvalCameraParam(&m_apertureBlades, HdRprCameraTokens->apertureBlades, sceneDelegate, id, 16);
   }
 
-  if (*dirtyBits & HdCamera::DirtyViewMatrix) {
+  if (*dirtyBits & HdCamera::DirtyViewMatrix)
+  {
     sceneDelegate->SampleTransform(GetId(), &m_transform);
   }
 
@@ -139,7 +146,8 @@ void HdRprCamera::Finalize(HdRenderParam *renderParam)
 
 bool HdRprCamera::GetApertureSize(GfVec2f *v) const
 {
-  if (!std::isnan(m_horizontalAperture) && !std::isnan(m_verticalAperture)) {
+  if (!std::isnan(m_horizontalAperture) && !std::isnan(m_verticalAperture))
+  {
     *v = {m_horizontalAperture, m_verticalAperture};
     return true;
   }
@@ -148,7 +156,8 @@ bool HdRprCamera::GetApertureSize(GfVec2f *v) const
 
 bool HdRprCamera::GetApertureOffset(GfVec2f *v) const
 {
-  if (!std::isnan(m_horizontalApertureOffset) && !std::isnan(m_verticalApertureOffset)) {
+  if (!std::isnan(m_horizontalApertureOffset) && !std::isnan(m_verticalApertureOffset))
+  {
     *v = {m_horizontalApertureOffset, m_verticalApertureOffset};
     return true;
   }
@@ -157,7 +166,8 @@ bool HdRprCamera::GetApertureOffset(GfVec2f *v) const
 
 bool HdRprCamera::GetFocalLength(float *v) const
 {
-  if (!std::isnan(m_focalLength)) {
+  if (!std::isnan(m_focalLength))
+  {
     *v = m_focalLength;
     return true;
   }
@@ -166,7 +176,8 @@ bool HdRprCamera::GetFocalLength(float *v) const
 
 bool HdRprCamera::GetFStop(float *v) const
 {
-  if (!std::isnan(m_fStop)) {
+  if (!std::isnan(m_fStop))
+  {
     *v = m_fStop;
     return true;
   }
@@ -175,7 +186,8 @@ bool HdRprCamera::GetFStop(float *v) const
 
 bool HdRprCamera::GetFocusDistance(float *v) const
 {
-  if (!std::isnan(m_focusDistance)) {
+  if (!std::isnan(m_focusDistance))
+  {
     *v = m_focusDistance;
     return true;
   }
@@ -184,7 +196,8 @@ bool HdRprCamera::GetFocusDistance(float *v) const
 
 bool HdRprCamera::GetShutterOpen(double *v) const
 {
-  if (!std::isnan(m_shutterOpen)) {
+  if (!std::isnan(m_shutterOpen))
+  {
     *v = m_shutterOpen;
     return true;
   }
@@ -193,7 +206,8 @@ bool HdRprCamera::GetShutterOpen(double *v) const
 
 bool HdRprCamera::GetShutterClose(double *v) const
 {
-  if (!std::isnan(m_shutterClose)) {
+  if (!std::isnan(m_shutterClose))
+  {
     *v = m_shutterClose;
     return true;
   }
@@ -202,7 +216,8 @@ bool HdRprCamera::GetShutterClose(double *v) const
 
 bool HdRprCamera::GetClippingRange(GfRange1f *v) const
 {
-  if (!std::isnan(m_clippingRange.GetMin()) && !std::isnan(m_clippingRange.GetMax())) {
+  if (!std::isnan(m_clippingRange.GetMin()) && !std::isnan(m_clippingRange.GetMax()))
+  {
     *v = m_clippingRange;
     return true;
   }

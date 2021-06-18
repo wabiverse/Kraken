@@ -46,22 +46,26 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Is a key is known at compile time, it is preferable to use
 /// a static constexpr TraceStaticKeyData instance instead.
-class TraceDynamicKey {
+class TraceDynamicKey
+{
  public:
   /// Constructor for TfToken.
-  TraceDynamicKey(TfToken name) : _key(std::move(name))
+  TraceDynamicKey(TfToken name)
+    : _key(std::move(name))
   {
     _data._name = _key.GetText();
   }
 
   /// Constructor for string.
-  TraceDynamicKey(const std::string &name) : _key(name)
+  TraceDynamicKey(const std::string &name)
+    : _key(name)
   {
     _data._name = _key.GetText();
   }
 
   /// Constructor for C string.
-  TraceDynamicKey(const char *name) : _key(name)
+  TraceDynamicKey(const char *name)
+    : _key(name)
   {
     _data._name = _key.GetText();
   }
@@ -80,7 +84,8 @@ class TraceDynamicKey {
 
   /// A Hash functor which uses the cached hash which may be used to store
   /// keys in a TfHashMap.
-  struct HashFunctor {
+  struct HashFunctor
+  {
     size_t operator()(const TraceDynamicKey &key) const
     {
       return key.Hash();

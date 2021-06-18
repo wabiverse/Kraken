@@ -46,7 +46,8 @@ struct NdrNodeDiscoveryResult;
 ///
 /// Parses shader definitions represented using Glslfx.
 ///
-class SdrGlslfxParserPlugin : public NdrParserPlugin {
+class SdrGlslfxParserPlugin : public NdrParserPlugin
+{
  public:
   SdrGlslfxParserPlugin() = default;
 

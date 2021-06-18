@@ -46,7 +46,8 @@ static std::string _Repr(const ArDefaultResolverContext &ctx)
 {
   std::string repr = TF_PY_REPR_PREFIX;
   repr += "DefaultResolverContext(";
-  if (!ctx.GetSearchPath().empty()) {
+  if (!ctx.GetSearchPath().empty())
+  {
     repr += TfPyRepr(ctx.GetSearchPath());
   }
   repr += ")";

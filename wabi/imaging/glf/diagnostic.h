@@ -88,7 +88,8 @@ char const *GlfDebugEnumToString(GLenum debugEnum);
 /// If set to 1 (true) the debug objects will be pushed and popped in
 /// the command stream as long as the GL implementation and version supports it.
 ///
-class GlfDebugGroup {
+class GlfDebugGroup
+{
  public:
   /// Pushes a new debug group onto the GL api debug trace stack
   GLF_API
@@ -119,7 +120,8 @@ void GlfDebugLabelProgram(GLuint id, char const *label);
 ///
 /// Represents a GL query object in Glf
 ///
-class GlfGLQueryObject {
+class GlfGLQueryObject
+{
  public:
   GLF_API
   GlfGLQueryObject();

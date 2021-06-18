@@ -48,15 +48,17 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Converter from std::vector<VtValue> to python list
-struct VtValueArrayToPython {
+struct VtValueArrayToPython
+{
   static PyObject *convert(const std::vector<VtValue> &v)
   {
     // TODO Use result converter. TfPySequenceToList.
     list result;
-    TF_FOR_ALL(i, v)
+    TF_FOR_ALL (i, v)
     {
       object o = TfPyObject(*i);
       result.append(o);
@@ -66,14 +68,15 @@ struct VtValueArrayToPython {
 };
 
 // Converter from VtDictionary to python dict.
-struct VtDictionaryToPython {
+struct VtDictionaryToPython
+{
   static PyObject *convert(const VtDictionary &v)
   {
     TRACE_FUNCTION();
 
     // TODO Use result converter TfPyMapToDictionary??
     dict result;
-    TF_FOR_ALL(i, v)
+    TF_FOR_ALL (i, v)
     {
       object o = TfPyObject(i->second);
       result.setdefault(i->first, o);
@@ -95,8 +98,10 @@ static bool _VtValueFromPython(object pVal, VtValue *result)
 {
   // Try to convert a nested dictionary into a VtDictionary.
   extract<VtDictionary> valDictProxy(pVal);
-  if (valDictProxy.check()) {
-    if (result) {
+  if (valDictProxy.check())
+  {
+    if (result)
+    {
       VtDictionary dict = valDictProxy;
       result->Swap(dict);
     }
@@ -105,8 +110,10 @@ static bool _VtValueFromPython(object pVal, VtValue *result)
 
   // Try to convert a nested list into a vector.
   extract<std::vector<VtValue>> valArrayProxy(pVal);
-  if (valArrayProxy.check()) {
-    if (result) {
+  if (valArrayProxy.check())
+  {
+    if (result)
+    {
       std::vector<VtValue> array = valArrayProxy;
       result->Swap(array);
     }
@@ -115,12 +122,15 @@ static bool _VtValueFromPython(object pVal, VtValue *result)
 
   // Try to convert a value into a VtValue.
   extract<VtValue> valProxy(pVal);
-  if (valProxy.check()) {
+  if (valProxy.check())
+  {
     VtValue v = valProxy();
-    if (v.IsHolding<TfPyObjWrapper>()) {
+    if (v.IsHolding<TfPyObjWrapper>())
+    {
       return false;
     }
-    if (result) {
+    if (result)
+    {
       result->Swap(v);
     }
     return true;
@@ -129,7 +139,8 @@ static bool _VtValueFromPython(object pVal, VtValue *result)
 }
 
 // Converter from python dict to VtValueArray.
-struct _VtValueArrayFromPython {
+struct _VtValueArrayFromPython
+{
   _VtValueArrayFromPython()
   {
     converter::registry::insert(&convertible, &construct, type_id<std::vector<VtValue>>());
@@ -140,7 +151,8 @@ struct _VtValueArrayFromPython {
   static PyObject *convert(PyObject *p, std::vector<VtValue> *result)
   {
     extract<list> dProxy(p);
-    if (!dProxy.check()) {
+    if (!dProxy.check())
+    {
       return NULL;
     }
     list d = dProxy();
@@ -148,15 +160,18 @@ struct _VtValueArrayFromPython {
 
     if (result)
       result->reserve(numElts);
-    for (int i = 0; i < numElts; i++) {
+    for (int i = 0; i < numElts; i++)
+    {
       object pVal = d[i];
-      if (result) {
+      if (result)
+      {
         result->push_back(VtValue());
         if (!_VtValueFromPython(pVal, &result->back()))
           return NULL;
         // Fall through to return p.
       }
-      else {
+      else
+      {
         // Test for convertibility.
       }
     }
@@ -178,7 +193,8 @@ struct _VtValueArrayFromPython {
 };
 
 // Converter from python dict to VtDictionary.
-struct _VtDictionaryFromPython {
+struct _VtDictionaryFromPython
+{
   _VtDictionaryFromPython()
   {
     converter::registry::insert(&convertible, &construct, type_id<VtDictionary>());
@@ -188,23 +204,27 @@ struct _VtDictionaryFromPython {
   // If result is non-NULL, does the conversion into *result.
   static PyObject *convert(PyObject *p, VtDictionary *result)
   {
-    if (!PyDict_Check(p)) {
+    if (!PyDict_Check(p))
+    {
       return NULL;
     }
 
     Py_ssize_t pos = 0;
     PyObject *pyKey = NULL, *pyVal = NULL;
-    while (PyDict_Next(p, &pos, &pyKey, &pyVal)) {
+    while (PyDict_Next(p, &pos, &pyKey, &pyVal))
+    {
       extract<std::string> keyProxy(pyKey);
       if (!keyProxy.check())
         return NULL;
       object pVal(handle<>(borrowed(pyVal)));
-      if (result) {
+      if (result)
+      {
         VtValue &val = (*result)[keyProxy()];
         if (!_VtValueFromPython(pVal, &val))
           return NULL;
       }
-      else {
+      else
+      {
         if (!_CanVtValueFromPython(pVal))
           return NULL;
       }
@@ -229,7 +249,8 @@ struct _VtDictionaryFromPython {
 };
 
 // Converter from python list to VtValue holding VtValueArray.
-struct _VtValueHoldingVtValueArrayFromPython {
+struct _VtValueHoldingVtValueArrayFromPython
+{
   _VtValueHoldingVtValueArrayFromPython()
   {
     converter::registry::insert(&_VtValueArrayFromPython::convertible, &construct, type_id<VtValue>());
@@ -248,7 +269,8 @@ struct _VtValueHoldingVtValueArrayFromPython {
 };
 
 // Converter from python dict to VtValue holding VtDictionary.
-struct _VtValueHoldingVtDictionaryFromPython {
+struct _VtValueHoldingVtDictionaryFromPython
+{
   _VtValueHoldingVtDictionaryFromPython()
   {
     converter::registry::insert(&_VtDictionaryFromPython::convertible, &construct, type_id<VtValue>());

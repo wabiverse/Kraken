@@ -38,17 +38,20 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<int N> TfRefPtr<_TestPlugBase<N>> _TestPlugBase<N>::Manufacture(const std::string &subclass)
+template<int N>
+TfRefPtr<_TestPlugBase<N>> _TestPlugBase<N>::Manufacture(const std::string &subclass)
 {
   // Lookup TfType for subclass
   const TfType &t = PlugRegistry::FindTypeByName(subclass);
-  if (t.IsUnknown()) {
+  if (t.IsUnknown())
+  {
     TF_CODING_ERROR("Failed to find TfType for %s", subclass.c_str());
     return TfNullPtr;
   }
 
   // Manufacture an instance.
-  if (_TestPlugFactoryBase<N> *factory = t.GetFactory<_TestPlugFactoryBase<N>>()) {
+  if (_TestPlugFactoryBase<N> *factory = t.GetFactory<_TestPlugFactoryBase<N>>())
+  {
     return factory->New();
   }
 
@@ -63,7 +66,8 @@ template class _TestPlugBase<4>;
 
 // This derived class should be discovered as an available subclass
 // of _TestPlugBase1 even though it is compiled into the base library.
-class _TestPlugDerived0 : public _TestPlugBase1 {
+class _TestPlugDerived0 : public _TestPlugBase1
+{
  public:
   typedef _TestPlugDerived0 This;
   typedef TfRefPtr<This> RefPtr;

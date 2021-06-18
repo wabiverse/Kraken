@@ -53,7 +53,8 @@ UsdRiLightAPI::~UsdRiLightAPI()
 /* static */
 UsdRiLightAPI UsdRiLightAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiLightAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdRiLightAPI::_GetSchemaType() const
 /* static */
 UsdRiLightAPI UsdRiLightAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiLightAPI>()) {
+  if (prim.ApplyAPI<UsdRiLightAPI>())
+  {
     return UsdRiLightAPI(prim);
   }
   return UsdRiLightAPI();
@@ -196,7 +198,8 @@ UsdAttribute UsdRiLightAPI::CreateRiTraceLightPathsAttr(VtValue const &defaultVa
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

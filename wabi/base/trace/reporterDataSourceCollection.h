@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// access to a set number of TraceCollection instances. This class is useful if
 /// you want to generate reports from serialized TraceCollections.
 ///
-class TraceReporterDataSourceCollection : public TraceReporterDataSourceBase {
+class TraceReporterDataSourceCollection : public TraceReporterDataSourceBase
+{
  public:
   using This = TraceReporterDataSourceCollection;
   using ThisRefPtr = std::unique_ptr<This>;

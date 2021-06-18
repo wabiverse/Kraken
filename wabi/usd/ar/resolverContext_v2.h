@@ -65,26 +65,34 @@ WABI_NAMESPACE_BEGIN
 /// Metafunction to determine whether the templated object type is a
 /// valid context object.
 ///
-template<class T> struct ArIsContextObject {
+template<class T>
+struct ArIsContextObject
+{
   static const bool value = false;
 };
 
 /// Default implementation for providing debug info on the contained context.
-template<class Context> std::string ArGetDebugString(const Context &context);
+template<class Context>
+std::string ArGetDebugString(const Context &context);
 
 // Metafunctions for determining if a variadic list of objects
 // are valid for use with the ArResolverContext c'tor.
 class ArResolverContext;
 
-template<class... Objects> struct Ar_AllValidForContext;
+template<class... Objects>
+struct Ar_AllValidForContext;
 
-template<class Object, class... Other> struct Ar_AllValidForContext<Object, Other...> {
+template<class Object, class... Other>
+struct Ar_AllValidForContext<Object, Other...>
+{
   static const bool value = (std::is_same<Object, ArResolverContext>::value ||
                              ArIsContextObject<Object>::value) &&
                             Ar_AllValidForContext<Other...>::value;
 };
 
-template<> struct Ar_AllValidForContext<> {
+template<>
+struct Ar_AllValidForContext<>
+{
   static const bool value = true;
 };
 
@@ -122,7 +130,8 @@ template<> struct Ar_AllValidForContext<> {
 /// \sa ArResolver::BindContext
 /// \sa ArResolver::UnbindContext
 /// \sa ArResolverContextBinder
-class ArResolverContext {
+class ArResolverContext
+{
  public:
   /// Construct an empty asset resolver context.
   ArResolverContext()
@@ -171,10 +180,13 @@ class ArResolverContext {
   /// Returns pointer to the context object of the given type
   /// held in this resolver context. Returns NULL if this resolver
   /// context is not holding an object of the requested type.
-  template<class ContextObj> const ContextObj *Get() const
+  template<class ContextObj>
+  const ContextObj *Get() const
   {
-    for (const auto &context : _contexts) {
-      if (context->IsHolding(typeid(ContextObj))) {
+    for (const auto &context : _contexts)
+    {
+      if (context->IsHolding(typeid(ContextObj)))
+      {
         return &_GetTyped<ContextObj>(*context)._context;
       }
     }
@@ -209,14 +221,16 @@ class ArResolverContext {
  private:
   // Type-erased storage for context objects.
   struct _Untyped;
-  template<class Context> struct _Typed;
+  template<class Context>
+  struct _Typed;
 
   void _AddObjects()
   {
     // Empty base case for unpacking parameter pack
   }
 
-  template<class Object, class... Other> void _AddObjects(const Object &obj, const Other &...other)
+  template<class Object, class... Other>
+  void _AddObjects(const Object &obj, const Other &...other)
   {
     _Add(obj);
     _AddObjects(other...);
@@ -225,7 +239,8 @@ class ArResolverContext {
   AR_API
   void _Add(const ArResolverContext &ctx);
 
-  template<class Object> void _Add(const Object &obj)
+  template<class Object>
+  void _Add(const Object &obj)
   {
     _Add(std::shared_ptr<_Untyped>(new _Typed<Object>(obj)));
   }
@@ -233,12 +248,14 @@ class ArResolverContext {
   AR_API
   void _Add(std::shared_ptr<_Untyped> &&context);
 
-  template<class Context> static const _Typed<Context> &_GetTyped(const _Untyped &untyped)
+  template<class Context>
+  static const _Typed<Context> &_GetTyped(const _Untyped &untyped)
   {
     return static_cast<const _Typed<Context> &>(untyped);
   }
 
-  struct _Untyped {
+  struct _Untyped
+  {
     AR_API
     virtual ~_Untyped();
 
@@ -259,11 +276,14 @@ class ArResolverContext {
 #  endif
   };
 
-  template<class Context> struct _Typed : public _Untyped {
+  template<class Context>
+  struct _Typed : public _Untyped
+  {
     virtual ~_Typed()
     {}
 
-    _Typed(const Context &context) : _context(context)
+    _Typed(const Context &context)
+      : _context(context)
     {}
 
     virtual _Untyped *Clone() const
@@ -307,7 +327,8 @@ class ArResolverContext {
     Context _context;
   };
 
-  template<class HashState> friend void TfHashAppend(HashState &h, const std::shared_ptr<_Untyped> &context)
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, const std::shared_ptr<_Untyped> &context)
   {
     h.Append(context->Hash());
   }
@@ -323,7 +344,8 @@ class ArResolverContext {
 AR_API
 std::string Ar_GetDebugString(const std::type_info &, void const *);
 
-template<class Context> std::string ArGetDebugString(const Context &context)
+template<class Context>
+std::string ArGetDebugString(const Context &context)
 {
   return Ar_GetDebugString(typeid(Context), static_cast<void const *>(&context));
 }

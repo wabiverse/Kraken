@@ -52,7 +52,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string _Repr(GfPlane const &self)
 {

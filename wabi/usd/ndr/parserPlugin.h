@@ -129,7 +129,8 @@ struct NdrNodeDiscoveryResult;
 ///         the documentation for the `plug` library (in wabi/base).
 ///     </li>
 /// </ul>
-class NdrParserPlugin : public TfWeakBase {
+class NdrParserPlugin : public TfWeakBase
+{
  public:
   NDR_API
   NdrParserPlugin();
@@ -171,12 +172,15 @@ class NdrParserPlugin : public TfWeakBase {
 /// \cond
 /// Factory classes should be hidden from the documentation.
 
-class NdrParserPluginFactoryBase : public TfType::FactoryBase {
+class NdrParserPluginFactoryBase : public TfType::FactoryBase
+{
  public:
   virtual NdrParserPlugin *New() const = 0;
 };
 
-template<class T> class NdrParserPluginFactory : public NdrParserPluginFactoryBase {
+template<class T>
+class NdrParserPluginFactory : public NdrParserPluginFactoryBase
+{
  public:
   virtual NdrParserPlugin *New() const
   {

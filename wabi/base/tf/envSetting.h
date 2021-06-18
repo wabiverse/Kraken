@@ -128,7 +128,9 @@ WABI_NAMESPACE_BEGIN
 // We store the atomic_value separately and refer to it via pointer because we
 // cannot use aggregate-initialization on a struct holding an atomic, but we
 // can value-initialize a single std::atomic.
-template<class T> struct TfEnvSetting {
+template<class T>
+struct TfEnvSetting
+{
   std::atomic<T *> *_value;
   T _default;
   char const *_name;
@@ -137,24 +139,29 @@ template<class T> struct TfEnvSetting {
 
 // Specialize for string, default is stored as char const * (pointing to a
 // literal).
-template<> struct TfEnvSetting<std::string> {
+template<>
+struct TfEnvSetting<std::string>
+{
   std::atomic<std::string *> *_value;
   char const *_default;
   char const *_name;
   char const *_description;
 };
 
-template<class T> void Tf_InitializeEnvSetting(TfEnvSetting<T> *);
+template<class T>
+void Tf_InitializeEnvSetting(TfEnvSetting<T> *);
 
 /// Returns the value of the specified env setting, registered using
 /// \c TF_DEFINE_ENV_SETTING.
-template<class T> inline T const &TfGetEnvSetting(TfEnvSetting<T> &setting)
+template<class T>
+inline T const &TfGetEnvSetting(TfEnvSetting<T> &setting)
 {
   extern void Tf_InitEnvSettings();
   Tf_InitEnvSettings();
 
   T *val = setting._value->load();
-  if (ARCH_UNLIKELY(!val)) {
+  if (ARCH_UNLIKELY(!val))
+  {
     Tf_InitializeEnvSetting(&setting);
     val = setting._value->load();
   }

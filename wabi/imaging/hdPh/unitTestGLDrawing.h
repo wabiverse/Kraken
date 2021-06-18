@@ -40,7 +40,8 @@ class HdPh_UnitTestWindow;
 ///
 /// A helper class for unit tests which need to perform GL drawing.
 ///
-class HdPh_UnitTestGLDrawing {
+class HdPh_UnitTestGLDrawing
+{
  public:
   HDPH_API
   HdPh_UnitTestGLDrawing();

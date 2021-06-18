@@ -36,9 +36,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
-struct AggregatedHit {
-  AggregatedHit(HdxPickHit const &h) : hit(h)
+namespace
+{
+struct AggregatedHit
+{
+  AggregatedHit(HdxPickHit const &h)
+    : hit(h)
   {}
 
   HdxPickHit const &hit;
@@ -66,17 +69,21 @@ static AggregatedHits _AggregateHits(HdxPickHitVector const &allHits)
 {
   AggregatedHits aggrHits;
 
-  for (auto const &hit : allHits) {
+  for (auto const &hit : allHits)
+  {
     size_t hitHash = _GetPartialHitHash(hit);
     const auto &it = aggrHits.find(hitHash);
-    if (it != aggrHits.end()) {
+    if (it != aggrHits.end())
+    {
       // aggregate the element and edge indices
       AggregatedHit &aHit = it->second;
       aHit.elementIndices.insert(hit.elementIndex);
-      if (hit.edgeIndex != -1) {
+      if (hit.edgeIndex != -1)
+      {
         aHit.edgeIndices.insert(hit.edgeIndex);
       }
-      if (hit.pointIndex != -1) {
+      if (hit.pointIndex != -1)
+      {
         aHit.pointIndices.insert(hit.pointIndex);
       }
       continue;
@@ -85,10 +92,12 @@ static AggregatedHits _AggregateHits(HdxPickHitVector const &allHits)
     // add a new entry
     AggregatedHit aHitNew(hit);
     aHitNew.elementIndices.insert(hit.elementIndex);
-    if (hit.edgeIndex != -1) {
+    if (hit.edgeIndex != -1)
+    {
       aHitNew.edgeIndices.insert(hit.edgeIndex);
     }
-    if (hit.pointIndex != -1) {
+    if (hit.pointIndex != -1)
+    {
       aHitNew.pointIndices.insert(hit.pointIndex);
     }
     aggrHits.insert(std::make_pair(hitHash, aHitNew));
@@ -104,8 +113,10 @@ static void _ProcessHit(AggregatedHit const &aHit,
 {
   HdxPickHit const &hit = aHit.hit;
 
-  if (pickTarget == HdxPickTokens->pickPrimsAndInstances) {
-    if (!hit.instancerId.IsEmpty()) {
+  if (pickTarget == HdxPickTokens->pickPrimsAndInstances)
+  {
+    if (!hit.instancerId.IsEmpty())
+    {
       // XXX :this doesn't work for nested instancing.
       VtIntArray instanceIndex;
       instanceIndex.push_back(hit.instanceIndex);
@@ -114,57 +125,68 @@ static void _ProcessHit(AggregatedHit const &aHit,
       std::cout << "Picked instance " << instanceIndex << " of "
                 << "rprim " << hit.objectId << std::endl;
     }
-    else {
+    else
+    {
       selection->AddRprim(highlightMode, hit.objectId);
 
       std::cout << "Picked rprim " << hit.objectId << std::endl;
     }
   }
-  else if (pickTarget == HdxPickTokens->pickFaces) {
+  else if (pickTarget == HdxPickTokens->pickFaces)
+  {
     VtIntArray elements(aHit.elementIndices.size());
     elements.assign(aHit.elementIndices.begin(), aHit.elementIndices.end());
     selection->AddElements(highlightMode, hit.objectId, elements);
 
     std::cout << "Picked faces ";
-    for (const auto &element : elements) {
+    for (const auto &element : elements)
+    {
       std::cout << element << ", ";
     }
     std::cout << " of prim " << hit.objectId << std::endl;
   }
-  else if (pickTarget == HdxPickTokens->pickEdges) {
-    if (!aHit.edgeIndices.empty()) {
+  else if (pickTarget == HdxPickTokens->pickEdges)
+  {
+    if (!aHit.edgeIndices.empty())
+    {
       VtIntArray edges(aHit.edgeIndices.size());
       edges.assign(aHit.edgeIndices.begin(), aHit.edgeIndices.end());
       selection->AddEdges(highlightMode, hit.objectId, edges);
 
       std::cout << "Picked edges ";
-      for (const auto &edge : edges) {
+      for (const auto &edge : edges)
+      {
         std::cout << edge << ", ";
       }
       std::cout << " of prim " << hit.objectId << std::endl;
     }
   }
-  else if (pickTarget == HdxPickTokens->pickPoints) {
-    if (!aHit.pointIndices.empty()) {
+  else if (pickTarget == HdxPickTokens->pickPoints)
+  {
+    if (!aHit.pointIndices.empty())
+    {
       VtIntArray points(aHit.pointIndices.size());
       points.assign(aHit.pointIndices.begin(), aHit.pointIndices.end());
       selection->AddPoints(highlightMode, hit.objectId, points);
 
       std::cout << "Picked points ";
-      for (const auto &point : points) {
+      for (const auto &point : points)
+      {
         std::cout << point << ", ";
       }
       std::cout << " of prim " << hit.objectId << std::endl;
     }
   }
-  else {
+  else
+  {
     std::cout << "Unsupported picking mode." << std::endl;
   }
 }
 
 }  // end anonymous namespace
 
-namespace HdxUnitTestUtils {
+namespace HdxUnitTestUtils
+{
 
 HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
                                               HdSelection::HighlightMode highlightMode,
@@ -173,7 +195,8 @@ HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
   HdSelectionSharedPtr selection(new HdSelection);
 
   AggregatedHits aggrHits = _AggregateHits(allHits);
-  for (const auto &pair : aggrHits) {
+  for (const auto &pair : aggrHits)
+  {
     _ProcessHit(pair.second, pickTarget, highlightMode, selection);
   }
 

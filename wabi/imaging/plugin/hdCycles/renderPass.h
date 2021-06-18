@@ -40,7 +40,8 @@ class HdCyclesRenderDelegate;
  * HdRenderPassState) to the current draw target.
  *
  */
-class HdCyclesRenderPass final : public HdRenderPass {
+class HdCyclesRenderPass final : public HdRenderPass
+{
  public:
   /**
    * @brief Construct a new HdCycles Render Pass object

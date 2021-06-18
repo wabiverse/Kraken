@@ -100,7 +100,8 @@ bool GfOrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, bool normalize,
 {
   GfVec3h ax, bx, cx, ay, by, cy, az, bz, cz;
 
-  if (normalize) {
+  if (normalize)
+  {
     GfNormalize(tx);
     GfNormalize(ty);
     GfNormalize(tz);
@@ -108,7 +109,8 @@ bool GfOrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, bool normalize,
     ay = *ty;
     az = *tz;
   }
-  else {
+  else
+  {
     ax = *tx;
     ay = *ty;
     az = *tz;
@@ -124,13 +126,15 @@ bool GfOrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, bool normalize,
    * the colinear case beforehand, or we'll get fooled in the error
    * computation.
    */
-  if (GfIsClose(ax, ay, eps) || GfIsClose(ax, az, eps) || GfIsClose(ay, az, eps)) {
+  if (GfIsClose(ax, ay, eps) || GfIsClose(ax, az, eps) || GfIsClose(ay, az, eps))
+  {
     return false;
   }
 
   const int MAX_ITERS = 20;
   int iter;
-  for (iter = 0; iter < MAX_ITERS; ++iter) {
+  for (iter = 0; iter < MAX_ITERS; ++iter)
+  {
     bx = *tx;
     by = *ty;
     bz = *tz;
@@ -148,7 +152,8 @@ bool GfOrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, bool normalize,
     cy = 0.5 * (*ty + by);
     cz = 0.5 * (*tz + bz);
 
-    if (normalize) {
+    if (normalize)
+    {
       cx.Normalize();
       cy.Normalize();
       cz.Normalize();
@@ -172,7 +177,8 @@ bool GfOrthogonalizeBasis(GfVec3h *tx, GfVec3h *ty, GfVec3h *tz, bool normalize,
     ay = *ty;
     az = *tz;
 
-    if (!normalize) {
+    if (!normalize)
+    {
       ax.Normalize();
       ay.Normalize();
       az.Normalize();
@@ -194,10 +200,12 @@ void GfBuildOrthonormalFrame(GfVec3h const &v0, GfVec3h *v1, GfVec3h *v2, GfHalf
 {
   GfHalf len = v0.GetLength();
 
-  if (len == 0.) {
+  if (len == 0.)
+  {
     *v1 = *v2 = GfVec3h(0);
   }
-  else {
+  else
+  {
     GfVec3h unitDir = v0 / len;
     *v1 = GfVec3h::XAxis() ^ unitDir;
 
@@ -207,7 +215,8 @@ void GfBuildOrthonormalFrame(GfVec3h const &v0, GfVec3h *v1, GfVec3h *v2, GfHalf
     GfNormalize(v1);
     *v2 = unitDir ^ *v1;  // this is of unit length
 
-    if (len < eps) {
+    if (len < eps)
+    {
       double desiredLen = len / eps;
       *v1 *= desiredLen;
       *v2 *= desiredLen;
@@ -225,7 +234,8 @@ GfVec3h GfSlerp(double alpha, const GfVec3h &v0, const GfVec3h &v1)
   // Check for very small angle between the vectors, and if so, just lerp them.
   // XXX: This value for epsilon is somewhat arbitrary, and if
   // someone can derive a more meaningful value, that would be fine.
-  if (fabs(angle) < 0.001) {
+  if (fabs(angle) < 0.001)
+  {
     return GfLerp(alpha, v0, v1);
   }
 
@@ -236,7 +246,8 @@ GfVec3h GfSlerp(double alpha, const GfVec3h &v0, const GfVec3h &v1)
   // compute an arbitrary orthogonal vector to interpolate across.
   // XXX: Another somewhat arbitrary test for epsilon, but trying to stay
   // within reasonable float precision.
-  if (fabs(sinAngle) < 0.00001) {
+  if (fabs(sinAngle) < 0.00001)
+  {
     GfVec3h vX, vY;
     v0.BuildOrthonormalFrame(&vX, &vY);
     GfVec3h v = v0 * cos(alpha * M_PI) + vX * sin(alpha * M_PI);

@@ -63,7 +63,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfPathVector _FindAllAttributeConnectionPaths(UsdPrim const &self,
                                                       boost::python::object pypred,
@@ -89,10 +90,12 @@ static SdfPathVector _FindAllRelationshipTargetPaths(UsdPrim const &self,
 
 static string __repr__(const UsdPrim &self)
 {
-  if (self) {
+  if (self)
+  {
     return TF_PY_REPR_PREFIX + TfStringPrintf("Prim(<%s>)", self.GetPath().GetText());
   }
-  else {
+  else
+  {
     return "invalid " + self.GetDescription();
   }
 }
@@ -126,8 +129,10 @@ static std::vector<UsdProperty> _WrapGetAuthoredProperties(const UsdPrim &prim,
   return prim.GetAuthoredProperties(pred);
 }
 
-struct Usd_PrimCanApplyAPIResult : public TfPyAnnotatedBoolResult<string> {
-  Usd_PrimCanApplyAPIResult(bool val, string const &msg) : TfPyAnnotatedBoolResult<string>(val, msg)
+struct Usd_PrimCanApplyAPIResult : public TfPyAnnotatedBoolResult<string>
+{
+  Usd_PrimCanApplyAPIResult(bool val, string const &msg)
+    : TfPyAnnotatedBoolResult<string>(val, msg)
   {}
 };
 

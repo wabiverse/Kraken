@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// OpenGL implementation of HgiComputeCmds.
 ///
-class HgiGLComputeCmds final : public HgiComputeCmds {
+class HgiGLComputeCmds final : public HgiComputeCmds
+{
  public:
   HGIGL_API
   ~HgiGLComputeCmds() override;

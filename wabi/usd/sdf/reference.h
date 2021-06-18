@@ -73,7 +73,8 @@ typedef std::vector<SdfReference> SdfReferenceVector;
 /// Custom data is for use by plugins or other non-tools supplied extensions
 /// that need to be able to store data associated with references.
 ///
-class SdfReference : boost::totally_ordered<SdfReference> {
+class SdfReference : boost::totally_ordered<SdfReference>
+{
  public:
   /// Creates a reference with all its meta data.  The default reference is an
   /// internal reference to the default prim.  See SdfAssetPath for what
@@ -190,7 +191,8 @@ class SdfReference : boost::totally_ordered<SdfReference> {
   /// Struct that defines equality of SdfReferences based on their
   /// identity (the asset path and prim path).
   ///
-  struct IdentityEqual {
+  struct IdentityEqual
+  {
     bool operator()(const SdfReference &lhs, const SdfReference &rhs) const
     {
       return lhs._assetPath == rhs._assetPath && lhs._primPath == rhs._primPath;
@@ -200,7 +202,8 @@ class SdfReference : boost::totally_ordered<SdfReference> {
   /// Struct that defines a strict weak ordering of SdfReferences based on
   /// their identity (the asset path and prim path).
   ///
-  struct IdentityLessThan {
+  struct IdentityLessThan
+  {
     bool operator()(const SdfReference &lhs, const SdfReference &rhs) const
     {
       return lhs._assetPath < rhs._assetPath ||

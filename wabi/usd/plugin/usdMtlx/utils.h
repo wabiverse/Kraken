@@ -98,7 +98,8 @@ USDMTLX_LOCAL
 const std::string &UsdMtlxGetSourceURI(const MaterialX::ConstElementPtr &element);
 
 /// Result of \c UsdMtlxGetUsdType().
-struct UsdMtlxUsdTypeInfo {
+struct UsdMtlxUsdTypeInfo
+{
   UsdMtlxUsdTypeInfo(SdfValueTypeName valueTypeName,
                      bool valueTypeNameIsExact,
                      TfToken shaderPropertyType,

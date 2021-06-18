@@ -370,7 +370,8 @@ std::string TfStringJoin(ForwardIterator begin, ForwardIterator end, const char 
 
   i = begin;
   retVal.append(*i);
-  while (++i != end) {
+  while (++i != end)
+  {
     retVal.append(separator);
     retVal.append(*i);
   }
@@ -479,7 +480,8 @@ inline std::vector<std::string> TfMatchedStringTokenize(const std::string &sourc
 /// Characters whose ASCII value are inbetween upper- and lowercase letters,
 /// such as underscore, are sorted to come after all letters.
 ///
-struct TfDictionaryLessThan {
+struct TfDictionaryLessThan
+{
   /// Return true if \p lhs is less than \p rhs in dictionary order.
   ///
   /// Normally this functor is used to supply an ordering functor for STL
@@ -536,8 +538,10 @@ TF_API bool TfDoubleToString(double d, char *buffer, int len, bool emitTrailingZ
 ///
 /// A type which offers streaming for floats in a canonical
 /// format that can safely roundtrip with the minimal number of digits.
-struct TfStreamFloat {
-  explicit TfStreamFloat(float f) : value(f)
+struct TfStreamFloat
+{
+  explicit TfStreamFloat(float f)
+    : value(f)
   {}
   float value;
 };
@@ -548,8 +552,10 @@ TF_API std::ostream &operator<<(std::ostream &o, TfStreamFloat t);
 ///
 /// A type which offers streaming for doubles in a canonical
 /// format that can safely roundtrip with the minimal number of digits.
-struct TfStreamDouble {
-  explicit TfStreamDouble(double d) : value(d)
+struct TfStreamDouble
+{
+  explicit TfStreamDouble(double d)
+    : value(d)
   {}
   double value;
 };
@@ -561,7 +567,8 @@ TF_API std::ostream &operator<<(std::ostream &o, TfStreamDouble t);
 /// Use the type's stream input operator to get it from a string. If \p status
 /// is non-NULL and \p instring cannot be converted to a \c T, \p *status is
 /// set to \c false; otherwise, \p *status is not modified.
-template<typename T> T TfUnstringify(const std::string &instring, bool *status = NULL)
+template<typename T>
+T TfUnstringify(const std::string &instring, bool *status = NULL)
 {
   T v = T();
   std::istringstream stream(instring);
@@ -572,9 +579,11 @@ template<typename T> T TfUnstringify(const std::string &instring, bool *status =
 }
 
 /// \overload
-template<> TF_API bool TfUnstringify(const std::string &instring, bool *status);
+template<>
+TF_API bool TfUnstringify(const std::string &instring, bool *status);
 /// \overload
-template<> TF_API std::string TfUnstringify(const std::string &instring, bool *status);
+template<>
+TF_API std::string TfUnstringify(const std::string &instring, bool *status);
 
 /// Returns a string with glob characters converted to their regular
 /// expression equivalents.
@@ -643,10 +652,12 @@ inline bool TfIsValidIdentifier(std::string const &identifier)
   auto number = [](unsigned c) { return (c - '0') < 10; };
   auto under = [](unsigned c) { return c == '_'; };
   unsigned x = *p;
-  if (!x || number(x)) {
+  if (!x || number(x))
+  {
     return false;
   }
-  while (letter(x) || number(x) || under(x)) {
+  while (letter(x) || number(x) || under(x))
+  {
     x = *p++;
   };
   return x == 0;

@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 class HdRprim;
 
 /// Utility class for handling instanceable Arnold Shapes.
-class HdArnoldShape {
+class HdArnoldShape
+{
  public:
   /// Constructor for HdArnoldShape.
   ///

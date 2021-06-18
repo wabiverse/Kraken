@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Represents a OpenGL GPU texture resource.
 ///
-class HgiGLTexture final : public HgiTexture {
+class HgiGLTexture final : public HgiTexture
+{
  public:
   HGIGL_API
   ~HgiGLTexture() override;

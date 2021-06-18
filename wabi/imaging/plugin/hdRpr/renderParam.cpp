@@ -32,10 +32,13 @@ HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(Hd
 void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
 {
   std::lock_guard<std::mutex> lock(m_subscribedVolumesMutex);
-  for (auto subscriptionsIt = m_subscribedVolumes.begin(); subscriptionsIt != m_subscribedVolumes.end();) {
+  for (auto subscriptionsIt = m_subscribedVolumes.begin(); subscriptionsIt != m_subscribedVolumes.end();)
+  {
     auto &subscriptions = subscriptionsIt->second;
-    for (size_t i = 0; i < subscriptions.size(); ++i) {
-      if (auto volume = subscriptions[i].lock()) {
+    for (size_t i = 0; i < subscriptions.size(); ++i)
+    {
+      if (auto volume = subscriptions[i].lock())
+      {
         // Force HdVolume Sync
         sceneDelegate->GetRenderIndex().GetChangeTracker().MarkRprimDirty(volume->GetId(),
                                                                           HdChangeTracker::DirtyTopology);
@@ -45,15 +48,18 @@ void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDeleg
         // from scratch all HdFields whenever one of them is changed (e.g added/removed/edited
         // primvar) (USD 20.02)
       }
-      else {
+      else
+      {
         std::swap(subscriptions[i], subscriptions.back());
         subscriptions.pop_back();
       }
     }
-    if (subscriptions.empty()) {
+    if (subscriptions.empty())
+    {
       subscriptionsIt = m_subscribedVolumes.erase(subscriptionsIt);
     }
-    else {
+    else
+    {
       ++subscriptionsIt;
     }
   }
@@ -69,9 +75,11 @@ void HdRprRenderParam::UnsubscribeFromMaterialUpdates(SdfPath const &materialId,
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   auto subscriptionsIt = m_materialSubscriptions.find(materialId);
-  if (TF_VERIFY(subscriptionsIt != m_materialSubscriptions.end())) {
+  if (TF_VERIFY(subscriptionsIt != m_materialSubscriptions.end()))
+  {
     subscriptionsIt->second.erase(rPrimId);
-    if (subscriptionsIt->second.empty()) {
+    if (subscriptionsIt->second.empty())
+    {
       m_materialSubscriptions.erase(subscriptionsIt);
     }
   }
@@ -81,9 +89,11 @@ void HdRprRenderParam::MaterialDidChange(HdSceneDelegate *sceneDelegate, SdfPath
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   auto subscriptionsIt = m_materialSubscriptions.find(materialId);
-  if (subscriptionsIt != m_materialSubscriptions.end()) {
+  if (subscriptionsIt != m_materialSubscriptions.end())
+  {
     HdChangeTracker &changeTracker = sceneDelegate->GetRenderIndex().GetChangeTracker();
-    for (auto &rPrimId : subscriptionsIt->second) {
+    for (auto &rPrimId : subscriptionsIt->second)
+    {
       changeTracker.MarkRprimDirty(rPrimId, HdChangeTracker::DirtyMaterialId);
     }
   }

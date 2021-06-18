@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// cartesian product of the transform arrays at each nesting level, to
 /// create a flattened transform array.
 ///
-class HdEmbreeInstancer : public HdInstancer {
+class HdEmbreeInstancer : public HdInstancer
+{
  public:
   /// Constructor.
   ///   \param delegate The scene delegate backing this instancer's data.

@@ -31,7 +31,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 bool _IsValid(HioFieldTextureDataSharedPtr const &textureData)
 {
@@ -51,12 +52,14 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   _textureDesc.debugName = debugName;
 
   // Bail if we don't have texture data.
-  if (!textureData) {
+  if (!textureData)
+  {
     return;
   }
 
   // Sanity checks
-  if (!_IsValid(textureData)) {
+  if (!_IsValid(textureData))
+  {
     return;
   }
 
@@ -80,7 +83,8 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
     hioFormat, premultiplyAlpha);
 
   // Handle grayscale textures by expanding value to green and blue.
-  if (HgiGetComponentCount(_textureDesc.format) == 1) {
+  if (HgiGetComponentCount(_textureDesc.format) == 1)
+  {
     _textureDesc.componentMapping = {
       HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
   }
@@ -98,7 +102,8 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   // Size of initial data.
   _textureDesc.pixelsByteSize = mipInfo.byteOffset + mipInfo.byteSizePerLayer;
 
-  if (conversionFunction) {
+  if (conversionFunction)
+  {
     const size_t numPixels = _textureDesc.pixelsByteSize / HgiGetDataSizeOfFormat(_textureDesc.format);
 
     // Convert the texture data
@@ -110,7 +115,8 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
     // Point to converted data
     _textureDesc.initialData = _convertedData.get();
   }
-  else {
+  else
+  {
     // Ensure that texture data are not deleted
     _textureData = textureData;
     // Point to raw buffer inside texture data

@@ -56,7 +56,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceReporterBase);
 /// and processing of TraceCollections.
 ///
 ///
-class TraceReporterBase : public TfRefBase, public TfWeakBase {
+class TraceReporterBase : public TfRefBase, public TfWeakBase
+{
  public:
   using This = TraceReporterBase;
   using ThisPtr = TraceReporterBasePtr;

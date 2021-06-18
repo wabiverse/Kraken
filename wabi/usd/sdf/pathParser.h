@@ -38,7 +38,8 @@ struct yy_buffer_state;
 typedef void *yyscan_t;
 
 // Lexical scanner value type.
-struct Sdf_PathLexerValue {
+struct Sdf_PathLexerValue
+{
   WABI_NS::TfToken token;
   WABI_NS::SdfPath path;
 };
@@ -47,7 +48,8 @@ struct Sdf_PathLexerValue {
 typedef std::vector<std::pair<WABI_NS::TfToken, WABI_NS::TfToken>> Sdf_PathVariantSelections;
 
 // Lexical scanner context.
-struct Sdf_PathParserContext {
+struct Sdf_PathParserContext
+{
   WABI_NS::SdfPath path;
   std::vector<Sdf_PathVariantSelections> variantSelectionStack;
   std::string errStr;

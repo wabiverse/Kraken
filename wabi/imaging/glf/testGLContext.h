@@ -49,7 +49,8 @@ typedef std::shared_ptr<class GlfTestGLContext> GlfTestGLContextSharedPtr;
 ///
 /// Testing support class for GlfGLContext.
 ///
-class GlfTestGLContext : public GlfGLContext {
+class GlfTestGLContext : public GlfGLContext
+{
  public:
   GLF_API
   static void RegisterGLContextCallbacks();

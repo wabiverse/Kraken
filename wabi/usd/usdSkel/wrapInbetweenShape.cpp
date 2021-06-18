@@ -43,7 +43,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 VtVec3fArray _GetOffsets(const UsdSkelInbetweenShape &self)
 {

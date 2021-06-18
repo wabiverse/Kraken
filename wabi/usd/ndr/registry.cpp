@@ -77,10 +77,13 @@ bool NdrRegistry_ValidateProperty(const NdrNodeConstPtr &node,
   // We allow default values to be unspecified, but if they aren't empty, then
   // we want to error if the value's type is different from the specified type
   // for the property.
-  if (!defaultValue.IsEmpty()) {
-    if (defaultValue.GetType() != sdfType.GetType()) {
+  if (!defaultValue.IsEmpty())
+  {
+    if (defaultValue.GetType() != sdfType.GetType())
+    {
 
-      if (errorMessage) {
+      if (errorMessage)
+      {
         *errorMessage = TfStringPrintf(
           "Default value type does not match specified type for "
           "property.\n"
@@ -102,13 +105,18 @@ bool NdrRegistry_ValidateProperty(const NdrNodeConstPtr &node,
   return true;
 }
 
-namespace {
+namespace
+{
 
 // Helpers to allow template functions to treat discovery results and
 // nodes equally.
-template<typename T> struct _NdrObjectAccess {
+template<typename T>
+struct _NdrObjectAccess
+{
 };
-template<> struct _NdrObjectAccess<NdrNodeDiscoveryResult> {
+template<>
+struct _NdrObjectAccess<NdrNodeDiscoveryResult>
+{
   typedef NdrNodeDiscoveryResult Type;
   static const std::string &GetName(const Type &x)
   {
@@ -123,7 +131,9 @@ template<> struct _NdrObjectAccess<NdrNodeDiscoveryResult> {
     return x.version;
   }
 };
-template<> struct _NdrObjectAccess<NdrNodeUniquePtr> {
+template<>
+struct _NdrObjectAccess<NdrNodeUniquePtr>
+{
   typedef NdrNodeUniquePtr Type;
   static const std::string &GetName(const Type &x)
   {
@@ -145,14 +155,17 @@ static bool _MatchesFamilyAndFilter(const T &object, const TfToken &family, NdrV
   using Access = _NdrObjectAccess<T>;
 
   // Check the family.
-  if (!family.IsEmpty() && family != Access::GetFamily(object)) {
+  if (!family.IsEmpty() && family != Access::GetFamily(object))
+  {
     return false;
   }
 
   // Check the filter.
-  switch (filter) {
+  switch (filter)
+  {
     case NdrVersionFilterDefaultOnly:
-      if (!Access::GetVersion(object).IsDefault()) {
+      if (!Access::GetVersion(object).IsDefault())
+      {
         return false;
       }
       break;
@@ -171,7 +184,8 @@ static NdrIdentifier _GetIdentifierForAsset(const SdfAssetPath &asset,
 {
   size_t h = 0;
   boost::hash_combine(h, asset);
-  for (const auto &i : metadata) {
+  for (const auto &i : metadata)
+  {
     boost::hash_combine(h, i.first.GetString());
     boost::hash_combine(h, i.second);
   }
@@ -184,7 +198,8 @@ static NdrIdentifier _GetIdentifierForSourceCode(const std::string &sourceCode, 
 {
   size_t h = 0;
   boost::hash_combine(h, sourceCode);
-  for (const auto &i : metadata) {
+  for (const auto &i : metadata)
+  {
     boost::hash_combine(h, i.first.GetString());
     boost::hash_combine(h, i.second);
   }
@@ -194,7 +209,8 @@ static NdrIdentifier _GetIdentifierForSourceCode(const std::string &sourceCode, 
 static bool _ValidateProperty(const NdrNodeConstPtr &node, const NdrPropertyConstPtr &property)
 {
   std::string errorMessage;
-  if (!NdrRegistry_ValidateProperty(node, property, &errorMessage)) {
+  if (!NdrRegistry_ValidateProperty(node, property, &errorMessage))
+  {
     // This warning may eventually want to be a runtime error and return
     // false to indicate an invalid node, but we didn't want to introduce
     // unexpected behaviors by introducing this error.
@@ -206,7 +222,8 @@ static bool _ValidateProperty(const NdrNodeConstPtr &node, const NdrPropertyCons
 static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscoveryResult &dr)
 {
   // Validate the node.
-  if (!newNode) {
+  if (!newNode)
+  {
     TF_RUNTIME_ERROR(
       "Parser for asset @%s@ of type %s returned null", dr.resolvedUri.c_str(), dr.discoveryType.GetText());
     return false;
@@ -218,7 +235,8 @@ static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscover
   //        didn't have to deal with them.
   if (newNode->IsValid() && !(newNode->GetIdentifier() == dr.identifier && newNode->GetName() == dr.name &&
                               newNode->GetVersion() == dr.version && newNode->GetFamily() == dr.family &&
-                              newNode->GetSourceType() == dr.sourceType)) {
+                              newNode->GetSourceType() == dr.sourceType))
+  {
     TF_RUNTIME_ERROR(
       "Parsed node %s:%s:%s:%s:%s doesn't match discovery result "
       "created for asset @%s@ - "
@@ -246,12 +264,14 @@ static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscover
   // we have already found an invalid property because we want to report
   // errors on all properties.
   bool valid = true;
-  for (const TfToken &inputName : newNode->GetInputNames()) {
+  for (const TfToken &inputName : newNode->GetInputNames())
+  {
     const NdrPropertyConstPtr &input = newNode->GetInput(inputName);
     valid &= _ValidateProperty(node, input);
   }
 
-  for (const TfToken &outputName : newNode->GetOutputNames()) {
+  for (const TfToken &outputName : newNode->GetOutputNames())
+  {
     const NdrPropertyConstPtr &output = newNode->GetOutput(outputName);
     valid &= _ValidateProperty(node, output);
   }
@@ -261,9 +281,11 @@ static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscover
 
 }  // anonymous namespace
 
-class NdrRegistry::_DiscoveryContext : public NdrDiscoveryPluginContext {
+class NdrRegistry::_DiscoveryContext : public NdrDiscoveryPluginContext
+{
  public:
-  _DiscoveryContext(const NdrRegistry &registry) : _registry(registry)
+  _DiscoveryContext(const NdrRegistry &registry)
+    : _registry(registry)
   {}
   ~_DiscoveryContext() override = default;
 
@@ -298,7 +320,8 @@ void NdrRegistry::SetExtraDiscoveryPlugins(DiscoveryPluginRefPtrVec plugins)
     // This policy was implemented in order to keep internal registry
     // operations simpler, and it "just makes sense" to have all plugins
     // run before asking for information from the registry.
-    if (!_nodeMap.empty()) {
+    if (!_nodeMap.empty())
+    {
       TF_CODING_ERROR(
         "SetExtraDiscoveryPlugins() cannot be called after"
         " nodes have been parsed; ignoring.");
@@ -318,11 +341,13 @@ void NdrRegistry::SetExtraDiscoveryPlugins(const std::vector<TfType> &pluginType
   // Validate the types and remove duplicates.
   std::set<TfType> discoveryPluginTypes;
   auto &discoveryPluginType = TfType::Find<NdrDiscoveryPlugin>();
-  for (auto &&type : pluginTypes) {
+  for (auto &&type : pluginTypes)
+  {
     if (!TF_VERIFY(type.IsA(discoveryPluginType),
                    "Type %s is not a %s",
                    type.GetTypeName().c_str(),
-                   discoveryPluginType.GetTypeName().c_str())) {
+                   discoveryPluginType.GetTypeName().c_str()))
+    {
       return;
     }
     discoveryPluginTypes.insert(type);
@@ -330,11 +355,13 @@ void NdrRegistry::SetExtraDiscoveryPlugins(const std::vector<TfType> &pluginType
 
   // Instantiate any discovery plugins that were found
   DiscoveryPluginRefPtrVec discoveryPlugins;
-  for (const TfType &discoveryPluginType : discoveryPluginTypes) {
+  for (const TfType &discoveryPluginType : discoveryPluginTypes)
+  {
     NdrDiscoveryPluginFactoryBase *pluginFactory =
       discoveryPluginType.GetFactory<NdrDiscoveryPluginFactoryBase>();
 
-    if (TF_VERIFY(pluginFactory)) {
+    if (TF_VERIFY(pluginFactory))
+    {
       discoveryPlugins.emplace_back(pluginFactory->New());
     }
   }
@@ -351,7 +378,8 @@ void NdrRegistry::SetExtraParserPlugins(const std::vector<TfType> &pluginTypes)
     // This policy was implemented in order to keep internal registry
     // operations simpler, and it "just makes sense" to have all plugins
     // run before asking for information from the registry.
-    if (!_nodeMap.empty()) {
+    if (!_nodeMap.empty())
+    {
       TF_CODING_ERROR(
         "SetExtraParserPlugins() cannot be called after"
         " nodes have been parsed; ignoring.");
@@ -362,11 +390,13 @@ void NdrRegistry::SetExtraParserPlugins(const std::vector<TfType> &pluginTypes)
   // Validate the types and remove duplicates.
   std::set<TfType> parserPluginTypes;
   auto &parserPluginType = TfType::Find<NdrParserPlugin>();
-  for (auto &&type : pluginTypes) {
+  for (auto &&type : pluginTypes)
+  {
     if (!TF_VERIFY(type.IsA(parserPluginType),
                    "Type %s is not a %s",
                    type.GetTypeName().c_str(),
-                   parserPluginType.GetTypeName().c_str())) {
+                   parserPluginType.GetTypeName().c_str()))
+    {
       return;
     }
     parserPluginTypes.insert(type);
@@ -386,7 +416,8 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromAsset(const SdfAssetPath &asset,
 
   // Ensure that there is a parser registered corresponding to the
   // discoveryType of the asset.
-  if (parserIt == _parserPluginMap.end()) {
+  if (parserIt == _parserPluginMap.end())
+  {
     TF_DEBUG(NDR_PARSING)
       .Msg(
         "Encountered a asset @%s@ of type [%s], but "
@@ -408,7 +439,8 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromAsset(const SdfAssetPath &asset,
   // key already exists.
   std::unique_lock<std::mutex> nmLock(_nodeMapMutex);
   auto it = _nodeMap.find(key);
-  if (it != _nodeMap.end()) {
+  if (it != _nodeMap.end())
+  {
     // Get the raw ptr from the unique_ptr
     return it->second.get();
   }
@@ -437,7 +469,8 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromAsset(const SdfAssetPath &asset,
 
   NdrNodeUniquePtr newNode = parserIt->second->Parse(dr);
 
-  if (!_ValidateNode(newNode, dr)) {
+  if (!_ValidateNode(newNode, dr))
+  {
     return nullptr;
   }
 
@@ -464,13 +497,16 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromSourceCode(const std::string &sourceCode
   // Ensure that there is a parser registered corresponding to the
   // given sourceType.
   NdrParserPlugin *parserForSourceType = nullptr;
-  for (const auto &parserIt : _parserPlugins) {
-    if (parserIt->GetSourceType() == sourceType) {
+  for (const auto &parserIt : _parserPlugins)
+  {
+    if (parserIt->GetSourceType() == sourceType)
+    {
       parserForSourceType = parserIt.get();
     }
   }
 
-  if (!parserForSourceType) {
+  if (!parserForSourceType)
+  {
     // XXX: Should we try looking for sourceType in _parserPluginMap,
     // in case it corresponds to a discovery type in Ndr?
 
@@ -490,7 +526,8 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromSourceCode(const std::string &sourceCode
   // key already exists.
   std::unique_lock<std::mutex> nmLock(_nodeMapMutex);
   auto it = _nodeMap.find(key);
-  if (it != _nodeMap.end()) {
+  if (it != _nodeMap.end())
+  {
     // Get the raw ptr from the unique_ptr
     return it->second.get();
   }
@@ -513,7 +550,8 @@ NdrNodeConstPtr NdrRegistry::GetNodeFromSourceCode(const std::string &sourceCode
                             metadata);
 
   NdrNodeUniquePtr newNode = parserForSourceType->Parse(dr);
-  if (!newNode) {
+  if (!newNode)
+  {
     TF_RUNTIME_ERROR(
       "Could not create node for the given source code of "
       "source type '%s'.",
@@ -541,7 +579,8 @@ NdrStringVec NdrRegistry::GetSearchURIs() const
 {
   NdrStringVec searchURIs;
 
-  for (const NdrDiscoveryPluginRefPtr &dp : _discoveryPlugins) {
+  for (const NdrDiscoveryPluginRefPtr &dp : _discoveryPlugins)
+  {
     NdrStringVec uris = dp->GetSearchURIs();
 
     searchURIs.insert(
@@ -564,10 +603,13 @@ NdrIdentifierVec NdrRegistry::GetNodeIdentifiers(const TfToken &family, NdrVersi
   result.reserve(_discoveryResults.size());
 
   NdrIdentifierSet visited;
-  for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-    if (_MatchesFamilyAndFilter(dr, family, filter)) {
+  for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+  {
+    if (_MatchesFamilyAndFilter(dr, family, filter))
+    {
       // Avoid duplicates.
-      if (visited.insert(dr.identifier).second) {
+      if (visited.insert(dr.identifier).second)
+      {
         result.push_back(dr.identifier);
       }
     }
@@ -589,10 +631,13 @@ NdrStringVec NdrRegistry::GetNodeNames(const TfToken &family) const
   nodeNames.reserve(_discoveryResults.size());
 
   NdrStringSet visited;
-  for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-    if (family.IsEmpty() || dr.family == family) {
+  for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+  {
+    if (family.IsEmpty() || dr.family == family)
+    {
       // Avoid duplicates.
-      if (visited.insert(dr.name).second) {
+      if (visited.insert(dr.name).second)
+      {
         nodeNames.push_back(dr.name);
       }
     }
@@ -609,18 +654,23 @@ NdrNodeConstPtr NdrRegistry::GetNodeByIdentifier(const NdrIdentifier &identifier
 
   // If the type priority specifier is empty, pick the first node that matches
   // the identifier regardless of source type.
-  if (sourceTypePriority.empty()) {
+  if (sourceTypePriority.empty())
+  {
     // We check for any node that matches the identifier first. If no
     // matching node is found we'll try to find a node with an alias
     // matching the identifier.
-    for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-      if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier)) {
+    for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+    {
+      if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier))
+      {
         return node;
       }
     }
 
-    for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-      if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier)) {
+    for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+    {
+      if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier))
+      {
         return node;
       }
     }
@@ -628,8 +678,10 @@ NdrNodeConstPtr NdrRegistry::GetNodeByIdentifier(const NdrIdentifier &identifier
 
   // Otherwise we attempt to get a node for matching the identifier (possibly
   // through an alias) for each source type in priority order.
-  for (const TfToken &sourceType : sourceTypePriority) {
-    if (NdrNodeConstPtr node = _GetNodeByIdentifierAndTypeImpl(identifier, sourceType)) {
+  for (const TfToken &sourceType : sourceTypePriority)
+  {
+    if (NdrNodeConstPtr node = _GetNodeByIdentifierAndTypeImpl(identifier, sourceType))
+    {
       return node;
     }
   }
@@ -653,7 +705,8 @@ NdrNodeConstPtr NdrRegistry::_GetNodeByIdentifierAndTypeImpl(const NdrIdentifier
   // it expects the caller to have appropriately locked it.
 
   const auto it = _discoveryResultIndicesBySourceType.find(sourceType);
-  if (it == _discoveryResultIndicesBySourceType.end()) {
+  if (it == _discoveryResultIndicesBySourceType.end())
+  {
     return nullptr;
   }
 
@@ -662,15 +715,19 @@ NdrNodeConstPtr NdrRegistry::_GetNodeByIdentifierAndTypeImpl(const NdrIdentifier
   // We check for any node that matches the identifier first. If no
   // matching node is found we'll try to find a node with an alias
   // matching the identifier.
-  for (size_t index : indices) {
+  for (size_t index : indices)
+  {
     const NdrNodeDiscoveryResult &dr = _discoveryResults[index];
-    if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier)) {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier))
+    {
       return node;
     }
   }
-  for (size_t index : indices) {
+  for (size_t index : indices)
+  {
     const NdrNodeDiscoveryResult &dr = _discoveryResults[index];
-    if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier)) {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier))
+    {
       return node;
     }
   }
@@ -687,9 +744,12 @@ NdrNodeConstPtr NdrRegistry::GetNodeByName(const std::string &name,
 
   // If the type priority specifier is empty, pick the first node that matches
   // the name
-  if (sourceTypePriority.empty()) {
-    for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-      if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter)) {
+  if (sourceTypePriority.empty())
+  {
+    for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+    {
+      if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter))
+      {
         return node;
       }
     }
@@ -697,8 +757,10 @@ NdrNodeConstPtr NdrRegistry::GetNodeByName(const std::string &name,
 
   // Although this is a doubly-nested loop, the number of types in the
   // priority list should be small as should the number of nodes.
-  for (const TfToken &sourceType : sourceTypePriority) {
-    if (NdrNodeConstPtr node = _GetNodeByNameAndTypeImpl(name, sourceType, filter)) {
+  for (const TfToken &sourceType : sourceTypePriority)
+  {
+    if (NdrNodeConstPtr node = _GetNodeByNameAndTypeImpl(name, sourceType, filter))
+    {
       return node;
     }
   }
@@ -724,15 +786,18 @@ NdrNodeConstPtr NdrRegistry::_GetNodeByNameAndTypeImpl(const std::string &name,
   // it expects the caller to have appropriately locked it.
 
   const auto it = _discoveryResultIndicesBySourceType.find(sourceType);
-  if (it == _discoveryResultIndicesBySourceType.end()) {
+  if (it == _discoveryResultIndicesBySourceType.end())
+  {
     return nullptr;
   }
 
   const std::vector<size_t> &indices = it->second;
 
-  for (size_t index : indices) {
+  for (size_t index : indices)
+  {
     const NdrNodeDiscoveryResult &dr = _discoveryResults[index];
-    if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter)) {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter))
+    {
       return node;
     }
   }
@@ -745,19 +810,24 @@ NdrNodeConstPtrVec NdrRegistry::GetNodesByIdentifier(const NdrIdentifier &identi
   std::lock_guard<std::mutex> drLock(_discoveryResultMutex);
   NdrNodeConstPtrVec parsedNodes;
 
-  for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-    if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier)) {
+  for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+  {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingIdentifier(dr, identifier))
+    {
       parsedNodes.push_back(node);
     }
   }
 
-  for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-    if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier)) {
+  for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+  {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingAlias(dr, identifier))
+    {
       // In the extremely unlikely case that a node is supplied with an
       // alias that is the same as its identifier, we just make sure it
       // doesn't show up in the list twice as it will have already been
       // added by the above loop.
-      if (ARCH_LIKELY(dr.identifier != identifier)) {
+      if (ARCH_LIKELY(dr.identifier != identifier))
+      {
         parsedNodes.push_back(node);
       }
     }
@@ -772,8 +842,10 @@ NdrNodeConstPtrVec NdrRegistry::GetNodesByName(const std::string &name, NdrVersi
   std::lock_guard<std::mutex> drLock(_discoveryResultMutex);
   NdrNodeConstPtrVec parsedNodes;
 
-  for (const NdrNodeDiscoveryResult &dr : _discoveryResults) {
-    if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter)) {
+  for (const NdrNodeDiscoveryResult &dr : _discoveryResults)
+  {
+    if (NdrNodeConstPtr node = _ParseNodeMatchingNameAndFilter(dr, name, filter))
+    {
       parsedNodes.push_back(node);
     }
   }
@@ -800,16 +872,19 @@ NdrNodeConstPtrVec NdrRegistry::GetNodesByFamily(const TfToken &family, NdrVersi
     std::lock_guard<std::mutex> nmLock(_nodeMapMutex);
 
     // Skip parsing if a parse was already completed for all nodes
-    if (_nodeMap.size() == _discoveryResults.size()) {
+    if (_nodeMap.size() == _discoveryResults.size())
+    {
       return _GetNodeMapAsNodePtrVec(family, filter);
     }
   }
 
   // Do the parsing
   WorkParallelForN(_discoveryResults.size(), [&](size_t begin, size_t end) {
-    for (size_t i = begin; i < end; ++i) {
+    for (size_t i = begin; i < end; ++i)
+    {
       const NdrNodeDiscoveryResult &dr = _discoveryResults.at(i);
-      if (_MatchesFamilyAndFilter(dr, family, filter)) {
+      if (_MatchesFamilyAndFilter(dr, family, filter))
+      {
         _InsertNodeIntoCache(dr);
       }
     }
@@ -831,7 +906,8 @@ NdrTokenVec NdrRegistry::GetAllNodeSourceTypes() const
   std::lock_guard<std::mutex> drLock(_discoveryResultMutex);
   NdrTokenVec availableSourceTypes;
   availableSourceTypes.reserve(_discoveryResultIndicesBySourceType.size());
-  for (const auto &valuePair : _discoveryResultIndicesBySourceType) {
+  for (const auto &valuePair : _discoveryResultIndicesBySourceType)
+  {
     availableSourceTypes.push_back(valuePair.first);
   }
   return availableSourceTypes;
@@ -840,7 +916,8 @@ NdrTokenVec NdrRegistry::GetAllNodeSourceTypes() const
 NdrNodeConstPtr NdrRegistry::_ParseNodeMatchingIdentifier(const NdrNodeDiscoveryResult &dr,
                                                           const NdrIdentifier &identifier)
 {
-  if (dr.identifier == identifier) {
+  if (dr.identifier == identifier)
+  {
     return _InsertNodeIntoCache(dr);
   }
   return nullptr;
@@ -849,8 +926,10 @@ NdrNodeConstPtr NdrRegistry::_ParseNodeMatchingIdentifier(const NdrNodeDiscovery
 NdrNodeConstPtr NdrRegistry::_ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr,
                                                      const NdrIdentifier &identifier)
 {
-  for (const TfToken &alias : dr.aliases) {
-    if (alias == identifier) {
+  for (const TfToken &alias : dr.aliases)
+  {
+    if (alias == identifier)
+    {
       return _InsertNodeIntoCache(dr);
     }
   }
@@ -862,11 +941,13 @@ NdrNodeConstPtr NdrRegistry::_ParseNodeMatchingNameAndFilter(const NdrNodeDiscov
                                                              NdrVersionFilter filter)
 {
   // Check the filter.
-  if (filter == NdrVersionFilterDefaultOnly && !dr.version.IsDefault()) {
+  if (filter == NdrVersionFilterDefaultOnly && !dr.version.IsDefault())
+  {
     return nullptr;
   }
 
-  if (dr.name == name) {
+  if (dr.name == name)
+  {
     return _InsertNodeIntoCache(dr);
   }
   return nullptr;
@@ -876,7 +957,8 @@ void NdrRegistry::_FindAndInstantiateDiscoveryPlugins()
 {
   // The auto-discovery of discovery plugins can be skipped. This is mostly
   // for testing purposes.
-  if (TfGetEnvSetting(WABI_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY)) {
+  if (TfGetEnvSetting(WABI_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY))
+  {
     return;
   }
 
@@ -885,14 +967,16 @@ void NdrRegistry::_FindAndInstantiateDiscoveryPlugins()
   PlugRegistry::GetInstance().GetAllDerivedTypes<NdrDiscoveryPlugin>(&discoveryPluginTypes);
 
   // Instantiate any discovery plugins that were found
-  for (const TfType &discoveryPluginType : discoveryPluginTypes) {
+  for (const TfType &discoveryPluginType : discoveryPluginTypes)
+  {
     TF_DEBUG(NDR_DISCOVERY)
       .Msg("Found NdrDiscoveryPlugin '%s'\n", discoveryPluginType.GetTypeName().c_str());
 
     NdrDiscoveryPluginFactoryBase *pluginFactory =
       discoveryPluginType.GetFactory<NdrDiscoveryPluginFactoryBase>();
 
-    if (TF_VERIFY(pluginFactory)) {
+    if (TF_VERIFY(pluginFactory))
+    {
       _discoveryPlugins.emplace_back(pluginFactory->New());
     }
   }
@@ -902,7 +986,8 @@ void NdrRegistry::_FindAndInstantiateParserPlugins()
 {
   // The auto-discovery of parser plugins can be skipped. This is mostly
   // for testing purposes.
-  if (TfGetEnvSetting(WABI_NDR_SKIP_PARSER_PLUGIN_DISCOVERY)) {
+  if (TfGetEnvSetting(WABI_NDR_SKIP_PARSER_PLUGIN_DISCOVERY))
+  {
     return;
   }
 
@@ -916,24 +1001,28 @@ void NdrRegistry::_FindAndInstantiateParserPlugins()
 void NdrRegistry::_InstantiateParserPlugins(const std::set<TfType> &parserPluginTypes)
 {
   // Instantiate any parser plugins that were found
-  for (const TfType &parserPluginType : parserPluginTypes) {
+  for (const TfType &parserPluginType : parserPluginTypes)
+  {
     TF_DEBUG(NDR_DISCOVERY)
       .Msg("Found NdrParserPlugin '%s' for discovery types:\n", parserPluginType.GetTypeName().c_str());
 
     NdrParserPluginFactoryBase *pluginFactory = parserPluginType.GetFactory<NdrParserPluginFactoryBase>();
 
-    if (!TF_VERIFY(pluginFactory)) {
+    if (!TF_VERIFY(pluginFactory))
+    {
       continue;
     }
 
     NdrParserPlugin *parserPlugin = pluginFactory->New();
     _parserPlugins.emplace_back(parserPlugin);
 
-    for (const TfToken &discoveryType : parserPlugin->GetDiscoveryTypes()) {
+    for (const TfToken &discoveryType : parserPlugin->GetDiscoveryTypes())
+    {
       TF_DEBUG(NDR_DISCOVERY).Msg("  - %s\n", discoveryType.GetText());
 
       auto i = _parserPluginMap.insert({discoveryType, parserPlugin});
-      if (!i.second) {
+      if (!i.second)
+      {
         const TfType otherType = TfType::Find(*i.first->second);
         TF_CODING_ERROR(
           "Plugin type %s claims discovery type '%s' "
@@ -950,11 +1039,13 @@ void NdrRegistry::_RunDiscoveryPlugins(const DiscoveryPluginRefPtrVec &discovery
 {
   std::lock_guard<std::mutex> drLock(_discoveryResultMutex);
 
-  for (const NdrDiscoveryPluginRefPtr &dp : discoveryPlugins) {
+  for (const NdrDiscoveryPluginRefPtr &dp : discoveryPlugins)
+  {
     NdrNodeDiscoveryResultVec results = dp->DiscoverNodes(_DiscoveryContext(*this));
     _discoveryResults.reserve(_discoveryResults.size() + results.size());
 
-    for (NdrNodeDiscoveryResult &dr : results) {
+    for (NdrNodeDiscoveryResult &dr : results)
+    {
       _discoveryResultIndicesBySourceType[dr.sourceType].push_back(_discoveryResults.size());
       _discoveryResults.emplace_back(std::move(dr));
     }
@@ -968,7 +1059,8 @@ NdrNodeConstPtr NdrRegistry::_InsertNodeIntoCache(const NdrNodeDiscoveryResult &
   std::unique_lock<std::mutex> nmLock(_nodeMapMutex);
   NodeMapKey key{dr.identifier, dr.sourceType};
   auto it = _nodeMap.find(key);
-  if (it != _nodeMap.end()) {
+  if (it != _nodeMap.end())
+  {
     // Get the raw ptr from the unique_ptr
     return it->second.get();
   }
@@ -979,7 +1071,8 @@ NdrNodeConstPtr NdrRegistry::_InsertNodeIntoCache(const NdrNodeDiscoveryResult &
 
   // Ensure there is a parser plugin that can handle this node
   auto i = _parserPluginMap.find(dr.discoveryType);
-  if (i == _parserPluginMap.end()) {
+  if (i == _parserPluginMap.end())
+  {
     TF_DEBUG(NDR_PARSING)
       .Msg(
         "Encountered a node of type [%s], "
@@ -993,7 +1086,8 @@ NdrNodeConstPtr NdrRegistry::_InsertNodeIntoCache(const NdrNodeDiscoveryResult &
   NdrNodeUniquePtr newNode = i->second->Parse(dr);
 
   // Validate the node.
-  if (!_ValidateNode(newNode, dr)) {
+  if (!_ValidateNode(newNode, dr))
+  {
     return nullptr;
   }
 
@@ -1009,8 +1103,10 @@ NdrNodeConstPtrVec NdrRegistry::_GetNodeMapAsNodePtrVec(const TfToken &family, N
 {
   NdrNodeConstPtrVec _nodeVec;
 
-  for (const auto &nodePair : _nodeMap) {
-    if (_MatchesFamilyAndFilter(nodePair.second, family, filter)) {
+  for (const auto &nodePair : _nodeMap)
+  {
+    if (_MatchesFamilyAndFilter(nodePair.second, family, filter))
+    {
       _nodeVec.emplace_back(nodePair.second.get());
     }
   }

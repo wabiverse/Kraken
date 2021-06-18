@@ -143,12 +143,15 @@ static const char *const *_sessionCrashLogArgv = nullptr;
 // Arch_InitConfig() to ArchGetExecutablePath()
 static char *_progNameForErrors = NULL;
 
-namespace {
+namespace
+{
 // Key-value map for program info. Stores additional
 // program info to be used when displaying error information.
-class Arch_ProgInfo {
+class Arch_ProgInfo
+{
  public:
-  Arch_ProgInfo() : _progInfoForErrors(NULL)
+  Arch_ProgInfo()
+    : _progInfoForErrors(NULL)
   {}
 
   ~Arch_ProgInfo();
@@ -179,17 +182,20 @@ void Arch_ProgInfo::SetProgramInfoForErrors(const std::string &key, const std::s
 {
   std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
 
-  if (value.empty()) {
+  if (value.empty())
+  {
     _progInfoMap.erase(key);
   }
-  else {
+  else
+  {
     _progInfoMap[key] = value;
   }
 
   std::ostringstream ss;
 
   // update the error info string
-  for (_MapType::iterator iter = _progInfoMap.begin(); iter != _progInfoMap.end(); ++iter) {
+  for (_MapType::iterator iter = _progInfoMap.begin(); iter != _progInfoMap.end(); ++iter)
+  {
 
     ss << iter->first << ": " << iter->second << '\n';
   }
@@ -215,7 +221,8 @@ std::string Arch_ProgInfo::GetProgramInfoForErrors(const std::string &key) const
 void Arch_ProgInfo::PrintInfoForErrors() const
 {
   std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
-  if (_progInfoForErrors) {
+  if (_progInfoForErrors)
+  {
     fprintf(stderr, "%s", _progInfoForErrors);
   }
 }
@@ -228,11 +235,13 @@ static Arch_ProgInfo &ArchStackTrace_GetProgInfo()
   return progInfo;
 }
 
-namespace {
+namespace
+{
 
 // Key-value map for extra log info.  Stores unowned pointers to text to be
 // emitted in stack trace logs in case of fatal errors or crashes.
-class Arch_LogInfo {
+class Arch_LogInfo
+{
  public:
   void SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines);
   void EmitAnyExtraLogInfo(FILE *outFile, size_t max = 0) const;
@@ -246,10 +255,12 @@ class Arch_LogInfo {
 void Arch_LogInfo::SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines)
 {
   std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
-  if (!lines || lines->empty()) {
+  if (!lines || lines->empty())
+  {
     _logInfoForErrors.erase(key);
   }
-  else {
+  else
+  {
     _logInfoForErrors[key] = lines;
   }
 }
@@ -261,12 +272,15 @@ void Arch_LogInfo::EmitAnyExtraLogInfo(FILE *outFile, size_t max) const
   std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
   size_t n = 0;
   for (_LogInfoMap::const_iterator i = _logInfoForErrors.begin(), end = _logInfoForErrors.end(); i != end;
-       ++i) {
+       ++i)
+  {
     fputs("\n", outFile);
     fputs(i->first.c_str(), outFile);
     fputs(":\n", outFile);
-    for (std::string const &line : *i->second) {
-      if (max && n++ >= max) {
+    for (std::string const &line : *i->second)
+    {
+      if (max && n++ >= max)
+      {
         fputs(
           "... full diagnostics reported in the stack trace "
           "file.\n",
@@ -303,14 +317,17 @@ static const char *const *stackTraceArgv = nullptr;
 
 static long _GetAppElapsedTime();
 
-namespace {
+namespace
+{
 
 // Return the length of s.
 size_t asstrlen(const char *s)
 {
   size_t result = 0;
-  if (s) {
-    while (*s++) {
+  if (s)
+  {
+    while (*s++)
+    {
       ++result;
     }
   }
@@ -325,7 +342,8 @@ size_t asstrlen(const char *s)
 char *asstrcpy(char *dst, const char *src) ARCH_NOINLINE;
 char *asstrcpy(char *dst, const char *src)
 {
-  while ((*dst++ = *src++)) {
+  while ((*dst++ = *src++))
+  {
     // Do nothing
   }
   return dst - 1;
@@ -334,11 +352,14 @@ char *asstrcpy(char *dst, const char *src)
 // Compare the strings for equality.
 bool asstreq(const char *dst, const char *src)
 {
-  if (!dst || !src) {
+  if (!dst || !src)
+  {
     return dst == src;
   }
-  while (*dst || *src) {
-    if (*dst++ != *src++) {
+  while (*dst || *src)
+  {
+    if (*dst++ != *src++)
+    {
       return false;
     }
   }
@@ -348,11 +369,14 @@ bool asstreq(const char *dst, const char *src)
 // Compare the strings for equality up to n characters.
 bool asstrneq(const char *dst, const char *src, size_t n)
 {
-  if (!dst || !src) {
+  if (!dst || !src)
+  {
     return dst == src;
   }
-  while ((*dst || *src) && n) {
-    if (*dst++ != *src++) {
+  while ((*dst || *src) && n)
+  {
+    if (*dst++ != *src++)
+    {
       return false;
     }
     --n;
@@ -363,12 +387,16 @@ bool asstrneq(const char *dst, const char *src, size_t n)
 // Returns the environment variable named name, or NULL if it doesn't exist.
 const char *asgetenv(const char *name)
 {
-  if (name) {
+  if (name)
+  {
     const size_t len = asstrlen(name);
-    for (char **i = ArchEnviron(); *i; ++i) {
+    for (char **i = ArchEnviron(); *i; ++i)
+    {
       const char *var = *i;
-      if (asstrneq(var, name, len)) {
-        if (var[len] == '=') {
+      if (asstrneq(var, name, len))
+      {
+        if (var[len] == '=')
+        {
           return var + len + 1;
         }
       }
@@ -379,19 +407,21 @@ const char *asgetenv(const char *name)
 
 // Minimum safe size for a buffer to hold a long converted to decimal ASCII.
 static constexpr int numericBufferSize = std::numeric_limits<long>::digits10 + 1  // sign
-                                         + 1  // overflow (digits10 doesn't necessarily count the high digit)
-                                         + 1  // trailing NUL
-                                         + 1;  // paranoia
+                                         + 1                                      // overflow (digits10 doesn't necessarily count the high digit)
+                                         + 1                                      // trailing NUL
+                                         + 1;                                     // paranoia
 
 // Return the number of digits in the decimal string representation of x.
 size_t asNumDigits(long x)
 {
   size_t result = 1;
-  if (x < 0) {
+  if (x < 0)
+  {
     x = -x;
     ++result;
   }
-  while (x >= 10) {
+  while (x >= 10)
+  {
     ++result;
     x /= 10;
   }
@@ -403,7 +433,8 @@ size_t asNumDigits(long x)
 char *asitoa(char *s, long x)
 {
   // Write the minus sign.
-  if (x < 0) {
+  if (x < 0)
+  {
     x = -x;
     *s = '-';
   }
@@ -413,12 +444,15 @@ char *asitoa(char *s, long x)
   *s = '\0';
 
   // Write each digit, starting with the 1's column, working backwards.
-  if (x == 0) {
+  if (x == 0)
+  {
     *--s = '0';
   }
-  else {
+  else
+  {
     static const char digit[] = "0123456789";
-    while (x) {
+    while (x)
+    {
       *--s = digit[x % 10];
       x /= 10;
     }
@@ -448,12 +482,14 @@ int _GetStackTraceName(char *buf, size_t len)
 
   // Fill in buf with the default name.
   char *end = buf;
-  if (len < required) {
+  if (len < required)
+  {
     // No space.  Not quite an accurate error code.
     errno = ENOMEM;
     return -1;
   }
-  else {
+  else
+  {
     end = asstrcpy(end, ArchGetTmpDir());
     end = asstrcpy(end, "/");
     end = asstrcpy(end, stackTracePrefix);
@@ -472,10 +508,12 @@ int _GetStackTraceName(char *buf, size_t len)
   int fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
 #endif
 
-  while (fd == -1 && errno == EEXIST) {
+  while (fd == -1 && errno == EEXIST)
+  {
     // File exists.  Try a new suffix if there's space.
     ++suffix;
-    if (len < required + 1 + asNumDigits(suffix)) {
+    if (len < required + 1 + asNumDigits(suffix))
+    {
       // No space.  Not quite an accurate error code.
       errno = ENOMEM;
       return -1;
@@ -488,7 +526,8 @@ int _GetStackTraceName(char *buf, size_t len)
     fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
 #endif
   }
-  if (fd != -1) {
+  if (fd != -1)
+  {
     ArchCloseFile(fd);
     fd = 0;
   }
@@ -503,31 +542,39 @@ static bool _MakeArgv(const char *dstArgv[],
                       const char *const substitutions[][2],
                       size_t numSubstitutions)
 {
-  if (!cmd || !srcArgv) {
+  if (!cmd || !srcArgv)
+  {
     return false;
   }
 
   // Count the maximum number of arguments needed.
   size_t n = 1;
-  for (const char *const *i = srcArgv; *i; ++n, ++i) {
+  for (const char *const *i = srcArgv; *i; ++n, ++i)
+  {
     // Do nothing
   }
 
   // Make sure we don't have too many arguments.
-  if (n >= maxDstArgs) {
+  if (n >= maxDstArgs)
+  {
     return false;
   }
 
   // Build the command line.
   size_t j = 0;
-  for (size_t i = 0; i != n; ++i) {
-    if (asstreq(srcArgv[i], "$cmd")) {
+  for (size_t i = 0; i != n; ++i)
+  {
+    if (asstreq(srcArgv[i], "$cmd"))
+    {
       dstArgv[j++] = cmd;
     }
-    else {
+    else
+    {
       dstArgv[j] = srcArgv[i];
-      for (size_t k = 0; k != numSubstitutions; ++k) {
-        if (asstreq(srcArgv[i], substitutions[k][0])) {
+      for (size_t k = 0; k != numSubstitutions; ++k)
+      {
+        if (asstreq(srcArgv[i], substitutions[k][0]))
+        {
           dstArgv[j] = substitutions[k][1];
           break;
         }
@@ -548,7 +595,8 @@ static bool _MakeArgv(const char *dstArgv[],
  */
 static int nonLockingFork()
 {
-  if (Arch_nonLockingFork != NULL) {
+  if (Arch_nonLockingFork != NULL)
+  {
     return (Arch_nonLockingFork)();
   }
   return fork();
@@ -589,7 +637,8 @@ static int nonLockingLinux__execve(const char *file, char *const argv[], char *c
     : "0"(file), "c"(argv), "d"(envp)
     : "memory", "cc", "r11");
 
-  if (result >= 0xfffffffffffff000) {
+  if (result >= 0xfffffffffffff000)
+  {
     errno = -result;
     result = (unsigned int)-1;
   }
@@ -626,9 +675,11 @@ static std::string getBase(const char *path)
 #if defined(ARCH_OS_WINDOWS)
   const std::string tmp = path;
   std::string::size_type i = tmp.find_last_of("/\\");
-  if (i != std::string::npos) {
+  if (i != std::string::npos)
+  {
     std::string::size_type j = tmp.find(".exe");
-    if (j != std::string::npos) {
+    if (j != std::string::npos)
+    {
       return tmp.substr(i + 1, j - i - 1);
     }
     return tmp.substr(i + 1);
@@ -658,10 +709,12 @@ static int _LogStackTraceForPid(const char *logfile)
 {
   // Get the command to run.
   const char *cmd = asgetenv("ARCH_POSTMORTEM");
-  if (!cmd) {
+  if (!cmd)
+  {
     cmd = stackTraceCmd;
   }
-  if (!cmd || !stackTraceArgv) {
+  if (!cmd || !stackTraceArgv)
+  {
     // Silently do nothing.
     return 0;
   }
@@ -675,7 +728,8 @@ static int _LogStackTraceForPid(const char *logfile)
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
   const char *argv[maxArgs];
-  if (!_MakeArgv(argv, maxArgs, cmd, stackTraceArgv, substitutions, 2)) {
+  if (!_MakeArgv(argv, maxArgs, cmd, stackTraceArgv, substitutions, 2))
+  {
     static const char msg[] = "Too many arguments to postmortem command\n";
     aswrite(2, msg);
     return 0;
@@ -797,7 +851,8 @@ static long _GetAppElapsedTime()
   FILETIME usertime;
   ULARGE_INTEGER li;
 
-  if (::GetProcessTimes(GetCurrentProcess(), &starttime, &exittime, &kerneltime, &usertime) == 0) {
+  if (::GetProcessTimes(GetCurrentProcess(), &starttime, &exittime, &kerneltime, &usertime) == 0)
+  {
     ARCH_WARNING("_GetAppElapsedTime failed");
     return 0L;
   }
@@ -811,7 +866,8 @@ static long _GetAppElapsedTime()
 
   // We only record the amount of time spent in user instructions,
   // so as to discount idle time when logging up time.
-  if (getrusage(RUSAGE_SELF, &ru) == 0) {
+  if (getrusage(RUSAGE_SELF, &ru) == 0)
+  {
     return long(ru.ru_utime.tv_sec);
   }
 
@@ -831,10 +887,12 @@ static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
   // Get the command to run.
   const char *cmd = asgetenv("ARCH_LOGSESSION");
   const char *const *srcArgv = stackTrace ? _sessionCrashLogArgv : _sessionLogArgv;
-  if (!cmd) {
+  if (!cmd)
+  {
     cmd = _logStackToDbCmd;
   }
-  if (!cmd || !srcArgv) {
+  if (!cmd || !srcArgv)
+  {
     // Silently do nothing.
     return;
   }
@@ -849,7 +907,8 @@ static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
   const char *argv[maxArgs];
-  if (!_MakeArgv(argv, maxArgs, cmd, srcArgv, substitutions, 4)) {
+  if (!_MakeArgv(argv, maxArgs, cmd, srcArgv, substitutions, 4))
+  {
     static const char msg[] = "Too many arguments to log session command\n";
     aswrite(2, msg);
     return;
@@ -869,14 +928,18 @@ static void _FinishLoggingFatalStackTrace(const char *progname,
                                           const char *sessionLog,
                                           bool crashingHard)
 {
-  if (!crashingHard && sessionLog) {
+  if (!crashingHard && sessionLog)
+  {
     // If we were given a session log, cat it to the end of the stack.
-    if (FILE *stackFd = ArchOpenFile(stackTrace, "a")) {
-      if (FILE *sessionLogFd = ArchOpenFile(sessionLog, "r")) {
+    if (FILE *stackFd = ArchOpenFile(stackTrace, "a"))
+    {
+      if (FILE *sessionLogFd = ArchOpenFile(sessionLog, "r"))
+      {
         fputs("\n\n********** Session Log **********\n\n", stackFd);
         // Cat the session log
         char line[4096];
-        while (fgets(line, 4096, sessionLogFd)) {
+        while (fgets(line, 4096, sessionLogFd))
+        {
           fputs(line, stackFd);
         }
         fclose(sessionLogFd);
@@ -886,14 +949,16 @@ static void _FinishLoggingFatalStackTrace(const char *progname,
   }
 
   // Add trace to database if _shouldLogStackToDb is true
-  if (_shouldLogStackToDb) {
+  if (_shouldLogStackToDb)
+  {
     _InvokeSessionLogger(progname, stackTrace);
   }
 }
 
 void ArchLogSessionInfo(const char *crashStackTrace)
 {
-  if (_shouldLogStackToDb) {
+  if (_shouldLogStackToDb)
+  {
     _InvokeSessionLogger(ArchGetProgramNameForErrors(), crashStackTrace);
   }
 }
@@ -918,7 +983,8 @@ void ArchLogPostMortem(const char *reason,
   static std::atomic_flag busy = ATOMIC_FLAG_INIT;
 
   // Disallow recursion and allow only one thread at a time.
-  while (busy.test_and_set(std::memory_order_acquire)) {
+  while (busy.test_and_set(std::memory_order_acquire))
+  {
     // Spin!
     std::this_thread::yield();
   }
@@ -926,14 +992,16 @@ void ArchLogPostMortem(const char *reason,
   const char *progname = ArchGetProgramNameForErrors();
 
   // If we can attach a debugger then just exit here.
-  if (ArchDebuggerAttach()) {
+  if (ArchDebuggerAttach())
+  {
     ARCH_DEBUGGER_TRAP;
     _exit(0);
   }
 
   /* Could use tmpnam but we're trying to be minimalist here. */
   char logfile[1024];
-  if (_GetStackTraceName(logfile, sizeof(logfile)) == -1) {
+  if (_GetStackTraceName(logfile, sizeof(logfile)) == -1)
+  {
     // Cannot create the logfile.
     static const char msg[] = "Cannot create a log file\n";
     aswrite(2, msg);
@@ -942,18 +1010,22 @@ void ArchLogPostMortem(const char *reason,
   }
 
   // Write reason for stack trace to logfile.
-  if (FILE *stackFd = ArchOpenFile(logfile, "a")) {
-    if (reason) {
+  if (FILE *stackFd = ArchOpenFile(logfile, "a"))
+  {
+    if (reason)
+    {
       fputs("This stack trace was requested because: ", stackFd);
       fputs(reason, stackFd);
       fputs("\n", stackFd);
     }
-    if (message) {
+    if (message)
+    {
       fputs(message, stackFd);
       fputs("\n", stackFd);
     }
     ArchStackTrace_GetLogInfo().EmitAnyExtraLogInfo(stackFd);
-    if (extraLogMsg) {
+    if (extraLogMsg)
+    {
       fputs(extraLogMsg, stackFd);
       fputs("\n", stackFd);
     }
@@ -963,7 +1035,8 @@ void ArchLogPostMortem(const char *reason,
 
   /* get hostname for printing out in the error message only */
   char hostname[MAXHOSTNAMELEN];
-  if (gethostname(hostname, MAXHOSTNAMELEN) != 0) {
+  if (gethostname(hostname, MAXHOSTNAMELEN) != 0)
+  {
     /* error getting hostname; don't try to print it */
     hostname[0] = '\0';
   }
@@ -978,12 +1051,14 @@ void ArchLogPostMortem(const char *reason,
     ArchStackTrace_GetProgInfo().PrintInfoForErrors();
   }
 
-  if (reason) {
+  if (reason)
+  {
     fputs("This stack trace was requested because: ", stderr);
     fputs(reason, stderr);
     fputs("\n", stderr);
   }
-  if (message) {
+  if (message)
+  {
     fputs(message, stderr);
     fputs("\n", stderr);
   }
@@ -1000,7 +1075,8 @@ void ArchLogPostMortem(const char *reason,
   ArchStackTrace_GetLogInfo().EmitAnyExtraLogInfo(stderr, 3 /* max */);
   fputs("------------------------------------------------------------------\n", stderr);
 
-  if (loggedStack) {
+  if (loggedStack)
+  {
     _FinishLoggingFatalStackTrace(progname, logfile, NULL /*session log*/, true /* crashing hard? */);
   }
 
@@ -1031,7 +1107,8 @@ void ArchLogStackTrace(const std::string &progname,
 
   /* get hostname for printing out in the error message only */
   char hostname[MAXHOSTNAMELEN];
-  if (gethostname(hostname, MAXHOSTNAMELEN) != 0) {
+  if (gethostname(hostname, MAXHOSTNAMELEN) != 0)
+  {
     hostname[0] = '\0';
   }
 
@@ -1046,7 +1123,8 @@ void ArchLogStackTrace(const std::string &progname,
     ArchStackTrace_GetProgInfo().PrintInfoForErrors();
   }
 
-  if (fd != -1) {
+  if (fd != -1)
+  {
     FILE *fout = ArchFdOpen(fd, "w");
     fprintf(stderr,
             "The stack can be found in %s:%s\n"
@@ -1056,18 +1134,21 @@ void ArchLogStackTrace(const std::string &progname,
             tmpFile.c_str());
     ArchPrintStackTrace(fout, progname, reason);
     /* If this is a fatal stack trace, attempt to add it to the db */
-    if (fatal) {
+    if (fatal)
+    {
       ArchStackTrace_GetLogInfo().EmitAnyExtraLogInfo(fout);
     }
     fclose(fout);
-    if (fatal) {
+    if (fatal)
+    {
       _FinishLoggingFatalStackTrace(progname.c_str(),
                                     tmpFile.c_str(),
                                     sessionLog.empty() ? NULL : sessionLog.c_str(),
                                     false /* crashing hard? */);
     }
   }
-  else {
+  else
+  {
     /* we couldn't open the tmp file, so write the stack trace to stderr */
     fprintf(stderr,
             "--------------------------------------------------------------"
@@ -1097,7 +1178,8 @@ static void _LogStackTraceToOutputIterator(OutputIterator oi, size_t maxDepth, b
   ifstream inFile(logfile);
   string line;
   size_t currentDepth = 0;
-  while (!inFile.eof() && currentDepth < maxDepth) {
+  while (!inFile.eof() && currentDepth < maxDepth)
+  {
     getline(inFile, line);
     if (addEndl && !inFile.eof())
       line += "\n";
@@ -1121,7 +1203,8 @@ void ArchPrintStackTrace(FILE *fout, const std::string &programName, const std::
 
   ArchPrintStackTrace(oss, programName, reason);
 
-  if (fout == NULL) {
+  if (fout == NULL)
+  {
     fout = stderr;
   }
 
@@ -1177,7 +1260,8 @@ void ArchGetStackFrames(size_t maxDepth, vector<uintptr_t> *frames)
 }
 
 #if defined(ARCH_OS_LINUX) && defined(ARCH_BITS_64)
-struct Arch_UnwindContext {
+struct Arch_UnwindContext
+{
  public:
   Arch_UnwindContext(size_t inMaxdepth, size_t inSkip, vector<uintptr_t> *inFrames)
     : maxdepth(inMaxdepth),
@@ -1198,14 +1282,18 @@ static _Unwind_Reason_Code Arch_unwindcb(struct _Unwind_Context *ctx, void *data
   // never extend frames because it is unsafe to alloc inside a
   // signal handler, and this function is called sometimes (when
   // profiling) from a signal handler.
-  if (context->frames->size() >= context->maxdepth) {
+  if (context->frames->size() >= context->maxdepth)
+  {
     return _URC_END_OF_STACK;
   }
-  else {
-    if (context->skip > 0) {
+  else
+  {
+    if (context->skip > 0)
+    {
       --context->skip;
     }
-    else {
+    else
+    {
       context->frames->push_back(_Unwind_GetIP(ctx));
     }
     return _URC_NO_REASON;
@@ -1233,7 +1321,8 @@ void ArchGetStackFrames(size_t maxdepth, size_t skip, vector<uintptr_t> *frames)
   size_t frameCount = CaptureStackBackTrace(0, MAX_STACK_DEPTH, stack, NULL);
   frameCount = std::min(frameCount, maxdepth);
   frames->reserve(frameCount);
-  for (size_t frame = skip; frame != frameCount; ++frame) {
+  for (size_t frame = skip; frame != frameCount; ++frame)
+  {
     frames->push_back(reinterpret_cast<uintptr_t>(stack[frame]));
   }
 }
@@ -1245,7 +1334,8 @@ void ArchGetStackFrames(size_t maxdepth, size_t skip, vector<uintptr_t> *frames)
   void *stack[MAX_STACK_DEPTH];
   const size_t frameCount = backtrace(stack, std::max((size_t)MAX_STACK_DEPTH, maxdepth));
   frames->reserve(frameCount);
-  for (size_t frame = skip; frame != frameCount; ++frame) {
+  for (size_t frame = skip; frame != frameCount; ++frame)
+  {
     frames->push_back(reinterpret_cast<uintptr_t>(stack[frame]));
   }
 }
@@ -1273,12 +1363,14 @@ static std::string Arch_DefaultStackTraceCallback(uintptr_t address)
   void *baseAddress, *symbolAddress;
   if (ArchGetAddressInfo(
         reinterpret_cast<void *>(address - 1), &objectPath, &baseAddress, &symbolName, &symbolAddress) &&
-      symbolAddress) {
+      symbolAddress)
+  {
     Arch_DemangleFunctionName(&symbolName);
     const uintptr_t symbolOffset = (uint64_t)(address - (uintptr_t)symbolAddress);
     return ArchStringPrintf("%s+%#0lx", symbolName.c_str(), symbolOffset);
   }
-  else {
+  else
+  {
     return ArchStringPrintf("%#016lx", address);
   }
 }
@@ -1292,7 +1384,8 @@ static vector<string> Arch_GetStackTrace(const vector<uintptr_t> &frames);
 void ArchPrintStackFrames(ostream &oss, const vector<uintptr_t> &frames)
 {
   const vector<string> result = Arch_GetStackTrace(frames);
-  for (size_t i = 0; i < result.size(); i++) {
+  for (size_t i = 0; i < result.size(); i++)
+  {
     oss << result[i] << std::endl;
   }
 }
@@ -1318,7 +1411,8 @@ vector<string> Arch_GetStackTrace(const vector<uintptr_t> &frames)
 {
   vector<string> rv;
 
-  if (frames.empty()) {
+  if (frames.empty())
+  {
     rv.push_back(
       "No frames saved, stack traces probably not supported "
       "on this architecture.");
@@ -1326,10 +1420,12 @@ vector<string> Arch_GetStackTrace(const vector<uintptr_t> &frames)
   }
 
   ArchStackTraceCallback callback = *Arch_GetStackTraceCallback();
-  if (!callback) {
+  if (!callback)
+  {
     callback = Arch_DefaultStackTraceCallback;
   }
-  for (size_t i = 0; i < frames.size(); i++) {
+  for (size_t i = 0; i < frames.size(); i++)
+  {
     const std::string symbolic = callback(frames[i]);
     rv.push_back(ArchStringPrintf(" #%-3i 0x%016lx in %s", (int)i, frames[i], symbolic.c_str()));
   }
@@ -1344,7 +1440,8 @@ void ArchSetStackTraceCallback(const ArchStackTraceCallback &cb)
 
 void ArchGetStackTraceCallback(ArchStackTraceCallback *cb)
 {
-  if (cb) {
+  if (cb)
+  {
     *cb = *Arch_GetStackTraceCallback();
   }
 }
@@ -1380,7 +1477,8 @@ int ArchCrashHandlerSystemv(const char *pathname,
   int retval = 0;
   int savedErrno;
   pid_t pid = nonLockingFork(); /* use non-locking fork */
-  if (pid == -1) {
+  if (pid == -1)
+  {
     /* fork() failed */
     char errBuffer[numericBufferSize];
     asitoa(errBuffer, errno);
@@ -1389,7 +1487,8 @@ int ArchCrashHandlerSystemv(const char *pathname,
     aswrite(2, "\n");
     return -1;
   }
-  else if (pid == 0) {
+  else if (pid == 0)
+  {
     // Call setsid() in the child, which is intended to start a new
     // "session", and detach from the controlling tty.  We do this because
     // the stack tracing stuff invokes gdb, which wants to fiddle with the
@@ -1399,7 +1498,8 @@ int ArchCrashHandlerSystemv(const char *pathname,
     // If standard input is not a TTY then skip this.  This ensures
     // the child is part of the same process group as this process,
     // which is important on the renderfarm.
-    if (isatty(0)) {
+    if (isatty(0))
+    {
       setsid();
     }
 
@@ -1416,7 +1516,8 @@ int ArchCrashHandlerSystemv(const char *pathname,
     aswrite(2, "\n");
     _exit(127);
   }
-  else {
+  else
+  {
     int delta = 0;
     sigemptyset(&act.sa_mask);
 #  if defined(SA_INTERRUPT)
@@ -1428,21 +1529,25 @@ int ArchCrashHandlerSystemv(const char *pathname,
     sigaction(SIGALRM, &act, &oldact);
 
     /* loop until timeout seconds have passed */
-    do {
+    do
+    {
       int status;
       pid_t child;
 
       /* a timeout <= 0 means forever */
-      if (timeout > 0) {
+      if (timeout > 0)
+      {
         delta = 1; /* callback every delta seconds */
         alarm(delta);
       }
 
       /* see what the child is up to */
       child = waitpid(pid, &status, 0 /* forever, unless interrupted */);
-      if (child == (pid_t)-1) {
+      if (child == (pid_t)-1)
+      {
         /* waitpid error.  return if not due to signal. */
-        if (errno != EINTR) {
+        if (errno != EINTR)
+        {
           retval = -1;
           char errBuffer[numericBufferSize];
           asitoa(errBuffer, errno);
@@ -1453,22 +1558,26 @@ int ArchCrashHandlerSystemv(const char *pathname,
         }
         /* continue below */
       }
-      else if (child != 0) {
+      else if (child != 0)
+      {
         /* child finished */
-        if (WIFEXITED(status)) {
+        if (WIFEXITED(status))
+        {
           /* child exited successfully.  it returned 127
            * if the exec() failed.  we'll set errno to
            * ENOENT in that case though the actual error
            * could be something else. */
           retval = WEXITSTATUS(status);
-          if (retval == 127) {
+          if (retval == 127)
+          {
             errno = ENOENT;
             aswrite(2, "FAIL: Crash handler failed to exec\n");
           }
           goto out;
         }
 
-        if (WIFSIGNALED(status)) {
+        if (WIFSIGNALED(status))
+        {
           /* child died due to uncaught signal */
           errno = EINTR;
           retval = -1;

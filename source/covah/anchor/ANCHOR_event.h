@@ -28,7 +28,8 @@
 
 #include <wabi/base/tf/refPtr.h>
 
-class ANCHOR_IEvent {
+class ANCHOR_IEvent
+{
  public:
   /**
    * Destructor. */
@@ -59,7 +60,8 @@ class ANCHOR_IEvent {
 
 /**
  * Base class for events received the operating system. */
-class ANCHOR_Event : public ANCHOR_IEvent {
+class ANCHOR_Event : public ANCHOR_IEvent
+{
  public:
   /**
    * Constructor.
@@ -123,7 +125,8 @@ class ANCHOR_Event : public ANCHOR_IEvent {
 
 /**
  * Cursor event. */
-class ANCHOR_EventCursor : public ANCHOR_Event {
+class ANCHOR_EventCursor : public ANCHOR_Event
+{
  public:
   /**
    * Constructor.
@@ -151,7 +154,8 @@ class ANCHOR_EventCursor : public ANCHOR_Event {
 
 /**
  * Mouse button event. */
-class ANCHOR_EventButton : public ANCHOR_Event {
+class ANCHOR_EventButton : public ANCHOR_Event
+{
  public:
   /**
    * Constructor.
@@ -180,7 +184,8 @@ class ANCHOR_EventButton : public ANCHOR_Event {
  * Mouse wheel event.
  * The displacement of the mouse wheel is counted in ticks.
  * A positive value means the wheel is turned away from the user. */
-class ANCHOR_EventWheel : public ANCHOR_Event {
+class ANCHOR_EventWheel : public ANCHOR_Event
+{
  public:
   /**
    * Constructor.
@@ -201,7 +206,8 @@ class ANCHOR_EventWheel : public ANCHOR_Event {
 
 /**
  * Key event. */
-class ANCHOR_EventKey : public ANCHOR_Event {
+class ANCHOR_EventKey : public ANCHOR_Event
+{
  public:
   /**
    * Constructor.

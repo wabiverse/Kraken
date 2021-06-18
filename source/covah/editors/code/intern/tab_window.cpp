@@ -8,9 +8,12 @@
 #include "zep/mcommon/logger.h"
 
 // A 'window' is like a Vim Tab
-namespace Zep {
+namespace Zep
+{
 
-ZepTabWindow::ZepTabWindow(ZepEditor &editor) : ZepComponent(editor), m_editor(editor)
+ZepTabWindow::ZepTabWindow(ZepEditor &editor)
+  : ZepComponent(editor),
+    m_editor(editor)
 {
   m_spRootRegion = std::make_shared<Region>();
   m_spRootRegion->flags = RegionFlags::Expanding;
@@ -34,66 +37,77 @@ ZepWindow *ZepTabWindow::DoMotion(WindowMotion motion)
   Region *pBestRegion = nullptr;
 
   auto overlap_x = [&](const NRectf &lhs, const NRectf &rhs) {
-    if ((lhs.topLeftPx.x < rhs.bottomRightPx.x) && (lhs.bottomRightPx.x > rhs.topLeftPx.x)) {
+    if ((lhs.topLeftPx.x < rhs.bottomRightPx.x) && (lhs.bottomRightPx.x > rhs.topLeftPx.x))
+    {
       return true;
     }
     return false;
   };
   auto overlap_y = [&](const NRectf &lhs, const NRectf &rhs) {
-    if ((lhs.topLeftPx.y < rhs.bottomRightPx.y) && (lhs.bottomRightPx.y > rhs.topLeftPx.y)) {
+    if ((lhs.topLeftPx.y < rhs.bottomRightPx.y) && (lhs.bottomRightPx.y > rhs.topLeftPx.y))
+    {
       return true;
     }
     return false;
   };
 
-  for (auto &r : m_windowRegions) {
+  for (auto &r : m_windowRegions)
+  {
     auto &pRegion = r.second;
     if (pCurrentRegion == pRegion)
       continue;
 
     auto thisCenter = pRegion->rect.Center();
     float dist = 0.0f;
-    switch (motion) {
+    switch (motion)
+    {
       case WindowMotion::Right: {
         if (overlap_x(pRegion->rect, pCurrentRegion->rect))
           continue;
         if (!overlap_y(pRegion->rect, pCurrentRegion->rect))
           continue;
         dist = thisCenter.x - center.x;
-      } break;
+      }
+      break;
       case WindowMotion::Left: {
         if (overlap_x(pRegion->rect, pCurrentRegion->rect))
           continue;
         if (!overlap_y(pRegion->rect, pCurrentRegion->rect))
           continue;
         dist = center.x - thisCenter.x;
-      } break;
+      }
+      break;
       case WindowMotion::Up: {
         if (overlap_y(pRegion->rect, pCurrentRegion->rect))
           continue;
         if (!overlap_x(pRegion->rect, pCurrentRegion->rect))
           continue;
         dist = center.y - thisCenter.y;
-      } break;
+      }
+      break;
       case WindowMotion::Down: {
         if (overlap_y(pRegion->rect, pCurrentRegion->rect))
           continue;
         if (!overlap_x(pRegion->rect, pCurrentRegion->rect))
           continue;
         dist = thisCenter.y - center.y;
-      } break;
+      }
+      break;
     }
-    if (dist > 0.0f && minDistance > dist) {
+    if (dist > 0.0f && minDistance > dist)
+    {
       minDistance = dist;
       pBestRegion = pRegion.get();
     }
   }
 
-  if (pBestRegion != nullptr) {
+  if (pBestRegion != nullptr)
+  {
     auto itrFound = std::find_if(m_windowRegions.begin(), m_windowRegions.end(), [pBestRegion](auto &val) {
       return (val.second.get() == pBestRegion);
     });
-    if (itrFound != m_windowRegions.end()) {
+    if (itrFound != m_windowRegions.end())
+    {
       SetActiveWindow(itrFound->first);
     }
   }
@@ -103,7 +117,8 @@ ZepWindow *ZepTabWindow::DoMotion(WindowMotion motion)
 void ZepTabWindow::SetActiveWindow(ZepWindow *pBuffer)
 {
   m_pActiveWindow = pBuffer;
-  if (m_pActiveWindow) {
+  if (m_pActiveWindow)
+  {
     m_pActiveWindow->GetBuffer().GetMode()->Begin(m_pActiveWindow);
   }
   GetEditor().UpdateTabs();
@@ -120,9 +135,11 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
   // If we are replacing a default/unmodified start buffer, then this new window will replace it
   // This makes for nice behavior where adding a top-level window to the tab will nuke the default
   // buffer
-  if (m_windows.size() == 1 && pParent == nullptr) {
+  if (m_windows.size() == 1 && pParent == nullptr)
+  {
     auto &buffer = m_windows[0]->GetBuffer();
-    if (buffer.HasFileFlags(FileFlags::DefaultBuffer) && !buffer.HasFileFlags(FileFlags::Dirty)) {
+    if (buffer.HasFileFlags(FileFlags::DefaultBuffer) && !buffer.HasFileFlags(FileFlags::Dirty))
+    {
       m_windows[0]->SetBuffer(pBuffer);
       return m_windows[0];
     }
@@ -140,9 +157,11 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
   SetActiveWindow(pWin);
 
   // No parent, inserting our window on top of whatever is already in the window
-  if (pParent == nullptr) {
+  if (pParent == nullptr)
+  {
     // There is something in the child, so make a good
-    if (m_spRootRegion->children.size() > 1) {
+    if (m_spRootRegion->children.size() > 1)
+    {
       // Make a new parent to hold the children at the root, and replace the root region
       // with the new parent, putting the old root inside it!
       auto r1 = std::make_shared<Region>();
@@ -154,7 +173,8 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
       m_spRootRegion = r1;
       r1->children.push_back(r);
     }
-    else {
+    else
+    {
       // The root region has 0 or 1 children, so just set its split type and add our child
       m_spRootRegion->children.push_back(r);
       m_spRootRegion->layoutType = layoutType;
@@ -164,30 +184,35 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
     r->pParent = m_spRootRegion.get();
     m_windowRegions[pWin] = r;
   }
-  else {
+  else
+  {
     // Get the parent region that holds the parent window!
     auto pParentRegion = m_windowRegions[pParent]->pParent;
 
     // Fix to ensure that a parent region isn't unnecessarily split if it doesn't have a split
     // layout, and has only one child
-    if (pParentRegion->children.size() == 1) {
+    if (pParentRegion->children.size() == 1)
+    {
       pParentRegion->layoutType = layoutType;
     }
 
-    if (pParentRegion->layoutType == layoutType) {
+    if (pParentRegion->layoutType == layoutType)
+    {
       // Add our newly created region into the parent region, since it is splitting in the same way
       // as the parent's children Try to find the right spot, so we effectively split the correct
       // parent
       auto itrFound = std::find_if(
         pParentRegion->children.begin(), pParentRegion->children.end(), [&](auto pCurrent) {
-          if (pCurrent == m_windowRegions[pParent]) {
+          if (pCurrent == m_windowRegions[pParent])
+          {
             return true;
           }
           return false;
         });
 
       // Insertion point should be _after_ the location we want
-      if (itrFound != pParentRegion->children.end()) {
+      if (itrFound != pParentRegion->children.end())
+      {
         itrFound++;
       }
       pParentRegion->children.insert(itrFound, r);
@@ -195,7 +220,8 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
       r->pParent = pParentRegion;
       m_windowRegions[pWin] = r;
     }
-    else {
+    else
+    {
       // We are adding ourselves to a child that isn't the same orientation as us
       auto pSplitRegion = m_windowRegions[pParent];
       assert(pSplitRegion->children.empty());
@@ -227,8 +253,10 @@ ZepWindow *ZepTabWindow::AddWindow(ZepBuffer *pBuffer, ZepWindow *pParent, Regio
 
 void ZepTabWindow::CloseActiveWindow()
 {
-  if (m_pActiveWindow) {
-    if (m_pActiveWindow->GetBuffer().GetMode()) {
+  if (m_pActiveWindow)
+  {
+    if (m_pActiveWindow->GetBuffer().GetMode())
+    {
       m_pActiveWindow->GetBuffer().GetMode()->Begin(nullptr);
     }
 
@@ -266,14 +294,16 @@ void ZepTabWindow::WalkRegions()
 void ZepTabWindow::RemoveWindow(ZepWindow *pWindow)
 {
   assert(pWindow);
-  if (!pWindow) {
+  if (!pWindow)
+  {
     assert(!"No window?");
     return;
   }
 
   // Find the window
   auto itrFound = std::find(m_windows.begin(), m_windows.end(), pWindow);
-  if (itrFound == m_windows.end()) {
+  if (itrFound == m_windows.end())
+  {
     assert(!"Not found?");
     return;
   }
@@ -300,7 +330,8 @@ void ZepTabWindow::RemoveWindow(ZepWindow *pWindow)
   // and cleans out empty ones
   std::function<void(Region *)> fnRemoveEmptyParent = [&](Region *pParent) {
     // If the parent of the region we are deleting has no more children...
-    if (pParent->children.empty()) {
+    if (pParent->children.empty())
+    {
       // ... and it is not associated with a window (i.e. it was created as a container)
       auto itrFoundWin = std::find_if(
         m_windowRegions.begin(), m_windowRegions.end(), [pParent](auto currentPair) {
@@ -308,15 +339,18 @@ void ZepTabWindow::RemoveWindow(ZepWindow *pWindow)
         });
 
       // ... then we remove it.
-      if (itrFoundWin == m_windowRegions.end()) {
+      if (itrFoundWin == m_windowRegions.end())
+      {
         auto pDeleteRegion = pParent;
         auto pOwnerRegion = pParent->pParent;
-        if (pOwnerRegion) {
+        if (pOwnerRegion)
+        {
           auto itrFoundChild = std::find_if(
             pOwnerRegion->children.begin(),
             pOwnerRegion->children.end(),
             [pDeleteRegion](std::shared_ptr<Region> pChild) { return pChild.get() == pDeleteRegion; });
-          if (itrFoundChild != pOwnerRegion->children.end()) {
+          if (itrFoundChild != pOwnerRegion->children.end())
+          {
             pOwnerRegion->children.erase(itrFoundChild);
           }
 
@@ -338,13 +372,16 @@ void ZepTabWindow::RemoveWindow(ZepWindow *pWindow)
       CleanEmptyRegions();
       */
 
-  if (m_windows.empty()) {
+  if (m_windows.empty())
+  {
     SetActiveWindow(nullptr);
     m_spRootRegion.reset();
     GetEditor().RemoveTabWindow(this);
   }
-  else {
-    if (m_pActiveWindow == pWindow) {
+  else
+  {
+    if (m_pActiveWindow == pWindow)
+    {
       // TODO: Active window ordering - remember the last active and switch to it when this one is
       // closed
       SetActiveWindow(m_windows[m_windows.size() - 1]);
@@ -356,10 +393,14 @@ void ZepTabWindow::RemoveWindow(ZepWindow *pWindow)
 
 void ZepTabWindow::Notify(std::shared_ptr<ZepMessage> pMsg)
 {
-  if (pMsg->messageId == Msg::MouseDown) {
-    for (auto &region : m_windowRegions) {
-      if (region.second->rect.Contains(pMsg->pos)) {
-        if (m_pActiveWindow != region.first) {
+  if (pMsg->messageId == Msg::MouseDown)
+  {
+    for (auto &region : m_windowRegions)
+    {
+      if (region.second->rect.Contains(pMsg->pos))
+      {
+        if (m_pActiveWindow != region.first)
+        {
           SetActiveWindow(region.first);
           pMsg->handled = true;
           return;
@@ -371,15 +412,18 @@ void ZepTabWindow::Notify(std::shared_ptr<ZepMessage> pMsg)
 
 void ZepTabWindow::SetDisplayRegion(const NRectf &region, bool force)
 {
-  if (m_lastRegionRect != region || force) {
+  if (m_lastRegionRect != region || force)
+  {
     m_lastRegionRect = region;
 
-    if (m_spRootRegion) {
+    if (m_spRootRegion)
+    {
       m_spRootRegion->rect = region;
       LayoutRegion(*m_spRootRegion);
     }
 
-    for (auto &w : m_windows) {
+    for (auto &w : m_windows)
+    {
       // TODO: Crash here rect is NULL?
       w->SetDisplayRegion(m_windowRegions[w]->rect);
     }
@@ -388,7 +432,8 @@ void ZepTabWindow::SetDisplayRegion(const NRectf &region, bool force)
 
 void ZepTabWindow::Display()
 {
-  for (auto &w : m_windows) {
+  for (auto &w : m_windows)
+  {
     w->Display();
   }
 }

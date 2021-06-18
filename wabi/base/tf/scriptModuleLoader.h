@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Generally, user code will not make use of this.
 ///
-class TfScriptModuleLoader : public TfWeakBase {
+class TfScriptModuleLoader : public TfWeakBase
+{
 
  public:
   typedef TfScriptModuleLoader This;
@@ -102,7 +103,8 @@ class TfScriptModuleLoader : public TfWeakBase {
   void WriteDotFile(std::string const &file) const;
 
  private:
-  struct _LibInfo {
+  struct _LibInfo
+  {
     _LibInfo()
     {}
     std::vector<TfToken> predecessors, successors;

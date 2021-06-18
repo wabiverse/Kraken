@@ -52,7 +52,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-struct Ndr_ValidatePropertyAnnotatedBool : public TfPyAnnotatedBoolResult<std::string> {
+struct Ndr_ValidatePropertyAnnotatedBool : public TfPyAnnotatedBoolResult<std::string>
+{
   Ndr_ValidatePropertyAnnotatedBool(bool value, const std::string &message)
     : TfPyAnnotatedBoolResult<std::string>(value, message)
   {}
@@ -70,15 +71,19 @@ static void _SetExtraDiscoveryPlugins(NdrRegistry &self, const list &pylist)
   NdrDiscoveryPluginRefPtrVector plugins;
   std::vector<TfType> types;
 
-  for (int i = 0; i < len(pylist); ++i) {
+  for (int i = 0; i < len(pylist); ++i)
+  {
     extract<NdrDiscoveryPluginPtr> plugin(pylist[i]);
-    if (plugin.check()) {
+    if (plugin.check())
+    {
       NdrDiscoveryPluginPtr pluginPtr = plugin;
-      if (pluginPtr) {
+      if (pluginPtr)
+      {
         plugins.push_back(pluginPtr);
       }
     }
-    else {
+    else
+    {
       types.push_back(extract<TfType>(pylist[i]));
     }
   }
@@ -87,7 +92,8 @@ static void _SetExtraDiscoveryPlugins(NdrRegistry &self, const list &pylist)
   self.SetExtraDiscoveryPlugins(types);
 }
 
-struct ConstNodePtrToPython {
+struct ConstNodePtrToPython
+{
   static PyObject *convert(NdrNodeConstPtr node)
   {
     return incref(object(ptr(node)).ptr());

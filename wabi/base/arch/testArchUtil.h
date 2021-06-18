@@ -36,7 +36,12 @@
 WABI_NAMESPACE_BEGIN
 
 // Crash types.
-enum class ArchTestCrashMode { Error, ReadInvalidAddresses, ReadInvalidAddressesWithThread };
+enum class ArchTestCrashMode
+{
+  Error,
+  ReadInvalidAddresses,
+  ReadInvalidAddressesWithThread
+};
 
 // Cause the test to crash deliberately.
 void ArchTestCrash(ArchTestCrashMode mode);

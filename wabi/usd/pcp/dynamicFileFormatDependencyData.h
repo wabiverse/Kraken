@@ -47,7 +47,8 @@ TF_DECLARE_WEAK_PTRS(SdfFileFormat);
 /// path itself and is expected to be the data in some other data structure
 /// that maps prim indexes to its dependencies.
 ///
-class PcpDynamicFileFormatDependencyData {
+class PcpDynamicFileFormatDependencyData
+{
  public:
   /// Default constructor. This data will be empty.
   PCP_API
@@ -124,7 +125,8 @@ class PcpDynamicFileFormatDependencyData {
 
  private:
   // Struct containing the entire contents of the dependency.
-  struct _Data {
+  struct _Data
+  {
     using _ContextData = std::pair<const PcpDynamicFileFormatInterface *, VtValue>;
     using _ContextDataVector = std::vector<_ContextData>;
 

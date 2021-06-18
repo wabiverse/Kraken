@@ -40,14 +40,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T> static VtArray<T> _BuildArray(T values[], int numValues)
+template<typename T>
+static VtArray<T> _BuildArray(T values[], int numValues)
 {
   VtArray<T> result(numValues);
   std::copy(values, values + numValues, result.begin());
   return result;
 }
 
-class Hdx_UnitTestDelegate : public HdSceneDelegate {
+class Hdx_UnitTestDelegate : public HdSceneDelegate
+{
  public:
   Hdx_UnitTestDelegate(HdRenderIndex *renderIndex);
 
@@ -176,7 +178,8 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
   bool WriteRenderBufferToFile(SdfPath const &id, std::string const &filePath);
 
  private:
-  struct _Mesh {
+  struct _Mesh
+  {
     _Mesh()
     {}
     _Mesh(TfToken const &scheme,
@@ -223,7 +226,8 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
     TfToken reprName;
   };
 
-  struct _Instancer {
+  struct _Instancer
+  {
     _Instancer()
     {}
     _Instancer(VtVec3fArray const &scale,
@@ -243,7 +247,8 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate {
 
     std::vector<SdfPath> prototypes;
   };
-  struct _DrawTarget {
+  struct _DrawTarget
+  {
   };
   std::map<SdfPath, _Mesh> _meshes;
   std::map<SdfPath, _Instancer> _instancers;

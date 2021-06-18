@@ -43,10 +43,12 @@ HdPh_BasisCurvesIndexBuilderComputation::HdPh_BasisCurvesIndexBuilderComputation
 void HdPh_BasisCurvesIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector *specs) const
 {
   // index buffer
-  if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic) {
+  if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic)
+  {
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec4, 1});
   }
-  else {
+  else
+  {
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec2, 1});
   }
 
@@ -65,9 +67,10 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
 
   int vertexIndex = 0;
   int curveIndex = 0;
-  TF_FOR_ALL(itCounts, vertexCounts)
+  TF_FOR_ALL (itCounts, vertexCounts)
   {
-    for (int i = 0; i < *itCounts; i += 2) {
+    for (int i = 0; i < *itCounts; i += 2)
+    {
       indices.push_back(GfVec2i(vertexIndex, vertexIndex + 1));
       vertexIndex += 2;
       primIndices.push_back(curveIndex);
@@ -79,15 +82,18 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
 
   // If have topology has indices set, map the generated indices
   // with the given indices.
-  if (!_topology->HasIndices()) {
+  if (!_topology->HasIndices())
+  {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
   }
-  else {
+  else
+  {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
     int maxIndex = curveIndices.size() - 1;
 
-    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
+    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum)
+    {
       const GfVec2i &line = indices[lineNum];
 
       int i0 = std::min(line[0], maxIndex);
@@ -120,24 +126,27 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   int vertexIndex = 0;  // Index of next vertex to emit
   int curveIndex = 0;   // Index of next curve to emit
   // For each curve
-  TF_FOR_ALL(itCounts, vertexCounts)
+  TF_FOR_ALL (itCounts, vertexCounts)
   {
     int v0 = vertexIndex;
     int v1;
     // Store first vert index incase we are wrapping
     const int firstVert = v0;
     ++vertexIndex;
-    for (int i = 1; i < *itCounts; ++i) {
+    for (int i = 1; i < *itCounts; ++i)
+    {
       v1 = vertexIndex;
       ++vertexIndex;
-      if (!skipFirstAndLastSegs || (i > 1 && i < (*itCounts) - 1)) {
+      if (!skipFirstAndLastSegs || (i > 1 && i < (*itCounts) - 1))
+      {
         indices.push_back(GfVec2i(v0, v1));
         // Map this line segment back to the curve it came from
         primIndices.push_back(curveIndex);
       }
       v0 = v1;
     }
-    if (wrap) {
+    if (wrap)
+    {
       indices.push_back(GfVec2i(v0, firstVert));
       primIndices.push_back(curveIndex);
     }
@@ -148,15 +157,18 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
 
   // If have topology has indices set, map the generated indices
   // with the given indices.
-  if (!_topology->HasIndices()) {
+  if (!_topology->HasIndices())
+  {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
   }
-  else {
+  else
+  {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
     int maxIndex = curveIndices.size() - 1;
 
-    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
+    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum)
+    {
       const GfVec2i &line = indices[lineNum];
 
       int i0 = std::min(line[0], maxIndex);
@@ -223,16 +235,18 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   bool wrap = _topology->GetCurveWrap() == HdTokens->periodic;
   int vStep;
   TfToken basis = _topology->GetCurveBasis();
-  if (basis == HdTokens->bezier) {
+  if (basis == HdTokens->bezier)
+  {
     vStep = 3;
   }
-  else {
+  else
+  {
     vStep = 1;
   }
 
   int vertexIndex = 0;
   int curveIndex = 0;
-  TF_FOR_ALL(itCounts, vertexCounts)
+  TF_FOR_ALL (itCounts, vertexCounts)
   {
     int count = *itCounts;
     // The first segment always eats up 4 verts, not just vstep, so to
@@ -241,19 +255,23 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
 
     // If we're closing the curve, make sure that we have enough
     // segments to wrap all the way back to the beginning.
-    if (wrap) {
+    if (wrap)
+    {
       numSegs = count / vStep;
     }
-    else {
+    else
+    {
       numSegs = ((count - 4) / vStep) + 1;
     }
 
-    for (int i = 0; i < numSegs; ++i) {
+    for (int i = 0; i < numSegs; ++i)
+    {
 
       // Set up curve segments based on curve basis
       GfVec4i seg;
       int offset = i * vStep;
-      for (int v = 0; v < 4; ++v) {
+      for (int v = 0; v < 4; ++v)
+      {
         // If there are not enough verts to round out the segment
         // just repeat the last vert.
         seg[v] = wrap ? vertexIndex + ((offset + v) % count) :
@@ -270,15 +288,18 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
 
   // If have topology has indices set, map the generated indices
   // with the given indices.
-  if (!_topology->HasIndices()) {
+  if (!_topology->HasIndices())
+  {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
   }
-  else {
+  else
+  {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
     int maxIndex = curveIndices.size() - 1;
 
-    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum) {
+    for (size_t lineNum = 0; lineNum < lineCount; ++lineNum)
+    {
       const GfVec4i &line = indices[lineNum];
 
       int i0 = std::min(line[0], maxIndex);
@@ -310,14 +331,18 @@ bool HdPh_BasisCurvesIndexBuilderComputation::Resolve()
 
   IndexAndPrimIndex result;
 
-  if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic) {
+  if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic)
+  {
     result = _BuildCubicIndexArray();
   }
-  else {
-    if (_topology->GetCurveWrap() == HdTokens->segmented) {
+  else
+  {
+    if (_topology->GetCurveWrap() == HdTokens->segmented)
+    {
       result = _BuildLinesIndexArray();
     }
-    else {
+    else
+    {
       result = _BuildLineSegmentIndexArray();
     }
   }

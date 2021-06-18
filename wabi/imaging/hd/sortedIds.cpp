@@ -36,7 +36,10 @@ WABI_NAMESPACE_BEGIN
 //
 static const size_t SORTED_PERCENT = 90;
 
-Hd_SortedIds::Hd_SortedIds() : _ids(), _sortedCount(0), _afterLastDeletePoint(INVALID_DELETE_POINT)
+Hd_SortedIds::Hd_SortedIds()
+  : _ids(),
+    _sortedCount(0),
+    _afterLastDeletePoint(INVALID_DELETE_POINT)
 {}
 
 Hd_SortedIds::Hd_SortedIds(Hd_SortedIds &&other)
@@ -83,31 +86,39 @@ void Hd_SortedIds::Remove(const SdfPath &id)
   // Try last removal point
   SdfPathVector::iterator idToRemove = _ids.end();
 
-  if (_afterLastDeletePoint != INVALID_DELETE_POINT) {
-    if (_ids[_afterLastDeletePoint] == id) {
+  if (_afterLastDeletePoint != INVALID_DELETE_POINT)
+  {
+    if (_ids[_afterLastDeletePoint] == id)
+    {
       idToRemove = _ids.begin() + _afterLastDeletePoint;
     }
   }
 
   // See if we can binary search sorted portion
-  if (idToRemove == _ids.end()) {
-    if (_sortedCount > 0) {
+  if (idToRemove == _ids.end())
+  {
+    if (_sortedCount > 0)
+    {
       // Check to see if id is somewhere within the sorted range
-      if (id <= _ids[_sortedCount - 1]) {
+      if (id <= _ids[_sortedCount - 1])
+      {
 
         SdfPathVector::iterator endSortedElements = _ids.begin() + _sortedCount;
         idToRemove = std::lower_bound(_ids.begin(), endSortedElements, id);
 
-        if (idToRemove != endSortedElements) {
+        if (idToRemove != endSortedElements)
+        {
           // Id could actually exist in the unsorted part
           // because of an insert.
           // Lower bound will then return an iterator to
           // the element after where id should be.
-          if (*idToRemove != id) {
+          if (*idToRemove != id)
+          {
             idToRemove = _ids.end();
           }
         }
-        else {
+        else
+        {
           // We checked that id should be in the sorted range
           // so lower_bound should return an iterator between
           // begin and endSortedElements - 1.
@@ -122,23 +133,29 @@ void Hd_SortedIds::Remove(const SdfPath &id)
   }
 
   // If all else fail, linear search through unsorted portion
-  if (idToRemove == _ids.end()) {
+  if (idToRemove == _ids.end())
+  {
     idToRemove = std::find(_ids.begin() + _sortedCount, _ids.end(), id);
   }
 
-  if (idToRemove != _ids.end()) {
-    if (*idToRemove == id) {
+  if (idToRemove != _ids.end())
+  {
+    if (*idToRemove == id)
+    {
       SdfPathVector::iterator lastElement = _ids.end();
       --lastElement;
 
-      if (idToRemove != lastElement) {
+      if (idToRemove != lastElement)
+      {
         std::iter_swap(idToRemove, lastElement);
 
-        if (std::distance(idToRemove, lastElement) == 1) {
+        if (std::distance(idToRemove, lastElement) == 1)
+        {
           // idToRemove points to the last element after pop_back()
           _afterLastDeletePoint = INVALID_DELETE_POINT;
         }
-        else {
+        else
+        {
           _afterLastDeletePoint = idToRemove - _ids.begin();
           ++_afterLastDeletePoint;
         }
@@ -150,7 +167,8 @@ void Hd_SortedIds::Remove(const SdfPath &id)
 
         _sortedCount = std::min(_sortedCount, static_cast<size_t>((idToRemove - _ids.begin())));
       }
-      else {
+      else
+      {
         _ids.pop_back();
         _afterLastDeletePoint = INVALID_DELETE_POINT;
 
@@ -171,12 +189,14 @@ void Hd_SortedIds::RemoveRange(size_t start, size_t end)
   size_t numIds = _ids.size();
   size_t numToRemove = (end - start + 1);
 
-  if (_sortedCount != numIds) {
+  if (_sortedCount != numIds)
+  {
     TF_CODING_ERROR("RemoveRange can only be called while list sorted\n");
     return;
   }
 
-  if (numToRemove == numIds) {
+  if (numToRemove == numIds)
+  {
     Clear();
     return;
   }
@@ -202,7 +222,8 @@ void Hd_SortedIds::_InsertSort()
   // skip already sorted items
   sortPosIt += _sortedCount;
 
-  while (sortPosIt != _ids.end()) {
+  while (sortPosIt != _ids.end())
+  {
     SdfPathVector::iterator insertPosIt = std::lower_bound(_ids.begin(), sortPosIt, *sortPosIt);
 
     std::rotate(insertPosIt, sortPosIt, sortPosIt + 1);
@@ -221,15 +242,18 @@ void Hd_SortedIds::_Sort()
 
   size_t numIds = _ids.size();
 
-  if (_sortedCount == numIds) {
+  if (_sortedCount == numIds)
+  {
     return;
   }
 
   //   (_sortedCount / numIds) * 100 > SORTED_PERCENT
-  if (100 * _sortedCount > SORTED_PERCENT * numIds) {
+  if (100 * _sortedCount > SORTED_PERCENT * numIds)
+  {
     _InsertSort();
   }
-  else {
+  else
+  {
     _FullSort();
   }
 

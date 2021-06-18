@@ -23,10 +23,12 @@ WABI_NAMESPACE_BEGIN
 class HdRprApi;
 struct HdRprApiEnvironmentLight;
 
-class HdRprDomeLight : public HdSprim {
+class HdRprDomeLight : public HdSprim
+{
 
  public:
-  HdRprDomeLight(SdfPath const &id) : HdSprim(id)
+  HdRprDomeLight(SdfPath const &id)
+    : HdSprim(id)
   {}
 
   void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;

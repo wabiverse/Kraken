@@ -189,7 +189,8 @@ VtValue const *VtDictionary::GetValueAtPath(vector<string> const &keyElems) cons
   // Descend dictionaries according to the key path elements.  If we fail
   // to find a dictionary element at any point, we can bail out.
   VtDictionary const *dict = this;
-  for (vector<string>::const_iterator i = start; i != last; ++i) {
+  for (vector<string>::const_iterator i = start; i != last; ++i)
+  {
     const_iterator j = dict->find(*i);
     if (j == dict->end() || !j->second.IsHolding<VtDictionary>())
       return NULL;
@@ -210,7 +211,8 @@ void VtDictionary::_SetValueAtPathImpl(vector<string>::const_iterator curKeyElem
   // the final value in place and return.
   vector<string>::const_iterator nextKeyElem = curKeyElem;
   ++nextKeyElem;
-  if (nextKeyElem == keyElemEnd) {
+  if (nextKeyElem == keyElemEnd)
+  {
     (*this)[*curKeyElem] = value;
     return;
   }
@@ -256,7 +258,8 @@ void VtDictionary::_EraseValueAtPathImpl(vector<string>::const_iterator curKeyEl
   // the element at this path and return.
   vector<string>::const_iterator nextKeyElem = curKeyElem;
   ++nextKeyElem;
-  if (nextKeyElem == keyElemEnd) {
+  if (nextKeyElem == keyElemEnd)
+  {
     erase(*curKeyElem);
     return;
   }
@@ -264,15 +267,18 @@ void VtDictionary::_EraseValueAtPathImpl(vector<string>::const_iterator curKeyEl
   // Otherwise we'll descend into an existing subdictionary at key *curKeyElem
   // if one exists.
   iterator i = find(*curKeyElem);
-  if (i != end() && i->second.IsHolding<VtDictionary>()) {
+  if (i != end() && i->second.IsHolding<VtDictionary>())
+  {
     VtDictionary newDict;
     i->second.Swap(newDict);
     newDict._EraseValueAtPathImpl(nextKeyElem, keyElemEnd);
     // store back potentially modified dict.
-    if (newDict.empty()) {
+    if (newDict.empty())
+    {
       erase(i);
     }
-    else {
+    else
+    {
       i->second.Swap(newDict);
     }
   }
@@ -297,7 +303,8 @@ void VtDictionary::EraseValueAtPath(vector<string> const &keyPath)
 
 void VtDictionary::_CreateDictIfNeeded()
 {
-  if (!_dictMap) {
+  if (!_dictMap)
+  {
     TfAutoMallocTag2 tag("Vt", "VtDictionary::_CreateDictIfNeeded");
     _dictMap.reset(new _Map());
   }
@@ -321,17 +328,20 @@ VtDictionary VtDictionaryOver(const VtDictionary &strong,
 
 void VtDictionaryOver(VtDictionary *strong, const VtDictionary &weak, bool coerceToWeakerOpinionType)
 {
-  if (!strong) {
+  if (!strong)
+  {
     TF_CODING_ERROR("VtDictionaryOver: NULL dictionary pointer.");
     return;
   }
   strong->insert(weak.begin(), weak.end());
 
-  if (coerceToWeakerOpinionType) {
-    TF_FOR_ALL(i, *strong)
+  if (coerceToWeakerOpinionType)
+  {
+    TF_FOR_ALL (i, *strong)
     {
       VtDictionary::const_iterator j = weak.find(i->first);
-      if (j != weak.end()) {
+      if (j != weak.end())
+      {
         i->second.CastToTypeOf(j->second);
       }
     }
@@ -340,26 +350,31 @@ void VtDictionaryOver(VtDictionary *strong, const VtDictionary &weak, bool coerc
 
 void VtDictionaryOver(const VtDictionary &strong, VtDictionary *weak, bool coerceToWeakerOpinionType)
 {
-  if (!weak) {
+  if (!weak)
+  {
     TF_CODING_ERROR("VtDictionaryOver: NULL dictionary pointer");
     return;
   }
-  if (coerceToWeakerOpinionType) {
-    TF_FOR_ALL(it, strong)
+  if (coerceToWeakerOpinionType)
+  {
+    TF_FOR_ALL (it, strong)
     {
       VtDictionary::iterator j = weak->find(it->first);
-      if (j == weak->end()) {
+      if (j == weak->end())
+      {
         weak->insert(*it);
       }
-      else {
+      else
+      {
         j->second = VtValue::CastToTypeOf(it->second, j->second);
       }
     }
   }
-  else {
+  else
+  {
     // Can't use map::insert here, because that doesn't overwrite
     // values for keys in strong that are already in weak.
-    TF_FOR_ALL(it, strong)
+    TF_FOR_ALL (it, strong)
     {
       (*weak)[it->first] = it->second;
     }
@@ -379,17 +394,19 @@ void VtDictionaryOverRecursive(VtDictionary *strong,
                                const VtDictionary &weak,
                                bool coerceToWeakerOpinionType)
 {
-  if (!strong) {
+  if (!strong)
+  {
     TF_CODING_ERROR("VtDictionaryOverRecursive: NULL dictionary pointer.");
     return;
   }
 
-  TF_FOR_ALL(it, weak)
+  TF_FOR_ALL (it, weak)
   {
     // If both dictionaries have values that are in turn dictionaries,
     // recurse:
     if (VtDictionaryIsHolding<VtDictionary>(*strong, it->first) &&
-        VtDictionaryIsHolding<VtDictionary>(weak, it->first)) {
+        VtDictionaryIsHolding<VtDictionary>(weak, it->first))
+    {
 
       const VtDictionary &weakSubDict = VtDictionaryGet<VtDictionary>(weak, it->first);
 
@@ -404,11 +421,13 @@ void VtDictionaryOverRecursive(VtDictionary *strong,
       // Swap the modified dict back into place.
       i->second.Swap(strongSubDict);
     }
-    else {
+    else
+    {
       // Insert will set strong with value from weak only if
       // strong does not already have a value for that key.
       std::pair<VtDictionary::iterator, bool> result = strong->insert(*it);
-      if (!result.second && coerceToWeakerOpinionType) {
+      if (!result.second && coerceToWeakerOpinionType)
+      {
         result.first->second.CastToTypeOf(it->second);
       }
     }
@@ -419,17 +438,19 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
                                VtDictionary *weak,
                                bool coerceToWeakerOpinionType)
 {
-  if (!weak) {
+  if (!weak)
+  {
     TF_CODING_ERROR("VtDictionaryOverRecursive: NULL dictionary pointer.");
     return;
   }
 
-  TF_FOR_ALL(it, strong)
+  TF_FOR_ALL (it, strong)
   {
     // If both dictionaries have values that are in turn dictionaries,
     // recurse:
     if (VtDictionaryIsHolding<VtDictionary>(strong, it->first) &&
-        VtDictionaryIsHolding<VtDictionary>(*weak, it->first)) {
+        VtDictionaryIsHolding<VtDictionary>(*weak, it->first))
+    {
 
       VtDictionary const &strongSubDict = VtDictionaryGet<VtDictionary>(strong, it->first);
 
@@ -444,17 +465,21 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
       // Swap the modified dict back into place.
       i->second.Swap(weakSubDict);
     }
-    else if (coerceToWeakerOpinionType) {
+    else if (coerceToWeakerOpinionType)
+    {
       // Else stomp over weak with strong but with type coersion.
       VtDictionary::iterator j = weak->find(it->first);
-      if (j == weak->end()) {
+      if (j == weak->end())
+      {
         weak->insert(*it);
       }
-      else {
+      else
+      {
         j->second = VtValue::CastToTypeOf(it->second, j->second);
       }
     }
-    else {
+    else
+    {
       // Else stomp over weak with strong
       (*weak)[it->first] = it->second;
     }
@@ -463,20 +488,23 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
 
 bool operator==(VtDictionary const &lhs, VtDictionary const &rhs)
 {
-  if (lhs.size() != rhs.size()) {
+  if (lhs.size() != rhs.size())
+  {
     return false;
   }
 
   // Iterate over all key-value pairs in the left-hand side dictionary
   // and check if they match up with the content of the right-hand
   // side dictionary.
-  TF_FOR_ALL(it, lhs)
+  TF_FOR_ALL (it, lhs)
   {
     VtDictionary::const_iterator it2 = rhs.find(it->first);
-    if (it2 == rhs.end()) {
+    if (it2 == rhs.end())
+    {
       return false;
     }
-    if (it->second != it2->second) {
+    if (it->second != it2->second)
+    {
       return false;
     }
   }
@@ -492,7 +520,7 @@ std::ostream &operator<<(std::ostream &stream, VtDictionary const &dict)
 {
   bool first = true;
   stream << '{';
-  TF_FOR_ALL(i, dict)
+  TF_FOR_ALL (i, dict)
   {
     if (first)
       first = false;

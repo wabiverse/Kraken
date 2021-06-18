@@ -65,7 +65,8 @@ class SdfAssetPath;
 /// have interpolation metadata.  It's common for authored widths and normals
 /// to have constant or varying interpolation.
 ///
-class UsdGeomPoints : public UsdGeomPointBased {
+class UsdGeomPoints : public UsdGeomPointBased
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdGeomPoints : public UsdGeomPointBased {
   /// Equivalent to UsdGeomPoints::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPoints(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim)
+  explicit UsdGeomPoints(const UsdPrim &prim = UsdPrim())
+    : UsdGeomPointBased(prim)
   {}
 
   /// Construct a UsdGeomPoints on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPoints(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPoints(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj)
+  explicit UsdGeomPoints(const UsdSchemaBase &schemaObj)
+    : UsdGeomPointBased(schemaObj)
   {}
 
   /// Destructor.

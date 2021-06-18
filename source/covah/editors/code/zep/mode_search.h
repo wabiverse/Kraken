@@ -7,10 +7,12 @@
 
 #include <zep/indexer.h>
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepWindow;
-class ZepMode_Search : public ZepMode {
+class ZepMode_Search : public ZepMode
+{
  public:
   ZepMode_Search(ZepEditor &editor, ZepWindow &previousWindow, ZepWindow &window, const ZepPath &startPath);
   ~ZepMode_Search();
@@ -42,18 +44,26 @@ class ZepMode_Search : public ZepMode {
   void ShowTreeResult();
   void UpdateTree();
 
-  enum class OpenType { Replace, VSplit, HSplit, Tab };
+  enum class OpenType
+  {
+    Replace,
+    VSplit,
+    HSplit,
+    Tab
+  };
   void OpenSelection(OpenType type);
 
  private:
   // List of lines in the file result, with last found char
-  struct SearchResult {
+  struct SearchResult
+  {
     uint32_t index = 0;
     uint32_t location = 0;
   };
 
   // A mapping from character distance to a list of lines
-  struct IndexSet {
+  struct IndexSet
+  {
     std::multimap<uint32_t, SearchResult> indices;
   };
 

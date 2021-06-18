@@ -7,7 +7,8 @@
 #include "zep/tab_window.h"
 #include "zep/window.h"
 
-namespace Zep {
+namespace Zep
+{
 
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
@@ -17,14 +18,16 @@ Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
   return start;
 }
 
-template<typename Iter> Iter select_randomly(Iter start, Iter end)
+template<typename Iter>
+Iter select_randomly(Iter start, Iter end)
 {
   static std::random_device rd;
   static std::mt19937 gen(rd());
   return select_randomly(start, end, gen);
 }
 
-ZepRegressExCommand::ZepRegressExCommand(ZepEditor &editor) : ZepExCommand(editor)
+ZepRegressExCommand::ZepRegressExCommand(ZepEditor &editor)
+  : ZepExCommand(editor)
 {
   timer_start(m_timer);
 }
@@ -43,18 +46,21 @@ void ZepRegressExCommand::Run(const std::vector<std::string> &tokens)
 {
   ZEP_UNUSED(tokens);
   m_enable = !m_enable;
-  if (m_enable) {
+  if (m_enable)
+  {
     GetEditor().RegisterCallback(this);
     m_windowOperationCount = 150;
   }
-  else {
+  else
+  {
     GetEditor().UnRegisterCallback(this);
   }
 }
 
 void ZepRegressExCommand::Notify(std::shared_ptr<ZepMessage> message)
 {
-  if (message->messageId == Msg::Tick) {
+  if (message->messageId == Msg::Tick)
+  {
     Tick();
   }
 }
@@ -62,17 +68,20 @@ void ZepRegressExCommand::Notify(std::shared_ptr<ZepMessage> message)
 void ZepRegressExCommand::Tick()
 {
   const int MaxTabWindows = 10;
-  if (!m_enable) {
+  if (!m_enable)
+  {
     return;
   }
 
   auto seconds = timer_get_elapsed_seconds(m_timer);
-  if (seconds < .05f) {
+  if (seconds < .05f)
+  {
     return;
   }
 
   m_windowOperationCount--;
-  if (m_windowOperationCount == 0) {
+  if (m_windowOperationCount == 0)
+  {
     m_enable = false;
   }
 
@@ -85,13 +94,16 @@ void ZepRegressExCommand::Tick()
   auto &tabWindows = GetEditor().GetTabWindows();
   auto &buffer = GetEditor().GetActiveTabWindow()->GetActiveWindow()->GetBuffer();
 
-  if (fRand3 > .5f && tabWindows.size() < MaxTabWindows) {
+  if (fRand3 > .5f && tabWindows.size() < MaxTabWindows)
+  {
     auto pNewTab = GetEditor().AddTabWindow();
     pNewTab->AddWindow(&buffer, nullptr, RegionLayoutType::HBox);
     GetEditor().SetCurrentTabWindow(pNewTab);
   }
-  else {
-    if (tabWindows.size() > 1) {
+  else
+  {
+    if (tabWindows.size() > 1)
+    {
       GetEditor().RemoveTabWindow(*select_randomly(tabWindows.begin(), tabWindows.end()));
     }
   }
@@ -100,10 +112,12 @@ void ZepRegressExCommand::Tick()
   auto &windows = pTab->GetWindows();
   auto pActiveWindow = pTab->GetActiveWindow();
 
-  if (fRand1 > .5f && windows.size() > 1) {
+  if (fRand1 > .5f && windows.size() > 1)
+  {
     pTab->RemoveWindow(*select_randomly(windows.begin(), windows.end()));
   }
-  else if (windows.size() < 10) {
+  else if (windows.size() < 10)
+  {
     pTab->AddWindow(&pActiveWindow->GetBuffer(),
                     *select_randomly(windows.begin(), windows.end()),
                     fRand2 > .5f ? RegionLayoutType::HBox : RegionLayoutType::VBox);

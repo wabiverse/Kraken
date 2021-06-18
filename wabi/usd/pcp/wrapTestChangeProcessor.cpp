@@ -38,11 +38,14 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable {
+class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable
+{
  public:
-  Pcp_PyTestChangeProcessor(const PcpCache *cache) : _cache(cache)
+  Pcp_PyTestChangeProcessor(const PcpCache *cache)
+    : _cache(cache)
   {}
 
   void Enter()
@@ -59,9 +62,10 @@ class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable {
 
   SdfPathVector GetSignificantChanges() const
   {
-    TF_FOR_ALL(it, _changes.GetCacheChanges())
+    TF_FOR_ALL (it, _changes.GetCacheChanges())
     {
-      if (it->first == _cache) {
+      if (it->first == _cache)
+      {
         return SdfPathVector(it->second.didChangeSignificantly.begin(),
                              it->second.didChangeSignificantly.end());
       }
@@ -71,9 +75,10 @@ class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable {
 
   SdfPathVector GetSpecChanges() const
   {
-    TF_FOR_ALL(it, _changes.GetCacheChanges())
+    TF_FOR_ALL (it, _changes.GetCacheChanges())
     {
-      if (it->first == _cache) {
+      if (it->first == _cache)
+      {
         return SdfPathVector(it->second.didChangeSpecs.begin(), it->second.didChangeSpecs.end());
       }
     }
@@ -82,9 +87,10 @@ class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable {
 
   SdfPathVector GetPrimChanges() const
   {
-    TF_FOR_ALL(it, _changes.GetCacheChanges())
+    TF_FOR_ALL (it, _changes.GetCacheChanges())
     {
-      if (it->first == _cache) {
+      if (it->first == _cache)
+      {
         return SdfPathVector(it->second.didChangePrims.begin(), it->second.didChangePrims.end());
       }
     }

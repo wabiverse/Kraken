@@ -63,7 +63,8 @@ class VtValue;
 /// asset resolution behavior by implementing a subclass of ArResolver.
 /// Clients may use #ArGetResolver to access the configured asset resolver.
 ///
-class ArResolver {
+class ArResolver
+{
  public:
   AR_API
   virtual ~ArResolver();
@@ -276,7 +277,8 @@ class ArResolver {
   std::shared_ptr<ArAsset> OpenAsset(const ArResolvedPath &resolvedPath);
 
   /// Enumeration of write modes for OpenAssetForWrite
-  enum class WriteMode {
+  enum class WriteMode
+  {
     /// Open asset for in-place updates. If the asset exists, its contents
     /// will not be discarded and writes may overwrite existing data.
     /// Otherwise, the asset will be created.

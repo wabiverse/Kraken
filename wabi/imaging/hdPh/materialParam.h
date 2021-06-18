@@ -42,12 +42,14 @@ WABI_NAMESPACE_BEGIN
 using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 
 // XXX: Docs
-class HdPh_MaterialParam final {
+class HdPh_MaterialParam final
+{
  public:
   typedef size_t ID;
 
   // Indicates the kind of material parameter.
-  enum ParamType {
+  enum ParamType
+  {
     // This is a shader specified fallback value that is
     // not connected to either a primvar or texture.
     ParamTypeFallback,

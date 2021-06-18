@@ -32,15 +32,35 @@ WABI_NAMESPACE_BEGIN
 
 class HdRprApiFramebuffer;
 
-namespace rif {
+namespace rif
+{
 
-enum FilterInputType { Color, Normal, LinearDepth, WorldCoordinate, ObjectId, Trans, Albedo, MaxInput };
+enum FilterInputType
+{
+  Color,
+  Normal,
+  LinearDepth,
+  WorldCoordinate,
+  ObjectId,
+  Trans,
+  Albedo,
+  MaxInput
+};
 
 using FilterParam = BOOST_NS::variant<int, float, std::string, GfVec2i, GfMatrix4f, rif_image>;
 
-enum class FilterType { None = -1, AIDenoise, Resample, EawDenoise, FIRST = AIDenoise, LAST = EawDenoise };
+enum class FilterType
+{
+  None = -1,
+  AIDenoise,
+  Resample,
+  EawDenoise,
+  FIRST = AIDenoise,
+  LAST = EawDenoise
+};
 
-class Filter {
+class Filter
+{
  public:
   static std::unique_ptr<Filter> Create(FilterType type,
                                         Context *rifContext,
@@ -69,7 +89,8 @@ class Filter {
   void Resolve();
 
  protected:
-  Filter(Context *rifContext) : m_rifContext(rifContext)
+  Filter(Context *rifContext)
+    : m_rifContext(rifContext)
   {}
 
   void DetachFilter();
@@ -86,16 +107,23 @@ class Filter {
 
   std::unique_ptr<rif::Image> m_retainedOutputImage;
 
-  struct InputTraits {
+  struct InputTraits
+  {
     rif_image rifImage;
     HdRprApiFramebuffer *rprFrameBuffer;
     float sigma;
 
     std::unique_ptr<rif::Image> retainedImage;
 
-    InputTraits() : rifImage(nullptr), rprFrameBuffer(nullptr), sigma(0.0f)
+    InputTraits()
+      : rifImage(nullptr),
+        rprFrameBuffer(nullptr),
+        sigma(0.0f)
     {}
-    InputTraits(rif_image rifImage, float sigma) : rifImage(rifImage), rprFrameBuffer(nullptr), sigma(sigma)
+    InputTraits(rif_image rifImage, float sigma)
+      : rifImage(rifImage),
+        rprFrameBuffer(nullptr),
+        sigma(sigma)
     {}
     InputTraits(HdRprApiFramebuffer *rprFrameBuffer, Context *context, float sigma)
       : rprFrameBuffer(rprFrameBuffer),
@@ -113,7 +141,13 @@ class Filter {
 
   rif_image m_outputImage = nullptr;
 
-  enum ChangeTracker { Clean = 0, DirtyAll = ~0u, DirtyIOImage = 1 << 0, DirtyParameters = 1 << 2 };
+  enum ChangeTracker
+  {
+    Clean = 0,
+    DirtyAll = ~0u,
+    DirtyIOImage = 1 << 0,
+    DirtyParameters = 1 << 2
+  };
   uint32_t m_dirtyFlags = DirtyAll;
 
   bool m_isAttached = false;

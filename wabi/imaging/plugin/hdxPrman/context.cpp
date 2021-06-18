@@ -61,14 +61,18 @@ void HdxPrman_RenderThreadCallback(HdxPrman_InteractiveContext *context)
   riley::RenderSettings settings;
   settings.mode = riley::RenderMode::k_Interactive;
   bool renderComplete = false;
-  while (!renderComplete) {
-    while (context->renderThread.IsPauseRequested()) {
-      if (context->renderThread.IsStopRequested()) {
+  while (!renderComplete)
+  {
+    while (context->renderThread.IsPauseRequested())
+    {
+      if (context->renderThread.IsStopRequested())
+      {
         break;
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    if (context->renderThread.IsStopRequested()) {
+    if (context->renderThread.IsStopRequested())
+    {
       break;
     }
     context->riley->Render(context->renderViews.size(), context->renderViews.data(), settings);
@@ -100,12 +104,14 @@ TF_DEFINE_ENV_SETTING(HDX_PRMAN_OSL_VERBOSE, 0, "override osl verbose in hdPrman
 void HdxPrman_InteractiveContext::_Initialize()
 {
   rix = RixGetContext();
-  if (!rix) {
+  if (!rix)
+  {
     TF_RUNTIME_ERROR("Could not initialize Rix API.");
     return;
   }
   ri = (RixRiCtl *)rix->GetRixInterface(k_RixRiCtl);
-  if (!ri) {
+  if (!ri)
+  {
     TF_RUNTIME_ERROR("Could not initialize Ri API.");
     return;
   }
@@ -133,7 +139,8 @@ void HdxPrman_InteractiveContext::_Initialize()
   mgr = (RixRileyManager *)rix->GetRixInterface(k_RixRileyManager);
   riley = mgr->CreateRiley(nullptr);
 
-  if (!riley) {
+  if (!riley)
+  {
     return;
   }
 
@@ -198,13 +205,16 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     unsigned nThreads = std::max(WorkGetConcurrencyLimit() - appThreads, 1u);
     // Check the environment
     unsigned nThreadsEnv = TfGetEnvSetting(HDX_PRMAN_NTHREADS);
-    if (nThreadsEnv > 0) {
+    if (nThreadsEnv > 0)
+    {
       nThreads = nThreadsEnv;
     }
-    else {
+    else
+    {
       // Otherwise check for a render setting
       VtValue vtThreads = renderDelegate->GetRenderSetting(HdRenderSettingsTokens->threadLimit).Cast<int>();
-      if (!vtThreads.IsEmpty()) {
+      if (!vtThreads.IsEmpty())
+      {
         nThreads = vtThreads.UncheckedGet<int>();
       }
     }
@@ -213,7 +223,8 @@ void HdxPrman_InteractiveContext::Begin(HdRenderDelegate *renderDelegate)
     // Set resolution from render settings
     const VtValue resolutionVal = renderDelegate->GetRenderSetting(HdPrmanRenderSettingsTokens->resolution);
 
-    if (resolutionVal.IsHolding<GfVec2i>()) {
+    if (resolutionVal.IsHolding<GfVec2i>())
+    {
       auto const &res = resolutionVal.UncheckedGet<GfVec2i>();
       resolution[0] = res[0];
       resolution[1] = res[1];
@@ -393,7 +404,8 @@ riley::IntegratorId HdxPrman_InteractiveContext::GetIntegrator()
 void HdxPrman_InteractiveContext::SetIntegrator(riley::IntegratorId iid)
 {
   integratorId = iid;
-  for (auto &view : renderViews) {
+  for (auto &view : renderViews)
+  {
     view.integratorId = integratorId;
   }
 }
@@ -405,7 +417,8 @@ void HdxPrman_InteractiveContext::StartRender()
 
   // Prepare Riley state for rendering.
   // Pass a valid riley callback pointer during IPR
-  if (!_didBeginRiley) {
+  if (!_didBeginRiley)
+  {
     riley->Begin();
     renderThread.StartThread();
     _didBeginRiley = true;
@@ -416,26 +429,32 @@ void HdxPrman_InteractiveContext::StartRender()
 
 void HdxPrman_InteractiveContext::End()
 {
-  if (renderThread.IsThreadRunning()) {
+  if (renderThread.IsThreadRunning())
+  {
     renderThread.StopThread();
   }
 
   // Reset to initial state.
-  if (riley) {
+  if (riley)
+  {
     riley->End();
   }
-  if (mgr) {
-    if (riley) {
+  if (mgr)
+  {
+    if (riley)
+    {
       mgr->DestroyRiley(riley);
     }
     mgr = nullptr;
   }
   riley = nullptr;
-  if (rix) {
+  if (rix)
+  {
     RixXcpt *rix_xcpt = (RixXcpt *)rix->GetRixInterface(k_RixXcpt);
     rix_xcpt->Unregister(&xcpt);
   }
-  if (ri) {
+  if (ri)
+  {
     ri->PRManEnd();
     ri = nullptr;
   }
@@ -443,7 +462,8 @@ void HdxPrman_InteractiveContext::End()
 
 void HdxPrman_InteractiveContext::SetFallbackLightsEnabled(bool enabled)
 {
-  if (_fallbackLightEnabled == enabled) {
+  if (_fallbackLightEnabled == enabled)
+  {
     return;
   }
   _fallbackLightEnabled = enabled;
@@ -464,7 +484,8 @@ void HdxPrman_InteractiveContext::SetFallbackLightsEnabled(bool enabled)
 
 void HdxPrman_InteractiveContext::StopRender()
 {
-  if (renderThread.IsRendering()) {
+  if (renderThread.IsRendering())
+  {
     riley->Stop();
     renderThread.StopRender();
   }
@@ -476,18 +497,23 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
   // or the display names don't match what we have.
   bool needCreate = false;
   bool needClear = false;
-  if (framebuffer.aovs.size() != aovBindings.size()) {
+  if (framebuffer.aovs.size() != aovBindings.size())
+  {
     needCreate = true;
   }
-  else {
-    for (size_t aov = 0; aov < aovBindings.size(); ++aov) {
-      if (aovBindings[aov].aovName != framebuffer.aovs[aov].name) {
+  else
+  {
+    for (size_t aov = 0; aov < aovBindings.size(); ++aov)
+    {
+      if (aovBindings[aov].aovName != framebuffer.aovs[aov].name)
+      {
         needCreate = true;
         break;
       }
       else if ((aovBindings[aov].aovName == HdAovTokens->color ||
                 aovBindings[aov].aovName == HdAovTokens->depth) &&
-               (aovBindings[aov].clearValue != framebuffer.aovs[aov].clearValue)) {
+               (aovBindings[aov].clearValue != framebuffer.aovs[aov].clearValue))
+      {
         // Request a framebuffer clear if the clear value in the aov
         // has changed from the framebuffer clear value.
         // We do this before StartRender() to avoid race conditions
@@ -500,7 +526,8 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
       }
     }
   }
-  if (!needCreate) {
+  if (!needCreate)
+  {
     return needClear;  // return val indicates whether render needs restart
   }
 
@@ -514,7 +541,8 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
   static const RtUString us_st("__st");
   static const RtUString us_primvars_st("primvars:st");
 
-  if (framebuffer.aovs.size()) {
+  if (framebuffer.aovs.size())
+  {
     framebuffer.aovs.clear();
     framebuffer.w = 0;
     framebuffer.h = 0;
@@ -531,7 +559,8 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
   RtParamList renderOutputParams;
 
   std::unordered_map<RtUString, RtUString> sourceNames;
-  for (size_t aov = 0; aov < aovBindings.size(); ++aov) {
+  for (size_t aov = 0; aov < aovBindings.size(); ++aov)
+  {
     std::string dataType;
     std::string sourceType;
     RtUString aovName(aovBindings[aov].aovName.GetText());
@@ -547,21 +576,26 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     // when it notices that the aovBinding's buffer format doesn't match
     // our framebuffer's format.
     int componentCount = HdGetComponentCount(aovFormat);
-    if (componentCount == 3) {
+    if (componentCount == 3)
+    {
       aovFormat = HdFormatFloat32Vec3;
     }
-    else if (componentCount == 4) {
+    else if (componentCount == 4)
+    {
       aovFormat = HdFormatFloat32Vec4;
     }
 
     // Prman only supports float, color, and integer
-    if (aovFormat == HdFormatFloat32) {
+    if (aovFormat == HdFormatFloat32)
+    {
       rt = riley::RenderOutputType::k_Float;
     }
-    else if (aovFormat == HdFormatFloat32Vec4 || aovFormat == HdFormatFloat32Vec3) {
+    else if (aovFormat == HdFormatFloat32Vec4 || aovFormat == HdFormatFloat32Vec3)
+    {
       rt = riley::RenderOutputType::k_Color;
     }
-    else if (aovFormat == HdFormatInt32) {
+    else if (aovFormat == HdFormatInt32)
+    {
       rt = riley::RenderOutputType::k_Integer;
     }
 
@@ -571,12 +605,15 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
     // might be an lpe or a standard aov name.
     // When no source is specified, we'll assume the aov name
     // is standard and also use that as the source.
-    for (auto it = aovBindings[aov].aovSettings.begin(); it != aovBindings[aov].aovSettings.end(); it++) {
-      if (it->first == _tokens->sourceName) {
+    for (auto it = aovBindings[aov].aovSettings.begin(); it != aovBindings[aov].aovSettings.end(); it++)
+    {
+      if (it->first == _tokens->sourceName)
+      {
         VtValue val = it->second;
         sourceName = RtUString(val.UncheckedGet<TfToken>().GetString().c_str());
       }
-      else if (it->first == _tokens->sourceType) {
+      else if (it->first == _tokens->sourceType)
+      {
         VtValue val = it->second;
         sourceType = val.UncheckedGet<TfToken>().GetString();
       }
@@ -584,7 +621,8 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
 
     // If the sourceType hints that the source is an lpe, make sure
     // it starts with "lpe:" as required by prman.
-    if (sourceType == RixStr.k_lpe.CStr()) {
+    if (sourceType == RixStr.k_lpe.CStr())
+    {
       std::string sn = sourceName.CStr();
       if (sn.find(RixStr.k_lpe.CStr()) == std::string::npos)
         sn = "lpe:" + sn;
@@ -593,43 +631,53 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
 
     // Map some standard hydra aov names to their equivalent prman names
     if (aovBindings[aov].aovName == HdAovTokens->color ||
-        aovBindings[aov].aovName.GetString() == us_ci.CStr()) {
+        aovBindings[aov].aovName.GetString() == us_ci.CStr())
+    {
       aovName = RixStr.k_Ci;
       sourceName = RixStr.k_Ci;
     }
-    else if (aovBindings[aov].aovName == HdAovTokens->depth) {
+    else if (aovBindings[aov].aovName == HdAovTokens->depth)
+    {
       sourceName = RixStr.k_z;
     }
-    else if (aovBindings[aov].aovName == HdAovTokens->normal) {
+    else if (aovBindings[aov].aovName == HdAovTokens->normal)
+    {
       sourceName = RixStr.k_Nn;
     }
-    else if (aovBindings[aov].aovName == HdAovTokens->primId) {
+    else if (aovBindings[aov].aovName == HdAovTokens->primId)
+    {
       aovName = RixStr.k_id;
       sourceName = RixStr.k_id;
     }
-    else if (aovBindings[aov].aovName == HdAovTokens->instanceId) {
+    else if (aovBindings[aov].aovName == HdAovTokens->instanceId)
+    {
       aovName = RixStr.k_id2;
       sourceName = RixStr.k_id2;
     }
-    else if (aovBindings[aov].aovName == HdAovTokens->elementId) {
+    else if (aovBindings[aov].aovName == HdAovTokens->elementId)
+    {
       aovName = RixStr.k_faceindex;
       sourceName = RixStr.k_faceindex;
     }
-    else if (aovName == us_primvars_st) {
+    else if (aovName == us_primvars_st)
+    {
       sourceName = us_st;
     }
 
     // If no sourceName is specified, assume name is a standard prman aov
-    if (sourceName.Empty()) {
+    if (sourceName.Empty())
+    {
       sourceName = aovName;
     }
 
     // z and integer types require zmin filter
-    if (sourceName == RixStr.k_z || rt == riley::RenderOutputType::k_Integer) {
+    if (sourceName == RixStr.k_z || rt == riley::RenderOutputType::k_Integer)
+    {
       filterName = RixStr.k_zmin;
     }
 
-    if (!sourceName.Empty()) {
+    if (!sourceName.Empty())
+    {
       // This is a workaround for an issue where we get an
       // unexpected duplicate in the aovBindings sometimes,
       // where the second entry lacks a sourceName.
@@ -637,9 +685,11 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
       // a result in the buffer
       sourceNames[RtUString(aovBindings[aov].aovName.GetText())] = sourceName;
     }
-    else {
+    else
+    {
       auto it = sourceNames.find(RtUString(aovBindings[aov].aovName.GetText()));
-      if (it != sourceNames.end()) {
+      if (it != sourceNames.end())
+      {
         sourceName = it->second;
       }
     }
@@ -650,7 +700,8 @@ bool HdxPrman_InteractiveContext::CreateDisplays(const HdRenderPassAovBindingVec
 
     // When a float4 color is requested, assume we require alpha as well.
     // This assumption is reflected in framebuffer.cpp HydraDspyData
-    if (rt == riley::RenderOutputType::k_Color && componentCount == 4) {
+    if (rt == riley::RenderOutputType::k_Color && componentCount == 4)
+    {
       renderOutputs.push_back(riley->CreateRenderOutput(RixStr.k_a,
                                                         riley::RenderOutputType::k_Float,
                                                         RixStr.k_a,

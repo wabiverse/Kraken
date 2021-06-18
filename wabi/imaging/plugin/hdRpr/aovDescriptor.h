@@ -35,7 +35,8 @@ TF_DECLARE_PUBLIC_TOKENS(HdRprAovTokens, HDRPR_AOV_TOKENS);
 
 const rpr::Aov kAovNone = static_cast<rpr::Aov>(-1);
 
-enum ComputedAovs {
+enum ComputedAovs
+{
   kNdcDepth = 0,
   kColorAlpha,
   kMaterialIdMask,
@@ -44,7 +45,8 @@ enum ComputedAovs {
   kComputedAovsCount
 };
 
-struct HdRprAovDescriptor {
+struct HdRprAovDescriptor
+{
   uint32_t id;
   HdFormat format;
   bool multiSampled;
@@ -64,7 +66,8 @@ struct HdRprAovDescriptor {
   {}
 };
 
-class HdRprAovRegistry {
+class HdRprAovRegistry
+{
  public:
   static HdRprAovRegistry &GetInstance()
   {
@@ -86,11 +89,14 @@ class HdRprAovRegistry {
   friend class TfSingleton<HdRprAovRegistry>;
 
  private:
-  struct AovNameLookupValue {
+  struct AovNameLookupValue
+  {
     uint32_t id;
     bool isComputed;
 
-    AovNameLookupValue(uint32_t id, bool isComputed = false) : id(id), isComputed(isComputed)
+    AovNameLookupValue(uint32_t id, bool isComputed = false)
+      : id(id),
+        isComputed(isComputed)
     {}
   };
   std::map<TfToken, AovNameLookupValue> m_aovNameLookup;

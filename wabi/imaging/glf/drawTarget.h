@@ -69,7 +69,8 @@ typedef std::shared_ptr<class GlfGLContext> GlfGLContextSharedPtr;
 /// are also available (by setting the format to GL_DEPTH_STENCIL and
 /// the internalFormat to GL_DEPTH24_STENCIL8)
 ///
-class GlfDrawTarget : public TfRefBase, public TfWeakBase {
+class GlfDrawTarget : public TfRefBase, public TfWeakBase
+{
  public:
   typedef GlfDrawTarget This;
 
@@ -89,7 +90,8 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase {
   GLF_API
   static GlfDrawTargetRefPtr New(GlfDrawTargetPtr const &drawtarget);
 
-  class Attachment : public GlfTexture {
+  class Attachment : public GlfTexture
+  {
    public:
     typedef TfDeclarePtrs<class Attachment>::RefPtr AttachmentRefPtr;
 
@@ -273,7 +275,8 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase {
   /// Weak/Ref-based container for the the map of texture attachments.
   /// Multiple GlfDrawTargets can jointly share their attachment textures :
   /// this construction allows the use of a RefPtr on the map of attachments.
-  class AttachmentsContainer : public TfRefBase, public TfWeakBase {
+  class AttachmentsContainer : public TfRefBase, public TfWeakBase
+  {
    public:
     AttachmentsMap attachments;
   };

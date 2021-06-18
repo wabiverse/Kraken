@@ -57,7 +57,8 @@ UsdRiRisIntegrator::~UsdRiRisIntegrator()
 /* static */
 UsdRiRisIntegrator UsdRiRisIntegrator::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisIntegrator();
   }
@@ -68,7 +69,8 @@ UsdRiRisIntegrator UsdRiRisIntegrator::Get(const UsdStagePtr &stage, const SdfPa
 UsdRiRisIntegrator UsdRiRisIntegrator::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisIntegrator");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisIntegrator();
   }
@@ -137,7 +139,8 @@ UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue,
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

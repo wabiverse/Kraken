@@ -20,7 +20,8 @@ limitations under the License.
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/imaging/hd/basisCurves.h"
 
-namespace rpr {
+namespace rpr
+{
 class Curve;
 }
 
@@ -31,7 +32,8 @@ class RprUsdMaterial;
 
 class HdRprMaterial;
 
-class HdRprBasisCurves : public HdRprBaseRprim<HdBasisCurves> {
+class HdRprBasisCurves : public HdRprBaseRprim<HdBasisCurves>
+{
 
  public:
   HdRprBasisCurves(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL);

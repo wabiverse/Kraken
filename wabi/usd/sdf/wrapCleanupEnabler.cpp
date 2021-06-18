@@ -31,7 +31,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // This class and its wrapping allow a client to do this:
 //
@@ -41,7 +42,8 @@ namespace {
 // Any specs modified in the with block will be removed if they are inert when
 // leaving the 'with' block.
 //
-class Sdf_PyCleanupEnabler {
+class Sdf_PyCleanupEnabler
+{
  public:
   // We don't create and destory the SdfCleanupEnabler object
   // on construction and destruction, but rather in the Enter/Exit methods.

@@ -47,12 +47,13 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static dict _ConvertDict(const JsObject &dictionary)
 {
   dict result;
-  TF_FOR_ALL(i, dictionary)
+  TF_FOR_ALL (i, dictionary)
   {
     const string &key = i->first;
     const JsValue &val = i->second;

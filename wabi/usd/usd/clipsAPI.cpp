@@ -46,7 +46,8 @@ UsdClipsAPI::~UsdClipsAPI()
 /* static */
 UsdClipsAPI UsdClipsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdClipsAPI();
   }
@@ -130,7 +131,8 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PUBLIC_TOKENS(UsdClipsAPIInfoKeys, USDCLIPS_INFO_KEYS);
 TF_DEFINE_PUBLIC_TOKENS(UsdClipsAPISetNames, USDCLIPS_SET_NAMES);
 
-namespace {
+namespace
+{
 
 TfToken _MakeKeyPath(const std::string &clipSet, const TfToken &clipInfoKey)
 {
@@ -146,13 +148,15 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
   Usd_ComputeClipSetDefinitionsForPrimIndex(prim.GetPrimIndex(), &clipSetDefs, &clipSetNames);
 
   auto it = std::find(clipSetNames.begin(), clipSetNames.end(), clipSet);
-  if (it == clipSetNames.end()) {
+  if (it == clipSetNames.end())
+  {
     TF_CODING_ERROR("No clip set named '%s'", clipSet.c_str());
     return false;
   }
 
   const size_t clipDefIndex = std::distance(clipSetNames.begin(), it);
-  if (!TF_VERIFY(clipDefIndex < clipSetDefs.size())) {
+  if (!TF_VERIFY(clipDefIndex < clipSetDefs.size()))
+  {
     return false;
   }
 
@@ -163,29 +167,34 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
 }  // namespace
 
 #define USD_CLIPS_API_SETTER(FnName, InArg, MetadataKey) \
-  if (GetPath() == SdfPath::AbsoluteRootPath()) { \
+  if (GetPath() == SdfPath::AbsoluteRootPath()) \
+  { \
     /* Special-case to pre-empt coding errors. */ \
     return false; \
   } \
   return FnName(InArg, UsdClipsAPISetNames->default_);
 
 #define USD_CLIPS_API_GETTER(FnName, OutArg, MetadataKey) \
-  if (GetPath() == SdfPath::AbsoluteRootPath()) { \
+  if (GetPath() == SdfPath::AbsoluteRootPath()) \
+  { \
     /* Special-case to pre-empt coding errors.  */ \
     return false; \
   } \
   return FnName(OutArg, UsdClipsAPISetNames->default_);
 
 #define USD_CLIPS_API_CLIPSET_SETTER(FnName, InArg, ClipSetArg, InfoKey) \
-  if (GetPath() == SdfPath::AbsoluteRootPath()) { \
+  if (GetPath() == SdfPath::AbsoluteRootPath()) \
+  { \
     /* Special-case to pre-empt coding errors. */ \
     return false; \
   } \
-  if (ClipSetArg.empty()) { \
+  if (ClipSetArg.empty()) \
+  { \
     TF_CODING_ERROR("Empty clip set name not allowed"); \
     return false; \
   } \
-  if (!TfIsValidIdentifier(ClipSetArg)) { \
+  if (!TfIsValidIdentifier(ClipSetArg)) \
+  { \
     TF_CODING_ERROR( \
       "Clip set name must be a valid identifier " \
       "(got '%s')", \
@@ -195,15 +204,18 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
   return GetPrim().SetMetadataByDictKey(UsdTokens->clips, _MakeKeyPath(ClipSetArg, InfoKey), InArg);
 
 #define USD_CLIPS_API_CLIPSET_GETTER(FnName, OutArg, ClipSetArg, InfoKey) \
-  if (GetPath() == SdfPath::AbsoluteRootPath()) { \
+  if (GetPath() == SdfPath::AbsoluteRootPath()) \
+  { \
     /* Special-case to pre-empt coding errors.  */ \
     return false; \
   } \
-  if (ClipSetArg.empty()) { \
+  if (ClipSetArg.empty()) \
+  { \
     TF_CODING_ERROR("Empty clip set name not allowed"); \
     return false; \
   } \
-  if (!TfIsValidIdentifier(ClipSetArg)) { \
+  if (!TfIsValidIdentifier(ClipSetArg)) \
+  { \
     TF_CODING_ERROR( \
       "Clip set name must be a valid identifier " \
       "(got '%s')", \
@@ -214,7 +226,8 @@ bool _ComputeClipSetDefinition(const UsdPrim &prim,
 
 bool UsdClipsAPI::GetClips(VtDictionary *clips) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return false;
   }
@@ -223,7 +236,8 @@ bool UsdClipsAPI::GetClips(VtDictionary *clips) const
 
 bool UsdClipsAPI::SetClips(const VtDictionary &clips)
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return false;
   }
@@ -232,7 +246,8 @@ bool UsdClipsAPI::SetClips(const VtDictionary &clips)
 
 bool UsdClipsAPI::GetClipSets(SdfStringListOp *clipSets) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return false;
   }
@@ -244,7 +259,8 @@ bool UsdClipsAPI::GetClipSets(SdfStringListOp *clipSets) const
 
 bool UsdClipsAPI::SetClipSets(const SdfStringListOp &clipSets)
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return false;
   }
@@ -268,13 +284,15 @@ bool UsdClipsAPI::GetClipAssetPaths(VtArray<SdfAssetPath> *assetPaths) const
 
 VtArray<SdfAssetPath> UsdClipsAPI::ComputeClipAssetPaths(const std::string &clipSet) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return {};
   }
 
   Usd_ClipSetDefinition clipSetDef;
-  if (!_ComputeClipSetDefinition(GetPrim(), clipSet, &clipSetDef) || !clipSetDef.clipAssetPaths) {
+  if (!_ComputeClipSetDefinition(GetPrim(), clipSet, &clipSetDef) || !clipSetDef.clipAssetPaths)
+  {
     return {};
   }
 
@@ -287,11 +305,13 @@ VtArray<SdfAssetPath> UsdClipsAPI::ComputeClipAssetPaths(const std::string &clip
     clipSetDef.sourceLayerStack->GetLayers()[clipSetDef.indexOfLayerWhereAssetPathsFound];
   const ArResolverContextBinder binder(clipSetDef.sourceLayerStack->GetIdentifier().pathResolverContext);
 
-  for (SdfAssetPath &p : *clipSetDef.clipAssetPaths) {
+  for (SdfAssetPath &p : *clipSetDef.clipAssetPaths)
+  {
     const std::string anchoredPath = SdfComputeAssetPathRelativeToLayer(sourceLayer, p.GetAssetPath());
     const std::string resolvedPath = resolver.Resolve(anchoredPath);
 
-    if (!resolvedPath.empty()) {
+    if (!resolvedPath.empty())
+    {
       p = SdfAssetPath(p.GetAssetPath(), resolvedPath);
     }
   }
@@ -334,20 +354,24 @@ bool UsdClipsAPI::GetClipManifestAssetPath(SdfAssetPath *assetPath, const std::s
 SdfLayerRefPtr UsdClipsAPI::GenerateClipManifest(const std::string &clipSetName,
                                                  bool writeBlocksForClipsWithMissingValues) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+  if (GetPath() == SdfPath::AbsoluteRootPath())
+  {
     // Special-case to pre-empt coding errors.
     return SdfLayerRefPtr();
   }
 
   Usd_ClipSetDefinition clipSetDef;
-  if (!_ComputeClipSetDefinition(GetPrim(), clipSetName, &clipSetDef)) {
+  if (!_ComputeClipSetDefinition(GetPrim(), clipSetName, &clipSetDef))
+  {
     return SdfLayerRefPtr();
   }
 
   std::string err;
   Usd_ClipSetRefPtr clipSet = Usd_ClipSet::New(clipSetName, clipSetDef, &err);
-  if (!clipSet) {
-    if (!err.empty()) {
+  if (!clipSet)
+  {
+    if (!err.empty())
+    {
       TF_CODING_ERROR("Invalid clips in clip set '%s': %s", clipSetName.c_str(), err.c_str());
     }
     return SdfLayerRefPtr();
@@ -495,7 +519,8 @@ bool UsdClipsAPI::GetClipTemplateStride(double *clipTemplateStride, const std::s
 
 bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride)
 {
-  if (clipTemplateStride <= 0) {
+  if (clipTemplateStride <= 0)
+  {
     TF_CODING_ERROR(
       "Invalid clipTemplateStride %f for prim <%s>. "
       "clipTemplateStride must be greater than 0.",
@@ -509,7 +534,8 @@ bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride)
 
 bool UsdClipsAPI::SetClipTemplateStride(const double clipTemplateStride, const std::string &clipSet)
 {
-  if (clipTemplateStride <= 0) {
+  if (clipTemplateStride <= 0)
+  {
     TF_CODING_ERROR(
       "Invalid clipTemplateStride %f for prim <%s>. "
       "clipTemplateStride must be greater than 0.",

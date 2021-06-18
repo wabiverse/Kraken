@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 /// OpenGL implementation of GPU device.
 /// Note that there is only one global opengl context / device.
 ///
-class HgiGLDevice final {
+class HgiGLDevice final
+{
  public:
   HGIGL_API
   HgiGLDevice();

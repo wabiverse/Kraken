@@ -54,7 +54,8 @@
 
 // 7.8 Format conversion of integer types
 
-typedef struct {
+typedef struct
+{
   intmax_t quot;
   intmax_t rem;
 } imaxdiv_t;
@@ -294,7 +295,8 @@ _inline
   result.quot = numer / denom;
   result.rem = numer % denom;
 
-  if (numer < 0 && result.rem > 0) {
+  if (numer < 0 && result.rem > 0)
+  {
     // did division wrong; must fix up
     ++result.quot;
     result.rem -= denom;

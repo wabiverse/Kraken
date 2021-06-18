@@ -29,7 +29,8 @@
 /**
  * Stores the state of modifier keys.
  * Discriminates between left and right modifier keys. */
-struct ANCHOR_ModifierKeys {
+struct ANCHOR_ModifierKeys
+{
   /**
    * Constructor. */
   ANCHOR_ModifierKeys();

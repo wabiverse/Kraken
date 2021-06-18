@@ -85,7 +85,8 @@ static void _FixupStringNames(string *name)
   /* Replace occurrences of stringRttiName with "string" */
 
   string::size_type pos = 0;
-  while ((pos = name->find(*from, pos)) != string::npos) {
+  while ((pos = name->find(*from, pos)) != string::npos)
+  {
     name->replace(pos, from->size(), *to);
     pos += to->size();
 
@@ -96,29 +97,34 @@ static void _FixupStringNames(string *name)
     // but on clang this comes in as Foo<std::__1::basic_string<...> >.
     // In both cases, we want to end the outer loop with Foo<std::string>.
     string::size_type numSpaces = 0;
-    for (string::size_type i = pos, e = name->size(); i != e && (*name)[i] == ' '; ++i, ++numSpaces) {
+    for (string::size_type i = pos, e = name->size(); i != e && (*name)[i] == ' '; ++i, ++numSpaces)
+    {
     }
     name->erase(pos, numSpaces);
   }
 
   pos = 0;
-  while ((pos = name->find("std::", pos)) != string::npos) {
+  while ((pos = name->find("std::", pos)) != string::npos)
+  {
     name->erase(pos, 5);
   }
 
 #if defined(ARCH_OS_WINDOWS)
   pos = 0;
-  while ((pos = name->find("class", pos)) != string::npos) {
+  while ((pos = name->find("class", pos)) != string::npos)
+  {
     name->erase(pos, 6);
   }
 
   pos = 0;
-  while ((pos = name->find("struct", pos)) != string::npos) {
+  while ((pos = name->find("struct", pos)) != string::npos)
+  {
     name->erase(pos, 7);
   }
 
   pos = 0;
-  while ((pos = name->find("enum", pos)) != string::npos) {
+  while ((pos = name->find("enum", pos)) != string::npos)
+  {
     name->erase(pos, 5);
   }
 #endif
@@ -135,7 +141,8 @@ static void _StripPxrInternalNamespace(string *name)
   constexpr const char nsQualifier[] = ARCH_STRINGIZE(WABI_INTERNAL_NS) "::";
   constexpr const auto nsQualifierSize = sizeof(nsQualifier);
   size_t lastNsQualifierEndPos = name->find(nsQualifier);
-  while (lastNsQualifierEndPos != std::string::npos) {
+  while (lastNsQualifierEndPos != std::string::npos)
+  {
     name->erase(lastNsQualifierEndPos, nsQualifierSize - 1);
     lastNsQualifierEndPos = name->find(nsQualifier);
   }
@@ -154,7 +161,8 @@ static void _StripPxrInternalNamespace(string *name)
 static bool _DemangleOld(string *mangledTypeName)
 {
   int status;
-  if (char *realName = abi::__cxa_demangle(mangledTypeName->c_str(), NULL, NULL, &status)) {
+  if (char *realName = abi::__cxa_demangle(mangledTypeName->c_str(), NULL, NULL, &status))
+  {
     *mangledTypeName = string(realName);
     free(realName);
     _FixupStringNames(mangledTypeName);
@@ -186,9 +194,11 @@ static bool _DemangleNewRaw(string *mangledTypeName)
   int status;
   bool ok = false;
 
-  if (char *realName = abi::__cxa_demangle(input.c_str(), NULL, NULL, &status)) {
+  if (char *realName = abi::__cxa_demangle(input.c_str(), NULL, NULL, &status))
+  {
     size_t len = strlen(realName);
-    if (len > 1 && realName[len - 1] == '*') {
+    if (len > 1 && realName[len - 1] == '*')
+    {
       *mangledTypeName = string(&realName[0], len - 1);
       ok = true;
     }
@@ -201,7 +211,8 @@ static bool _DemangleNewRaw(string *mangledTypeName)
 
 static bool _DemangleNew(string *mangledTypeName)
 {
-  if (_DemangleNewRaw(mangledTypeName)) {
+  if (_DemangleNewRaw(mangledTypeName))
+  {
     _FixupStringNames(mangledTypeName);
     return true;
   }
@@ -219,8 +230,10 @@ bool ArchDemangle(string *mangledTypeName)
 {
 #  if defined(_PARANOID_CHECK_MODE)
   string copy = *mangledTypeName;
-  if (_DemangleNew(mangledTypeName)) {
-    if (_DemangleOld(&copy) && copy != *mangledTypeName) {
+  if (_DemangleNew(mangledTypeName))
+  {
+    if (_DemangleOld(&copy) && copy != *mangledTypeName)
+    {
       fprintf(stderr,
               "ArchDemangle: disagreement between old and new\n"
               "demangling schemes: '%s' (old way) vs '%s' (new way)\n",
@@ -235,7 +248,8 @@ bool ArchDemangle(string *mangledTypeName)
   }
   return false;
 #  else
-  if (_DemangleNew(mangledTypeName)) {
+  if (_DemangleNew(mangledTypeName))
+  {
 #    if WABI_USE_NAMESPACES
     _StripPxrInternalNamespace(mangledTypeName);
 #    endif
@@ -249,7 +263,8 @@ bool ArchDemangle(string *mangledTypeName)
 void Arch_DemangleFunctionName(string *mangledFunctionName)
 {
   if (mangledFunctionName->size() > 2 && (*mangledFunctionName)[0] == '_' &&
-      (*mangledFunctionName)[1] == 'Z') {
+      (*mangledFunctionName)[1] == 'Z')
+  {
     // Note: _DemangleNew isn't doing the correct thing with
     //       function names, use the old codepath.
     _DemangleOld(mangledFunctionName);
@@ -289,9 +304,11 @@ string ArchGetDemangled(const string &typeName)
 
 string ArchGetDemangled(const char *typeName)
 {
-  if (typeName) {
+  if (typeName)
+  {
     string r = typeName;
-    if (ArchDemangle(&r)) {
+    if (ArchDemangle(&r))
+    {
       return r;
     }
   }

@@ -48,7 +48,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 void SetAxisHelper(GfRotation &rotation, const GfVec3d &axis)
 {

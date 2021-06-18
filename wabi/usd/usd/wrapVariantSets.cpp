@@ -43,7 +43,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static object _HasAuthoredVariantSelection(const UsdVariantSet &self)
 {

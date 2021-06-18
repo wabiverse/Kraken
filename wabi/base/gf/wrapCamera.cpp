@@ -44,7 +44,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static float _GetHorizontalFieldOfView(const GfCamera &camera)
 {

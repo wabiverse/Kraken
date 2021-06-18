@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GlfSimpleMaterial final {
+class GlfSimpleMaterial final
+{
  public:
   GLF_API
   GlfSimpleMaterial();

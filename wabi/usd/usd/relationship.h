@@ -124,10 +124,12 @@ typedef std::vector<UsdRelationship> UsdRelationshipVector;
 ///     the model's payload, forwards to prims useful to a client, the set of
 ///     which may vary depending on the model's configured VariantSets.
 ///
-class UsdRelationship : public UsdProperty {
+class UsdRelationship : public UsdProperty
+{
  public:
   /// Construct an invalid relationship.
-  UsdRelationship() : UsdProperty(_Null<UsdRelationship>())
+  UsdRelationship()
+    : UsdProperty(_Null<UsdRelationship>())
   {}
 
   /// \name Editing Relationships at Current EditTarget
@@ -243,7 +245,8 @@ class UsdRelationship : public UsdProperty {
   friend class UsdObject;
   friend class UsdPrim;
   friend class Usd_PrimData;
-  template<class A0, class A1> friend struct UsdPrim_TargetFinder;
+  template<class A0, class A1>
+  friend struct UsdPrim_TargetFinder;
 
   UsdRelationship(const Usd_PrimDataHandle &prim, const SdfPath &proxyPrimPath, const TfToken &relName)
     : UsdProperty(UsdTypeRelationship, prim, proxyPrimPath, relName)

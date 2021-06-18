@@ -89,12 +89,14 @@ bool UsdDracoAttributeFactory::IsHalf(const std::type_info &typeInfo)
 
 SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAttributeDescriptor &descriptor)
 {
-  switch (descriptor.GetShape()) {
+  switch (descriptor.GetShape())
+  {
     case UsdDracoAttributeDescriptor::MATRIX:
       // All matrices in USD have elements of type double.
       if (descriptor.GetDataType() != draco::DT_FLOAT64)
         break;
-      switch (descriptor.GetNumComponents()) {
+      switch (descriptor.GetNumComponents())
+      {
         case 4:  // 2-by-2 matrix.
           return SdfValueTypeNames->Matrix2dArray;
         case 9:  // 3-by-3 matrix.
@@ -109,7 +111,8 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
       // Quaternion has four entries.
       if (descriptor.GetNumComponents() != 4)
         break;
-      switch (descriptor.GetDataType()) {
+      switch (descriptor.GetDataType())
+      {
         // USD halfs are stored as Draco 16-bit ints.
         case draco::DT_INT16:
           if (descriptor.GetIsHalf())
@@ -124,9 +127,11 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
       }
       break;
     case UsdDracoAttributeDescriptor::VECTOR:
-      switch (descriptor.GetNumComponents()) {
+      switch (descriptor.GetNumComponents())
+      {
         case 1:  // Scalar.
-          switch (descriptor.GetDataType()) {
+          switch (descriptor.GetDataType())
+          {
             case draco::DT_UINT8:
               return SdfValueTypeNames->UCharArray;
             case draco::DT_INT32:
@@ -153,7 +158,8 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 2:  // Length-two vector.
-          switch (descriptor.GetDataType()) {
+          switch (descriptor.GetDataType())
+          {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int2Array;
             // USD halfs are stored as Draco 16-bit ints.
@@ -170,7 +176,8 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 3:  // Length-three vector.
-          switch (descriptor.GetDataType()) {
+          switch (descriptor.GetDataType())
+          {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int3Array;
             // USD halfs are stored as Draco 16-bit ints.
@@ -187,7 +194,8 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 4:  // Length-four vector.
-          switch (descriptor.GetDataType()) {
+          switch (descriptor.GetDataType())
+          {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int4Array;
             // USD halfs are stored as Draco 16-bit ints.

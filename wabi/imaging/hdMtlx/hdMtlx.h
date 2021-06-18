@@ -38,7 +38,8 @@
 #include <set>
 #include <unordered_map>
 
-namespace MaterialX {
+namespace MaterialX
+{
 using DocumentPtr = std::shared_ptr<class Document>;
 using StringMap = std::unordered_map<std::string, std::string>;
 }  // namespace MaterialX

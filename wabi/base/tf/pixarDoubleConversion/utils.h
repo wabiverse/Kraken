@@ -155,18 +155,21 @@ typedef uint16_t uc16;
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 static const int kCharSize = sizeof(char);
 
 // Returns the maximum of the two parameters.
-template<typename T> static T Max(T a, T b)
+template<typename T>
+static T Max(T a, T b)
 {
   return a < b ? b : a;
 }
 
 // Returns the minimum of the two parameters.
-template<typename T> static T Min(T a, T b)
+template<typename T>
+static T Min(T a, T b)
 {
   return a < b ? a : b;
 }
@@ -179,11 +182,17 @@ inline int StrLength(const char *string)
 }
 
 // This is a simplified version of V8's Vector class.
-template<typename T> class Vector {
+template<typename T>
+class Vector
+{
  public:
-  Vector() : start_(NULL), length_(0)
+  Vector()
+    : start_(NULL),
+      length_(0)
   {}
-  Vector(T *data, int len) : start_(data), length_(len)
+  Vector(T *data, int len)
+    : start_(data),
+      length_(len)
   {
     ASSERT(len == 0 || (len > 0 && data != NULL));
   }
@@ -241,9 +250,12 @@ template<typename T> class Vector {
 // Helper class for building result strings in a character buffer. The
 // purpose of the class is to use safe operations that checks the
 // buffer bounds on all operations in debug mode.
-class StringBuilder {
+class StringBuilder
+{
  public:
-  StringBuilder(char *buffer, int buffer_size) : buffer_(buffer, buffer_size), position_(0)
+  StringBuilder(char *buffer, int buffer_size)
+    : buffer_(buffer, buffer_size),
+      position_(0)
   {}
 
   ~StringBuilder()
@@ -301,7 +313,8 @@ class StringBuilder {
   // nothing is added to the builder.
   void AddPadding(char c, int count)
   {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
       AddCharacter(c);
     }
   }
@@ -355,7 +368,8 @@ class StringBuilder {
 // you can use BitCast to cast one pointer type to another.  This confuses gcc
 // enough that it can no longer see that you have cast one pointer type to
 // another thus avoiding the warning.
-template<class Dest, class Source> inline Dest BitCast(const Source &source)
+template<class Dest, class Source>
+inline Dest BitCast(const Source &source)
 {
   // Compile time assertion: sizeof(Dest) == sizeof(Source)
   // A compile error here means your Dest and Source have different sizes.
@@ -367,7 +381,8 @@ template<class Dest, class Source> inline Dest BitCast(const Source &source)
   return dest;
 }
 
-template<class Dest, class Source> inline Dest BitCast(Source *source)
+template<class Dest, class Source>
+inline Dest BitCast(Source *source)
 {
   return BitCast<Dest>(reinterpret_cast<uintptr_t>(source));
 }

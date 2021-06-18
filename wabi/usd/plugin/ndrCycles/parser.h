@@ -28,7 +28,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Ndr Parser for cycles shader nodes.
-class NdrCyclesParserPlugin : public NdrParserPlugin {
+class NdrCyclesParserPlugin : public NdrParserPlugin
+{
  public:
   /**
    * @brief Creates an instance of NdrCyclesParserPlugin.

@@ -20,7 +20,8 @@ WABI_NAMESPACE_BEGIN
 
 class RprUsdMaterial;
 
-class HdRprMaterial final : public HdMaterial {
+class HdRprMaterial final : public HdMaterial
+{
  public:
   HdRprMaterial(SdfPath const &id);
 

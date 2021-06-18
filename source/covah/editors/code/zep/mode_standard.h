@@ -2,9 +2,11 @@
 
 #include "mode.h"
 
-namespace Zep {
+namespace Zep
+{
 
-class ZepMode_Standard : public ZepMode {
+class ZepMode_Standard : public ZepMode
+{
  public:
   ZepMode_Standard(ZepEditor &editor);
   ~ZepMode_Standard();

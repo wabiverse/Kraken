@@ -58,15 +58,18 @@ NdrNode::NdrNode(const NdrIdentifier &identifier,
   // Build a map of input/output name -> NdrProperty.
   // This could also be done lazily if needed.
   size_t numProperties = _properties.size();
-  for (size_t i = 0; i < numProperties; i++) {
+  for (size_t i = 0; i < numProperties; i++)
+  {
     NdrPropertyConstPtr property = _properties[i].get();
     const TfToken &propertyName = property->GetName();
 
-    if (property->IsOutput()) {
+    if (property->IsOutput())
+    {
       _outputNames.push_back(propertyName);
       _outputs.insert({propertyName, property});
     }
-    else {
+    else
+    {
       _inputNames.push_back(propertyName);
       _inputs.insert({propertyName, property});
     }
@@ -105,7 +108,8 @@ NdrPropertyConstPtr NdrNode::GetInput(const TfToken &inputName) const
 {
   NdrPropertyPtrMap::const_iterator it = _inputs.find(inputName);
 
-  if (it != _inputs.end()) {
+  if (it != _inputs.end())
+  {
     return it->second;
   }
 
@@ -116,7 +120,8 @@ NdrPropertyConstPtr NdrNode::GetOutput(const TfToken &outputName) const
 {
   NdrPropertyPtrMap::const_iterator it = _outputs.find(outputName);
 
-  if (it != _outputs.end()) {
+  if (it != _outputs.end())
+  {
     return it->second;
   }
 

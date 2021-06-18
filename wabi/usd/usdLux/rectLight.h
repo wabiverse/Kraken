@@ -65,7 +65,8 @@ class SdfAssetPath;
 /// position, a texture file's min coordinates should be at (+X, +Y) and
 /// max coordinates at (-X, -Y).
 ///
-class UsdLuxRectLight : public UsdLuxLight {
+class UsdLuxRectLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdLuxRectLight : public UsdLuxLight {
   /// Equivalent to UsdLuxRectLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxRectLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxRectLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxRectLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxRectLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxRectLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxRectLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

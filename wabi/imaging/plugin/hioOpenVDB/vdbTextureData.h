@@ -50,7 +50,8 @@ class HioOpenVDB_TextureData_DenseGridHolderBase;
 /// Implements HioFieldTextureData to read grid with given name from
 /// OpenVDB file at given path.
 ///
-class HioOpenVDB_TextureData final : public HioFieldTextureData {
+class HioOpenVDB_TextureData final : public HioFieldTextureData
+{
  public:
   using Base = HioFieldTextureData;
 

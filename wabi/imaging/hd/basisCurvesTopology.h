@@ -73,7 +73,8 @@ WABI_NAMESPACE_BEGIN
 ///  optional index buffer to map the generated indices to actual indices in
 ///  the vertex buffer.
 ///
-class HdBasisCurvesTopology : public HdTopology {
+class HdBasisCurvesTopology : public HdTopology
+{
  public:
   HD_API
   HdBasisCurvesTopology();

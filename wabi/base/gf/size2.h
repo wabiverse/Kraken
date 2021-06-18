@@ -55,7 +55,8 @@ WABI_NAMESPACE_BEGIN
 /// Usage of GfSize2 is similar to that of GfVec2i, except that all
 /// mathematical operations are componentwise (including multiplication).
 ///
-class GfSize2 {
+class GfSize2
+{
  public:
   /// Default constructor initializes components to zero.
   GfSize2()

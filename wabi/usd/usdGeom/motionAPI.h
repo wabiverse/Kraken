@@ -61,7 +61,8 @@ class SdfAssetPath;
 /// (GetVelocityScaleAttr()) for controlling how motion-blur samples should
 /// be computed by velocity-consuming schemas.
 ///
-class UsdGeomMotionAPI : public UsdAPISchemaBase {
+class UsdGeomMotionAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -77,13 +78,15 @@ class UsdGeomMotionAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdGeomMotionAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomMotionAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdGeomMotionAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdGeomMotionAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomMotionAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomMotionAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdGeomMotionAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

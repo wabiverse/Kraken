@@ -50,7 +50,8 @@ UsdRiRiLightFilterAPI::~UsdRiRiLightFilterAPI()
 /* static */
 UsdRiRiLightFilterAPI UsdRiRiLightFilterAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRiLightFilterAPI();
   }
@@ -172,7 +173,8 @@ UsdAttribute UsdRiRiLightFilterAPI::CreateRiSpecularAttr(VtValue const &defaultV
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

@@ -55,25 +55,42 @@ using HioImageSharedPtr = std::shared_ptr<class HioImage>;
 ///
 /// The class allows basic access to texture image file data.
 ///
-class HioImage {
+class HioImage
+{
  public:
   /// Specifies whether to treat the image origin as the upper-left corner
   /// or the lower left
-  enum ImageOriginLocation { OriginUpperLeft, OriginLowerLeft };
+  enum ImageOriginLocation
+  {
+    OriginUpperLeft,
+    OriginLowerLeft
+  };
 
   /// Specifies the source color space in which the texture is encoded, with
   /// "Auto" indicating the texture reader should determine color space based
   /// on hints from the image (e.g. file type, number of channels, image
   /// metadata)
-  enum SourceColorSpace { Raw, SRGB, Auto };
+  enum SourceColorSpace
+  {
+    Raw,
+    SRGB,
+    Auto
+  };
 
   /// \class StorageSpec
   ///
   /// Describes the memory layout and storage of a texture image
   ///
-  class StorageSpec {
+  class StorageSpec
+  {
    public:
-    StorageSpec() : width(0), height(0), depth(0), format(HioFormatInvalid), flipped(false), data(0)
+    StorageSpec()
+      : width(0),
+        height(0),
+        depth(0),
+        format(HioFormatInvalid),
+        flipped(false),
+        data(0)
     {}
 
     int width, height, depth;
@@ -156,7 +173,8 @@ class HioImage {
 
   /// \name Metadata
   /// {@
-  template<typename T> bool GetMetadata(TfToken const &key, T *value) const;
+  template<typename T>
+  bool GetMetadata(TfToken const &key, T *value) const;
 
   virtual bool GetMetadata(TfToken const &key, VtValue *value) const = 0;
 
@@ -174,22 +192,27 @@ class HioImage {
   virtual bool _OpenForWriting(std::string const &filename) = 0;
 };
 
-template<typename T> bool HioImage::GetMetadata(TfToken const &key, T *value) const
+template<typename T>
+bool HioImage::GetMetadata(TfToken const &key, T *value) const
 {
   VtValue any;
-  if (!GetMetadata(key, &any) || !any.IsHolding<T>()) {
+  if (!GetMetadata(key, &any) || !any.IsHolding<T>())
+  {
     return false;
   }
   *value = any.UncheckedGet<T>();
   return true;
 }
 
-class HIO_API HioImageFactoryBase : public TfType::FactoryBase {
+class HIO_API HioImageFactoryBase : public TfType::FactoryBase
+{
  public:
   virtual HioImageSharedPtr New() const = 0;
 };
 
-template<class T> class HioImageFactory : public HioImageFactoryBase {
+template<class T>
+class HioImageFactory : public HioImageFactoryBase
+{
  public:
   virtual HioImageSharedPtr New() const
   {

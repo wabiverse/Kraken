@@ -51,7 +51,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Mesh::HdPrman_Mesh(SdfPath const &id) : BASE(id)
+HdPrman_Mesh::HdPrman_Mesh(SdfPath const &id)
+  : BASE(id)
 {}
 
 HdDirtyBits HdPrman_Mesh::GetInitialDirtyBitsMask() const
@@ -84,19 +85,24 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   // If the geometry has been partitioned into subsets, add an
   // additional subset representing anything left over.
   *geomSubsets = topology.GetGeomSubsets();
-  if (!geomSubsets->empty()) {
+  if (!geomSubsets->empty())
+  {
     const int numFaces = topology.GetNumFaces();
     std::vector<bool> faceMask(numFaces, true);
     size_t numUnusedFaces = faceMask.size();
-    for (HdGeomSubset const &subset : *geomSubsets) {
-      for (int index : subset.indices) {
-        if (TF_VERIFY(index < numFaces) && faceMask[index]) {
+    for (HdGeomSubset const &subset : *geomSubsets)
+    {
+      for (int index : subset.indices)
+      {
+        if (TF_VERIFY(index < numFaces) && faceMask[index])
+        {
           faceMask[index] = false;
           numUnusedFaces--;
         }
       }
     }
-    if (numUnusedFaces) {
+    if (numUnusedFaces)
+    {
       geomSubsets->push_back(HdGeomSubset());
       HdGeomSubset &unusedSubset = geomSubsets->back();
       unusedSubset.type = HdGeomSubset::TypeFaceSet;
@@ -106,8 +112,10 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
       unusedSubset.materialId = SdfPath();
       unusedSubset.indices.resize(numUnusedFaces);
       size_t count = 0;
-      for (size_t i = 0; i < faceMask.size() && count < numUnusedFaces; ++i) {
-        if (faceMask[i]) {
+      for (size_t i = 0; i < faceMask.size() && count < numUnusedFaces; ++i)
+      {
+        if (faceMask[i])
+        {
           unusedSubset.indices[count] = i;
           count++;
         }
@@ -131,11 +139,14 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   }
 
   primvars.SetTimeSamples(points.count, &points.times[0]);
-  for (size_t i = 0; i < points.count; ++i) {
-    if (points.values[i].size() == npoints) {
+  for (size_t i = 0; i < points.count; ++i)
+  {
+    if (points.values[i].size() == npoints)
+    {
       primvars.SetPointDetail(RixStr.k_P, (RtPoint3 *)points.values[i].cdata(), RtDetailType::k_vertex, i);
     }
-    else {
+    else
+    {
       TF_WARN(
         "<%s> primvar 'points' size (%zu) did not match "
         "expected (%zu)",
@@ -148,46 +159,55 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   // Topology.
   primvars.SetIntegerDetail(RixStr.k_Ri_nvertices, nverts.cdata(), RtDetailType::k_uniform);
   primvars.SetIntegerDetail(RixStr.k_Ri_vertices, verts.cdata(), RtDetailType::k_facevarying);
-  if (topology.GetScheme() == PxOsdOpenSubdivTokens->catmullClark) {
+  if (topology.GetScheme() == PxOsdOpenSubdivTokens->catmullClark)
+  {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_catmullclark);
   }
-  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->loop) {
+  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->loop)
+  {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_loop);
   }
-  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->bilinear) {
+  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->bilinear)
+  {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_bilinear);
   }
-  else {  // if scheme == PxOsdOpenSubdivTokens->none
+  else
+  {  // if scheme == PxOsdOpenSubdivTokens->none
     *primType = RixStr.k_Ri_PolygonMesh;
   }
 
   VtIntArray holeIndices = topology.GetHoleIndices();
-  if (*primType == RixStr.k_Ri_PolygonMesh && !holeIndices.empty()) {
+  if (*primType == RixStr.k_Ri_PolygonMesh && !holeIndices.empty())
+  {
     // Poly meshes with holes are promoted to bilinear subdivs, to
     // make riley respect the holes.
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_bilinear);
   }
 
-  if (IsDoubleSided(sceneDelegate)) {
+  if (IsDoubleSided(sceneDelegate))
+  {
     primvars.SetInteger(RixStr.k_Ri_Sides, 2);
   }
   // Orientation, aka winding order.
   // Because PRMan uses a left-handed coordinate system, and USD/Hydra
   // use a right-handed coordinate system, the meaning of orientation
   // also flips when we convert between them.  So LH<->RH.
-  if (topology.GetOrientation() == PxOsdOpenSubdivTokens->leftHanded) {
+  if (topology.GetOrientation() == PxOsdOpenSubdivTokens->leftHanded)
+  {
     primvars.SetString(RixStr.k_Ri_Orientation, RixStr.k_rh);
   }
-  else {
+  else
+  {
     primvars.SetString(RixStr.k_Ri_Orientation, RixStr.k_lh);
   }
 
   // Subdiv tags
-  if (*primType == RixStr.k_Ri_SubdivisionMesh) {
+  if (*primType == RixStr.k_Ri_SubdivisionMesh)
+  {
     std::vector<RtUString> tagNames;
     std::vector<RtInt> tagArgCounts;
     std::vector<RtInt> tagIntArgs;
@@ -195,7 +215,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     std::vector<RtToken> tagStringArgs;
 
     // Holes
-    if (!holeIndices.empty()) {
+    if (!holeIndices.empty())
+    {
       tagNames.push_back(RixStr.k_hole);
       tagArgCounts.push_back(holeIndices.size());  // num int args
       tagArgCounts.push_back(0);                   // num float args
@@ -209,8 +230,10 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     VtIntArray creaseLengths = osdTags.GetCreaseLengths();
     VtIntArray creaseIndices = osdTags.GetCreaseIndices();
     VtFloatArray creaseWeights = osdTags.GetCreaseWeights();
-    if (!creaseIndices.empty()) {
-      for (int creaseLength : creaseLengths) {
+    if (!creaseIndices.empty())
+    {
+      for (int creaseLength : creaseLengths)
+      {
         tagNames.push_back(RixStr.k_crease);
         tagArgCounts.push_back(creaseLength);  // num int args
         tagArgCounts.push_back(1);             // num float args
@@ -223,7 +246,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     // Corners
     VtIntArray cornerIndices = osdTags.GetCornerIndices();
     VtFloatArray cornerWeights = osdTags.GetCornerWeights();
-    if (cornerIndices.size()) {
+    if (cornerIndices.size())
+    {
       tagNames.push_back(RixStr.k_corner);
       tagArgCounts.push_back(cornerIndices.size());  // num int args
       tagArgCounts.push_back(cornerWeights.size());  // num float args
@@ -234,10 +258,12 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
 
     // Vertex Interpolation (aka interpolateboundary)
     TfToken vInterp = osdTags.GetVertexInterpolationRule();
-    if (vInterp.IsEmpty()) {
+    if (vInterp.IsEmpty())
+    {
       vInterp = PxOsdOpenSubdivTokens->edgeAndCorner;
     }
-    if (UsdRiConvertToRManInterpolateBoundary(vInterp) != 0) {
+    if (UsdRiConvertToRManInterpolateBoundary(vInterp) != 0)
+    {
       tagNames.push_back(RixStr.k_interpolateboundary);
       tagArgCounts.push_back(0);  // num int args
       tagArgCounts.push_back(0);  // num float args
@@ -246,7 +272,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
 
     // Face-varying Interpolation (aka facevaryinginterpolateboundary)
     TfToken fvInterp = osdTags.GetFaceVaryingInterpolationRule();
-    if (fvInterp.IsEmpty()) {
+    if (fvInterp.IsEmpty())
+    {
       fvInterp = PxOsdOpenSubdivTokens->cornersPlus1;
     }
     tagNames.push_back(RixStr.k_facevaryinginterpolateboundary);
@@ -257,7 +284,8 @@ RtParamList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
 
     // Triangle subdivision rule
     TfToken triSubdivRule = osdTags.GetTriangleSubdivision();
-    if (triSubdivRule == PxOsdOpenSubdivTokens->smooth) {
+    if (triSubdivRule == PxOsdOpenSubdivTokens->smooth)
+    {
       tagNames.push_back(RixStr.k_smoothtriangles);
       tagArgCounts.push_back(1);  // num int args
       tagArgCounts.push_back(0);  // num float args

@@ -53,7 +53,8 @@ using namespace std;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 ////////////////////////////////////////////////////////////////////////
 // Python -> C++ TfType conversion
@@ -69,7 +70,8 @@ static TfType _GetTfTypeFromPython(PyObject *p)
 }
 
 // A from-Python converter that uses the _GetTfTypeFromPython function.
-struct _TfTypeFromPython {
+struct _TfTypeFromPython
+{
   _TfTypeFromPython()
   {
     converter::registry::insert(&_Convertible, &_Construct, type_id<TfType>());
@@ -78,7 +80,8 @@ struct _TfTypeFromPython {
  private:
   static void *_Convertible(PyObject *p)
   {
-    if (_GetTfTypeFromPython(p).IsUnknown()) {
+    if (_GetTfTypeFromPython(p).IsUnknown())
+    {
       TfPyThrowTypeError(
         TfStringPrintf("cannot convert %s to TfType; has that type "
                        "been defined as a TfType?",
@@ -154,10 +157,12 @@ static void wrapTestCppBase()
 
 static string _Repr(const TfType &t)
 {
-  if (t.IsUnknown()) {
+  if (t.IsUnknown())
+  {
     return TF_PY_REPR_PREFIX + "Type.Unknown";
   }
-  else {
+  else
+  {
     // Use TfPyRepr() to get Python-style escaping.
     return TF_PY_REPR_PREFIX + "Type.FindByName(" + TfPyRepr(t.GetTypeName()) + ")";
   }
@@ -211,7 +216,8 @@ static TfType _FindByPythonClass(const boost::python::object &classObj)
   // string typename.  Rather than returning the unknown type (assuming
   // of course that we never declare Python's string type as a TfType),
   // we instead direct the caller to use FindByName().
-  if (TfPyString_Check(classObj.ptr())) {
+  if (TfPyString_Check(classObj.ptr()))
+  {
     TfPyThrowTypeError(
       "String passed to Tf.Type.Find() -- you probably "
       "want Tf.Type.FindByName() instead");
@@ -228,7 +234,7 @@ static void _DumpTypeHierarchyRecursive(TfType t, int depth = 0)
 
   printf("%s%s\n", indent.c_str(), t.GetTypeName().c_str());
   std::vector<TfType> derived = t.GetDirectlyDerivedTypes();
-  TF_FOR_ALL(it, derived)
+  TF_FOR_ALL (it, derived)
   {
     _DumpTypeHierarchyRecursive(*it, depth + 1);
   }

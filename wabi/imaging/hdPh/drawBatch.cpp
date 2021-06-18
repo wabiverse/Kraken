@@ -48,7 +48,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPh_DrawBatch::HdPh_DrawBatch(HdPhDrawItemInstance *drawItemInstance) : _shaderHash(0)
+HdPh_DrawBatch::HdPh_DrawBatch(HdPhDrawItemInstance *drawItemInstance)
+  : _shaderHash(0)
 {}
 
 /*virtual*/
@@ -72,15 +73,19 @@ void HdPh_DrawBatch::DrawItemInstanceChanged(HdPhDrawItemInstance const * /*inst
 void HdPh_DrawBatch::SetEnableTinyPrimCulling(bool tinyPrimCulling)
 {}
 
-namespace {
+namespace
+{
 inline bool isAggregated(HdBufferArrayRangeSharedPtr const &rangeA,
                          HdBufferArrayRangeSharedPtr const &rangeB)
 {
-  if (rangeA) {
+  if (rangeA)
+  {
     return rangeA->IsAggregatedWith(rangeB);
   }
-  else {
-    if (!rangeB) {
+  else
+  {
+    if (!rangeB)
+    {
       // can batch together if both ranges are empty.
       return true;
     }
@@ -91,7 +96,8 @@ inline bool isAggregated(HdBufferArrayRangeSharedPtr const &rangeA,
 
 bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
 {
-  if (!TF_VERIFY(!_drawItemInstances.empty())) {
+  if (!TF_VERIFY(!_drawItemInstances.empty()))
+  {
     return false;
   }
 
@@ -103,13 +109,15 @@ bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
     _drawItemInstances.front()->GetDrawItem());
   TF_VERIFY(batchItem);
 
-  if (_IsAggregated(drawItem, batchItem)) {
+  if (_IsAggregated(drawItem, batchItem))
+  {
     drawItemInstance->SetBatchIndex(_drawItemInstances.size());
     drawItemInstance->SetBatch(this);
     _drawItemInstances.push_back(drawItemInstance);
     return true;
   }
-  else {
+  else
+  {
     return false;
   }
 }
@@ -117,7 +125,8 @@ bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
 /*static*/
 bool HdPh_DrawBatch::_IsAggregated(HdPhDrawItem const *drawItem0, HdPhDrawItem const *drawItem1)
 {
-  if (!HdPhSurfaceShader::CanAggregate(drawItem0->GetMaterialShader(), drawItem1->GetMaterialShader())) {
+  if (!HdPhSurfaceShader::CanAggregate(drawItem0->GetMaterialShader(), drawItem1->GetMaterialShader()))
+  {
     return false;
   }
 
@@ -130,10 +139,13 @@ bool HdPh_DrawBatch::_IsAggregated(HdPhDrawItem const *drawItem0, HdPhDrawItem c
       isAggregated(drawItem0->GetElementPrimvarRange(), drawItem1->GetElementPrimvarRange()) &&
       isAggregated(drawItem0->GetFaceVaryingPrimvarRange(), drawItem1->GetFaceVaryingPrimvarRange()) &&
       isAggregated(drawItem0->GetConstantPrimvarRange(), drawItem1->GetConstantPrimvarRange()) &&
-      isAggregated(drawItem0->GetInstanceIndexRange(), drawItem1->GetInstanceIndexRange())) {
+      isAggregated(drawItem0->GetInstanceIndexRange(), drawItem1->GetInstanceIndexRange()))
+  {
     int numLevels = drawItem0->GetInstancePrimvarNumLevels();
-    for (int i = 0; i < numLevels; ++i) {
-      if (!isAggregated(drawItem0->GetInstancePrimvarRange(i), drawItem1->GetInstancePrimvarRange(i))) {
+    for (int i = 0; i < numLevels; ++i)
+    {
+      if (!isAggregated(drawItem0->GetInstancePrimvarRange(i), drawItem1->GetInstancePrimvarRange(i)))
+      {
         return false;
       }
     }
@@ -151,21 +163,26 @@ bool HdPh_DrawBatch::Rebuild()
 
   // Ensure all batch state initialized from items/instances is refreshed.
   HdPhDrawItemInstance *batchItem = const_cast<HdPhDrawItemInstance *>(instances.front());
-  if (!TF_VERIFY(batchItem->GetDrawItem()->GetGeometricShader())) {
+  if (!TF_VERIFY(batchItem->GetDrawItem()->GetGeometricShader()))
+  {
     return false;
   }
   _Init(batchItem);
-  if (!TF_VERIFY(!_drawItemInstances.empty())) {
+  if (!TF_VERIFY(!_drawItemInstances.empty()))
+  {
     return false;
   }
 
   // Start this loop at i=1 because the 0th element was pushed via _Init
-  for (size_t i = 1; i < instances.size(); ++i) {
+  for (size_t i = 1; i < instances.size(); ++i)
+  {
     HdPhDrawItemInstance *item = const_cast<HdPhDrawItemInstance *>(instances[i]);
-    if (!TF_VERIFY(item->GetDrawItem()->GetGeometricShader())) {
+    if (!TF_VERIFY(item->GetDrawItem()->GetGeometricShader()))
+    {
       return false;
     }
-    if (!Append(item)) {
+    if (!Append(item))
+    {
       TF_DEBUG(HDPH_DRAW_BATCH).Msg("   Rebuild failed for batch %p\n", (void *)(this));
       return false;
     }
@@ -221,13 +238,15 @@ HdPh_DrawBatch::_DrawingProgram &HdPh_DrawBatch::_GetDrawingProgram(
 
   // XXX: if this function appears to be expensive, we might consider caching
   //      programs by shaderHash.
-  if (!_program.GetGLSLProgram() || shaderChanged) {
+  if (!_program.GetGLSLProgram() || shaderChanged)
+  {
 
     _program.SetSurfaceShader(surfaceShader);
 
     // Try to compile the shader and if it fails to compile we go back
     // to use the specified fallback surface shader.
-    if (!_program.CompileShader(firstDrawItem, indirect, resourceRegistry)) {
+    if (!_program.CompileShader(firstDrawItem, indirect, resourceRegistry))
+    {
 
       // While the code should gracefully handle shader compilation
       // failures, it is also undesirable for shaders to silently fail.
@@ -261,7 +280,8 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_geometricShader) {
+  if (!_geometricShader)
+  {
     TF_CODING_ERROR("Can not compile a shader without a geometric shader");
     return false;
   }
@@ -274,7 +294,7 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
   // also (surface, renderPass) shaders use their bindings
   HdPhShaderCodeSharedPtrVector shaders = GetComposedShaders();
 
-  TF_FOR_ALL(it, shaders)
+  TF_FOR_ALL (it, shaders)
   {
     (*it)->AddBindings(&customBindings);
   }
@@ -292,9 +312,11 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
     // ask registry to see if there's already compiled program
     HdInstance<HdPhGLSLProgramSharedPtr> programInstance = resourceRegistry->RegisterGLSLProgram(hash);
 
-    if (programInstance.IsFirstInstance()) {
+    if (programInstance.IsFirstInstance())
+    {
       HdPhGLSLProgramSharedPtr glslProgram = codeGen.Compile(resourceRegistry.get());
-      if (glslProgram && _Link(glslProgram)) {
+      if (glslProgram && _Link(glslProgram))
+      {
         // store the program into the program registry.
         programInstance.SetValue(glslProgram);
       }
@@ -302,10 +324,12 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
 
     _glslProgram = programInstance.GetValue();
 
-    if (_glslProgram) {
+    if (_glslProgram)
+    {
       _resourceBinder.IntrospectBindings(_glslProgram->GetProgram());
     }
-    else {
+    else
+    {
       // Failed to compile and link a valid glsl program.
       return false;
     }

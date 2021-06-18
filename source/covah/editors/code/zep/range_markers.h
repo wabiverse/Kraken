@@ -12,12 +12,15 @@
 // Range Markers are adornments over the text; they represent any additional marks over the
 // existing text buffer. For example, tooltips, underlines, inline widgets, etc. Try :ZTestMarkers
 // 5 or :ZTestMarkers 3 after selecting a region of text
-namespace Zep {
+namespace Zep
+{
 struct IWidget;
 class ZepBuffer;
 
-namespace RangeMarkerType {
-enum {
+namespace RangeMarkerType
+{
+enum
+{
   Mark = (1 << 0),
   Search = (1 << 1),
   Widget = (1 << 2),
@@ -26,10 +29,15 @@ enum {
 };
 };
 
-enum class FlashType { Flash };
+enum class FlashType
+{
+  Flash
+};
 
-namespace RangeMarkerDisplayType {
-enum {
+namespace RangeMarkerDisplayType
+{
+enum
+{
   Hidden = 0,
   Underline = (1 << 0),        // Underline the range
   Background = (1 << 1),       // Add a background to the range
@@ -45,9 +53,16 @@ enum {
 };
 };
 
-enum class ToolTipPos { AboveLine = 0, BelowLine = 1, RightLine = 2, Count = 3 };
+enum class ToolTipPos
+{
+  AboveLine = 0,
+  BelowLine = 1,
+  RightLine = 2,
+  Count = 3
+};
 
-struct RangeMarker : std::enable_shared_from_this<RangeMarker> {
+struct RangeMarker : std::enable_shared_from_this<RangeMarker>
+{
   RangeMarker(ZepBuffer &buffer);
 
   bool ContainsLocation(GlyphIterator loc) const;

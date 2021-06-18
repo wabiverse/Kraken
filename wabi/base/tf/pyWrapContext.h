@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 
 // This is used internally by the Tf python wrapping infrastructure.
 
-class Tf_PyWrapContextManager : public boost::noncopyable {
+class Tf_PyWrapContextManager : public boost::noncopyable
+{
 
  public:
   typedef Tf_PyWrapContextManager This;

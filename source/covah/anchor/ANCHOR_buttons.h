@@ -29,7 +29,8 @@
 /**
  * This struct stores the state of the mouse buttons.
  * Buttons can be set using button masks. */
-struct ANCHOR_Buttons {
+struct ANCHOR_Buttons
+{
   /**
    * Constructor. */
   ANCHOR_Buttons();

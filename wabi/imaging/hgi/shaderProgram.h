@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 ///   Holds handles to shader functions for each shader stage.</li>
 /// </ul>
 ///
-struct HgiShaderProgramDesc {
+struct HgiShaderProgramDesc
+{
   HGI_API
   HgiShaderProgramDesc();
 
@@ -76,7 +77,8 @@ inline bool operator!=(const HgiShaderProgramDesc &lhs, const HgiShaderProgramDe
 /// when the program is detroyed, because only the client knows if the shader
 /// functions are used by other shader programs.
 ///
-class HgiShaderProgram {
+class HgiShaderProgram
+{
  public:
   HGI_API
   virtual ~HgiShaderProgram();

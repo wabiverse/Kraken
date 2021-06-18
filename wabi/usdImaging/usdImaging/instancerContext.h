@@ -39,7 +39,8 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapt
 /// Object used by instancer prim adapters to pass along context
 /// about the instancer and instance prim to prototype prim adapters.
 ///
-class UsdImagingInstancerContext {
+class UsdImagingInstancerContext
+{
  public:
   /// The cachePath of the instancer.
   SdfPath instancerCachePath;

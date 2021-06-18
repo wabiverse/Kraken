@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 /// that is is not available, all OpenGL calls become no-ops, but all other work
 /// is performed as usual.
 ///
-class Hd_TestDriver final {
+class Hd_TestDriver final
+{
  public:
   Hd_TestDriver();
   Hd_TestDriver(HdReprSelector const &reprToken);

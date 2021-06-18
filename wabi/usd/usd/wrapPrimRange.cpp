@@ -36,13 +36,17 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 class Usd_PyPrimRangeIterator;
 
-class Usd_PyPrimRange {
+class Usd_PyPrimRange
+{
  public:
-  Usd_PyPrimRange(UsdPrim root) : _rng(root), _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+  Usd_PyPrimRange(UsdPrim root)
+    : _rng(root),
+      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
   {}
 
   Usd_PyPrimRange(UsdPrim root, Usd_PrimFlagsPredicate predicate)
@@ -146,7 +150,8 @@ class Usd_PyPrimRange {
   UsdPrim _startPrim;
 };
 
-class Usd_PyPrimRangeIterator {
+class Usd_PyPrimRangeIterator
+{
  public:
   explicit Usd_PyPrimRangeIterator(Usd_PyPrimRange const *range)
     : range(range),
@@ -176,12 +181,14 @@ class Usd_PyPrimRangeIterator {
     // If the current prim is invalid, we can't use iter and must raise an
     // exception.
     _RaiseIfAtEnd();
-    if (!curPrim) {
+    if (!curPrim)
+    {
       PyErr_SetString(PyExc_RuntimeError,
                       TfStringPrintf("Iterator points to %s", curPrim.GetDescription().c_str()).c_str());
       throw_error_already_set();
     }
-    if (didFirst) {
+    if (didFirst)
+    {
       ++iter;
       _RaiseIfAtEnd();
     }
@@ -193,7 +200,8 @@ class Usd_PyPrimRangeIterator {
 
   void _RaiseIfAtEnd() const
   {
-    if (iter == range->_rng.end()) {
+    if (iter == range->_rng.end())
+    {
       PyErr_SetString(PyExc_StopIteration, "PrimRange at end");
       throw_error_already_set();
     }
@@ -207,7 +215,8 @@ class Usd_PyPrimRangeIterator {
 
 Usd_PyPrimRangeIterator Usd_PyPrimRange::__iter__() const
 {
-  if (!_rng.empty() && !_startPrim) {
+  if (!_rng.empty() && !_startPrim)
+  {
     PyErr_SetString(
       PyExc_RuntimeError,
       TfStringPrintf("Invalid range starting with %s", _startPrim.GetDescription().c_str()).c_str());

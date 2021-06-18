@@ -46,7 +46,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfData);
 /// An SdfData is an implementation of SdfAbstractData that simply
 /// stores specs and fields in a map keyed by path.
 ///
-class SdfData : public SdfAbstractData {
+class SdfData : public SdfAbstractData
+{
  public:
   SdfData()
   {}
@@ -144,8 +145,10 @@ class SdfData : public SdfAbstractData {
  private:
   // Backing storage for a single "spec" -- prim, property, etc.
   typedef std::pair<TfToken, VtValue> _FieldValuePair;
-  struct _SpecData {
-    _SpecData() : specType(SdfSpecTypeUnknown)
+  struct _SpecData
+  {
+    _SpecData()
+      : specType(SdfSpecTypeUnknown)
     {}
 
     SdfSpecType specType;

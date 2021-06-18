@@ -43,19 +43,23 @@ WABI_NAMESPACE_BEGIN
 /// A wrapper around a TraceStaticKeyData pointer that is stored in TraceEvent
 /// instances.
 ///
-class TraceKey {
+class TraceKey
+{
  public:
   /// Constructor.
-  constexpr TraceKey(const TraceStaticKeyData &data) : _ptr(&data)
+  constexpr TraceKey(const TraceStaticKeyData &data)
+    : _ptr(&data)
   {}
 
   /// Equality comparison.
   bool operator==(const TraceKey &other) const
   {
-    if (_ptr == other._ptr) {
+    if (_ptr == other._ptr)
+    {
       return true;
     }
-    else {
+    else
+    {
       return *_ptr == *other._ptr;
     }
   }
@@ -67,7 +71,8 @@ class TraceKey {
   }
 
   /// A Hash functor which may be used to store keys in a TfHashMap.
-  struct HashFunctor {
+  struct HashFunctor
+  {
     size_t operator()(const TraceKey &key) const
     {
       return key.Hash();

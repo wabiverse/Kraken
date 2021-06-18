@@ -53,7 +53,8 @@ using HdPhRenderPassStateSharedPtrVector = std::vector<HdPhRenderPassStateShared
 
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleShadowArray);
 
-struct HdxShadowTaskParams {
+struct HdxShadowTaskParams
+{
   HdxShadowTaskParams()
     : overrideColor(0.0),
       wireframeColor(0.0),
@@ -86,7 +87,8 @@ struct HdxShadowTaskParams {
 ///
 /// A task for generating shadow maps.
 ///
-class HdxShadowTask : public HdTask {
+class HdxShadowTask : public HdTask
+{
  public:
   HDX_API
   HdxShadowTask(HdSceneDelegate *delegate, SdfPath const &id);

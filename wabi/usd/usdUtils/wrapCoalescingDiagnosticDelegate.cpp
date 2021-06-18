@@ -62,7 +62,8 @@ static void _DumpUncoalescedDiagnosticsToStderr(UsdUtilsCoalescingDiagnosticDele
 static boost::python::list _TakeUncoalescedDiagnostics(UsdUtilsCoalescingDiagnosticDelegate &d)
 {
   boost::python::list result;
-  for (auto const &item : d.TakeUncoalescedDiagnostics()) {
+  for (auto const &item : d.TakeUncoalescedDiagnostics())
+  {
     result.append(*item.get());
   }
   return result;
@@ -71,7 +72,8 @@ static boost::python::list _TakeUncoalescedDiagnostics(UsdUtilsCoalescingDiagnos
 static boost::python::list _TakeCoalescedDiagnostics(UsdUtilsCoalescingDiagnosticDelegate &d)
 {
   boost::python::list result;
-  for (auto const &item : d.TakeCoalescedDiagnostics()) {
+  for (auto const &item : d.TakeCoalescedDiagnostics())
+  {
     result.append(item);
   }
   return result;
@@ -80,7 +82,8 @@ static boost::python::list _TakeCoalescedDiagnostics(UsdUtilsCoalescingDiagnosti
 static boost::python::list _GetUnsharedItems(UsdUtilsCoalescingDiagnosticDelegateItem const &d)
 {
   boost::python::list result;
-  for (auto const &item : d.unsharedItems) {
+  for (auto const &item : d.unsharedItems)
+  {
     result.append(item);
   }
 

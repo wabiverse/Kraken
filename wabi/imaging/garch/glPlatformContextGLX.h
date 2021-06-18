@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GarchGLXContextState {
+class GarchGLXContextState
+{
  public:
   /// Construct with the current state.
   GarchGLXContextState();

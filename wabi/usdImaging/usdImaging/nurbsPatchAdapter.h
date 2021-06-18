@@ -37,11 +37,13 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Delegate support for UsdGeomNurbsPatch.
 ///
-class UsdImagingNurbsPatchAdapter : public UsdImagingGprimAdapter {
+class UsdImagingNurbsPatchAdapter : public UsdImagingGprimAdapter
+{
  public:
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingNurbsPatchAdapter() : UsdImagingGprimAdapter()
+  UsdImagingNurbsPatchAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   ~UsdImagingNurbsPatchAdapter() override;

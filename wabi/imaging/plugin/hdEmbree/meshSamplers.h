@@ -45,10 +45,12 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Utility class to track which embree user vertex buffers are currently
 /// in use.
-class HdEmbreeRTCBufferAllocator {
+class HdEmbreeRTCBufferAllocator
+{
  public:
   /// Constructor. By default, set everything to unallocated.
-  HdEmbreeRTCBufferAllocator() : _bitset(0)
+  HdEmbreeRTCBufferAllocator()
+    : _bitset(0)
   {}
 
   /// Allocate a buffer by finding the first clear bit, using that as
@@ -83,7 +85,8 @@ class HdEmbreeRTCBufferAllocator {
 /// This class implements the HdEmbreePrimvarSampler interface for primvars
 /// with "constant" interpolation mode. This means that the buffer only has
 /// one item, which should be returned for any (element, u, v) tuple.
-class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler {
+class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler
+{
  public:
   /// Constructor.
   /// \param name The name of the primvar.
@@ -118,7 +121,8 @@ class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler {
 /// called "primitiveParams" which maps from the face index embree reports
 /// to the original authored face in the scene data. If primitiveParams is not
 /// provided, this translation step is skipped.
-class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler {
+class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler
+{
  public:
   /// Constructor.
   /// \param name The name of the primvar.
@@ -134,7 +138,9 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler {
   /// Constructor.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
-  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value) : _buffer(name, value), _sampler(_buffer)
+  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value)
+    : _buffer(name, value),
+      _sampler(_buffer)
   {}
 
   /// Sample the primvar at an (element, u, v) location. For uniform
@@ -164,7 +170,8 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler {
 /// barycentric interpolation of the hit face vertices. This class
 /// requires the triangulated mesh topology, to map from the triangle index
 /// (in "element") to the triangle vertices.
-class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler {
+class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler
+{
  public:
   /// Constructor.
   /// \param name The name of the primvar.
@@ -213,7 +220,8 @@ class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler {
 /// Face-varying primvars are provided to the sampler un-triangulated, but
 /// the size of the buffer is tied to the size of the topology, so
 /// this class triangulates the input buffer before sampling.
-class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler {
+class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler
+{
  public:
   /// Constructor. Triangulates the provided buffer data.
   /// \param name The name of the primvar.
@@ -259,7 +267,8 @@ class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler {
 /// the buffer has one item per vertex, and the result of sampling is a
 /// reconstruction using the subdivision scheme basis weights. It uses embree's
 /// user vertex buffers and rtcInterpolate API to accomplish the sampling.
-class HdEmbreeSubdivVertexSampler : public HdEmbreePrimvarSampler {
+class HdEmbreeSubdivVertexSampler : public HdEmbreePrimvarSampler
+{
  public:
   /// Constructor. Allocates an embree user vertex buffer, and uploads
   /// the primvar data. Only float-based types (float, GfVec3f, GfMatrix4f)

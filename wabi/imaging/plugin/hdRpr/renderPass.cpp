@@ -40,7 +40,8 @@ static GfVec2i GetViewportSize(HdRenderPassStateSharedPtr const &renderPassState
 #if WABI_VERSION >= 2102
   // XXX (RPR): there is no way to efficiently handle thew new camera framing API with RPR
   const CameraUtilFraming &framing = renderPassState->GetFraming();
-  if (framing.IsValid()) {
+  if (framing.IsValid())
+  {
     return framing.dataWindow.GetSize();
   }
 #endif
@@ -66,11 +67,13 @@ void HdRprRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
     HdRprConfig *config;
     auto configInstanceLock = HdRprConfig::GetInstance(&config);
     config->Sync(GetRenderIndex()->GetRenderDelegate());
-    if (config->IsDirty(HdRprConfig::DirtyAll)) {
+    if (config->IsDirty(HdRprConfig::DirtyAll))
+    {
       stopRender = true;
     }
   }
-  if (stopRender) {
+  if (stopRender)
+  {
     m_renderParam->GetRenderThread()->StopRender();
   }
 
@@ -78,21 +81,27 @@ void HdRprRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
 
   GfVec2i newViewportSize = GetViewportSize(renderPassState);
   auto oldViewportSize = rprApiConst->GetViewportSize();
-  if (oldViewportSize != newViewportSize) {
+  if (oldViewportSize != newViewportSize)
+  {
     m_renderParam->AcquireRprApiForEdit()->SetViewportSize(newViewportSize);
   }
 
-  if (rprApiConst->GetAovBindings() != renderPassState->GetAovBindings()) {
+  if (rprApiConst->GetAovBindings() != renderPassState->GetAovBindings())
+  {
     m_renderParam->AcquireRprApiForEdit()->SetAovBindings(renderPassState->GetAovBindings());
   }
 
-  if (rprApiConst->GetCamera() != renderPassState->GetCamera()) {
+  if (rprApiConst->GetCamera() != renderPassState->GetCamera())
+  {
     m_renderParam->AcquireRprApiForEdit()->SetCamera(renderPassState->GetCamera());
   }
 
-  if (rprApiConst->IsChanged() || m_renderParam->IsRenderShouldBeRestarted()) {
-    for (auto &aovBinding : renderPassState->GetAovBindings()) {
-      if (aovBinding.renderBuffer) {
+  if (rprApiConst->IsChanged() || m_renderParam->IsRenderShouldBeRestarted())
+  {
+    for (auto &aovBinding : renderPassState->GetAovBindings())
+    {
+      if (aovBinding.renderBuffer)
+      {
         auto rprRenderBuffer = static_cast<HdRprRenderBuffer *>(aovBinding.renderBuffer);
         rprRenderBuffer->SetConverged(false);
       }
@@ -103,8 +112,10 @@ void HdRprRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
 
 bool HdRprRenderPass::IsConverged() const
 {
-  for (auto &aovBinding : m_renderParam->GetRprApi()->GetAovBindings()) {
-    if (aovBinding.renderBuffer && !aovBinding.renderBuffer->IsConverged()) {
+  for (auto &aovBinding : m_renderParam->GetRprApi()->GetAovBindings())
+  {
+    if (aovBinding.renderBuffer && !aovBinding.renderBuffer->IsConverged())
+    {
       return false;
     }
   }

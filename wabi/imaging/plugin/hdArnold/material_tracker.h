@@ -29,7 +29,8 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldRenderDelegate;
 
 /// Class to track material assignments to shapes.
-class HdArnoldMaterialTracker {
+class HdArnoldMaterialTracker
+{
  public:
   /// Queries the list of current materials.
   ///

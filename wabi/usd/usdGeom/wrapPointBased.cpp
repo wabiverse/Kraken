@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -145,7 +147,8 @@ void wrapUsdGeomPointBased()
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
-namespace {
+namespace
+{
 
 static TfPyObjWrapper _ComputeExtent(object points)
 {
@@ -155,17 +158,20 @@ static TfPyObjWrapper _ComputeExtent(object points)
   VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
 
   // Check for proper conversion to VtVec3fArray
-  if (!pointsAsVtValue.IsHolding<VtVec3fArray>()) {
+  if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+  {
     TF_CODING_ERROR("Improper value for 'points'");
     return object();
   }
 
   // Convert from VtValue to VtVec3fArray
   VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
-  if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent)) {
+  if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent))
+  {
     return UsdVtValueToPython(VtValue(extent));
   }
-  else {
+  else
+  {
     return object();
   }
 }

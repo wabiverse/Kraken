@@ -38,7 +38,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfPathVector _GetTargets(const UsdRelationship &self)
 {
@@ -56,11 +57,13 @@ static SdfPathVector _GetForwardedTargets(const UsdRelationship &self)
 
 static string __repr__(const UsdRelationship &self)
 {
-  if (self) {
+  if (self)
+  {
     return TfStringPrintf(
       "%s.GetRelationship(%s)", TfPyRepr(self.GetPrim()).c_str(), TfPyRepr(self.GetName()).c_str());
   }
-  else {
+  else
+  {
     return "invalid " + self.GetDescription();
   }
 }

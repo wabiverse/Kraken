@@ -59,7 +59,8 @@ ANCHOR_SystemPathsUnix::~ANCHOR_SystemPathsUnix()
 const AnchorU8 *ANCHOR_SystemPathsUnix::getSystemDir(int, const char *versionstr) const
 {
   /* no prefix assumes a portable build which only uses bundled scripts */
-  if (static_path) {
+  if (static_path)
+  {
     static string system_path = string(static_path) + "/covah/" + versionstr;
     return (AnchorU8 *)system_path.c_str();
   }
@@ -72,31 +73,39 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserDir(int version, const char *vers
   static string user_path = "";
   static int last_version = 0;
 
-  if (version < 264) {
-    if (user_path.empty() || last_version != version) {
+  if (version < 264)
+  {
+    if (user_path.empty() || last_version != version)
+    {
       const char *home = getenv("HOME");
 
       last_version = version;
 
-      if (home) {
+      if (home)
+      {
         user_path = string(home) + "/.covah/" + versionstr;
       }
-      else {
+      else
+      {
         return NULL;
       }
     }
     return (AnchorU8 *)user_path.c_str();
   }
-  else {
-    if (user_path.empty() || last_version != version) {
+  else
+  {
+    if (user_path.empty() || last_version != version)
+    {
       const char *home = getenv("XDG_CONFIG_HOME");
 
       last_version = version;
 
-      if (home) {
+      if (home)
+      {
         user_path = string(home) + "/covah/" + versionstr;
       }
-      else {
+      else
+      {
         home = getenv("HOME");
 
         if (home == NULL)
@@ -114,7 +123,8 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirT
 {
   const char *type_str;
 
-  switch (type) {
+  switch (type)
+  {
     case ANCHOR_UserSpecialDirDesktop:
       type_str = "DESKTOP";
       break;
@@ -144,19 +154,23 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirT
   string command = string("xdg-user-dir ") + type_str + " 2> /dev/null";
 
   FILE *fstream = popen(command.c_str(), "r");
-  if (fstream == NULL) {
+  if (fstream == NULL)
+  {
     return NULL;
   }
   std::stringstream path_stream;
-  while (!feof(fstream)) {
+  while (!feof(fstream))
+  {
     char c = fgetc(fstream);
     /* xdg-user-dir ends the path with '\n'. */
-    if (c == '\n') {
+    if (c == '\n')
+    {
       break;
     }
     path_stream << c;
   }
-  if (pclose(fstream) == -1) {
+  if (pclose(fstream) == -1)
+  {
     perror("ANCHOR_SystemPathsUnix::getUserSpecialDir failed at pclose()");
     return NULL;
   }
@@ -181,7 +195,8 @@ ANCHOR_ISystemPaths *ANCHOR_ISystemPaths::m_systemPaths = NULL;
 eAnchorStatus ANCHOR_ISystemPaths::create()
 {
   eAnchorStatus success;
-  if (!m_systemPaths) {
+  if (!m_systemPaths)
+  {
 #ifdef WIN32
     m_systemPaths = new ANCHOR_SystemPathsWin32();
 #else
@@ -193,7 +208,8 @@ eAnchorStatus ANCHOR_ISystemPaths::create()
 #endif
     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_ERROR;
   }
-  else {
+  else
+  {
     success = ANCHOR_ERROR;
   }
   return success;
@@ -202,11 +218,13 @@ eAnchorStatus ANCHOR_ISystemPaths::create()
 eAnchorStatus ANCHOR_ISystemPaths::dispose()
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
-  if (m_systemPaths) {
+  if (m_systemPaths)
+  {
     delete m_systemPaths;
     m_systemPaths = NULL;
   }
-  else {
+  else
+  {
     success = ANCHOR_ERROR;
   }
   return success;
@@ -214,7 +232,8 @@ eAnchorStatus ANCHOR_ISystemPaths::dispose()
 
 ANCHOR_ISystemPaths *ANCHOR_ISystemPaths::get()
 {
-  if (!m_systemPaths) {
+  if (!m_systemPaths)
+  {
     create();
   }
   return m_systemPaths;

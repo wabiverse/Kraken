@@ -43,7 +43,8 @@ namespace mx = MaterialX;
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, ((discoveryType, "mtlx")));
 
@@ -55,15 +56,19 @@ const std::string &_GetTopMostAncestralName(mx::ConstElementPtr mtlx)
 {
   static const std::string inheritAttr("inherit");
 
-  while (true) {
+  while (true)
+  {
     const std::string &inherit = mtlx->getAttribute(inheritAttr);
-    if (inherit.empty()) {
+    if (inherit.empty())
+    {
       break;
     }
-    if (auto inherited = mtlx->getRoot()->getChild(inherit)) {
+    if (auto inherited = mtlx->getRoot()->getChild(inherit))
+    {
       mtlx = inherited;
     }
-    else {
+    else
+    {
       break;
     }
   }
@@ -79,7 +84,8 @@ _NameMapping _ComputeNameMapping(const mx::ConstDocumentPtr &doc)
   // nodedef on the inheritance chain where top-most is the one
   // that doesn't itself inherit anything.  The 1.36 spec gives
   // guidance that this should be sufficient.
-  for (auto &&mtlxNodeDef : doc->getNodeDefs()) {
+  for (auto &&mtlxNodeDef : doc->getNodeDefs())
+  {
     result.emplace(mtlxNodeDef->getName(), _GetTopMostAncestralName(mtlxNodeDef));
   }
 
@@ -106,16 +112,19 @@ static void _DiscoverNodes(NdrNodeDiscoveryResultVec *result,
   // insert into the discovery result list.
 
   // Get the implementations.
-  for (auto &&impl : doc->getImplementations()) {
+  for (auto &&impl : doc->getImplementations())
+  {
     auto &&nodeDef = impl->getNodeDef();
-    if (!nodeDef) {
+    if (!nodeDef)
+    {
       continue;
     }
 
     // Ignore implementations that don't refer to a file.
     // XXX -- Do we want to allow these?  The renderer will
     //        be expected to provide the implementation.
-    if (impl->getFile().empty()) {
+    if (impl->getFile().empty())
+    {
       continue;
     }
 
@@ -134,9 +143,11 @@ static void _DiscoverNodes(NdrNodeDiscoveryResultVec *result,
   }
 
   // Get the nodegraphs implementing node defs.
-  for (auto &&nodeGraph : doc->getNodeGraphs()) {
+  for (auto &&nodeGraph : doc->getNodeGraphs())
+  {
     auto &&nodeDef = nodeGraph->getNodeDef();
-    if (!nodeDef) {
+    if (!nodeDef)
+    {
       continue;
     }
 
@@ -158,7 +169,8 @@ static void _DiscoverNodes(NdrNodeDiscoveryResultVec *result,
 }  // anonymous namespace
 
 /// Discovers nodes in MaterialX files.
-class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin {
+class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin
+{
  public:
   UsdMtlxDiscoveryPlugin();
   ~UsdMtlxDiscoveryPlugin() override = default;
@@ -194,7 +206,8 @@ NdrNodeDiscoveryResultVec UsdMtlxDiscoveryPlugin::DiscoverNodes(const Context &c
   // all included by a single document.  We could construct such
   // a document in memory and parse it but instead we choose to
   // read each document separately and merge them.
-  if (auto document = UsdMtlxGetDocument("")) {
+  if (auto document = UsdMtlxGetDocument(""))
+  {
     auto standardResult = NdrNodeDiscoveryResult(NdrIdentifier(),  // identifier unused
                                                  NdrVersion(),     // version unused
                                                  "",               // name unused
@@ -211,8 +224,10 @@ NdrNodeDiscoveryResultVec UsdMtlxDiscoveryPlugin::DiscoverNodes(const Context &c
   for (auto &&fileResult :
        NdrFsHelpersDiscoverNodes(_searchPaths,
                                  UsdMtlxStandardFileExtensions(),
-                                 TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false))) {
-    if (auto document = UsdMtlxGetDocument(fileResult.resolvedUri)) {
+                                 TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false)))
+  {
+    if (auto document = UsdMtlxGetDocument(fileResult.resolvedUri))
+    {
       _DiscoverNodes(&result, document, fileResult, _ComputeNameMapping(document));
     }
   }

@@ -6,7 +6,8 @@
 /**
  * \brief          MD5 context structure
  */
-typedef struct {
+typedef struct
+{
   unsigned long total[2];   /*!< number of bytes processed  */
   unsigned long state[4];   /*!< intermediate digest state  */
   unsigned char buffer[64]; /*!< data block being processed */
@@ -282,7 +283,8 @@ void md5_update(md5_context *ctx, unsigned char *input, int ilen)
   if (ctx->total[0] < (unsigned long)ilen)
     ctx->total[1]++;
 
-  if (left && ilen >= fill) {
+  if (left && ilen >= fill)
+  {
     memcpy((void *)(ctx->buffer + left), (void *)input, fill);
     md5_process(ctx, ctx->buffer);
     input += fill;
@@ -290,20 +292,84 @@ void md5_update(md5_context *ctx, unsigned char *input, int ilen)
     left = 0;
   }
 
-  while (ilen >= 64) {
+  while (ilen >= 64)
+  {
     md5_process(ctx, input);
     input += 64;
     ilen -= 64;
   }
 
-  if (ilen > 0) {
+  if (ilen > 0)
+  {
     memcpy((void *)(ctx->buffer + left), (void *)input, ilen);
   }
 }
 
 static const unsigned char md5_padding[64] = {
-  0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  0x80,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0};
 
 /*
  * MD5 final digest

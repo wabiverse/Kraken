@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
 class PcpNodeRef_PrivateChildrenConstIterator : public boost::iterator_facade<
                                                   /* Derived =   */ PcpNodeRef_PrivateChildrenConstIterator,
                                                   /* ValueType = */ const PcpNodeRef,
-                                                  /* Category =  */ boost::forward_traversal_tag> {
+                                                  /* Category =  */ boost::forward_traversal_tag>
+{
  public:
   // Required by TF_FOR_ALL but always assigned to afterwards.
   PcpNodeRef_PrivateChildrenConstIterator()
@@ -94,7 +95,8 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
   : public boost::iterator_facade<
       /* Derived =   */ PcpNodeRef_PrivateChildrenConstReverseIterator,
       /* ValueType = */ const PcpNodeRef,
-      /* Category =  */ boost::forward_traversal_tag> {
+      /* Category =  */ boost::forward_traversal_tag>
+{
  public:
   // Required by TF_FOR_ALL but always assigned to afterwards.
   PcpNodeRef_PrivateChildrenConstReverseIterator()
@@ -134,15 +136,19 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
 };
 
 // Wrapper type for TF_FOR_ALL().
-class PcpNodeRef_PrivateChildrenConstRange {
+class PcpNodeRef_PrivateChildrenConstRange
+{
  public:
-  PcpNodeRef_PrivateChildrenConstRange(const PcpNodeRef &node_) : node(node_)
+  PcpNodeRef_PrivateChildrenConstRange(const PcpNodeRef &node_)
+    : node(node_)
   {}
   PcpNodeRef node;
 };
 
 // TF_FOR_ALL() traits.  We build the iterators on demand.
-template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, false> {
+template<>
+struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, false>
+{
   typedef PcpNodeRef_PrivateChildrenConstRange RangeType;
   typedef PcpNodeRef_PrivateChildrenConstIterator IteratorType;
   static IteratorType Begin(RangeType const &c)
@@ -154,7 +160,9 @@ template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, fal
     return IteratorType(c.node, /* end = */ true);
   }
 };
-template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, true> {
+template<>
+struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, true>
+{
   typedef PcpNodeRef_PrivateChildrenConstRange RangeType;
   typedef PcpNodeRef_PrivateChildrenConstReverseIterator IteratorType;
   static IteratorType Begin(RangeType const &c)
@@ -166,7 +174,9 @@ template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, tru
     return IteratorType(c.node, /* end = */ true);
   }
 };
-template<> struct Tf_ShouldIterateOverCopy<PcpNodeRef_PrivateChildrenConstRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<PcpNodeRef_PrivateChildrenConstRange> : boost::true_type
+{
 };
 
 // Wrap a node for use by TF_FOR_ALL().

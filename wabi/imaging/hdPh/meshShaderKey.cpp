@@ -149,7 +149,8 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     fvarPatchType(fvarPatchType),
     glslfx(_tokens->baseGLSLFX)
 {
-  if (geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly) {
+  if (geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly)
+  {
     polygonMode = HdPolygonModeLine;
   }
 
@@ -193,7 +194,8 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
                     _tokens->normalsSmooth :
                     (vsSceneNormals ? _tokens->normalsScene : _tokens->normalsPass);
 
-  if (isPrimTypePoints) {
+  if (isPrimTypePoints)
+  {
     // Add mixins that allow for picking and sel highlighting of points.
     // Even though these are more "render pass-ish", we do this here to
     // reduce the shader code generated when the points repr isn't used.
@@ -201,7 +203,8 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     VS[vsIndex++] = _tokens->selDecodeUtils;
     VS[vsIndex++] = _tokens->selPointSelVS;
   }
-  else {
+  else
+  {
     VS[vsIndex++] = _tokens->pointIdNoneVS;
   }
   VS[vsIndex++] = _tokens->mainVS;
@@ -248,13 +251,15 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   const bool renderWireframe = geomStyle == HdMeshGeomStyleEdgeOnly ||
                                geomStyle == HdMeshGeomStyleHullEdgeOnly;
   // emit "ComputeSelectionOffset" GS function.
-  if (renderWireframe) {
+  if (renderWireframe)
+  {
     // emit necessary selection decoding and helper mixins
     GS[gsIndex++] = _tokens->selDecodeUtils;
     GS[gsIndex++] = _tokens->selElementSelGS;
     GS[gsIndex++] = _tokens->selWireOffsetGS;
   }
-  else {
+  else
+  {
     GS[gsIndex++] = _tokens->selWireNoOffsetGS;
   }
 
@@ -272,14 +277,16 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   if (!useCustomDisplacement && (normalsSource != NormalSourceLimit) &&
       (normalsSource != NormalSourceGeometryShader) &&
       (geomStyle == HdMeshGeomStyleSurf || geomStyle == HdMeshGeomStyleHull) &&
-      HdPh_GeometricShader::IsPrimTypeTriangles(primType) && (!forceGeometryShader)) {
+      HdPh_GeometricShader::IsPrimTypeTriangles(primType) && (!forceGeometryShader))
+  {
 
     GS[0] = TfToken();
   }
 
   // Optimization : Points don't need any sort of geometry shader so
   //                we ignore it here.
-  if (isPrimTypePoints) {
+  if (isPrimTypePoints)
+  {
     GS[0] = TfToken();
   }
 
@@ -299,91 +306,119 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
                     (doubleSided ? _tokens->faceCullDoubleSidedFS : _tokens->faceCullSingleSidedFS);
 
   // Wire (edge) related mixins
-  if ((geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly)) {
+  if ((geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly))
+  {
 
-    if (isPrimTypeRefinedMesh) {
-      if (isPrimTypeQuads) {
+    if (isPrimTypeRefinedMesh)
+    {
+      if (isPrimTypeQuads)
+      {
         FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
       }
-      else {
+      else
+      {
         FS[fsIndex++] = _tokens->edgeMaskNoneFS;
       }
     }
-    else if (isPrimTypeTris) {
+    else if (isPrimTypeTris)
+    {
       FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
     }
-    else {
+    else
+    {
       FS[fsIndex++] = _tokens->edgeMaskQuadFS;
     }
     FS[fsIndex++] = _tokens->edgeCommonFS;
-    if (isPrimTypePatches) {
+    if (isPrimTypePatches)
+    {
       FS[fsIndex++] = _tokens->patchEdgeOnlyFS;
     }
-    else {
+    else
+    {
       FS[fsIndex++] = blendWireframeColor ? _tokens->edgeOnlyBlendFS : _tokens->edgeOnlyNoBlendFS;
     }
   }
-  else if ((geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf)) {
+  else if ((geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf))
+  {
 
-    if (isPrimTypeRefinedMesh) {
-      if (isPrimTypeQuads) {
+    if (isPrimTypeRefinedMesh)
+    {
+      if (isPrimTypeQuads)
+      {
         FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
       }
-      else {
+      else
+      {
         FS[fsIndex++] = _tokens->edgeMaskNoneFS;
       }
     }
-    else if (isPrimTypeTris) {
+    else if (isPrimTypeTris)
+    {
       FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
     }
-    else {
+    else
+    {
       FS[fsIndex++] = _tokens->edgeMaskQuadFS;
     }
     FS[fsIndex++] = _tokens->edgeCommonFS;
-    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle) {
+    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle)
+    {
       FS[fsIndex++] = _tokens->patchEdgeTriangleFS;
     }
-    else {
+    else
+    {
       FS[fsIndex++] = _tokens->patchEdgeQuadFS;
     }
-    if (isPrimTypePatches) {
+    if (isPrimTypePatches)
+    {
       FS[fsIndex++] = _tokens->patchEdgeOnSurfFS;
     }
-    else {
+    else
+    {
       FS[fsIndex++] = _tokens->edgeOnSurfFS;
     }
   }
-  else {
+  else
+  {
     FS[fsIndex++] = _tokens->edgeNoneFS;
   }
 
   // Shading terminal mixin
   TfToken terminalFS;
-  if (shadingTerminal == HdMeshReprDescTokens->surfaceShader) {
+  if (shadingTerminal == HdMeshReprDescTokens->surfaceShader)
+  {
     terminalFS = _tokens->surfaceFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderUnlit) {
+  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderUnlit)
+  {
     terminalFS = _tokens->surfaceUnlitFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderSheer) {
+  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderSheer)
+  {
     terminalFS = _tokens->surfaceSheerFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderOutline) {
+  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderOutline)
+  {
     terminalFS = _tokens->surfaceOutlineFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->constantColor) {
+  else if (shadingTerminal == HdMeshReprDescTokens->constantColor)
+  {
     terminalFS = _tokens->constantColorFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->hullColor) {
+  else if (shadingTerminal == HdMeshReprDescTokens->hullColor)
+  {
     terminalFS = _tokens->hullColorFS;
   }
-  else if (shadingTerminal == HdMeshReprDescTokens->pointColor) {
+  else if (shadingTerminal == HdMeshReprDescTokens->pointColor)
+  {
     terminalFS = _tokens->pointColorFS;
   }
-  else if (!shadingTerminal.IsEmpty()) {
+  else if (!shadingTerminal.IsEmpty())
+  {
     terminalFS = shadingTerminal;
   }
-  else {
+  else
+  {
     terminalFS = _tokens->surfaceFS;
   }
 
@@ -394,34 +429,43 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   FS[fsIndex++] = enableScalarOverride ? _tokens->scalarOverrideFS : _tokens->noScalarOverrideFS;
 
   // EdgeId mixin(s) for edge picking and selection
-  if (gsStageEnabled) {
+  if (gsStageEnabled)
+  {
     TF_VERIFY(gsEdgeIdMixin == _tokens->edgeIdEdgeParamGS);
     FS[fsIndex++] = _tokens->edgeIdCommonFS;
-    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle) {
-      if (polygonMode == HdPolygonModeLine) {
+    if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle)
+    {
+      if (polygonMode == HdPolygonModeLine)
+      {
         FS[fsIndex++] = _tokens->edgeIdTriangleLineFS;
       }
-      else {
+      else
+      {
         FS[fsIndex++] = _tokens->edgeIdTriangleSurfFS;
       }
       FS[fsIndex++] = _tokens->edgeIdTriangleParamFS;
     }
-    else {
-      if (polygonMode == HdPolygonModeLine) {
+    else
+    {
+      if (polygonMode == HdPolygonModeLine)
+      {
         FS[fsIndex++] = _tokens->edgeIdQuadLineFS;
       }
-      else {
+      else
+      {
         FS[fsIndex++] = _tokens->edgeIdQuadSurfFS;
       }
       FS[fsIndex++] = _tokens->edgeIdQuadParamFS;
     }
   }
-  else {
+  else
+  {
     // the GS stage is skipped if we're dealing with points or triangles.
     // (see "Optimization" above)
 
     // for triangles, emit the fallback version.
-    if (isPrimTypeTris) {
+    if (isPrimTypeTris)
+    {
       FS[fsIndex++] = _tokens->edgeIdFallbackFS;
     }
 

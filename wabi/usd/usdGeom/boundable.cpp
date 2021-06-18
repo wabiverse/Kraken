@@ -43,7 +43,8 @@ UsdGeomBoundable::~UsdGeomBoundable()
 /* static */
 UsdGeomBoundable UsdGeomBoundable::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomBoundable();
   }
@@ -97,7 +98,8 @@ UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue, boo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

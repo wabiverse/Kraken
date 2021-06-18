@@ -44,7 +44,8 @@ class HgiMetal;
 ///
 /// Metal implementation of HgiComputePipeline.
 ///
-class HgiMetalComputePipeline final : public HgiComputePipeline {
+class HgiMetalComputePipeline final : public HgiComputePipeline
+{
  public:
   HGIMETAL_API
   HgiMetalComputePipeline(HgiMetal *hgi, HgiComputePipelineDesc const &desc);

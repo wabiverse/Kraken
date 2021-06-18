@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_Field final : public HdField {
+class HdPrman_Field final : public HdField
+{
  public:
   HdPrman_Field(TfToken const &typeId, SdfPath const &id);
   virtual void Sync(HdSceneDelegate *sceneDelegate,
@@ -49,7 +50,8 @@ class HdPrman_Field final : public HdField {
   TfToken const _typeId;
 };
 
-class HdPrman_Volume final : public HdPrman_Gprim<HdVolume> {
+class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
+{
  public:
   typedef HdPrman_Gprim<HdVolume> BASE;
 
@@ -88,7 +90,8 @@ class HdPrman_Volume final : public HdPrman_Gprim<HdVolume> {
                                    bool overrideExisting = false);
 
   /// Specialized subset of primvar types for volume fields
-  enum FieldType {
+  enum FieldType
+  {
     FloatType = 0,
     IntType,
     Float2Type,

@@ -187,15 +187,18 @@ bool GfRay::Intersect(const GfVec3d &p0,
   double yAbs = GfAbs(plane.GetNormal()[1]);
   double zAbs = GfAbs(plane.GetNormal()[2]);
   unsigned int axis0, axis1;
-  if (xAbs > yAbs && xAbs > zAbs) {
+  if (xAbs > yAbs && xAbs > zAbs)
+  {
     axis0 = 1;
     axis1 = 2;
   }
-  else if (yAbs > zAbs) {
+  else if (yAbs > zAbs)
+  {
     axis0 = 2;
     axis1 = 0;
   }
-  else {
+  else
+  {
     axis0 = 0;
     axis1 = 1;
   }
@@ -214,12 +217,14 @@ bool GfRay::Intersect(const GfVec3d &p0,
   double alpha;
   double beta = ((d0[1] * d1[0] - d0[0] * d1[1]) / (d2[1] * d1[0] - d2[0] * d1[1]));
   // clamp beta to 0 if it is only very slightly less than 0
-  if (beta < 0 && beta > -GF_MIN_VECTOR_LENGTH) {
+  if (beta < 0 && beta > -GF_MIN_VECTOR_LENGTH)
+  {
     // CODE_COVERAGE_OFF_NO_REPORT - architecture dependent numerics
     beta = 0;
     // CODE_COVERAGE_ON_NO_REPORT
   }
-  if (beta < 0.0 || beta > 1.0) {
+  if (beta < 0.0 || beta > 1.0)
+  {
     return false;
   }
   alpha = -1.0;
@@ -229,7 +234,8 @@ bool GfRay::Intersect(const GfVec3d &p0,
     alpha = (d0[0] - beta * d2[0]) / d1[0];
 
   // clamp alpha to 0 if it is only very slightly less than 0
-  if (alpha < 0 && alpha > -GF_MIN_VECTOR_LENGTH) {
+  if (alpha < 0 && alpha > -GF_MIN_VECTOR_LENGTH)
+  {
     // CODE_COVERAGE_OFF_NO_REPORT - architecture dependent numerics
     alpha = 0;
     // CODE_COVERAGE_ON_NO_REPORT
@@ -237,7 +243,8 @@ bool GfRay::Intersect(const GfVec3d &p0,
 
   // clamp gamma to 0 if it is only very slightly less than 0
   float gamma = 1.0 - (alpha + beta);
-  if (gamma < 0 && gamma > -GF_MIN_VECTOR_LENGTH) {
+  if (gamma < 0 && gamma > -GF_MIN_VECTOR_LENGTH)
+  {
     // CODE_COVERAGE_OFF_NO_REPORT - architecture dependent numerics
     gamma = 0;
     // CODE_COVERAGE_ON_NO_REPORT
@@ -289,17 +296,21 @@ bool GfRay::Intersect(const GfRange3d &box, double *enterDistance, double *exitD
   // box. Save the largest near-plane intersection and the smallest
   // far-plane intersection.
   double maxNearest = -DBL_MAX, minFarthest = DBL_MAX;
-  for (size_t i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++)
+  {
 
     // Skip dimensions almost parallel to the ray.
     double d = GetDirection()[i];
-    if (GfAbs(d) < GF_MIN_VECTOR_LENGTH) {
+    if (GfAbs(d) < GF_MIN_VECTOR_LENGTH)
+    {
       // ray is parallel to this set of planes.
       // If origin is not between them, no intersection.
-      if (GetStartPoint()[i] < box.GetMin()[i] || GetStartPoint()[i] > box.GetMax()[i]) {
+      if (GetStartPoint()[i] < box.GetMin()[i] || GetStartPoint()[i] > box.GetMax()[i])
+      {
         return false;
       }
-      else {
+      else
+      {
         continue;
       }
     }
@@ -309,7 +320,8 @@ bool GfRay::Intersect(const GfRange3d &box, double *enterDistance, double *exitD
     double t2 = d * (box.GetMax()[i] - GetStartPoint()[i]);
 
     // Make sure t1 is the nearer one
-    if (t1 > t2) {
+    if (t1 > t2)
+    {
       double tmp = t1;
       t1 = t2;
       t2 = tmp;
@@ -427,7 +439,8 @@ bool GfRay::Intersect(const GfVec3d &origin,
   double b = 2.0 * (cos2 * GfDot(u, v) - sin2 * p * q);
   double c = cos2 * GfDot(v, v) - sin2 * GfSqr(q);
 
-  if (!_SolveQuadratic(a, b, c, enterDistance, exitDistance)) {
+  if (!_SolveQuadratic(a, b, c, enterDistance, exitDistance))
+  {
     return false;
   }
 
@@ -435,16 +448,19 @@ bool GfRay::Intersect(const GfVec3d &origin,
   bool enterValid = GfDot(unitAxis, GetPoint(*enterDistance) - apex) <= 0.0;
   bool exitValid = GfDot(unitAxis, GetPoint(*exitDistance) - apex) <= 0.0;
 
-  if ((!enterValid) && (!exitValid)) {
+  if ((!enterValid) && (!exitValid))
+  {
 
     // Solutions lie only on double cone
     return false;
   }
 
-  if (!enterValid) {
+  if (!enterValid)
+  {
     *enterDistance = *exitDistance;
   }
-  else if (!exitValid) {
+  else if (!exitValid)
+  {
     *exitDistance = *enterDistance;
   }
 
@@ -457,8 +473,10 @@ bool GfRay::_SolveQuadratic(const double a,
                             double *enterDistance,
                             double *exitDistance) const
 {
-  if (GfIsClose(a, 0.0, tolerance)) {
-    if (GfIsClose(b, 0.0, tolerance)) {
+  if (GfIsClose(a, 0.0, tolerance))
+  {
+    if (GfIsClose(b, 0.0, tolerance))
+    {
 
       // Degenerate solution
       return false;
@@ -466,15 +484,18 @@ bool GfRay::_SolveQuadratic(const double a,
 
     double t = -c / b;
 
-    if (t < 0.0) {
+    if (t < 0.0)
+    {
       return false;
     }
 
-    if (enterDistance) {
+    if (enterDistance)
+    {
       *enterDistance = t;
     }
 
-    if (exitDistance) {
+    if (exitDistance)
+    {
       *exitDistance = t;
     }
 
@@ -484,27 +505,32 @@ bool GfRay::_SolveQuadratic(const double a,
   // Discriminant
   double disc = GfSqr(b) - 4.0 * a * c;
 
-  if (GfIsClose(disc, 0.0, tolerance)) {
+  if (GfIsClose(disc, 0.0, tolerance))
+  {
 
     // Tangent
     double t = -b / (2.0 * a);
 
-    if (t < 0.0) {
+    if (t < 0.0)
+    {
       return false;
     }
 
-    if (enterDistance) {
+    if (enterDistance)
+    {
       *enterDistance = t;
     }
 
-    if (exitDistance) {
+    if (exitDistance)
+    {
       *exitDistance = t;
     }
 
     return true;
   }
 
-  if (disc < 0.0) {
+  if (disc < 0.0)
+  {
 
     // No intersection
     return false;
@@ -515,17 +541,21 @@ bool GfRay::_SolveQuadratic(const double a,
   double t0 = q / a;
   double t1 = c / q;
 
-  if (t0 > t1) {
+  if (t0 > t1)
+  {
     std::swap(t0, t1);
   }
 
-  if (t1 >= 0) {
+  if (t1 >= 0)
+  {
 
-    if (enterDistance) {
+    if (enterDistance)
+    {
       *enterDistance = t0;
     }
 
-    if (exitDistance) {
+    if (exitDistance)
+    {
       *exitDistance = t1;
     }
 

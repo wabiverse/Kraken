@@ -38,7 +38,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Ndr Parser for arnold shader nodes.
-class NdrArnoldParserPlugin : public NdrParserPlugin {
+class NdrArnoldParserPlugin : public NdrParserPlugin
+{
  public:
   /// Creates an instance of NdrArnoldParserPlugin.
   NDRARNOLD_API

@@ -88,7 +88,8 @@ class SdfPath;
 
 /// An enum that specifies the type of an object. Objects
 /// are entities that have fields and are addressable by path.
-enum SdfSpecType {
+enum SdfSpecType
+{
   // The unknown type has a value of 0 so that SdfSpecType() is unknown.
   SdfSpecTypeUnknown = 0,
 
@@ -120,7 +121,13 @@ enum SdfSpecType {
 /// <li><b>SdfNumSpecifiers.</b> The number of specifiers.
 /// </ul>
 ///
-enum SdfSpecifier { SdfSpecifierDef, SdfSpecifierOver, SdfSpecifierClass, SdfNumSpecifiers };
+enum SdfSpecifier
+{
+  SdfSpecifierDef,
+  SdfSpecifierOver,
+  SdfSpecifierClass,
+  SdfNumSpecifiers
+};
 
 /// Returns true if the specifier defines a prim.
 inline bool SdfIsDefiningSpecifier(SdfSpecifier spec)
@@ -145,7 +152,8 @@ inline bool SdfIsDefiningSpecifier(SdfSpecifier spec)
 /// <li><b>SdfNumPermission.</b> Internal sentinel value.
 /// </ul>
 ///
-enum SdfPermission {
+enum SdfPermission
+{
   SdfPermissionPublic,
   SdfPermissionPrivate,
 
@@ -169,7 +177,8 @@ enum SdfPermission {
 ///     <li><b>SdNumVariabilities.</b> Internal sentinel value.
 /// </ul>
 ///
-enum SdfVariability {
+enum SdfVariability
+{
   SdfVariabilityVarying,
   SdfVariabilityUniform,
 
@@ -189,7 +198,11 @@ enum SdfVariability {
 ///            not recognized by the layer's schema.
 /// </ul>
 ///
-enum SdfAuthoringError { SdfAuthoringErrorUnrecognizedFields, SdfAuthoringErrorUnrecognizedSpecType };
+enum SdfAuthoringError
+{
+  SdfAuthoringErrorUnrecognizedFields,
+  SdfAuthoringErrorUnrecognizedSpecType
+};
 
 // Each category of compatible units of measurement is defined by a
 // preprocessor sequence of tuples.  Each such sequence gives rise to an enum
@@ -230,7 +243,8 @@ enum SdfAuthoringError { SdfAuthoringErrorUnrecognizedFields, SdfAuthoringErrorU
 #define _SDF_DECLARE_UNIT_ENUMERANT(r, tag, elem) BOOST_PP_CAT(Sdf##tag##Unit, _SDF_UNIT_TAG(elem)),
 
 #define _SDF_DECLARE_UNIT_ENUM(r, unused, elem) \
-  enum _SDF_UNITSLIST_ENUM(elem) { \
+  enum _SDF_UNITSLIST_ENUM(elem) \
+  { \
     BOOST_PP_SEQ_FOR_EACH( \
       _SDF_DECLARE_UNIT_ENUMERANT, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)) \
   };
@@ -335,21 +349,29 @@ SDF_API TfToken SdfGetRoleNameForValueTypeName(TfToken const &typeName);
 #define SDF_VALUE_CPP_TYPE(tup) BOOST_PP_TUPLE_ELEM(4, 2, tup)
 #define SDF_VALUE_CPP_ARRAY_TYPE(tup) VtArray<BOOST_PP_TUPLE_ELEM(4, 2, tup)>
 
-template<class T> struct SdfValueTypeTraits {
+template<class T>
+struct SdfValueTypeTraits
+{
   static const bool IsValueType = false;
 };
 
 // Allow character arrays to be treated as Sdf value types.
 // Sdf converts character arrays to strings for scene description.
-template<int N> struct SdfValueTypeTraits<char[N]> {
+template<int N>
+struct SdfValueTypeTraits<char[N]>
+{
   static const bool IsValueType = true;
 };
 
 #define SDF_DECLARE_VALUE_TYPE_TRAITS(r, unused, elem) \
-  template<> struct SdfValueTypeTraits<SDF_VALUE_CPP_TYPE(elem)> { \
+  template<> \
+  struct SdfValueTypeTraits<SDF_VALUE_CPP_TYPE(elem)> \
+  { \
     static const bool IsValueType = true; \
   }; \
-  template<> struct SdfValueTypeTraits<SDF_VALUE_CPP_ARRAY_TYPE(elem)> { \
+  template<> \
+  struct SdfValueTypeTraits<SDF_VALUE_CPP_ARRAY_TYPE(elem)> \
+  { \
     static const bool IsValueType = true; \
   };
 
@@ -419,7 +441,8 @@ std::ostream &VtStreamOut(const SdfVariantSelectionMap &, std::ostream &);
 /// well as limited inspection and editing capabilities (e.g., moving
 /// this data to a different spec or field) even when the data type
 /// of the value isn't known.
-class SdfUnregisteredValue : public boost::equality_comparable<SdfUnregisteredValue> {
+class SdfUnregisteredValue : public boost::equality_comparable<SdfUnregisteredValue>
+{
  public:
   /// Wraps an empty VtValue
   SDF_API SdfUnregisteredValue();
@@ -455,7 +478,8 @@ class SdfUnregisteredValue : public boost::equality_comparable<SdfUnregisteredVa
 /// Writes the string representation of \c SdfUnregisteredValue to \a out.
 SDF_API std::ostream &operator<<(std::ostream &out, const SdfUnregisteredValue &value);
 
-class Sdf_ValueTypeNamesType : boost::noncopyable {
+class Sdf_ValueTypeNamesType : boost::noncopyable
+{
  public:
   SdfValueTypeName Bool;
   SdfValueTypeName UChar, Int, UInt, Int64, UInt64;
@@ -496,7 +520,8 @@ class Sdf_ValueTypeNamesType : boost::noncopyable {
   SdfValueTypeName TexCoord3hArray, TexCoord3fArray, TexCoord3dArray;
 
   SDF_API ~Sdf_ValueTypeNamesType();
-  struct _Init {
+  struct _Init
+  {
     SDF_API static const Sdf_ValueTypeNamesType *New();
   };
 
@@ -526,7 +551,8 @@ extern SDF_API TfStaticData<const Sdf_ValueTypeNamesType, Sdf_ValueTypeNamesType
 /// layer->SetTimeSample(attribute->GetPath(), 101, VtValue(SdfValueBlock()));
 /// \endcode
 ///
-struct SdfValueBlock {
+struct SdfValueBlock
+{
   bool operator==(const SdfValueBlock &block) const
   {
     return true;
@@ -549,9 +575,11 @@ SDF_API std::ostream &operator<<(std::ostream &, SdfValueBlock const &);
 // A class that represents a human-readable value.  This is used for the special
 // purpose of producing layers that serialize field values in alternate ways; to
 // produce more human-readable output, for example.
-struct SdfHumanReadableValue {
+struct SdfHumanReadableValue
+{
   SdfHumanReadableValue() = default;
-  explicit SdfHumanReadableValue(std::string const &text) : _text(text)
+  explicit SdfHumanReadableValue(std::string const &text)
+    : _text(text)
   {}
 
   bool operator==(SdfHumanReadableValue const &other) const

@@ -171,18 +171,18 @@ static int Garch_GetModifierKeys(NSUInteger flags)
   int key = 0;
 
   // XXX shoud call UCKeyTranslate() for non-us keyboard
-  const int keyMap[] = {0x00, 'a', 0x0b, 'b', 0x08, 'c', 0x02, 'd', 0x0e, 'e', 0x03, 'f', 0x05, 'g',
-                        0x04, 'h', 0x22, 'i', 0x26, 'j', 0x28, 'k', 0x25, 'l', 0x2e, 'm', 0x2d, 'n',
-                        0x1f, 'o', 0x23, 'p', 0x0c, 'q', 0x0f, 'r', 0x01, 's', 0x11, 't', 0x20, 'u',
-                        0x09, 'v', 0x0d, 'w', 0x07, 'x', 0x10, 'y', 0x06, 'z', 0x31, ' ', -1,   -1};
+  const int keyMap[] = {0x00, 'a', 0x0b, 'b', 0x08, 'c', 0x02, 'd', 0x0e, 'e', 0x03, 'f', 0x05, 'g', 0x04, 'h', 0x22, 'i', 0x26, 'j', 0x28, 'k', 0x25, 'l', 0x2e, 'm', 0x2d, 'n', 0x1f, 'o', 0x23, 'p', 0x0c, 'q', 0x0f, 'r', 0x01, 's', 0x11, 't', 0x20, 'u', 0x09, 'v', 0x0d, 'w', 0x07, 'x', 0x10, 'y', 0x06, 'z', 0x31, ' ', -1, -1};
 
-  for (int i = 0; keyMap[i] >= 0; i += 2) {
-    if (keyMap[i] == keyCode) {
+  for (int i = 0; keyMap[i] >= 0; i += 2)
+  {
+    if (keyMap[i] == keyCode)
+    {
       key = keyMap[i + 1];
       break;
     }
   }
-  if (key) {
+  if (key)
+  {
     _callback->OnKeyRelease(key);
   }
 
@@ -195,7 +195,8 @@ static int Garch_GetModifierKeys(NSUInteger flags)
 
 WABI_NAMESPACE_BEGIN
 
-Garch_GLPlatformDebugWindow::Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w) : _callback(w)
+Garch_GLPlatformDebugWindow::Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w)
+  : _callback(w)
 {}
 
 void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height, int nSamples)

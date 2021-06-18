@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// The end goal is to not need this object at all and make sure all opengl
 /// state is only changed via HgiPipeline objects.
 ///
-class HgiGL_ScopedStateHolder final {
+class HgiGL_ScopedStateHolder final
+{
  public:
   HGIGL_API
   HgiGL_ScopedStateHolder();

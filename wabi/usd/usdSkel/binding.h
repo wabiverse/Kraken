@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 /// skinnable objects. The set of skinnable objects is given as
 /// UsdSkelSkinningQuery prims, which can be used both to identify the
 /// skinned prim as well compute skinning properties of the prim.
-class UsdSkelBinding {
+class UsdSkelBinding
+{
  public:
   UsdSkelBinding()
   {}

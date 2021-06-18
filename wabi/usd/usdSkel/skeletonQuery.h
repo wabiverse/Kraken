@@ -72,7 +72,8 @@ TF_DECLARE_REF_PTRS(UsdSkel_SkelDefinition);
 /// }
 /// \endcode
 ///
-class UsdSkelSkeletonQuery {
+class UsdSkelSkeletonQuery
+{
  public:
   UsdSkelSkeletonQuery()
   {}
@@ -204,7 +205,8 @@ class UsdSkelSkeletonQuery {
   USDSKEL_API bool ComputeSkinningTransforms(VtArray<Matrix4> *xforms, UsdTimeCode time) const;
 
   /// Returns the world space joint transforms at bind time.
-  template<typename Matrix4> USDSKEL_API bool GetJointWorldBindTransforms(VtArray<Matrix4> *xforms) const;
+  template<typename Matrix4>
+  USDSKEL_API bool GetJointWorldBindTransforms(VtArray<Matrix4> *xforms) const;
 
   USDSKEL_API
   std::string GetDescription() const;

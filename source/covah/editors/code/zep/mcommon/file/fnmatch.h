@@ -66,7 +66,8 @@ inline int fnmatch(const char *pattern, const char *string, int flags)
   char c, test;
 
   for (stringstart = string;;)
-    switch (c = *pattern++) {
+    switch (c = *pattern++)
+    {
       case EOS:
         if ((flags & FNM_LEADING_DIR) && *string == '/')
           return (0);
@@ -97,14 +98,16 @@ inline int fnmatch(const char *pattern, const char *string, int flags)
             return ((flags & FNM_LEADING_DIR) || strchr(string, '/') == NULL ? 0 : FNM_NOMATCH);
           else
             return (0);
-        else if (c == '/' && flags & FNM_PATHNAME) {
+        else if (c == '/' && flags & FNM_PATHNAME)
+        {
           if ((string = strchr(string, '/')) == NULL)
             return (FNM_NOMATCH);
           break;
         }
 
         /* General case, use recursion. */
-        while ((test = *string) != EOS) {
+        while ((test = *string) != EOS)
+        {
           if (!fnmatch(pattern, string, flags & ~FNM_PERIOD))
             return (0);
           if (test == '/' && flags & FNM_PATHNAME)
@@ -122,8 +125,10 @@ inline int fnmatch(const char *pattern, const char *string, int flags)
         ++string;
         break;
       case '\\':
-        if (!(flags & FNM_NOESCAPE)) {
-          if ((c = *pattern++) == EOS) {
+        if (!(flags & FNM_NOESCAPE))
+        {
+          if ((c = *pattern++) == EOS)
+          {
             c = '\\';
             --pattern;
           }
@@ -163,7 +168,8 @@ inline const char *rangematch(const char *pattern, char test, int flags)
   if (flags & FNM_CASEFOLD)
     test = (char)tolower((unsigned char)test);
 
-  for (ok = 0; (c = *pattern++) != ']';) {
+  for (ok = 0; (c = *pattern++) != ']';)
+  {
     if (c == '\\' && !(flags & FNM_NOESCAPE))
       c = *pattern++;
     if (c == EOS)
@@ -172,7 +178,8 @@ inline const char *rangematch(const char *pattern, char test, int flags)
     if (flags & FNM_CASEFOLD)
       c = (char)tolower((unsigned char)c);
 
-    if (*pattern == '-' && (c2 = *(pattern + 1)) != EOS && c2 != ']') {
+    if (*pattern == '-' && (c2 = *(pattern + 1)) != EOS && c2 != ']')
+    {
       pattern += 2;
       if (c2 == '\\' && !(flags & FNM_NOESCAPE))
         c2 = *pattern++;

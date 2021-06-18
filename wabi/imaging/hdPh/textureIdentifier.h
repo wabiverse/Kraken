@@ -44,7 +44,8 @@ class HdPhSubtextureIdentifier;
 /// The class has value semantics and uses HdPhSubtextureIdentifier in a
 /// polymorphic way.
 ///
-class HdPhTextureIdentifier final {
+class HdPhTextureIdentifier final
+{
  public:
   using ID = size_t;
 

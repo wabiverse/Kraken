@@ -72,7 +72,8 @@ TfToken UsdUtilsGetModelNameFromRootLayer(const SdfLayerHandle &rootLayer)
 {
   // First check if if we have the metadata.
   TfToken modelName = rootLayer->GetDefaultPrim();
-  if (!modelName.IsEmpty()) {
+  if (!modelName.IsEmpty())
+  {
     return modelName;
   }
 
@@ -83,15 +84,17 @@ TfToken UsdUtilsGetModelNameFromRootLayer(const SdfLayerHandle &rootLayer)
   modelName = TfToken(baseName.substr(0, baseName.find('.')));
 
   if (!modelName.IsEmpty() && SdfPath::IsValidIdentifier(modelName) &&
-      rootLayer->GetPrimAtPath(SdfPath::AbsoluteRootPath().AppendChild(modelName))) {
+      rootLayer->GetPrimAtPath(SdfPath::AbsoluteRootPath().AppendChild(modelName)))
+  {
     return modelName;
   }
 
   // Otherwise, fallback to getting the first non-class child in the layer.
-  TF_FOR_ALL(rootChildrenIter, rootLayer->GetRootPrims())
+  TF_FOR_ALL (rootChildrenIter, rootLayer->GetRootPrims())
   {
     const SdfPrimSpecHandle &rootPrim = *rootChildrenIter;
-    if (rootPrim->GetSpecifier() != SdfSpecifierClass) {
+    if (rootPrim->GetSpecifier() != SdfSpecifierClass)
+    {
       return rootPrim->GetNameToken();
     }
   }
@@ -102,13 +105,15 @@ TfToken UsdUtilsGetModelNameFromRootLayer(const SdfLayerHandle &rootLayer)
 TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
 {
   PlugPluginPtrVector plugs = PlugRegistry::GetInstance().GetAllPlugins();
-  TF_FOR_ALL(plugIter, plugs)
+  TF_FOR_ALL (plugIter, plugs)
   {
     PlugPluginPtr plug = *plugIter;
     JsObject metadata = plug->GetMetadata();
     JsValue pipelineUtilsDictValue;
-    if (TfMapLookup(metadata, _tokens->UsdUtilsPipeline, &pipelineUtilsDictValue)) {
-      if (!pipelineUtilsDictValue.Is<JsObject>()) {
+    if (TfMapLookup(metadata, _tokens->UsdUtilsPipeline, &pipelineUtilsDictValue))
+    {
+      if (!pipelineUtilsDictValue.Is<JsObject>())
+      {
         TF_CODING_ERROR("%s[UsdUtilsPipeline] was not a dictionary.", plug->GetName().c_str());
         continue;
       }
@@ -116,18 +121,22 @@ TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
       JsObject pipelineUtilsDict = pipelineUtilsDictValue.Get<JsObject>();
 
       JsValue registeredVariantSetsValue;
-      if (TfMapLookup(pipelineUtilsDict, _tokens->RegisteredVariantSets, &registeredVariantSetsValue)) {
-        if (!registeredVariantSetsValue.IsObject()) {
+      if (TfMapLookup(pipelineUtilsDict, _tokens->RegisteredVariantSets, &registeredVariantSetsValue))
+      {
+        if (!registeredVariantSetsValue.IsObject())
+        {
           TF_CODING_ERROR("%s[UsdUtilsPipeline][RegisteredVariantSets] was not a dictionary.",
                           plug->GetName().c_str());
           continue;
         }
 
         const JsObject &registeredVariantSets = registeredVariantSetsValue.GetJsObject();
-        for (const auto &i : registeredVariantSets) {
+        for (const auto &i : registeredVariantSets)
+        {
           const std::string &variantSetName = i.first;
           const JsValue &v = i.second;
-          if (!v.IsObject()) {
+          if (!v.IsObject())
+          {
             TF_CODING_ERROR("%s[UsdUtilsPipeline][RegisteredVariantSets][%s] was not a dictionary.",
                             plug->GetName().c_str(),
                             variantSetName.c_str());
@@ -138,16 +147,20 @@ TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
           std::string variantSetType = info[_tokens->selectionExportPolicy].GetString();
 
           UsdUtilsRegisteredVariantSet::SelectionExportPolicy selectionExportPolicy;
-          if (variantSetType == _tokens->never) {
+          if (variantSetType == _tokens->never)
+          {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Never;
           }
-          else if (variantSetType == _tokens->ifAuthored) {
+          else if (variantSetType == _tokens->ifAuthored)
+          {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::IfAuthored;
           }
-          else if (variantSetType == _tokens->always) {
+          else if (variantSetType == _tokens->always)
+          {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Always;
           }
-          else {
+          else
+          {
             TF_CODING_ERROR("%s[UsdUtilsPipeline][RegisteredVariantSets][%s] was not valid.",
                             plug->GetName().c_str(),
                             variantSetName.c_str());
@@ -182,24 +195,29 @@ UsdPrim UsdUtilsUninstancePrimAtPath(const UsdStagePtr &stage, const SdfPath &pa
   // a prim beneath an instance. In order to uninstance it, we need
   // to uninstance all ancestral instances.
   UsdPrim p = stage->GetPrimAtPath(path);
-  if (!p || !p.IsInstanceProxy()) {
+  if (!p || !p.IsInstanceProxy())
+  {
     return p;
   }
 
   // Skip the last element in prefixes, since that's our own
   // path and we only want to uninstance ancestors.
   SdfPathVector prefixes = path.GetPrefixes();
-  if (!prefixes.empty()) {
+  if (!prefixes.empty())
+  {
     prefixes.pop_back();
   }
 
-  for (const SdfPath &prefixPath : prefixes) {
+  for (const SdfPath &prefixPath : prefixes)
+  {
     UsdPrim prim = stage->GetPrimAtPath(prefixPath);
-    if (!prim) {
+    if (!prim)
+    {
       break;
     }
 
-    if (prim.IsInstance()) {
+    if (prim.IsInstance())
+    {
       prim.SetInstanceable(false);
     }
   }
@@ -238,27 +256,33 @@ static _TokenToTokenMap _GetPipelineIdentifierTokens(const TfTokenVector &identi
   _TokenToTokenMap identifierMap;
 
   const PlugPluginPtrVector plugs = PlugRegistry::GetInstance().GetAllPlugins();
-  for (const auto &plug : plugs) {
+  for (const auto &plug : plugs)
+  {
     JsObject metadata = plug->GetMetadata();
     JsValue metadataDictValue;
-    if (!TfMapLookup(metadata, metadataDictKey, &metadataDictValue)) {
+    if (!TfMapLookup(metadata, metadataDictKey, &metadataDictValue))
+    {
       continue;
     }
 
-    if (!metadataDictValue.Is<JsObject>()) {
+    if (!metadataDictValue.Is<JsObject>())
+    {
       TF_CODING_ERROR("%s[%s] was not a dictionary.", plug->GetName().c_str(), metadataDictKey.GetText());
       continue;
     }
 
     JsObject metadataDict = metadataDictValue.Get<JsObject>();
 
-    for (const TfToken &identifierKey : identifierKeys) {
+    for (const TfToken &identifierKey : identifierKeys)
+    {
       JsValue stringJsValue;
-      if (!TfMapLookup(metadataDict, identifierKey, &stringJsValue)) {
+      if (!TfMapLookup(metadataDict, identifierKey, &stringJsValue))
+      {
         continue;
       }
 
-      if (!stringJsValue.IsString()) {
+      if (!stringJsValue.IsString())
+      {
         TF_CODING_ERROR("%s[%s][%s] was not a string.",
                         plug->GetName().c_str(),
                         metadataDictKey.GetText(),
@@ -267,7 +291,8 @@ static _TokenToTokenMap _GetPipelineIdentifierTokens(const TfTokenVector &identi
       }
 
       const std::string valueString = stringJsValue.GetString();
-      if (!SdfPath::IsValidIdentifier(valueString)) {
+      if (!SdfPath::IsValidIdentifier(valueString))
+      {
         TF_CODING_ERROR("%s[%s][%s] was not a valid identifier: \"%s\".",
                         plug->GetName().c_str(),
                         metadataDictKey.GetText(),
@@ -279,7 +304,8 @@ static _TokenToTokenMap _GetPipelineIdentifierTokens(const TfTokenVector &identi
       identifierMap.insert({identifierKey, TfToken(valueString)});
     }
 
-    if (identifierMap.size() == identifierKeys.size()) {
+    if (identifierMap.size() == identifierKeys.size())
+    {
       // We got an identifier for all of the given keys, so stop looking
       // through plugin metadata.
       break;
@@ -298,7 +324,8 @@ TF_MAKE_STATIC_DATA(_TokenToTokenMap, _pipelineIdentifiersMap)
 
 TfToken UsdUtilsGetMaterialsScopeName(const bool forceDefault)
 {
-  if (TfGetEnvSetting(USD_FORCE_DEFAULT_MATERIALS_SCOPE_NAME) || forceDefault) {
+  if (TfGetEnvSetting(USD_FORCE_DEFAULT_MATERIALS_SCOPE_NAME) || forceDefault)
+  {
     return _tokens->DefaultMaterialsScopeName;
   }
 
@@ -308,7 +335,8 @@ TfToken UsdUtilsGetMaterialsScopeName(const bool forceDefault)
 
 TfToken UsdUtilsGetPrimaryCameraName(const bool forceDefault)
 {
-  if (forceDefault) {
+  if (forceDefault)
+  {
     return _tokens->DefaultPrimaryCameraName;
   }
 

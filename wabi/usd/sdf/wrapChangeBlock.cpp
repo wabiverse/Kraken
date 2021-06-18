@@ -33,11 +33,14 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-class Sdf_PythonChangeBlock {
+class Sdf_PythonChangeBlock
+{
  public:
-  Sdf_PythonChangeBlock() : _block(0)
+  Sdf_PythonChangeBlock()
+    : _block(0)
   {
     // Do nothing.
   }
@@ -49,7 +52,8 @@ class Sdf_PythonChangeBlock {
 
   void Open()
   {
-    if (!TF_VERIFY(_block == 0)) {
+    if (!TF_VERIFY(_block == 0))
+    {
       return;
     }
     _block = new SdfChangeBlock;
@@ -57,7 +61,8 @@ class Sdf_PythonChangeBlock {
 
   void Close(object, object, object)
   {
-    if (!TF_VERIFY(_block != 0)) {
+    if (!TF_VERIFY(_block != 0))
+    {
       return;
     }
     delete _block;

@@ -50,7 +50,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GetNormalized_overloads, GetNormalized, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Normalize_overloads, Normalize, 0, 1);

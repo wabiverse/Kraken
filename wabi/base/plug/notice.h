@@ -42,17 +42,20 @@ TF_DECLARE_WEAK_PTRS(PlugPlugin);
 
 /// \class PlugNotice
 /// Notifications sent by the Plug library.
-class PlugNotice {
+class PlugNotice
+{
  public:
   /// Base class for all Plug notices.
-  class Base : public TfNotice {
+  class Base : public TfNotice
+  {
    public:
     PLUG_API virtual ~Base();
   };
 
   /// Notice sent after new plugins have been registered with the Plug
   /// registry.
-  class DidRegisterPlugins : public Base {
+  class DidRegisterPlugins : public Base
+  {
    public:
     explicit DidRegisterPlugins(const PlugPluginPtrVector &newPlugins);
     PLUG_API virtual ~DidRegisterPlugins();

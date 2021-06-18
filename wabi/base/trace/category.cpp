@@ -58,7 +58,8 @@ std::vector<std::string> TraceCategory::GetCategories(TraceCategoryId id) const
   std::vector<std::string> result;
   using const_iter = std::multimap<TraceCategoryId, std::string>::const_iterator;
   std::pair<const_iter, const_iter> range = _idToNames.equal_range(id);
-  for (const_iter i = range.first; i != range.second; ++i) {
+  for (const_iter i = range.first; i != range.second; ++i)
+  {
     result.push_back(i->second);
   }
   return result;

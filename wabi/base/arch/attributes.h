@@ -208,7 +208,9 @@ WABI_NAMESPACE_BEGIN
 // ensure that each library gets its own initialization.  Without it, on Linux,
 // there would be exactly *one* initialization no matter how many libraries are
 // loaded.
-template<class StaticInit> struct ARCH_HIDDEN Arch_PerLibInit {
+template<class StaticInit>
+struct ARCH_HIDDEN Arch_PerLibInit
+{
   Arch_PerLibInit()
   { /* "use" of init here forces instantiation */
     (void)init;
@@ -217,7 +219,8 @@ template<class StaticInit> struct ARCH_HIDDEN Arch_PerLibInit {
  private:
   static StaticInit init;
 };
-template<class StaticInit> StaticInit Arch_PerLibInit<StaticInit>::init;
+template<class StaticInit>
+StaticInit Arch_PerLibInit<StaticInit>::init;
 
 #define _ARCH_CAT_NOEXPAND(a, b) a##b
 #define _ARCH_CAT(a, b) _ARCH_CAT_NOEXPAND(a, b)
@@ -230,7 +233,8 @@ template<class StaticInit> StaticInit Arch_PerLibInit<StaticInit>::init;
 #elif defined(ARCH_OS_DARWIN)
 
 // Entry for a constructor/destructor in the custom section.
-struct Arch_ConstructorEntry {
+struct Arch_ConstructorEntry
+{
   typedef void (*Type)(void);
   Type function;
   unsigned int version  : 24;  // USD version
@@ -268,7 +272,8 @@ struct Arch_ConstructorEntry {
 #  include "wabi/base/arch/api.h"
 
 // Entry for a constructor/destructor in the custom section.
-__declspec(align(16)) struct Arch_ConstructorEntry {
+__declspec(align(16)) struct Arch_ConstructorEntry
+{
   typedef void(__cdecl *Type)(void);
   Type function;
   unsigned int version  : 24;  // USD version
@@ -282,7 +287,8 @@ __declspec(align(16)) struct Arch_ConstructorEntry {
 // Objects of this type run the ARCH_CONSTRUCTOR and ARCH_DESTRUCTOR functions
 // for the library containing the object in the c'tor and d'tor, respectively.
 // Each HMODULE is handled at most once.
-struct Arch_ConstructorInit {
+struct Arch_ConstructorInit
+{
   ARCH_API Arch_ConstructorInit();
   ARCH_API ~Arch_ConstructorInit();
 };
@@ -293,7 +299,8 @@ struct Arch_ConstructorInit {
 // __attribute__((used)) to do that.
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...) \
     static void _name(__VA_ARGS__); \
-    namespace { \
+    namespace \
+    { \
     __declspec(allocate(".wabictor")) extern const Arch_ConstructorEntry \
       _ARCH_CAT_NOEXPAND(arch_ctor_, \
                          _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \
@@ -304,7 +311,8 @@ struct Arch_ConstructorInit {
 // Emit a Arch_ConstructorEntry in the .wabidtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...) \
     static void _name(__VA_ARGS__); \
-    namespace { \
+    namespace \
+    { \
     __declspec(allocate(".wabidtor")) extern const Arch_ConstructorEntry \
       _ARCH_CAT_NOEXPAND(arch_dtor_, \
                          _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), 0u, _priority}; \

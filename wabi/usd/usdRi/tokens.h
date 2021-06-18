@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdRiTokens->analytic);
 /// \endcode
-struct UsdRiTokensType {
+struct UsdRiTokensType
+{
   USDRI_API UsdRiTokensType();
   /// \brief "analytic"
   ///

@@ -50,7 +50,8 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 
 /// A subdivision surface or poly-mesh object.
 ///
-class HdPhMesh final : public HdMesh {
+class HdPhMesh final : public HdMesh
+{
  public:
   HF_MALLOC_TAG_NEW("new HdPhMesh");
 
@@ -165,7 +166,8 @@ class HdPhMesh final : public HdMesh {
   // the OSD refiner in an order that will correspond to their face-varying
   // channel number. We keep a vector of only the topologies in use, paired
   // with their associated primvar names.
-  class _FvarTopologyTracker {
+  class _FvarTopologyTracker
+  {
    public:
     const TopologyToPrimvarVector &GetTopologyToPrimvarVector() const
     {
@@ -175,12 +177,15 @@ class HdPhMesh final : public HdMesh {
     // Add a primvar and its corresponding toplogy to the tracker
     void AddOrUpdateTopology(const TfToken &primvar, const VtIntArray &topology)
     {
-      for (size_t i = 0; i < _topologies.size(); ++i) {
+      for (size_t i = 0; i < _topologies.size(); ++i)
+      {
         // Found existing topology
-        if (_topologies[i].first == topology) {
+        if (_topologies[i].first == topology)
+        {
 
           if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) ==
-              _topologies[i].second.end()) {
+              _topologies[i].second.end())
+          {
             // Topology does not have that primvar assigned
             RemovePrimvar(primvar);
             _topologies[i].second.push_back(primvar);
@@ -197,7 +202,8 @@ class HdPhMesh final : public HdMesh {
     // Remove a primvar from the tracker.
     void RemovePrimvar(const TfToken &primvar)
     {
-      for (size_t i = 0; i < _topologies.size(); ++i) {
+      for (size_t i = 0; i < _topologies.size(); ++i)
+      {
         _topologies[i].second.erase(
           std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar),
           _topologies[i].second.end());
@@ -216,9 +222,11 @@ class HdPhMesh final : public HdMesh {
     // not in the tracker, returns -1.
     int GetChannelFromPrimvar(const TfToken &primvar) const
     {
-      for (size_t i = 0; i < _topologies.size(); ++i) {
+      for (size_t i = 0; i < _topologies.size(); ++i)
+      {
         if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) !=
-            _topologies[i].second.end()) {
+            _topologies[i].second.end())
+        {
           return i;
         }
       }
@@ -229,7 +237,8 @@ class HdPhMesh final : public HdMesh {
     std::vector<VtIntArray> GetFvarTopologies() const
     {
       std::vector<VtIntArray> fvarTopologies;
-      for (const auto &it : _topologies) {
+      for (const auto &it : _topologies)
+      {
         fvarTopologies.push_back(it.first);
       }
       return fvarTopologies;
@@ -252,13 +261,15 @@ class HdPhMesh final : public HdMesh {
   };
 
  private:
-  enum DrawingCoord {
+  enum DrawingCoord
+  {
     HullTopology = HdDrawingCoord::CustomSlotsBegin,
     PointsTopology,
     InstancePrimvar  // has to be at the very end
   };
 
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     DirtySmoothNormals = HdChangeTracker::CustomBitsBegin,
     DirtyFlatNormals = (DirtySmoothNormals << 1),
     DirtyIndices = (DirtyFlatNormals << 1),

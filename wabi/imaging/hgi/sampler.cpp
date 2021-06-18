@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiSampler::HgiSampler(HgiSamplerDesc const &desc) : _descriptor(desc)
+HgiSampler::HgiSampler(HgiSamplerDesc const &desc)
+  : _descriptor(desc)
 {}
 
 HgiSampler::~HgiSampler() = default;

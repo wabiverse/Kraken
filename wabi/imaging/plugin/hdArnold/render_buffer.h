@@ -34,7 +34,8 @@ struct AtNode;
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for handling render data.
-class HdArnoldRenderBuffer : public HdRenderBuffer {
+class HdArnoldRenderBuffer : public HdRenderBuffer
+{
  public:
   HDARNOLD_API
   HdArnoldRenderBuffer(const SdfPath &id);
@@ -136,7 +137,8 @@ class HdArnoldRenderBuffer : public HdRenderBuffer {
   }
 
   /// Utility class for storing render buffers.
-  struct BufferDefinition {
+  struct BufferDefinition
+  {
     HdAovSettingsMap settings;               ///< Filter and AOV settings for the Render Buffer.
     HdArnoldRenderBuffer *buffer = nullptr;  ///< HdArnoldRenderBuffer pointer.
     AtNode *driver = nullptr;                ///< Arnold driver.

@@ -85,7 +85,9 @@ using Sdf_PathPrimHandle = Sdf_PathPrimPartPool::Handle;
 using Sdf_PathPropHandle = Sdf_PathPropPartPool::Handle;
 
 // This handle class wraps up the raw Prim/PropPartPool handles.
-template<class Handle, bool Counted, class PathNode = Sdf_PathNode const> struct Sdf_PathNodeHandleImpl {
+template<class Handle, bool Counted, class PathNode = Sdf_PathNode const>
+struct Sdf_PathNodeHandleImpl
+{
  private:
   typedef Sdf_PathNodeHandleImpl this_type;
 
@@ -95,42 +97,50 @@ template<class Handle, bool Counted, class PathNode = Sdf_PathNode const> struct
   explicit Sdf_PathNodeHandleImpl(Sdf_PathNode const *p, bool add_ref = true)
     : _poolHandle(Handle::GetHandle(reinterpret_cast<char const *>(p)))
   {
-    if (p && add_ref) {
+    if (p && add_ref)
+    {
       _AddRef(p);
     }
   }
 
-  explicit Sdf_PathNodeHandleImpl(Handle h, bool add_ref = true) : _poolHandle(h)
+  explicit Sdf_PathNodeHandleImpl(Handle h, bool add_ref = true)
+    : _poolHandle(h)
   {
-    if (h && add_ref) {
+    if (h && add_ref)
+    {
       _AddRef();
     }
   }
 
-  Sdf_PathNodeHandleImpl(Sdf_PathNodeHandleImpl const &rhs) : _poolHandle(rhs._poolHandle)
+  Sdf_PathNodeHandleImpl(Sdf_PathNodeHandleImpl const &rhs)
+    : _poolHandle(rhs._poolHandle)
   {
-    if (_poolHandle) {
+    if (_poolHandle)
+    {
       _AddRef();
     }
   }
 
   ~Sdf_PathNodeHandleImpl()
   {
-    if (_poolHandle) {
+    if (_poolHandle)
+    {
       _DecRef();
     }
   }
 
   Sdf_PathNodeHandleImpl &operator=(Sdf_PathNodeHandleImpl const &rhs)
   {
-    if (Counted && *this == rhs) {
+    if (Counted && *this == rhs)
+    {
       return *this;
     }
     this_type(rhs).swap(*this);
     return *this;
   }
 
-  Sdf_PathNodeHandleImpl(Sdf_PathNodeHandleImpl &&rhs) noexcept : _poolHandle(rhs._poolHandle)
+  Sdf_PathNodeHandleImpl(Sdf_PathNodeHandleImpl &&rhs) noexcept
+    : _poolHandle(rhs._poolHandle)
   {
     rhs._poolHandle = nullptr;
   }
@@ -193,7 +203,8 @@ template<class Handle, bool Counted, class PathNode = Sdf_PathNode const> struct
  private:
   void _AddRef(Sdf_PathNode const *p) const
   {
-    if (Counted) {
+    if (Counted)
+    {
       intrusive_ptr_add_ref(p);
     }
   }
@@ -205,7 +216,8 @@ template<class Handle, bool Counted, class PathNode = Sdf_PathNode const> struct
 
   void _DecRef() const
   {
-    if (Counted) {
+    if (Counted)
+    {
       intrusive_ptr_release(get());
     }
   }
@@ -299,7 +311,8 @@ VT_TYPE_IS_CHEAP_TO_COPY(class SdfPath);
 /// the number of values created (since it requires synchronized access to
 /// this table) or copied (since it requires atomic ref-counting operations).
 ///
-class SdfPath : boost::totally_ordered<SdfPath> {
+class SdfPath : boost::totally_ordered<SdfPath>
+{
  public:
   /// The empty path value, equivalent to SdfPath().
   SDF_API static const SdfPath &EmptyPath();
@@ -909,17 +922,20 @@ class SdfPath : boost::totally_ordered<SdfPath> {
   ///
   inline bool operator<(const SdfPath &rhs) const
   {
-    if (_AsInt() == rhs._AsInt()) {
+    if (_AsInt() == rhs._AsInt())
+    {
       return false;
     }
-    if (!_primPart || !rhs._primPart) {
+    if (!_primPart || !rhs._primPart)
+    {
       return !_primPart && rhs._primPart;
     }
     // Valid prim parts -- must walk node structure, etc.
     return _LessThanInternal(*this, rhs);
   }
 
-  template<class HashState> friend void TfHashAppend(HashState &h, SdfPath const &path)
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, SdfPath const &path)
   {
     // The hash function is pretty sensitive performance-wise.  Be
     // careful making changes here, and run tests.
@@ -931,7 +947,8 @@ class SdfPath : boost::totally_ordered<SdfPath> {
   }
 
   // For hash maps and sets
-  struct Hash {
+  struct Hash
+  {
     inline size_t operator()(const SdfPath &path) const
     {
       return TfHash()(path);
@@ -945,7 +962,8 @@ class SdfPath : boost::totally_ordered<SdfPath> {
 
   // For cases where an unspecified total order that is not stable from
   // run-to-run is needed.
-  struct FastLessThan {
+  struct FastLessThan
+  {
     inline bool operator()(const SdfPath &a, const SdfPath &b) const
     {
       return a._AsInt() < b._AsInt();
@@ -982,7 +1000,8 @@ class SdfPath : boost::totally_ordered<SdfPath> {
   // property parts.
 
   // Accept rvalues.
-  explicit SdfPath(Sdf_PathPrimNodeHandle &&primNode) : _primPart(std::move(primNode))
+  explicit SdfPath(Sdf_PathPrimNodeHandle &&primNode)
+    : _primPart(std::move(primNode))
   {}
 
   // Construct from prim & prop parts.
@@ -1047,9 +1066,11 @@ class SdfPath : boost::totally_ordered<SdfPath> {
 /// represents paths `../a/b`, `../a` and `..`.
 /// This represents the same of set of `prefix` paths as SdfPath::GetPrefixes,
 /// but in reverse order.
-class SdfPathAncestorsRange {
+class SdfPathAncestorsRange
+{
  public:
-  SdfPathAncestorsRange(const SdfPath &path) : _path(path)
+  SdfPathAncestorsRange(const SdfPath &path)
+    : _path(path)
   {}
 
   const SdfPath &GetPath() const
@@ -1057,14 +1078,16 @@ class SdfPathAncestorsRange {
     return _path;
   }
 
-  struct iterator {
+  struct iterator
+  {
     using iterator_category = std::forward_iterator_tag;
     using value_type = SdfPath;
     using difference_type = std::ptrdiff_t;
     using reference = const SdfPath &;
     using pointer = const SdfPath *;
 
-    iterator(const SdfPath &path) : _path(path)
+    iterator(const SdfPath &path)
+      : _path(path)
     {}
 
     iterator() = default;
@@ -1126,7 +1149,8 @@ SDF_API std::ostream &operator<<(std::ostream &out, const SdfPath &path);
 
 // Helper for SdfPathFindPrefixedRange & SdfPathFindLongestPrefix.  A function
 // object that returns an SdfPath const & unchanged.
-struct Sdf_PathIdentity {
+struct Sdf_PathIdentity
+{
   inline SdfPath const &operator()(SdfPath const &arg) const
   {
     return arg;
@@ -1147,8 +1171,10 @@ std::pair<ForwardIterator, ForwardIterator> SdfPathFindPrefixedRange(ForwardIter
 {
   using IterRef = typename std::iterator_traits<ForwardIterator>::reference;
 
-  struct Compare {
-    Compare(GetPathFn const &getPath) : _getPath(getPath)
+  struct Compare
+  {
+    Compare(GetPathFn const &getPath)
+      : _getPath(getPath)
     {}
     GetPathFn const &_getPath;
     bool operator()(IterRef a, SdfPath const &b) const
@@ -1179,8 +1205,10 @@ RandomAccessIterator Sdf_PathFindLongestPrefixImpl(RandomAccessIterator begin,
 {
   using IterRef = typename std::iterator_traits<RandomAccessIterator>::reference;
 
-  struct Compare {
-    Compare(GetPathFn const &getPath) : _getPath(getPath)
+  struct Compare
+  {
+    Compare(GetPathFn const &getPath)
+      : _getPath(getPath)
     {}
     GetPathFn const &_getPath;
     bool operator()(IterRef a, SdfPath const &b) const
@@ -1205,18 +1233,21 @@ RandomAccessIterator Sdf_PathFindLongestPrefixImpl(RandomAccessIterator begin,
 
   // If we didn't get the end, check to see if we got the path exactly if
   // we're not looking for a strict prefix.
-  if (!strictPrefix && result != end && getPath(*result) == path) {
+  if (!strictPrefix && result != end && getPath(*result) == path)
+  {
     return result;
   }
 
   // If we got begin (and didn't match in the case of a non-strict prefix)
   // then there's no prefix.
-  if (result == begin) {
+  if (result == begin)
+  {
     return end;
   }
 
   // If the prior element is a prefix, we're done.
-  if (path.HasPrefix(getPath(*--result))) {
+  if (path.HasPrefix(getPath(*--result)))
+  {
     return result;
   }
 
@@ -1224,17 +1255,21 @@ RandomAccessIterator Sdf_PathFindLongestPrefixImpl(RandomAccessIterator begin,
   // look for its prefix in the preceding range.
   SdfPath newPath = path.GetCommonPrefix(getPath(*result));
   auto origEnd = end;
-  do {
+  do
+  {
     end = result;
     result = std::lower_bound(begin, end, newPath, comp);
 
-    if (result != end && getPath(*result) == newPath) {
+    if (result != end && getPath(*result) == newPath)
+    {
       return result;
     }
-    if (result == begin) {
+    if (result == begin)
+    {
       return origEnd;
     }
-    if (newPath.HasPrefix(getPath(*--result))) {
+    if (newPath.HasPrefix(getPath(*--result)))
+    {
       return result;
     }
     newPath = newPath.GetCommonPrefix(getPath(*result));

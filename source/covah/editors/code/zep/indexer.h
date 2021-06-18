@@ -7,26 +7,30 @@
 
 #include "zep/editor.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepEditor;
 
 // List of files found in the directory search
-struct FileIndexResult {
+struct FileIndexResult
+{
   ZepPath root;
   std::vector<ZepPath> paths;
   std::vector<std::string> lowerPaths;
   std::string errors;
 };
 
-struct SymbolDetails {
+struct SymbolDetails
+{
   int line = 0;
   int column = 0;
 };
 
 using SymbolContainer = std::map<std::string, SymbolDetails>;
 
-class Indexer : public ZepComponent {
+class Indexer : public ZepComponent
+{
  public:
   Indexer(ZepEditor &editor);
 

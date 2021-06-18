@@ -28,7 +28,8 @@
 #include <wabi/imaging/hd/bufferSource.h>
 #include <wabi/usd/sdf/path.h>
 
-namespace ccl {
+namespace ccl
+{
 class Object;
 class Scene;
 }  // namespace ccl
@@ -40,7 +41,8 @@ class SdfPath;
 ///
 ///
 ///
-class HdCyclesObjectSource : public HdBufferSource {
+class HdCyclesObjectSource : public HdBufferSource
+{
  public:
   explicit HdCyclesObjectSource(ccl::Object *object, const SdfPath &id, bool isReference = true);
   ~HdCyclesObjectSource() override;
@@ -55,7 +57,8 @@ class HdCyclesObjectSource : public HdBufferSource {
   HdBbAttributeSource *CreateAttributeSource(const TfToken &name, Args &&...args)
   {
     const std::string &name_str = name.GetString();
-    if (name_str.find("__", 0) == 0) {
+    if (name_str.find("__", 0) == 0)
+    {
       return nullptr;
     }
 

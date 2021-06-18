@@ -79,7 +79,8 @@ using HdPhExtCompGpuComputationSharedPtr = std::shared_ptr<class HdPhExtCompGpuC
 /// \see HdResourceRegistry
 /// \see HdExtComputation
 /// \see HdBufferArrayRange
-class HdPhExtCompGpuComputation final : public HdComputation {
+class HdPhExtCompGpuComputation final : public HdComputation
+{
  public:
   /// Constructs a new GPU ExtComputation computation.
   /// resource provides the set of input data and kernel to execute this

@@ -38,8 +38,10 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
-struct _DummyScope {
+namespace
+{
+struct _DummyScope
+{
 };
 }  // namespace
 

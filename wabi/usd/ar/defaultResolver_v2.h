@@ -75,7 +75,8 @@ WABI_NAMESPACE_BEGIN
 /// ArDefaultResolver supports creating an ArDefaultResolverContext via
 /// ArResolver::CreateContextFromString by passing a list of directories
 /// delimited by the platform's standard path separator.
-class ArDefaultResolver : public ArResolver {
+class ArDefaultResolver : public ArResolver
+{
  public:
   AR_API
   ArDefaultResolver();

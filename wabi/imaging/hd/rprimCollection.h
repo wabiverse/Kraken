@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 /// HdRenderPass
 /// HdDirtyList
 ///
-class HdRprimCollection {
+class HdRprimCollection
+{
  public:
   HD_API
   HdRprimCollection();
@@ -188,7 +189,8 @@ class HdRprimCollection {
   HD_API
   size_t ComputeHash() const;
 
-  struct Hash {
+  struct Hash
+  {
     size_t operator()(HdRprimCollection const &value) const
     {
       return value.ComputeHash();
@@ -196,7 +198,8 @@ class HdRprimCollection {
   };
 
   // TfHash support.
-  template<class HashState> friend void TfHashAppend(HashState &h, HdRprimCollection const &rc)
+  template<class HashState>
+  friend void TfHashAppend(HashState &h, HdRprimCollection const &rc)
   {
     h.Append(rc._name, rc._reprSelector, rc._forcedRepr, rc._rootPaths, rc._excludePaths, rc._materialTag);
   }

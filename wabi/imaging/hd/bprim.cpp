@@ -27,7 +27,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdBprim::HdBprim(SdfPath const &id) : _id(id)
+HdBprim::HdBprim(SdfPath const &id)
+  : _id(id)
 {}
 
 HdBprim::~HdBprim()

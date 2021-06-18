@@ -56,13 +56,19 @@ using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
 ///
 /// Phoenix implementation for mesh topology.
 ///
-class HdPh_MeshTopology final : public HdMeshTopology {
+class HdPh_MeshTopology final : public HdMeshTopology
+{
  public:
   /// Specifies how subdivision mesh topology is refined.
-  enum RefineMode { RefineModeUniform = 0, RefineModePatches };
+  enum RefineMode
+  {
+    RefineModeUniform = 0,
+    RefineModePatches
+  };
 
   /// Specifies type of interpolation to use in refinement
-  enum Interpolation {
+  enum Interpolation
+  {
     INTERPOLATE_VERTEX,
     INTERPOLATE_VARYING,
     INTERPOLATE_FACEVARYING,

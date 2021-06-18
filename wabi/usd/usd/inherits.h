@@ -48,10 +48,12 @@ SDF_DECLARE_HANDLES(SdfPrimSpec);
 /// will be issued and no changes will be made. Root prim inherit paths will
 /// not be translated.
 ///
-class UsdInherits {
+class UsdInherits
+{
   friend class UsdPrim;
 
-  explicit UsdInherits(const UsdPrim &prim) : _prim(prim)
+  explicit UsdInherits(const UsdPrim &prim)
+    : _prim(prim)
   {}
 
  public:

@@ -64,18 +64,22 @@ int TraceAggregateTree::GetCounterIndex(const TfToken &key) const
 bool TraceAggregateTree::AddCounter(const TfToken &key, int index, double totalValue)
 {
   // Don't add counters with invalid indices
-  if (!TF_VERIFY(index >= 0)) {
+  if (!TF_VERIFY(index >= 0))
+  {
     return false;
   }
 
   // We don't expect a counter entry to exist with this key
-  if (!TF_VERIFY(_counters.find(key) == _counters.end())) {
+  if (!TF_VERIFY(_counters.find(key) == _counters.end()))
+  {
     return false;
   }
 
   // We also don't expect the given index to be used by a different counter
-  for (const _CounterIndexMap::value_type &it : _counterIndexMap) {
-    if (!TF_VERIFY(it.second != index)) {
+  for (const _CounterIndexMap::value_type &it : _counterIndexMap)
+  {
+    if (!TF_VERIFY(it.second != index))
+    {
       return false;
     }
   }

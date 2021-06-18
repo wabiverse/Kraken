@@ -47,7 +47,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 ////////////////////////////////////////////////////////////////////////
 // Wrappers for constructors and proxy constructors
@@ -125,7 +126,8 @@ static void _SetRelocates(SdfPrimSpec &self, const dict &d)
   list keys = d.keys();
   int numKeys = len(d);
 
-  for (int i = 0; i < numKeys; i++) {
+  for (int i = 0; i < numKeys; i++)
+  {
     SdfPath key = extract<SdfPath>(keys[i]);
     SdfPath val = extract<SdfPath>(d[keys[i]]);
 

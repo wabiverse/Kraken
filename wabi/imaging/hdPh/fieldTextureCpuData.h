@@ -43,7 +43,8 @@ using HioFieldTextureDataSharedPtr = std::shared_ptr<class HioFieldTextureData>;
 /// An implmentation of HdPhTextureCpuData that can be initialized
 /// from HioFieldTextureData.
 ///
-class HdPh_FieldTextureCpuData : public HdPhTextureCpuData {
+class HdPh_FieldTextureCpuData : public HdPhTextureCpuData
+{
  public:
   /// It is assumed that Read(...) has already been called
   /// on textureData.

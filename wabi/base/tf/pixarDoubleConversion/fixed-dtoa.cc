@@ -38,15 +38,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
 // Represents a 128bit type. This class should be replaced by a native type on
 // platforms that support 128bit integers.
-class UInt128 {
+class UInt128
+{
  public:
-  UInt128() : high_bits_(0), low_bits_(0)
+  UInt128()
+    : high_bits_(0),
+      low_bits_(0)
   {}
-  UInt128(uint64_t high, uint64_t low) : high_bits_(high), low_bits_(low)
+  UInt128(uint64_t high, uint64_t low)
+    : high_bits_(high),
+      low_bits_(low)
   {}
 
   void Multiply(uint32_t multiplicand)
@@ -70,23 +76,28 @@ class UInt128 {
   void Shift(int shift_amount)
   {
     ASSERT(-64 <= shift_amount && shift_amount <= 64);
-    if (shift_amount == 0) {
+    if (shift_amount == 0)
+    {
       return;
     }
-    else if (shift_amount == -64) {
+    else if (shift_amount == -64)
+    {
       high_bits_ = low_bits_;
       low_bits_ = 0;
     }
-    else if (shift_amount == 64) {
+    else if (shift_amount == 64)
+    {
       low_bits_ = high_bits_;
       high_bits_ = 0;
     }
-    else if (shift_amount <= 0) {
+    else if (shift_amount <= 0)
+    {
       high_bits_ <<= -shift_amount;
       high_bits_ += low_bits_ >> (64 + shift_amount);
       low_bits_ <<= -shift_amount;
     }
-    else {
+    else
+    {
       low_bits_ >>= shift_amount;
       low_bits_ += high_bits_ << (64 - shift_amount);
       high_bits_ >>= shift_amount;
@@ -97,12 +108,14 @@ class UInt128 {
   // Returns *this DIV (2^power).
   int DivModPowerOf2(int power)
   {
-    if (power >= 64) {
+    if (power >= 64)
+    {
       int result = static_cast<int>(high_bits_ >> (power - 64));
       high_bits_ -= static_cast<uint64_t>(result) << (power - 64);
       return result;
     }
-    else {
+    else
+    {
       uint64_t part_low = low_bits_ >> power;
       uint64_t part_high = high_bits_ << (64 - power);
       int result = static_cast<int>(part_low + part_high);
@@ -119,10 +132,12 @@ class UInt128 {
 
   int BitAt(int position) const
   {
-    if (position >= 64) {
+    if (position >= 64)
+    {
       return static_cast<int>(high_bits_ >> (position - 64)) & 1;
     }
-    else {
+    else
+    {
       return static_cast<int>(low_bits_ >> position) & 1;
     }
   }
@@ -138,7 +153,8 @@ static const int kDoubleSignificandSize = 53;  // Includes the hidden bit.
 
 static void FillDigits32FixedLength(uint32_t number, int requested_length, Vector<char> buffer, int *length)
 {
-  for (int i = requested_length - 1; i >= 0; --i) {
+  for (int i = requested_length - 1; i >= 0; --i)
+  {
     buffer[(*length) + i] = '0' + number % 10;
     number /= 10;
   }
@@ -149,7 +165,8 @@ static void FillDigits32(uint32_t number, Vector<char> buffer, int *length)
 {
   int number_length = 0;
   // We fill the digits in reverse order and exchange them afterwards.
-  while (number != 0) {
+  while (number != 0)
+  {
     int digit = number % 10;
     number /= 10;
     buffer[(*length) + number_length] = static_cast<char>('0' + digit);
@@ -158,7 +175,8 @@ static void FillDigits32(uint32_t number, Vector<char> buffer, int *length)
   // Exchange the digits.
   int i = *length;
   int j = *length + number_length - 1;
-  while (i < j) {
+  while (i < j)
+  {
     char tmp = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = tmp;
@@ -191,16 +209,19 @@ static void FillDigits64(uint64_t number, Vector<char> buffer, int *length)
   uint32_t part1 = static_cast<uint32_t>(number % kTen7);
   uint32_t part0 = static_cast<uint32_t>(number / kTen7);
 
-  if (part0 != 0) {
+  if (part0 != 0)
+  {
     FillDigits32(part0, buffer, length);
     FillDigits32FixedLength(part1, 7, buffer, length);
     FillDigits32FixedLength(part2, 7, buffer, length);
   }
-  else if (part1 != 0) {
+  else if (part1 != 0)
+  {
     FillDigits32(part1, buffer, length);
     FillDigits32FixedLength(part2, 7, buffer, length);
   }
-  else {
+  else
+  {
     FillDigits32(part2, buffer, length);
   }
 }
@@ -208,7 +229,8 @@ static void FillDigits64(uint64_t number, Vector<char> buffer, int *length)
 static void RoundUp(Vector<char> buffer, int *length, int *decimal_point)
 {
   // An empty buffer represents 0.
-  if (*length == 0) {
+  if (*length == 0)
+  {
     buffer[0] = '1';
     *decimal_point = 1;
     *length = 1;
@@ -217,8 +239,10 @@ static void RoundUp(Vector<char> buffer, int *length, int *decimal_point)
   // Round the last digit until we either have a digit that was not '9' or until
   // we reached the first digit.
   buffer[(*length) - 1]++;
-  for (int i = (*length) - 1; i > 0; --i) {
-    if (buffer[i] != '0' + 10) {
+  for (int i = (*length) - 1; i > 0; --i)
+  {
+    if (buffer[i] != '0' + 10)
+    {
       return;
     }
     buffer[i] = '0';
@@ -229,7 +253,8 @@ static void RoundUp(Vector<char> buffer, int *length, int *decimal_point)
   // digits had been '9' before rounding up. Now all trailing digits are '0' and
   // we simply switch the first digit to '1' and update the decimal-point
   // (indicating that the point is now one digit to the right).
-  if (buffer[0] == '0' + 10) {
+  if (buffer[0] == '0' + 10)
+  {
     buffer[0] = '1';
     (*decimal_point)++;
   }
@@ -257,11 +282,13 @@ static void FillFractionals(uint64_t fractionals,
   // 'fractionals' is a fixed-point number, with binary point at bit
   // (-exponent). Inside the function the non-converted remainder of fractionals
   // is a fixed-point number, with binary point at bit 'point'.
-  if (-exponent <= 64) {
+  if (-exponent <= 64)
+  {
     // One 64 bit number is sufficient.
     ASSERT(fractionals >> 56 == 0);
     int point = -exponent;
-    for (int i = 0; i < fractional_count; ++i) {
+    for (int i = 0; i < fractional_count; ++i)
+    {
       if (fractionals == 0)
         break;
       // Instead of multiplying by 10 we multiply by 5 and adjust the point
@@ -283,16 +310,19 @@ static void FillFractionals(uint64_t fractionals,
       fractionals -= static_cast<uint64_t>(digit) << point;
     }
     // If the first bit after the point is set we have to round up.
-    if (((fractionals >> (point - 1)) & 1) == 1) {
+    if (((fractionals >> (point - 1)) & 1) == 1)
+    {
       RoundUp(buffer, length, decimal_point);
     }
   }
-  else {  // We need 128 bits.
+  else
+  {  // We need 128 bits.
     ASSERT(64 < -exponent && -exponent <= 128);
     UInt128 fractionals128 = UInt128(fractionals, 0);
     fractionals128.Shift(-exponent - 64);
     int point = 128;
-    for (int i = 0; i < fractional_count; ++i) {
+    for (int i = 0; i < fractional_count; ++i)
+    {
       if (fractionals128.IsZero())
         break;
       // As before: instead of multiplying by 10 we multiply by 5 and adjust the
@@ -305,7 +335,8 @@ static void FillFractionals(uint64_t fractionals,
       buffer[*length] = static_cast<char>('0' + digit);
       (*length)++;
     }
-    if (fractionals128.BitAt(point - 1) == 1) {
+    if (fractionals128.BitAt(point - 1) == 1)
+    {
       RoundUp(buffer, length, decimal_point);
     }
   }
@@ -315,15 +346,19 @@ static void FillFractionals(uint64_t fractionals,
 // If leading zeros are removed then the decimal point position is adjusted.
 static void TrimZeros(Vector<char> buffer, int *length, int *decimal_point)
 {
-  while (*length > 0 && buffer[(*length) - 1] == '0') {
+  while (*length > 0 && buffer[(*length) - 1] == '0')
+  {
     (*length)--;
   }
   int first_non_zero = 0;
-  while (first_non_zero < *length && buffer[first_non_zero] == '0') {
+  while (first_non_zero < *length && buffer[first_non_zero] == '0')
+  {
     first_non_zero++;
   }
-  if (first_non_zero != 0) {
-    for (int i = first_non_zero; i < *length; ++i) {
+  if (first_non_zero != 0)
+  {
+    for (int i = first_non_zero; i < *length; ++i)
+    {
       buffer[i - first_non_zero] = buffer[i];
     }
     *length -= first_non_zero;
@@ -349,7 +384,8 @@ bool FastFixedDtoa(double v, int fractional_count, Vector<char> buffer, int *len
   // At most kDoubleSignificandSize bits of the significand are non-zero.
   // Given a 64 bit integer we have 11 0s followed by 53 potentially non-zero
   // bits:  0..11*..0xxx..53*..xx
-  if (exponent + kDoubleSignificandSize > 64) {
+  if (exponent + kDoubleSignificandSize > 64)
+  {
     // The exponent must be > 11.
     //
     // We know that v = significand * 2^exponent.
@@ -373,13 +409,15 @@ bool FastFixedDtoa(double v, int fractional_count, Vector<char> buffer, int *len
     //   f * 2^(e-17) = q * 5^17        + r/2^17
     // else
     //   f  = q * 5^17 * 2^(17-e) + r/2^e
-    if (exponent > divisor_power) {
+    if (exponent > divisor_power)
+    {
       // We only allow exponents of up to 20 and therefore (17 - e) <= 3
       dividend <<= exponent - divisor_power;
       quotient = static_cast<uint32_t>(dividend / divisor);
       remainder = (dividend % divisor) << divisor_power;
     }
-    else {
+    else
+    {
       divisor <<= divisor_power - exponent;
       quotient = static_cast<uint32_t>(dividend / divisor);
       remainder = (dividend % divisor) << exponent;
@@ -388,26 +426,31 @@ bool FastFixedDtoa(double v, int fractional_count, Vector<char> buffer, int *len
     FillDigits64FixedLength(remainder, buffer, length);
     *decimal_point = *length;
   }
-  else if (exponent >= 0) {
+  else if (exponent >= 0)
+  {
     // 0 <= exponent <= 11
     significand <<= exponent;
     FillDigits64(significand, buffer, length);
     *decimal_point = *length;
   }
-  else if (exponent > -kDoubleSignificandSize) {
+  else if (exponent > -kDoubleSignificandSize)
+  {
     // We have to cut the number.
     uint64_t integrals = significand >> -exponent;
     uint64_t fractionals = significand - (integrals << -exponent);
-    if (integrals > kMaxUInt32) {
+    if (integrals > kMaxUInt32)
+    {
       FillDigits64(integrals, buffer, length);
     }
-    else {
+    else
+    {
       FillDigits32(static_cast<uint32_t>(integrals), buffer, length);
     }
     *decimal_point = *length;
     FillFractionals(fractionals, exponent, fractional_count, buffer, length, decimal_point);
   }
-  else if (exponent < -128) {
+  else if (exponent < -128)
+  {
     // This configuration (with at most 20 digits) means that all digits must be
     // 0.
     ASSERT(fractional_count <= 20);
@@ -415,13 +458,15 @@ bool FastFixedDtoa(double v, int fractional_count, Vector<char> buffer, int *len
     *length = 0;
     *decimal_point = -fractional_count;
   }
-  else {
+  else
+  {
     *decimal_point = 0;
     FillFractionals(significand, exponent, fractional_count, buffer, length, decimal_point);
   }
   TrimZeros(buffer, length, decimal_point);
   buffer[*length] = '\0';
-  if ((*length) == 0) {
+  if ((*length) == 0)
+  {
     // The string is empty and the decimal_point thus has no importance. Mimick
     // Gay's dtoa and and set it to -fractional_count.
     *decimal_point = -fractional_count;

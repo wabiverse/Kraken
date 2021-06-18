@@ -93,11 +93,13 @@ WABI_NAMESPACE_BEGIN
 /// used to compute a look at point which is useful when rotating around an
 /// object of interest.
 ///
-class GfFrustum {
+class GfFrustum
+{
  public:
   /// This enum is used to determine the type of projection represented by a
   /// frustum.
-  enum ProjectionType {
+  enum ProjectionType
+  {
     Orthographic,  ///< Orthographic projection
     Perspective,   ///< Perspective projection
   };
@@ -122,7 +124,8 @@ class GfFrustum {
       _projectionType(o._projectionType),
       _planes(nullptr)
   {
-    if (auto *planes = o._planes.load()) {
+    if (auto *planes = o._planes.load())
+    {
       _planes = new std::array<GfPlane, 6>(*planes);
     }
   }
@@ -137,7 +140,8 @@ class GfFrustum {
       _projectionType(o._projectionType),
       _planes(nullptr)
   {
-    if (auto *planes = o._planes.exchange(nullptr, std::memory_order_relaxed)) {
+    if (auto *planes = o._planes.exchange(nullptr, std::memory_order_relaxed))
+    {
       _planes = planes;
     }
   }
@@ -163,7 +167,8 @@ class GfFrustum {
   /// Copy assignment.
   GfFrustum &operator=(GfFrustum const &o) noexcept
   {
-    if (this == &o) {
+    if (this == &o)
+    {
       return *this;
     }
     _position = o._position;
@@ -173,10 +178,12 @@ class GfFrustum {
     _viewDistance = o._viewDistance;
     _projectionType = o._projectionType;
     delete _planes.load(std::memory_order_relaxed);
-    if (auto *planes = o._planes.load(std::memory_order_relaxed)) {
+    if (auto *planes = o._planes.load(std::memory_order_relaxed))
+    {
       _planes.store(new std::array<GfPlane, 6>(*planes), std::memory_order_relaxed);
     }
-    else {
+    else
+    {
       _planes.store(nullptr, std::memory_order_relaxed);
     }
     return *this;
@@ -185,7 +192,8 @@ class GfFrustum {
   /// Move assignment.
   GfFrustum &operator=(GfFrustum &&o) noexcept
   {
-    if (this == &o) {
+    if (this == &o)
+    {
       return *this;
     }
     _position = o._position;

@@ -36,7 +36,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfVariantSetSpecHandle _NewUnderPrim(const SdfPrimSpecHandle &owner, const std::string &name)
 {

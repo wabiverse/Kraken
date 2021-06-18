@@ -47,22 +47,26 @@ WABI_NAMESPACE_BEGIN
 // VtZero<GfVec3d>()
 // etc.
 #define VT_ZERO_0_CONSTRUCTOR(r, unused, elem) \
-  template<> VT_API VT_TYPE(elem) VtZero() \
+  template<> \
+  VT_API VT_TYPE(elem) VtZero() \
   { \
     return (VT_TYPE(elem))(0); \
   }
 #define VT_ZERO_0FLOAT_CONSTRUCTOR(r, unused, elem) \
-  template<> VT_API VT_TYPE(elem) VtZero() \
+  template<> \
+  VT_API VT_TYPE(elem) VtZero() \
   { \
     return VT_TYPE(elem)(0.0f); \
   }
 #define VT_ZERO_0DOUBLE_CONSTRUCTOR(r, unused, elem) \
-  template<> VT_API VT_TYPE(elem) VtZero() \
+  template<> \
+  VT_API VT_TYPE(elem) VtZero() \
   { \
     return VT_TYPE(elem)(0.0); \
   }
 #define VT_ZERO_EMPTY_CONSTRUCTOR(r, unused, elem) \
-  template<> VT_API VT_TYPE(elem) VtZero() \
+  template<> \
+  VT_API VT_TYPE(elem) VtZero() \
   { \
     return VT_TYPE(elem)(); \
   }
@@ -88,19 +92,26 @@ TF_REGISTRY_FUNCTION(TfType)
 
 // Floating point conversions... in future, we might hope to use SSE here.
 // Where is the right place to document the existence of these?
-namespace {
+namespace
+{
 
 // A function object that converts a 'From' to a 'To'.
-template<class To> struct _Convert {
-  template<class From> inline To operator()(From const &from) const
+template<class To>
+struct _Convert
+{
+  template<class From>
+  inline To operator()(From const &from) const
   {
     return To(from);
   }
 };
 
 // A function object that converts a GfRange type to another GfRange type.
-template<class ToRng> struct _ConvertRng {
-  template<class FromRng> inline ToRng operator()(FromRng const &from) const
+template<class ToRng>
+struct _ConvertRng
+{
+  template<class FromRng>
+  inline ToRng operator()(FromRng const &from) const
   {
     return ToRng(typename ToRng::MinMaxType(from.GetMin()), typename ToRng::MinMaxType(from.GetMax()));
   }
@@ -115,13 +126,15 @@ VtValue _ConvertArray(VtValue const &array)
   return VtValue::Take(dst);
 }
 
-template<class A1, class A2> void _RegisterArrayCasts()
+template<class A1, class A2>
+void _RegisterArrayCasts()
 {
   VtValue::RegisterCast<A1, A2>(_ConvertArray<A1, A2, _Convert>);
   VtValue::RegisterCast<A2, A1>(_ConvertArray<A2, A1, _Convert>);
 }
 
-template<class A1, class A2> void _RegisterRangeArrayCasts()
+template<class A1, class A2>
+void _RegisterRangeArrayCasts()
 {
   VtValue::RegisterCast<A1, A2>(_ConvertArray<A1, A2, _ConvertRng>);
   VtValue::RegisterCast<A2, A1>(_ConvertArray<A2, A1, _ConvertRng>);

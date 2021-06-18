@@ -53,7 +53,8 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 /// that is is not available, all OpenGL calls become no-ops, but all other work
 /// is performed as usual.
 ///
-class HdPh_TestDriver final {
+class HdPh_TestDriver final
+{
  public:
   HdPh_TestDriver();
   HdPh_TestDriver(TfToken const &reprName);
@@ -121,7 +122,8 @@ class HdPh_TestDriver final {
 ///
 using HdPh_TestLightingShaderSharedPtr = std::shared_ptr<class HdPh_TestLightingShader>;
 
-class HdPh_TestLightingShader : public HdPhLightingShader {
+class HdPh_TestLightingShader : public HdPhLightingShader
+{
  public:
   HDPH_API
   HdPh_TestLightingShader();
@@ -149,7 +151,8 @@ class HdPh_TestLightingShader : public HdPhLightingShader {
   void SetLight(int light, GfVec3f const &dir, GfVec3f const &color);
 
  private:
-  struct Light {
+  struct Light
+  {
     GfVec3f dir;
     GfVec3f eyeDir;
     GfVec3f color;

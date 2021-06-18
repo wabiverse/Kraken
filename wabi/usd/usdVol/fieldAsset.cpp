@@ -50,7 +50,8 @@ UsdVolFieldAsset::~UsdVolFieldAsset()
 /* static */
 UsdVolFieldAsset UsdVolFieldAsset::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolFieldAsset();
   }
@@ -165,7 +166,8 @@ UsdAttribute UsdVolFieldAsset::CreateVectorDataRoleHintAttr(VtValue const &defau
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

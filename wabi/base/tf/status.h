@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// In the Python API, you can issue a status message with Tf.Status().
 ///
-class TfStatus : public TfDiagnosticBase {
+class TfStatus : public TfDiagnosticBase
+{
  private:
   TfStatus(TfEnum statusCode,
            char const *statusCodeString,

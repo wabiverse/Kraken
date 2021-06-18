@@ -22,7 +22,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class RprUsdImageCache {
+class RprUsdImageCache
+{
  public:
   RPRUSD_API
   RprUsdImageCache(rpr::Context *context);
@@ -37,7 +38,8 @@ class RprUsdImageCache {
  private:
   rpr::Context *m_context;
 
-  struct CacheKey {
+  struct CacheKey
+  {
     std::string path;
     std::string colorspace;
     rpr::ImageWrapType wrapType;
@@ -48,7 +50,8 @@ class RprUsdImageCache {
     }
 
     size_t hash;
-    struct Hash {
+    struct Hash
+    {
       size_t operator()(CacheKey const &key) const
       {
         return key.hash;
@@ -56,7 +59,8 @@ class RprUsdImageCache {
     };
   };
 
-  struct CacheValue {
+  struct CacheValue
+  {
     std::vector<std::pair<uint32_t, double>> tileModificationTimes;
     std::weak_ptr<RprUsdCoreImage> handle;
 

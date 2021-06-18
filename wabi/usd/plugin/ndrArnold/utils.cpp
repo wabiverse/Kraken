@@ -45,31 +45,38 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
  (filename));
 // clang-format on
 
-namespace {
+namespace
+{
 
 // TODO(pal): All this should be moved to a schema API.
 
 // The conversion classes store both the sdf type and a simple function pointer
 // that can do the conversion.
-struct DefaultValueConversion {
+struct DefaultValueConversion
+{
   const SdfValueTypeName &type;
   using Convert = VtValue (*)(const AtParamValue &, const AtParamEntry *);
   Convert f = nullptr;
 
   template<typename F>
-  DefaultValueConversion(const SdfValueTypeName &_type, F &&_f) : type(_type),
-                                                                  f(std::move(_f))
+  DefaultValueConversion(const SdfValueTypeName &_type, F &&_f)
+    : type(_type),
+      f(std::move(_f))
   {}
 
   DefaultValueConversion() = delete;
 };
 
-struct ArrayConversion {
+struct ArrayConversion
+{
   const SdfValueTypeName &type;
   using Convert = VtValue (*)(const AtArray *);
   Convert f = nullptr;
 
-  template<typename F> ArrayConversion(const SdfValueTypeName &_type, F &&_f) : type(_type), f(std::move(_f))
+  template<typename F>
+  ArrayConversion(const SdfValueTypeName &_type, F &&_f)
+    : type(_type),
+      f(std::move(_f))
   {}
 
   ArrayConversion() = delete;
@@ -88,16 +95,19 @@ inline GfMatrix4d _ArrayGetMatrix(const AtArray *arr, uint32_t i, const char *fi
 
 // Most of the USD types line up with the arnold types, so memcpying is enough
 // except for strings, so we need to be able to specialize for that case.
-template<typename LHT, typename RHT> inline void _Convert(LHT &l, const RHT &r)
+template<typename LHT, typename RHT>
+inline void _Convert(LHT &l, const RHT &r)
 {
   static_assert(sizeof(LHT) == sizeof(RHT), "Input data for convert must has the same size");
   memcpy(&l, &r, sizeof(r));
 };
 
-template<> inline void _Convert<std::string, AtString>(std::string &l, const AtString &r)
+template<>
+inline void _Convert<std::string, AtString>(std::string &l, const AtString &r)
 {
   const auto *c = r.c_str();
-  if (c != nullptr) {
+  if (c != nullptr)
+  {
     l = c;
   }
 };
@@ -107,11 +117,13 @@ inline VtValue _ExportArray(const AtArray *arr, R (*f)(const AtArray *, uint32_t
 {
   // we already check the validity of the array before this call
   const auto nelements = AiArrayGetNumElements(arr);
-  if (nelements == 0) {
+  if (nelements == 0)
+  {
     return VtValue(VtArray<T>());
   }
   VtArray<T> out_arr(nelements);
-  for (auto i = 0u; i < nelements; ++i) {
+  for (auto i = 0u; i < nelements; ++i)
+  {
     _Convert(out_arr[i], f(arr, i, __FILE__, __LINE__));
   }
   return VtValue(out_arr);
@@ -180,7 +192,8 @@ const std::unordered_map<uint8_t, DefaultValueConversion> &_DefaultValueConversi
     {AI_TYPE_ENUM,
      {SdfValueTypeNames->String,
       [](const AtParamValue &pv, const AtParamEntry *pe) -> VtValue {
-        if (pe == nullptr) {
+        if (pe == nullptr)
+        {
           return VtValue("");
         }
         const auto enums = AiParamGetEnum(pe);
@@ -241,7 +254,8 @@ const std::unordered_map<uint8_t, ArrayConversion> &_ArrayTypeConversionMap()
       [](const AtArray *a) -> VtValue {
         const auto nelements = AiArrayGetNumElements(a);
         VtArray<GfMatrix4d> arr(nelements);
-        for (auto i = 0u; i < nelements; ++i) {
+        for (auto i = 0u; i < nelements; ++i)
+        {
           arr[i] = _ArrayGetMatrix(a, i, __FILE__, __LINE__);
         }
         return VtValue(arr);
@@ -266,10 +280,12 @@ const DefaultValueConversion *_GetDefaultValueConversion(uint8_t type)
 {
   const auto &dvcm = _DefaultValueConversionMap();
   const auto it = dvcm.find(type);
-  if (it != dvcm.end()) {
+  if (it != dvcm.end())
+  {
     return &it->second;
   }
-  else {
+  else
+  {
     return nullptr;
   }
 }
@@ -278,10 +294,12 @@ const ArrayConversion *_GetArrayConversion(uint8_t type)
 {
   const auto &atm = _ArrayTypeConversionMap();
   const auto it = atm.find(type);
-  if (it != atm.end()) {
+  if (it != atm.end())
+  {
     return &it->second;
   }
-  else {
+  else
+  {
     return nullptr;
   }
 }
@@ -296,38 +314,47 @@ void _ReadArnoldShaderDef(UsdPrim &prim, const AtNodeEntry *nodeEntry)
 
   auto paramIter = AiNodeEntryGetParamIterator(nodeEntry);
 
-  while (!AiParamIteratorFinished(paramIter)) {
+  while (!AiParamIteratorFinished(paramIter))
+  {
     const auto *pentry = AiParamIteratorGetNext(paramIter);
     const auto paramType = AiParamGetType(pentry);
 
-    if (paramType == AI_TYPE_ARRAY) {
+    if (paramType == AI_TYPE_ARRAY)
+    {
       const auto *defaultValue = AiParamGetDefault(pentry);
-      if (defaultValue == nullptr) {
+      if (defaultValue == nullptr)
+      {
         continue;
       }
       const auto *array = defaultValue->ARRAY();
-      if (array == nullptr) {
+      if (array == nullptr)
+      {
         continue;
       }
       const auto elemType = AiArrayGetType(array);
       const auto *conversion = _GetArrayConversion(elemType);
-      if (conversion == nullptr) {
+      if (conversion == nullptr)
+      {
         continue;
       }
       auto attr = prim.CreateAttribute(TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
 
-      if (conversion->f != nullptr) {
+      if (conversion->f != nullptr)
+      {
         attr.Set(conversion->f(array));
       }
     }
-    else {
+    else
+    {
       const auto *conversion = _GetDefaultValueConversion(paramType);
-      if (conversion == nullptr) {
+      if (conversion == nullptr)
+      {
         continue;
       }
       auto attr = prim.CreateAttribute(TfToken(AiParamGetName(pentry).c_str()), conversion->type, false);
 
-      if (conversion->f != nullptr) {
+      if (conversion->f != nullptr)
+      {
         attr.Set(conversion->f(*AiParamGetDefault(pentry), pentry));
       }
     }
@@ -350,14 +377,16 @@ UsdStageRefPtr NdrArnoldGetShaderDefs()
 
     // We expect the existing arnold universe to load the plugins.
     const auto hasActiveUniverse = AiUniverseIsActive();
-    if (!hasActiveUniverse) {
+    if (!hasActiveUniverse)
+    {
       AiBegin(AI_SESSION_BATCH);
       AiMsgSetConsoleFlags(AI_LOG_NONE);
     }
 
     auto *nodeIter = AiUniverseGetNodeEntryIterator(AI_NODE_SHADER);
 
-    while (!AiNodeEntryIteratorFinished(nodeIter)) {
+    while (!AiNodeEntryIteratorFinished(nodeIter))
+    {
       auto *nodeEntry = AiNodeEntryIteratorGetNext(nodeIter);
       auto prim = stage->DefinePrim(SdfPath(TfStringPrintf("/%s", AiNodeEntryGetName(nodeEntry))));
       _ReadArnoldShaderDef(prim, nodeEntry);
@@ -365,7 +394,8 @@ UsdStageRefPtr NdrArnoldGetShaderDefs()
 
     AiNodeEntryIteratorDestroy(nodeIter);
 
-    if (!hasActiveUniverse) {
+    if (!hasActiveUniverse)
+    {
       AiEnd();
     }
 

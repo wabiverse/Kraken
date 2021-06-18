@@ -77,7 +77,8 @@ class SdfAssetPath;
 /// be accessed via GetFilterLinkCollection().
 ///
 ///
-class UsdLuxLightFilter : public UsdGeomXformable {
+class UsdLuxLightFilter : public UsdGeomXformable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -93,13 +94,15 @@ class UsdLuxLightFilter : public UsdGeomXformable {
   /// Equivalent to UsdLuxLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxLightFilter(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim)
+  explicit UsdLuxLightFilter(const UsdPrim &prim = UsdPrim())
+    : UsdGeomXformable(prim)
   {}
 
   /// Construct a UsdLuxLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxLightFilter(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj)
+  explicit UsdLuxLightFilter(const UsdSchemaBase &schemaObj)
+    : UsdGeomXformable(schemaObj)
   {}
 
   /// Destructor.

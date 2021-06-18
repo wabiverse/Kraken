@@ -9,7 +9,8 @@ double chooseK(int n, int k)
 
   double c = 1;
 
-  for (int i = 0; i < k; i++) {
+  for (int i = 0; i < k; i++)
+  {
     double t = double(n - i) / double(i + 1);
 
     c *= t;
@@ -22,7 +23,8 @@ double chooseUpToK(int n, int k)
 {
   double c = 0;
 
-  for (int i = 1; i <= k; i++) {
+  for (int i = 1; i <= k; i++)
+  {
     c += chooseK(n, i);
   }
 
@@ -50,7 +52,8 @@ double calcScore(const int *bins, const int bincount, const int keycount)
 
   double r = 0;
 
-  for (int i = 0; i < bincount; i++) {
+  for (int i = 0; i < bincount; i++)
+  {
     double b = bins[i];
 
     r += b * b;
@@ -85,7 +88,8 @@ void plot(double n)
 
   if (n3 == 0)
     printf(".");
-  else {
+  else
+  {
     char x = '0' + char(n3);
 
     if (x > '9')

@@ -56,10 +56,12 @@ SdfReference::SdfReference(const std::string &assetPath,
 
 void SdfReference::SetCustomData(const std::string &name, const VtValue &value)
 {
-  if (value.IsEmpty()) {
+  if (value.IsEmpty())
+  {
     _customData.erase(name);
   }
-  else {
+  else
+  {
     _customData[name] = value;
   }
 }

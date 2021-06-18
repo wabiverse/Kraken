@@ -62,7 +62,8 @@ SdfPath UsdImagingMaterialAdapter::Populate(UsdPrim const &prim,
   // Since material are populated by reference, they need to take care not to
   // be populated multiple times.
   SdfPath cachePath = prim.GetPath();
-  if (index->IsPopulated(cachePath)) {
+  if (index->IsPopulated(cachePath))
+  {
     return cachePath;
   }
 
@@ -75,7 +76,8 @@ SdfPath UsdImagingMaterialAdapter::Populate(UsdPrim const &prim,
   // gather and validate the Sdr node types are supported by render delegate.
   const TfTokenVector contextVector = _GetMaterialRenderContexts();
   UsdShadeShader surface = material.ComputeSurfaceSource(contextVector);
-  if (!surface) {
+  if (!surface)
+  {
     UsdShadeShader volume = material.ComputeVolumeSource(contextVector);
     if (!volume)
       return SdfPath::EmptyPath();
@@ -87,8 +89,10 @@ SdfPath UsdImagingMaterialAdapter::Populate(UsdPrim const &prim,
   // Also register dependencies on behalf of any descendent
   // UsdShadeShader prims, since they are consumed to
   // create the material network.
-  for (UsdPrim const &child : prim.GetDescendants()) {
-    if (child.IsA<UsdShadeShader>()) {
+  for (UsdPrim const &child : prim.GetDescendants())
+  {
+    if (child.IsA<UsdShadeShader>())
+    {
       index->AddDependency(cachePath, child);
     }
   }
@@ -104,7 +108,8 @@ void UsdImagingMaterialAdapter::TrackVariability(UsdPrim const &prim,
 {
   TRACE_FUNCTION();
   UsdShadeMaterial material(prim);
-  if (!material) {
+  if (!material)
+  {
     TF_RUNTIME_ERROR(
       "Expected material prim at <%s> to be of type "
       "'UsdShadeMaterial', not type '%s'; ignoring",
@@ -114,22 +119,28 @@ void UsdImagingMaterialAdapter::TrackVariability(UsdPrim const &prim,
   }
 
   const TfTokenVector contextVector = _GetMaterialRenderContexts();
-  if (UsdShadeShader s = material.ComputeSurfaceSource(contextVector)) {
-    if (UsdImaging_IsHdMaterialNetworkTimeVarying(s.GetPrim())) {
+  if (UsdShadeShader s = material.ComputeSurfaceSource(contextVector))
+  {
+    if (UsdImaging_IsHdMaterialNetworkTimeVarying(s.GetPrim()))
+    {
       *timeVaryingBits |= HdMaterial::DirtyResource;
       return;
     }
     // Only check if displacement is timeVarying if we also have a surface
-    if (UsdShadeShader d = material.ComputeDisplacementSource(contextVector)) {
-      if (UsdImaging_IsHdMaterialNetworkTimeVarying(d.GetPrim())) {
+    if (UsdShadeShader d = material.ComputeDisplacementSource(contextVector))
+    {
+      if (UsdImaging_IsHdMaterialNetworkTimeVarying(d.GetPrim()))
+      {
         *timeVaryingBits |= HdMaterial::DirtyResource;
       }
     }
     return;
   }
 
-  if (UsdShadeShader v = material.ComputeVolumeSource(contextVector)) {
-    if (UsdImaging_IsHdMaterialNetworkTimeVarying(v.GetPrim())) {
+  if (UsdShadeShader v = material.ComputeVolumeSource(contextVector))
+  {
+    if (UsdImaging_IsHdMaterialNetworkTimeVarying(v.GetPrim()))
+    {
       *timeVaryingBits |= HdMaterial::DirtyResource;
     }
     return;
@@ -149,7 +160,8 @@ HdDirtyBits UsdImagingMaterialAdapter::ProcessPropertyChange(UsdPrim const &prim
                                                              SdfPath const &cachePath,
                                                              TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->visibility) {
+  if (propertyName == UsdGeomTokens->visibility)
+  {
     // Materials aren't affected by visibility
     return HdChangeTracker::Clean;
   }
@@ -169,11 +181,13 @@ void UsdImagingMaterialAdapter::MarkDirty(UsdPrim const &prim,
   // Material prim, walk up to the enclosing Material.
   SdfPath materialCachePath = cachePath;
   UsdPrim materialPrim = prim;
-  while (materialPrim && !materialPrim.IsA<UsdShadeMaterial>()) {
+  while (materialPrim && !materialPrim.IsA<UsdShadeMaterial>())
+  {
     materialPrim = materialPrim.GetParent();
     materialCachePath = materialCachePath.GetParentPath();
   }
-  if (!TF_VERIFY(materialPrim)) {
+  if (!TF_VERIFY(materialPrim))
+  {
     return;
   }
 
@@ -213,7 +227,8 @@ VtValue UsdImagingMaterialAdapter::GetMaterialResource(UsdPrim const &prim,
 {
   TRACE_FUNCTION();
   UsdShadeMaterial material(prim);
-  if (!material) {
+  if (!material)
+  {
     TF_RUNTIME_ERROR(
       "Expected material prim at <%s> to be of type "
       "'UsdShadeMaterial', not type '%s'; ignoring",
@@ -231,12 +246,14 @@ VtValue UsdImagingMaterialAdapter::GetMaterialResource(UsdPrim const &prim,
   const TfTokenVector contextVector = _GetMaterialRenderContexts();
   TfTokenVector shaderSourceTypes = _GetShaderSourceTypes();
 
-  if (UsdShadeShader surface = material.ComputeSurfaceSource(contextVector)) {
+  if (UsdShadeShader surface = material.ComputeSurfaceSource(contextVector))
+  {
     UsdImaging_BuildHdMaterialNetworkFromTerminal(
       surface.GetPrim(), HdMaterialTerminalTokens->surface, shaderSourceTypes, &networkMap, time);
 
     // Only build a displacement materialNetwork if we also have a surface
-    if (UsdShadeShader displacement = material.ComputeDisplacementSource(contextVector)) {
+    if (UsdShadeShader displacement = material.ComputeDisplacementSource(contextVector))
+    {
       UsdImaging_BuildHdMaterialNetworkFromTerminal(displacement.GetPrim(),
                                                     HdMaterialTerminalTokens->displacement,
                                                     shaderSourceTypes,
@@ -246,7 +263,8 @@ VtValue UsdImagingMaterialAdapter::GetMaterialResource(UsdPrim const &prim,
   }
 
   // Only build a volume materialNetwork if we do not have a surface
-  else if (UsdShadeShader volume = material.ComputeVolumeSource(contextVector)) {
+  else if (UsdShadeShader volume = material.ComputeVolumeSource(contextVector))
+  {
     UsdImaging_BuildHdMaterialNetworkFromTerminal(
       volume.GetPrim(), HdMaterialTerminalTokens->volume, shaderSourceTypes, &networkMap, time);
   }

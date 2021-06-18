@@ -41,9 +41,13 @@ class PcpPrimIndex_Graph;
 /// The arc is owned by a node (source) and points to its parent node (target)
 /// in the index.
 ///
-class PcpArc {
+class PcpArc
+{
  public:
-  PcpArc() : type(PcpArcTypeRoot), siblingNumAtOrigin(0), namespaceDepth(0)
+  PcpArc()
+    : type(PcpArcTypeRoot),
+      siblingNumAtOrigin(0),
+      namespaceDepth(0)
   {}
 
   /// The type of this arc.

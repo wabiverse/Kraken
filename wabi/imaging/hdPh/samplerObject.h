@@ -62,7 +62,8 @@ using HdPhSamplerObjectSharedPtr = std::shared_ptr<class HdPhSamplerObject>;
 /// different thread. The HdPh_SamplerObjectRegistry is also dispatching
 /// by texture type to construct the corresponding sampler type.
 ///
-class HdPhSamplerObject {
+class HdPhSamplerObject
+{
  public:
   virtual ~HdPhSamplerObject() = 0;
 
@@ -77,7 +78,8 @@ class HdPhSamplerObject {
 ///
 /// A sampler suitable for HdPhUvTextureObject.
 ///
-class HdPhUvSamplerObject final : public HdPhSamplerObject {
+class HdPhUvSamplerObject final : public HdPhSamplerObject
+{
  public:
   HDPH_API
   HdPhUvSamplerObject(HdPhUvTextureObject const &uvTexture,
@@ -114,7 +116,8 @@ class HdPhUvSamplerObject final : public HdPhSamplerObject {
 ///
 /// A sampler suitable for HdPhFieldTextureObject.
 ///
-class HdPhFieldSamplerObject final : public HdPhSamplerObject {
+class HdPhFieldSamplerObject final : public HdPhSamplerObject
+{
  public:
   HdPhFieldSamplerObject(HdPhFieldTextureObject const &uvTexture,
                          HdSamplerParameters const &samplerParameters,
@@ -150,7 +153,8 @@ class HdPhFieldSamplerObject final : public HdPhSamplerObject {
 /// Ptex doesn't bind samplers, so this class is just holding the
 /// texture handles for bindless textures.
 ///
-class HdPhPtexSamplerObject final : public HdPhSamplerObject {
+class HdPhPtexSamplerObject final : public HdPhSamplerObject
+{
  public:
   HdPhPtexSamplerObject(HdPhPtexTextureObject const &ptexTexture,
                         // samplerParameters are ignored by ptex
@@ -196,7 +200,8 @@ class HdPhPtexSamplerObject final : public HdPhSamplerObject {
 /// A sampler suitable for Udim textures (wraps one GPU sampler
 /// for the texels texture).
 ///
-class HdPhUdimSamplerObject final : public HdPhSamplerObject {
+class HdPhUdimSamplerObject final : public HdPhSamplerObject
+{
  public:
   HdPhUdimSamplerObject(HdPhUdimTextureObject const &ptexTexture,
                         // samplerParameters are ignored by udim (at least for now)
@@ -237,7 +242,8 @@ class HdPhUdimSamplerObject final : public HdPhSamplerObject {
   const uint64_t _layoutGLTextureHandle;
 };
 
-template<HdTextureType textureType> struct HdPh_TypedSamplerObjectHelper;
+template<HdTextureType textureType>
+struct HdPh_TypedSamplerObjectHelper;
 
 /// \class HdPhTypedSamplerObject
 ///
@@ -247,19 +253,27 @@ template<HdTextureType textureType> struct HdPh_TypedSamplerObjectHelper;
 template<HdTextureType textureType>
 using HdPhTypedSamplerObject = typename HdPh_TypedSamplerObjectHelper<textureType>::type;
 
-template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Uv> {
+template<>
+struct HdPh_TypedSamplerObjectHelper<HdTextureType::Uv>
+{
   using type = HdPhUvSamplerObject;
 };
 
-template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Field> {
+template<>
+struct HdPh_TypedSamplerObjectHelper<HdTextureType::Field>
+{
   using type = HdPhFieldSamplerObject;
 };
 
-template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Ptex> {
+template<>
+struct HdPh_TypedSamplerObjectHelper<HdTextureType::Ptex>
+{
   using type = HdPhPtexSamplerObject;
 };
 
-template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Udim> {
+template<>
+struct HdPh_TypedSamplerObjectHelper<HdTextureType::Udim>
+{
   using type = HdPhUdimSamplerObject;
 };
 

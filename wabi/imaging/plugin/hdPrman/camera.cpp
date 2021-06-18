@@ -33,7 +33,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrmanCamera::HdPrmanCamera(SdfPath const &id) : HdCamera(id), _dirtyParams(false)
+HdPrmanCamera::HdPrmanCamera(SdfPath const &id)
+  : HdCamera(id),
+    _dirtyParams(false)
 {
   /* NOTHING */
 }
@@ -46,18 +48,21 @@ void HdPrmanCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!TF_VERIFY(sceneDelegate != nullptr)) {
+  if (!TF_VERIFY(sceneDelegate != nullptr))
+  {
     return;
   }
 
   SdfPath const &id = GetId();
   HdDirtyBits &bits = *dirtyBits;
 
-  if (bits & DirtyViewMatrix) {
+  if (bits & DirtyViewMatrix)
+  {
     sceneDelegate->SampleTransform(id, &_sampleXforms);
   }
 
-  if (bits & DirtyParams) {
+  if (bits & DirtyParams)
+  {
     _dirtyParams = true;
   }
 
@@ -86,23 +91,27 @@ void HdPrmanCamera::SetRileyCameraParams(RtParamList &camParams, RtParamList &pr
   // focalDistance
   // RenderMan defines disabled DOF as fStop=inf not zero
   const float fStop = GetFStop();
-  if (GetFStop() > 0) {
+  if (GetFStop() > 0)
+  {
     projParams.SetFloat(RixStr.k_fStop, fStop);
   }
-  else {
+  else
+  {
     projParams.SetFloat(RixStr.k_fStop, RI_INFINITY);
   }
 
   // Do not use the initial value 0 which we get if the scene delegate
   // did not provide a focal length.
   const float focalLength = GetFocalLength();
-  if (focalLength > 0) {
+  if (focalLength > 0)
+  {
     projParams.SetFloat(RixStr.k_focalLength, focalLength);
   }
 
   // Similar for focus distance.
   const float focusDistance = GetFocusDistance();
-  if (focusDistance > 0) {
+  if (focusDistance > 0)
+  {
     projParams.SetFloat(RixStr.k_focalDistance, focusDistance);
   }
 
@@ -129,7 +138,8 @@ void HdPrmanCamera::SetRileyCameraParams(RtParamList &camParams, RtParamList &pr
   // GfRange1f::IsEmpty() in that we do not allow the range to contain
   // only exactly one point.
   const GfRange1f &clippingRange = GetClippingRange();
-  if (clippingRange.GetMin() < clippingRange.GetMax()) {
+  if (clippingRange.GetMin() < clippingRange.GetMax())
+  {
     camParams.SetFloat(RixStr.k_nearClip, clippingRange.GetMin());
     camParams.SetFloat(RixStr.k_farClip, clippingRange.GetMax());
   }

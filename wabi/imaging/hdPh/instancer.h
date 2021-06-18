@@ -65,7 +65,8 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 /// index tuple can be passed to the shader so that each instance can look up
 /// its instance primvars in the bound primvar arrays.
 
-class HdPhInstancer : public HdInstancer {
+class HdPhInstancer : public HdInstancer
+{
  public:
   /// Constructor.
   HDPH_API

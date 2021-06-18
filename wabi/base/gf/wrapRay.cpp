@@ -55,7 +55,8 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static void SetStartPointHelper(GfRay &self, const GfVec3d &startPoint)
 {

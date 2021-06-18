@@ -25,7 +25,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhLightingShader::HdPhLightingShader() : HdPhShaderCode()
+HdPhLightingShader::HdPhLightingShader()
+  : HdPhShaderCode()
 {
   /*NOTHING*/
 }

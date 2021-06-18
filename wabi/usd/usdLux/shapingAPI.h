@@ -64,7 +64,8 @@ class SdfAssetPath;
 ///
 /// Controls for shaping a light's emission.
 ///
-class UsdLuxShapingAPI : public UsdAPISchemaBase {
+class UsdLuxShapingAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -80,13 +81,15 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdLuxShapingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxShapingAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdLuxShapingAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdLuxShapingAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxShapingAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxShapingAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdLuxShapingAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

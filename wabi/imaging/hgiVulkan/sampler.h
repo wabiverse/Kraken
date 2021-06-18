@@ -44,7 +44,8 @@ class HgiVulkanDevice;
 ///
 /// Vulkan implementation of HgiSampler
 ///
-class HgiVulkanSampler final : public HgiSampler {
+class HgiVulkanSampler final : public HgiSampler
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanSampler() override;

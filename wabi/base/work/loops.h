@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 ///     void LoopCallback(size_t begin, size_t end);
 ///
-template<typename Fn> void WorkSerialForN(size_t n, Fn &&fn)
+template<typename Fn>
+void WorkSerialForN(size_t n, Fn &&fn)
 {
   std::forward<Fn>(fn)(0, n);
 }
@@ -68,17 +69,21 @@ template<typename Fn> void WorkSerialForN(size_t n, Fn &&fn)
 /// you want to have at least 10,000 instructions to count for the overhead of
 /// launching a thread.
 ///
-template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
+template<typename Fn>
+void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
 {
   if (n == 0)
     return;
 
   // Don't bother with parallel_for, if concurrency is limited to 1.
-  if (WorkHasConcurrency()) {
+  if (WorkHasConcurrency())
+  {
 
-    class Work_ParallelForN_TBB {
+    class Work_ParallelForN_TBB
+    {
      public:
-      Work_ParallelForN_TBB(Fn &fn) : _fn(fn)
+      Work_ParallelForN_TBB(Fn &fn)
+        : _fn(fn)
       {}
 
       void operator()(const tbb::blocked_range<size_t> &r) const
@@ -100,7 +105,8 @@ template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback, size_t grai
     tbb::task_group_context ctx(tbb::task_group_context::isolated);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, n, grainSize), Work_ParallelForN_TBB(callback), ctx);
   }
-  else {
+  else
+  {
 
     // If concurrency is limited to 1, execute serially.
     WorkSerialForN(n, std::forward<Fn>(callback));
@@ -118,7 +124,8 @@ template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback, size_t grai
 ///     void LoopCallback(size_t begin, size_t end);
 ///
 ///
-template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback)
+template<typename Fn>
+void WorkParallelForN(size_t n, Fn &&callback)
 {
   WorkParallelForN(n, std::forward<Fn>(callback), 1);
 }

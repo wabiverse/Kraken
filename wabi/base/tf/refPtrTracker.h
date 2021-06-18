@@ -41,7 +41,8 @@
 WABI_NAMESPACE_BEGIN
 
 class TfRefBase;
-template<class T> class TfRefPtr;
+template<class T>
+class TfRefPtr;
 
 /// \class TfRefPtrTracker
 ///
@@ -94,9 +95,14 @@ template<class T> class TfRefPtr;
 /// \c TfRefPtrTracker::WatchNone() when tracking \c B if you're not
 /// interested in instances of \c B.
 ///
-class TfRefPtrTracker : public TfWeakBase, boost::noncopyable {
+class TfRefPtrTracker : public TfWeakBase, boost::noncopyable
+{
  public:
-  enum TraceType { Add, Assign };
+  enum TraceType
+  {
+    Add,
+    Assign
+  };
 
   TF_API static TfRefPtrTracker &GetInstance()
   {
@@ -112,7 +118,8 @@ class TfRefPtrTracker : public TfWeakBase, boost::noncopyable {
   void SetStackTraceMaxDepth(size_t);
 
   /// A track trace.
-  struct Trace {
+  struct Trace
+  {
     /// The stack trace when the \c TfRefPtr was created or assigned to.
     std::vector<uintptr_t> trace;
 
@@ -202,7 +209,8 @@ class TfRefPtrTracker : public TfWeakBase, boost::noncopyable {
 TF_API_TEMPLATE_CLASS(TfSingleton<TfRefPtrTracker>);
 
 // For internal use only.
-class Tf_RefPtrTrackerUtil {
+class Tf_RefPtrTrackerUtil
+{
  public:
   /// Start watching \p obj.  Only watched objects are traced.
   static void Watch(const TfRefBase *obj)
@@ -259,7 +267,8 @@ class Tf_RefPtrTrackerUtil {
   } \
   inline void Tf_RefPtrTracker_Assign(const void *owner, T *obj, T *oldObj) \
   { \
-    if (oldObj != obj) { \
+    if (oldObj != obj) \
+    { \
       Tf_RefPtrTrackerUtil::AddTrace(owner, obj, TfRefPtrTracker::Assign); \
     } \
   }

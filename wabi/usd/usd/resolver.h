@@ -43,7 +43,8 @@ class PcpPrimIndex;
 /// Given a PcpPrimIndex, this class facilitates value resolution by providing
 /// a mechanism for walking the composition structure in strong-to-weak order.
 ///
-class Usd_Resolver {
+class Usd_Resolver
+{
  public:
   /// Constructs a resolver with the given \p index. The index is
   /// held for the duration of the resolver's lifetime. If \p skipEmptyNodes
@@ -108,7 +109,8 @@ class Usd_Resolver {
   /// Represents a position in the prim index for value resolution.
   /// For performance, this object stores pointers and iterators to avoid
   /// unnecessary copies and ref-count bumps.
-  struct Position {
+  struct Position
+  {
     Position()
     {}
 

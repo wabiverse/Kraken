@@ -107,7 +107,8 @@ struct NdrNodeDiscoveryResult;
 ///     </li>
 /// </ul>
 ///
-class RmanOslParserPlugin : public NdrParserPlugin {
+class RmanOslParserPlugin : public NdrParserPlugin
+{
  public:
   RmanOslParserPlugin();
   ~RmanOslParserPlugin();

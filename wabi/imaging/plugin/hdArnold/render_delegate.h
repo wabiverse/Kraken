@@ -49,7 +49,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct HdArnoldRenderVar {
+struct HdArnoldRenderVar
+{
   /// Settings for the RenderVar.
   HdAovSettingsMap settings;
   /// Name of the render var.
@@ -68,7 +69,8 @@ struct HdArnoldRenderVar {
   bool multiSampled = true;
 };
 
-struct HdArnoldDelegateRenderProduct {
+struct HdArnoldDelegateRenderProduct
+{
   /// List of RenderVars used by the RenderProduct.
   std::vector<HdArnoldRenderVar> renderVars;
   /// Map of settings for the RenderProduct.
@@ -78,13 +80,15 @@ struct HdArnoldDelegateRenderProduct {
 };
 
 /// Render context for the render delegate.
-enum class HdArnoldRenderContext {
+enum class HdArnoldRenderContext
+{
   Hydra,  ///< Generic Hydra renderer.
   Husk,   ///< Husk from Houdini.
 };
 
 /// Main class point for the Arnold Render Delegate.
-class HdArnoldRenderDelegate final : public HdRenderDelegate {
+class HdArnoldRenderDelegate final : public HdRenderDelegate
+{
  public:
   HDARNOLD_API
   HdArnoldRenderDelegate(
@@ -426,7 +430,8 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
     std::unordered_map<SdfPath, std::unordered_set<SdfPath, SdfPath::Hash>, SdfPath::Hash>;
   using MaterialChangesQueue = tbb::concurrent_queue<SdfPath>;
 
-  struct ShapeMaterialChange {
+  struct ShapeMaterialChange
+  {
     SdfPath shape;
     VtArray<SdfPath> materials;
 
@@ -452,8 +457,8 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate {
   std::atomic<bool> _lightLinkingChanged;          ///< Whether or not Light Linking have changed.
   DelegateRenderProducts _delegateRenderProducts;  ///< Delegate Render Products for batch renders via husk.
   TfTokenVector _supportedRprimTypes;              ///< List of supported rprim types.
-  NativeRprimTypeMap _nativeRprimTypes;  ///< Remapping between the native rprim type names and arnold types.
-  NativeRprimParams _nativeRprimParams;  ///< List of parameters for native rprims.
+  NativeRprimTypeMap _nativeRprimTypes;            ///< Remapping between the native rprim type names and arnold types.
+  NativeRprimParams _nativeRprimParams;            ///< List of parameters for native rprims.
   /// Pointer to an instance of HdArnoldRenderParam.
   ///
   /// This is shared with all the primitives, so they can control the flow of

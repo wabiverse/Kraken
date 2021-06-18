@@ -74,7 +74,8 @@ TF_DECLARE_WEAK_PTRS(UsdStage);
 /// to UsdEditTargets.  A UsdEditTarget constructed in this way means direct
 /// opinions in a layer in a stage's local LayerStack.
 ///
-class UsdEditTarget {
+class UsdEditTarget
+{
  public:
   /// Construct a null EditTarget.  A null EditTarget will return paths
   /// unchanged when asked to map paths.

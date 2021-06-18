@@ -48,7 +48,8 @@ using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 /// using buffer specs determined by GetBufferSpecs, and registered as a pair
 /// of computation and range.
 ///
-class HdComputation {
+class HdComputation
+{
  public:
   HD_API
   virtual ~HdComputation();

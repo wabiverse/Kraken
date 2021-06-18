@@ -36,12 +36,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GarchNSGLContextState {
+class GarchNSGLContextState
+{
  public:
   /// Construct with the current state.
   GarchNSGLContextState();
 
-  enum class NullState { nullstate };
+  enum class NullState
+  {
+    nullstate
+  };
   GarchNSGLContextState(NullState);
 
   /// Compare for equality.

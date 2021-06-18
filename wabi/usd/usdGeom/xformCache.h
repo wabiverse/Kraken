@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// separate instance of this class should be used per-thread, calling the Get*
 /// methods from multiple threads is not safe, as they mutate internal state.
 ///
-class UsdGeomXformCache {
+class UsdGeomXformCache
+{
  public:
   /// Construct a new XformCache for the specified \p time.
   USDGEOM_API
@@ -148,7 +149,8 @@ class UsdGeomXformCache {
   GfMatrix4d const *_GetCtm(const UsdPrim &prim);
 
   // Map of cached values.
-  struct _Entry {
+  struct _Entry
+  {
     _Entry() = default;
     _Entry(const UsdGeomXformable::XformQuery &query_, const GfMatrix4d &ctm_, bool ctmIsValid_)
       : query(query_),

@@ -60,11 +60,13 @@ TraceEventData TraceEvent::GetData() const
   static_assert(sizeof(PayloadStorage) >= sizeof(void *), "Payload Error");
   static_assert(alignof(PayloadStorage) >= alignof(void *), "Payload Error");
 
-  if (_type == _InternalEventType::ScopeData || _type == _InternalEventType::ScopeDataLarge) {
+  if (_type == _InternalEventType::ScopeData || _type == _InternalEventType::ScopeDataLarge)
+  {
     const void *data = _type == _InternalEventType::ScopeData ?
                          &_payload :
                          *reinterpret_cast<const void *const *>(&_payload);
-    switch (_dataType) {
+    switch (_dataType)
+    {
       case DataType::Boolean:
         return TraceEventData(*reinterpret_cast<const bool *>(data));
       case DataType::Int:
@@ -94,7 +96,8 @@ TraceEvent::TimeStamp TraceEvent::GetEndTimeStamp() const
 
 TraceEvent::EventType TraceEvent::GetType() const
 {
-  switch (_type) {
+  switch (_type)
+  {
     case _InternalEventType::Begin:
       return EventType::Begin;
     case _InternalEventType::End:

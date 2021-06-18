@@ -48,11 +48,15 @@ bool TfPyConvertTfErrorsToPythonException(TfErrorMark const &m)
 {
   // If there is a python exception somewhere in here, restore that, otherwise
   // raise a normal error exception.
-  if (!m.IsClean()) {
+  if (!m.IsClean())
+  {
     list args;
-    for (TfErrorMark::Iterator e = m.GetBegin(); e != m.GetEnd(); ++e) {
-      if (e->GetErrorCode() == TF_PYTHON_EXCEPTION) {
-        if (const TfPyExceptionState *info = e->GetInfo<TfPyExceptionState>()) {
+    for (TfErrorMark::Iterator e = m.GetBegin(); e != m.GetEnd(); ++e)
+    {
+      if (e->GetErrorCode() == TF_PYTHON_EXCEPTION)
+      {
+        if (const TfPyExceptionState *info = e->GetInfo<TfPyExceptionState>())
+        {
           Tf_PyRestorePythonExceptionState(*info);
           TfDiagnosticMgr::GetInstance().EraseError(e);
 
@@ -74,7 +78,8 @@ bool TfPyConvertTfErrorsToPythonException(TfErrorMark const &m)
           m.Clear();
           return true;
         }
-        else {
+        else
+        {
           // abort? should perhaps use polymorphic_downcast workalike
           // instead? throw a python error...
         }
@@ -97,19 +102,23 @@ void TfPyConvertPythonExceptionToTfErrors()
   TfPyExceptionState exc = Tf_PyFetchPythonExceptionState();
 
   // Replace the errors in m with errors parsed out of the exception.
-  if (exc.GetType()) {
-    if (exc.GetType().get() == Tf_PyGetErrorExceptionClass().get() && exc.GetValue()) {
+  if (exc.GetType())
+  {
+    if (exc.GetType().get() == Tf_PyGetErrorExceptionClass().get() && exc.GetValue())
+    {
       // Replace the errors in m with errors pulled out of exc.
       object exception = object(exc.GetValue());
       object args = exception.attr("args");
       extract<vector<TfError>> extractor(args);
-      if (extractor.check()) {
+      if (extractor.check())
+      {
         vector<TfError> errs = extractor();
-        TF_FOR_ALL(e, errs)
-        TfDiagnosticMgr::GetInstance().AppendError(*e);
+        TF_FOR_ALL (e, errs)
+          TfDiagnosticMgr::GetInstance().AppendError(*e);
       }
     }
-    else {
+    else
+    {
       TF_ERROR(exc, TF_PYTHON_EXCEPTION, "Tf Python Exception");
     }
   }

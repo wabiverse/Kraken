@@ -57,7 +57,8 @@ WABI_NAMESPACE_BEGIN
 /// This task updates the 'color' entry of the task context with the colorized
 /// texture contents.
 ///
-class HdxVisualizeAovTask : public HdxTask {
+class HdxVisualizeAovTask : public HdxTask
+{
  public:
   HDX_API
   HdxVisualizeAovTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -77,7 +78,14 @@ class HdxVisualizeAovTask : public HdxTask {
 
  private:
   // Enumeration of visualization kernels
-  enum VizKernel { VizKernelDepth = 0, VizKernelId, VizKernelNormal, VizKernelFallback, VizKernelNone };
+  enum VizKernel
+  {
+    VizKernelDepth = 0,
+    VizKernelId,
+    VizKernelNormal,
+    VizKernelFallback,
+    VizKernelNone
+  };
 
   HdxVisualizeAovTask() = delete;
   HdxVisualizeAovTask(const HdxVisualizeAovTask &) = delete;
@@ -152,7 +160,8 @@ class HdxVisualizeAovTask : public HdxTask {
 /// HdxAovInputTask is responsible for updating the task context entry for
 /// the active AOV.
 ///
-struct HdxVisualizeAovTaskParams {
+struct HdxVisualizeAovTaskParams
+{
   HDX_API
   HdxVisualizeAovTaskParams();
 

@@ -53,7 +53,8 @@ uint32_t lookup3(const void *key, int length, uint32_t initval)
   const uint32_t *k = (const uint32_t *)key; /* read 32-bit chunks */
 
   /*------ all but last block: aligned reads and affect 32 bits of (a,b,c) */
-  while (length > 12) {
+  while (length > 12)
+  {
     a += k[0];
     b += k[1];
     c += k[2];
@@ -62,7 +63,8 @@ uint32_t lookup3(const void *key, int length, uint32_t initval)
     k += 3;
   }
 
-  switch (length) {
+  switch (length)
+  {
     case 12:
       c += k[2];
       b += k[1];

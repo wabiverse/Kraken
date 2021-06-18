@@ -94,7 +94,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Hash implementations.
 size_t __hash__Term(const Usd_Term &t)

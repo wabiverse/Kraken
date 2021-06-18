@@ -52,10 +52,13 @@ class PcpNodeIterator : public boost::iterator_facade<
                           /* Derived =   */ PcpNodeIterator,
                           /* ValueType = */ PcpNodeRef,
                           /* Category =  */ boost::random_access_traversal_tag,
-                          /* RefType =   */ PcpNodeRef> {
+                          /* RefType =   */ PcpNodeRef>
+{
  public:
   /// Constructs an invalid iterator.
-  PcpNodeIterator() : _graph(0), _nodeIdx(PCP_INVALID_INDEX)
+  PcpNodeIterator()
+    : _graph(0),
+      _nodeIdx(PCP_INVALID_INDEX)
   {}
 
   // Returns a compressed Sd site.  For internal use only.
@@ -66,7 +69,9 @@ class PcpNodeIterator : public boost::iterator_facade<
 
  private:
   friend class PcpPrimIndex;
-  PcpNodeIterator(PcpPrimIndex_Graph *graph, size_t nodeIdx) : _graph(graph), _nodeIdx(nodeIdx)
+  PcpNodeIterator(PcpPrimIndex_Graph *graph, size_t nodeIdx)
+    : _graph(graph),
+      _nodeIdx(nodeIdx)
   {}
 
   friend class boost::iterator_core_access;
@@ -106,7 +111,8 @@ class PcpNodeIterator : public boost::iterator_facade<
 /// Object used to iterate over nodes in the prim index graph in weak-to-strong
 /// order.
 ///
-class PcpNodeReverseIterator : public boost::reverse_iterator<PcpNodeIterator> {
+class PcpNodeReverseIterator : public boost::reverse_iterator<PcpNodeIterator>
+{
  public:
   PcpNodeReverseIterator()
   {}
@@ -124,7 +130,8 @@ class PcpPrimIterator : public boost::iterator_facade<
                           /* Derived  = */ PcpPrimIterator,
                           /* Value    = */ SdfSite,
                           /* Category = */ boost::random_access_traversal_tag,
-                          /* Ref      = */ SdfSite> {
+                          /* Ref      = */ SdfSite>
+{
  public:
   /// Constructs an invalid iterator.
   PCP_API
@@ -169,7 +176,8 @@ class PcpPrimIterator : public boost::iterator_facade<
 /// Object used to iterate over prim specs in the prim index graph in
 /// weak-to-strong order.
 ///
-class PcpPrimReverseIterator : public boost::reverse_iterator<PcpPrimIterator> {
+class PcpPrimReverseIterator : public boost::reverse_iterator<PcpPrimIterator>
+{
  public:
   PcpPrimReverseIterator()
   {}
@@ -198,7 +206,8 @@ class PcpPrimReverseIterator : public boost::reverse_iterator<PcpPrimIterator> {
 class PcpPropertyIterator : public boost::iterator_facade<
                               /* Derived  = */ PcpPropertyIterator,
                               /* Value    = */ const SdfPropertySpecHandle,
-                              /* Category = */ boost::random_access_traversal_tag> {
+                              /* Category = */ boost::random_access_traversal_tag>
+{
  public:
   /// Constructs an invalid iterator.
   PCP_API
@@ -243,7 +252,8 @@ class PcpPropertyIterator : public boost::iterator_facade<
 /// Object used to iterate over property specs in a property index in
 /// weak-to-strong order.
 ///
-class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIterator> {
+class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIterator>
+{
  public:
   PcpPropertyReverseIterator()
   {}
@@ -287,7 +297,9 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
     return range.second; \
   } \
 \
-  template<> struct Tf_IteratorInterface<Range, false> { \
+  template<> \
+  struct Tf_IteratorInterface<Range, false> \
+  { \
     typedef Iterator IteratorType; \
     static IteratorType Begin(Range &c) \
     { \
@@ -299,7 +311,9 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
     } \
   }; \
 \
-  template<> struct Tf_IteratorInterface<const Range, false> { \
+  template<> \
+  struct Tf_IteratorInterface<const Range, false> \
+  { \
     typedef Iterator IteratorType; \
     static IteratorType Begin(Range const &c) \
     { \
@@ -311,7 +325,9 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
     } \
   }; \
 \
-  template<> struct Tf_IteratorInterface<Range, true> { \
+  template<> \
+  struct Tf_IteratorInterface<Range, true> \
+  { \
     typedef ReverseIterator IteratorType; \
     static IteratorType Begin(Range &c) \
     { \
@@ -323,7 +339,9 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
     } \
   }; \
 \
-  template<> struct Tf_IteratorInterface<const Range, true> { \
+  template<> \
+  struct Tf_IteratorInterface<const Range, true> \
+  { \
     typedef ReverseIterator IteratorType; \
     static IteratorType Begin(Range const &c) \
     { \
@@ -335,10 +353,14 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
     } \
   }; \
 \
-  template<> struct Tf_ShouldIterateOverCopy<Range> : boost::true_type { \
+  template<> \
+  struct Tf_ShouldIterateOverCopy<Range> : boost::true_type \
+  { \
   }; \
 \
-  template<> struct Tf_ShouldIterateOverCopy<const Range> : boost::true_type { \
+  template<> \
+  struct Tf_ShouldIterateOverCopy<const Range> : boost::true_type \
+  { \
   }
 
 PCP_DEFINE_RANGE(PcpNodeRange, PcpNodeIterator, PcpNodeReverseIterator);
@@ -350,19 +372,26 @@ PCP_DEFINE_RANGE(PcpPropertyRange, PcpPropertyIterator, PcpPropertyReverseIterat
 /// Traits class for retrieving useful characteristics about one of the
 /// Pcp iterator types above.
 ///
-template<class Iterator> struct PcpIteratorTraits;
+template<class Iterator>
+struct PcpIteratorTraits;
 
-template<> struct PcpIteratorTraits<PcpNodeIterator> {
+template<>
+struct PcpIteratorTraits<PcpNodeIterator>
+{
   typedef PcpNodeRange RangeType;
   typedef PcpNodeReverseIterator ReverseIteratorType;
 };
 
-template<> struct PcpIteratorTraits<PcpPrimIterator> {
+template<>
+struct PcpIteratorTraits<PcpPrimIterator>
+{
   typedef PcpPrimRange RangeType;
   typedef PcpPrimReverseIterator ReverseIteratorType;
 };
 
-template<> struct PcpIteratorTraits<PcpPropertyIterator> {
+template<>
+struct PcpIteratorTraits<PcpPropertyIterator>
+{
   typedef PcpPropertyRange RangeType;
   typedef PcpPropertyReverseIterator ReverseIteratorType;
 };

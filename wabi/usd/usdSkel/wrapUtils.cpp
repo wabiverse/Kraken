@@ -55,7 +55,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // deprecated
 VtMatrix4dArray _ComputeJointLocalTransforms(const UsdSkelTopology &topology,
@@ -88,12 +89,14 @@ VtMatrix4dArray _ConcatJointTransforms(const UsdSkelTopology &topology,
   return xforms;
 }
 
-template<typename Matrix4> tuple _DecomposeTransform(const Matrix4 &mx)
+template<typename Matrix4>
+tuple _DecomposeTransform(const Matrix4 &mx)
 {
   GfVec3f t;
   GfQuatf r;
   GfVec3h s;
-  if (!UsdSkelDecomposeTransform(mx, &t, &r, &s)) {
+  if (!UsdSkelDecomposeTransform(mx, &t, &r, &s))
+  {
     // XXX: Want this case to throw an exception.
     TF_CODING_ERROR(
       "Failed decomposing transform. "
@@ -102,12 +105,14 @@ template<typename Matrix4> tuple _DecomposeTransform(const Matrix4 &mx)
   return boost::python::make_tuple(t, r, s);
 }
 
-template<typename Matrix4> tuple _DecomposeTransforms(const TfSpan<Matrix4> &xforms)
+template<typename Matrix4>
+tuple _DecomposeTransforms(const TfSpan<Matrix4> &xforms)
 {
   VtVec3fArray t(xforms.size());
   VtQuatfArray r(xforms.size());
   VtVec3hArray s(xforms.size());
-  if (!UsdSkelDecomposeTransforms(xforms, t, r, s)) {
+  if (!UsdSkelDecomposeTransforms(xforms, t, r, s))
+  {
     TF_CODING_ERROR(
       "Failed decomposing transforms. "
       "Some transforms may be singular.");
@@ -141,7 +146,8 @@ GfRange3f _ComputeJointsExtent(TfSpan<const Matrix4> xforms,
   return range;
 }
 
-template<typename T> bool _ExpandConstantInfluencesToVarying(VtArray<T> &array, size_t size)
+template<typename T>
+bool _ExpandConstantInfluencesToVarying(VtArray<T> &array, size_t size)
 {
   return UsdSkelExpandConstantInfluencesToVarying(&array, size);
 }
@@ -158,7 +164,8 @@ Matrix4 _InterleavedSkinTransformLBS(const Matrix4 &geomBindTransform,
                                      TfSpan<const GfVec2f> influences)
 {
   Matrix4 xform;
-  if (!UsdSkelSkinTransformLBS(geomBindTransform, jointXforms, influences, &xform)) {
+  if (!UsdSkelSkinTransformLBS(geomBindTransform, jointXforms, influences, &xform))
+  {
     xform = geomBindTransform;
   }
   return xform;
@@ -171,13 +178,15 @@ Matrix4 _NonInterleavedSkinTransformLBS(const Matrix4 &geomBindTransform,
                                         TfSpan<const float> jointWeights)
 {
   Matrix4 xform;
-  if (!UsdSkelSkinTransformLBS(geomBindTransform, jointXforms, jointIndices, jointWeights, &xform)) {
+  if (!UsdSkelSkinTransformLBS(geomBindTransform, jointXforms, jointIndices, jointWeights, &xform))
+  {
     xform = geomBindTransform;
   }
   return xform;
 }
 
-template<class Matrix3, class Matrix4> void _WrapUtilsT()
+template<class Matrix3, class Matrix4>
+void _WrapUtilsT()
 {
   def("ComputeJointLocalTransforms",
       static_cast<bool (*)(const UsdSkelTopology &,

@@ -39,11 +39,13 @@ class UsdGeomCube;
 ///
 /// Delegate support for UsdGeomCube.
 ///
-class UsdImagingCubeAdapter : public UsdImagingGprimAdapter {
+class UsdImagingCubeAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingCubeAdapter() : UsdImagingGprimAdapter()
+  UsdImagingCubeAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   virtual ~UsdImagingCubeAdapter();

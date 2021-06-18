@@ -63,7 +63,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> struct GfIsGfQuat<class {{QUAT}}> {
+template<>
+struct GfIsGfQuat<class {{QUAT}}>
+{
   static const bool value = true;
 };
 
@@ -81,7 +83,8 @@ GfDot(const {{QUAT}} & q1, const {{QUAT}} & q2);
 /// Basic type: a quaternion, a complex number with a real coefficient and
 /// three imaginary coefficients, stored as a 3-vector.
 ///
-class {
+class
+{
   {
     QUAT
   }

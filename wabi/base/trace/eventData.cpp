@@ -36,12 +36,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // Boost variant visitor to convert TraceEventData to JsValue
-class JsValue_visitor : public boost::static_visitor<void> {
+class JsValue_visitor : public boost::static_visitor<void>
+{
  public:
-  JsValue_visitor(JsWriter &writer) : _writer(writer)
+  JsValue_visitor(JsWriter &writer)
+    : _writer(writer)
   {}
 
   void operator()(int64_t i) const
@@ -69,7 +72,8 @@ class JsValue_visitor : public boost::static_visitor<void> {
     _writer.WriteValue(s);
   }
 
-  template<class T> void operator()(T) const
+  template<class T>
+  void operator()(T) const
   {
     _writer.WriteValue(nullptr);
   }
@@ -79,7 +83,8 @@ class JsValue_visitor : public boost::static_visitor<void> {
 };
 
 // Boost variant visitor to convert TraceEventData to TraceEvent::DataType
-class Type_visitor : public boost::static_visitor<TraceEvent::DataType> {
+class Type_visitor : public boost::static_visitor<TraceEvent::DataType>
+{
  public:
   TraceEvent::DataType operator()(int64_t i) const
   {
@@ -106,7 +111,8 @@ class Type_visitor : public boost::static_visitor<TraceEvent::DataType> {
     return TraceEvent::DataType::String;
   }
 
-  template<class T> TraceEvent::DataType operator()(T) const
+  template<class T>
+  TraceEvent::DataType operator()(T) const
   {
     return TraceEvent::DataType::Invalid;
   }

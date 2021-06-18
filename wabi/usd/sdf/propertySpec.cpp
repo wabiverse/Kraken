@@ -83,7 +83,8 @@ SdfSpecHandle SdfPropertySpec::GetOwner() const
   // If this spec is a relational attribute, its parent path will be
   // a target path. Since Sdf does not provide specs for relationship targets
   // we return the target's owning relationship instead.
-  if (parentPath.IsTargetPath()) {
+  if (parentPath.IsTargetPath())
+  {
     parentPath = parentPath.GetParentPath();
   }
 
@@ -147,14 +148,17 @@ SDF_DEFINE_GET_PRIVATE(AttributeValueTypeName, SdfFieldKeys->TypeName, TfToken)
 
 bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
 {
-  if (defaultValue.IsEmpty()) {
+  if (defaultValue.IsEmpty())
+  {
     ClearDefaultValue();
     return true;
   }
 
   TfType valueType = GetValueType();
-  if (valueType.IsUnknown()) {
-    if (defaultValue.IsHolding<SdfValueBlock>()) {
+  if (valueType.IsUnknown())
+  {
+    if (defaultValue.IsHolding<SdfValueBlock>())
+    {
       // Allow blocking unknown types.
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
@@ -168,21 +172,26 @@ bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
 
   // valueType may be an enum type provided by a plugin which has not been
   // loaded.
-  if (valueType.GetTypeid() == typeid(void) || valueType.IsEnumType()) {
+  if (valueType.GetTypeid() == typeid(void) || valueType.IsEnumType())
+  {
     // If we are dealing with an enum then we just make sure the TfTypes
     // match up. Authoring integral values to enum typed properties is
     // disallowed.
-    if (valueType == defaultValue.GetType()) {
+    if (valueType == defaultValue.GetType())
+    {
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
   }
-  else {
+  else
+  {
     // Otherwise check if defaultValue is castable to valueType
     VtValue value = VtValue::CastToTypeid(defaultValue, valueType.GetTypeid());
-    if (!value.IsEmpty()) {
+    if (!value.IsEmpty())
+    {
       return SetField(SdfFieldKeys->Default, value);
     }
-    else if (defaultValue.IsHolding<SdfValueBlock>()) {
+    else if (defaultValue.IsHolding<SdfValueBlock>())
+    {
       // If we're setting a value block, always allow that.
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
@@ -212,7 +221,8 @@ TfType SdfPropertySpec::GetValueType() const
   // however we don't want to use virtuals as SdfSpec and its subclasses are
   // intended to be simple value types that are merely wrappers around
   // a layer. So, we have this hacky 'virtual' function.
-  switch (GetSpecType()) {
+  switch (GetSpecType())
+  {
     case SdfSpecTypeAttribute:
       return GetSchema().FindType(_GetAttributeValueTypeName()).GetType();
 
@@ -230,7 +240,8 @@ TfType SdfPropertySpec::GetValueType() const
 SdfValueTypeName SdfPropertySpec::GetTypeName() const
 {
   // See comment in GetValueType().
-  switch (GetSpecType()) {
+  switch (GetSpecType())
+  {
     case SdfSpecTypeAttribute:
       return GetSchema().FindOrCreateType(_GetAttributeValueTypeName());
 

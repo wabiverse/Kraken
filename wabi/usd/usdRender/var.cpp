@@ -57,7 +57,8 @@ UsdRenderVar::~UsdRenderVar()
 /* static */
 UsdRenderVar UsdRenderVar::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderVar();
   }
@@ -68,7 +69,8 @@ UsdRenderVar UsdRenderVar::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdRenderVar UsdRenderVar::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RenderVar");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderVar();
   }
@@ -152,7 +154,8 @@ UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue, boo
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

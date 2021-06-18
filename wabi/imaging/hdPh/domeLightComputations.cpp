@@ -70,30 +70,35 @@ static bool _GetSrcTextureDimensionsAndName(HdPhSimpleLightingShaderSharedPtr co
 {
   // Get source texture, the dome light environment map
   HdPhTextureHandleSharedPtr const &srcTextureHandle = shader->GetDomeLightEnvironmentTextureHandle();
-  if (!TF_VERIFY(srcTextureHandle)) {
+  if (!TF_VERIFY(srcTextureHandle))
+  {
     return false;
   }
 
   const HdPhUvTextureObject *const srcTextureObject = dynamic_cast<HdPhUvTextureObject *>(
     srcTextureHandle->GetTextureObject().get());
-  if (!TF_VERIFY(srcTextureObject)) {
+  if (!TF_VERIFY(srcTextureObject))
+  {
     return false;
   }
 
   const HdPhUvSamplerObject *const srcSamplerObject = dynamic_cast<HdPhUvSamplerObject *>(
     srcTextureHandle->GetSamplerObject().get());
-  if (!TF_VERIFY(srcSamplerObject)) {
+  if (!TF_VERIFY(srcSamplerObject))
+  {
     return false;
   }
 
-  if (!srcTextureObject->IsValid()) {
+  if (!srcTextureObject->IsValid())
+  {
     const std::string &filePath = srcTextureObject->GetTextureIdentifier().GetFilePath();
     TF_WARN("Could not open dome light texture file at %s.", filePath.c_str());
     return false;
   }
 
   const HgiTexture *const srcTexture = srcTextureObject->GetTexture().Get();
-  if (!TF_VERIFY(srcTexture)) {
+  if (!TF_VERIFY(srcTexture))
+  {
     return false;
   }
 
@@ -113,12 +118,14 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr const computeProgram = HdPhGLSLProgram::GetComputeProgram(
     HdPhPackageDomeLightShader(), _shaderToken, static_cast<HdPhResourceRegistry *>(resourceRegistry));
-  if (!TF_VERIFY(computeProgram)) {
+  if (!TF_VERIFY(computeProgram))
+  {
     return;
   }
 
   HdPhSimpleLightingShaderSharedPtr const shader = _lightingShader.lock();
-  if (!TF_VERIFY(shader)) {
+  if (!TF_VERIFY(shader))
+  {
     return;
   }
 
@@ -126,7 +133,8 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   GfVec3i srcDim;
   HgiTextureHandle srcTextureName;
   HgiSamplerHandle srcSamplerName;
-  if (!_GetSrcTextureDimensionsAndName(shader, &srcDim, &srcTextureName, &srcSamplerName)) {
+  if (!_GetSrcTextureDimensionsAndName(shader, &srcDim, &srcTextureName, &srcSamplerName))
+  {
     return;
   }
 
@@ -137,17 +145,20 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   // Get texture object from lighting shader that this
   // computation is supposed to populate
   HdPhTextureHandleSharedPtr const &dstTextureHandle = shader->GetTextureHandle(_shaderToken);
-  if (!TF_VERIFY(dstTextureHandle)) {
+  if (!TF_VERIFY(dstTextureHandle))
+  {
     return;
   }
 
   HdPhDynamicUvTextureObject *const dstUvTextureObject = dynamic_cast<HdPhDynamicUvTextureObject *>(
     dstTextureHandle->GetTextureObject().get());
-  if (!TF_VERIFY(dstUvTextureObject)) {
+  if (!TF_VERIFY(dstUvTextureObject))
+  {
     return;
   }
 
-  if (_level == 0) {
+  if (_level == 0)
+  {
     // Level zero is in charge of actually creating the
     // GPU resource.
     HgiTextureDesc desc;
@@ -195,7 +206,8 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   HgiResourceBindingsHandle resourceBindings = hgi->CreateResourceBindings(resourceDesc);
 
   // prepare uniform buffer for GPU computation
-  struct Uniforms {
+  struct Uniforms
+  {
     float roughness;
   } uniform;
 
@@ -206,7 +218,8 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   HgiComputePipelineDesc desc;
   desc.debugName = "DomeLightComputation";
   desc.shaderProgram = computeProgram->GetProgram();
-  if (hasUniforms) {
+  if (hasUniforms)
+  {
     desc.shaderConstantsDesc.byteSize = sizeof(uniform);
   }
   HgiComputePipelineHandle pipeline = hgi->CreateComputePipeline(desc);
@@ -220,7 +233,8 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
   // If we are calculating the irradiance map we do not need to send over
   // the roughness value to the shader
   // flagged this with a negative roughness value
-  if (hasUniforms) {
+  if (hasUniforms)
+  {
     computeCmds->SetConstantValues(pipeline, 0, sizeof(uniform), &uniform);
   }
 

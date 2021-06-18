@@ -93,19 +93,23 @@ void UsdImagingLightAdapter::TrackVariability(UsdPrim const &prim,
              true);
 
   // Determine if the light material network is time varying.
-  if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim)) {
+  if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim))
+  {
     *timeVaryingBits |= HdLight::DirtyBits::DirtyResource;
   }
 
   // If any of the light attributes is time varying
   // we will assume all light params are time-varying.
   const std::vector<UsdAttribute> &attrs = prim.GetAttributes();
-  for (UsdAttribute const &attr : attrs) {
+  for (UsdAttribute const &attr : attrs)
+  {
     // Don't double-count transform attrs.
-    if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(attr.GetBaseName())) {
+    if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(attr.GetBaseName()))
+    {
       continue;
     }
-    if (attr.GetNumTimeSamples() > 1) {
+    if (attr.GetNumTimeSamples() > 1)
+    {
       *timeVaryingBits |= HdLight::DirtyBits::DirtyParams;
       break;
     }
@@ -114,7 +118,8 @@ void UsdImagingLightAdapter::TrackVariability(UsdPrim const &prim,
   UsdImagingPrimvarDescCache *primvarDescCache = _GetPrimvarDescCache();
 
   UsdLuxLight light(prim);
-  if (TF_VERIFY(light)) {
+  if (TF_VERIFY(light))
+  {
     UsdImaging_CollectionCache &collectionCache = _GetCollectionCache();
     collectionCache.UpdateCollection(light.GetLightLinkCollectionAPI());
     collectionCache.UpdateCollection(light.GetShadowLinkCollectionAPI());
@@ -131,14 +136,16 @@ void UsdImagingLightAdapter::TrackVariability(UsdPrim const &prim,
     std::vector<UsdGeomPrimvar> primvars;
     UsdImaging_InheritedPrimvarStrategy::value_type inheritedPrimvarRecord = _GetInheritedPrimvars(
       prim.GetParent());
-    if (inheritedPrimvarRecord) {
+    if (inheritedPrimvarRecord)
+    {
       primvars = inheritedPrimvarRecord->primvars;
     }
 
     UsdGeomPrimvarsAPI primvarsAPI(prim);
     std::vector<UsdGeomPrimvar> local = primvarsAPI.GetPrimvarsWithValues();
     primvars.insert(primvars.end(), local.begin(), local.end());
-    for (auto const &pv : primvars) {
+    for (auto const &pv : primvars)
+    {
       _ComputeAndMergePrimvar(prim, pv, UsdTimeCode(), &vPrimvars);
     }
   }
@@ -157,7 +164,8 @@ HdDirtyBits UsdImagingLightAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                           SdfPath const &cachePath,
                                                           TfToken const &propertyName)
 {
-  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName)) {
+  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName))
+  {
     return HdLight::DirtyBits::DirtyTransform;
   }
   // "DirtyParam" is the catch-all bit for light params.
@@ -201,7 +209,8 @@ VtValue UsdImagingLightAdapter::GetMaterialResource(UsdPrim const &prim,
                                                     UsdTimeCode time) const
 {
   UsdLuxLight light(prim);
-  if (!light) {
+  if (!light)
+  {
     TF_RUNTIME_ERROR(
       "Expected light prim at <%s> to be a subclass of type "
       "'UsdLuxLight', not type '%s'; ignoring",

@@ -44,7 +44,8 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 /// While it currently has some ties to GL, the goal is to use Hgi to allow
 /// it to be graphics API agnostic.
 ///
-class HdPhRenderDelegate final : public HdRenderDelegate {
+class HdPhRenderDelegate final : public HdRenderDelegate
+{
  public:
   HDPH_API
   HdPhRenderDelegate();

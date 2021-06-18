@@ -33,8 +33,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct HdPh_MeshShaderKey : public HdPh_ShaderKey {
-  enum NormalSource {
+struct HdPh_MeshShaderKey : public HdPh_ShaderKey
+{
+  enum NormalSource
+  {
     NormalSourceScene,
     NormalSourceSmooth,
     NormalSourceLimit,

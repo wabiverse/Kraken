@@ -57,9 +57,11 @@ class UsdRenderSettings;
 
 /// A self-contained specification of render settings.
 /// \note This is preliminary API and is likely to change.
-struct UsdRenderSpec {
+struct UsdRenderSpec
+{
   /// Specification of a product.  See UsdRenderProduct.
-  struct Product {
+  struct Product
+  {
     /// The type of product, ex: "raster".
     TfToken type;
     /// The name of the product, which uniquely identifies it.
@@ -90,7 +92,8 @@ struct UsdRenderSpec {
     VtDictionary extraSettings;
   };
   /// Specification of a render variable (aka AOV).  See UsdRenderVar.
-  struct RenderVar {
+  struct RenderVar
+  {
     /// The path of this render var, which uniquely identifies it.
     SdfPath renderVarPath;
     /// The value data type of the variable, as a USD type name.

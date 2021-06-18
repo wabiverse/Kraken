@@ -27,7 +27,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Tf_MakePyConstructor {
+namespace Tf_MakePyConstructor
+{
 
 bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
 {

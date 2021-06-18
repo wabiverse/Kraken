@@ -45,13 +45,15 @@ using std::vector;
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (connectability)(renderType));
 
-UsdShadeInput::UsdShadeInput(const UsdAttribute &attr) : _attr(attr)
+UsdShadeInput::UsdShadeInput(const UsdAttribute &attr)
+  : _attr(attr)
 {}
 
 TfToken UsdShadeInput::GetBaseName() const
 {
   string name = GetFullName();
-  if (TfStringStartsWith(name, UsdShadeTokens->inputs)) {
+  if (TfStringStartsWith(name, UsdShadeTokens->inputs))
+  {
     return TfToken(name.substr(UsdShadeTokens->inputs.GetString().size()));
   }
 
@@ -72,11 +74,13 @@ UsdShadeInput::UsdShadeInput(UsdPrim prim, TfToken const &name, SdfValueTypeName
 {
   // XXX what do we do if the type name doesn't match and it exists already?
   TfToken inputAttrName = _GetInputAttrName(name);
-  if (prim.HasAttribute(inputAttrName)) {
+  if (prim.HasAttribute(inputAttrName))
+  {
     _attr = prim.GetAttribute(inputAttrName);
   }
 
-  if (!_attr) {
+  if (!_attr)
+  {
     _attr = prim.CreateAttribute(inputAttrName,
                                  typeName,
                                  /* custom = */ false);
@@ -85,7 +89,8 @@ UsdShadeInput::UsdShadeInput(UsdPrim prim, TfToken const &name, SdfValueTypeName
 
 bool UsdShadeInput::Get(VtValue *value, UsdTimeCode time) const
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return false;
   }
 
@@ -119,8 +124,10 @@ NdrTokenMap UsdShadeInput::GetSdrMetadata() const
   NdrTokenMap result;
 
   VtDictionary sdrMetadata;
-  if (GetAttr().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata)) {
-    for (const auto &it : sdrMetadata) {
+  if (GetAttr().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata))
+  {
+    for (const auto &it : sdrMetadata)
+    {
       result[TfToken(it.first)] = TfStringify(it.second);
     }
   }
@@ -137,7 +144,8 @@ std::string UsdShadeInput::GetSdrMetadataByKey(const TfToken &key) const
 
 void UsdShadeInput::SetSdrMetadata(const NdrTokenMap &sdrMetadata) const
 {
-  for (auto &i : sdrMetadata) {
+  for (auto &i : sdrMetadata)
+  {
     SetSdrMetadataByKey(i.first, i.second);
   }
 }
@@ -176,7 +184,8 @@ bool UsdShadeInput::IsInput(const UsdAttribute &attr)
 /* static */
 bool UsdShadeInput::IsInterfaceInputName(const std::string &name)
 {
-  if (TfStringStartsWith(name, UsdShadeTokens->inputs)) {
+  if (TfStringStartsWith(name, UsdShadeTokens->inputs))
+  {
     return true;
   }
 
@@ -185,7 +194,8 @@ bool UsdShadeInput::IsInterfaceInputName(const std::string &name)
 
 bool UsdShadeInput::SetDocumentation(const std::string &docs) const
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return false;
   }
 
@@ -194,7 +204,8 @@ bool UsdShadeInput::SetDocumentation(const std::string &docs) const
 
 std::string UsdShadeInput::GetDocumentation() const
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return "";
   }
 
@@ -203,7 +214,8 @@ std::string UsdShadeInput::GetDocumentation() const
 
 bool UsdShadeInput::SetDisplayGroup(const std::string &docs) const
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return false;
   }
 
@@ -212,7 +224,8 @@ bool UsdShadeInput::SetDisplayGroup(const std::string &docs) const
 
 std::string UsdShadeInput::GetDisplayGroup() const
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return "";
   }
 
@@ -322,7 +335,8 @@ TfToken UsdShadeInput::GetConnectability() const
 
   // If there's an authored non-empty connectability value, then return it.
   // If not, return "full".
-  if (!connectability.IsEmpty()) {
+  if (!connectability.IsEmpty())
+  {
     return connectability;
   }
 
@@ -344,15 +358,19 @@ UsdAttribute UsdShadeInput::GetValueProducingAttribute(UsdShadeAttributeType *at
   // Call the multi-connection aware version
   UsdShadeAttributeVector valueAttrs = UsdShadeUtils::GetValueProducingAttributes(*this);
 
-  if (valueAttrs.empty()) {
-    if (attrType) {
+  if (valueAttrs.empty())
+  {
+    if (attrType)
+    {
       *attrType = UsdShadeAttributeType::Invalid;
     }
     return UsdAttribute();
   }
-  else {
+  else
+  {
     // If we have valid connections extract the first one
-    if (valueAttrs.size() > 1) {
+    if (valueAttrs.size() > 1)
+    {
       TF_WARN(
         "More than one value producing attribute for shading input "
         "%s. GetValueProducingAttribute will only report the first "
@@ -362,7 +380,8 @@ UsdAttribute UsdShadeInput::GetValueProducingAttribute(UsdShadeAttributeType *at
     }
 
     UsdAttribute attr = valueAttrs[0];
-    if (attrType) {
+    if (attrType)
+    {
       *attrType = UsdShadeUtils::GetType(attr.GetName());
     }
 

@@ -25,7 +25,8 @@ WABI_NAMESPACE_BEGIN
 class HdRprApi;
 struct RprUsdContextMetadata;
 
-class HdRprApiAov {
+class HdRprApiAov
+{
  public:
   HdRprApiAov(rpr_aov rprAovType,
               int width,
@@ -81,7 +82,8 @@ class HdRprApiAov {
   std::unique_ptr<HdRprApiFramebuffer> m_resolved;
   std::unique_ptr<rif::Filter> m_filter;
 
-  enum ChangeTracker {
+  enum ChangeTracker
+  {
     Clean = 0,
     AllDirty = ~0u,
     DirtySize = 1 << 0,
@@ -93,7 +95,8 @@ class HdRprApiAov {
   bool GetDataImpl(void *dstBuffer, size_t dstBufferSize);
 };
 
-class HdRprApiColorAov : public HdRprApiAov {
+class HdRprApiColorAov : public HdRprApiAov
+{
  public:
   HdRprApiColorAov(HdFormat format,
                    std::shared_ptr<HdRprApiAov> rawColorAov,
@@ -119,7 +122,8 @@ class HdRprApiColorAov : public HdRprApiAov {
   void DeinitDenoise(rif::Context *rifContext);
   void SetDenoise(bool enable, HdRprApi const *rprApi, rif::Context *rifContext);
 
-  struct TonemapParams {
+  struct TonemapParams
+  {
     bool enable;
     float exposureTime;
     float sensitivity;
@@ -143,7 +147,8 @@ class HdRprApiColorAov : public HdRprApiAov {
   void OnSizeChange(rif::Context *rifContext) override;
 
  private:
-  enum Filter {
+  enum Filter
+  {
     kFilterNone = 0,
     kFilterResample = 1 << 0,
     kFilterAIDenoise = 1 << 1,
@@ -178,7 +183,8 @@ class HdRprApiColorAov : public HdRprApiAov {
   int m_height = 0;
 };
 
-class HdRprApiNormalAov : public HdRprApiAov {
+class HdRprApiNormalAov : public HdRprApiAov
+{
  public:
   HdRprApiNormalAov(int width,
                     int height,
@@ -193,7 +199,8 @@ class HdRprApiNormalAov : public HdRprApiAov {
   void OnSizeChange(rif::Context *rifContext) override;
 };
 
-class HdRprApiComputedAov : public HdRprApiAov {
+class HdRprApiComputedAov : public HdRprApiAov
+{
  public:
   HdRprApiComputedAov(HdRprAovDescriptor const &aovDescriptor, int width, int height, HdFormat format)
     : HdRprApiAov(aovDescriptor, format),
@@ -209,7 +216,8 @@ class HdRprApiComputedAov : public HdRprApiAov {
   int m_height = -1;
 };
 
-class HdRprApiDepthAov : public HdRprApiComputedAov {
+class HdRprApiDepthAov : public HdRprApiComputedAov
+{
  public:
   HdRprApiDepthAov(int width,
                    int height,
@@ -232,7 +240,8 @@ class HdRprApiDepthAov : public HdRprApiComputedAov {
   std::shared_ptr<HdRprApiAov> m_retainedWorldCoordinateAov;
 };
 
-class HdRprApiIdMaskAov : public HdRprApiComputedAov {
+class HdRprApiIdMaskAov : public HdRprApiComputedAov
+{
  public:
   HdRprApiIdMaskAov(HdRprAovDescriptor const &aovDescriptor,
                     std::shared_ptr<HdRprApiAov> const &baseIdAov,

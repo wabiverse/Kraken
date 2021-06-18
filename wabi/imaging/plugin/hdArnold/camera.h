@@ -27,7 +27,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdArnoldCamera : public HdCamera {
+class HdArnoldCamera : public HdCamera
+{
  public:
   /// Constructor for HdArnoldCamera.
   ///

@@ -59,7 +59,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPluginContext);
 /// A context for discovery.  Discovery plugins can use this to get
 /// a limited set of non-local information without direct coupling
 /// between plugins.
-class NdrDiscoveryPluginContext : public TfRefBase, public TfWeakBase {
+class NdrDiscoveryPluginContext : public TfRefBase, public TfWeakBase
+{
  public:
   NDR_API
   virtual ~NdrDiscoveryPluginContext() = default;
@@ -146,7 +147,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPlugin);
 ///     </li>
 /// </ul>
 ///
-class NdrDiscoveryPlugin : public TfRefBase, public TfWeakBase {
+class NdrDiscoveryPlugin : public TfRefBase, public TfWeakBase
+{
  public:
   using Context = NdrDiscoveryPluginContext;
 
@@ -168,13 +170,16 @@ class NdrDiscoveryPlugin : public TfRefBase, public TfWeakBase {
 /// \cond
 /// Factory classes should be hidden from the documentation.
 
-class NdrDiscoveryPluginFactoryBase : public TfType::FactoryBase {
+class NdrDiscoveryPluginFactoryBase : public TfType::FactoryBase
+{
  public:
   NDR_API
   virtual NdrDiscoveryPluginRefPtr New() const = 0;
 };
 
-template<class T> class NdrDiscoveryPluginFactory : public NdrDiscoveryPluginFactoryBase {
+template<class T>
+class NdrDiscoveryPluginFactory : public NdrDiscoveryPluginFactoryBase
+{
  public:
   NdrDiscoveryPluginRefPtr New() const override
   {

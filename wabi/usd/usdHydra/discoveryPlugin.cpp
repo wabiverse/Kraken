@@ -78,7 +78,8 @@ NdrNodeDiscoveryResultVec UsdHydraDiscoveryPlugin::DiscoverNodes(const Context &
 
   const UsdStageRefPtr stage = UsdStage::Open(shaderDefsFile, resolverContext);
 
-  if (!stage) {
+  if (!stage)
+  {
     TF_RUNTIME_ERROR("Could not open file '%s' on a USD stage.", shaderDefsFile.c_str());
     return result;
   }
@@ -87,9 +88,11 @@ NdrNodeDiscoveryResultVec UsdHydraDiscoveryPlugin::DiscoverNodes(const Context &
   const TfToken discoveryType(ArGetResolver().GetExtension(shaderDefsFile));
 
   auto rootPrims = stage->GetPseudoRoot().GetChildren();
-  for (const auto &shaderDef : rootPrims) {
+  for (const auto &shaderDef : rootPrims)
+  {
     UsdShadeShader shader(shaderDef);
-    if (!shader) {
+    if (!shader)
+    {
       continue;
     }
 
@@ -97,7 +100,8 @@ NdrNodeDiscoveryResultVec UsdHydraDiscoveryPlugin::DiscoverNodes(const Context &
 
     result.insert(result.end(), discoveryResults.begin(), discoveryResults.end());
 
-    if (discoveryResults.empty()) {
+    if (discoveryResults.empty())
+    {
       TF_RUNTIME_ERROR(
         "Found shader definition <%s> with no valid "
         "discovery results. This is likely because there are no "

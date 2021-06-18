@@ -3,15 +3,22 @@
 #include "mode.h"
 #include "zep/mode_vim.h"
 
-namespace Zep {
+namespace Zep
+{
 
 struct ZepRepl;
 
-namespace ZepTreeNodeFlags {
-enum { None = (0), IsFolder = (1 << 0) };
+namespace ZepTreeNodeFlags
+{
+enum
+{
+  None = (0),
+  IsFolder = (1 << 0)
+};
 }
 
-class ZepTreeNode {
+class ZepTreeNode
+{
  public:
   using TNode = std::shared_ptr<ZepTreeNode>;
   using TChildren = std::vector<TNode>;
@@ -49,13 +56,15 @@ class ZepTreeNode {
   virtual bool RemoveChild(ZepTreeNode *pNode)
   {
     auto itr = std::find_if(m_children.begin(), m_children.end(), [=](TNode &node) {
-      if (node.get() == pNode) {
+      if (node.get() == pNode)
+      {
         return true;
       }
       return false;
     });
 
-    if (itr != m_children.end()) {
+    if (itr != m_children.end())
+    {
       m_children.erase(itr);
       pNode->SetParent(nullptr);
       return true;
@@ -83,8 +92,10 @@ class ZepTreeNode {
     using fnVisit = std::function<void(ZepTreeNode * pNode, bool ex)>;
     fnVisit visitor = [&](ZepTreeNode *pNode, bool ex) {
       pNode->Expand(ex);
-      if (pNode->HasChildren()) {
-        for (auto &pChild : pNode->GetChildren()) {
+      if (pNode->HasChildren())
+      {
+        for (auto &pChild : pNode->GetChildren())
+        {
           visitor(pChild.get(), ex);
         }
       }
@@ -105,7 +116,8 @@ class ZepTreeNode {
   uint32_t m_flags = ZepTreeNodeFlags::None;
 };
 
-class ZepTree {
+class ZepTree
+{
  public:
   virtual ZepTreeNode *GetRoot() const
   {
@@ -116,18 +128,22 @@ class ZepTree {
   ZepTreeNode::TNode m_spRoot;
 };
 
-class ZepFileNode : public ZepTreeNode {
+class ZepFileNode : public ZepTreeNode
+{
  public:
-  ZepFileNode(const std::string &name, uint32_t flags = ZepTreeNodeFlags::None) : ZepTreeNode(name, flags)
+  ZepFileNode(const std::string &name, uint32_t flags = ZepTreeNodeFlags::None)
+    : ZepTreeNode(name, flags)
   {}
 };
 
-class ZepFileTree : public ZepTree {
+class ZepFileTree : public ZepTree
+{
  public:
   ZepFileTree();
 };
 
-class ZepMode_Tree : public ZepMode_Vim {
+class ZepMode_Tree : public ZepMode_Vim
+{
  public:
   ZepMode_Tree(ZepEditor &editor,
                std::shared_ptr<ZepTree> spTree,

@@ -56,7 +56,8 @@ WABI_NAMESPACE_BEGIN
 /// Default-constructed UsdStagePopulationMask s are considered empty
 /// (IsEmpty()) and include no paths.  A population mask containing
 /// SdfPath::AbsoluteRootPath() includes all paths.
-class UsdStagePopulationMask {
+class UsdStagePopulationMask
+{
  public:
   /// Return a mask that includes all paths.  This is the mask that contains
   /// the absolute root path.
@@ -76,7 +77,9 @@ class UsdStagePopulationMask {
   /// Construct a mask from the range of paths [f, l).  All paths in the range
   /// must be absolute prim paths or the absolute root path. (See
   /// SdfPath::IsAbsolutePath, SdfPath::IsAbsoluteRootOrPrimPath).
-  template<class Iter> explicit UsdStagePopulationMask(Iter f, Iter l) : _paths(f, l)
+  template<class Iter>
+  explicit UsdStagePopulationMask(Iter f, Iter l)
+    : _paths(f, l)
   {
     _ValidateAndNormalize();
   }

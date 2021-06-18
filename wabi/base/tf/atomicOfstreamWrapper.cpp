@@ -50,7 +50,8 @@ WABI_NAMESPACE_BEGIN
 
 using std::string;
 
-TfAtomicOfstreamWrapper::TfAtomicOfstreamWrapper(const string &filePath) : _filePath(filePath)
+TfAtomicOfstreamWrapper::TfAtomicOfstreamWrapper(const string &filePath)
+  : _filePath(filePath)
 {
   // Do Nothing.
 }
@@ -62,8 +63,10 @@ TfAtomicOfstreamWrapper::~TfAtomicOfstreamWrapper()
 
 bool TfAtomicOfstreamWrapper::Open(string *reason)
 {
-  if (_stream.is_open()) {
-    if (reason) {
+  if (_stream.is_open())
+  {
+    if (reason)
+    {
       *reason = "Stream is already open";
     }
     return false;
@@ -71,7 +74,8 @@ bool TfAtomicOfstreamWrapper::Open(string *reason)
 
   std::string localError, *err = reason ? reason : &localError;
   int tmpFd = Tf_CreateSiblingTempFile(_filePath, &_filePath, &_tmpFilePath, err);
-  if (tmpFd == -1) {
+  if (tmpFd == -1)
+  {
     return false;
   }
 
@@ -80,8 +84,10 @@ bool TfAtomicOfstreamWrapper::Open(string *reason)
   ArchCloseFile(tmpFd);
 
   _stream.open(_tmpFilePath.c_str(), std::fstream::out | std::fstream::binary | std::fstream::trunc);
-  if (!_stream) {
-    if (reason) {
+  if (!_stream)
+  {
+    if (reason)
+    {
       *reason = TfStringPrintf(
         "Unable to open '%s' for writing: %s", _tmpFilePath.c_str(), ArchStrerror().c_str());
     }
@@ -93,8 +99,10 @@ bool TfAtomicOfstreamWrapper::Open(string *reason)
 
 bool TfAtomicOfstreamWrapper::Commit(string *reason)
 {
-  if (!_stream.is_open()) {
-    if (reason) {
+  if (!_stream.is_open())
+  {
+    if (reason)
+    {
       *reason = "Stream is not open";
     }
     return false;
@@ -110,8 +118,10 @@ bool TfAtomicOfstreamWrapper::Commit(string *reason)
 
 bool TfAtomicOfstreamWrapper::Cancel(string *reason)
 {
-  if (!_stream.is_open()) {
-    if (reason) {
+  if (!_stream.is_open())
+  {
+    if (reason)
+    {
       *reason = "Buffer is not open";
     }
     return false;
@@ -123,9 +133,12 @@ bool TfAtomicOfstreamWrapper::Cancel(string *reason)
 
   bool success = true;
 
-  if (ArchUnlinkFile(_tmpFilePath.c_str()) != 0) {
-    if (errno != ENOENT) {
-      if (reason) {
+  if (ArchUnlinkFile(_tmpFilePath.c_str()) != 0)
+  {
+    if (errno != ENOENT)
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf(
           "Unable to remove temporary file '%s': %s", _tmpFilePath.c_str(), ArchStrerror(errno).c_str());
       }

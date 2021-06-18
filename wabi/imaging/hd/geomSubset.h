@@ -37,8 +37,10 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Describes a subset of a piece of geometry as a set of indices.
 ///
-struct HdGeomSubset {
-  enum Type {
+struct HdGeomSubset
+{
+  enum Type
+  {
     /// A subset of faces
     TypeFaceSet,
 

@@ -33,7 +33,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_BEGIN
 
-struct Usd_PyEditContextAccess {
+struct Usd_PyEditContextAccess
+{
   static void __enter__(UsdPyEditContext &self)
   {
     self._editContext = self._editTarget.IsValid() ?

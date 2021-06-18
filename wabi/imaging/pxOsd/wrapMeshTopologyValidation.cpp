@@ -58,12 +58,15 @@ static std::string _InvalidationRepr(PxOsdMeshTopologyValidation::Invalidation c
 static std::string _ValidationRepr(PxOsdMeshTopologyValidation const &validation)
 {
   std::ostringstream repr(std::ostringstream::ate);
-  if (validation) {
+  if (validation)
+  {
     repr << "PxOsd.MeshTopologyValidation()";
   }
-  else {
+  else
+  {
     repr << "PxOsd.MeshTopologyValidation<";
-    for (auto const &element : validation) {
+    for (auto const &element : validation)
+    {
       repr << TfPyRepr(element.code) << ", " << element.message << "), ";
     }
     repr << ">";

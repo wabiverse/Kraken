@@ -75,7 +75,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdRiTokens->rightHanded
 /// as the value.
 ///
-class UsdRiMaterialAPI : public UsdAPISchemaBase {
+class UsdRiMaterialAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -91,13 +92,15 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiMaterialAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiMaterialAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiMaterialAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiMaterialAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiMaterialAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiMaterialAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiMaterialAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -244,7 +247,8 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase {
   // --(BEGIN CUSTOM CODE)--
 
   /// A constructor for creating a MaterialAPI object from a material prim.
-  explicit UsdRiMaterialAPI(const UsdShadeMaterial &material) : UsdRiMaterialAPI(material.GetPrim())
+  explicit UsdRiMaterialAPI(const UsdShadeMaterial &material)
+    : UsdRiMaterialAPI(material.GetPrim())
   {}
 
   // --------------------------------------------------------------------- //

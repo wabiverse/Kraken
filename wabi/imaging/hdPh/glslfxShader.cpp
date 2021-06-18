@@ -28,7 +28,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhGLSLFXShader::HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx) : HdPhSurfaceShader(), _glslfx(glslfx)
+HdPhGLSLFXShader::HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx)
+  : HdPhSurfaceShader(),
+    _glslfx(glslfx)
 {
   _SetSource(HdShaderTokens->fragmentShader, _glslfx->GetSurfaceSource());
   _SetSource(HdShaderTokens->geometryShader, _glslfx->GetDisplacementSource());
@@ -41,7 +43,8 @@ void HdPhGLSLFXShader::Reload()
 {
   HioGlslfxSharedPtr newGlslFx = std::make_shared<HioGlslfx>(_glslfx->GetFilePath());
 
-  if (newGlslFx->IsValid()) {
+  if (newGlslFx->IsValid())
+  {
     _glslfx = newGlslFx;
 
     _SetSource(HdShaderTokens->fragmentShader, _glslfx->GetSurfaceSource());

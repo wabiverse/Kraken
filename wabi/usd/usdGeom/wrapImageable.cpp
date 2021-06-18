@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -127,15 +129,18 @@ void wrapUsdGeomImageable()
 
 #include "wabi/base/tf/pyObjWrapper.h"
 
-namespace {
+namespace
+{
 
 static TfPyObjWrapper _ComputeProxyPrim(UsdGeomImageable const &self)
 {
   UsdPrim renderPrim, proxyPrim;
 
-  if (self) {
+  if (self)
+  {
     proxyPrim = self.ComputeProxyPrim(&renderPrim);
-    if (proxyPrim) {
+    if (proxyPrim)
+    {
       return TfPyObjWrapper(boost::python::make_tuple(proxyPrim, renderPrim));
     }
   }

@@ -32,9 +32,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-struct Tf_PyObjWrapperFromPython {
+struct Tf_PyObjWrapperFromPython
+{
   Tf_PyObjWrapperFromPython()
   {
     converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<TfPyObjWrapper>());
@@ -56,7 +58,8 @@ struct Tf_PyObjWrapperFromPython {
   }
 };
 
-struct Tf_PyObjWrapperToPython {
+struct Tf_PyObjWrapperToPython
+{
   static PyObject *convert(TfPyObjWrapper const &val)
   {
     return incref(val.Get().ptr());

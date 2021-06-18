@@ -29,7 +29,8 @@ RAPIDJSON_NAMESPACE_BEGIN
 /*!
     \note implements Stream concept
 */
-class FileWriteStream {
+class FileWriteStream
+{
  public:
   typedef char Ch;  //!< Character type. Only support char.
 
@@ -53,7 +54,8 @@ class FileWriteStream {
   void PutN(char c, size_t n)
   {
     size_t avail = static_cast<size_t>(bufferEnd_ - current_);
-    while (n > avail) {
+    while (n > avail)
+    {
       std::memset(current_, c, avail);
       current_ += avail;
       Flush();
@@ -61,7 +63,8 @@ class FileWriteStream {
       avail = static_cast<size_t>(bufferEnd_ - current_);
     }
 
-    if (n > 0) {
+    if (n > 0)
+    {
       std::memset(current_, c, n);
       current_ += n;
     }
@@ -69,9 +72,11 @@ class FileWriteStream {
 
   void Flush()
   {
-    if (current_ != buffer_) {
+    if (current_ != buffer_)
+    {
       size_t result = fwrite(buffer_, 1, static_cast<size_t>(current_ - buffer_), fp_);
-      if (result < static_cast<size_t>(current_ - buffer_)) {
+      if (result < static_cast<size_t>(current_ - buffer_))
+      {
         // failure deliberately ignored at this time
         // added to avoid warn_unused_result build errors
       }
@@ -118,7 +123,8 @@ class FileWriteStream {
 };
 
 //! Implement specialized version of PutN() with memset() for better performance.
-template<> inline void PutN(FileWriteStream &stream, char c, size_t n)
+template<>
+inline void PutN(FileWriteStream &stream, char c, size_t n)
 {
   stream.PutN(c, n);
 }

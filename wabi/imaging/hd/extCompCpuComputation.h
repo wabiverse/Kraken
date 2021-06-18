@@ -57,7 +57,8 @@ using HdExtCompCpuComputationSharedPtr = std::shared_ptr<HdExtCompCpuComputation
 ///
 /// Outputs to a computation are in SOA form, so a computation may have
 /// many outputs, but each output has the same number of elements in it.
-class HdExtCompCpuComputation final : public HdNullBufferSource {
+class HdExtCompCpuComputation final : public HdNullBufferSource
+{
  public:
   static const size_t INVALID_OUTPUT_INDEX;
 

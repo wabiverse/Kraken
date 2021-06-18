@@ -74,7 +74,8 @@ class SdfAssetPath;
 /// authored one value per curve.  \em knots should be the concatentation of
 /// all batched curves.
 ///
-class UsdGeomNurbsCurves : public UsdGeomCurves {
+class UsdGeomNurbsCurves : public UsdGeomCurves
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -90,13 +91,15 @@ class UsdGeomNurbsCurves : public UsdGeomCurves {
   /// Equivalent to UsdGeomNurbsCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomNurbsCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomCurves(prim)
+  explicit UsdGeomNurbsCurves(const UsdPrim &prim = UsdPrim())
+    : UsdGeomCurves(prim)
   {}
 
   /// Construct a UsdGeomNurbsCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomNurbsCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomNurbsCurves(const UsdSchemaBase &schemaObj) : UsdGeomCurves(schemaObj)
+  explicit UsdGeomNurbsCurves(const UsdSchemaBase &schemaObj)
+    : UsdGeomCurves(schemaObj)
   {}
 
   /// Destructor.

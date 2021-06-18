@@ -52,11 +52,13 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Support for drawing bones of a UsdSkelSkeleton.
 ///
-class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter {
+class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdSkelImagingSkeletonAdapter() : BaseAdapter()
+  UsdSkelImagingSkeletonAdapter()
+    : BaseAdapter()
   {}
 
   USDSKELIMAGING_API
@@ -351,7 +353,8 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter {
   /// Populated skeleton state
   // ---------------------------------------------------------------------- //
   /// Data for a skel instance.
-  struct _SkelData {
+  struct _SkelData
+  {
 
     UsdSkelSkeletonQuery skelQuery;
     SdfPathSet skelRootPaths;
@@ -380,7 +383,8 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter {
   _SkelDataMap _skelDataCache;
 
   // Data for each skinned prim.
-  struct _SkinnedPrimData {
+  struct _SkinnedPrimData
+  {
     _SkinnedPrimData() = default;
 
     /// Construct skinned prim, referencing the skeleton at \p skelPath.

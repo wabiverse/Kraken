@@ -35,7 +35,8 @@ bool HdBufferSpec::IsSubset(HdBufferSpecVector const &subset, HdBufferSpecVector
 {
   HD_TRACE_FUNCTION();
 
-  for (HdBufferSpec const &spec : subset) {
+  for (HdBufferSpec const &spec : subset)
+  {
     if (std::find(superset.begin(), superset.end(), spec) == superset.end())
       return false;
   }
@@ -49,10 +50,12 @@ HdBufferSpecVector HdBufferSpec::ComputeUnion(HdBufferSpecVector const &specs1,
   HD_TRACE_FUNCTION();
 
   std::set<HdBufferSpec> set;
-  for (HdBufferSpec const &spec : specs1) {
+  for (HdBufferSpec const &spec : specs1)
+  {
     set.insert(spec);
   }
-  for (HdBufferSpec const &spec : specs2) {
+  for (HdBufferSpec const &spec : specs2)
+  {
     set.insert(spec);
   }
 
@@ -66,10 +69,12 @@ HdBufferSpecVector HdBufferSpec::ComputeDifference(HdBufferSpecVector const &spe
   HD_TRACE_FUNCTION();
 
   std::set<HdBufferSpec> set;
-  for (HdBufferSpec const &spec : specs1) {
+  for (HdBufferSpec const &spec : specs1)
+  {
     set.insert(spec);
   }
-  for (HdBufferSpec const &spec : specs2) {
+  for (HdBufferSpec const &spec : specs2)
+  {
     set.erase(spec);
   }
 
@@ -84,7 +89,8 @@ size_t HdBufferSpec::Hash() const
 void HdBufferSpec::Dump(HdBufferSpecVector const &specs)
 {
   std::cout << "BufferSpecVector\n";
-  for (int i = 0; i < (int)specs.size(); ++i) {
+  for (int i = 0; i < (int)specs.size(); ++i)
+  {
     std::cout << i << " : " << specs[i].name << ", " << TfEnum::GetName(specs[i].tupleType.type) << " ("
               << specs[i].tupleType.type << "), " << specs[i].tupleType.count << "\n";
   }

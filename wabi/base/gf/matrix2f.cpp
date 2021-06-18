@@ -64,8 +64,10 @@ GfMatrix2f::GfMatrix2f(const GfMatrix2d &m)
 GfMatrix2f::GfMatrix2f(const std::vector<std::vector<double>> &v)
 {
   float m[2][2] = {{1.0, 0.0}, {0.0, 1.0}};
-  for (size_t row = 0; row < 2 && row < v.size(); ++row) {
-    for (size_t col = 0; col < 2 && col < v[row].size(); ++col) {
+  for (size_t row = 0; row < 2 && row < v.size(); ++row)
+  {
+    for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
+    {
       m[row][col] = v[row][col];
     }
   }
@@ -75,8 +77,10 @@ GfMatrix2f::GfMatrix2f(const std::vector<std::vector<double>> &v)
 GfMatrix2f::GfMatrix2f(const std::vector<std::vector<float>> &v)
 {
   float m[2][2] = {{1.0, 0.0}, {0.0, 1.0}};
-  for (size_t row = 0; row < 2 && row < v.size(); ++row) {
-    for (size_t col = 0; col < 2 && col < v[row].size(); ++col) {
+  for (size_t row = 0; row < 2 && row < v.size(); ++row)
+  {
+    for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
+    {
       m[row][col] = v[row][col];
     }
   }
@@ -137,7 +141,8 @@ GfMatrix2f GfMatrix2f::GetInverse(double *detPtr, double eps) const
 {
   double det = GetDeterminant();
 
-  if (detPtr) {
+  if (detPtr)
+  {
     // CODE_COVERAGE_OFF_NO_REPORT This is inaccessible from script and not
     // worth writing a whole C++ test for.
     *detPtr = det;
@@ -146,7 +151,8 @@ GfMatrix2f GfMatrix2f::GetInverse(double *detPtr, double eps) const
 
   GfMatrix2f inverse;
 
-  if (GfAbs(det) > eps) {
+  if (GfAbs(det) > eps)
+  {
 
     double rcp = 1.0 / det;
     inverse._mtx[0][0] = static_cast<float>(_mtx[1][1] * rcp);
@@ -154,7 +160,8 @@ GfMatrix2f GfMatrix2f::GetInverse(double *detPtr, double eps) const
     inverse._mtx[1][0] = static_cast<float>(_mtx[1][0] * -rcp);
     inverse._mtx[1][1] = static_cast<float>(_mtx[0][0] * rcp);
   }
-  else {
+  else
+  {
     inverse.SetDiagonal(FLT_MAX);
   }
 
@@ -228,8 +235,10 @@ GfMatrix2f &GfMatrix2f::operator*=(const GfMatrix2f &m)
 
 bool GfIsClose(GfMatrix2f const &m1, GfMatrix2f const &m2, double tolerance)
 {
-  for (size_t row = 0; row < 2; ++row) {
-    for (size_t col = 0; col < 2; ++col) {
+  for (size_t row = 0; row < 2; ++row)
+  {
+    for (size_t col = 0; col < 2; ++col)
+    {
       if (!GfIsClose(m1[row][col], m2[row][col], tolerance))
         return false;
     }

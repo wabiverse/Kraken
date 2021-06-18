@@ -52,7 +52,8 @@ WABI_NAMESPACE_BEGIN
 /// \c TfStopwatch and then combine results using the \c AddFrom() member
 /// function.
 ///
-class TfStopwatch {
+class TfStopwatch
+{
  public:
   /// Record the current time for use by the next \c Stop() call.
   ///

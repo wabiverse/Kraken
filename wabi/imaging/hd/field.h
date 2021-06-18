@@ -45,7 +45,8 @@ typedef std::vector<class HdField const *> HdFieldPtrConstVector;
 /// Hydra schema for a USD field primitive. Acts like a texture, combined
 /// with other fields to make up a renderable volume.
 ///
-class HdField : public HdBprim {
+class HdField : public HdBprim
+{
  public:
   HD_API
   HdField(SdfPath const &id);
@@ -53,7 +54,8 @@ class HdField : public HdBprim {
   virtual ~HdField();
 
   // Change tracking for HdField
-  enum DirtyBits : HdDirtyBits {
+  enum DirtyBits : HdDirtyBits
+  {
     Clean = 0,
     DirtyTransform = 1 << 0,
     DirtyParams = 1 << 1,

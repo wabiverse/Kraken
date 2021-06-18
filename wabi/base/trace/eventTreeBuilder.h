@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 /// This class creates a tree of TraceEventTree instances from
 /// TraceCollection instances.
 ///
-class Trace_EventTreeBuilder : protected TraceCollection::Visitor {
+class Trace_EventTreeBuilder : protected TraceCollection::Visitor
+{
  public:
   /// Constructor.
   Trace_EventTreeBuilder();
@@ -81,10 +82,12 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor {
 
  private:
   // Helper class for event graph creation.
-  struct _PendingEventNode {
+  struct _PendingEventNode
+  {
     using TimeStamp = TraceEvent::TimeStamp;
 
-    struct AttributeData {
+    struct AttributeData
+    {
       TimeStamp time;
       TfToken key;
       TraceEventNode::AttributeData data;
@@ -130,7 +133,8 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor {
   _ThreadStackMap _threadStacks;
   TraceEventTreeRefPtr _tree;
 
-  class _CounterAccumulator : public TraceCounterAccumulator {
+  class _CounterAccumulator : public TraceCounterAccumulator
+  {
    protected:
     bool _AcceptsCategory(TraceCategoryId) override;
   };

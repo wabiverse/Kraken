@@ -8,7 +8,8 @@
 #include <string>
 #include <vector>
 
-namespace Zep {
+namespace Zep
+{
 
 ZepSyntax_Markdown::ZepSyntax_Markdown(ZepBuffer &buffer,
                                        const std::unordered_set<std::string> &keywords,
@@ -47,31 +48,40 @@ void ZepSyntax_Markdown::UpdateSyntax()
   bool lineBegin = true;
 
   // Walk backwards to previous delimiter
-  while (itrCurrent != itrEnd) {
-    if (m_stop == true) {
+  while (itrCurrent != itrEnd)
+  {
+    if (m_stop == true)
+    {
       return;
     }
 
     // Update start location
     m_processedChar = long(itrCurrent - buffer.begin());
 
-    if (*itrCurrent == '#' && lineBegin) {
+    if (*itrCurrent == '#' && lineBegin)
+    {
       lineBegin = false;
       auto itrStart = itrCurrent;
-      while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0) {
+      while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0)
+      {
         itrCurrent++;
       }
       mark(itrStart, itrCurrent, ThemeColor::Identifier, ThemeColor::None);
     }
-    else {
-      if (*itrCurrent == '[') {
+    else
+    {
+      if (*itrCurrent == '[')
+      {
         int inCount = 0;
         auto itrStart = itrCurrent;
-        while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0) {
-          if (*itrCurrent == '[') {
+        while (itrCurrent != itrEnd && *itrCurrent != '\n' && *itrCurrent != 0)
+        {
+          if (*itrCurrent == '[')
+          {
             inCount++;
           }
-          else if (*itrCurrent == ']') {
+          else if (*itrCurrent == ']')
+          {
             inCount--;
           }
           itrCurrent++;
@@ -82,7 +92,8 @@ void ZepSyntax_Markdown::UpdateSyntax()
       }
     }
 
-    if (*itrCurrent == '\n') {
+    if (*itrCurrent == '\n')
+    {
       lineBegin = true;
     }
 

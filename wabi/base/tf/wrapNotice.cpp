@@ -48,7 +48,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_BEGIN
 
-class Tf_PyNotice {
+class Tf_PyNotice
+{
  public:
   static size_t SendWithType(const TfNotice &notice,
                              const TfType &noticeType,
@@ -64,15 +65,18 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // TfNotice is passed for both the type and the base to indicate the root of the
 // hierarchy.
 TF_INSTANTIATE_NOTICE_WRAPPER(TfNotice, TfNotice);
 
-class Tf_PyNoticeInternal {
+class Tf_PyNoticeInternal
+{
  public:
-  struct Listener : public TfWeakBase, public boost::noncopyable {
+  struct Listener : public TfWeakBase, public boost::noncopyable
+  {
 
     typedef void CallbackSig(object const &, handle<> const &);
     typedef std::function<CallbackSig> Callback;
@@ -138,7 +142,8 @@ class Tf_PyNoticeInternal {
     {
       TfPyLock lock;
       object pyNotice = _GetDeliverableNotice(notice, type);
-      if (!TfPyIsNone(pyNotice)) {
+      if (!TfPyIsNone(pyNotice))
+      {
         // Get the python sender.
         handle<> pySender = sender ? handle<>(allow_null(Tf_PyIdentityHelper::Get(senderUniqueId))) :
                                      handle<>();

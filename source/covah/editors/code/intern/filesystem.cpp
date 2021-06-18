@@ -11,7 +11,8 @@
 #include <filesystem>
 namespace cpp_fs = std::filesystem;
 
-namespace Zep {
+namespace Zep
+{
 ZepFileSystemCPP::ZepFileSystemCPP(const ZepPath &configPath)
 {
   // Use the config path
@@ -20,7 +21,8 @@ ZepFileSystemCPP::ZepFileSystemCPP(const ZepPath &configPath)
   m_workingDirectory = ZepPath(cpp_fs::current_path().string());
 
   // Didn't find the config path, try the working directory
-  if (!Exists(m_configPath)) {
+  if (!Exists(m_configPath))
+  {
     m_configPath = m_workingDirectory;
   }
 
@@ -53,7 +55,8 @@ bool ZepFileSystemCPP::MakeDirectories(const ZepPath &path)
 
 bool ZepFileSystemCPP::IsDirectory(const ZepPath &path) const
 {
-  if (!Exists(path)) {
+  if (!Exists(path))
+  {
     return false;
   }
   return cpp_fs::is_directory(path.string());
@@ -62,7 +65,8 @@ bool ZepFileSystemCPP::IsDirectory(const ZepPath &path) const
 bool ZepFileSystemCPP::IsReadOnly(const ZepPath &path) const
 {
   auto perms = cpp_fs::status(path.string()).permissions();
-  if ((perms & cpp_fs::perms::owner_write) == cpp_fs::perms::owner_write) {
+  if ((perms & cpp_fs::perms::owner_write) == cpp_fs::perms::owner_write)
+  {
     return false;
   }
   return true;
@@ -71,7 +75,8 @@ bool ZepFileSystemCPP::IsReadOnly(const ZepPath &path) const
 std::string ZepFileSystemCPP::Read(const ZepPath &fileName)
 {
   std::ifstream in(fileName, std::ios::in | std::ios::binary);
-  if (in) {
+  if (in)
+  {
     std::string contents;
     in.seekg(0, std::ios::end);
     contents.resize(size_t(in.tellg()));
@@ -80,7 +85,8 @@ std::string ZepFileSystemCPP::Read(const ZepPath &fileName)
     in.close();
     return (contents);
   }
-  else {
+  else
+  {
     ZLOG(ERROR, "File Not Found: " << fileName.string());
   }
   return std::string();
@@ -90,7 +96,8 @@ bool ZepFileSystemCPP::Write(const ZepPath &fileName, const void *pData, size_t 
 {
   FILE *pFile;
   pFile = fopen(fileName.string().c_str(), "wb");
-  if (!pFile) {
+  if (!pFile)
+  {
     return false;
   }
   fwrite(pData, sizeof(uint8_t), size, pFile);
@@ -104,14 +111,16 @@ void ZepFileSystemCPP::ScanDirectory(
 {
   for (auto itr = cpp_fs::recursive_directory_iterator(path.string());
        itr != cpp_fs::recursive_directory_iterator();
-       itr++) {
+       itr++)
+  {
     auto p = ZepPath(itr->path().string());
 
     bool recurse = true;
     if (!fnScan(p, recurse))
       return;
 
-    if (!recurse && itr.recursion_pending()) {
+    if (!recurse && itr.recursion_pending())
+    {
       itr.disable_recursion_pending();
     }
   }
@@ -119,10 +128,12 @@ void ZepFileSystemCPP::ScanDirectory(
 
 bool ZepFileSystemCPP::Exists(const ZepPath &path) const
 {
-  try {
+  try
+  {
     return cpp_fs::exists(path.string());
   }
-  catch (cpp_fs::filesystem_error &err) {
+  catch (cpp_fs::filesystem_error &err)
+  {
     ZEP_UNUSED(err);
     ZLOG(ERROR, "Exception: " << err.what());
     return false;
@@ -131,14 +142,17 @@ bool ZepFileSystemCPP::Exists(const ZepPath &path) const
 
 bool ZepFileSystemCPP::Equivalent(const ZepPath &path1, const ZepPath &path2) const
 {
-  try {
+  try
+  {
     // The below API expects existing files!  Best we can do is direct compare of paths
-    if (!cpp_fs::exists(path1.string()) || !cpp_fs::exists(path2.string())) {
+    if (!cpp_fs::exists(path1.string()) || !cpp_fs::exists(path2.string()))
+    {
       return Canonical(path1).string() == Canonical(path2).string();
     }
     return cpp_fs::equivalent(path1.string(), path2.string());
   }
-  catch (cpp_fs::filesystem_error &err) {
+  catch (cpp_fs::filesystem_error &err)
+  {
     ZEP_UNUSED(err);
     ZLOG(ERROR, "Exception: " << err.what());
     return path1 == path2;
@@ -147,7 +161,8 @@ bool ZepFileSystemCPP::Equivalent(const ZepPath &path1, const ZepPath &path2) co
 
 ZepPath ZepFileSystemCPP::Canonical(const ZepPath &path) const
 {
-  try {
+  try
+  {
 #ifdef __unix__
     // TODO: Remove when unix doesn't need <experimental/filesystem>
     // I can't remember why weakly_connical is used....
@@ -156,7 +171,8 @@ ZepPath ZepFileSystemCPP::Canonical(const ZepPath &path) const
     return ZepPath(cpp_fs::weakly_canonical(path.string()).string());
 #endif
   }
-  catch (cpp_fs::filesystem_error &err) {
+  catch (cpp_fs::filesystem_error &err)
+  {
     ZEP_UNUSED(err);
     ZLOG(ERROR, "Exception: " << err.what());
     return path;
@@ -167,13 +183,16 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
 {
   foundGit = false;
   auto findStartPath = [&](const ZepPath &startPath) {
-    if (!startPath.empty()) {
+    if (!startPath.empty())
+    {
       auto testPath = startPath;
-      if (!IsDirectory(testPath)) {
+      if (!IsDirectory(testPath))
+      {
         testPath = testPath.parent_path();
       }
 
-      while (!testPath.empty() && IsDirectory(testPath)) {
+      while (!testPath.empty() && IsDirectory(testPath))
+      {
         foundGit = false;
 
         // Look in this dir
@@ -182,7 +201,8 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
           recurse = false;
 
           // Found the .git repo
-          if (p.extension() == ".git" && IsDirectory(p)) {
+          if (p.extension() == ".git" && IsDirectory(p))
+          {
             foundGit = true;
 
             // Quit search
@@ -192,7 +212,8 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
         });
 
         // If found,  return it as the path we need
-        if (foundGit) {
+        if (foundGit)
+        {
           return testPath;
         }
 
@@ -204,15 +225,18 @@ ZepPath ZepFileSystemCPP::GetSearchRoot(const ZepPath &start, bool &foundGit) co
 
   ZepPath workingDir = GetWorkingDirectory();
   auto startPath = findStartPath(start);
-  if (startPath.empty()) {
+  if (startPath.empty())
+  {
     startPath = findStartPath(workingDir);
-    if (startPath.empty()) {
+    if (startPath.empty())
+    {
       startPath = GetWorkingDirectory();
     }
   }
 
   // Failure case, just use current path
-  if (startPath.empty()) {
+  if (startPath.empty())
+  {
     startPath = start;
   }
   return startPath;

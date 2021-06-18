@@ -37,7 +37,8 @@ WABI_NAMESPACE_BEGIN
 struct HdPrman_Context;
 struct HdxPrman_InteractiveContext;
 
-class HdxPrman_RenderPass final : public HdRenderPass {
+class HdxPrman_RenderPass final : public HdRenderPass
+{
  public:
   HdxPrman_RenderPass(HdRenderIndex *index,
                       HdRprimCollection const &collection,

@@ -54,7 +54,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(PcpPrimIndex_Graph);
 /// Internal representation of the graph used to represent sources of
 /// opinions in the prim index.
 ///
-class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
+class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
+{
  public:
   /// Creates a new graph with a root node for site \p rootSite.
   static PcpPrimIndex_GraphRefPtr New(const PcpLayerStackSite &rootSite, bool usd);
@@ -168,7 +169,8 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
   // for the first node for which p(node) is true and the first subsequent
   // node where p(node) is false. Returns the indexes of the resulting
   // nodes.
-  template<class Predicate> std::pair<size_t, size_t> _FindRootChildRange(const Predicate &p) const;
+  template<class Predicate>
+  std::pair<size_t, size_t> _FindRootChildRange(const Predicate &p) const;
 
   // Helper functions to compute a mapping between node indexes and
   // the strength order of the corresponding node.
@@ -232,7 +234,8 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
   // Allow Pcp_Statistics access to internal data for diagnostics.
   friend class Pcp_Statistics;
 
-  struct _Node {
+  struct _Node
+  {
     static const size_t _nodeIndexSize = 15;
     static const size_t _childrenSize = 10;
     static const size_t _depthSize = 10;
@@ -296,7 +299,8 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
     // This allows us to initialize them all at once.  g++ will,
     // surprisingly, initialize each individually in the default
     // copy constructor if they're direct members of _Node.
-    struct _SmallInts {
+    struct _SmallInts
+    {
       // The permissions for this node (whether specs on this node
       // can be accessed from other nodes).
       SdfPermission permission : 2;
@@ -365,8 +369,13 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase {
 
   typedef std::vector<_Node> _NodePool;
 
-  struct _SharedData {
-    _SharedData(bool usd_) : finalized(false), usd(usd_), hasPayloads(false), instanceable(false)
+  struct _SharedData
+  {
+    _SharedData(bool usd_)
+      : finalized(false),
+        usd(usd_),
+        hasPayloads(false),
+        instanceable(false)
     {}
 
     // Pool of nodes for this graph.

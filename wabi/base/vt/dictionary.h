@@ -60,7 +60,8 @@ WABI_NAMESPACE_BEGIN
 /// For a list of functions that can manipulate VtDictionary objects, see the
 /// \link group_vtdict_functions VtDictionary Functions \endlink group page .
 ///
-class VtDictionary {
+class VtDictionary
+{
   typedef std::map<std::string, VtValue, std::less<>> _Map;
   std::unique_ptr<_Map> _dictMap;
 
@@ -76,11 +77,14 @@ class VtDictionary {
   // that contains values).
   template<class UnderlyingMapPtr, class UnderlyingIterator>
   class Iterator
-    : public boost::iterator_adaptor<Iterator<UnderlyingMapPtr, UnderlyingIterator>, UnderlyingIterator> {
+    : public boost::iterator_adaptor<Iterator<UnderlyingMapPtr, UnderlyingIterator>, UnderlyingIterator>
+  {
    public:
     // Default constructor creates an Iterator equivalent to end() (i.e.
     // UnderlyingMapPtr is null)
-    Iterator() : Iterator::iterator_adaptor_(UnderlyingIterator()), _underlyingMap(0)
+    Iterator()
+      : Iterator::iterator_adaptor_(UnderlyingIterator()),
+        _underlyingMap(0)
     {}
 
     // Copy constructor (also allows for converting non-const to const).
@@ -93,7 +97,9 @@ class VtDictionary {
    private:
     // Private constructor allowing the find, begin and insert methods
     // to create and return the proper Iterator.
-    Iterator(UnderlyingMapPtr m, UnderlyingIterator i) : Iterator::iterator_adaptor_(i), _underlyingMap(m)
+    Iterator(UnderlyingMapPtr m, UnderlyingIterator i)
+      : Iterator::iterator_adaptor_(i),
+        _underlyingMap(m)
     {
       if (m && i == m->end())
         _underlyingMap = 0;
@@ -116,13 +122,15 @@ class VtDictionary {
     // null when the iterator reaches the end of the map.
     void increment()
     {
-      if (!_underlyingMap) {
+      if (!_underlyingMap)
+      {
         TF_FATAL_ERROR(
           "Attempted invalid increment operation on a "
           "VtDictionary iterator");
         return;
       }
-      if (++this->base_reference() == _underlyingMap->end()) {
+      if (++this->base_reference() == _underlyingMap->end())
+      {
         _underlyingMap = 0;
       }
     }
@@ -166,7 +174,8 @@ class VtDictionary {
   {}
 
   /// Creates a \p VtDictionary with a copy of a range.
-  template<class _InputIterator> VtDictionary(_InputIterator f, _InputIterator l)
+  template<class _InputIterator>
+  VtDictionary(_InputIterator f, _InputIterator l)
   {
     TfAutoMallocTag2 tag("Vt", "VtDictionary::VtDictionary (range)");
     insert(f, l);
@@ -281,10 +290,12 @@ class VtDictionary {
   }
 
   /// Inserts a range into the \p VtDictionary.
-  template<class _InputIterator> void insert(_InputIterator f, _InputIterator l)
+  template<class _InputIterator>
+  void insert(_InputIterator f, _InputIterator l)
   {
     TfAutoMallocTag2 tag("Vt", "VtDictionary::insert (range)");
-    if (f != l) {
+    if (f != l)
+    {
       _CreateDictIfNeeded();
       _dictMap->insert(f, l);
     }
@@ -366,10 +377,12 @@ VT_API VtDictionary const &VtGetEmptyDictionary();
 /// is of type \p T.
 /// \ingroup group_vtdict_functions
 ///
-template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, const std::string &key)
+template<typename T>
+bool VtDictionaryIsHolding(const VtDictionary &dictionary, const std::string &key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
-  if (i == dictionary.end()) {
+  if (i == dictionary.end())
+  {
     return false;
   }
 
@@ -377,10 +390,12 @@ template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, 
 }
 
 /// \overload
-template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, const char *key)
+template<typename T>
+bool VtDictionaryIsHolding(const VtDictionary &dictionary, const char *key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
-  if (i == dictionary.end()) {
+  if (i == dictionary.end())
+  {
     return false;
   }
 
@@ -397,10 +412,12 @@ template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, 
 /// VtDictionaryIsHolding first.
 ///
 /// \ingroup group_vtdict_functions
-template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, const std::string &key)
+template<typename T>
+const T &VtDictionaryGet(const VtDictionary &dictionary, const std::string &key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
-  if (ARCH_UNLIKELY(i == dictionary.end())) {
+  if (ARCH_UNLIKELY(i == dictionary.end()))
+  {
     TF_FATAL_ERROR("Attempted to get value for key '" + key + "', which is not in the dictionary.");
   }
 
@@ -408,10 +425,12 @@ template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, co
 }
 
 /// \overload
-template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, const char *key)
+template<typename T>
+const T &VtDictionaryGet(const VtDictionary &dictionary, const char *key)
 {
   VtDictionary::const_iterator i = dictionary.find(key);
-  if (ARCH_UNLIKELY(i == dictionary.end())) {
+  if (ARCH_UNLIKELY(i == dictionary.end()))
+  {
     TF_FATAL_ERROR(
       "Attempted to get value for key '%s', "
       "which is not in the dictionary.",
@@ -423,8 +442,11 @@ template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, co
 
 // This is an internal holder class that is used in the version of
 // VtDictionaryGet that takes a default.
-template<class T> struct Vt_DefaultHolder {
-  explicit Vt_DefaultHolder(T const &t) : val(t)
+template<class T>
+struct Vt_DefaultHolder
+{
+  explicit Vt_DefaultHolder(T const &t)
+    : val(t)
   {}
   T const &val;
 };
@@ -432,8 +454,10 @@ template<class T> struct Vt_DefaultHolder {
 // This internal class has a very unusual assignment operator that returns an
 // instance of Vt_DefaultHolder, holding any type T.  This is used to get the
 // "VtDefault = X" syntax for VtDictionaryGet.
-struct Vt_DefaultGenerator {
-  template<class T> Vt_DefaultHolder<T> operator=(T const &t)
+struct Vt_DefaultGenerator
+{
+  template<class T>
+  Vt_DefaultHolder<T> operator=(T const &t)
   {
     return Vt_DefaultHolder<T>(t);
   }
@@ -586,7 +610,8 @@ VT_API void VtDictionaryOverRecursive(const VtDictionary &strong,
                                       VtDictionary *weak,
                                       bool coerceToWeakerOpinionType = false);
 
-struct VtDictionaryHash {
+struct VtDictionaryHash
+{
   inline size_t operator()(VtDictionary const &dict) const
   {
     return hash_value(dict);

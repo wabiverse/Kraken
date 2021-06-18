@@ -42,9 +42,11 @@ std::vector<TfPatternMatcher> constructPatternFilters(const std::vector<std::str
 {
   std::vector<TfPatternMatcher> patternMatchers;
   patternMatchers.reserve(filters.size());
-  for (const std::string &filter : filters) {
+  for (const std::string &filter : filters)
+  {
     patternMatchers.push_back(TfPatternMatcher(filter, true, true));
-    if (!patternMatchers.back().IsValid()) {
+    if (!patternMatchers.back().IsValid())
+    {
       TF_WARN("Invalid pattern string: %s", filter.c_str());
     }
   }
@@ -92,17 +94,23 @@ bool UsdUtilsConditionalAbortDiagnosticDelegate::_RuleMatcher(
   const std::vector<TfPatternMatcher> &codePathPatternFilters)
 {
   const std::string &sourceFileName = err.GetSourceFileName();
-  if (!sourceFileName.empty()) {
-    for (const TfPatternMatcher &codePathPattern : codePathPatternFilters) {
-      if (codePathPattern.Match(sourceFileName)) {
+  if (!sourceFileName.empty())
+  {
+    for (const TfPatternMatcher &codePathPattern : codePathPatternFilters)
+    {
+      if (codePathPattern.Match(sourceFileName))
+      {
         return true;
       }
     }
   }
   const std::string &errorString = err.GetCommentary();
-  if (!errorString.empty()) {
-    for (const TfPatternMatcher &stringPattern : stringPatternFilters) {
-      if (stringPattern.Match(errorString)) {
+  if (!errorString.empty())
+  {
+    for (const TfPatternMatcher &stringPattern : stringPatternFilters)
+    {
+      if (stringPattern.Match(errorString))
+      {
         return true;
       }
     }
@@ -114,7 +122,8 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueError(const TfError &err)
 {
   // if matching in include rules and NOT in exclude rules then abort
   if (_RuleMatcher(err, _includePatternStringFilters, _includePatternCodePathFilters) &&
-      !_RuleMatcher(err, _excludePatternStringFilters, _excludePatternCodePathFilters)) {
+      !_RuleMatcher(err, _excludePatternStringFilters, _excludePatternCodePathFilters))
+  {
     TfLogCrash(
       "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
       "Error",
@@ -124,7 +133,8 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueError(const TfError &err)
       true);
     ArchAbort(false);
   }
-  else if (!err.GetQuiet()) {
+  else if (!err.GetQuiet())
+  {
     _PrintDiagnostic(err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err.GetInfo<TfError>());
   }
 }
@@ -146,7 +156,8 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &w
 {
   // if matching in include rules and NOT in exclude rules then abort
   if (_RuleMatcher(warning, _includePatternStringFilters, _includePatternCodePathFilters) &&
-      !_RuleMatcher(warning, _excludePatternStringFilters, _excludePatternCodePathFilters)) {
+      !_RuleMatcher(warning, _excludePatternStringFilters, _excludePatternCodePathFilters))
+  {
     TfLogCrash(
       "Aborted by UsdUtilsConditionalAbortDiagnosticDelegate On "
       "Warning",
@@ -156,7 +167,8 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &w
       true);
     ArchAbort(false);
   }
-  else if (!warning.GetQuiet()) {
+  else if (!warning.GetQuiet())
+  {
     _PrintDiagnostic(warning.GetDiagnosticCode(),
                      warning.GetContext(),
                      warning.GetCommentary(),

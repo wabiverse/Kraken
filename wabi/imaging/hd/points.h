@@ -35,8 +35,10 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Descriptor to configure a drawItem for a repr.
 ///
-struct HdPointsReprDesc {
-  HdPointsReprDesc(HdPointsGeomStyle geomStyle = HdPointsGeomStyleInvalid) : geomStyle(geomStyle)
+struct HdPointsReprDesc
+{
+  HdPointsReprDesc(HdPointsGeomStyle geomStyle = HdPointsGeomStyleInvalid)
+    : geomStyle(geomStyle)
   {}
 
   bool IsEmpty() const
@@ -49,7 +51,8 @@ struct HdPointsReprDesc {
 
 /// Hydra Schema for a point cloud.
 ///
-class HdPoints : public HdRprim {
+class HdPoints : public HdRprim
+{
  public:
   HD_API
   virtual ~HdPoints();

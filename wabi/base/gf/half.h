@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// A 16-bit floating point data type.
 using GfHalf = wabi_half::half;
 
-namespace wabi_half {
+namespace wabi_half
+{
 /// Overload hash_value for half.
 template<typename Half>
 inline typename std::enable_if<std::is_same<Half, half>::value, size_t>::type hash_value(const Half &h)
@@ -58,7 +59,9 @@ inline typename std::enable_if<std::is_same<Half, half>::value, size_t>::type ha
 }
 }  // namespace wabi_half
 
-template<> struct GfIsFloatingPoint<GfHalf> : public std::integral_constant<bool, true> {
+template<>
+struct GfIsFloatingPoint<GfHalf> : public std::integral_constant<bool, true>
+{
 };
 
 WABI_NAMESPACE_END

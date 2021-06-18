@@ -37,7 +37,8 @@ class ArAsset;
 ///
 /// Package resolver responsible for resolving assets in
 /// .usdz files.
-class Usd_UsdzResolver : public ArPackageResolver {
+class Usd_UsdzResolver : public ArPackageResolver
+{
  public:
   Usd_UsdzResolver();
 
@@ -56,7 +57,8 @@ class Usd_UsdzResolver : public ArPackageResolver {
 /// Singleton thread-local scoped cache used by Usd_UsdzResolver. This
 /// allows other clients besides Usd_UsdzResolver to take advantage of
 /// caching of zip files while a resolver scoped cache is active.
-class Usd_UsdzResolverCache {
+class Usd_UsdzResolverCache
+{
  public:
   static Usd_UsdzResolverCache &GetInstance();
 

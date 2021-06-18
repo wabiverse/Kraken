@@ -52,7 +52,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static void _RaiseCodingError(string const &msg,
                               string const &moduleName,
@@ -124,7 +125,8 @@ static string TfError__repr__(TfError const &self)
                               self.GetSourceFileName().c_str(),
                               self.GetCommentary().c_str());
 
-  if (const TfPyExceptionState *exc = self.GetInfo<TfPyExceptionState>()) {
+  if (const TfPyExceptionState *exc = self.GetInfo<TfPyExceptionState>())
+  {
     ret += "\n" + exc->GetExceptionString();
   }
 
@@ -145,38 +147,45 @@ static bool _RepostErrors(boost::python::object exc)
   // XXX: Must use the string-based name until bug XXXXX is fixed.
   const bool TF_ERROR_MARK_TRACKING = TfDebug::IsDebugSymbolNameEnabled("TF_ERROR_MARK_TRACKING");
 
-  if (TF_ERROR_MARK_TRACKING && TfDiagnosticMgr::GetInstance().HasActiveErrorMark()) {
+  if (TF_ERROR_MARK_TRACKING && TfDiagnosticMgr::GetInstance().HasActiveErrorMark())
+  {
     if (TF_ERROR_MARK_TRACKING)
       printf("Tf.RepostErrors called with active marks\n");
     TfReportActiveErrorMarks();
   }
-  else {
+  else
+  {
     if (TF_ERROR_MARK_TRACKING)
       printf("no active marks\n");
   }
 
-  if ((PyObject *)exc.ptr()->ob_type == Tf_PyGetErrorExceptionClass().get()) {
+  if ((PyObject *)exc.ptr()->ob_type == Tf_PyGetErrorExceptionClass().get())
+  {
     object args = exc.attr("args");
     extract<vector<TfError>> extractor(args);
-    if (extractor.check()) {
+    if (extractor.check())
+    {
       vector<TfError> errs = extractor();
-      if (errs.empty()) {
+      if (errs.empty())
+      {
         if (TF_ERROR_MARK_TRACKING)
           printf("Tf.RepostErrors: exception contains no errors\n");
         return false;
       }
-      TF_FOR_ALL(i, errs)
-      TfDiagnosticMgr::GetInstance().AppendError(*i);
+      TF_FOR_ALL (i, errs)
+        TfDiagnosticMgr::GetInstance().AppendError(*i);
       return true;
     }
-    else {
+    else
+    {
       if (TF_ERROR_MARK_TRACKING)
         printf(
           "Tf.RepostErrors: "
           "failed to get errors from exception\n");
     }
   }
-  else {
+  else
+  {
     if (TF_ERROR_MARK_TRACKING)
       printf("Tf.RepostErrors: invalid exception type\n");
   }
@@ -185,10 +194,13 @@ static bool _RepostErrors(boost::python::object exc)
 
 static void _PythonExceptionDebugTracer(TfPyTraceInfo const &info)
 {
-  if (info.what == PyTrace_EXCEPTION) {
+  if (info.what == PyTrace_EXCEPTION)
+  {
     string excName = "<unknown>";
-    if (PyObject *excType = PyTuple_GET_ITEM(info.arg, 0)) {
-      if (PyObject *r = PyObject_Repr(excType)) {
+    if (PyObject *excType = PyTuple_GET_ITEM(info.arg, 0))
+    {
+      if (PyObject *r = PyObject_Repr(excType))
+      {
         excName = TfPyString_AsString(r);
         Py_DECREF(r);
       }
@@ -202,10 +214,12 @@ static void _PythonExceptionDebugTracer(TfPyTraceInfo const &info)
 static void _SetPythonExceptionDebugTracingEnabled(bool enable)
 {
   static TfPyTraceFnId traceFnId;
-  if (!enable) {
+  if (!enable)
+  {
     traceFnId.reset();
   }
-  else if (!traceFnId) {
+  else if (!traceFnId)
+  {
     traceFnId = TfPyRegisterTraceFn(_PythonExceptionDebugTracer);
   }
 }

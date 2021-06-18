@@ -110,8 +110,10 @@ HdPh_QuadInfoBuilderComputationSharedPtr HdPh_MeshTopology::GetQuadInfoBuilderCo
   // store as a weak ptr.
   _quadInfoBuilder = builder;
 
-  if (gpu) {
-    if (!TF_VERIFY(resourceRegistry)) {
+  if (gpu)
+  {
+    if (!TF_VERIFY(resourceRegistry))
+    {
       TF_CODING_ERROR(
         "resource registry must be non-null "
         "if gpu quadinfo is requested.");
@@ -142,7 +144,8 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetQuadrangulateComputation(HdBufferS
                                                                        SdfPath const &id)
 {
   // check if the quad table is already computed as all-quads.
-  if (_quadInfo && _quadInfo->IsAllQuads()) {
+  if (_quadInfo && _quadInfo->IsAllQuads())
+  {
     // no need of quadrangulation.
     return HdBufferSourceSharedPtr();
   }
@@ -163,7 +166,8 @@ HdComputationSharedPtr HdPh_MeshTopology::GetQuadrangulateComputationGPU(TfToken
                                                                          SdfPath const &id)
 {
   // check if the quad table is already computed as all-quads.
-  if (_quadInfo && _quadInfo->IsAllQuads()) {
+  if (_quadInfo && _quadInfo->IsAllQuads())
+  {
     // no need of quadrangulation.
     return HdComputationSharedPtr();
   }
@@ -203,7 +207,8 @@ bool HdPh_MeshTopology::RefinesToBoxSplineTrianglePatches() const
 
 HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdTopologyComputation(SdfPath const &id)
 {
-  if (HdBufferSourceSharedPtr builder = _osdTopologyBuilder.lock()) {
+  if (HdBufferSourceSharedPtr builder = _osdTopologyBuilder.lock())
+  {
     return builder;
   }
 
@@ -254,7 +259,8 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(HdBufferSourc
   if (_topology.GetFaceVertexCounts().size() == 0)
     return source;
 
-  if (!TF_VERIFY(_subdivision)) {
+  if (!TF_VERIFY(_subdivision))
+  {
     TF_CODING_ERROR(
       "GetOsdTopologyComputation should be called before "
       "GetOsdRefineComputation.");
@@ -272,7 +278,8 @@ HdComputationSharedPtr HdPh_MeshTopology::GetOsdRefineComputationGPU(TfToken con
                                                                      int fvarChannel)
 {
   // for empty topology, we don't need to refine anything.
-  if (_topology.GetFaceVertexCounts().size() == 0) {
+  if (_topology.GetFaceVertexCounts().size() == 0)
+  {
     return HdComputationSharedPtr();
   }
 

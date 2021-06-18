@@ -59,7 +59,9 @@ void TfPyConvertPythonExceptionToTfErrors();
 /// required for wrapped functions and methods that do not appear directly in an
 /// extension module.  For instance, the map and sequence proxy objects use
 /// this, since they are created on the fly.
-template<typename Base = boost::python::default_call_policies> struct TfPyRaiseOnError : Base {
+template<typename Base = boost::python::default_call_policies>
+struct TfPyRaiseOnError : Base
+{
  public:
   // This call policy provides a customized argument_package.  We need to do
   // this to store the TfErrorMark that we use to collect TfErrors that
@@ -70,8 +72,11 @@ template<typename Base = boost::python::default_call_policies> struct TfPyRaiseO
   // Using the argument_package solves this since it is a local variable it
   // will be destroyed whether or not the call throws.  This is not really a
   // publicly documented boost.python feature, however.  :-/
-  template<class BaseArgs> struct ErrorMarkAndArgs {
-    /* implicit */ ErrorMarkAndArgs(BaseArgs base_) : base(base_)
+  template<class BaseArgs>
+  struct ErrorMarkAndArgs
+  {
+    /* implicit */ ErrorMarkAndArgs(BaseArgs base_)
+      : base(base_)
     {}
     operator const BaseArgs &() const
     {
@@ -102,7 +107,8 @@ template<typename Base = boost::python::default_call_policies> struct TfPyRaiseO
   PyObject *postcall(argument_package const &a, PyObject *result)
   {
     result = Base::postcall(a, result);
-    if (result && TfPyConvertTfErrorsToPythonException(a.errorMark)) {
+    if (result && TfPyConvertTfErrorsToPythonException(a.errorMark))
+    {
       Py_DECREF(result);
       result = NULL;
     }
@@ -110,8 +116,10 @@ template<typename Base = boost::python::default_call_policies> struct TfPyRaiseO
   }
 };
 
-struct Tf_PyErrorClearer {
-  Tf_PyErrorClearer() : clearOnDestruction(true)
+struct Tf_PyErrorClearer
+{
+  Tf_PyErrorClearer()
+    : clearOnDestruction(true)
   {}
   ~Tf_PyErrorClearer()
   {

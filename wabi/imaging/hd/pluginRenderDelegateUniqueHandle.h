@@ -44,11 +44,14 @@ class HdRenderDelegate;
 /// plugin is kept alive until the render delegate is destroyed.
 /// In other words, the handle can be used just like a std::unique_ptr.
 ///
-class HdPluginRenderDelegateUniqueHandle final {
+class HdPluginRenderDelegateUniqueHandle final
+{
  public:
-  HdPluginRenderDelegateUniqueHandle() : _delegate(nullptr)
+  HdPluginRenderDelegateUniqueHandle()
+    : _delegate(nullptr)
   {}
-  HdPluginRenderDelegateUniqueHandle(const std::nullptr_t &) : _delegate(nullptr)
+  HdPluginRenderDelegateUniqueHandle(const std::nullptr_t &)
+    : _delegate(nullptr)
   {}
 
   /// Transfer ownership

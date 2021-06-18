@@ -34,16 +34,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Usd_CrateValueInliners {
+namespace Usd_CrateValueInliners
+{
 
 // Return true and set \p *dst if \p src can be exactly represented as a Dst
 // instance.  This only works for numeric types, and it checks range before
 // doing the conversion.
-template<class Src, class Dst> inline bool _IsExactlyRepresented(Src const &src, Dst *dst)
+template<class Src, class Dst>
+inline bool _IsExactlyRepresented(Src const &src, Dst *dst)
 {
   Src min = static_cast<Src>(std::numeric_limits<Dst>::lowest());
   Src max = static_cast<Src>(std::numeric_limits<Dst>::max());
-  if (min <= src && src <= max && static_cast<Src>(static_cast<Dst>(src)) == src) {
+  if (min <= src && src <= max && static_cast<Src>(static_cast<Dst>(src)) == src)
+  {
     *dst = static_cast<Dst>(src);
     return true;
   }
@@ -51,11 +54,13 @@ template<class Src, class Dst> inline bool _IsExactlyRepresented(Src const &src,
 }
 
 // Base case templates.
-template<class T> bool _EncodeInline(T, ...)
+template<class T>
+bool _EncodeInline(T, ...)
 {
   return false;
 }
-template<class T> void _DecodeInline(T *, ...)
+template<class T>
+void _DecodeInline(T *, ...)
 {}
 
 ////////////////////////////////////////////////////////////////////////
@@ -65,7 +70,8 @@ typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeIn
 {
   // If fp is representable exactly as float, encode as inline float.
   float f;
-  if (_IsExactlyRepresented(fp, &f)) {
+  if (_IsExactlyRepresented(fp, &f))
+  {
     memcpy(ival, &f, sizeof(f));
     return true;
   }
@@ -87,7 +93,8 @@ typename std::enable_if<std::is_integral<INT>::value, bool>::type _EncodeInline(
   // If i is in-range for (u)int32_t, encode as such.
   using int_t = typename std::conditional<std::is_signed<INT>::value, int32_t, uint32_t>::type;
   int_t rep;
-  if (_IsExactlyRepresented(i, &rep)) {
+  if (_IsExactlyRepresented(i, &rep))
+  {
     memcpy(ival, &rep, sizeof(rep));
     return true;
   }
@@ -111,7 +118,8 @@ typename std::enable_if<GfIsGfVec<T>::value, bool>::type _EncodeInline(T vec, ui
   // inline it.
   static_assert(T::dimension <= 4, "Vec dimension cannot exceed 4.");
   int8_t ivec[T::dimension];
-  for (int i = 0; i != T::dimension; ++i) {
+  for (int i = 0; i != T::dimension; ++i)
+  {
     if (!_IsExactlyRepresented(vec[i], &ivec[i]))
       return false;
   }
@@ -119,11 +127,13 @@ typename std::enable_if<GfIsGfVec<T>::value, bool>::type _EncodeInline(T vec, ui
   memcpy(out, ivec, sizeof(ivec));
   return true;
 }
-template<class T> typename std::enable_if<GfIsGfVec<T>::value>::type _DecodeInline(T *vec, uint32_t in)
+template<class T>
+typename std::enable_if<GfIsGfVec<T>::value>::type _DecodeInline(T *vec, uint32_t in)
 {
   int8_t ivec[T::dimension];
   memcpy(ivec, &in, sizeof(ivec));
-  for (int i = 0; i != T::dimension; ++i) {
+  for (int i = 0; i != T::dimension; ++i)
+  {
     (*vec)[i] = static_cast<typename T::ScalarType>(ivec[i]);
   }
 }
@@ -138,9 +148,12 @@ typename std::enable_if<GfIsGfMatrix<Matrix>::value, bool>::type _EncodeInline(M
   static_assert(Matrix::numRows <= 4, "Matrix dimension cannot exceed 4");
 
   int8_t diag[Matrix::numRows];
-  for (int i = 0; i != Matrix::numRows; ++i) {
-    for (int j = 0; j != Matrix::numColumns; ++j) {
-      if (((i != j) && m[i][j] != 0) || ((i == j) && !_IsExactlyRepresented(m[i][j], &diag[i]))) {
+  for (int i = 0; i != Matrix::numRows; ++i)
+  {
+    for (int j = 0; j != Matrix::numColumns; ++j)
+    {
+      if (((i != j) && m[i][j] != 0) || ((i == j) && !_IsExactlyRepresented(m[i][j], &diag[i])))
+      {
         return false;
       }
     }
@@ -157,7 +170,8 @@ typename std::enable_if<GfIsGfMatrix<Matrix>::value>::type _DecodeInline(Matrix 
   int8_t diag[Matrix::numRows];
   memcpy(diag, &in, sizeof(diag));
   *m = Matrix(1);
-  for (int i = 0; i != Matrix::numRows; ++i) {
+  for (int i = 0; i != Matrix::numRows; ++i)
+  {
     (*m)[i][i] = static_cast<typename Matrix::ScalarType>(diag[i]);
   }
 }
@@ -166,7 +180,8 @@ typename std::enable_if<GfIsGfMatrix<Matrix>::value>::type _DecodeInline(Matrix 
 // Encode VtDictionary inline if it's empty.
 inline bool _EncodeInline(VtDictionary const &dict, uint32_t *ival)
 {
-  if (dict.empty()) {
+  if (dict.empty())
+  {
     *ival = 0;
     return true;
   }

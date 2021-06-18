@@ -29,8 +29,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Vt_WrapArray {
-template<> std::string GetVtArrayName<VtArray<SdfTimeCode>>()
+namespace Vt_WrapArray
+{
+template<>
+std::string GetVtArrayName<VtArray<SdfTimeCode>>()
 {
   return "TimeCodeArray";
 }

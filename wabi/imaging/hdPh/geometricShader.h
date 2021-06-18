@@ -55,10 +55,12 @@ struct HdPh_ShaderKey;
 /// stages and uses geometry opinions (such as cullstyle, double sided, etc)
 /// to generate shader code variants via mixins.
 ///
-class HdPh_GeometricShader : public HdPhShaderCode {
+class HdPh_GeometricShader : public HdPhShaderCode
+{
  public:
   /// Used in HdPh_CodeGen to generate the appropriate shader source
-  enum class PrimitiveType {
+  enum class PrimitiveType
+  {
     PRIM_POINTS,
     PRIM_BASIS_CURVES_LINES,           // when linear (or) non-refined cubic
     PRIM_BASIS_CURVES_LINEAR_PATCHES,  // refined linear curves
@@ -126,7 +128,8 @@ class HdPh_GeometricShader : public HdPhShaderCode {
   }
 
   // Face-varying patch type
-  enum class FvarPatchType {
+  enum class FvarPatchType
+  {
     PATCH_COARSE_TRIANGLES,
     PATCH_REFINED_TRIANGLES,
     PATCH_COARSE_QUADS,

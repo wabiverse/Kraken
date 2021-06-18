@@ -47,7 +47,8 @@ class HgiVulkanDevice;
 ///
 /// Vulkan implementation of HgiShaderProgram
 ///
-class HgiVulkanShaderProgram final : public HgiShaderProgram {
+class HgiVulkanShaderProgram final : public HgiShaderProgram
+{
  public:
   HGIVULKAN_API
   ~HgiVulkanShaderProgram() override = default;

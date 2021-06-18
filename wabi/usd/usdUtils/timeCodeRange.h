@@ -62,12 +62,14 @@ TF_DECLARE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens, USDUTILS_API, USDUTILS_TIM
 /// cannot be greater than the start time code for negative stride values.
 /// Finally, the stride value cannot be zero. If any of these conditions are
 /// not satisfied, then an invalid empty range will be returned.
-class UsdUtilsTimeCodeRange {
+class UsdUtilsTimeCodeRange
+{
  public:
   /// \class const_iterator
   ///
   /// A forward iterator into a UsdUtilsTimeCodeRange.
-  class const_iterator {
+  class const_iterator
+  {
    public:
     using iterator_category = std::forward_iterator_tag;
     using value_type = UsdTimeCode;
@@ -93,7 +95,8 @@ class UsdUtilsTimeCodeRange {
     /// This iterator is returned.
     const_iterator &operator++()
     {
-      if (_timeCodeRange) {
+      if (_timeCodeRange)
+      {
         ++_currStep;
         _currTimeCode = UsdTimeCode(_timeCodeRange->_startTimeCode.GetValue() +
                                     _timeCodeRange->_stride * _currStep);
@@ -134,7 +137,8 @@ class UsdUtilsTimeCodeRange {
         _maxSteps(0u),
         _currTimeCode()
     {
-      if (_timeCodeRange) {
+      if (_timeCodeRange)
+      {
         const double startVal = _timeCodeRange->_startTimeCode.GetValue();
         const double endVal = _timeCodeRange->_endTimeCode.GetValue();
         const double stride = _timeCodeRange->_stride;
@@ -149,14 +153,17 @@ class UsdUtilsTimeCodeRange {
     void _InvalidateIfExhausted()
     {
       bool finished = false;
-      if (!_timeCodeRange) {
+      if (!_timeCodeRange)
+      {
         finished = true;
       }
-      else if (_currStep >= _maxSteps) {
+      else if (_currStep >= _maxSteps)
+      {
         finished = true;
       }
 
-      if (finished) {
+      if (finished)
+      {
         _timeCodeRange = nullptr;
         _currStep = 0u;
         _maxSteps = 0u;
@@ -216,7 +223,8 @@ class UsdUtilsTimeCodeRange {
   /// Construct a range containing only the given \p timeCode.
   ///
   /// An iteration of the range will yield only that time code.
-  UsdUtilsTimeCodeRange(const UsdTimeCode timeCode) : UsdUtilsTimeCodeRange(timeCode, timeCode)
+  UsdUtilsTimeCodeRange(const UsdTimeCode timeCode)
+    : UsdUtilsTimeCodeRange(timeCode, timeCode)
   {}
 
   /// Construct a range containing the time codes from \p startTimeCode to
@@ -243,29 +251,35 @@ class UsdUtilsTimeCodeRange {
       _endTimeCode(endTimeCode),
       _stride(stride)
   {
-    if (_startTimeCode.IsEarliestTime()) {
+    if (_startTimeCode.IsEarliestTime())
+    {
       TF_CODING_ERROR("startTimeCode cannot be UsdTimeCode::EarliestTime()");
       _Invalidate();
       return;
     }
-    if (_startTimeCode.IsDefault()) {
+    if (_startTimeCode.IsDefault())
+    {
       TF_CODING_ERROR("startTimeCode cannot be UsdTimeCode::Default()");
       _Invalidate();
       return;
     }
-    if (_endTimeCode.IsEarliestTime()) {
+    if (_endTimeCode.IsEarliestTime())
+    {
       TF_CODING_ERROR("endTimeCode cannot be UsdTimeCode::EarliestTime()");
       _Invalidate();
       return;
     }
-    if (_endTimeCode.IsDefault()) {
+    if (_endTimeCode.IsDefault())
+    {
       TF_CODING_ERROR("endTimeCode cannot be UsdTimeCode::Default()");
       _Invalidate();
       return;
     }
 
-    if (_stride > 0.0) {
-      if (_endTimeCode < _startTimeCode) {
+    if (_stride > 0.0)
+    {
+      if (_endTimeCode < _startTimeCode)
+      {
         TF_CODING_ERROR(
           "endTimeCode cannot be less than startTimeCode with "
           "positive stride");
@@ -273,8 +287,10 @@ class UsdUtilsTimeCodeRange {
         return;
       }
     }
-    else if (_stride < 0.0) {
-      if (_endTimeCode > _startTimeCode) {
+    else if (_stride < 0.0)
+    {
+      if (_endTimeCode > _startTimeCode)
+      {
         TF_CODING_ERROR(
           "endTimeCode cannot be greater than startTimeCode with "
           "negative stride");
@@ -282,7 +298,8 @@ class UsdUtilsTimeCodeRange {
         return;
       }
     }
-    else {
+    else
+    {
       TF_CODING_ERROR("stride cannot be zero");
       _Invalidate();
       return;

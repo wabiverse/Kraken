@@ -26,7 +26,8 @@
 
 #include "ANCHOR_api.h"
 
-class ANCHOR_ISystemPaths {
+class ANCHOR_ISystemPaths
+{
  public:
   /**
    * Creates the one and only system.
@@ -91,7 +92,8 @@ class ANCHOR_ISystemPaths {
   static ANCHOR_ISystemPaths *m_systemPaths;
 };
 
-class ANCHOR_SystemPaths : public ANCHOR_ISystemPaths {
+class ANCHOR_SystemPaths : public ANCHOR_ISystemPaths
+{
  protected:
   /**
    * Constructor.
@@ -135,7 +137,8 @@ class ANCHOR_SystemPaths : public ANCHOR_ISystemPaths {
 };
 
 #if defined(__linux__)
-class ANCHOR_SystemPathsUnix : public ANCHOR_SystemPaths {
+class ANCHOR_SystemPathsUnix : public ANCHOR_SystemPaths
+{
  public:
   /**
    * Constructor
@@ -183,7 +186,8 @@ class ANCHOR_SystemPathsUnix : public ANCHOR_SystemPaths {
  * WIN32 Implementation of ANCHOR_SystemPaths class.
  * \see ANCHOR_SystemPaths.
  */
-class ANCHOR_SystemPathsWin32 : public ANCHOR_SystemPaths {
+class ANCHOR_SystemPathsWin32 : public ANCHOR_SystemPaths
+{
  public:
   /**
    * Constructor.
@@ -227,7 +231,8 @@ class ANCHOR_SystemPathsWin32 : public ANCHOR_SystemPaths {
   void addToSystemRecentFiles(const char *filename) const;
 };
 #elif defined(__APPLE__)
-class ANCHOR_SystemPathsCocoa : public ANCHOR_SystemPaths {
+class ANCHOR_SystemPathsCocoa : public ANCHOR_SystemPaths
+{
  public:
   /**
    * Constructor.

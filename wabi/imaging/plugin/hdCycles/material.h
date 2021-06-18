@@ -25,7 +25,8 @@
 #include <wabi/imaging/hd/material.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Object;
 class Shader;
 class ShaderNode;
@@ -57,7 +58,8 @@ class HdCyclesRenderDelegate;
  * @brief HdCycles Material Sprim mapped to Cycles Material
  *
  */
-class HdCyclesMaterial final : public HdMaterial {
+class HdCyclesMaterial final : public HdMaterial
+{
  public:
   /**
    * @brief Construct a new HdCycles Material

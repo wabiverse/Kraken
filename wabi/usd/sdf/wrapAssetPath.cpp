@@ -45,7 +45,8 @@ TF_REGISTRY_FUNCTION(VtValue)
   VtRegisterValueCastsFromPythonSequencesToArray<SdfAssetPath>();
 }
 
-namespace {
+namespace
+{
 
 static std::string _Str(SdfAssetPath const &self)
 {
@@ -58,7 +59,8 @@ static std::string _Repr(SdfAssetPath const &self)
   repr << TF_PY_REPR_PREFIX << "AssetPath(" << TfPyRepr(self.GetAssetPath());
 
   const std::string &resolvedPath = self.GetResolvedPath();
-  if (!resolvedPath.empty()) {
+  if (!resolvedPath.empty())
+  {
     repr << ", " << TfPyRepr(resolvedPath);
   }
   repr << ")";

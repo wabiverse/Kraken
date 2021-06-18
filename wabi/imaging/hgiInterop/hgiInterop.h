@@ -47,7 +47,8 @@ class VtValue;
 /// HgiInterop provides functionality to transfer render targets between
 /// supported APIs as efficiently as possible.
 ///
-class HgiInterop final {
+class HgiInterop final
+{
  public:
   HGIINTEROP_API
   HgiInterop();

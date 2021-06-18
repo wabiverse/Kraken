@@ -22,7 +22,8 @@ limitations under the License.
 #include "wabi/imaging/hd/mesh.h"
 #include "wabi/imaging/hd/vertexAdjacency.h"
 
-namespace rpr {
+namespace rpr
+{
 class Shape;
 }
 
@@ -31,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 class HdRprApi;
 class RprUsdMaterial;
 
-class HdRprMesh final : public HdRprBaseRprim<HdMesh> {
+class HdRprMesh final : public HdRprBaseRprim<HdMesh>
+{
  public:
   HF_MALLOC_TAG_NEW("new HdRprMesh");
 

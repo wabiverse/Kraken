@@ -77,7 +77,8 @@ class SdfAssetPath;
 /// by multiple Volumes, a Volume's Field prims should be located
 /// under the Volume in namespace, for enhanced organization.
 ///
-class UsdVolVolume : public UsdGeomGprim {
+class UsdVolVolume : public UsdGeomGprim
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -93,13 +94,15 @@ class UsdVolVolume : public UsdGeomGprim {
   /// Equivalent to UsdVolVolume::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolVolume(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim)
+  explicit UsdVolVolume(const UsdPrim &prim = UsdPrim())
+    : UsdGeomGprim(prim)
   {}
 
   /// Construct a UsdVolVolume on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolVolume(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolVolume(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj)
+  explicit UsdVolVolume(const UsdSchemaBase &schemaObj)
+    : UsdGeomGprim(schemaObj)
   {}
 
   /// Destructor.

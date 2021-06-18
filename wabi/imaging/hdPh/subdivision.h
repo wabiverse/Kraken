@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This single struct can be used for cpu and gpu subdivision at the same time.
 ///
-class HdPh_Subdivision {
+class HdPh_Subdivision
+{
  public:
   virtual ~HdPh_Subdivision();
 
@@ -106,7 +107,8 @@ class HdPh_Subdivision {
 /// OpenSubdiv Topology Analysis.
 /// Create Hd_Subdivision struct and sets it into HdPh_MeshTopology.
 ///
-class HdPh_OsdTopologyComputation : public HdComputedBufferSource {
+class HdPh_OsdTopologyComputation : public HdComputedBufferSource
+{
  public:
   HdPh_OsdTopologyComputation(HdPh_MeshTopology *topology, int level, SdfPath const &id);
 
@@ -136,7 +138,8 @@ class HdPh_OsdTopologyComputation : public HdComputedBufferSource {
 /// ... |           |           | ...    primitive param[2] (patch param 1)
 /// ----+-----------+-----------+------
 ///
-class HdPh_OsdIndexComputation : public HdComputedBufferSource {
+class HdPh_OsdIndexComputation : public HdComputedBufferSource
+{
  public:
   /// overrides
   bool HasChainedBuffer() const override;
@@ -162,7 +165,9 @@ class HdPh_OsdIndexComputation : public HdComputedBufferSource {
 /// GetData() returns the internal buffer of Hd_OsdCpuVertexBuffer,
 /// so that reducing data copy between osd buffer and HdBufferSource.
 ///
-template<typename VERTEX_BUFFER> class HdPh_OsdRefineComputation final : public HdBufferSource {
+template<typename VERTEX_BUFFER>
+class HdPh_OsdRefineComputation final : public HdBufferSource
+{
  public:
   HdPh_OsdRefineComputation(HdPh_MeshTopology *topology,
                             HdBufferSourceSharedPtr const &source,
@@ -198,7 +203,8 @@ template<typename VERTEX_BUFFER> class HdPh_OsdRefineComputation final : public 
 ///
 /// OpenSubdiv GPU Refinement.
 ///
-class HdPh_OsdRefineComputationGPU : public HdComputation {
+class HdPh_OsdRefineComputationGPU : public HdComputation
+{
  public:
   HdPh_OsdRefineComputationGPU(HdPh_MeshTopology *topology,
                                TfToken const &name,
@@ -214,7 +220,8 @@ class HdPh_OsdRefineComputationGPU : public HdComputation {
   // A wrapper class to bridge between HdBufferResource and OpenSubdiv
   // vertex buffer API.
   //
-  class VertexBuffer {
+  class VertexBuffer
+  {
    public:
     VertexBuffer(HdBufferResourceSharedPtr const &resource)
     {
@@ -258,12 +265,14 @@ HdPh_OsdRefineComputation<VERTEX_BUFFER>::HdPh_OsdRefineComputation(
     _fvarChannel(fvarChannel)
 {}
 
-template<typename VERTEX_BUFFER> HdPh_OsdRefineComputation<VERTEX_BUFFER>::~HdPh_OsdRefineComputation()
+template<typename VERTEX_BUFFER>
+HdPh_OsdRefineComputation<VERTEX_BUFFER>::~HdPh_OsdRefineComputation()
 {
   delete _cpuVertexBuffer;
 }
 
-template<typename VERTEX_BUFFER> TfToken const &HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetName() const
+template<typename VERTEX_BUFFER>
+TfToken const &HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetName() const
 {
   return _source->GetName();
 }
@@ -274,22 +283,26 @@ void TfHashAppend(HashState &h, HdPh_OsdRefineComputation<VERTEX_BUFFER> const &
   h.Append(bs.GetInterpolation());
 }
 
-template<typename VERTEX_BUFFER> size_t HdPh_OsdRefineComputation<VERTEX_BUFFER>::ComputeHash() const
+template<typename VERTEX_BUFFER>
+size_t HdPh_OsdRefineComputation<VERTEX_BUFFER>::ComputeHash() const
 {
   return TfHash()(*this);
 }
 
-template<typename VERTEX_BUFFER> void const *HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetData() const
+template<typename VERTEX_BUFFER>
+void const *HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetData() const
 {
   return _cpuVertexBuffer->BindCpuBuffer();
 }
 
-template<typename VERTEX_BUFFER> HdTupleType HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetTupleType() const
+template<typename VERTEX_BUFFER>
+HdTupleType HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetTupleType() const
 {
   return _source->GetTupleType();
 }
 
-template<typename VERTEX_BUFFER> size_t HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetNumElements() const
+template<typename VERTEX_BUFFER>
+size_t HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetNumElements() const
 {
   return _cpuVertexBuffer->GetNumVertices();
 }
@@ -300,7 +313,8 @@ HdPh_MeshTopology::Interpolation HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetIn
   return _interpolation;
 }
 
-template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
+template<typename VERTEX_BUFFER>
+bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
 {
   if (_source && !_source->IsResolved())
     return false;
@@ -314,7 +328,8 @@ template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::
   HF_MALLOC_TAG_FUNCTION();
 
   HdPh_Subdivision *subdivision = _topology->GetSubdivision();
-  if (!TF_VERIFY(subdivision)) {
+  if (!TF_VERIFY(subdivision))
+  {
     _SetResolved();
     return true;
   }
@@ -335,7 +350,8 @@ template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::
   return true;
 }
 
-template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::_CheckValid() const
+template<typename VERTEX_BUFFER>
+bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::_CheckValid() const
 {
   bool valid = _source->IsValid();
 
@@ -352,7 +368,8 @@ void HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetBufferSpecs(HdBufferSpecVector
   _source->GetBufferSpecs(specs);
 }
 
-template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::HasPreChainedBuffer() const
+template<typename VERTEX_BUFFER>
+bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::HasPreChainedBuffer() const
 {
   return true;
 }

@@ -37,7 +37,9 @@ RAPIDJSON_NAMESPACE_BEGIN
     \tparam Allocator type for allocating memory buffer.
     \note implements Stream concept
 */
-template<typename Encoding, typename Allocator = CrtAllocator> class GenericStringBuffer {
+template<typename Encoding, typename Allocator = CrtAllocator>
+class GenericStringBuffer
+{
  public:
   typedef typename Encoding::Ch Ch;
 
@@ -46,7 +48,8 @@ template<typename Encoding, typename Allocator = CrtAllocator> class GenericStri
   {}
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
-  GenericStringBuffer(GenericStringBuffer &&rhs) : stack_(std::move(rhs.stack_))
+  GenericStringBuffer(GenericStringBuffer &&rhs)
+    : stack_(std::move(rhs.stack_))
   {}
   GenericStringBuffer &operator=(GenericStringBuffer &&rhs)
   {
@@ -135,7 +138,8 @@ inline void PutUnsafe(GenericStringBuffer<Encoding, Allocator> &stream, typename
 }
 
 //! Implement specialized version of PutN() with memset() for better performance.
-template<> inline void PutN(GenericStringBuffer<UTF8<>> &stream, char c, size_t n)
+template<>
+inline void PutN(GenericStringBuffer<UTF8<>> &stream, char c, size_t n)
 {
   std::memset(stream.stack_.Push<char>(n), c, n * sizeof(c));
 }

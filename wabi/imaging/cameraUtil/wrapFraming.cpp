@@ -41,7 +41,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 std::string _Repr(const CameraUtilFraming &self)
 {
@@ -51,7 +52,8 @@ std::string _Repr(const CameraUtilFraming &self)
   std::vector<std::string> kwargs;
   kwargs.push_back("displayWindow = " + TfPyRepr(self.displayWindow));
   kwargs.push_back("dataWindow = " + TfPyRepr(self.dataWindow));
-  if (self.pixelAspectRatio != 1.0f) {
+  if (self.pixelAspectRatio != 1.0f)
+  {
     kwargs.push_back("pixelAspectRatio = " + TfPyRepr(self.pixelAspectRatio));
   }
 

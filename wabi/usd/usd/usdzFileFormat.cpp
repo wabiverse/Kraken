@@ -61,12 +61,14 @@ bool UsdUsdzFileFormat::IsPackage() const
   return true;
 }
 
-namespace {
+namespace
+{
 
 std::string _GetFirstFileInZipFile(const std::string &zipFilePath)
 {
   const UsdZipFile zipFile = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(zipFilePath).second;
-  if (!zipFile) {
+  if (!zipFile)
+  {
     return std::string();
   }
 
@@ -92,12 +94,14 @@ bool UsdUsdzFileFormat::CanRead(const std::string &filePath) const
   TRACE_FUNCTION();
 
   const std::string firstFile = _GetFirstFileInZipFile(filePath);
-  if (firstFile.empty()) {
+  if (firstFile.empty())
+  {
     return false;
   }
 
   const SdfFileFormatConstPtr packagedFileFormat = SdfFileFormat::FindByExtension(firstFile);
-  if (!packagedFileFormat) {
+  if (!packagedFileFormat)
+  {
     return false;
   }
 
@@ -110,12 +114,14 @@ bool UsdUsdzFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, b
   TRACE_FUNCTION();
 
   const std::string firstFile = _GetFirstFileInZipFile(resolvedPath);
-  if (firstFile.empty()) {
+  if (firstFile.empty())
+  {
     return false;
   }
 
   const SdfFileFormatConstPtr packagedFileFormat = SdfFileFormat::FindByExtension(firstFile);
-  if (!packagedFileFormat) {
+  if (!packagedFileFormat)
+  {
     return false;
   }
 

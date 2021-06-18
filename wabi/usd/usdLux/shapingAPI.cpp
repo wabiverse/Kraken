@@ -53,7 +53,8 @@ UsdLuxShapingAPI::~UsdLuxShapingAPI()
 /* static */
 UsdLuxShapingAPI UsdLuxShapingAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxShapingAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdLuxShapingAPI::_GetSchemaType() const
 /* static */
 UsdLuxShapingAPI UsdLuxShapingAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdLuxShapingAPI>()) {
+  if (prim.ApplyAPI<UsdLuxShapingAPI>())
+  {
     return UsdLuxShapingAPI(prim);
   }
   return UsdLuxShapingAPI();
@@ -212,7 +214,8 @@ UsdAttribute UsdLuxShapingAPI::CreateShapingIesNormalizeAttr(VtValue const &defa
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

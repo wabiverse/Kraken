@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 /// OpenGL implementation of HgiResourceBindings.
 ///
 ///
-class HgiGLResourceBindings final : public HgiResourceBindings {
+class HgiGLResourceBindings final : public HgiResourceBindings
+{
  public:
   HGIGL_API
   ~HgiGLResourceBindings() override;

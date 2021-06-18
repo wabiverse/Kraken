@@ -95,12 +95,14 @@ static bool _MallocProvidedBySameLibraryAs(const char *functionName, bool skipMa
 {
 #if !defined(ARCH_OS_WINDOWS)
   const void *function = dlsym(RTLD_DEFAULT, functionName);
-  if (!function) {
+  if (!function)
+  {
     return false;
   }
 
   Dl_info functionInfo, mallocInfo;
-  if (!dladdr(function, &functionInfo) || !dladdr((void *)malloc, &mallocInfo)) {
+  if (!dladdr(function, &functionInfo) || !dladdr((void *)malloc, &mallocInfo))
+  {
     return false;
   }
 
@@ -119,7 +121,8 @@ static inline bool _CheckMallocTagImpl(const std::string &impl, const char *libn
 bool ArchIsPxmallocActive()
 {
   const std::string impl = ArchGetEnv("TF_MALLOC_TAG_IMPL");
-  if (!_CheckMallocTagImpl(impl, "pxmalloc")) {
+  if (!_CheckMallocTagImpl(impl, "pxmalloc"))
+  {
     return false;
   }
   bool skipMallocCheck = (impl == "pxmalloc force");
@@ -129,7 +132,8 @@ bool ArchIsPxmallocActive()
 bool ArchIsPtmallocActive()
 {
   const std::string impl = ArchGetEnv("TF_MALLOC_TAG_IMPL");
-  if (!_CheckMallocTagImpl(impl, "ptmalloc")) {
+  if (!_CheckMallocTagImpl(impl, "ptmalloc"))
+  {
     return false;
   }
   bool skipMallocCheck = (impl == "ptmalloc force");
@@ -139,7 +143,8 @@ bool ArchIsPtmallocActive()
 bool ArchIsJemallocActive()
 {
   const std::string impl = ArchGetEnv("TF_MALLOC_TAG_IMPL");
-  if (!_CheckMallocTagImpl(impl, "jemalloc")) {
+  if (!_CheckMallocTagImpl(impl, "jemalloc"))
+  {
     return false;
   }
   bool skipMallocCheck = (impl == "jemalloc force");
@@ -172,13 +177,16 @@ bool ArchMallocHook::IsInitialized()
 }
 
 #if defined(ARCH_OS_LINUX)
-template<typename T> static bool _GetSymbol(T *addr, const char *name, string *errMsg)
+template<typename T>
+static bool _GetSymbol(T *addr, const char *name, string *errMsg)
 {
-  if (void *symbol = dlsym(RTLD_DEFAULT, name)) {
+  if (void *symbol = dlsym(RTLD_DEFAULT, name))
+  {
     *addr = (T)symbol;
     return true;
   }
-  else {
+  else
+  {
     *errMsg = "lookup for symbol '" + string(name) + "' failed";
     return false;
   }
@@ -189,7 +197,8 @@ static bool _MallocHookAvailable()
   return (ArchIsPxmallocActive() || ArchIsPtmallocActive() || ArchIsJemallocActive());
 }
 
-struct Arch_MallocFunctionNames {
+struct Arch_MallocFunctionNames
+{
   const char *mallocFn;
   const char *reallocFn;
   const char *memalignFn;
@@ -199,19 +208,22 @@ struct Arch_MallocFunctionNames {
 static Arch_MallocFunctionNames _GetUnderlyingMallocFunctionNames()
 {
   Arch_MallocFunctionNames names;
-  if (ArchIsPxmallocActive()) {
+  if (ArchIsPxmallocActive())
+  {
     names.mallocFn = "__pxmalloc_malloc";
     names.reallocFn = "__pxmalloc_realloc";
     names.memalignFn = "__pxmalloc_memalign";
     names.freeFn = "__pxmalloc_free";
   }
-  else if (ArchIsPtmallocActive()) {
+  else if (ArchIsPtmallocActive())
+  {
     names.mallocFn = "__ptmalloc3_malloc";
     names.reallocFn = "__ptmalloc3_realloc";
     names.memalignFn = "__ptmalloc3_memalign";
     names.freeFn = "__ptmalloc3_free";
   }
-  else if (ArchIsJemallocActive()) {
+  else if (ArchIsJemallocActive())
+  {
     names.mallocFn = "__jemalloc_malloc";
     names.reallocFn = "__jemalloc_realloc";
     names.memalignFn = "__jemalloc_memalign";
@@ -232,12 +244,14 @@ bool ArchMallocHook::Initialize(ARCH_UNUSED_ARG void *(*mallocWrapper)(size_t, c
   *errMsg = "ArchMallocHook functionality not implemented for non-linux systems";
   return false;
 #else
-  if (IsInitialized()) {
+  if (IsInitialized())
+  {
     *errMsg = "ArchMallocHook already initialized";
     return false;
   }
 
-  if (!_MallocHookAvailable()) {
+  if (!_MallocHookAvailable())
+  {
     *errMsg = "ArchMallocHook functionality not available for current allocator";
     return false;
   }
@@ -260,7 +274,8 @@ bool ArchMallocHook::Initialize(ARCH_UNUSED_ARG void *(*mallocWrapper)(size_t, c
   if ((__libc_malloc && __libc_malloc != reinterpret_cast<void *>(malloc)) ||
       (__libc_realloc && __libc_realloc != reinterpret_cast<void *>(realloc)) ||
       (__libc_memalign && __libc_memalign != reinterpret_cast<void *>(memalign)) ||
-      (__libc_free && __libc_free != reinterpret_cast<void *>(free))) {
+      (__libc_free && __libc_free != reinterpret_cast<void *>(free)))
+  {
     *errMsg =
       "One or more malloc/realloc/free hook variables are already set.\n"
       "This probably means another entity in the program is trying to\n"
@@ -277,7 +292,8 @@ bool ArchMallocHook::Initialize(ARCH_UNUSED_ARG void *(*mallocWrapper)(size_t, c
   if (!_GetSymbol(&_underlyingMallocFunc, names.mallocFn, errMsg) ||
       !_GetSymbol(&_underlyingReallocFunc, names.reallocFn, errMsg) ||
       !_GetSymbol(&_underlyingMemalignFunc, names.memalignFn, errMsg) ||
-      !_GetSymbol(&_underlyingFreeFunc, names.freeFn, errMsg)) {
+      !_GetSymbol(&_underlyingFreeFunc, names.freeFn, errMsg))
+  {
     return false;
   }
 

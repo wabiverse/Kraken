@@ -36,7 +36,8 @@ struct MxHdInfo;
 ///
 /// Generates a glslfx shader with a surfaceShader function for a MaterialX
 /// network
-class HdPhMaterialXShaderGen : public MaterialX::GlslShaderGenerator {
+class HdPhMaterialXShaderGen : public MaterialX::GlslShaderGenerator
+{
  public:
   HdPhMaterialXShaderGen(MxHdInfo const &mxHdInfo);
 

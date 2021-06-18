@@ -54,7 +54,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static GfVec3d _NoTranslation()
 {

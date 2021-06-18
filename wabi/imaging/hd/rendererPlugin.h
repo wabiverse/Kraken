@@ -46,7 +46,8 @@ class HdPluginRenderDelegateUniqueHandle;
 /// The class is used to factory objects that provide delegate support
 /// to other parts of the Hydra Ecosystem.
 ///
-class HdRendererPlugin : public HfPluginBase {
+class HdRendererPlugin : public HfPluginBase
+{
  public:
   ///
   /// Create a render delegate through the plugin and wrap it in a

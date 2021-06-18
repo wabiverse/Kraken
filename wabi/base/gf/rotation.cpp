@@ -53,7 +53,8 @@ TF_REGISTRY_FUNCTION(TfType)
 GfRotation &GfRotation::SetQuat(const GfQuatd &quat)
 {
   double len = quat.GetImaginary().GetLength();
-  if (len > GF_MIN_VECTOR_LENGTH) {
+  if (len > GF_MIN_VECTOR_LENGTH)
+  {
     // Pass through the public API which normalizes axis.
     // Otherwise, it would be possible to create GfRotations using
     // SetQuaternion which cannot be re-created via SetAxisAngle().
@@ -80,7 +81,8 @@ GfRotation &GfRotation::SetRotateInto(const GfVec3d &rotateFrom, const GfVec3d &
 
   // If vectors are opposite, rotate by 180 degrees around an axis
   // vector perpendicular to the original axis.
-  if (cos < -0.9999999) {
+  if (cos < -0.9999999)
+  {
     // Try cross product with X axis first.  If that's too close
     // to the original axis, use the Y axis
     GfVec3d tmp = GfCross(from, GfVec3d(1.0, 0.0, 0.0));
@@ -125,7 +127,8 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0, const GfVec3d &axis1, const 
   //     GfMatrix4d::HasOrthogonalRows3() could use).
   if (!(GfIsClose(GfDot(nAxis0, nAxis1), 0, GF_MIN_ORTHO_TOLERANCE) &&
         GfIsClose(GfDot(nAxis0, nAxis2), 0, GF_MIN_ORTHO_TOLERANCE) &&
-        GfIsClose(GfDot(nAxis1, nAxis2), 0, GF_MIN_ORTHO_TOLERANCE))) {
+        GfIsClose(GfDot(nAxis1, nAxis2), 0, GF_MIN_ORTHO_TOLERANCE)))
+  {
     TF_WARN("Rotation axes are not orthogonal.");
   }
 
@@ -156,12 +159,14 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0, const GfVec3d &axis1, const 
   int i = 0, j = 1, k = 2;
   double r0, r1, r2;
   double cy = sqrt(m[i][i] * m[i][i] + m[j][i] * m[j][i]);
-  if (cy > _GetEpsilon()) {
+  if (cy > _GetEpsilon())
+  {
     r0 = atan2(m[k][j], m[k][k]);
     r1 = atan2(-m[k][i], cy);
     r2 = atan2(m[j][i], m[i][i]);
   }
-  else {
+  else
+  {
     r0 = atan2(-m[j][k], m[j][j]);
     r1 = atan2(-m[k][i], cy);
     r2 = 0;
@@ -170,7 +175,8 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0, const GfVec3d &axis1, const 
   // Check handedness of matrix
   GfVec3d axisCross = GfCross(nAxis0, nAxis1);
   double axisHand = GfDot(axisCross, nAxis2);
-  if (axisHand >= 0.0) {
+  if (axisHand >= 0.0)
+  {
     r0 = -r0;
     r1 = -r1;
     r2 = -r2;
@@ -220,7 +226,8 @@ static GfMatrix4d _RotateOntoProjected(const GfVec3d &v1,
   GfMatrix4d mat;
   GfRotation r = GfRotation::RotateOntoProjected(v1, v2, axisParam);
   mat.SetRotate(r);
-  if (thetaInRadians) {
+  if (thetaInRadians)
+  {
     const double toDeg = (180.0) / M_PI;
     *thetaInRadians = r.GetAngle() / toDeg;
   }
@@ -234,7 +241,8 @@ static GfMatrix4d _RotateOntoProjected(const GfVec3d &v1,
 static GfVec4d _PiShift(const GfVec4d &hint, const GfVec4d &attempt, double mul = 2 * M_PI)
 {
   GfVec4d result(attempt);
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++)
+  {
     double mod1 = fmod(attempt[i], mul);
     double mod2 = fmod(hint[i], mul);
     result[i] = (hint[i] - mod2) + mod1;
@@ -251,7 +259,8 @@ static void _ShiftGimbalLock(double middleAngle, double *firstAngle, double *las
 {
   // If the middle angle is PI or -PI, we flipped the axes so use the
   // difference of the two angles.
-  if (fabs(fabs(middleAngle) - M_PI) < _GetEpsilon()) {
+  if (fabs(fabs(middleAngle) - M_PI) < _GetEpsilon())
+  {
     double diff = *lastAngle - *firstAngle;
     *lastAngle = diff / 2;
     *firstAngle = -diff / 2;
@@ -259,7 +268,8 @@ static void _ShiftGimbalLock(double middleAngle, double *firstAngle, double *las
 
   // If the middle angle is 0, then the two axes have the same effect so use
   // the sum of the angles.
-  if (fabs(middleAngle) < _GetEpsilon()) {
+  if (fabs(middleAngle) < _GetEpsilon())
+  {
     double sum = *lastAngle + *firstAngle;
     *lastAngle = sum / 2;
     *firstAngle = sum / 2;
@@ -280,32 +290,46 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
 {
   // Enum of which angle is being zeroed out when decomposing the roatation.
   // This is determined by which angle output (if any) is NULL.
-  enum _ZeroAngle { ZERO_NONE = 0, ZERO_TW, ZERO_FB, ZERO_LR, ZERO_SW };
+  enum _ZeroAngle
+  {
+    ZERO_NONE = 0,
+    ZERO_TW,
+    ZERO_FB,
+    ZERO_LR,
+    ZERO_SW
+  };
   _ZeroAngle zeroAngle = ZERO_NONE;
 
   double angleStandin = 0.0f, hintTw = 0.0f, hintFB = 0.0f, hintLR = 0.0f, hintSw = 0.0f;
-  if (thetaTw == NULL) {
+  if (thetaTw == NULL)
+  {
     zeroAngle = ZERO_TW;
     thetaTw = &angleStandin;
   }
-  if (thetaFB == NULL) {
-    if (zeroAngle != ZERO_NONE) {
+  if (thetaFB == NULL)
+  {
+    if (zeroAngle != ZERO_NONE)
+    {
       TF_CODING_ERROR("Need three angles to correctly decompose rotation");
       return;
     }
     zeroAngle = ZERO_FB;
     thetaFB = &angleStandin;
   }
-  if (thetaLR == NULL) {
-    if (zeroAngle != ZERO_NONE) {
+  if (thetaLR == NULL)
+  {
+    if (zeroAngle != ZERO_NONE)
+    {
       TF_CODING_ERROR("Need three angles to correctly decompose rotation");
       return;
     }
     zeroAngle = ZERO_LR;
     thetaLR = &angleStandin;
   }
-  if (thetaSw == NULL) {
-    if (zeroAngle != ZERO_NONE) {
+  if (thetaSw == NULL)
+  {
+    if (zeroAngle != ZERO_NONE)
+    {
       TF_CODING_ERROR("Need three angles to correctly decompose rotation");
       return;
     }
@@ -313,14 +337,16 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
     thetaSw = &angleStandin;
   }
 
-  if (swShift && zeroAngle != ZERO_NONE) {
+  if (swShift && zeroAngle != ZERO_NONE)
+  {
     TF_WARN(
       "A swing shift was provided but we're not decomposing into"
       " four angles.  The swing shift will be ignored.");
   }
 
   // Update hint values if we're using them as hints.
-  if (useHint) {
+  if (useHint)
+  {
     if (thetaTw)
       hintTw = *thetaTw;
     if (thetaFB)
@@ -343,7 +369,8 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
 
   // The angles used and what order we rotate axes is determined by which
   // angle we're not decomposing into.
-  switch (zeroAngle) {
+  switch (zeroAngle)
+  {
     case ZERO_SW:
     case ZERO_NONE:
       r = r * _RotateOntoProjected(r.TransformDir(TwAxisR), TwAxis, LRAxis, thetaLR);
@@ -431,7 +458,8 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   // to zero, but if we are zeroing an angle, then we only have to valid
   // options, the ones that don't flip the zeroed angle by pi.
   int numVals = zeroAngle == ZERO_NONE ? 4 : 2;
-  switch (zeroAngle) {
+  switch (zeroAngle)
+  {
     case ZERO_TW:
       vals[1] = vals[3];
       break;
@@ -452,8 +480,10 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   // If using hint, then alter our 4 euler angle component values
   // to get them into a per angle mult 2*M_PI that is as close as
   // possible to the hint angles.
-  if (useHint) {
-    for (size_t i = 0; i < 4; i++) {
+  if (useHint)
+  {
+    for (size_t i = 0; i < 4; i++)
+    {
       vals[i] = _PiShift(hintAngles, vals[i]);
     }
   }
@@ -470,12 +500,14 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   double min = 0;
   int i, j, mini = -1;
 
-  for (i = 0; i < numVals; i++) {
+  for (i = 0; i < numVals; i++)
+  {
     double sum = 0;
     GfVec4d hintDiff = vals[i] - hintAngles;
     for (j = 0; j < 4; j++)
       sum += fabs(hintDiff[j]);
-    if ((i == 0) || (sum < min)) {
+    if ((i == 0) || (sum < min))
+    {
       min = sum;
       mini = i;
     }
@@ -508,7 +540,8 @@ void GfRotation::DecomposeRotation(const GfMatrix4d &rot,
   basis.SetRow(0, TwAxis);
   basis.SetRow(1, FBAxis);
   basis.SetRow(2, LRAxis);
-  switch (zeroAngle) {
+  switch (zeroAngle)
+  {
     case ZERO_NONE:
     case ZERO_SW:
       _ShiftGimbalLock(*thetaFB + M_PI / 2 * basis.GetHandedness(), thetaTw, thetaLR);
@@ -582,11 +615,13 @@ GfRotation &GfRotation::operator*=(const GfRotation &r)
   // multiple of 360 degrees. Duplicate the math here, preferring
   // the current axis for an identity rotation:
   double len = q.GetImaginary().GetLength();
-  if (len > GF_MIN_VECTOR_LENGTH) {
+  if (len > GF_MIN_VECTOR_LENGTH)
+  {
     _axis = q.GetImaginary() / len;
     _angle = 2.0 * GfRadiansToDegrees(acos(q.GetReal()));
   }
-  else {
+  else
+  {
     // Leave the axis as is; just set the angle to 0.
     _angle = 0.0;
   }

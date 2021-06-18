@@ -59,11 +59,13 @@ WABI_NAMESPACE_BEGIN
   { \
     typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
     const VtValue &value = _Helper::GetField(this, key_); \
-    if (value.IsEmpty() || !value.IsHolding<heldType_>()) { \
+    if (value.IsEmpty() || !value.IsHolding<heldType_>()) \
+    { \
       const SdfSchemaBase &schema = _Helper::GetSchema(this); \
       return schema.GetFallback(_GET_KEY_(key_)).Get<heldType_>(); \
     } \
-    else { \
+    else \
+    { \
       return value.Get<heldType_>(); \
     } \
   }
@@ -74,7 +76,8 @@ WABI_NAMESPACE_BEGIN
 #define SDF_DEFINE_GET(name_, key_, heldType_) \
   heldType_ SDF_ACCESSOR_CLASS::Get##name_() const \
   { \
-    if (SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) { \
+    if (SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) \
+    { \
       /* Empty clause needed to prevent compiler complaints */ \
     } \
 \
@@ -84,7 +87,8 @@ WABI_NAMESPACE_BEGIN
 #define SDF_DEFINE_IS(name_, key_) \
   bool SDF_ACCESSOR_CLASS::Is##name_() const \
   { \
-    if (!SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) { \
+    if (!SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) \
+    { \
       return false; \
     } \
 \
@@ -94,7 +98,8 @@ WABI_NAMESPACE_BEGIN
 #define SDF_DEFINE_SET(name_, key_, argType_) \
   void SDF_ACCESSOR_CLASS::Set##name_(argType_ value) \
   { \
-    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) { \
+    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) \
+    { \
       typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
       _Helper::SetField(this, _GET_KEY_(key_), value); \
     } \
@@ -111,7 +116,8 @@ WABI_NAMESPACE_BEGIN
   void SDF_ACCESSOR_CLASS::Clear##name_() \
   { \
     typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
-    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) { \
+    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) \
+    { \
       _Helper::ClearField(this, _GET_KEY_(key_)); \
     } \
   }
@@ -122,7 +128,8 @@ WABI_NAMESPACE_BEGIN
 #define SDF_DEFINE_GET_PRIVATE(name_, key_, heldType_) \
   heldType_ SDF_ACCESSOR_CLASS::_Get##name_() const \
   { \
-    if (SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) { \
+    if (SDF_ACCESSOR_READ_PREDICATE(_GET_KEY_(key_))) \
+    { \
       /* Empty clause needed to prevent compiler complaints */ \
     } \
 \
@@ -145,12 +152,15 @@ WABI_NAMESPACE_BEGIN
   void SDF_ACCESSOR_CLASS::name_(const std::string &name, const VtValue &value) \
   { \
     typedef Sdf_AccessorHelpers<SDF_ACCESSOR_CLASS> _Helper; \
-    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) { \
+    if (SDF_ACCESSOR_WRITE_PREDICATE(_GET_KEY_(key_))) \
+    { \
       SdfDictionaryProxy proxy(_Helper::GetSpecHandle(this), _GET_KEY_(key_)); \
-      if (value.IsEmpty()) { \
+      if (value.IsEmpty()) \
+      { \
         proxy.erase(name); \
       } \
-      else { \
+      else \
+      { \
         proxy[name] = value; \
       } \
     } \
@@ -188,9 +198,12 @@ WABI_NAMESPACE_BEGIN
 // members directly, while spec API classes need to query their associated
 // spec. These templates capture those differences.
 
-template<class T, bool IsForSpec = boost::is_base_of<SdfSpec, T>::value> struct Sdf_AccessorHelpers;
+template<class T, bool IsForSpec = boost::is_base_of<SdfSpec, T>::value>
+struct Sdf_AccessorHelpers;
 
-template<class T> struct Sdf_AccessorHelpers<T, true> {
+template<class T>
+struct Sdf_AccessorHelpers<T, true>
+{
   static const SdfSchemaBase &GetSchema(const T *spec)
   {
     return spec->GetSchema();
@@ -201,7 +214,8 @@ template<class T> struct Sdf_AccessorHelpers<T, true> {
     return spec->GetField(key);
   }
 
-  template<class V> static bool SetField(T *spec, const TfToken &key, const V &value)
+  template<class V>
+  static bool SetField(T *spec, const TfToken &key, const V &value)
   {
     return spec->SetField(key, value);
   }
@@ -222,7 +236,9 @@ template<class T> struct Sdf_AccessorHelpers<T, true> {
   }
 };
 
-template<class T> struct Sdf_AccessorHelpers<T, false> {
+template<class T>
+struct Sdf_AccessorHelpers<T, false>
+{
   static const SdfSchemaBase &GetSchema(const T *spec)
   {
     return spec->_GetSpec().GetSchema();
@@ -233,7 +249,8 @@ template<class T> struct Sdf_AccessorHelpers<T, false> {
     return spec->_GetSpec().GetField(key);
   }
 
-  template<class V> static bool SetField(T *spec, const TfToken &key, const V &value)
+  template<class V>
+  static bool SetField(T *spec, const TfToken &key, const V &value)
   {
     return spec->_GetSpec().SetField(key, value);
   }

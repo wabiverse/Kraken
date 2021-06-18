@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Compute basis curves indices as a computation on CPU.
 ///
-class HdPh_BasisCurvesIndexBuilderComputation : public HdComputedBufferSource {
+class HdPh_BasisCurvesIndexBuilderComputation : public HdComputedBufferSource
+{
  public:
   HdPh_BasisCurvesIndexBuilderComputation(HdBasisCurvesTopology *topology, bool forceLines);
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
@@ -57,12 +58,15 @@ class HdPh_BasisCurvesIndexBuilderComputation : public HdComputedBufferSource {
 
  public:
   // For building index and primitive index arrays
-  struct IndexAndPrimIndex {
+  struct IndexAndPrimIndex
+  {
     // default constructor results in empty VtValue's
     IndexAndPrimIndex()
     {}
 
-    IndexAndPrimIndex(VtValue indices, VtValue primIndices) : _indices(indices), _primIndices(primIndices)
+    IndexAndPrimIndex(VtValue indices, VtValue primIndices)
+      : _indices(indices),
+        _primIndices(primIndices)
     {}
 
     VtValue _indices;
@@ -92,25 +96,30 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
   size_t srcIndex = 0;
   size_t dstIndex = 0;
 
-  if (wrap == HdTokens->periodic) {
+  if (wrap == HdTokens->periodic)
+  {
     // XXX : Add support for periodic curves
     TF_WARN("Varying data is only supported for non-periodic curves.");
   }
 
-  for (const int nVerts : vertexCounts) {
+  for (const int nVerts : vertexCounts)
+  {
     // Handling for the case of potentially incorrect vertex counts
-    if (nVerts < 1) {
+    if (nVerts < 1)
+    {
       continue;
     }
 
-    if (basis == HdTokens->catmullRom || basis == HdTokens->bSpline) {
+    if (basis == HdTokens->catmullRom || basis == HdTokens->bSpline)
+    {
       // For splines with a vstep of 1, we are doing linear interpolation
       // between segments, so all we do here is duplicate the first and
       // last outputValues. Since these are never acutally used during
       // drawing, it would also work just to set the to 0.
       outputValues[dstIndex] = authoredValues[srcIndex];
       ++dstIndex;
-      for (int i = 1; i < nVerts - 2; ++i) {
+      for (int i = 1; i < nVerts - 2; ++i)
+      {
         outputValues[dstIndex] = authoredValues[srcIndex];
         ++dstIndex;
         ++srcIndex;
@@ -121,7 +130,8 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       ++dstIndex;
       ++srcIndex;
     }
-    else if (basis == HdTokens->bezier) {
+    else if (basis == HdTokens->bezier)
+    {
       // For bezier splines, we map the linear values to cubic values
       // the begin value gets mapped to the first two vertices and
       // the end value gets mapped to the last two vertices in a segment.
@@ -136,7 +146,8 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       ++srcIndex;
 
       // vstep - 1 control points will have an interpolated value
-      for (int i = 2; i < nVerts - 2; i += vStep) {
+      for (int i = 2; i < nVerts - 2; i += vStep)
+      {
         outputValues[dstIndex] = authoredValues[srcIndex];
         ++dstIndex;  // don't increment the srcIndex
         outputValues[dstIndex] = authoredValues[srcIndex];
@@ -151,7 +162,8 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       ++dstIndex;
       ++srcIndex;
     }
-    else {
+    else
+    {
       TF_WARN("Unsupported basis: '%s'", basis.GetText());
     }
   }
@@ -163,7 +175,9 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
 
 /// Verify the number of authored vertex or varying primvars, expanding the
 /// number of varying values when necessary
-template<typename T> class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSource {
+template<typename T>
+class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSource
+{
  public:
   HdPh_BasisCurvesPrimvarInterpolaterComputation(HdPh_BasisCurvesTopologySharedPtr topology,
                                                  const VtArray<T> &authoredPrimvar,
@@ -194,25 +208,34 @@ template<typename T> class HdPh_BasisCurvesPrimvarInterpolaterComputation : publ
     const size_t size = _authoredPrimvar.size();
 
     // Special handling for when points is size 0
-    if (size == 0 && _name == HdTokens->points) {
+    if (size == 0 && _name == HdTokens->points)
+    {
       primvars = _authoredPrimvar;
     }
-    else if (_interpolation == HdInterpolationVertex) {
-      if (size == 1) {
-        for (size_t i = 0; i < numVerts; i++) {
+    else if (_interpolation == HdInterpolationVertex)
+    {
+      if (size == 1)
+      {
+        for (size_t i = 0; i < numVerts; i++)
+        {
           primvars[i] = _authoredPrimvar[0];
         }
       }
-      else if (size == numVerts) {
+      else if (size == numVerts)
+      {
         primvars = _authoredPrimvar;
       }
-      else if (size < numVerts && _topology->HasIndices()) {
-        for (size_t i = 0; i < size; ++i) {
+      else if (size < numVerts && _topology->HasIndices())
+      {
+        for (size_t i = 0; i < size; ++i)
+        {
           primvars[i] = _authoredPrimvar[i];
         }
       }
-      else {
-        for (size_t i = 0; i < numVerts; ++i) {
+      else
+      {
+        for (size_t i = 0; i < numVerts; ++i)
+        {
           primvars[i] = _fallbackValue;
         }
         TF_WARN(
@@ -221,24 +244,31 @@ template<typename T> class HdPh_BasisCurvesPrimvarInterpolaterComputation : publ
           _name.GetText());
       }
     }
-    else if (_interpolation == HdInterpolationVarying) {
-      if (size == 1) {
-        for (size_t i = 0; i < numVerts; i++) {
+    else if (_interpolation == HdInterpolationVarying)
+    {
+      if (size == 1)
+      {
+        for (size_t i = 0; i < numVerts; i++)
+        {
           primvars[i] = _authoredPrimvar[0];
         }
       }
-      else if (_topology->GetCurveType() == HdTokens->linear && size == numVerts) {
+      else if (_topology->GetCurveType() == HdTokens->linear && size == numVerts)
+      {
         primvars = _authoredPrimvar;
       }
-      else if (size == _topology->CalculateNeededNumberOfVaryingControlPoints()) {
+      else if (size == _topology->CalculateNeededNumberOfVaryingControlPoints())
+      {
         primvars = HdPh_ExpandVarying<T>(numVerts,
                                          _topology->GetCurveVertexCounts(),
                                          _topology->GetCurveWrap(),
                                          _topology->GetCurveBasis(),
                                          _authoredPrimvar);
       }
-      else {
-        for (size_t i = 0; i < numVerts; ++i) {
+      else
+      {
+        for (size_t i = 0; i < numVerts; ++i)
+        {
           primvars[i] = _fallbackValue;
         }
         TF_WARN(

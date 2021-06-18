@@ -43,7 +43,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdDracoFileFormat);
 ///
 /// Adds support for ireading Draco *.drc files.
 ///
-class UsdDracoFileFormat : public SdfFileFormat {
+class UsdDracoFileFormat : public SdfFileFormat
+{
  public:
   virtual bool CanRead(const std::string &file) const;
   virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const;

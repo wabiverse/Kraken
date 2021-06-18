@@ -51,7 +51,8 @@ class UsdGeomBoundable;
 /// \class UsdSkelSkinningQuery
 ///
 /// Object used for querying resolved bindings for skinning.
-class UsdSkelSkinningQuery {
+class UsdSkelSkinningQuery
+{
  public:
   USDSKEL_API
   UsdSkelSkinningQuery();

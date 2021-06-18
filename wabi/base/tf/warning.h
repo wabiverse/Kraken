@@ -41,7 +41,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// In the Python API, you can issue a warning with Tf.Warn().
 ///
-class TfWarning : public TfDiagnosticBase {
+class TfWarning : public TfDiagnosticBase
+{
  private:
   TfWarning(TfEnum warningCode,
             char const *warningCodeString,

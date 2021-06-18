@@ -45,11 +45,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type PxrIntMultLightFilter
 ///
-class UsdRiImagingPxrIntMultLightFilterAdapter : public UsdImagingLightFilterAdapter {
+class UsdRiImagingPxrIntMultLightFilterAdapter : public UsdImagingLightFilterAdapter
+{
  public:
   typedef UsdImagingLightFilterAdapter BaseAdapter;
 
-  UsdRiImagingPxrIntMultLightFilterAdapter() : UsdImagingLightFilterAdapter()
+  UsdRiImagingPxrIntMultLightFilterAdapter()
+    : UsdImagingLightFilterAdapter()
   {}
 
   USDRIIMAGING_API

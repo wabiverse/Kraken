@@ -72,7 +72,8 @@ class SdfPath;
 /// PcpComputePrimIndex() recursively follows these arcs, building and
 /// ordering the results.
 ///
-class PcpPrimIndex {
+class PcpPrimIndex
+{
  public:
   /// Default construct an empty, invalid prim index.
   PCP_API
@@ -275,13 +276,15 @@ inline void swap(PcpPrimIndex &l, PcpPrimIndex &r)
 ///
 /// Outputs of the prim indexing procedure.
 ///
-class PcpPrimIndexOutputs {
+class PcpPrimIndexOutputs
+{
  public:
   /// Enumerator whose enumerants describe the payload state of this prim
   /// index.  NoPayload if the index has no payload arcs, otherwise whether
   /// payloads were included or excluded, and if done so by consulting either
   /// the cache's payload include set, or determined by a payload predicate.
-  enum PayloadState {
+  enum PayloadState
+  {
     NoPayload,
     IncludedByIncludeSet,
     ExcludedByIncludeSet,
@@ -334,7 +337,8 @@ inline void swap(PcpPrimIndexOutputs &l, PcpPrimIndexOutputs &r)
 ///
 /// Inputs for the prim indexing procedure.
 ///
-class PcpPrimIndexInputs {
+class PcpPrimIndexInputs
+{
  public:
   PcpPrimIndexInputs()
     : cache(nullptr),

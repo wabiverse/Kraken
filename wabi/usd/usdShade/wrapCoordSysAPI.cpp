@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -103,9 +105,11 @@ void wrapUsdShadeCoordSysAPI()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
-struct _BindingToTuple {
+struct _BindingToTuple
+{
   static PyObject *convert(UsdShadeCoordSysAPI::Binding const &b)
   {
     boost::python::tuple result = boost::python::make_tuple(b.name, b.bindingRelPath, b.coordSysPrimPath);

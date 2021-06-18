@@ -7,7 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Zep {
+namespace Zep
+{
 
 inline size_t CountUtf8BytesFromChar(unsigned int c)
 {
@@ -25,9 +26,11 @@ inline size_t CountUtf8BytesFromChar(unsigned int c)
 inline size_t Utf8Length(const char *s)
 {
   size_t stringLength = 0;
-  while (*s != 0) {
+  while (*s != 0)
+  {
     size_t len = 1;
-    while (len <= 4 && *s) {
+    while (len <= 4 && *s)
+    {
       if ((*s++ & 0xc0) != 0x80)
         break;
       len++;
@@ -60,14 +63,16 @@ inline std::string &Trim(std::string &s, const char *t = " \t\n\r\f\v")
   return LTrim(RTrim(s, t), t);
 }
 
-template<typename T> std::string toString(const T &t)
+template<typename T>
+std::string toString(const T &t)
 {
   std::ostringstream oss;
   oss << t;
   return oss.str();
 }
 
-template<typename T> T fromString(const std::string &s)
+template<typename T>
+T fromString(const std::string &s)
 {
   std::istringstream stream(s);
   T t;
@@ -83,7 +88,8 @@ inline std::wstring makeWStr(const std::string &str)
 std::string string_from_wstring(const std::wstring &str);
 std::string string_tolower(const std::string &str);
 
-struct StringId {
+struct StringId
+{
   uint32_t id = 0;
   StringId()
   {}
@@ -112,7 +118,8 @@ struct StringId {
   std::string ToString() const
   {
     auto itr = GetStringLookup().find(id);
-    if (itr == GetStringLookup().end()) {
+    if (itr == GetStringLookup().end())
+    {
       return "murmur:" + std::to_string(id);
     }
     return itr->second;
@@ -170,8 +177,11 @@ inline long utf8_codepoint_length(uint8_t ch)
 
 }  // namespace Zep
 
-namespace std {
-template<> struct hash<Zep::StringId> {
+namespace std
+{
+template<>
+struct hash<Zep::StringId>
+{
   std::size_t operator()(const Zep::StringId &k) const
   {
     // Compute individual hash values for first,
@@ -183,7 +193,8 @@ template<> struct hash<Zep::StringId> {
 };
 }  // namespace std
 
-namespace Zep {
+namespace Zep
+{
 inline bool string_equals(const StringId lhs, const StringId rhs)
 {
   return lhs.id == rhs.id;

@@ -44,11 +44,14 @@ class HdPluginRenderDelegateUniqueHandle;
 /// automatically decreases and increases the plugin's reference
 /// counts with the plugin registry.
 ///
-class HdRendererPluginHandle final {
+class HdRendererPluginHandle final
+{
  public:
-  HdRendererPluginHandle() : _plugin(nullptr)
+  HdRendererPluginHandle()
+    : _plugin(nullptr)
   {}
-  HdRendererPluginHandle(const std::nullptr_t &) : _plugin(nullptr)
+  HdRendererPluginHandle(const std::nullptr_t &)
+    : _plugin(nullptr)
   {}
 
   HD_API
@@ -88,7 +91,8 @@ class HdRendererPluginHandle final {
   friend class HdRendererPluginRegistry;
   friend class HdRendererPlugin;
 
-  HdRendererPluginHandle(HdRendererPlugin *const plugin) : _plugin(plugin)
+  HdRendererPluginHandle(HdRendererPlugin *const plugin)
+    : _plugin(plugin)
   {}
 
   HdRendererPlugin *_plugin;

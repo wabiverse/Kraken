@@ -59,7 +59,8 @@ TF_DECLARE_WEAK_PTRS(UsdImagingGLLegacyEngine);
 
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfDrawTarget);
 
-class UsdImagingGLLegacyEngine : public TfWeakBase {
+class UsdImagingGLLegacyEngine : public TfWeakBase
+{
 
   typedef UsdImagingGLLegacyEngine This;
 
@@ -250,7 +251,8 @@ class UsdImagingGLLegacyEngine : public TfWeakBase {
 
   // Define a type for PrimID along with some helper methods to pack a vec4i
   // into a single value (and the inverse).
-  struct _PrimID {
+  struct _PrimID
+  {
     typedef int32_t ValueType;
 
     static ValueType Pack(GfVec4i primIdColor)

@@ -51,7 +51,8 @@ HdxRenderTask::~HdxRenderTask() = default;
 
 bool HdxRenderTask::IsConverged() const
 {
-  if (_pass) {
+  if (_pass)
+  {
     return _pass->IsConverged();
   }
 
@@ -64,7 +65,8 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
 
   HdDirtyBits bits = *dirtyBits;
 
-  if (bits & HdChangeTracker::DirtyCollection) {
+  if (bits & HdChangeTracker::DirtyCollection)
+  {
 
     VtValue val = delegate->Get(GetId(), HdTokens->collection);
 
@@ -74,22 +76,27 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
     // constructed).  To do this, the code looks at the root paths,
     // if it is empty, the collection doesn't refer to any prims at
     // all.
-    if (collection.GetName().IsEmpty()) {
+    if (collection.GetName().IsEmpty())
+    {
       _pass.reset();
     }
-    else {
-      if (!_pass) {
+    else
+    {
+      if (!_pass)
+      {
         HdRenderIndex &index = delegate->GetRenderIndex();
         HdRenderDelegate *renderDelegate = index.GetRenderDelegate();
         _pass = renderDelegate->CreateRenderPass(&index, collection);
       }
-      else {
+      else
+      {
         _pass->SetRprimCollection(collection);
       }
     }
   }
 
-  if (bits & HdChangeTracker::DirtyParams) {
+  if (bits & HdChangeTracker::DirtyParams)
+  {
     HdxRenderTaskParams params;
 
     // if HdxRenderTaskParams is set on this task, create an
@@ -97,10 +104,12 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
     //
     // As params is optional, the base class helpper can't be used.
     VtValue valueVt = delegate->Get(GetId(), HdTokens->params);
-    if (valueVt.IsHolding<HdxRenderTaskParams>()) {
+    if (valueVt.IsHolding<HdxRenderTaskParams>())
+    {
       params = valueVt.UncheckedGet<HdxRenderTaskParams>();
 
-      if (!_setupTask) {
+      if (!_setupTask)
+      {
         // note that _setupTask should have the same id, since it will
         // use that id to look up params in the scene delegate.
         // this setup task isn't indexed, so there's no concern
@@ -110,18 +119,21 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
 
       _setupTask->SyncParams(delegate, params);
     }
-    else {
+    else
+    {
       // If params are not set, expect the renderpass state to be passed
       // in the task context.
     }
   }
 
-  if (bits & HdChangeTracker::DirtyRenderTags) {
+  if (bits & HdChangeTracker::DirtyRenderTags)
+  {
     _renderTags = _GetTaskRenderTags(delegate);
   }
 
   // sync render pass
-  if (_pass) {
+  if (_pass)
+  {
     _pass->Sync();
   }
 
@@ -130,11 +142,13 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
 
 void HdxRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
-  if (_setupTask) {
+  if (_setupTask)
+  {
     _setupTask->Prepare(ctx, renderIndex);
   }
 
-  if (_pass) {
+  if (_pass)
+  {
     _pass->Prepare(GetRenderTags());
   }
 }
@@ -149,18 +163,21 @@ void HdxRenderTask::Execute(HdTaskContext *ctx)
   if (!TF_VERIFY(renderPassState))
     return;
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get())) {
+  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get()))
+  {
 
     // Bail out early for Phoenix tasks that have no rendering work to submit
     // and don't need to clear AOVs.
-    if (!_HasDrawItems() && !_NeedToClearAovs(renderPassState)) {
+    if (!_HasDrawItems() && !_NeedToClearAovs(renderPassState))
+    {
       return;
     }
     _SetHdPhRenderPassState(ctx, extendedState);
   }
 
   // Render geometry with the rendertags (if any)
-  if (_pass) {
+  if (_pass)
+  {
     _pass->Execute(renderPassState, GetRenderTags());
   }
 }
@@ -172,13 +189,15 @@ const TfTokenVector &HdxRenderTask::GetRenderTags() const
 
 HdRenderPassStateSharedPtr HdxRenderTask::_GetRenderPassState(HdTaskContext *ctx) const
 {
-  if (_setupTask) {
+  if (_setupTask)
+  {
     // If HdxRenderTaskParams is set on this task, we will have created an
     // internal HdxRenderSetupTask in _Sync, to sync and unpack the params,
     // and we should use the resulting resources.
     return _setupTask->GetRenderPassState();
   }
-  else {
+  else
+  {
     // Otherwise, we expect an application-created HdxRenderSetupTask to
     // have run and put the renderpass resources in the task context.
     // See HdxRenderSetupTask::_Execute.
@@ -190,10 +209,12 @@ HdRenderPassStateSharedPtr HdxRenderTask::_GetRenderPassState(HdTaskContext *ctx
 
 bool HdxRenderTask::_HasDrawItems() const
 {
-  if (HdPh_RenderPass *hdPhRenderPass = dynamic_cast<HdPh_RenderPass *>(_pass.get())) {
+  if (HdPh_RenderPass *hdPhRenderPass = dynamic_cast<HdPh_RenderPass *>(_pass.get()))
+  {
     return hdPhRenderPass->GetDrawItemCount() > 0;
   }
-  else {
+  else
+  {
     // Non-Phoenix backends don't typically use the draw item subsystem.
     // Return true to signify that there is rendering work to do.
     return true;
@@ -208,7 +229,8 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassSt
 
   // it's possible to not set lighting shader to HdRenderPassState.
   // Hd_DefaultLightingShader will be used in that case.
-  if (lightingShader.IsHolding<HdPhLightingShaderSharedPtr>()) {
+  if (lightingShader.IsHolding<HdPhLightingShaderSharedPtr>())
+  {
     renderPassState->SetLightingShader(lightingShader.Get<HdPhLightingShaderSharedPtr>());
   }
 
@@ -221,7 +243,8 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassSt
 
   HdPhRenderPassShaderSharedPtr renderPassShader = renderPassState->GetRenderPassShader();
 
-  if (!vo.IsEmpty() && !vu.IsEmpty() && !vc.IsEmpty()) {
+  if (!vo.IsEmpty() && !vu.IsEmpty() && !vc.IsEmpty())
+  {
     HdBufferArrayRangeSharedPtr obar = vo.Get<HdBufferArrayRangeSharedPtr>();
     HdBufferArrayRangeSharedPtr ubar = vu.Get<HdBufferArrayRangeSharedPtr>();
     HdBufferArrayRangeSharedPtr cbar = vc.Get<HdBufferArrayRangeSharedPtr>();
@@ -239,7 +262,8 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassSt
                                                         cbar,
                                                         /*interleave*/ false));
   }
-  else {
+  else
+  {
     renderPassShader->RemoveBufferBinding(HdxTokens->selectionOffsets);
     renderPassShader->RemoveBufferBinding(HdxTokens->selectionUniforms);
     renderPassShader->RemoveBufferBinding(HdxTokens->selectionPointColors);
@@ -249,8 +273,10 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassSt
 bool HdxRenderTask::_NeedToClearAovs(HdRenderPassStateSharedPtr const &renderPassState) const
 {
   HdRenderPassAovBindingVector const &aovBindings = renderPassState->GetAovBindings();
-  for (auto const &binding : aovBindings) {
-    if (!binding.clearValue.IsEmpty()) {
+  for (auto const &binding : aovBindings)
+  {
+    if (!binding.clearValue.IsEmpty())
+    {
       return true;
     }
   }

@@ -43,7 +43,8 @@ class TfToken;
 /// added to the underlying list operation.
 ///
 template<class ConnectionChildPolicy>
-class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy> {
+class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy>
+{
  protected:
   virtual ~Sdf_ConnectionListEditor();
 
@@ -65,7 +66,8 @@ class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy> {
 /// List editor implementation for attribute connections.
 ///
 class Sdf_AttributeConnectionListEditor
-  : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy> {
+  : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>
+{
  public:
   virtual ~Sdf_AttributeConnectionListEditor();
 
@@ -84,7 +86,8 @@ class Sdf_AttributeConnectionListEditor
 ///
 /// List editor implementation for attribute connections.
 ///
-class Sdf_RelationshipTargetListEditor : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy> {
+class Sdf_RelationshipTargetListEditor : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>
+{
  public:
   virtual ~Sdf_RelationshipTargetListEditor();
 

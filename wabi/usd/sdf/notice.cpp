@@ -47,7 +47,7 @@ SdfLayerHandleVector SdfNotice::BaseLayersDidChange::GetLayers() const
 {
   SdfLayerHandleVector layers;
   layers.reserve(_vec->size());
-  TF_FOR_ALL(i, *_vec)
+  TF_FOR_ALL (i, *_vec)
   {
     // XXX:bug 20833 It should be ok to return expired layers here.
     if (i->first)

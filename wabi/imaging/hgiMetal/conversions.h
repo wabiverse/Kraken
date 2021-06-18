@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Converts from Hgi types to Metal types.
 ///
-class HgiMetalConversions final {
+class HgiMetalConversions final
+{
  public:
   //
   // Hgi to Metal conversions

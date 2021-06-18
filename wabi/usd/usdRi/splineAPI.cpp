@@ -53,7 +53,8 @@ UsdRiSplineAPI::~UsdRiSplineAPI()
 /* static */
 UsdRiSplineAPI UsdRiSplineAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiSplineAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdRiSplineAPI::_GetSchemaType() const
 /* static */
 UsdRiSplineAPI UsdRiSplineAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiSplineAPI>()) {
+  if (prim.ApplyAPI<UsdRiSplineAPI>())
+  {
     return UsdRiSplineAPI(prim);
   }
   return UsdRiSplineAPI();
@@ -189,7 +191,8 @@ UsdAttribute UsdRiSplineAPI::CreateValuesAttr(VtValue const &defaultValue, bool 
 
 bool UsdRiSplineAPI::Validate(std::string *reason) const
 {
-  if (_splineName.IsEmpty()) {
+  if (_splineName.IsEmpty())
+  {
     *reason += "SplineAPI is not correctly initialized";
     return false;
   }
@@ -199,27 +202,32 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
   UsdAttribute valAttr = GetValuesAttr();
 
   if (_valuesTypeName != SdfValueTypeNames->FloatArray &&
-      _valuesTypeName != SdfValueTypeNames->Color3fArray) {
+      _valuesTypeName != SdfValueTypeNames->Color3fArray)
+  {
     *reason += "SplineAPI is configured for an unsupported value type '" +
                _valuesTypeName.GetAsToken().GetString() + "'";
     return false;
   }
-  if (!interpAttr) {
+  if (!interpAttr)
+  {
     *reason += "Could not get the interpolation attribute.";
     return false;
   }
-  if (!posAttr) {
+  if (!posAttr)
+  {
     *reason += "Could not get the position attribute.";
     return false;
   }
   TfToken interp;
   interpAttr.Get(&interp);
   if (interp != UsdRiTokens->constant && interp != UsdRiTokens->linear &&
-      interp != UsdRiTokens->catmull_rom && interp != UsdRiTokens->bspline) {
+      interp != UsdRiTokens->catmull_rom && interp != UsdRiTokens->bspline)
+  {
     *reason += "Interpolation attribute has invalid value '" + interp.GetString() + "'";
     return false;
   }
-  if (posAttr.GetTypeName() != SdfValueTypeNames->FloatArray) {
+  if (posAttr.GetTypeName() != SdfValueTypeNames->FloatArray)
+  {
     *reason += "Values attribute has incorrect type; found '" +
                valAttr.GetTypeName().GetAsToken().GetString() + "' but expected '" +
                SdfValueTypeNames->FloatArray.GetAsToken().GetString() + "'";
@@ -227,28 +235,33 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
   }
   VtFloatArray positions;
   posAttr.Get(&positions);
-  if (!std::is_sorted(positions.begin(), positions.end())) {
+  if (!std::is_sorted(positions.begin(), positions.end()))
+  {
     *reason += "Positions attribute must be sorted in increasing order";
     return false;
   }
-  if (valAttr.GetTypeName() != _valuesTypeName) {
+  if (valAttr.GetTypeName() != _valuesTypeName)
+  {
     *reason += "Values attribute has incorrect type; found '" +
                valAttr.GetTypeName().GetAsToken().GetString() + "' but expected '" +
                _valuesTypeName.GetAsToken().GetString() + "'";
     return false;
   }
   size_t numValues = 0;
-  if (_valuesTypeName == SdfValueTypeNames->FloatArray) {
+  if (_valuesTypeName == SdfValueTypeNames->FloatArray)
+  {
     VtFloatArray vals;
     valAttr.Get(&vals);
     numValues = vals.size();
   }
-  else if (_valuesTypeName == SdfValueTypeNames->Color3fArray) {
+  else if (_valuesTypeName == SdfValueTypeNames->Color3fArray)
+  {
     VtVec3fArray vals;
     valAttr.Get(&vals);
     numValues = vals.size();
   }
-  if (positions.size() != numValues) {
+  if (positions.size() != numValues)
+  {
     *reason +=
       "Values attribute and positions attribute must "
       "have the same number of entries";

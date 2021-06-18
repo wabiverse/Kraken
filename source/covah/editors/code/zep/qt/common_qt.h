@@ -8,14 +8,17 @@
 #include <QScreen>
 #include <QStyle>
 
-namespace DPI {
-enum class PixelSize {
+namespace DPI
+{
+enum class PixelSize
+{
   ToolBarIcon,
 };
 
 inline int GetPixelSize(PixelSize sz)
 {
-  switch (sz) {
+  switch (sz)
+  {
     case PixelSize::ToolBarIcon:
       return qApp->style()->pixelMetric(QStyle::PM_ButtonIconSize);
     default:

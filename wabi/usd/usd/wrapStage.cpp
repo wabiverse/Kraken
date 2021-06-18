@@ -50,7 +50,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_BEGIN
 
-class Usd_PcpCacheAccess {
+class Usd_PcpCacheAccess
+{
  public:
   static const PcpCache *GetPcpCache(const UsdStage &stage)
   {
@@ -62,7 +63,8 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bool _Export(const UsdStagePtr &self,
                     const std::string &filename,
@@ -71,7 +73,8 @@ static bool _Export(const UsdStagePtr &self,
 {
   SdfLayer::FileFormatArguments args;
   std::string errMsg;
-  if (!SdfFileFormatArgumentsFromPython(dict, &args, &errMsg)) {
+  if (!SdfFileFormatArgumentsFromPython(dict, &args, &errMsg))
+  {
     TF_CODING_ERROR("%s", errMsg.c_str());
     return false;
   }
@@ -88,7 +91,8 @@ static string _ExportToString(const UsdStagePtr &self, bool addSourceFileComment
 
 static string __repr__(const UsdStagePtr &self)
 {
-  if (self.IsExpired()) {
+  if (self.IsExpired())
+  {
     return "invalid " + UsdDescribe(self);
   }
 
@@ -96,7 +100,8 @@ static string __repr__(const UsdStagePtr &self)
                                                      TfPyRepr(self->GetRootLayer()).c_str(),
                                                      TfPyRepr(self->GetSessionLayer()).c_str());
 
-  if (!self->GetPathResolverContext().IsEmpty()) {
+  if (!self->GetPathResolverContext().IsEmpty())
+  {
     result += TfStringPrintf(", pathResolverContext=%s", TfPyRepr(self->GetPathResolverContext()).c_str());
   }
 
@@ -142,7 +147,8 @@ static bool _SetMetadataByDictKey(const UsdStagePtr &self,
 static void _SetGlobalVariantFallbacks(const dict &d)
 {
   PcpVariantFallbackMap fallbacks;
-  if (PcpVariantFallbackMapFromPython(d, &fallbacks)) {
+  if (PcpVariantFallbackMapFromPython(d, &fallbacks))
+  {
     UsdStage::SetGlobalVariantFallbacks(fallbacks);
   }
 }
@@ -165,10 +171,12 @@ static void _ExpandPopulationMask(UsdStage &self,
   using AttrPredicate = std::function<bool(UsdAttribute const &)>;
   RelPredicate relPred;
   AttrPredicate attrPred;
-  if (!pyRelPred.is_none()) {
+  if (!pyRelPred.is_none())
+  {
     relPred = boost::python::extract<RelPredicate>(pyRelPred);
   }
-  if (!pyAttrPred.is_none()) {
+  if (!pyAttrPred.is_none())
+  {
     attrPred = boost::python::extract<AttrPredicate>(pyAttrPred);
   }
   return self.ExpandPopulationMask(relPred, attrPred);

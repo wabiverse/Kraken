@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 /// \class TfDebugSymbolsChangedNotice
 ///
 /// Sent when the list of available debug symbol names has changed.
-class TfDebugSymbolsChangedNotice : public TfNotice {
+class TfDebugSymbolsChangedNotice : public TfNotice
+{
  public:
   TfDebugSymbolsChangedNotice()
   {}
@@ -44,7 +45,8 @@ class TfDebugSymbolsChangedNotice : public TfNotice {
 /// \class TfDebugSymbolEnableChangedNotice
 ///
 /// Sent when a debug symbol has been enabled or disabled.
-class TfDebugSymbolEnableChangedNotice : public TfNotice {
+class TfDebugSymbolEnableChangedNotice : public TfNotice
+{
  public:
   TfDebugSymbolEnableChangedNotice()
   {}

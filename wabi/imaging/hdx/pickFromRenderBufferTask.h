@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 
 /// Pick task params.  This is augmented by HdxPickTaskContextParams, which is
 /// passed in on the task context.
-struct HdxPickFromRenderBufferTaskParams {
+struct HdxPickFromRenderBufferTaskParams
+{
   HdxPickFromRenderBufferTaskParams()
     : primIdBufferPath(),
       instanceIdBufferPath(),
@@ -75,7 +76,8 @@ struct HdxPickFromRenderBufferTaskParams {
 /// to the camera frustum used to generate the ID buffers.  It then runs the
 /// pick query against the subset of the ID buffers contained by the pick
 /// frustum.
-class HdxPickFromRenderBufferTask : public HdxTask {
+class HdxPickFromRenderBufferTask : public HdxTask
+{
  public:
   HDX_API
   HdxPickFromRenderBufferTask(HdSceneDelegate *delegate, SdfPath const &id);

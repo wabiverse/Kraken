@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPhGLConversions {
+class HdPhGLConversions
+{
  public:
   /// Returns the size of glDataType.
   /// For example: sizeof(GLuint)

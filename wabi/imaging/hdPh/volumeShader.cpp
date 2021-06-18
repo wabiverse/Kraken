@@ -70,7 +70,8 @@ void HdPh_VolumeShader::BindResources(const int program,
 
   const int currentRenderSettingsVersion = _renderDelegate->GetRenderSettingsVersion();
 
-  if (_lastRenderSettingsVersion != currentRenderSettingsVersion) {
+  if (_lastRenderSettingsVersion != currentRenderSettingsVersion)
+  {
     _lastRenderSettingsVersion = currentRenderSettingsVersion;
     _stepSize = _renderDelegate->GetRenderSetting<float>(HdPhRenderSettingsTokens->volumeRaymarchingStepSize,
                                                          HdPhVolume::defaultStepSize);
@@ -172,7 +173,8 @@ void HdPh_VolumeShader::GetBufferSourcesForBBoxAndSampleDistance(
 
 GfVec3d HdPh_VolumeShader::GetSafeMin(const GfRange3d &range)
 {
-  if (range.IsEmpty()) {
+  if (range.IsEmpty())
+  {
     return GfVec3d(0.0, 0.0, 0.0);
   }
   return range.GetMin();
@@ -180,13 +182,15 @@ GfVec3d HdPh_VolumeShader::GetSafeMin(const GfRange3d &range)
 
 GfVec3d HdPh_VolumeShader::GetSafeMax(const GfRange3d &range)
 {
-  if (range.IsEmpty()) {
+  if (range.IsEmpty())
+  {
     return GfVec3d(0.0, 0.0, 0.0);
   }
   return range.GetMax();
 }
 
-namespace {
+namespace
+{
 
 // Square of length of a 3-vector
 float _SqrLengthThreeVector(const double *const v)
@@ -225,11 +229,13 @@ std::pair<GfBBox3d, float> _ComputeBBoxAndSampleDistance(
   // bounding box after one step and stops).
   float sampleDistance = 1000000.0;
 
-  for (const HdPhShaderCode::NamedTextureHandle &texture : textures) {
+  for (const HdPhShaderCode::NamedTextureHandle &texture : textures)
+  {
     HdPhTextureObjectSharedPtr const &textureObject = texture.handle->GetTextureObject();
 
     if (const HdPhFieldTextureObject *const fieldTex = dynamic_cast<HdPhFieldTextureObject *>(
-          textureObject.get())) {
+          textureObject.get()))
+    {
       const GfBBox3d &fieldBbox = fieldTex->GetBoundingBox();
       bbox = GfBBox3d::Combine(bbox, fieldBbox);
       sampleDistance = std::min(sampleDistance, _ComputeSampleDistance(fieldBbox));
@@ -255,9 +261,12 @@ VtValue _ComputePoints(const GfBBox3d &bbox)
   const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
   const GfVec3d max = HdPh_VolumeShader::GetSafeMax(range);
 
-  for (const double x : {min[0], max[0]}) {
-    for (const double y : {min[1], max[1]}) {
-      for (const double z : {min[2], max[2]}) {
+  for (const double x : {min[0], max[0]})
+  {
+    for (const double y : {min[1], max[1]})
+    {
+      for (const double z : {min[2], max[2]})
+      {
         points[i] = GfVec3f(transform.Transform(GfVec3d(x, y, z)));
         i++;
       }
@@ -280,7 +289,8 @@ void HdPh_VolumeShader::AddResourcesFromTextures(ResourceContext &ctx) const
   HdPh_TextureBinder::ComputeBufferSources(
     GetNamedTextureHandles(), bindlessTextureEnabled, &shaderBarSources);
 
-  if (_fillsPointsBar) {
+  if (_fillsPointsBar)
+  {
     // Compute volume bounding box from field bounding boxes
     const std::pair<GfBBox3d, float> bboxAndSampleDistance = _ComputeBBoxAndSampleDistance(
       GetNamedTextureHandles());
@@ -294,7 +304,8 @@ void HdPh_VolumeShader::AddResourcesFromTextures(ResourceContext &ctx) const
     GetBufferSourcesForBBoxAndSampleDistance(bboxAndSampleDistance, &shaderBarSources);
   }
 
-  if (!shaderBarSources.empty()) {
+  if (!shaderBarSources.empty())
+  {
     ctx.AddSources(GetShaderData(), std::move(shaderBarSources));
   }
 }
@@ -313,7 +324,8 @@ void HdPh_VolumeShader::UpdateTextureHandles(HdSceneDelegate *const sceneDelegat
 
   NamedTextureHandleVector textureHandles = GetNamedTextureHandles();
 
-  if (!TF_VERIFY(textureHandles.size() == _fieldDescriptors.size())) {
+  if (!TF_VERIFY(textureHandles.size() == _fieldDescriptors.size()))
+  {
     return;
   }
 
@@ -321,7 +333,8 @@ void HdPh_VolumeShader::UpdateTextureHandles(HdSceneDelegate *const sceneDelegat
 
   // Walk through the vector of named texture handles and field descriptors
   // simultaneously.
-  for (size_t i = 0; i < textureHandles.size(); i++) {
+  for (size_t i = 0; i < textureHandles.size(); i++)
+  {
     // To allocate the texture and update it in the vector ...
 
     // use field descriptor to find field prim, ...

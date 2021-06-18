@@ -84,7 +84,8 @@
   det = -(a02 * a11 * a20) + a01 * a12 * a20 + a02 * a10 * a21 - a00 * a12 * a21 - a01 * a10 * a22 +
         a00 * a11 * a22;
 
-  if (detPtr) {
+  if (detPtr)
+  {
     *detPtr = det;
   }
 
@@ -95,7 +96,8 @@
   }
   inverse;
 
-  if (GfAbs(det) > eps) {
+  if (GfAbs(det) > eps)
+  {
     rcp = 1.0 / det;
 
     { % -macro SCALAR_CAST(t) % } {
@@ -113,7 +115,8 @@
     inverse._mtx[2][1] = {{SCALAR_CAST("(a01*a20 - a00*a21)*rcp")}};
     inverse._mtx[2][2] = {{SCALAR_CAST("(-(a01*a10) + a00*a11)*rcp")}};
   }
-  else {
+  else
+  {
     inverse.SetScale(FLT_MAX);
   }
 
@@ -318,13 +321,15 @@ GfQuaternion
   GfVec3d im;
   double r;
 
-  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i]) {
+  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i])
+  {
     r = 0.5 * sqrt(_mtx[0][0] + _mtx[1][1] + _mtx[2][2] + 1);
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
   }
-  else {
+  else
+  {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;
     double q = 0.5 * sqrt(_mtx[i][i] - _mtx[j][j] - _mtx[k][k] + 1);

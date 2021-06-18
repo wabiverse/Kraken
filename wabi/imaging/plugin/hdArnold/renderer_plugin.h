@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdArnoldRendererPlugin final : public HdRendererPlugin {
+class HdArnoldRendererPlugin final : public HdRendererPlugin
+{
  public:
   /// Default constructor for HdArnoldRendererPlugin.
   HDARNOLD_API

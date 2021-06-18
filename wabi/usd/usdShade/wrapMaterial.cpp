@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -142,7 +144,8 @@ void wrapUsdShadeMaterial()
 
 #include <boost/python/tuple.hpp>
 
-namespace {
+namespace
+{
 
 static UsdPyEditContext _GetEditContextForVariant(const UsdShadeMaterial &self,
                                                   const TfToken &materialVariantName,

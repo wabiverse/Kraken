@@ -37,7 +37,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static object _GetBaseNameAndType(const TfToken &fullName)
 {

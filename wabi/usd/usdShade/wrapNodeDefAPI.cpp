@@ -40,9 +40,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -127,12 +129,14 @@ void wrapUsdShadeNodeDefAPI()
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
 static object _WrapGetShaderId(const UsdShadeNodeDefAPI &shader)
 {
   TfToken id;
-  if (shader.GetShaderId(&id)) {
+  if (shader.GetShaderId(&id))
+  {
     return object(id);
   }
   return object();
@@ -141,7 +145,8 @@ static object _WrapGetShaderId(const UsdShadeNodeDefAPI &shader)
 static object _WrapGetSourceAsset(const UsdShadeNodeDefAPI &shader, const TfToken &sourceType)
 {
   SdfAssetPath asset;
-  if (shader.GetSourceAsset(&asset, sourceType)) {
+  if (shader.GetSourceAsset(&asset, sourceType))
+  {
     return object(asset);
   }
   return object();
@@ -150,7 +155,8 @@ static object _WrapGetSourceAsset(const UsdShadeNodeDefAPI &shader, const TfToke
 static object _WrapGetSourceAssetSubIdentifier(const UsdShadeNodeDefAPI &shader, const TfToken &sourceType)
 {
   TfToken subIdentifier;
-  if (shader.GetSourceAssetSubIdentifier(&subIdentifier, sourceType)) {
+  if (shader.GetSourceAssetSubIdentifier(&subIdentifier, sourceType))
+  {
     return object(subIdentifier);
   }
   return object();
@@ -159,7 +165,8 @@ static object _WrapGetSourceAssetSubIdentifier(const UsdShadeNodeDefAPI &shader,
 static object _WrapGetSourceCode(const UsdShadeNodeDefAPI &shader, const TfToken &sourceType)
 {
   std::string code;
-  if (shader.GetSourceCode(&code, sourceType)) {
+  if (shader.GetSourceCode(&code, sourceType))
+  {
     return object(code);
   }
   return object();

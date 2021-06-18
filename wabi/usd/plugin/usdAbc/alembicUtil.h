@@ -54,10 +54,15 @@
 #include <string>
 #include <vector>
 
-namespace Alembic {
-namespace Util {
-namespace ALEMBIC_VERSION_NS {
-template<> struct PODTraitsFromType<WABI_NS::GfHalf> : public Float16PODTraits {
+namespace Alembic
+{
+namespace Util
+{
+namespace ALEMBIC_VERSION_NS
+{
+template<>
+struct PODTraitsFromType<WABI_NS::GfHalf> : public Float16PODTraits
+{
 };
 }  // namespace ALEMBIC_VERSION_NS
 }  // namespace Util
@@ -74,7 +79,8 @@ class SdfAbstractDataValue;
 TF_DECLARE_PUBLIC_TOKENS(UsdAbc_AlembicContextFlagNames, USDABC_ALEMBIC_CONTEXT_FLAG_NAMES);
 
 // A namespace so we can bring Alembic namespaces into it.
-namespace UsdAbc_AlembicUtil {
+namespace UsdAbc_AlembicUtil
+{
 
 using namespace ::Alembic::Abc;
 
@@ -113,13 +119,17 @@ TF_DECLARE_PUBLIC_TOKENS(UsdAbcCustomMetadata, USD_ABC_CUSTOM_METADATA);
 /// A type to represent an Alembic value type.  An Alembic DataType has
 /// a POD and extent but not scalar vs array;  this type includes that
 /// extra bit.  It also supports compound types as their schema titles.
-struct UsdAbc_AlembicType : boost::totally_ordered<UsdAbc_AlembicType> {
+struct UsdAbc_AlembicType : boost::totally_ordered<UsdAbc_AlembicType>
+{
   PlainOldDataType pod;  // POD type in scalar and array.
   uint8_t extent;        // Extent of POD (e.g. 3 for a 3-tuple).
   bool_t array;          // true for array, false otherwise.
 
   // An empty type.
-  UsdAbc_AlembicType() : pod(kUnknownPOD), extent(0), array(false)
+  UsdAbc_AlembicType()
+    : pod(kUnknownPOD),
+      extent(0),
+      array(false)
   {
     // Do nothing
   }
@@ -173,7 +183,8 @@ struct UsdAbc_AlembicType : boost::totally_ordered<UsdAbc_AlembicType> {
 /// Wraps a VtValue or SdfAbstractDataValue so we can access any
 /// the same way.  This type allows us to implement some methods without
 /// templatizing them.
-class UsdAbc_AlembicDataAny {
+class UsdAbc_AlembicDataAny
+{
  public:
   /// Construct an empty any.
   UsdAbc_AlembicDataAny()
@@ -181,9 +192,11 @@ class UsdAbc_AlembicDataAny {
 
   /// Construct with a pointer to any supported type-erased object \p any.
   /// If \p any is \c NULL then this object is considered to be empty.
-  template<class T> explicit UsdAbc_AlembicDataAny(T *any)
+  template<class T>
+  explicit UsdAbc_AlembicDataAny(T *any)
   {
-    if (any) {
+    if (any)
+    {
       _valuePtr = any;
     }
   }
@@ -195,7 +208,8 @@ class UsdAbc_AlembicDataAny {
   }
 
   /// Assigns \p rhs to the value passed in the c'tor.
-  template<class T> bool Set(T rhs) const
+  template<class T>
+  bool Set(T rhs) const
   {
     typedef typename boost::remove_reference<typename boost::remove_const<T>::type>::type Type;
     return boost::apply_visitor(_SetTyped<Type>(rhs), _valuePtr);
@@ -216,12 +230,15 @@ class UsdAbc_AlembicDataAny {
 
  private:
   // Object representing the NULL pointer.
-  class _Empty {
+  class _Empty
+  {
   };
 
   // Visitor for assignment.
-  struct _Set : public boost::static_visitor<bool> {
-    _Set(const VtValue &rhs) : value(rhs)
+  struct _Set : public boost::static_visitor<bool>
+  {
+    _Set(const VtValue &rhs)
+      : value(rhs)
     {}
 
     bool operator()(_Empty) const
@@ -246,8 +263,11 @@ class UsdAbc_AlembicDataAny {
   };
 
   // Visitor for assignment.
-  template<class T> struct _SetTyped : public boost::static_visitor<bool> {
-    _SetTyped(typename boost::call_traits<T>::param_type rhs) : value(rhs)
+  template<class T>
+  struct _SetTyped : public boost::static_visitor<bool>
+  {
+    _SetTyped(typename boost::call_traits<T>::param_type rhs)
+      : value(rhs)
     {}
 
     bool operator()(_Empty) const
@@ -280,20 +300,26 @@ class UsdAbc_AlembicDataAny {
 //
 
 // Helpers for _SampleForAlembic.
-template<class T> struct _ExtractAddressOfSampleForAlembic {
+template<class T>
+struct _ExtractAddressOfSampleForAlembic
+{
   const void *operator()(const T &value) const
   {
     return &value;
   }
 };
-template<class T, class A = _ExtractAddressOfSampleForAlembic<T>> struct _ExtractSampleForAlembic {
+template<class T, class A = _ExtractAddressOfSampleForAlembic<T>>
+struct _ExtractSampleForAlembic
+{
   const void *operator()(const VtValue &v, size_t *numSamples) const
   {
     *numSamples = 1;
     return A()(v.UncheckedGet<T>());
   }
 };
-template<class T> struct _ExtractSampleForAlembic<VtArray<T>> {
+template<class T>
+struct _ExtractSampleForAlembic<VtArray<T>>
+{
   const void *operator()(const VtValue &v, size_t *numSamples) const
   {
     const VtArray<T> &result = v.UncheckedGet<VtArray<T>>();
@@ -304,20 +330,25 @@ template<class T> struct _ExtractSampleForAlembic<VtArray<T>> {
 
 /// Holds a property value from Usd in a form suitable for passing to Alembic,
 /// providing a common interface to several forms of data.
-class _SampleForAlembic {
+class _SampleForAlembic
+{
  public:
   typedef std::vector<uint32_t> IndexArray;
   typedef boost::shared_ptr<IndexArray> IndexArrayPtr;
 
-  class Error {
+  class Error
+  {
    public:
-    Error(const std::string &msg) : message(msg)
+    Error(const std::string &msg)
+      : message(msg)
     {}
     const std::string &message;
   };
 
   /// An empty sample.
-  _SampleForAlembic() : _numSamples(0), _value(_HolderValue(new _EmptyHolder))
+  _SampleForAlembic()
+    : _numSamples(0),
+      _value(_HolderValue(new _EmptyHolder))
   {
     // Do nothing
   }
@@ -333,8 +364,9 @@ class _SampleForAlembic {
 
   /// A sample using a given scalar value of type T.
   template<class T>
-  _SampleForAlembic(const T &value) : _numSamples(1),
-                                      _value(_HolderValue(new _RawHolder<T>(value)))
+  _SampleForAlembic(const T &value)
+    : _numSamples(1),
+      _value(_HolderValue(new _RawHolder<T>(value)))
   {
     // Do nothing
   }
@@ -398,7 +430,8 @@ class _SampleForAlembic {
 
   /// Returns the raw data cast to a const T*.  Do not call if this object
   /// evaluates to \c false.
-  template<class T> const T *GetDataAs() const
+  template<class T>
+  const T *GetDataAs() const
   {
     return reinterpret_cast<const T *>(_value.Get());
   }
@@ -428,7 +461,8 @@ class _SampleForAlembic {
   }
 
   // Type erased holder for pointers.
-  class _Holder {
+  class _Holder
+  {
    public:
     virtual ~_Holder();
     virtual const void *Get() const = 0;
@@ -436,7 +470,8 @@ class _SampleForAlembic {
   };
 
   // Hold nothing.
-  class _EmptyHolder : public _Holder {
+  class _EmptyHolder : public _Holder
+  {
    public:
     _EmptyHolder();
     virtual ~_EmptyHolder();
@@ -447,7 +482,8 @@ class _SampleForAlembic {
   };
 
   // Hold an error and no sample.
-  class _ErrorHolder : public _Holder {
+  class _ErrorHolder : public _Holder
+  {
    public:
     _ErrorHolder(const std::string &message);
     virtual ~_ErrorHolder();
@@ -462,9 +498,12 @@ class _SampleForAlembic {
   };
 
   // Hold nothing.
-  template<class T> class _RawHolder : public _Holder {
+  template<class T>
+  class _RawHolder : public _Holder
+  {
    public:
-    _RawHolder(const T &value) : _value(value)
+    _RawHolder(const T &value)
+      : _value(value)
     {}
     virtual ~_RawHolder()
     {}
@@ -478,7 +517,8 @@ class _SampleForAlembic {
   };
 
   // Hold a VtValue.
-  class _VtValueHolder : public _Holder {
+  class _VtValueHolder : public _Holder
+  {
    public:
     template<class E>
     _VtValueHolder(const VtValue &value, size_t *numSamples, const E &extractor)
@@ -497,9 +537,12 @@ class _SampleForAlembic {
   };
 
   // Hold a shared_ptr.
-  template<class T> class _ScalarHolder : public _Holder {
+  template<class T>
+  class _ScalarHolder : public _Holder
+  {
    public:
-    _ScalarHolder(const boost::shared_ptr<T> &ptr) : _ptr(ptr)
+    _ScalarHolder(const boost::shared_ptr<T> &ptr)
+      : _ptr(ptr)
     {}
     virtual ~_ScalarHolder()
     {}
@@ -513,9 +556,12 @@ class _SampleForAlembic {
   };
 
   // Hold a shared_array.
-  template<class T> class _ArrayHolder : public _Holder {
+  template<class T>
+  class _ArrayHolder : public _Holder
+  {
    public:
-    _ArrayHolder(const boost::shared_array<T> &ptr) : _ptr(ptr)
+    _ArrayHolder(const boost::shared_array<T> &ptr)
+      : _ptr(ptr)
     {}
     virtual ~_ArrayHolder()
     {}
@@ -529,9 +575,11 @@ class _SampleForAlembic {
   };
 
   // Hold a _Holder as a value type.
-  class _HolderValue {
+  class _HolderValue
+  {
    public:
-    explicit _HolderValue(_Holder *holder) : _holder(holder)
+    explicit _HolderValue(_Holder *holder)
+      : _holder(holder)
     {}
 
     const void *Get() const
@@ -547,7 +595,8 @@ class _SampleForAlembic {
     boost::shared_ptr<_Holder> _holder;
   };
 
-  template<class T> static _HolderValue _MakeRawArrayHolder(const std::vector<T> &value)
+  template<class T>
+  static _HolderValue _MakeRawArrayHolder(const std::vector<T> &value)
   {
     boost::shared_array<T> copy(new T[value.size()]);
     std::copy(value.begin(), value.end(), copy.get());
@@ -564,7 +613,9 @@ _SampleForAlembic _ErrorSampleForAlembic(const std::string &msg);
 
 /// Create an _SampleForAlembic pointing to the raw data in a VtValue.
 /// This assumes the VtValue is holding a value of type UsdType.
-template<class UsdType> struct _SampleForAlembicIdentityConverter {
+template<class UsdType>
+struct _SampleForAlembicIdentityConverter
+{
   _SampleForAlembic operator()(const VtValue &value) const
   {
     return _SampleForAlembic(value, _ExtractSampleForAlembic<UsdType>());
@@ -574,7 +625,9 @@ template<class UsdType> struct _SampleForAlembicIdentityConverter {
 /// Create an _SampleForAlembic from a VtValue converted by construction
 /// to the Alembic type.  This assumes the VtValue is holding a value of
 /// type UsdType.
-template<class UsdType, class AlembicType> struct _SampleForAlembicConstructConverter {
+template<class UsdType, class AlembicType>
+struct _SampleForAlembicConstructConverter
+{
   _SampleForAlembic operator()(const VtValue &value) const
   {
     return _SampleForAlembic(boost::shared_ptr<AlembicType>(new AlembicType(value.UncheckedGet<UsdType>())));
@@ -582,7 +635,8 @@ template<class UsdType, class AlembicType> struct _SampleForAlembicConstructConv
 };
 // Special case to identity converter.
 template<class U>
-struct _SampleForAlembicConstructConverter<U, U> : public _SampleForAlembicIdentityConverter<U> {
+struct _SampleForAlembicConstructConverter<U, U> : public _SampleForAlembicIdentityConverter<U>
+{
 };
 
 //
@@ -593,11 +647,15 @@ struct _SampleForAlembicConstructConverter<U, U> : public _SampleForAlembicIdent
 // POD conversion to Usd.
 //
 
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODToUsd {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODToUsd
+{
 };
 
 // No conversion necessary.
-template<class UsdType> struct _ConvertPODToUsd<UsdType, UsdType, 1> {
+template<class UsdType>
+struct _ConvertPODToUsd<UsdType, UsdType, 1>
+{
   const UsdType &operator()(const void *data) const
   {
     return *reinterpret_cast<const UsdType *>(data);
@@ -605,7 +663,9 @@ template<class UsdType> struct _ConvertPODToUsd<UsdType, UsdType, 1> {
 };
 
 // Conversion by construction.
-template<class UsdType, class AlembicType> struct _ConvertPODToUsd<UsdType, AlembicType, 1> {
+template<class UsdType, class AlembicType>
+struct _ConvertPODToUsd<UsdType, AlembicType, 1>
+{
   UsdType operator()(const void *data) const
   {
     return UsdType(*reinterpret_cast<const AlembicType *>(data));
@@ -613,42 +673,70 @@ template<class UsdType, class AlembicType> struct _ConvertPODToUsd<UsdType, Alem
 };
 
 // Construct vector.
-template<class UsdType> struct _ConvertPODToUsdVec {
+template<class UsdType>
+struct _ConvertPODToUsdVec
+{
   UsdType operator()(const void *data) const
   {
     typedef typename UsdType::ScalarType ScalarType;
     return UsdType(reinterpret_cast<const ScalarType *>(data));
   }
 };
-template<> struct _ConvertPODToUsd<GfVec2i, int32_t, 2> : _ConvertPODToUsdVec<GfVec2i> {
+template<>
+struct _ConvertPODToUsd<GfVec2i, int32_t, 2> : _ConvertPODToUsdVec<GfVec2i>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec2h, GfHalf, 2> : _ConvertPODToUsdVec<GfVec2h> {
+template<>
+struct _ConvertPODToUsd<GfVec2h, GfHalf, 2> : _ConvertPODToUsdVec<GfVec2h>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec2f, float32_t, 2> : _ConvertPODToUsdVec<GfVec2f> {
+template<>
+struct _ConvertPODToUsd<GfVec2f, float32_t, 2> : _ConvertPODToUsdVec<GfVec2f>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec2d, float64_t, 2> : _ConvertPODToUsdVec<GfVec2d> {
+template<>
+struct _ConvertPODToUsd<GfVec2d, float64_t, 2> : _ConvertPODToUsdVec<GfVec2d>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec3i, int32_t, 3> : _ConvertPODToUsdVec<GfVec3i> {
+template<>
+struct _ConvertPODToUsd<GfVec3i, int32_t, 3> : _ConvertPODToUsdVec<GfVec3i>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec3h, GfHalf, 3> : _ConvertPODToUsdVec<GfVec3h> {
+template<>
+struct _ConvertPODToUsd<GfVec3h, GfHalf, 3> : _ConvertPODToUsdVec<GfVec3h>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec3f, float32_t, 3> : _ConvertPODToUsdVec<GfVec3f> {
+template<>
+struct _ConvertPODToUsd<GfVec3f, float32_t, 3> : _ConvertPODToUsdVec<GfVec3f>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec3d, float64_t, 3> : _ConvertPODToUsdVec<GfVec3d> {
+template<>
+struct _ConvertPODToUsd<GfVec3d, float64_t, 3> : _ConvertPODToUsdVec<GfVec3d>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec4i, int32_t, 4> : _ConvertPODToUsdVec<GfVec4i> {
+template<>
+struct _ConvertPODToUsd<GfVec4i, int32_t, 4> : _ConvertPODToUsdVec<GfVec4i>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec4h, GfHalf, 4> : _ConvertPODToUsdVec<GfVec4h> {
+template<>
+struct _ConvertPODToUsd<GfVec4h, GfHalf, 4> : _ConvertPODToUsdVec<GfVec4h>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec4f, float32_t, 4> : _ConvertPODToUsdVec<GfVec4f> {
+template<>
+struct _ConvertPODToUsd<GfVec4f, float32_t, 4> : _ConvertPODToUsdVec<GfVec4f>
+{
 };
-template<> struct _ConvertPODToUsd<GfVec4d, float64_t, 4> : _ConvertPODToUsdVec<GfVec4d> {
+template<>
+struct _ConvertPODToUsd<GfVec4d, float64_t, 4> : _ConvertPODToUsdVec<GfVec4d>
+{
 };
 
 // Construct quaternion.
 // Note: Imath quaternions are stored as (r, i0, i1, i2) whereas the Gf
 // versions are stored as (i0, i1, i2, r)
-template<> struct _ConvertPODToUsd<GfQuatf, float32_t, 4> {
+template<>
+struct _ConvertPODToUsd<GfQuatf, float32_t, 4>
+{
   GfQuatf operator()(const void *data) const
   {
     const float32_t *src = reinterpret_cast<const float32_t *>(data);
@@ -657,7 +745,9 @@ template<> struct _ConvertPODToUsd<GfQuatf, float32_t, 4> {
   }
 };
 
-template<> struct _ConvertPODToUsd<GfQuatd, float64_t, 4> {
+template<>
+struct _ConvertPODToUsd<GfQuatd, float64_t, 4>
+{
   GfQuatd operator()(const void *data) const
   {
     const float64_t *src = reinterpret_cast<const float64_t *>(data);
@@ -667,7 +757,9 @@ template<> struct _ConvertPODToUsd<GfQuatd, float64_t, 4> {
 };
 
 // Construct matrix.
-template<> struct _ConvertPODToUsd<GfMatrix4d, float32_t, 16> {
+template<>
+struct _ConvertPODToUsd<GfMatrix4d, float32_t, 16>
+{
   GfMatrix4d operator()(const void *data) const
   {
     float64_t buffer[4][4];
@@ -676,7 +768,9 @@ template<> struct _ConvertPODToUsd<GfMatrix4d, float32_t, 16> {
     return GfMatrix4d(buffer);
   }
 };
-template<> struct _ConvertPODToUsd<GfMatrix4d, float64_t, 16> {
+template<>
+struct _ConvertPODToUsd<GfMatrix4d, float64_t, 16>
+{
   GfMatrix4d operator()(const void *data) const
   {
     return GfMatrix4d(reinterpret_cast<const float64_t(*)[4]>(data));
@@ -684,19 +778,24 @@ template<> struct _ConvertPODToUsd<GfMatrix4d, float64_t, 16> {
 };
 
 // Copy an array -- general case.
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODToUsdArray {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODToUsdArray
+{
   void operator()(UsdType *dst, const void *src, size_t size)
   {
     const uint8_t *typedSrc = reinterpret_cast<const uint8_t *>(src);
     const size_t step = extent * sizeof(AlembicType);
-    for (size_t i = 0, n = size; i != n; typedSrc += step, ++i) {
+    for (size_t i = 0, n = size; i != n; typedSrc += step, ++i)
+    {
       dst[i] = _ConvertPODToUsd<UsdType, AlembicType, extent>()(typedSrc);
     }
   }
 };
 
 // Copy an array -- no conversion necessary.
-template<class UsdType> struct _ConvertPODToUsdArray<UsdType, UsdType, 1> {
+template<class UsdType>
+struct _ConvertPODToUsdArray<UsdType, UsdType, 1>
+{
   void operator()(UsdType *dst, const void *src, size_t size)
   {
     const UsdType *typedSrc = reinterpret_cast<const UsdType *>(src);
@@ -708,11 +807,15 @@ template<class UsdType> struct _ConvertPODToUsdArray<UsdType, UsdType, 1> {
 // POD conversion from Usd.
 //
 
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFromUsd {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODFromUsd
+{
 };
 
 // No conversion necessary.
-template<class UsdType> struct _ConvertPODFromUsd<UsdType, UsdType, 1> {
+template<class UsdType>
+struct _ConvertPODFromUsd<UsdType, UsdType, 1>
+{
   void operator()(const UsdType &src, UsdType *dst) const
   {
     *dst = src;
@@ -720,7 +823,9 @@ template<class UsdType> struct _ConvertPODFromUsd<UsdType, UsdType, 1> {
 };
 
 // Conversion by construction.
-template<class UsdType, class AlembicType> struct _ConvertPODFromUsd<UsdType, AlembicType, 1> {
+template<class UsdType, class AlembicType>
+struct _ConvertPODFromUsd<UsdType, AlembicType, 1>
+{
   void operator()(const UsdType &src, AlembicType *dst) const
   {
     *dst = AlembicType(src);
@@ -728,7 +833,9 @@ template<class UsdType, class AlembicType> struct _ConvertPODFromUsd<UsdType, Al
 };
 
 // Conversion for TfToken to std::string.
-template<> struct _ConvertPODFromUsd<TfToken, std::string, 1> {
+template<>
+struct _ConvertPODFromUsd<TfToken, std::string, 1>
+{
   void operator()(const TfToken &src, std::string *dst) const
   {
     *dst = src.GetString();
@@ -736,41 +843,69 @@ template<> struct _ConvertPODFromUsd<TfToken, std::string, 1> {
 };
 
 // Construct vector.
-template<class UsdType> struct _ConvertPODFromUsdVec {
+template<class UsdType>
+struct _ConvertPODFromUsdVec
+{
   void operator()(const UsdType &src, typename UsdType::ScalarType *dst) const
   {
     std::copy(src.GetArray(), src.GetArray() + UsdType::dimension, dst);
   }
 };
-template<> struct _ConvertPODFromUsd<GfVec2i, int32_t, 2> : _ConvertPODFromUsdVec<GfVec2i> {
+template<>
+struct _ConvertPODFromUsd<GfVec2i, int32_t, 2> : _ConvertPODFromUsdVec<GfVec2i>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec2h, GfHalf, 2> : _ConvertPODFromUsdVec<GfVec2h> {
+template<>
+struct _ConvertPODFromUsd<GfVec2h, GfHalf, 2> : _ConvertPODFromUsdVec<GfVec2h>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec2f, float32_t, 2> : _ConvertPODFromUsdVec<GfVec2f> {
+template<>
+struct _ConvertPODFromUsd<GfVec2f, float32_t, 2> : _ConvertPODFromUsdVec<GfVec2f>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec2d, float64_t, 2> : _ConvertPODFromUsdVec<GfVec2d> {
+template<>
+struct _ConvertPODFromUsd<GfVec2d, float64_t, 2> : _ConvertPODFromUsdVec<GfVec2d>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec3i, int32_t, 3> : _ConvertPODFromUsdVec<GfVec3i> {
+template<>
+struct _ConvertPODFromUsd<GfVec3i, int32_t, 3> : _ConvertPODFromUsdVec<GfVec3i>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec3h, GfHalf, 3> : _ConvertPODFromUsdVec<GfVec3h> {
+template<>
+struct _ConvertPODFromUsd<GfVec3h, GfHalf, 3> : _ConvertPODFromUsdVec<GfVec3h>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec3f, float32_t, 3> : _ConvertPODFromUsdVec<GfVec3f> {
+template<>
+struct _ConvertPODFromUsd<GfVec3f, float32_t, 3> : _ConvertPODFromUsdVec<GfVec3f>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec3d, float64_t, 3> : _ConvertPODFromUsdVec<GfVec3d> {
+template<>
+struct _ConvertPODFromUsd<GfVec3d, float64_t, 3> : _ConvertPODFromUsdVec<GfVec3d>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec4i, int32_t, 4> : _ConvertPODFromUsdVec<GfVec4i> {
+template<>
+struct _ConvertPODFromUsd<GfVec4i, int32_t, 4> : _ConvertPODFromUsdVec<GfVec4i>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec4h, GfHalf, 4> : _ConvertPODFromUsdVec<GfVec4h> {
+template<>
+struct _ConvertPODFromUsd<GfVec4h, GfHalf, 4> : _ConvertPODFromUsdVec<GfVec4h>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec4f, float32_t, 4> : _ConvertPODFromUsdVec<GfVec4f> {
+template<>
+struct _ConvertPODFromUsd<GfVec4f, float32_t, 4> : _ConvertPODFromUsdVec<GfVec4f>
+{
 };
-template<> struct _ConvertPODFromUsd<GfVec4d, float64_t, 4> : _ConvertPODFromUsdVec<GfVec4d> {
+template<>
+struct _ConvertPODFromUsd<GfVec4d, float64_t, 4> : _ConvertPODFromUsdVec<GfVec4d>
+{
 };
 
 // Construct quaternion.
 // Note: Imath quaternions are stored as (r, i0, i1, i2) whereas the Gf
 // versions are stored as (i0, i1, i2, r)
-template<> struct _ConvertPODFromUsd<GfQuatf, float32_t, 4> {
+template<>
+struct _ConvertPODFromUsd<GfQuatf, float32_t, 4>
+{
   void operator()(const GfQuatf &src, float32_t *dst) const
   {
     dst[0] = src.GetReal();
@@ -780,7 +915,9 @@ template<> struct _ConvertPODFromUsd<GfQuatf, float32_t, 4> {
   }
 };
 
-template<> struct _ConvertPODFromUsd<GfQuatd, float64_t, 4> {
+template<>
+struct _ConvertPODFromUsd<GfQuatd, float64_t, 4>
+{
   void operator()(const GfQuatd &src, float64_t *dst) const
   {
     dst[0] = src.GetReal();
@@ -791,13 +928,17 @@ template<> struct _ConvertPODFromUsd<GfQuatd, float64_t, 4> {
 };
 
 // Construct matrix.
-template<> struct _ConvertPODFromUsd<GfMatrix4d, float32_t, 16> {
+template<>
+struct _ConvertPODFromUsd<GfMatrix4d, float32_t, 16>
+{
   void operator()(const GfMatrix4d &src, float32_t *dst) const
   {
     std::copy(src.GetArray(), src.GetArray() + 16, dst);
   }
 };
-template<> struct _ConvertPODFromUsd<GfMatrix4d, float64_t, 16> {
+template<>
+struct _ConvertPODFromUsd<GfMatrix4d, float64_t, 16>
+{
   void operator()(const GfMatrix4d &src, float64_t *dst) const
   {
     std::copy(src.GetArray(), src.GetArray() + 16, dst);
@@ -805,7 +946,9 @@ template<> struct _ConvertPODFromUsd<GfMatrix4d, float64_t, 16> {
 };
 
 // Copy a scalar -- general case.
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFromUsdScalar {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODFromUsdScalar
+{
   _SampleForAlembic operator()(const VtValue &src) const
   {
     boost::shared_array<AlembicType> dst(new AlembicType[extent]);
@@ -815,7 +958,9 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFrom
 };
 
 // Copy a scalar -- POD.
-template<class UsdType, class AlembicType> struct _ConvertPODFromUsdScalar<UsdType, AlembicType, 1> {
+template<class UsdType, class AlembicType>
+struct _ConvertPODFromUsdScalar<UsdType, AlembicType, 1>
+{
   _SampleForAlembic operator()(const VtValue &src) const
   {
     AlembicType dst;
@@ -825,14 +970,17 @@ template<class UsdType, class AlembicType> struct _ConvertPODFromUsdScalar<UsdTy
 };
 
 // Copy an array -- general case.
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFromUsdArray {
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODFromUsdArray
+{
   _SampleForAlembic operator()(const VtValue &src)
   {
     const VtArray<UsdType> &data = src.UncheckedGet<VtArray<UsdType>>();
     const size_t size = data.size();
     boost::shared_array<AlembicType> array(new AlembicType[size * extent]);
     AlembicType *ptr = array.get();
-    for (size_t i = 0, n = size; i != n; ptr += extent, ++i) {
+    for (size_t i = 0, n = size; i != n; ptr += extent, ++i)
+    {
       _ConvertPODFromUsd<UsdType, AlembicType, extent>()(data[i], ptr);
     }
     return _SampleForAlembic(array, size * extent);
@@ -843,12 +991,15 @@ template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODFrom
 // Alembic <-> Usd conversion registries.
 //
 
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODScalar;
-template<class UsdType, class AlembicType, size_t extent> struct _ConvertPODArray;
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODScalar;
+template<class UsdType, class AlembicType, size_t extent>
+struct _ConvertPODArray;
 
 /// Holds a dictionary of property value conversions.  It can apply the
 /// appropriate conversion to a given property and store the result.
-class UsdAbc_AlembicDataConversion {
+class UsdAbc_AlembicDataConversion
+{
  public:
   /// A conversion function.  Returns \c true on success and copies the
   /// value from the named property in the compound property at the given
@@ -889,17 +1040,20 @@ class UsdAbc_AlembicDataConversion {
   /// extent \p extent.  Note that this will not register a conversion
   /// that's already been registered.  This is useful to register a
   /// preferred conversion when there's a many-to-one mapping.
-  template<class UsdType, class AlembicType, size_t extent> void AddConverter()
+  template<class UsdType, class AlembicType, size_t extent>
+  void AddConverter()
   {
     AddConverter<UsdType, AlembicType, extent>(SdfSchema::GetInstance().FindType(TfType::Find<UsdType>()));
   }
 
-  template<class UsdType, class AlembicType> void AddConverter(const SdfValueTypeName &usdType)
+  template<class UsdType, class AlembicType>
+  void AddConverter(const SdfValueTypeName &usdType)
   {
     AddConverter<UsdType, AlembicType, 1>(usdType);
   }
 
-  template<class UsdType, class AlembicType> void AddConverter()
+  template<class UsdType, class AlembicType>
+  void AddConverter()
   {
     AddConverter<UsdType, AlembicType, 1>();
   }
@@ -929,7 +1083,8 @@ class UsdAbc_AlembicDataConversion {
 
  private:
   // All the data that we need to convert between usd and abc types.
-  struct _ConverterData {
+  struct _ConverterData
+  {
     _ConverterData(const SdfValueTypeName &usdType_,
                    const UsdAbc_AlembicType &abcType_,
                    const ToUsdConverter &toUsdFn_,
@@ -952,7 +1107,8 @@ class UsdAbc_AlembicDataConversion {
 
 /// All conversions.  This exists so we can construct all conversion types
 /// as a single object for convenience with TfStaticData.
-struct UsdAbc_AlembicConversions {
+struct UsdAbc_AlembicConversions
+{
   UsdAbc_AlembicConversions();
 
   UsdAbc_AlembicDataConversion data;
@@ -967,14 +1123,17 @@ std::string UsdAbc_FormatAlembicVersion(int32_t n);
 
 /// Reverse the order of the subsequences in \p values where the subsequence
 /// lengths are given by \p counts.
-template<class T> static bool UsdAbc_ReverseOrderImpl(VtArray<T> &values, const VtArray<int> &counts)
+template<class T>
+static bool UsdAbc_ReverseOrderImpl(VtArray<T> &values, const VtArray<int> &counts)
 {
   // Reverse items.
-  for (size_t j = 0, n = values.size(), k = 0, m = counts.size(); k != m; ++k) {
+  for (size_t j = 0, n = values.size(), k = 0, m = counts.size(); k != m; ++k)
+  {
     const int count = counts[k];
 
     // Bail out with failure if we run out of items.
-    if (!TF_VERIFY(j + count <= n)) {
+    if (!TF_VERIFY(j + count <= n))
+    {
       return false;
     }
 

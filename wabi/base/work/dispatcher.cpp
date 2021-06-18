@@ -55,7 +55,8 @@ void WorkDispatcher::Wait()
 {
   _rootTask->wait_for_all();
 
-  if (_context.is_group_execution_cancelled()) {
+  if (_context.is_group_execution_cancelled())
+  {
     _context.reset();
   }
 

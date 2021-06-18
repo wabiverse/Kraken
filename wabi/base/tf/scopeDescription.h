@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// not dynamically created, however it should not be used in very highly
 /// performance sensitive contexts.  The cost to push & pop is essentially a TLS
 /// lookup plus a couple of atomic operations.
-class TfScopeDescription {
+class TfScopeDescription
+{
   TfScopeDescription() = delete;
   TfScopeDescription(TfScopeDescription const &) = delete;
   TfScopeDescription &operator=(TfScopeDescription const &) = delete;

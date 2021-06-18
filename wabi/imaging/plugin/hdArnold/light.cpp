@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // These tokens are not exposed in 19.5.
 // clang-format off
@@ -68,8 +69,11 @@ TF_DEFINE_PRIVATE_TOKENS(
 );
 // clang-format on
 
-struct ParamDesc {
-  ParamDesc(const char *aname, const TfToken &hname) : arnoldName(aname), hdName(hname)
+struct ParamDesc
+{
+  ParamDesc(const char *aname, const TfToken &hname)
+    : arnoldName(aname),
+      hdName(hname)
   {}
   AtString arnoldName;
   TfToken hdName;
@@ -150,9 +154,11 @@ void iterateParams(AtNode *light,
                    HdSceneDelegate *delegate,
                    const std::vector<ParamDesc> &params)
 {
-  for (const auto &param : params) {
+  for (const auto &param : params)
+  {
     const auto *pentry = AiNodeEntryLookUpParameter(nentry, param.arnoldName);
-    if (pentry == nullptr) {
+    if (pentry == nullptr)
+    {
       continue;
     }
 
@@ -164,13 +170,16 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
 {
   auto isDefault = [&](const TfToken &paramName, float defaultVal) -> bool {
     auto val = delegate->GetLightParamValue(id, paramName);
-    if (val.IsEmpty()) {
+    if (val.IsEmpty())
+    {
       return true;
     }
-    if (val.IsHolding<float>()) {
+    if (val.IsHolding<float>())
+    {
       return defaultVal == val.UncheckedGet<float>();
     }
-    if (val.IsHolding<double>()) {
+    if (val.IsHolding<double>())
+    {
       return defaultVal == static_cast<float>(val.UncheckedGet<double>());
     }
     // If it's holding an unexpected type, we won't be
@@ -186,13 +195,16 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
 #else
     auto val = delegate->GetLightParamValue(id, _tokens->shapingIesFile);
 #endif
-    if (val.IsEmpty()) {
+    if (val.IsEmpty())
+    {
       return false;
     }
-    if (val.IsHolding<std::string>()) {
+    if (val.IsHolding<std::string>())
+    {
       return !val.UncheckedGet<std::string>().empty();
     }
-    if (val.IsHolding<SdfAssetPath>()) {
+    if (val.IsHolding<SdfAssetPath>())
+    {
       const auto path = val.UncheckedGet<SdfAssetPath>();
       return !path.GetResolvedPath().empty() || !path.GetAssetPath().empty();
     }
@@ -202,13 +214,16 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
 #if WABI_VERSION >= 2105
   if (!isDefault(UsdLuxTokens->inputsShapingFocus, 0.0f) ||
       !isDefault(UsdLuxTokens->inputsShapingConeAngle, 180.0f) ||
-      !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f)) {
+      !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f))
+  {
 #elif WABI_VERSION >= 2102
   if (!isDefault(UsdLuxTokens->shapingFocus, 0.0f) || !isDefault(UsdLuxTokens->shapingConeAngle, 180.0f) ||
-      !isDefault(UsdLuxTokens->shapingConeSoftness, 0.0f)) {
+      !isDefault(UsdLuxTokens->shapingConeSoftness, 0.0f))
+  {
 #else
   if (!isDefault(_tokens->shapingFocus, 0.0f) || !isDefault(_tokens->shapingConeAngle, 180.0f) ||
-      !isDefault(_tokens->shapingConeSoftness, 0.0f)) {
+      !isDefault(_tokens->shapingConeSoftness, 0.0f))
+  {
 #endif
     return str::spot_light;
   }
@@ -247,7 +262,8 @@ auto spotLightSync = [](AtNode *light,
   auto getBarndoor = [&](const TfToken &name) -> float {
     const auto barndoor = AiClamp(
       sceneDelegate->GetLightParamValue(id, name).GetWithDefault(0.0f), 0.0f, 1.0f);
-    if (barndoor > AI_EPSILON) {
+    if (barndoor > AI_EPSILON)
+    {
       hasBarndoor = true;
     }
     return barndoor;
@@ -261,12 +277,15 @@ auto spotLightSync = [](AtNode *light,
   const auto barndoortop = getBarndoor(_tokens->barndoortop);
   const auto barndoortopedge = getBarndoor(_tokens->barndoortopedge);
   auto createBarndoor = [&]() { *filter = AiNode(renderDelegate->GetUniverse(), str::barndoor); };
-  if (hasBarndoor) {
+  if (hasBarndoor)
+  {
     // We check if the filter is non-zero and if it's a barndoor
-    if (*filter == nullptr) {
+    if (*filter == nullptr)
+    {
       createBarndoor();
     }
-    else if (!AiNodeIs(*filter, str::barndoor)) {
+    else if (!AiNodeIs(*filter, str::barndoor))
+    {
       AiNodeDestroy(*filter);
       createBarndoor();
     }
@@ -286,7 +305,8 @@ auto spotLightSync = [](AtNode *light,
     AiNodeSetFlt(*filter, str::barndoor_top_edge, barndoortopedge);
     AiNodeSetPtr(light, str::filters, *filter);
   }
-  else {
+  else
+  {
     // We disconnect the filter.
     AiNodeSetArray(light, str::filters, AiArray(0, 1, AI_TYPE_NODE));
   }
@@ -304,11 +324,13 @@ auto pointLightSync = [](AtNode *light,
 #else
   const auto treatAsPointValue = sceneDelegate->GetLightParamValue(id, _tokens->treatAsPoint);
 #endif
-  if (treatAsPointValue.IsHolding<bool>() && treatAsPointValue.UncheckedGet<bool>()) {
+  if (treatAsPointValue.IsHolding<bool>() && treatAsPointValue.UncheckedGet<bool>())
+  {
     AiNodeSetFlt(light, str::radius, 0.0f);
     AiNodeSetBool(light, str::normalize, true);
   }
-  else {
+  else
+  {
     iterateParams(light, nentry, id, sceneDelegate, pointParams);
   }
 };
@@ -359,7 +381,8 @@ auto rectLightSync = [](AtNode *light,
 #else
   const auto &widthValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->width);
 #endif
-  if (widthValue.IsHolding<float>()) {
+  if (widthValue.IsHolding<float>())
+  {
     width = widthValue.UncheckedGet<float>();
   }
 #if WABI_VERSION >= 2102
@@ -367,7 +390,8 @@ auto rectLightSync = [](AtNode *light,
 #else
   const auto &heightValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->height);
 #endif
-  if (heightValue.IsHolding<float>()) {
+  if (heightValue.IsHolding<float>())
+  {
     height = heightValue.UncheckedGet<float>();
   }
 
@@ -399,7 +423,8 @@ auto cylinderLightSync = [](AtNode *light,
 #else
   const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->length);
 #endif
-  if (lengthValue.IsHolding<float>()) {
+  if (lengthValue.IsHolding<float>())
+  {
     length = lengthValue.UncheckedGet<float>();
   }
   length /= 2.0f;
@@ -419,22 +444,27 @@ auto domeLightSync = [](AtNode *light,
 #else
   const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->textureFormat);
 #endif
-  if (formatValue.IsHolding<TfToken>()) {
+  if (formatValue.IsHolding<TfToken>())
+  {
     const auto &textureFormat = formatValue.UncheckedGet<TfToken>();
-    if (textureFormat == UsdLuxTokens->latlong) {
+    if (textureFormat == UsdLuxTokens->latlong)
+    {
       AiNodeSetStr(light, str::format, str::latlong);
     }
-    else if (textureFormat == UsdLuxTokens->mirroredBall) {
+    else if (textureFormat == UsdLuxTokens->mirroredBall)
+    {
       AiNodeSetStr(light, str::format, str::mirrored_ball);
     }
-    else {
+    else
+    {
       AiNodeSetStr(light, str::format, str::angular);  // default value
     }
   }
 };
 
 /// Utility class to translate Hydra lights for th Render Delegate.
-class HdArnoldGenericLight : public HdLight {
+class HdArnoldGenericLight : public HdLight
+{
  public:
   using SyncParams = void (*)(AtNode *,
                               AtNode **filter,
@@ -508,27 +538,33 @@ HdArnoldGenericLight::HdArnoldGenericLight(HdArnoldRenderDelegate *delegate,
     _supportsTexture(supportsTexture)
 {
   _light = AiNode(_delegate->GetUniverse(), arnoldType);
-  if (id.IsEmpty()) {
+  if (id.IsEmpty())
+  {
     AiNodeSetFlt(_light, str::intensity, 0.0f);
   }
-  else {
+  else
+  {
     AiNodeSetStr(_light, str::name, AtString(id.GetText()));
   }
 }
 
 HdArnoldGenericLight::~HdArnoldGenericLight()
 {
-  if (_lightLink != _tokens->emptyLink) {
+  if (_lightLink != _tokens->emptyLink)
+  {
     _delegate->DeregisterLightLinking(_lightLink, this, false);
   }
-  if (_shadowLink != _tokens->emptyLink) {
+  if (_shadowLink != _tokens->emptyLink)
+  {
     _delegate->DeregisterLightLinking(_shadowLink, this, true);
   }
   AiNodeDestroy(_light);
-  if (_texture != nullptr) {
+  if (_texture != nullptr)
+  {
     AiNodeDestroy(_texture);
   }
-  if (_filter != nullptr) {
+  if (_filter != nullptr)
+  {
     AiNodeDestroy(_filter);
   }
 }
@@ -541,16 +577,19 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
   TF_UNUSED(sceneDelegate);
   TF_UNUSED(dirtyBits);
   const auto &id = GetId();
-  if (*dirtyBits & HdLight::DirtyParams) {
+  if (*dirtyBits & HdLight::DirtyParams)
+  {
     // If the params have changed, we need to see if any of the shaping parameters were applied to
     // the sphere light.
     const auto *nentry = AiNodeGetNodeEntry(_light);
     const auto lightType = AiNodeEntryGetNameAtString(nentry);
     auto interrupted = false;
     if (lightType == str::spot_light || lightType == str::point_light ||
-        lightType == str::photometric_light) {
+        lightType == str::photometric_light)
+    {
       const auto newLightType = getLightType(sceneDelegate, id);
-      if (newLightType != lightType) {
+      if (newLightType != lightType)
+      {
         param->Interrupt();
         interrupted = true;
         const AtString oldName{AiNodeGetName(_light)};
@@ -558,20 +597,25 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
         _light = AiNode(_delegate->GetUniverse(), newLightType);
         nentry = AiNodeGetNodeEntry(_light);
         AiNodeSetStr(_light, str::name, oldName);
-        if (newLightType == str::point_light) {
+        if (newLightType == str::point_light)
+        {
           _syncParams = pointLightSync;
         }
-        else if (newLightType == str::spot_light) {
+        else if (newLightType == str::spot_light)
+        {
           _syncParams = spotLightSync;
         }
-        else {
+        else
+        {
           _syncParams = photometricLightSync;
         }
-        if (_lightLink != _tokens->emptyLink) {
+        if (_lightLink != _tokens->emptyLink)
+        {
           _delegate->DeregisterLightLinking(_shadowLink, this, false);
           _lightLink = _tokens->emptyLink;
         }
-        if (_shadowLink != _tokens->emptyLink) {
+        if (_shadowLink != _tokens->emptyLink)
+        {
           _delegate->DeregisterLightLinking(_shadowLink, this, true);
           _shadowLink = _tokens->emptyLink;
         }
@@ -579,14 +623,16 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
     }
     // We need to force dirtying the transform, because AiNodeReset resets the transformation.
     *dirtyBits |= HdLight::DirtyTransform;
-    if (!interrupted) {
+    if (!interrupted)
+    {
       param->Interrupt();
     }
 
     AiNodeReset(_light);
     iterateParams(_light, nentry, id, sceneDelegate, genericParams);
     _syncParams(_light, &_filter, nentry, id, sceneDelegate, _delegate);
-    if (_supportsTexture) {
+    if (_supportsTexture)
+    {
 #if WABI_VERSION >= 2102
       SetupTexture(sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFile));
 #else
@@ -597,7 +643,8 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
     // for primvars on all primitives uniformly. We have to pass the full name of the primvar
     // post-20.11 to make this bit still work.
     for (const auto &primvar :
-         sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant)) {
+         sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant))
+    {
       ConvertPrimvarToBuiltinParameter(_light,
                                        primvar.name,
                                        sceneDelegate->Get(
@@ -610,37 +657,45 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
                                          ));
     }
     const auto filtersValue = sceneDelegate->GetLightParamValue(id, _tokens->filters);
-    if (filtersValue.IsHolding<SdfPathVector>()) {
+    if (filtersValue.IsHolding<SdfPathVector>())
+    {
       const auto &filterPaths = filtersValue.UncheckedGet<SdfPathVector>();
       std::vector<AtNode *> filters;
       filters.reserve(filterPaths.size());
-      for (const auto &filterPath : filterPaths) {
+      for (const auto &filterPath : filterPaths)
+      {
         auto *filterMaterial = reinterpret_cast<const HdArnoldMaterial *>(
           sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, filterPath));
-        if (filterMaterial == nullptr) {
+        if (filterMaterial == nullptr)
+        {
           continue;
         }
         auto *filter = filterMaterial->GetSurfaceShader();
-        if (filter == nullptr) {
+        if (filter == nullptr)
+        {
           continue;
         }
         auto *filterEntry = AiNodeGetNodeEntry(filter);
         // Light filters are shaders with a none output type.
-        if (AiNodeEntryGetOutputType(filterEntry) == AI_TYPE_NONE) {
+        if (AiNodeEntryGetOutputType(filterEntry) == AI_TYPE_NONE)
+        {
           filters.push_back(filter);
         }
       }
-      if (filters.empty()) {
+      if (filters.empty())
+      {
         AiNodeSetArray(_light, str::filters, AiArray(0, 0, AI_TYPE_NODE));
       }
-      else {
+      else
+      {
         AiNodeSetArray(
           _light, str::filters, AiArrayConvert(filters.size(), 1, AI_TYPE_NODE, filters.data()));
       }
     }
   }
 
-  if (*dirtyBits & HdLight::DirtyTransform) {
+  if (*dirtyBits & HdLight::DirtyTransform)
+  {
     param->Interrupt();
     HdArnoldSetTransform(_light, sceneDelegate, id);
   }
@@ -648,13 +703,16 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
   // TODO(pal): Test if there is a separate dirty bits for this, maybe DirtyCollection?
   auto updateLightLinking = [&](TfToken &currentLink, const TfToken &linkName, bool isShadow) {
     auto linkValue = sceneDelegate->GetLightParamValue(id, linkName);
-    if (linkValue.IsHolding<TfToken>()) {
+    if (linkValue.IsHolding<TfToken>())
+    {
       const auto &link = linkValue.UncheckedGet<TfToken>();
-      if (currentLink != link) {
+      if (currentLink != link)
+      {
         param->Interrupt();
         // The empty link value only exists when creating the class, so link can never match
         // emptyLink.
-        if (currentLink != _tokens->emptyLink) {
+        if (currentLink != _tokens->emptyLink)
+        {
           _delegate->DeregisterLightLinking(currentLink, this, isShadow);
         }
         _delegate->RegisterLightLinking(link, this, isShadow);
@@ -677,34 +735,42 @@ void HdArnoldGenericLight::SetupTexture(const VtValue &value)
 {
   const auto *nentry = AiNodeGetNodeEntry(_light);
   const auto hasShader = AiNodeEntryLookUpParameter(nentry, str::shader) != nullptr;
-  if (hasShader) {
+  if (hasShader)
+  {
     AiNodeSetPtr(_light, str::shader, nullptr);
   }
-  else {
+  else
+  {
     AiNodeUnlink(_light, str::color);
   }
-  if (_texture != nullptr) {
+  if (_texture != nullptr)
+  {
     AiNodeDestroy(_texture);
     _texture = nullptr;
   }
-  if (!value.IsHolding<SdfAssetPath>()) {
+  if (!value.IsHolding<SdfAssetPath>())
+  {
     return;
   }
   const auto &assetPath = value.UncheckedGet<SdfAssetPath>();
   auto path = assetPath.GetResolvedPath();
-  if (path.empty()) {
+  if (path.empty())
+  {
     path = assetPath.GetAssetPath();
   }
 
-  if (path.empty()) {
+  if (path.empty())
+  {
     return;
   }
   _texture = AiNode(_delegate->GetUniverse(), str::image);
   AiNodeSetStr(_texture, str::filename, AtString(path.c_str()));
-  if (hasShader) {
+  if (hasShader)
+  {
     AiNodeSetPtr(_light, str::shader, _texture);
   }
-  else {  // Connect to color if filename doesn't exists.
+  else
+  {  // Connect to color if filename doesn't exists.
     AiNodeLink(_texture, str::color, _light);
   }
 }
@@ -721,7 +787,8 @@ AtNode *HdArnoldGenericLight::GetLightNode() const
 
 }  // namespace
 
-namespace HdArnoldLight {
+namespace HdArnoldLight
+{
 
 HdLight *CreatePointLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
 {

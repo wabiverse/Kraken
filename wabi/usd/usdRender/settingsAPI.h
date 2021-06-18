@@ -61,7 +61,8 @@ class SdfAssetPath;
 /// UsdRenderSettingsAPI is a base class for API schemas
 /// to encode renderer-specific settings.
 ///
-class UsdRenderSettingsAPI : public UsdAPISchemaBase {
+class UsdRenderSettingsAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -77,13 +78,15 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRenderSettingsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderSettingsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRenderSettingsAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRenderSettingsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderSettingsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderSettingsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRenderSettingsAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

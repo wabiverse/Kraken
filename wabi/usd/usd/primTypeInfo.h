@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 /// type for the unrecognized type. This class also provides access to the prim
 /// definition that defines all the built-in properties and metadata of a prim
 /// of this type.
-class UsdPrimTypeInfo {
+class UsdPrimTypeInfo
+{
  public:
   /// Returns the concrete prim type name.
   const TfToken &GetTypeName() const
@@ -93,7 +94,8 @@ class UsdPrimTypeInfo {
     // we can just return it. Note that we use memory_order_acquire for
     // the case wher _FindOrCreatePrimDefinition needs to build its own
     // prim definition.
-    if (const UsdPrimDefinition *primDef = _primDefinition.load(std::memory_order_acquire)) {
+    if (const UsdPrimDefinition *primDef = _primDefinition.load(std::memory_order_acquire))
+    {
       return *primDef;
     }
     return *_FindOrCreatePrimDefinition();
@@ -125,7 +127,8 @@ class UsdPrimTypeInfo {
   // This struct holds the information used to uniquely identify the type of a
   // UsdPrimTypeInfo and can be used to key each prim type info in the type
   // info cache.
-  struct _TypeId {
+  struct _TypeId
+  {
     // Authored type name of the prim.
     TfToken primTypeName;
 
@@ -145,7 +148,8 @@ class UsdPrimTypeInfo {
     _TypeId(_TypeId &&typeId) = default;
 
     // Explicit constructor from just a prim type name.
-    explicit _TypeId(const TfToken &primTypeName_) : primTypeName(primTypeName_)
+    explicit _TypeId(const TfToken &primTypeName_)
+      : primTypeName(primTypeName_)
     {}
 
     // Is empty type
@@ -158,12 +162,15 @@ class UsdPrimTypeInfo {
     size_t Hash() const
     {
       size_t hash = primTypeName.Hash();
-      if (!mappedTypeName.IsEmpty()) {
+      if (!mappedTypeName.IsEmpty())
+      {
         boost::hash_combine(hash, mappedTypeName.Hash());
       }
-      if (!appliedAPISchemas.empty()) {
+      if (!appliedAPISchemas.empty())
+      {
         size_t appliedHash = appliedAPISchemas.size();
-        for (const TfToken &apiSchema : appliedAPISchemas) {
+        for (const TfToken &apiSchema : appliedAPISchemas)
+        {
           boost::hash_combine(appliedHash, apiSchema);
         }
         boost::hash_combine(hash, appliedHash);
@@ -184,7 +191,8 @@ class UsdPrimTypeInfo {
   };
 
   // Default constructor. Empty type.
-  UsdPrimTypeInfo() : _primDefinition(nullptr)
+  UsdPrimTypeInfo()
+    : _primDefinition(nullptr)
   {}
 
   // Move constructor from a _TypeId.

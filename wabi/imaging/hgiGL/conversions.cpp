@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct _FormatDesc {
+struct _FormatDesc
+{
   GLenum format;
   GLenum type;
   GLenum internalFormat;
@@ -201,28 +202,35 @@ void HgiGLConversions::GetFormat(HgiFormat inFormat,
                                  GLenum *outType,
                                  GLenum *outInternalFormat)
 {
-  if ((inFormat < 0) || (inFormat >= HgiFormatCount)) {
+  if ((inFormat < 0) || (inFormat >= HgiFormatCount))
+  {
     TF_CODING_ERROR("Unexpected  %d", inFormat);
-    if (outFormat) {
+    if (outFormat)
+    {
       *outFormat = GL_RGBA;
     }
-    if (outType) {
+    if (outType)
+    {
       *outType = GL_BYTE;
     }
-    if (outInternalFormat) {
+    if (outInternalFormat)
+    {
       *outInternalFormat = GL_RGBA8;
     }
     return;
   }
 
   const _FormatDesc &desc = FORMAT_DESC[inFormat];
-  if (outFormat) {
+  if (outFormat)
+  {
     *outFormat = desc.format;
   }
-  if (outType) {
+  if (outType)
+  {
     *outType = desc.type;
   }
-  if (outInternalFormat) {
+  if (outInternalFormat)
+  {
     *outInternalFormat = desc.internalFormat;
   }
 }
@@ -236,12 +244,14 @@ GLenum HgiGLConversions::GetFormatType(HgiFormat inFormat)
 std::vector<GLenum> HgiGLConversions::GetShaderStages(HgiShaderStage ss)
 {
   std::vector<GLenum> stages;
-  for (const auto &f : _ShaderStageTable) {
+  for (const auto &f : _ShaderStageTable)
+  {
     if (ss & f[0])
       stages.push_back(f[1]);
   }
 
-  if (stages.empty()) {
+  if (stages.empty())
+  {
     TF_CODING_ERROR("Missing shader stage table entry");
   }
   return stages;
@@ -284,7 +294,8 @@ GLenum HgiGLConversions::GetSamplerAddressMode(HgiSamplerAddressMode am)
 
 GLenum HgiGLConversions::GetMagFilter(HgiSamplerFilter sf)
 {
-  switch (sf) {
+  switch (sf)
+  {
     case HgiSamplerFilterNearest:
       return GL_NEAREST;
     case HgiSamplerFilterLinear:
@@ -299,10 +310,12 @@ GLenum HgiGLConversions::GetMagFilter(HgiSamplerFilter sf)
 
 GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter mipFilter)
 {
-  switch (mipFilter) {
+  switch (mipFilter)
+  {
     // No mip-filter supplied (no mipmapping), return min-filter
     case HgiMipFilterNotMipmapped:
-      switch (minFilter) {
+      switch (minFilter)
+      {
         case HgiSamplerFilterNearest:
           return GL_NEAREST;
         case HgiSamplerFilterLinear:
@@ -314,7 +327,8 @@ GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter m
 
     // Mip filter is nearest, combine min and mip filter into one enum
     case HgiMipFilterNearest:
-      switch (minFilter) {
+      switch (minFilter)
+      {
         case HgiSamplerFilterNearest:
           return GL_NEAREST_MIPMAP_NEAREST;
         case HgiSamplerFilterLinear:
@@ -326,7 +340,8 @@ GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter m
 
     // Mip filter is linear, combine min and mip filter into one enum
     case HgiMipFilterLinear:
-      switch (minFilter) {
+      switch (minFilter)
+      {
         case HgiSamplerFilterNearest:
           return GL_NEAREST_MIPMAP_LINEAR;
         case HgiSamplerFilterLinear:

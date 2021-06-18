@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 /// Parses shader definitions from the registered prim definitions for
 /// UsdLuxLight and UsdLuxLightFilter derived schema classes.
 ///
-class UsdLux_LightDefParserPlugin : public NdrParserPlugin {
+class UsdLux_LightDefParserPlugin : public NdrParserPlugin
+{
  public:
   USDLUX_API
   UsdLux_LightDefParserPlugin() = default;

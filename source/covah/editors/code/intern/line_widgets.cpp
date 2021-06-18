@@ -1,7 +1,8 @@
 #include "zep/line_widgets.h"
 #include "zep/display.h"
 
-namespace Zep {
+namespace Zep
+{
 
 NVec2f FloatSlider::GetSize() const
 {
@@ -40,7 +41,8 @@ void FloatSlider::Draw(const ZepBuffer &buffer, const NVec2f &loc)
 {
   auto &display = m_editor.GetDisplay();
 
-  for (uint32_t slider = 0; slider < m_dimension; slider++) {
+  for (uint32_t slider = 0; slider < m_dimension; slider++)
+  {
     // Convert to low DPI, then double up on submit
     // We should do it this way more.
     auto location = loc / m_editor.GetDisplay().GetPixelScale().x;
@@ -68,7 +70,8 @@ void FloatSlider::Draw(const ZepBuffer &buffer, const NVec2f &loc)
 void FloatSlider::Set(const NVec4f &value)
 {
   m_value = value;
-  if (m_fnChanged) {
+  if (m_fnChanged)
+  {
     m_fnChanged(this);
   }
 }

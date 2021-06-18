@@ -58,7 +58,8 @@ HdRendererPlugin::~HdRendererPlugin() = default;
 
 HdPluginRenderDelegateUniqueHandle HdRendererPlugin::CreateDelegate(HdRenderSettingsMap const &settingsMap)
 {
-  if (!IsSupported()) {
+  if (!IsSupported())
+  {
     return nullptr;
   }
 

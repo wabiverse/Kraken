@@ -21,7 +21,8 @@
 WABI_NAMESPACE_BEGIN
 
 // For now we reserve a single bit for all the parameter changes.
-enum ArnoldUsdRprimBits : HdDirtyBits {
+enum ArnoldUsdRprimBits : HdDirtyBits
+{
   ArnoldUsdRprimBitsParams = HdChangeTracker::CustomBitsBegin,
 };
 

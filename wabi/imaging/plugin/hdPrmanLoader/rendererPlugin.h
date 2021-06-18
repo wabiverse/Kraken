@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrmanLoaderRendererPlugin final : public HdRendererPlugin {
+class HdPrmanLoaderRendererPlugin final : public HdRendererPlugin
+{
  public:
   HdPrmanLoaderRendererPlugin();
   virtual ~HdPrmanLoaderRendererPlugin();

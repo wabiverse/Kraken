@@ -38,9 +38,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
-class DoubleToStringConverter {
+class DoubleToStringConverter
+{
  public:
   // When calling ToFixed with a double > 10^kMaxFixedDigitsBeforePoint
   // or a requested_digits parameter > kMaxFixedDigitsAfterPoint then the
@@ -58,7 +60,8 @@ class DoubleToStringConverter {
   static const int kMinPrecisionDigits = 1;
   static const int kMaxPrecisionDigits = 120;
 
-  enum Flags {
+  enum Flags
+  {
     NO_FLAGS = 0,
     EMIT_POSITIVE_EXPONENT_SIGN = 1,
     EMIT_TRAILING_DECIMAL_POINT = 2,
@@ -272,7 +275,8 @@ class DoubleToStringConverter {
   // exponent character, the exponent's sign, and at most 3 exponent digits).
   bool ToPrecision(double value, int precision, StringBuilder *result_builder) const;
 
-  enum DtoaMode {
+  enum DtoaMode
+  {
     // Produce the shortest correct representation.
     // For example the output of 0.299999999999999988897 is (the less accurate
     // but correct) 0.3.
@@ -376,11 +380,13 @@ class DoubleToStringConverter {
   DISALLOW_IMPLICIT_CONSTRUCTORS(DoubleToStringConverter);
 };
 
-class StringToDoubleConverter {
+class StringToDoubleConverter
+{
  public:
   // Enumeration for allowing octals and ignoring junk when converting
   // strings to numbers.
-  enum Flags {
+  enum Flags
+  {
     NO_FLAGS = 0,
     ALLOW_HEX = 1,
     ALLOW_OCTALS = 2,

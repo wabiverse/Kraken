@@ -20,9 +20,11 @@
 // control+Shift == select word
 // CTRL - CVX (copy paste, cut) + Delete Selection
 
-namespace Zep {
+namespace Zep
+{
 
-ZepMode_Standard::ZepMode_Standard(ZepEditor &editor) : ZepMode(editor)
+ZepMode_Standard::ZepMode_Standard(ZepEditor &editor)
+  : ZepMode(editor)
 {}
 
 ZepMode_Standard::~ZepMode_Standard()
@@ -35,7 +37,8 @@ void ZepMode_Standard::Init()
 
   m_modeFlags |= ModeFlags::InsertModeGroupUndo | ModeFlags::StayInInsertMode;
 
-  for (int i = 0; i <= 9; i++) {
+  for (int i = 0; i <= 9; i++)
+  {
     GetEditor().SetRegister('0' + (const char)i, "");
   }
   GetEditor().SetRegister('"', "");

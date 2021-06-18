@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 #ifndef doxygen
 
 // Convert any type to boost::python::object.
-template<typename T> boost::python::object Tf_ArgToPy(const T &value)
+template<typename T>
+boost::python::object Tf_ArgToPy(const T &value)
 {
   return boost::python::object(value);
 }
@@ -82,8 +83,11 @@ TF_API boost::python::object Tf_ArgToPy(const std::nullptr_t &value);
 ///     # ...
 /// \endcode
 ///
-struct TfPyKwArg {
-  template<typename T> TfPyKwArg(const std::string &nameIn, const T &valueIn) : name(nameIn)
+struct TfPyKwArg
+{
+  template<typename T>
+  TfPyKwArg(const std::string &nameIn, const T &valueIn)
+    : name(nameIn)
   {
     // Constructing boost::python::object requires the GIL.
     TfPyLock lock;
@@ -234,7 +238,8 @@ bool TfPyInvokeAndExtract(const std::string &moduleName,
                           Result *resultOut,
                           Args... args)
 {
-  if (!resultOut) {
+  if (!resultOut)
+  {
     TF_CODING_ERROR("Bad pointer to TfPyInvokeAndExtract");
     return false;
   }
@@ -244,13 +249,15 @@ bool TfPyInvokeAndExtract(const std::string &moduleName,
   TfPyLock lock;
 
   boost::python::object resultObj;
-  if (!TfPyInvokeAndReturn(moduleName, callableExpr, &resultObj, args...)) {
+  if (!TfPyInvokeAndReturn(moduleName, callableExpr, &resultObj, args...))
+  {
     return false;
   }
 
   // Extract return value.
   boost::python::extract<Result> extractor(resultObj);
-  if (!extractor.check()) {
+  if (!extractor.check())
+  {
     TF_CODING_ERROR("Result type mismatched or not convertible");
     return false;
   }
@@ -269,7 +276,8 @@ bool TfPyInvokeAndReturn(const std::string &moduleName,
                          boost::python::object *resultOut,
                          Args... args)
 {
-  if (!resultOut) {
+  if (!resultOut)
+  {
     TF_CODING_ERROR("Bad pointer to TfPyInvokeAndExtract");
     return false;
   }
@@ -278,18 +286,21 @@ bool TfPyInvokeAndReturn(const std::string &moduleName,
   TfPyInitialize();
   TfPyLock lock;
 
-  try {
+  try
+  {
     // Convert args to Python and store in list+dict form.
     boost::python::list posArgs;
     boost::python::dict kwArgs;
     Tf_BuildPyInvokeArgs(&posArgs, &kwArgs, args...);
 
     // Import, find callable, and call.
-    if (!Tf_PyInvokeImpl(moduleName, callableExpr, posArgs, kwArgs, resultOut)) {
+    if (!Tf_PyInvokeImpl(moduleName, callableExpr, posArgs, kwArgs, resultOut))
+    {
       return false;
     }
   }
-  catch (boost::python::error_already_set const &) {
+  catch (boost::python::error_already_set const &)
+  {
     // Handle exceptions.
     TfPyConvertPythonExceptionToTfErrors();
     PyErr_Clear();

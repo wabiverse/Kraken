@@ -46,7 +46,8 @@ using HdRenderPassAovBindingVector = std::vector<struct HdRenderPassAovBinding>;
 ///
 /// A shader that supports common renderPass functionality.
 ///
-class HdPhRenderPassShader : public HdPhShaderCode {
+class HdPhRenderPassShader : public HdPhShaderCode
+{
  public:
   HDPH_API
   HdPhRenderPassShader();

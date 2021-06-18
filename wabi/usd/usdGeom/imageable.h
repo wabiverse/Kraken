@@ -71,7 +71,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomImageable : public UsdTyped {
+class UsdGeomImageable : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -87,13 +88,15 @@ class UsdGeomImageable : public UsdTyped {
   /// Equivalent to UsdGeomImageable::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomImageable(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdGeomImageable(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdGeomImageable on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomImageable(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomImageable(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdGeomImageable(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.
@@ -390,7 +393,8 @@ class UsdGeomImageable : public UsdTyped {
   /// information necessary for efficiently computing and caching the purposes
   /// of a hierarchy of prims.
   /// \sa GetPurposeAttr(), \ref UsdGeom_ImageablePurpose
-  struct PurposeInfo {
+  struct PurposeInfo
+  {
     constexpr PurposeInfo() = default;
 
     PurposeInfo(const TfToken &purpose_, bool isInheritable_)

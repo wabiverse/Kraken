@@ -74,7 +74,8 @@ using HgiGLOpsFn = std::function<void(void)>;
 /// 2. It lets us satisfy the Hgi requirement that Hgi***Cmds objects must be
 ///    able to do their recording on secondary threads.
 ///
-class HgiGLOps {
+class HgiGLOps
+{
  public:
   HGIGL_API
   static HgiGLOpsFn PushDebugGroup(const char *label);

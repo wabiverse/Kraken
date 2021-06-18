@@ -47,7 +47,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdAbcAlembicFileFormat);
 
 /// \class UsdAbcAlembicFileFormat
 ///
-class UsdAbcAlembicFileFormat : public SdfFileFormat {
+class UsdAbcAlembicFileFormat : public SdfFileFormat
+{
  public:
   // SdfFileFormat overrides
   virtual SdfAbstractDataRefPtr InitData(const FileFormatArguments &) const override;

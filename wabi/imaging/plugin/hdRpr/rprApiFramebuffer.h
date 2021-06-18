@@ -21,7 +21,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprApiFramebuffer {
+class HdRprApiFramebuffer
+{
  public:
   static constexpr uint32_t kNumChannels = 4;
 

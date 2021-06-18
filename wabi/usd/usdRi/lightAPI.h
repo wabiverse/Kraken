@@ -66,7 +66,8 @@ class SdfAssetPath;
 /// RiLightAPI is an API schema that provides an interface
 /// to add Renderman-specific attributes to lights.
 ///
-class UsdRiLightAPI : public UsdAPISchemaBase {
+class UsdRiLightAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -82,13 +83,15 @@ class UsdRiLightAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdRiLightAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiLightAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdRiLightAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdRiLightAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiLightAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiLightAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdRiLightAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Various utilities for parsing metadata contained within shaders.
 ///
-namespace ShaderMetadataHelpers {
+namespace ShaderMetadataHelpers
+{
 /// Determines if the given property in the metadata dictionary has a
 /// truthy value. All values are considered to be true except the following
 /// (case-insensitive): '0', 'false', and 'f'. The absence of `propName`

@@ -56,7 +56,8 @@ class HdCamera;
 ///
 /// Parameters are expressed as GL states, uniforms or shaders.
 ///
-class HdRenderPassState {
+class HdRenderPassState
+{
  public:
   HD_API
   HdRenderPassState();
@@ -428,7 +429,12 @@ class HdRenderPassState {
     return _colorMaskUseDefault;
   }
 
-  enum ColorMask { ColorMaskNone, ColorMaskRGB, ColorMaskRGBA };
+  enum ColorMask
+  {
+    ColorMaskNone,
+    ColorMaskRGB,
+    ColorMaskRGBA
+  };
 
   HD_API
   void SetColorMasks(std::vector<ColorMask> const &masks);

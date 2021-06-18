@@ -70,7 +70,8 @@ _NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin()
   _followSymlinks = TfGetEnvSetting(WABI_NDR_FS_PLUGIN_FOLLOW_SYMLINKS);
 }
 
-_NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin(Filter filter) : _NdrFilesystemDiscoveryPlugin()
+_NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin(Filter filter)
+  : _NdrFilesystemDiscoveryPlugin()
 {
   _filter = std::move(filter);
 }
@@ -79,12 +80,16 @@ NdrNodeDiscoveryResultVec _NdrFilesystemDiscoveryPlugin::DiscoverNodes(const Con
 {
   auto result = NdrFsHelpersDiscoverNodes(_searchPaths, _allowedExtensions, _followSymlinks, &context);
 
-  if (_filter) {
+  if (_filter)
+  {
     auto j = result.begin();
-    for (auto i = j; i != result.end(); ++i) {
+    for (auto i = j; i != result.end(); ++i)
+    {
       // If we pass the filter and any previous haven't then move.
-      if (_filter(*i)) {
-        if (j != i) {
+      if (_filter(*i))
+      {
+        if (j != i)
+        {
           *j = std::move(*i);
         }
         ++j;

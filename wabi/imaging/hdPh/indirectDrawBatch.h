@@ -44,7 +44,8 @@ using HdBindingRequestVector = std::vector<HdBindingRequest>;
 /// primitive mode and that share aggregated drawing resources,
 /// e.g. uniform and non uniform primvar buffers.
 ///
-class HdPh_IndirectDrawBatch : public HdPh_DrawBatch {
+class HdPh_IndirectDrawBatch : public HdPh_DrawBatch
+{
  public:
   HDPH_API
   HdPh_IndirectDrawBatch(HdPhDrawItemInstance *drawItemInstance);
@@ -101,9 +102,13 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch {
                               std::vector<HdPhBufferArrayRangeSharedPtr> const &instanceBars) const;
 
   // Culling requires custom resource binding.
-  class _CullingProgram : public _DrawingProgram {
+  class _CullingProgram : public _DrawingProgram
+  {
    public:
-    _CullingProgram() : _useDrawArrays(false), _useInstanceCulling(false), _bufferArrayHash(0)
+    _CullingProgram()
+      : _useDrawArrays(false),
+        _useInstanceCulling(false),
+        _bufferArrayHash(0)
     {}
     void Initialize(bool useDrawArrays, bool useInstanceCulling, size_t bufferArrayHash);
 

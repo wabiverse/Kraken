@@ -44,7 +44,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _FrameSpec(const UsdUtilsTimeCodeRange &timeCodeRange)
 {
@@ -55,14 +56,16 @@ static std::string _FrameSpec(const UsdUtilsTimeCodeRange &timeCodeRange)
 
 static std::string _Repr(const UsdUtilsTimeCodeRange &timeCodeRange)
 {
-  if (timeCodeRange.empty()) {
+  if (timeCodeRange.empty())
+  {
     return TF_PY_REPR_PREFIX + "TimeCodeRange()";
   }
 
   return TF_PY_REPR_PREFIX + "TimeCodeRange.CreateFromFrameSpec('" + _FrameSpec(timeCodeRange) + "')";
 }
 
-class UsdUtils_PyTimeCodeRangeIterator {
+class UsdUtils_PyTimeCodeRangeIterator
+{
  public:
   explicit UsdUtils_PyTimeCodeRangeIterator(const UsdUtilsTimeCodeRange &timeCodeRange)
     : _iter(timeCodeRange.begin()),
@@ -80,7 +83,8 @@ class UsdUtils_PyTimeCodeRangeIterator {
   {
     _RaiseIfAtEnd();
 
-    if (_didFirst) {
+    if (_didFirst)
+    {
       ++_iter;
       _RaiseIfAtEnd();
     }
@@ -93,7 +97,8 @@ class UsdUtils_PyTimeCodeRangeIterator {
  private:
   void _RaiseIfAtEnd() const
   {
-    if (_iter == _end) {
+    if (_iter == _end)
+    {
       PyErr_SetString(PyExc_StopIteration, "UsdUtilsTimeCodeRange at end");
       throw_error_already_set();
     }

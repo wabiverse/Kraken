@@ -45,7 +45,8 @@ class HdPhTextureIdentifier;
 ///
 /// A central registry for texture GPU resources.
 ///
-class HdPh_TextureObjectRegistry final {
+class HdPh_TextureObjectRegistry final
+{
  public:
   explicit HdPh_TextureObjectRegistry(HdPhResourceRegistry *registry);
   ~HdPh_TextureObjectRegistry();

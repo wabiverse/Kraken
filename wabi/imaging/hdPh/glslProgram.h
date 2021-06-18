@@ -42,7 +42,8 @@ using HgiShaderProgramHandle = HgiHandle<class HgiShaderProgram>;
 ///
 /// An instance of a glsl program.
 ///
-class HdPhGLSLProgram final {
+class HdPhGLSLProgram final
+{
  public:
   typedef size_t ID;
 

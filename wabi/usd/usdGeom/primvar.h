@@ -257,7 +257,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// \sa UsdGeomImageable::FindInheritablePrimvars().
 ///
-class UsdGeomPrimvar {
+class UsdGeomPrimvar
+{
  public:
   // Default constructor returns an invalid Primvar.  Exists for
   // container classes
@@ -476,13 +477,15 @@ class UsdGeomPrimvar {
   ///
   /// \sa Usd_Handling_Indexed_Primvars for proper handling of
   /// \ref Usd_Handling_Indexed_Primvars "indexed primvars"
-  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return _attr.Get(value, time);
   }
 
   /// Set the attribute value of the Primvar at \p time
-  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return _attr.Set(value, time);
   }
@@ -792,11 +795,14 @@ class UsdGeomPrimvar {
 
 // We instantiate the following so we can check and provide the correct value
 // for Id attributes.
-template<> USDGEOM_API bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const;
+template<>
+USDGEOM_API bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const;
 
-template<> USDGEOM_API bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) const;
+template<>
+USDGEOM_API bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) const;
 
-template<> USDGEOM_API bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const;
+template<>
+USDGEOM_API bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const;
 
 template<typename ScalarType>
 bool UsdGeomPrimvar::ComputeFlattened(VtArray<ScalarType> *value, UsdTimeCode time) const
@@ -805,13 +811,15 @@ bool UsdGeomPrimvar::ComputeFlattened(VtArray<ScalarType> *value, UsdTimeCode ti
   if (!Get(&authored, time))
     return false;
 
-  if (!IsIndexed()) {
+  if (!IsIndexed())
+  {
     *value = authored;
     return true;
   }
 
   VtIntArray indices;
-  if (!GetIndices(&indices, time)) {
+  if (!GetIndices(&indices, time))
+  {
     TF_WARN("No indices authored for indexed primvar <%s>.", _attr.GetPath().GetText());
     return false;
   }
@@ -822,7 +830,8 @@ bool UsdGeomPrimvar::ComputeFlattened(VtArray<ScalarType> *value, UsdTimeCode ti
 
   std::string errString;
   bool res = _ComputeFlattenedHelper(authored, indices, value, &errString);
-  if (!errString.empty()) {
+  if (!errString.empty())
+  {
     TF_WARN("For primvar %s: %s", UsdDescribe(_attr).c_str(), errString.c_str());
   }
   return res;
@@ -838,27 +847,33 @@ bool UsdGeomPrimvar::_ComputeFlattenedHelper(const VtArray<ScalarType> &authored
   bool success = true;
 
   std::vector<size_t> invalidIndexPositions;
-  for (size_t i = 0; i < indices.size(); i++) {
+  for (size_t i = 0; i < indices.size(); i++)
+  {
     int index = indices[i];
-    if (index >= 0 && (size_t)index < authored.size()) {
+    if (index >= 0 && (size_t)index < authored.size())
+    {
       (*value)[i] = authored[index];
     }
-    else {
+    else
+    {
       invalidIndexPositions.push_back(i);
       success = false;
     }
   }
 
-  if (!invalidIndexPositions.empty()) {
+  if (!invalidIndexPositions.empty())
+  {
     std::vector<std::string> invalidPositionsStrVec;
     // Print a maximum of 5 invalid index positions.
     size_t numElementsToPrint = std::min(invalidIndexPositions.size(), size_t(5));
     invalidPositionsStrVec.reserve(numElementsToPrint);
-    for (size_t i = 0; i < numElementsToPrint; ++i) {
+    for (size_t i = 0; i < numElementsToPrint; ++i)
+    {
       invalidPositionsStrVec.push_back(TfStringify(invalidIndexPositions[i]));
     }
 
-    if (errString) {
+    if (errString)
+    {
       *errString = TfStringPrintf(
         "Found %ld invalid indices at positions [%s%s] that are out of "
         "range [0,%ld).",

@@ -40,7 +40,8 @@ class PcpCache;
 /// field values when generating dynamic file format arguments. The context
 /// allows us to iterate over all nodes that have already been composed looking
 /// for the strongest opinion for a relevant field.
-class PcpDynamicFileFormatContext {
+class PcpDynamicFileFormatContext
+{
  public:
   using VtValueVector = std::vector<VtValue>;
 

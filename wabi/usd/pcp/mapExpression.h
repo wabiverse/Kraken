@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 /// mapping operations and their inputs, so we can narrowly redo the
 /// computation when one of the inputs changes.
 ///
-class PcpMapExpression {
+class PcpMapExpression
+{
  public:
   /// The value type of PcpMapExpression is a PcpMapFunction.
   typedef PcpMapFunction Value;
@@ -91,7 +92,8 @@ class PcpMapExpression {
   /// A Variable is a mutable memory cell that holds a value.
   /// Changing a variable's value invalidates any expressions using
   /// that variable.
-  class Variable {
+  class Variable
+  {
     Variable(Variable const &) = delete;
     Variable &operator=(Variable const &) = delete;
 
@@ -191,17 +193,27 @@ class PcpMapExpression {
   class _Node;
   typedef boost::intrusive_ptr<_Node> _NodeRefPtr;
 
-  explicit PcpMapExpression(const _NodeRefPtr &node) : _node(node)
+  explicit PcpMapExpression(const _NodeRefPtr &node)
+    : _node(node)
   {}
 
  private:  // data
-  enum _Op { _OpConstant, _OpVariable, _OpInverse, _OpCompose, _OpAddRootIdentity };
+  enum _Op
+  {
+    _OpConstant,
+    _OpVariable,
+    _OpInverse,
+    _OpCompose,
+    _OpAddRootIdentity
+  };
 
-  class _Node : public boost::noncopyable {
+  class _Node : public boost::noncopyable
+  {
    public:
     // The Key holds all the state needed to uniquely identify
     // this (sub-)expression.
-    struct Key {
+    struct Key
+    {
       const _Op op;
       const _NodeRefPtr arg1, arg2;
       const Value valueForConstant;

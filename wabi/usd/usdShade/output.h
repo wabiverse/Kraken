@@ -44,7 +44,8 @@ class UsdShadeInput;
 /// This class encapsulates a shader or node-graph output, which is a
 /// connectable attribute representing a typed, externally computed value.
 ///
-class UsdShadeOutput {
+class UsdShadeOutput
+{
  public:
   /// Default constructor returns an invalid Output.  Exists for
   /// container classes
@@ -92,9 +93,11 @@ class UsdShadeOutput {
   /// \overload
   /// Set the attribute value of the Output at \p time
   ///
-  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T>
+  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
-    if (UsdAttribute attr = GetAttr()) {
+    if (UsdAttribute attr = GetAttr())
+    {
       return attr.Set(value, time);
     }
     return false;

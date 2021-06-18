@@ -47,7 +47,8 @@ TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 ///
 /// For more details, see \ref Usd_ValueResolution.
 ///
-enum UsdResolveInfoSource {
+enum UsdResolveInfoSource
+{
   UsdResolveInfoSourceNone,  ///< No value
 
   UsdResolveInfoSourceFallback,     ///< Built-in fallback value
@@ -63,9 +64,12 @@ enum UsdResolveInfoSource {
 ///
 /// For more details, see \ref Usd_ValueResolution.
 ///
-class UsdResolveInfo {
+class UsdResolveInfo
+{
  public:
-  UsdResolveInfo() : _source(UsdResolveInfoSourceNone), _valueIsBlocked(false)
+  UsdResolveInfo()
+    : _source(UsdResolveInfoSourceNone),
+      _valueIsBlocked(false)
   {}
 
   /// Return the source of the associated attribute's value.

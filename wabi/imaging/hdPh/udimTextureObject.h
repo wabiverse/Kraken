@@ -51,7 +51,8 @@ HDPH_API bool HdPhIsSupportedUdimTexture(std::string const &imageFilePath);
 ///
 /// A UDIM texture.
 ///
-class HdPhUdimTextureObject final : public HdPhTextureObject {
+class HdPhUdimTextureObject final : public HdPhTextureObject
+{
  public:
   HDPH_API
   HdPhUdimTextureObject(const HdPhTextureIdentifier &textureId,
@@ -106,7 +107,9 @@ class HdPhUdimTextureObject final : public HdPhTextureObject {
   void _DestroyTextures();
 };
 
-template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Udim> {
+template<>
+struct HdPh_TypedTextureObjectHelper<HdTextureType::Udim>
+{
   using type = HdPhUdimTextureObject;
 };
 

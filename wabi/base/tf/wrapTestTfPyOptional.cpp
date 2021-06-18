@@ -40,7 +40,8 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // ////////////////////////////////
 // // optional
@@ -49,23 +50,27 @@ static tuple _TakesOptional(const boost::optional<string> &optString,
                             const boost::optional<vector<string>> &optStrvec)
 {
   object strObj;
-  if (optString) {
+  if (optString)
+  {
     strObj = object(*optString);
   }
   object vecObj;
-  if (optStrvec) {
+  if (optStrvec)
+  {
     vecObj = object(TfPyCopySequenceToList(*optStrvec));
   }
   return make_tuple(strObj, vecObj);
 }
 
-template<typename T> static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
+template<typename T>
+static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
 {
   fprintf(stderr, "TestOptional<%s>\n", ArchGetDemangled<T>().c_str());
   return opt;
 }
 
-struct Tf_TestPyOptional {
+struct Tf_TestPyOptional
+{
 };
 
 }  // anonymous namespace

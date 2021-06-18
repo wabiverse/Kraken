@@ -47,7 +47,8 @@ class HgiGLDevice;
 ///
 /// OpenGL implementation of HgiGraphicsCmds.
 ///
-class HgiGLGraphicsCmds final : public HgiGraphicsCmds {
+class HgiGLGraphicsCmds final : public HgiGraphicsCmds
+{
  public:
   HGIGL_API
   ~HgiGLGraphicsCmds() override;

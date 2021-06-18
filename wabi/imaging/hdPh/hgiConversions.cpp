@@ -26,9 +26,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-struct _FormatDesc {
+struct _FormatDesc
+{
   HdFormat hdFormat;
   HgiFormat hgiFormat;
 };
@@ -85,7 +87,8 @@ constexpr bool _CompileTimeValidateFormatTable()
 static_assert(_CompileTimeValidateFormatTable(),
               "_FormatDesc array out of sync with HdFormat/HgiFormat enum");
 
-struct _WrapDesc {
+struct _WrapDesc
+{
   HdWrap hdWrap;
   HgiSamplerAddressMode hgiSamplerAddressMode;
 };
@@ -105,7 +108,8 @@ constexpr bool _CompileTimeValidateWrapTable()
 static_assert(_CompileTimeValidateWrapTable(),
               "_WrapDesc array out of sync with HdWrap/HgiSamplerAddressMode");
 
-struct _MagDesc {
+struct _MagDesc
+{
   HdMagFilter hdMagFilter;
   HgiSamplerFilter hgiSamplerFilter;
 };
@@ -120,7 +124,8 @@ constexpr bool _CompileTimeValidateMagTable()
 
 static_assert(_CompileTimeValidateMagTable(), "_MagDesc array out of sync with HdMagFilter");
 
-struct _MinDesc {
+struct _MinDesc
+{
   HdMinFilter hdMinFilter;
   HgiSamplerFilter hgiSamplerFilter;
   HgiMipFilter hgiMipFilter;
@@ -145,13 +150,15 @@ static_assert(_CompileTimeValidateMinTable(), "_MinDesc array out of sync with H
 
 HgiFormat HdPhHgiConversions::GetHgiFormat(const HdFormat hdFormat)
 {
-  if ((hdFormat < 0) || (hdFormat >= HdFormatCount)) {
+  if ((hdFormat < 0) || (hdFormat >= HdFormatCount))
+  {
     TF_CODING_ERROR("Unexpected HdFormat %d", hdFormat);
     return HgiFormatInvalid;
   }
 
   HgiFormat hgiFormat = FORMAT_DESC[hdFormat].hgiFormat;
-  if (ARCH_UNLIKELY(hgiFormat == HgiFormatInvalid)) {
+  if (ARCH_UNLIKELY(hgiFormat == HgiFormatInvalid))
+  {
     TF_CODING_ERROR("Unsupported format");
   }
 
@@ -160,7 +167,8 @@ HgiFormat HdPhHgiConversions::GetHgiFormat(const HdFormat hdFormat)
 
 HgiSamplerAddressMode HdPhHgiConversions::GetHgiSamplerAddressMode(const HdWrap hdWrap)
 {
-  if ((hdWrap < 0) || (hdWrap > HdWrapLegacyNoOpinionFallbackRepeat)) {
+  if ((hdWrap < 0) || (hdWrap > HdWrapLegacyNoOpinionFallbackRepeat))
+  {
     TF_CODING_ERROR("Unexpected HdWrap %d", hdWrap);
     return HgiSamplerAddressModeClampToBorderColor;
   }
@@ -170,7 +178,8 @@ HgiSamplerAddressMode HdPhHgiConversions::GetHgiSamplerAddressMode(const HdWrap 
 
 HgiSamplerFilter HdPhHgiConversions::GetHgiMagFilter(const HdMagFilter hdMagFilter)
 {
-  if ((hdMagFilter < 0) || (hdMagFilter > HdMagFilterLinear)) {
+  if ((hdMagFilter < 0) || (hdMagFilter > HdMagFilterLinear))
+  {
     TF_CODING_ERROR("Unexpected HdMagFilter %d", hdMagFilter);
     return HgiSamplerFilterLinear;
   }
@@ -181,7 +190,8 @@ void HdPhHgiConversions::GetHgiMinAndMipFilter(const HdMinFilter hdMinFilter,
                                                HgiSamplerFilter *const hgiSamplerFilter,
                                                HgiMipFilter *const hgiMipFilter)
 {
-  if ((hdMinFilter < 0) || (hdMinFilter > HdMinFilterLinearMipmapLinear)) {
+  if ((hdMinFilter < 0) || (hdMinFilter > HdMinFilterLinearMipmapLinear))
+  {
     TF_CODING_ERROR("Unexpected HdMinFilter %d", hdMinFilter);
     *hgiSamplerFilter = HgiSamplerFilterLinear;
     *hgiMipFilter = HgiMipFilterNotMipmapped;

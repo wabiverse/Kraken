@@ -34,7 +34,8 @@
 #include <wabi/imaging/hd/basisCurves.h>
 #include <wabi/wabi.h>
 
-namespace ccl {
+namespace ccl
+{
 class Mesh;
 class Scene;
 class Object;
@@ -52,7 +53,8 @@ class HdCyclesRenderDelegate;
  * @brief Cycles Basis Curve Rprim mapped to Cycles Basis Curve
  *
  */
-class HdCyclesBasisCurves final : public HdBasisCurves {
+class HdCyclesBasisCurves final : public HdBasisCurves
+{
  public:
   /**
    * @brief Construct a new HdCycles Basis Curve object
@@ -210,7 +212,8 @@ class HdCyclesBasisCurves final : public HdBasisCurves {
   HdCyclesRenderDelegate *m_renderDelegate;
 };
 
-class HdBbHairAttributeSource : public HdBbAttributeSource {
+class HdBbHairAttributeSource : public HdBbAttributeSource
+{
  public:
   HdBbHairAttributeSource(TfToken name,
                           const TfToken &role,

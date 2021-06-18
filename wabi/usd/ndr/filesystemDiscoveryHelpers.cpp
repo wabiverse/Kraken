@@ -41,7 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 // Examines the specified set of files, and determines if any of the files
 // are candidates for being parsed into a node. If a file is determined
@@ -61,14 +62,16 @@ bool FsHelpersExamineFiles(NdrNodeDiscoveryResultVec *foundNodes,
                            const std::string &dirPath,
                            const NdrStringVec &dirFileNames)
 {
-  for (const std::string &fileName : dirFileNames) {
+  for (const std::string &fileName : dirFileNames)
+  {
     std::string extension = TfStringToLower(TfGetExtension(fileName));
 
     // Does the extension match one of the known-good extensions?
     NdrStringVec::const_iterator extIter = std::find(
       allowedExtensions.begin(), allowedExtensions.end(), extension);
 
-    if (extIter != allowedExtensions.end()) {
+    if (extIter != allowedExtensions.end())
+    {
       // Found a node file w/ allowed extension
       std::string uri = TfStringCatPaths(dirPath, fileName);
       std::string identifier = TfStringGetBeforeSuffix(fileName, '.');
@@ -76,7 +79,8 @@ bool FsHelpersExamineFiles(NdrNodeDiscoveryResultVec *foundNodes,
 
       // Don't allow duplicates. A "duplicate" is considered to be a node
       // with the same name AND discovery type.
-      if (!foundNodesWithTypes->insert(identifierAndType).second) {
+      if (!foundNodesWithTypes->insert(identifierAndType).second)
+      {
         TF_DEBUG(NDR_DISCOVERY)
           .Msg(
             "Found a duplicate node with identifier [%s] "
@@ -136,8 +140,10 @@ NdrNodeDiscoveryResultVec NdrFsHelpersDiscoverNodes(const NdrStringVec &searchPa
   // Cache the calls to Ar's `Resolve()`
   ArResolverScopedCache resolverCache;
 
-  for (const std::string &searchPath : searchPaths) {
-    if (!TfIsDir(searchPath)) {
+  for (const std::string &searchPath : searchPaths)
+  {
+    if (!TfIsDir(searchPath))
+    {
       continue;
     }
 

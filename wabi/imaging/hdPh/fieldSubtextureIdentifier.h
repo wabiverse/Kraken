@@ -33,7 +33,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Identifies a grid in an OpenVDB file. Parallels OpenVDBAsset in usdVol.
 ///
-class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier {
+class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier
+{
  public:
   /// C'tor
   ///
@@ -59,7 +60,8 @@ class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextur
 /// Identifies the grid in a Field3DAsset file.
 /// Parallels Field3DAsset in usdVol.
 ///
-class HdPhField3DAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier {
+class HdPhField3DAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier
+{
  public:
   /// C'tor
   ///

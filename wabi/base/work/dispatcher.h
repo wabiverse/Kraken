@@ -76,7 +76,8 @@ WABI_NAMESPACE_BEGIN
 /// added by Run().  Additionally, Wait() must never be called by a task added by
 /// Run(), since that task could never complete.
 ///
-class WorkDispatcher {
+class WorkDispatcher
+{
  public:
   /// Construct a new dispatcher.
   WORK_API WorkDispatcher();
@@ -104,12 +105,14 @@ class WorkDispatcher {
 
 #else  // doxygen
 
-  template<class Callable> inline void Run(Callable &&c)
+  template<class Callable>
+  inline void Run(Callable &&c)
   {
     _rootTask->spawn(_MakeInvokerTask(std::forward<Callable>(c)));
   }
 
-  template<class Callable, class A0, class... Args> inline void Run(Callable &&c, A0 &&a0, Args &&...args)
+  template<class Callable, class A0, class... Args>
+  inline void Run(Callable &&c, A0 &&a0, Args &&...args)
   {
     Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
   }
@@ -137,11 +140,17 @@ class WorkDispatcher {
   // Function invoker helper that wraps the invocation with an ErrorMark so we
   // can transmit errors that occur back to the thread that Wait() s for tasks
   // to complete.
-  template<class Fn> struct _InvokerTask : public tbb::task {
-    explicit _InvokerTask(Fn &&fn, _ErrorTransports *err) : _fn(std::move(fn)), _errors(err)
+  template<class Fn>
+  struct _InvokerTask : public tbb::task
+  {
+    explicit _InvokerTask(Fn &&fn, _ErrorTransports *err)
+      : _fn(std::move(fn)),
+        _errors(err)
     {}
 
-    explicit _InvokerTask(Fn const &fn, _ErrorTransports *err) : _fn(fn), _errors(err)
+    explicit _InvokerTask(Fn const &fn, _ErrorTransports *err)
+      : _fn(fn),
+        _errors(err)
     {}
 
     virtual tbb::task *execute()
@@ -159,7 +168,8 @@ class WorkDispatcher {
   };
 
   // Make an _InvokerTask instance, letting the function template deduce Fn.
-  template<class Fn> _InvokerTask<typename std::remove_reference<Fn>::type> &_MakeInvokerTask(Fn &&fn)
+  template<class Fn>
+  _InvokerTask<typename std::remove_reference<Fn>::type> &_MakeInvokerTask(Fn &&fn)
   {
     return *new (_rootTask->allocate_additional_child_of(*_rootTask))
       _InvokerTask<typename std::remove_reference<Fn>::type>(std::forward<Fn>(fn), &_errors);

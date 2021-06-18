@@ -81,19 +81,23 @@ shader UsdUVTexture[[string category = "generator"]](
   string swrap = wrapS;
   string twrap = wrapT;
 
-  if (swrap == "repeat") {
+  if (swrap == "repeat")
+  {
     swrap = "periodic";
   }
 
-  if (twrap == "repeat") {
+  if (twrap == "repeat")
+  {
     twrap = "periodic";
   }
 
-  if (swrap == "useMetadata") {
+  if (swrap == "useMetadata")
+  {
     swrap = "default";
   }
 
-  if (twrap == "useMetadata") {
+  if (twrap == "useMetadata")
+  {
     twrap = "default";
   }
 

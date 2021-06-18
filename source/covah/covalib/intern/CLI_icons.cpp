@@ -37,7 +37,8 @@ std::string CLI_icon(int icon_id)
   const std::string exe_path = TfGetPathName(ArchGetExecutablePath());
   const std::string icons_path = TfStringCatPaths(exe_path, "../datafiles/icons");
 
-  switch (icon_id) {
+  switch (icon_id)
+  {
     case ICON_COVAH:
       return TfStringCatPaths(icons_path, "covah-desktop.png");
     case ICON_WINDOW_CLOSE:

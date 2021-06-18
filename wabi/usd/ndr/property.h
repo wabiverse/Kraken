@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// In almost all cases, this class will not be used directly. More specialized
 /// properties can be created that derive from `NdrProperty`; those specialized
 /// properties can add their own domain-specific data and methods.
-class NdrProperty {
+class NdrProperty
+{
  public:
   /// Constructor.
   NDR_API

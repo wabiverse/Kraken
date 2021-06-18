@@ -57,7 +57,8 @@ UsdLuxRectLight::~UsdLuxRectLight()
 /* static */
 UsdLuxRectLight UsdLuxRectLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxRectLight();
   }
@@ -68,7 +69,8 @@ UsdLuxRectLight UsdLuxRectLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxRectLight UsdLuxRectLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RectLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxRectLight();
   }
@@ -152,7 +154,8 @@ UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue,
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

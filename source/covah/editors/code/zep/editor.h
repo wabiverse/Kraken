@@ -37,7 +37,8 @@
 // The display has multiple BufferRegions, each a window onto a buffer.
 // Multiple regions can refer to the same buffer (N Regions : N Buffers)
 // The Modes receive key presses and act on a buffer region
-namespace Zep {
+namespace Zep
+{
 
 class ZepBuffer;
 class ZepMode;
@@ -63,7 +64,8 @@ inline bool ZTestFlags(const uint32_t &flags, uint32_t value)
 }
 inline uint32_t ZSetFlags(const uint32_t &flags, uint32_t value, bool set = true)
 {
-  if (set) {
+  if (set)
+  {
     return flags | value;
   }
   else
@@ -74,13 +76,26 @@ inline uint32_t ZClearFlags(const uint32_t &flags, uint32_t value)
   return flags & ~value;
 }
 
-namespace ZepEditorFlags {
-enum { None = (0), DisableThreads = (1 << 0), FastUpdate = (1 << 1) };
+namespace ZepEditorFlags
+{
+enum
+{
+  None = (0),
+  DisableThreads = (1 << 0),
+  FastUpdate = (1 << 1)
+};
 };
 
-enum class ZepMouseButton { Left, Middle, Right, Unknown };
+enum class ZepMouseButton
+{
+  Left,
+  Middle,
+  Right,
+  Unknown
+};
 
-enum class Msg {
+enum class Msg
+{
   HandleCommand,
   RequestQuit,
   GetClipBoard,
@@ -96,9 +111,12 @@ enum class Msg {
 };
 
 struct IZepComponent;
-class ZepMessage {
+class ZepMessage
+{
  public:
-  ZepMessage(Msg id, const std::string &strIn = std::string()) : messageId(id), str(strIn)
+  ZepMessage(Msg id, const std::string &strIn = std::string())
+    : messageId(id),
+      str(strIn)
   {}
 
   ZepMessage(Msg id, const NVec2f &p, ZepMouseButton b = ZepMouseButton::Unknown)
@@ -107,7 +125,9 @@ class ZepMessage {
       button(b)
   {}
 
-  ZepMessage(Msg id, IZepComponent *pComp) : messageId(id), pComponent(pComp)
+  ZepMessage(Msg id, IZepComponent *pComp)
+    : messageId(id),
+      pComponent(pComp)
   {}
 
   Msg messageId;         // Message ID
@@ -118,7 +138,8 @@ class ZepMessage {
   IZepComponent *pComponent = nullptr;
 };
 
-struct IZepComponent {
+struct IZepComponent
+{
   virtual void Notify(std::shared_ptr<ZepMessage> message)
   {
     ZEP_UNUSED(message);
@@ -126,7 +147,8 @@ struct IZepComponent {
   virtual ZepEditor &GetEditor() const = 0;
 };
 
-class ZepComponent : public IZepComponent {
+class ZepComponent : public IZepComponent
+{
  public:
   ZepComponent(ZepEditor &editor);
   virtual ~ZepComponent();
@@ -140,14 +162,23 @@ class ZepComponent : public IZepComponent {
 };
 
 // Registers are used by the editor to store/retrieve text fragments
-struct Register {
-  Register() : text(""), lineWise(false)
+struct Register
+{
+  Register()
+    : text(""),
+      lineWise(false)
   {}
-  Register(const char *ch, bool lw = false) : text(ch), lineWise(lw)
+  Register(const char *ch, bool lw = false)
+    : text(ch),
+      lineWise(lw)
   {}
-  Register(uint8_t *ch, bool lw = false) : text((const char *)ch), lineWise(lw)
+  Register(uint8_t *ch, bool lw = false)
+    : text((const char *)ch),
+      lineWise(lw)
   {}
-  Register(const std::string &str, bool lw = false) : text(str), lineWise(lw)
+  Register(const std::string &str, bool lw = false)
+    : text(str),
+      lineWise(lw)
   {}
 
   std::string text;
@@ -158,7 +189,8 @@ using tRegisters = std::map<std::string, Register>;
 using tBuffers = std::deque<std::shared_ptr<ZepBuffer>>;
 using tSyntaxFactory = std::function<std::shared_ptr<ZepSyntax>(ZepBuffer *)>;
 
-struct SyntaxProvider {
+struct SyntaxProvider
+{
   std::string syntaxID;
   tSyntaxFactory factory = nullptr;
 };
@@ -180,9 +212,14 @@ inline float FontHeightPixelsFromPointSize(float pointSize, float pixelScaleY)
   return inches * (pixelScaleY * 96.0f);
 }
 
-enum class EditorStyle { Normal = 0, Minimal };
+enum class EditorStyle
+{
+  Normal = 0,
+  Minimal
+};
 
-struct EditorConfig {
+struct EditorConfig
+{
   uint32_t showScrollBar = 1;
   EditorStyle style = EditorStyle::Normal;
   NVec2f lineMargins = NVec2f(1.0f);
@@ -199,9 +236,11 @@ struct EditorConfig {
   float backgroundFadeWait = 60.0f;
 };
 
-class ZepExCommand : public ZepComponent {
+class ZepExCommand : public ZepComponent
+{
  public:
-  ZepExCommand(ZepEditor &editor) : ZepComponent(editor)
+  ZepExCommand(ZepEditor &editor)
+    : ZepComponent(editor)
   {}
   virtual ~ZepExCommand()
   {}
@@ -218,13 +257,15 @@ class ZepExCommand : public ZepComponent {
   };
 };
 
-struct TabRegionTab : public Region {
+struct TabRegionTab : public Region
+{
   NVec4f color;
   std::string name;
   ZepTabWindow *pTabWindow = nullptr;
 };
 
-class ZepEditor {
+class ZepEditor
+{
  public:
   // Root path is the path to search for a config file
   ZepEditor(ZepDisplay *pDisplay,

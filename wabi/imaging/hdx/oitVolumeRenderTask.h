@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 /// A task for rendering transparent geometry into OIT buffers.
 /// Its companion task, OITResolveTask, will blend the buffers to screen.
 ///
-class HdxOitVolumeRenderTask : public HdxRenderTask {
+class HdxOitVolumeRenderTask : public HdxRenderTask
+{
  public:
   HDX_API
   HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id);

@@ -52,7 +52,8 @@ using HdPhBufferResourceNamedList = std::vector<std::pair<TfToken, HdPhBufferRes
 /// inherited of this interface so that client (drawItem) can be agnostic about
 /// the implementation detail of aggregation.
 ///
-class HdPhBufferArrayRange : public HdBufferArrayRange {
+class HdPhBufferArrayRange : public HdBufferArrayRange
+{
  public:
   HdPhBufferArrayRange(HdPhResourceRegistry *resourceRegistry);
 
@@ -92,10 +93,12 @@ std::ostream &operator<<(std::ostream &out, const HdPhBufferArrayRange &self);
 ///
 /// A resizable container of HdBufferArrayRanges.
 ///
-class HdPhBufferArrayRangeContainer {
+class HdPhBufferArrayRangeContainer
+{
  public:
   /// Constructor
-  HdPhBufferArrayRangeContainer(int size) : _ranges(size)
+  HdPhBufferArrayRangeContainer(int size)
+    : _ranges(size)
   {}
 
   /// Set \p range into the container at \p index.

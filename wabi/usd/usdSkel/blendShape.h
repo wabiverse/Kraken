@@ -69,7 +69,8 @@ class SdfAssetPath;
 /// documentation for information.
 ///
 ///
-class UsdSkelBlendShape : public UsdTyped {
+class UsdSkelBlendShape : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -85,13 +86,15 @@ class UsdSkelBlendShape : public UsdTyped {
   /// Equivalent to UsdSkelBlendShape::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelBlendShape(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdSkelBlendShape(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdSkelBlendShape on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelBlendShape(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelBlendShape(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdSkelBlendShape(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

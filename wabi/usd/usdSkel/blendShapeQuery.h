@@ -50,7 +50,8 @@ class UsdSkelBindingAPI;
 ///
 /// Helper class used to resolve blend shape weights, including
 /// inbetweens.
-class UsdSkelBlendShapeQuery {
+class UsdSkelBlendShapeQuery
+{
  public:
   UsdSkelBlendShapeQuery() = default;
 
@@ -180,7 +181,8 @@ class UsdSkelBlendShapeQuery {
 
  private:
   /// Object identifying a general subshape.
-  struct _SubShape {
+  struct _SubShape
+  {
     _SubShape() = default;
 
     _SubShape(unsigned blendShapeIndex, int inbetweenIndex, float weight)
@@ -223,7 +225,8 @@ class UsdSkelBlendShapeQuery {
     float _weight = 0;
   };
 
-  struct _SubShapeCompareByWeight {
+  struct _SubShapeCompareByWeight
+  {
     bool operator()(const _SubShape &lhs, const _SubShape &rhs) const
     {
       return lhs.GetWeight() < rhs.GetWeight();
@@ -235,7 +238,8 @@ class UsdSkelBlendShapeQuery {
     }
   };
 
-  struct _BlendShape {
+  struct _BlendShape
+  {
     UsdSkelBlendShape shape;
     size_t firstSubShape = 0;
     size_t numSubShapes = 0;

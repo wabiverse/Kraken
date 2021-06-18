@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Delegate support for UsdGeomCamera.
 ///
-class UsdImagingCameraAdapter : public UsdImagingPrimAdapter {
+class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
+{
  public:
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingCameraAdapter() : UsdImagingPrimAdapter()
+  UsdImagingCameraAdapter()
+    : UsdImagingPrimAdapter()
   {}
 
   USDIMAGING_API

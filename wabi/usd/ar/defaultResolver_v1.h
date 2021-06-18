@@ -71,7 +71,8 @@ WABI_NAMESPACE_BEGIN
 ///      expected to be a list of directories delimited by the platform's
 ///      standard path separator.
 ///
-class ArDefaultResolver : public ArResolver {
+class ArDefaultResolver : public ArResolver
+{
  public:
   AR_API
   ArDefaultResolver();

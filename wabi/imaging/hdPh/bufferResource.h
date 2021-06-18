@@ -48,7 +48,8 @@ using HdPhBufferResourceNamedList = std::vector<HdPhBufferResourceNamedPair>;
 /// A specific type of HdBufferResource (GPU resource) representing
 /// an HgiBufferHandle.
 ///
-class HdPhBufferResource final : public HdBufferResource {
+class HdPhBufferResource final : public HdBufferResource
+{
  public:
   HDPH_API
   HdPhBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride);

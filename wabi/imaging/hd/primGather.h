@@ -35,7 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrimGather final {
+class HdPrimGather final
+{
  public:
   typedef bool (*FilterPredicateFn)(const SdfPath &path, const void *param);
 
@@ -133,11 +134,14 @@ class HdPrimGather final {
   bool SubtreeAsRange(const SdfPathVector &paths, const SdfPath &rootPath, size_t *start, size_t *end);
 
  private:
-  struct _PathFilter {
+  struct _PathFilter
+  {
     SdfPath _path;
     bool _includePath;  // false = exclude path
 
-    _PathFilter(const SdfPath &path, bool includePath) : _path(path), _includePath(includePath)
+    _PathFilter(const SdfPath &path, bool includePath)
+      : _path(path),
+        _includePath(includePath)
     {}
 
     bool operator>(const _PathFilter &other) const
@@ -151,11 +155,14 @@ class HdPrimGather final {
   // rather than copying all the paths.
   // This to avoid copying the larger set of paths at intermediate
   // processing steps.
-  struct _Range {
+  struct _Range
+  {
     size_t _start;
     size_t _end;  // Inclusive
 
-    _Range(size_t start, size_t end) : _start(start), _end(end)
+    _Range(size_t start, size_t end)
+      : _start(start),
+        _end(end)
     {}
   };
   typedef std::vector<_Range> _RangeArray;

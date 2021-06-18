@@ -57,7 +57,8 @@ UsdSkelBlendShape::~UsdSkelBlendShape()
 /* static */
 UsdSkelBlendShape UsdSkelBlendShape::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelBlendShape();
   }
@@ -68,7 +69,8 @@ UsdSkelBlendShape UsdSkelBlendShape::Get(const UsdStagePtr &stage, const SdfPath
 UsdSkelBlendShape UsdSkelBlendShape::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("BlendShape");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelBlendShape();
   }
@@ -153,7 +155,8 @@ UsdAttribute UsdSkelBlendShape::CreatePointIndicesAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -216,12 +219,14 @@ std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::_MakeInbetweens(
 {
   std::vector<UsdSkelInbetweenShape> shapes;
   shapes.reserve(props.size());
-  for (const UsdProperty &prop : props) {
+  for (const UsdProperty &prop : props)
+  {
     const UsdAttribute attr = prop.As<UsdAttribute>();
     // The input property list will often include properties within
     // the namespace of inbetween shapes, such as
     // 'inbetweens:shape:normalOffsets' Filter out those cases.
-    if (UsdSkelInbetweenShape::IsInbetween(attr)) {
+    if (UsdSkelInbetweenShape::IsInbetween(attr))
+    {
       shapes.push_back(UsdSkelInbetweenShape(attr));
     }
   }
@@ -247,18 +252,24 @@ bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
                                              size_t numPoints,
                                              std::string *reason)
 {
-  for (size_t i = 0; i < indices.size(); ++i) {
+  for (size_t i = 0; i < indices.size(); ++i)
+  {
     const int pointIndex = indices[i];
-    if (pointIndex >= 0) {
-      if (ARCH_UNLIKELY(static_cast<size_t>(pointIndex) >= numPoints)) {
-        if (reason) {
+    if (pointIndex >= 0)
+    {
+      if (ARCH_UNLIKELY(static_cast<size_t>(pointIndex) >= numPoints))
+      {
+        if (reason)
+        {
           *reason = TfStringPrintf("Index [%d] at element %td >= numPoints [%zu]", pointIndex, i, numPoints);
         }
         return false;
       }
     }
-    else {
-      if (reason) {
+    else
+    {
+      if (reason)
+      {
         *reason = TfStringPrintf("Index [%d] at element %td < 0", pointIndex, i);
       }
       return false;

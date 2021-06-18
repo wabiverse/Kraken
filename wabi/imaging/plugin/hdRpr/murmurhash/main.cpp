@@ -32,7 +32,8 @@ bool g_testSeed = false;
 //-----------------------------------------------------------------------------
 // This is the list of all hashes that SMHasher can test.
 
-struct HashInfo {
+struct HashInfo
+{
   pfHash hash;
   int hashbits;
   uint32_t verification;
@@ -94,7 +95,8 @@ HashInfo g_hashes[] = {
 
 HashInfo *findHash(const char *name)
 {
-  for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++) {
+  for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++)
+  {
     if (_stricmp(name, g_hashes[i].name) == 0)
       return &g_hashes[i];
   }
@@ -109,16 +111,19 @@ void SelfTest(void)
 {
   bool pass = true;
 
-  for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++) {
+  for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++)
+  {
     HashInfo *info = &g_hashes[i];
 
     pass &= VerificationTest(info->hash, info->hashbits, info->verification, false);
   }
 
-  if (!pass) {
+  if (!pass)
+  {
     printf("Self-test FAILED!\n");
 
-    for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++) {
+    for (size_t i = 0; i < sizeof(g_hashes) / sizeof(HashInfo); i++)
+    {
       HashInfo *info = &g_hashes[i];
 
       printf("%16s - ", info->name);
@@ -131,7 +136,8 @@ void SelfTest(void)
 
 //----------------------------------------------------------------------------
 
-template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
+template<typename hashtype>
+void test(hashfunc<hashtype> hash, HashInfo *info)
 {
   const int hashbits = sizeof(hashtype) * 8;
 
@@ -141,7 +147,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Sanity tests
 
-  if (g_testSanity || g_testAll) {
+  if (g_testSanity || g_testAll)
+  {
     printf("[[[ Sanity Tests ]]]\n\n");
 
     VerificationTest(hash, hashbits, info->verification, true);
@@ -153,13 +160,15 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Speed tests
 
-  if (g_testSpeed || g_testAll) {
+  if (g_testSpeed || g_testAll)
+  {
     printf("[[[ Speed Tests ]]]\n\n");
 
     BulkSpeedTest(info->hash, info->verification);
     printf("\n");
 
-    for (int i = 1; i < 32; i++) {
+    for (int i = 1; i < 32; i++)
+    {
       double cycles;
 
       TinySpeedTest(hashfunc<hashtype>(info->hash), sizeof(hashtype), i, info->verification, true, cycles);
@@ -171,7 +180,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Differential tests
 
-  if (g_testDiff || g_testAll) {
+  if (g_testDiff || g_testAll)
+  {
     printf("[[[ Differential Tests ]]]\n\n");
 
     bool result = true;
@@ -189,7 +199,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Differential-distribution tests
 
-  if (g_testDiffDist /*|| g_testAll*/) {
+  if (g_testDiffDist /*|| g_testAll*/)
+  {
     printf("[[[ Differential Distribution Tests ]]]\n\n");
 
     bool result = true;
@@ -202,7 +213,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Avalanche tests
 
-  if (g_testAvalanche || g_testAll) {
+  if (g_testAvalanche || g_testAll)
+  {
     printf("[[[ Avalanche Tests ]]]\n\n");
 
     bool result = true;
@@ -236,7 +248,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   // Bit Independence Criteria. Interesting, but doesn't tell us much about
   // collision or distribution.
 
-  if (g_testBIC) {
+  if (g_testBIC)
+  {
     printf("[[[ Bit Independence Criteria ]]]\n\n");
 
     bool result = true;
@@ -252,7 +265,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Cyclic' - keys of the form "abcdabcdabcd..."
 
-  if (g_testCyclic || g_testAll) {
+  if (g_testCyclic || g_testAll)
+  {
     printf("[[[ Keyset 'Cyclic' Tests ]]]\n\n");
 
     bool result = true;
@@ -274,13 +288,15 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
 
   // This generates some huge keysets, 128-bit tests will take ~1.3 gigs of RAM.
 
-  if (g_testTwoBytes || g_testAll) {
+  if (g_testTwoBytes || g_testAll)
+  {
     printf("[[[ Keyset 'TwoBytes' Tests ]]]\n\n");
 
     bool result = true;
     bool drawDiagram = false;
 
-    for (int i = 4; i <= 20; i += 4) {
+    for (int i = 4; i <= 20; i += 4)
+    {
       result &= TwoBytesTest2<hashtype>(hash, i, drawDiagram);
     }
 
@@ -292,7 +308,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Sparse' - keys with all bits 0 except a few
 
-  if (g_testSparse || g_testAll) {
+  if (g_testSparse || g_testAll)
+  {
     printf("[[[ Keyset 'Sparse' Tests ]]]\n\n");
 
     bool result = true;
@@ -315,7 +332,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Permutation' - all possible combinations of a set of blocks
 
-  if (g_testPermutation || g_testAll) {
+  if (g_testPermutation || g_testAll)
+  {
     {
       // This one breaks lookup3, surprisingly
 
@@ -447,7 +465,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   // Skip distribution test for these - they're too easy to distribute well,
   // and it generates a _lot_ of testing
 
-  if (g_testWindow || g_testAll) {
+  if (g_testWindow || g_testAll)
+  {
     printf("[[[ Keyset 'Window' Tests ]]]\n\n");
 
     bool result = true;
@@ -466,7 +485,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Text'
 
-  if (g_testText || g_testAll) {
+  if (g_testText || g_testAll)
+  {
     printf("[[[ Keyset 'Text' Tests ]]]\n\n");
 
     bool result = true;
@@ -486,7 +506,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Zeroes'
 
-  if (g_testZeroes || g_testAll) {
+  if (g_testZeroes || g_testAll)
+  {
     printf("[[[ Keyset 'Zeroes' Tests ]]]\n\n");
 
     bool result = true;
@@ -502,7 +523,8 @@ template<typename hashtype> void test(hashfunc<hashtype> hash, HashInfo *info)
   //-----------------------------------------------------------------------------
   // Keyset 'Seed'
 
-  if (g_testSeed || g_testAll) {
+  if (g_testSeed || g_testAll)
+  {
     printf("[[[ Keyset 'Seed' Tests ]]]\n\n");
 
     bool result = true;
@@ -540,26 +562,33 @@ void testHash(const char *name)
 {
   HashInfo *pInfo = findHash(name);
 
-  if (pInfo == NULL) {
+  if (pInfo == NULL)
+  {
     printf("Invalid hash '%s' specified\n", name);
     return;
   }
-  else {
+  else
+  {
     g_hashUnderTest = pInfo;
 
-    if (pInfo->hashbits == 32) {
+    if (pInfo->hashbits == 32)
+    {
       test<uint32_t>(VerifyHash, pInfo);
     }
-    else if (pInfo->hashbits == 64) {
+    else if (pInfo->hashbits == 64)
+    {
       test<uint64_t>(pInfo->hash, pInfo);
     }
-    else if (pInfo->hashbits == 128) {
+    else if (pInfo->hashbits == 128)
+    {
       test<uint128_t>(pInfo->hash, pInfo);
     }
-    else if (pInfo->hashbits == 256) {
+    else if (pInfo->hashbits == 256)
+    {
       test<uint256_t>(pInfo->hash, pInfo);
     }
-    else {
+    else
+    {
       printf("Invalid hash bit width %d for hash '%s'", pInfo->hashbits, pInfo->name);
     }
   }
@@ -570,10 +599,12 @@ int main(int argc, char **argv)
 {
   const char *hashToTest = "murmur3a";
 
-  if (argc < 2) {
+  if (argc < 2)
+  {
     printf("(No test hash given on command line, testing Murmur3_x86_32.)\n");
   }
-  else {
+  else
+  {
     hashToTest = argv[1];
   }
 

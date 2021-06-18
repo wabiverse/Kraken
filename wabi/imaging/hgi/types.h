@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// For reference, see:
 ///   https://www.khronos.org/registry/vulkan/specs/1.1/html/vkspec.html#VkFormat
-enum HgiFormat : int {
+enum HgiFormat : int
+{
   HgiFormatInvalid = -1,
 
   // UNorm8 - a 1-byte value representing a float between 0 and 1.
@@ -134,7 +135,8 @@ enum HgiFormat : int {
 /// \class HgiMipInfo
 ///
 /// HgiMipInfo describes size and other info for a mip level.
-struct HgiMipInfo {
+struct HgiMipInfo
+{
   /// Offset in bytes from start of texture data to start of mip map.
   size_t byteOffset;
   /// Dimension of mip GfVec3i.

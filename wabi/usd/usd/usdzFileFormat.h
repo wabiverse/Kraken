@@ -42,7 +42,8 @@ TF_DECLARE_PUBLIC_TOKENS(UsdUsdzFileFormatTokens, USD_API, USD_USDZ_FILE_FORMAT_
 /// \class UsdUsdzFileFormat
 ///
 /// File format for package .usdz files.
-class UsdUsdzFileFormat : public SdfFileFormat {
+class UsdUsdzFileFormat : public SdfFileFormat
+{
  public:
   using SdfFileFormat::FileFormatArguments;
 

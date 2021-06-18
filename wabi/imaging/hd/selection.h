@@ -49,10 +49,12 @@ using HdSelectionSharedPtr = std::shared_ptr<class HdSelection>;
 /// It current supports active and rollover selection modes, and may be
 /// inherited for customization.
 ///
-class HdSelection {
+class HdSelection
+{
  public:
   /// Selection modes allow differentiation in selection highlight behavior.
-  enum HighlightMode {
+  enum HighlightMode
+  {
     HighlightModeSelect = 0,  // Active selection
     HighlightModeLocate,      // Rollover selection
 
@@ -96,8 +98,10 @@ class HdSelection {
   // selection of subprims (faces/edges/points) per instance of an rprim.
   // By making this per rprim, all selected instances of the rprim will share
   // the same subprim highlighting.
-  struct PrimSelectionState {
-    PrimSelectionState() : fullySelected(false)
+  struct PrimSelectionState
+  {
+    PrimSelectionState()
+      : fullySelected(false)
     {}
 
     bool fullySelected;

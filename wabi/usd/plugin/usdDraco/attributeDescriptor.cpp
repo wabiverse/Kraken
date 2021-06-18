@@ -41,7 +41,8 @@ const std::string UsdDracoAttributeDescriptor::METADATA_VALUES_TIME_KEY = "value
 const std::string UsdDracoAttributeDescriptor::METADATA_INDICES_TIME_KEY = "indices_time";
 const std::string UsdDracoAttributeDescriptor::METADATA_INTERPOLATION_KEY = "interpolation";
 
-UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor() : UsdDracoAttributeDescriptor(INVALID)
+UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor()
+  : UsdDracoAttributeDescriptor(INVALID)
 {}
 
 UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor(Status status)
@@ -139,7 +140,8 @@ std::string UsdDracoAttributeDescriptor::GetShapeText() const
 
 std::string UsdDracoAttributeDescriptor::GetShapeText(Shape shape)
 {
-  switch (shape) {
+  switch (shape)
+  {
     case VECTOR:
       return "vec";
     case QUATERNION:
@@ -270,7 +272,8 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromDracoAttribute(
   // Metadata may have a shape.
   UsdDracoAttributeDescriptor::Shape shape = GetDefaultShape();
   std::string shapeText;
-  if (metadata.GetEntryString(METADATA_SHAPE_KEY, &shapeText)) {
+  if (metadata.GetEntryString(METADATA_SHAPE_KEY, &shapeText))
+  {
     if (shapeText == GetShapeText(VECTOR))
       shape = VECTOR;
     else if (shapeText == GetShapeText(MATRIX))
@@ -300,12 +303,16 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromDracoAttribute(
 
   // Metadata may have interpolation for primvars.
   TfToken interpolation;
-  if (isPrimvar) {
+  if (isPrimvar)
+  {
     interpolation = GetDefaultInterpolation();
     std::string interpolationText;
-    if (metadata.GetEntryString(METADATA_INTERPOLATION_KEY, &interpolationText)) {
-      for (const TfToken &supported : GetSupportedInterpolations()) {
-        if (interpolationText == supported.GetString()) {
+    if (metadata.GetEntryString(METADATA_INTERPOLATION_KEY, &interpolationText))
+    {
+      for (const TfToken &supported : GetSupportedInterpolations())
+      {
+        if (interpolationText == supported.GetString())
+        {
           interpolation = supported;
           break;
         }
@@ -379,7 +386,8 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromUsdAttribute(
   // Skip attributes with unsupported number of components.
   size_t dimensionOneSize = 1;
   size_t dimensionTwoSize = 1;
-  if (numDimensions > 0) {
+  if (numDimensions > 0)
+  {
     dimensionOneSize = attribute.GetTypeName().GetDimensions().d[0];
     if (numDimensions > 1)
       dimensionTwoSize = attribute.GetTypeName().GetDimensions().d[1];

@@ -35,7 +35,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class _View> class SdfPyWrapChildrenView {
+template<class _View>
+class SdfPyWrapChildrenView
+{
  public:
   typedef _View View;
   typedef typename View::ChildPolicy ChildPolicy;
@@ -51,28 +53,33 @@ template<class _View> class SdfPyWrapChildrenView {
   }
 
  private:
-  struct _ExtractItem {
+  struct _ExtractItem
+  {
     static boost::python::object Get(const View &x, const const_iterator &i)
     {
       return boost::python::make_tuple(x.key(i), *i);
     }
   };
 
-  struct _ExtractKey {
+  struct _ExtractKey
+  {
     static boost::python::object Get(const View &x, const const_iterator &i)
     {
       return boost::python::object(x.key(i));
     }
   };
 
-  struct _ExtractValue {
+  struct _ExtractValue
+  {
     static boost::python::object Get(const View &x, const const_iterator &i)
     {
       return boost::python::object(*i);
     }
   };
 
-  template<class E> class _Iterator {
+  template<class E>
+  class _Iterator
+  {
    public:
     _Iterator(const boost::python::object &object)
       : _object(object),
@@ -90,7 +97,8 @@ template<class _View> class SdfPyWrapChildrenView {
 
     boost::python::object GetNext()
     {
-      if (_cur == _end) {
+      if (_cur == _end)
+      {
         TfPyThrowStopIteration("End of ChildrenProxy iteration");
       }
       boost::python::object result = E::Get(_owner, _cur);
@@ -170,10 +178,12 @@ template<class _View> class SdfPyWrapChildrenView {
   static std::string _GetRepr(const View &x)
   {
     std::string result("{");
-    if (!x.empty()) {
+    if (!x.empty())
+    {
       const_iterator i = x.begin(), n = x.end();
       result += TfPyRepr(x.key(i)) + ": " + TfPyRepr(*i);
-      while (++i != n) {
+      while (++i != n)
+      {
         result += ", " + TfPyRepr(x.key(i)) + ": " + TfPyRepr(*i);
       }
     }
@@ -184,18 +194,21 @@ template<class _View> class SdfPyWrapChildrenView {
   static value_type _GetItemByKey(const View &x, const key_type &key)
   {
     const_iterator i = x.find(key);
-    if (i == x.end()) {
+    if (i == x.end())
+    {
       TfPyThrowIndexError(TfPyRepr(key));
       return value_type();
     }
-    else {
+    else
+    {
       return *i;
     }
   }
 
   static value_type _GetItemByIndex(const View &x, size_t index)
   {
-    if (index >= x.size()) {
+    if (index >= x.size())
+    {
       TfPyThrowIndexError("list index out of range");
     }
     return x[index];
@@ -232,10 +245,12 @@ template<class _View> class SdfPyWrapChildrenView {
     return _Iterator<_ExtractValue>(x);
   }
 
-  template<class E> static boost::python::list _Get(const View &x)
+  template<class E>
+  static boost::python::list _Get(const View &x)
   {
     boost::python::list result;
-    for (const_iterator i = x.begin(), n = x.end(); i != n; ++i) {
+    for (const_iterator i = x.begin(), n = x.end(); i != n; ++i)
+    {
       result.append(E::Get(x, i));
     }
     return result;

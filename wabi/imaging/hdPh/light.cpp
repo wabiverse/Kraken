@@ -33,7 +33,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhLight::HdPhLight(SdfPath const &id, TfToken const &lightType) : HdLight(id), _lightType(lightType)
+HdPhLight::HdPhLight(SdfPath const &id, TfToken const &lightType)
+  : HdLight(id),
+    _lightType(lightType)
 {}
 
 HdPhLight::~HdPhLight() = default;
@@ -82,11 +84,14 @@ GlfSimpleLight HdPhLight::_PrepareDomeLight(SdfPath const &id, HdSceneDelegate *
 
   {
     const VtValue v = sceneDelegate->GetLightParamValue(id, HdLightTokens->textureFile);
-    if (!v.IsEmpty()) {
-      if (v.IsHolding<SdfAssetPath>()) {
+    if (!v.IsEmpty())
+    {
+      if (v.IsHolding<SdfAssetPath>())
+      {
         l.SetDomeLightTextureFile(v.UncheckedGet<SdfAssetPath>());
       }
-      else {
+      else
+      {
         TF_CODING_ERROR("Dome light texture file not an asset path.");
       }
     }
@@ -102,7 +107,8 @@ void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
 
   TF_UNUSED(renderParam);
 
-  if (!TF_VERIFY(sceneDelegate != nullptr)) {
+  if (!TF_VERIFY(sceneDelegate != nullptr))
+  {
     return;
   }
 
@@ -117,39 +123,48 @@ void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
   HdDirtyBits bits = *dirtyBits;
 
   // Transform
-  if (bits & DirtyTransform) {
+  if (bits & DirtyTransform)
+  {
     _params[HdTokens->transform] = sceneDelegate->GetTransform(id);
   }
 
   // Lighting Params
-  if (bits & DirtyParams) {
-    if (_lightType == HdPrimTypeTokens->simpleLight) {
+  if (bits & DirtyParams)
+  {
+    if (_lightType == HdPrimTypeTokens->simpleLight)
+    {
       _params[HdLightTokens->params] = sceneDelegate->Get(id, HdLightTokens->params);
     }
-    else if (_lightType == HdPrimTypeTokens->domeLight) {
+    else if (_lightType == HdPrimTypeTokens->domeLight)
+    {
       _params[HdLightTokens->params] = _PrepareDomeLight(id, sceneDelegate);
     }
     // If it is an area light we will extract the parameters and convert
     // them to a gl friendly representation.
-    else {
+    else
+    {
       _params[HdLightTokens->params] = _ApproximateAreaLight(id, sceneDelegate);
     }
   }
 
   // Shadow Params
-  if (bits & DirtyShadowParams) {
+  if (bits & DirtyShadowParams)
+  {
     _params[HdLightTokens->shadowParams] = sceneDelegate->Get(id, HdLightTokens->shadowParams);
   }
 
   // Shadow Collection
-  if (bits & DirtyCollection) {
+  if (bits & DirtyCollection)
+  {
     VtValue vtShadowCollection = sceneDelegate->Get(id, HdLightTokens->shadowCollection);
 
     // Optional
-    if (vtShadowCollection.IsHolding<HdRprimCollection>()) {
+    if (vtShadowCollection.IsHolding<HdRprimCollection>())
+    {
       HdRprimCollection newCollection = vtShadowCollection.UncheckedGet<HdRprimCollection>();
 
-      if (_params[HdLightTokens->shadowCollection] != newCollection) {
+      if (_params[HdLightTokens->shadowCollection] != newCollection)
+      {
         _params[HdLightTokens->shadowCollection] = newCollection;
 
         HdChangeTracker &changeTracker = sceneDelegate->GetRenderIndex().GetChangeTracker();
@@ -157,7 +172,8 @@ void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
         changeTracker.MarkCollectionDirty(newCollection.GetName());
       }
     }
-    else {
+    else
+    {
       _params[HdLightTokens->shadowCollection] = HdRprimCollection();
     }
   }
@@ -185,10 +201,12 @@ HdDirtyBits HdPhLight::GetInitialDirtyBitsMask() const
   // In the case of regular lights we want to sync all dirty bits, but
   // for area lights coming from the scenegraph we just want to extract
   // the Transform and Params for now.
-  if (_lightType == HdPrimTypeTokens->simpleLight) {
+  if (_lightType == HdPrimTypeTokens->simpleLight)
+  {
     return AllDirty;
   }
-  else {
+  else
+  {
     return (DirtyParams | DirtyTransform);
   }
 }

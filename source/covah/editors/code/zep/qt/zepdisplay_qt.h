@@ -12,7 +12,8 @@
 #include "zep/syntax.h"
 #include <string>
 
-namespace Zep {
+namespace Zep
+{
 
 inline NVec2f toNVec2f(const QPoint &im)
 {
@@ -27,9 +28,11 @@ inline QPoint toQPoint(const NVec2f &im)
   return QPoint(im.x, im.y);
 }
 
-class ZepFont_Qt : public ZepFont {
+class ZepFont_Qt : public ZepFont
+{
  public:
-  ZepFont_Qt(ZepDisplay &display, const std::string &filePath, int pixelHeight) : ZepFont(display)
+  ZepFont_Qt(ZepDisplay &display, const std::string &filePath, int pixelHeight)
+    : ZepFont(display)
   {
     SetPixelHeight(pixelHeight);
   }
@@ -54,18 +57,21 @@ class ZepFont_Qt : public ZepFont {
   virtual NVec2f GetTextSize(const uint8_t *pBegin, const uint8_t *pEnd = nullptr) const override
   {
     QFontMetrics met(m_font);
-    if (pEnd == nullptr) {
+    if (pEnd == nullptr)
+    {
       pEnd = pBegin + strlen((const char *)pBegin);
     }
 
     auto rc = met.size(Qt::TextIncludeTrailingSpaces | Qt::TextLongestVariant,
                        QString::fromUtf8((char *)pBegin, pEnd - pBegin));
-    if (*pBegin == '\t' && (pEnd == (pBegin + 1))) {
+    if (*pBegin == '\t' && (pEnd == (pBegin + 1)))
+    {
       // Default tab width
       rc.setWidth(rc.width() * 4);
     }
 
-    if (rc.width() == 0.0) {
+    if (rc.width() == 0.0)
+    {
       // Make invalid characters a default fixed_size
       const char chDefault = 'A';
       rc = met.size(Qt::TextIncludeTrailingSpaces | Qt::TextLongestVariant, QString("A"));
@@ -89,11 +95,13 @@ class ZepFont_Qt : public ZepFont {
   QFont m_font;
 };
 
-class ZepDisplay_Qt : public ZepDisplay {
+class ZepDisplay_Qt : public ZepDisplay
+{
  public:
   using TParent = ZepDisplay;
 
-  ZepDisplay_Qt(const NVec2f &pixelScale) : ZepDisplay(pixelScale)
+  ZepDisplay_Qt(const NVec2f &pixelScale)
+    : ZepDisplay(pixelScale)
   {}
 
   ~ZepDisplay_Qt()
@@ -110,7 +118,8 @@ class ZepDisplay_Qt : public ZepDisplay {
                  const uint8_t *text_begin,
                  const uint8_t *text_end) const override
   {
-    if (text_end == nullptr) {
+    if (text_end == nullptr)
+    {
       text_end = text_begin + strlen((const char *)text_begin);
     }
     auto &qtFont = static_cast<ZepFont_Qt &>(font);
@@ -149,22 +158,26 @@ class ZepDisplay_Qt : public ZepDisplay {
   virtual void SetClipRect(const NRectf &rc) override
   {
     m_clipRect = rc;
-    if (m_clipRect.Width() > 0) {
+    if (m_clipRect.Width() > 0)
+    {
       auto clip = QRect(
         m_clipRect.topLeftPx.x, m_clipRect.topLeftPx.y, m_clipRect.Width(), m_clipRect.Height());
       m_pPainter->setClipRect(clip);
     }
-    else {
+    else
+    {
       m_pPainter->setClipping(false);
     }
   }
 
   virtual ZepFont &GetFont(ZepTextType type) override
   {
-    if (m_fonts[(int)type] == nullptr) {
+    if (m_fonts[(int)type] == nullptr)
+    {
       QFontMetrics met(qApp->font());
       auto height = met.height();
-      switch (type) {
+      switch (type)
+      {
         case ZepTextType::Heading1:
           height *= 1.75f;
           break;

@@ -39,7 +39,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLComputePipeline::HgiGLComputePipeline(HgiComputePipelineDesc const &desc) : HgiComputePipeline(desc)
+HgiGLComputePipeline::HgiGLComputePipeline(HgiComputePipelineDesc const &desc)
+  : HgiComputePipeline(desc)
 {}
 
 HgiGLComputePipeline::~HgiGLComputePipeline() = default;
@@ -50,7 +51,8 @@ void HgiGLComputePipeline::BindPipeline()
   // Shader program
   //
   HgiGLShaderProgram *glProgram = static_cast<HgiGLShaderProgram *>(_descriptor.shaderProgram.Get());
-  if (glProgram) {
+  if (glProgram)
+  {
     glUseProgram(glProgram->GetProgramId());
   }
 

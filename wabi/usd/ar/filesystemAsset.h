@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
 /// \class ArFilesystemAsset
 ///
 /// ArAsset implementation for asset represented by a file on a filesystem.
-class ArFilesystemAsset : public ArAsset {
+class ArFilesystemAsset : public ArAsset
+{
  public:
   /// Constructs an ArFilesystemAsset for the given \p file.
   /// The ArFilesystemAsset object takes ownership of \p file and will

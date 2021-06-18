@@ -184,7 +184,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdLuxTokens->rightHanded
 /// as the value.
 ///
-class UsdLuxListAPI : public UsdAPISchemaBase {
+class UsdLuxListAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -200,13 +201,15 @@ class UsdLuxListAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdLuxListAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxListAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdLuxListAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdLuxListAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxListAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxListAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdLuxListAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -336,7 +339,8 @@ class UsdLuxListAPI : public UsdAPISchemaBase {
   // --(BEGIN CUSTOM CODE)--
 
   /// Runtime control over whether to consult stored lightList caches.
-  enum ComputeMode {
+  enum ComputeMode
+  {
     /// Consult any caches found on the model hierarchy.
     /// Do not traverse beneath the model hierarchy.
     ComputeModeConsultModelHierarchyCache,

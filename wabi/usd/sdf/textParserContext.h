@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 // It contains the data structures that we use to create the scene description
 // from the file.
 
-class Sdf_TextParserContext {
+class Sdf_TextParserContext
+{
  public:
   // Constructor.
   Sdf_TextParserContext();

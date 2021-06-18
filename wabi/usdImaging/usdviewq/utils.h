@@ -46,9 +46,11 @@ class UsdStage;
 ///
 /// Performance enhancing utilities for usdview.
 ///
-class UsdviewqUtils {
+class UsdviewqUtils
+{
  public:
-  struct PrimInfo {
+  struct PrimInfo
+  {
     PrimInfo(const UsdPrim &prim, const UsdTimeCode time);
 
     bool hasCompositionArcs;

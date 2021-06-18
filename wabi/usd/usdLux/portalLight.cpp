@@ -57,7 +57,8 @@ UsdLuxPortalLight::~UsdLuxPortalLight()
 /* static */
 UsdLuxPortalLight UsdLuxPortalLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxPortalLight();
   }
@@ -68,7 +69,8 @@ UsdLuxPortalLight UsdLuxPortalLight::Get(const UsdStagePtr &stage, const SdfPath
 UsdLuxPortalLight UsdLuxPortalLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PortalLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxPortalLight();
   }

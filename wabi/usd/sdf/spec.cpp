@@ -74,7 +74,8 @@ SdfSpecType SdfSpec::GetSpecType() const
 {
   // We can't retrieve an object type for a dormant spec.
   Sdf_Identity const *idPtr = _id.get();
-  if (!idPtr) {
+  if (!idPtr)
+  {
     return SdfSpecTypeUnknown;
   }
   SdfLayerHandle const &layer = idPtr->GetLayer();
@@ -107,7 +108,8 @@ bool SdfSpec::PermissionToEdit() const
 
 std::vector<TfToken> SdfSpec::ListFields() const
 {
-  if (!_id) {
+  if (!_id)
+  {
     return std::vector<TfToken>();
   }
   const SdfPath &path = _id->GetPath();
@@ -126,7 +128,8 @@ bool SdfSpec::HasField(const TfToken &name) const
 
 VtValue SdfSpec::GetField(const TfToken &name) const
 {
-  if (Sdf_Identity const *idPtr = _id.get()) {
+  if (Sdf_Identity const *idPtr = _id.get())
+  {
     return idPtr->GetLayer()->GetField(idPtr->GetPath(), name);
   }
   return VtValue();
@@ -134,7 +137,8 @@ VtValue SdfSpec::GetField(const TfToken &name) const
 
 bool SdfSpec::SetField(const TfToken &name, const VtValue &value)
 {
-  if (!_id) {
+  if (!_id)
+  {
     return false;
   }
   _id->GetLayer()->SetField(_id->GetPath(), name, value);
@@ -143,7 +147,8 @@ bool SdfSpec::SetField(const TfToken &name, const VtValue &value)
 
 bool SdfSpec::ClearField(const TfToken &name)
 {
-  if (!_id) {
+  if (!_id)
+  {
     return false;
   }
 
@@ -158,7 +163,8 @@ std::vector<TfToken> SdfSpec::GetMetaDataInfoKeys() const
 
 TfToken SdfSpec::GetMetaDataDisplayGroup(TfToken const &key) const
 {
-  if (const SdfSchema::SpecDefinition *specDef = GetSchema().GetSpecDefinition(GetSpecType())) {
+  if (const SdfSchema::SpecDefinition *specDef = GetSchema().GetSpecDefinition(GetSpecType()))
+  {
     return specDef->GetMetadataFieldDisplayGroup(key);
   }
   return TfToken();
@@ -167,19 +173,22 @@ TfToken SdfSpec::GetMetaDataDisplayGroup(TfToken const &key) const
 std::vector<TfToken> SdfSpec::ListInfoKeys() const
 {
   const SdfSchemaBase &schema = GetSchema();
-  if (const SdfSchema::SpecDefinition *specDef = schema.GetSpecDefinition(GetSpecType())) {
+  if (const SdfSchema::SpecDefinition *specDef = schema.GetSpecDefinition(GetSpecType()))
+  {
 
     std::vector<TfToken> result;
     const std::vector<TfToken> valueFields = specDef->GetFields();
-    TF_FOR_ALL(field, valueFields)
+    TF_FOR_ALL (field, valueFields)
     {
       // Skip fields holding children.
-      if (const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(*field)) {
+      if (const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(*field))
+      {
         if (fieldDef->HoldsChildren())
           continue;
       }
 
-      if (HasInfo(*field)) {
+      if (HasInfo(*field))
+      {
         result.push_back(*field);
       }
     }
@@ -198,17 +207,20 @@ static bool _CanEditInfoOnSpec(const TfToken &key,
                                const SdfSchema::FieldDefinition *fieldDef,
                                const char *editType)
 {
-  if (!fieldDef) {
+  if (!fieldDef)
+  {
     TF_CODING_ERROR("Cannot %s value for unknown field '%s'", editType, key.GetText());
     return false;
   }
 
-  if (fieldDef->IsReadOnly()) {
+  if (fieldDef->IsReadOnly())
+  {
     TF_CODING_ERROR("Cannot %s value for read-only field '%s'", editType, key.GetText());
     return false;
   }
 
-  if (!schema.IsValidFieldForSpec(fieldDef->GetName(), specType)) {
+  if (!schema.IsValidFieldForSpec(fieldDef->GetName(), specType))
+  {
     TF_CODING_ERROR(
       "Field '%s' is not valid for spec type %s", key.GetText(), TfStringify(specType).c_str());
     return false;
@@ -224,7 +236,8 @@ void SdfSpec::SetInfo(const TfToken &key, const VtValue &value)
   // coding errors as needed.
   const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(key);
-  if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "set")) {
+  if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "set"))
+  {
     return;
   }
 
@@ -232,7 +245,8 @@ void SdfSpec::SetInfo(const TfToken &key, const VtValue &value)
   // in the schema.
   const VtValue fallback = fieldDef->GetFallbackValue();
   const VtValue castValue = (fallback.IsEmpty() ? value : VtValue::CastToTypeOf(value, fallback));
-  if (castValue.IsEmpty()) {
+  if (castValue.IsEmpty())
+  {
     TF_CODING_ERROR(
       "Cannot set field '%s' of type '%s' to provided value "
       "'%s' because the value is an incompatible type '%s', "
@@ -274,10 +288,12 @@ void SdfSpec::SetInfoDictionaryValue(const TfToken &dictionaryKey,
   // XXX: Instead of copying, modifying, then re-setting the dictionary,
   //      could this use the proxy to edit the dictionary directly?
   VtDictionary dict = SdfDictionaryProxy(SdfCreateHandle(this), dictionaryKey);
-  if (value.IsEmpty()) {
+  if (value.IsEmpty())
+  {
     dict.erase(entryKey);
   }
-  else {
+  else
+  {
     dict[entryKey] = value;
   }
   SetInfo(dictionaryKey, VtValue(dict));
@@ -301,7 +317,8 @@ void SdfSpec::ClearInfo(const TfToken &key)
   // via the Info API. Note this function will issue coding errors as needed.
   const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(key);
-  if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "clear")) {
+  if (!_CanEditInfoOnSpec(key, GetSpecType(), schema, fieldDef, "clear"))
+  {
     return;
   }
 
@@ -325,14 +342,16 @@ const VtValue &SdfSpec::GetFallbackForInfo(const TfToken &key) const
 
   const SdfSchemaBase &schema = GetSchema();
   const SdfSchema::FieldDefinition *def = schema.GetFieldDefinition(key);
-  if (!def) {
+  if (!def)
+  {
     TF_CODING_ERROR("Unknown field '%s'", key.GetText());
     return empty;
   }
 
   const SdfSpecType objType = GetSpecType();
   const SdfSchema::SpecDefinition *specDef = schema.GetSpecDefinition(objType);
-  if (!specDef || !specDef->IsMetadataField(key)) {
+  if (!specDef || !specDef->IsMetadataField(key))
+  {
     TF_CODING_ERROR("Non-metadata key '%s' for type %s", key.GetText(), TfStringify(objType).c_str());
     return empty;
   }
@@ -353,7 +372,8 @@ bool SdfSpec::IsInert(bool ignoreChildren) const
 VtValue SdfSpec::GetInfo(const TfToken &key) const
 {
   const SdfSchema::FieldDefinition *def = GetSchema().GetFieldDefinition(key);
-  if (!def) {
+  if (!def)
+  {
     TF_CODING_ERROR("Invalid info key: %s", key.GetText());
     return VtValue();
   }

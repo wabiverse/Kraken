@@ -30,7 +30,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static tuple _GetLocalTransformation(UsdGeomXformCache &self, const UsdPrim &prim)
 {

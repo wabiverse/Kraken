@@ -45,7 +45,8 @@ TF_REGISTRY_FUNCTION(VtValue)
   VtRegisterValueCastsFromPythonSequencesToArray<SdfTimeCode>();
 }
 
-namespace {
+namespace
+{
 
 static std::string _Str(SdfTimeCode const &self)
 {

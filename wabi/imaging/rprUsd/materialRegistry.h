@@ -39,7 +39,8 @@ using RprUsdMaterialNodeFactoryFnc =
   std::function<RprUsd_MaterialNode *(RprUsd_MaterialBuilderContext *context,
                                       std::map<TfToken, VtValue> const &parameters)>;
 
-struct RprUsdMaterialNodeDesc {
+struct RprUsdMaterialNodeDesc
+{
   RprUsdMaterialNodeFactoryFnc factory;
   RprUsdMaterialNodeInfo const *info;
 };
@@ -50,7 +51,8 @@ struct RprUsdMaterialNodeDesc {
 /// responsible for resolving material node definitions and may create materials
 /// from HdMaterialNetworkMap that are ready for use in hdRpr.
 ///
-class RprUsdMaterialRegistry {
+class RprUsdMaterialRegistry
+{
  public:
   ~RprUsdMaterialRegistry();
 
@@ -85,7 +87,8 @@ class RprUsdMaterialRegistry {
                 RprUsdMaterialNodeFactoryFnc factory,
                 RprUsdMaterialNodeInfo const *info = nullptr);
 
-  struct TextureCommit {
+  struct TextureCommit
+  {
     std::string filepath;
     std::string colorspace;
     rpr::ImageWrapType wrapType;
@@ -126,7 +129,8 @@ class RprUsdMaterialNodeElement;
 ///
 /// Describes resolved node, its name, inputs, outputs, etc
 ///
-class RprUsdMaterialNodeInfo {
+class RprUsdMaterialNodeInfo
+{
  public:
   virtual ~RprUsdMaterialNodeInfo() = default;
 
@@ -145,7 +149,8 @@ class RprUsdMaterialNodeInfo {
   };
 };
 
-class RprUsdMaterialNodeElement {
+class RprUsdMaterialNodeElement
+{
  public:
   virtual ~RprUsdMaterialNodeElement() = default;
 
@@ -153,7 +158,8 @@ class RprUsdMaterialNodeElement {
   virtual const char *GetUIName() const = 0;
   virtual const char *GetDocString() const = 0;
 
-  enum Type {
+  enum Type
+  {
     kInvalid,
     kFloat,
     kAngle,
@@ -176,14 +182,16 @@ class RprUsdMaterialNodeElement {
   }
 
  protected:
-  RprUsdMaterialNodeElement(Type type) : m_type(type)
+  RprUsdMaterialNodeElement(Type type)
+    : m_type(type)
   {}
 
  protected:
   Type m_type;
 };
 
-class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement {
+class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement
+{
  public:
   ~RprUsdMaterialNodeInput() override = default;
 
@@ -196,7 +204,8 @@ class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement {
   virtual std::vector<TfToken> const &GetTokenValues() const = 0;
 
  protected:
-  RprUsdMaterialNodeInput(Type type) : RprUsdMaterialNodeElement(type)
+  RprUsdMaterialNodeInput(Type type)
+    : RprUsdMaterialNodeElement(type)
   {}
 };
 
@@ -216,10 +225,12 @@ inline void RprUsdMaterialRegistry::Register(TfToken const &id,
   desc.info = info;
 
   auto status = m_registeredNodesLookup.emplace(id, m_registeredNodes.size());
-  if (!status.second) {
+  if (!status.second)
+  {
     TF_CODING_ERROR("Failed to register %s: already registered", id.GetText());
   }
-  else {
+  else
+  {
     m_registeredNodes.push_back(std::move(desc));
   }
 }

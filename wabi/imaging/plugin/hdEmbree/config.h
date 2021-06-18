@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 /// *HDEMBREE_PRINT_CONFIGURATION* is true. Integer values greater than zero
 /// are considered "true".
 ///
-class HdEmbreeConfig {
+class HdEmbreeConfig
+{
  public:
   /// \brief Return the configuration singleton.
   static const HdEmbreeConfig &GetInstance();

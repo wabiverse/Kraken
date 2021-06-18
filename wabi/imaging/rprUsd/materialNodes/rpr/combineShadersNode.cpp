@@ -31,7 +31,8 @@ WABI_NAMESPACE_BEGIN
 ///   b) take outputs of `surface` node and `displacement` and combine them into one node
 /// This node implements the second option
 ///
-class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
+class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode
+{
  public:
   RprUsd_RprCombineShadersNode() = default;
   ~RprUsd_RprCombineShadersNode() override = default;
@@ -39,7 +40,8 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
   VtValue GetOutput(TfToken const &outputId) override
   {
     auto it = m_outputs.find(outputId);
-    if (it != m_outputs.end()) {
+    if (it != m_outputs.end())
+    {
       return it->second;
     }
     return VtValue();
@@ -48,17 +50,21 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode {
   bool SetInput(TfToken const &inputId, VtValue const &value) override
   {
     if (inputId == HdMaterialTerminalTokens->volume || inputId == HdMaterialTerminalTokens->surface ||
-        inputId == HdMaterialTerminalTokens->displacement) {
-      if (value.IsHolding<std::shared_ptr<rpr::MaterialNode>>()) {
+        inputId == HdMaterialTerminalTokens->displacement)
+    {
+      if (value.IsHolding<std::shared_ptr<rpr::MaterialNode>>())
+      {
         m_outputs[inputId] = value;
         return true;
       }
-      else {
+      else
+      {
         TF_RUNTIME_ERROR("Invalid input for Combine Shaders node: must be of shader type, type=%s",
                          value.GetTypeName().c_str());
       }
     }
-    else {
+    else
+    {
       TF_RUNTIME_ERROR(
         "Invalid input for Combine Shaders node: must be `surface` or `displacement` or "
         "`volume`, inputId=%s",

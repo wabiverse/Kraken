@@ -43,7 +43,8 @@ int UsdRiConvertToRManInterpolateBoundary(TfToken const &token)
     return 1;
   else if (token == UsdGeomTokens->edgeOnly)
     return 2;
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid InterpolateBoundary Token: %s", token.GetText());
     return 0;
   }
@@ -51,7 +52,8 @@ int UsdRiConvertToRManInterpolateBoundary(TfToken const &token)
 
 TfToken const &UsdRiConvertFromRManInterpolateBoundary(int i)
 {
-  switch (i) {
+  switch (i)
+  {
     case 0:
       return UsdGeomTokens->none;
     case 1:
@@ -66,21 +68,26 @@ TfToken const &UsdRiConvertFromRManInterpolateBoundary(int i)
 
 int UsdRiConvertToRManFaceVaryingLinearInterpolation(TfToken const &token)
 {
-  if (token == UsdGeomTokens->all) {
+  if (token == UsdGeomTokens->all)
+  {
     return 0;
   }
   else if (token == UsdGeomTokens->cornersOnly || token == UsdGeomTokens->cornersPlus1 ||
-           token == UsdGeomTokens->cornersPlus2) {
+           token == UsdGeomTokens->cornersPlus2)
+  {
     return 1;
   }
-  else if (token == UsdGeomTokens->none) {
+  else if (token == UsdGeomTokens->none)
+  {
     return 2;
   }
-  else if (token == UsdGeomTokens->boundaries) {
+  else if (token == UsdGeomTokens->boundaries)
+  {
     return 3;
   }
 
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid FaceVaryingLinearInterpolation Token: %s", token.GetText());
     return 1;
   }
@@ -88,7 +95,8 @@ int UsdRiConvertToRManFaceVaryingLinearInterpolation(TfToken const &token)
 
 TfToken const &UsdRiConvertFromRManFaceVaryingLinearInterpolation(int i)
 {
-  switch (i) {
+  switch (i)
+  {
     case 0:
       return UsdGeomTokens->all;
     case 1:
@@ -106,12 +114,14 @@ TfToken const &UsdRiConvertFromRManFaceVaryingLinearInterpolation(int i)
 int UsdRiConvertToRManTriangleSubdivisionRule(TfToken const &token)
 {
   // XXX A value of 2 is needed in order for the smoothing algorithm to work.
-  if (token == UsdGeomTokens->catmullClark) {
+  if (token == UsdGeomTokens->catmullClark)
+  {
     return 0;
   }
   else if (token == UsdGeomTokens->smooth)
     return 2;
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid TriangleSubdivisionRule Token: %s", token.GetText());
     return 0;
   }
@@ -120,7 +130,8 @@ int UsdRiConvertToRManTriangleSubdivisionRule(TfToken const &token)
 TfToken const &UsdRiConvertFromRManTriangleSubdivisionRule(int i)
 {
   // XXX A value of 2 is needed in order for the smoothing algorithm to work.
-  switch (i) {
+  switch (i)
+  {
     case 0:
       return UsdGeomTokens->catmullClark;
     case 2:

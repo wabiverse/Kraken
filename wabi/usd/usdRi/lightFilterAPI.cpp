@@ -53,7 +53,8 @@ UsdRiLightFilterAPI::~UsdRiLightFilterAPI()
 /* static */
 UsdRiLightFilterAPI UsdRiLightFilterAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiLightFilterAPI();
   }
@@ -75,7 +76,8 @@ UsdSchemaKind UsdRiLightFilterAPI::_GetSchemaType() const
 /* static */
 UsdRiLightFilterAPI UsdRiLightFilterAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiLightFilterAPI>()) {
+  if (prim.ApplyAPI<UsdRiLightFilterAPI>())
+  {
     return UsdRiLightFilterAPI(prim);
   }
   return UsdRiLightFilterAPI();
@@ -208,7 +210,8 @@ UsdAttribute UsdRiLightFilterAPI::CreateRiSpecularAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

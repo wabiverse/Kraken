@@ -264,7 +264,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomBasisCurves : public UsdGeomCurves {
+class UsdGeomBasisCurves : public UsdGeomCurves
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -280,13 +281,15 @@ class UsdGeomBasisCurves : public UsdGeomCurves {
   /// Equivalent to UsdGeomBasisCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomBasisCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomCurves(prim)
+  explicit UsdGeomBasisCurves(const UsdPrim &prim = UsdPrim())
+    : UsdGeomCurves(prim)
   {}
 
   /// Construct a UsdGeomBasisCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomBasisCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomBasisCurves(const UsdSchemaBase &schemaObj) : UsdGeomCurves(schemaObj)
+  explicit UsdGeomBasisCurves(const UsdSchemaBase &schemaObj)
+    : UsdGeomCurves(schemaObj)
   {}
 
   /// Destructor.

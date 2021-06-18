@@ -44,7 +44,8 @@ using HdRenderPassAovBindingVector = std::vector<struct HdRenderPassAovBinding>;
 /// to major changes.  It is likely this functionality will be absorbed into
 /// the base class.
 ///
-class HdPhDrawTargetRenderPassState final {
+class HdPhDrawTargetRenderPassState final
+{
  public:
   HDPH_API
   HdPhDrawTargetRenderPassState();

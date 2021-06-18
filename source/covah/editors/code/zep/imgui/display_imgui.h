@@ -9,7 +9,8 @@
 // Can't include this publicly
 //#include "zep/mcommon/logger.h"
 
-namespace Zep {
+namespace Zep
+{
 
 inline NVec2f toNVec2f(const wabi::GfVec2f &im)
 {
@@ -22,9 +23,12 @@ inline wabi::GfVec2f toNVec2f(const NVec2f &im)
 
 static AnchorWChar greek_range[] = {0x300, 0x52F, 0x1f00, 0x1fff, 0, 0};
 
-class ZepFont_ANCHOR : public ZepFont {
+class ZepFont_ANCHOR : public ZepFont
+{
  public:
-  ZepFont_ANCHOR(ZepDisplay &display, AnchorFont *pFont, int pixelHeight) : ZepFont(display), m_pFont(pFont)
+  ZepFont_ANCHOR(ZepDisplay &display, AnchorFont *pFont, int pixelHeight)
+    : ZepFont(display),
+      m_pFont(pFont)
   {
     SetPixelHeight(pixelHeight);
   }
@@ -42,7 +46,8 @@ class ZepFont_ANCHOR : public ZepFont {
     const float font_size = m_pFont->FontSize;
     wabi::GfVec2f text_size = m_pFont->CalcTextSizeA(
       float(GetPixelHeight()), FLT_MAX, FLT_MAX, (const char *)pBegin, (const char *)pEnd, NULL);
-    if (text_size[0] == 0.0) {
+    if (text_size[0] == 0.0)
+    {
       // Make invalid characters a default fixed_size
       const char chDefault = 'A';
       text_size = m_pFont->CalcTextSizeA(
@@ -62,9 +67,11 @@ class ZepFont_ANCHOR : public ZepFont {
   float m_fontScale = 1.0f;
 };
 
-class ZepDisplay_ANCHOR : public ZepDisplay {
+class ZepDisplay_ANCHOR : public ZepDisplay
+{
  public:
-  ZepDisplay_ANCHOR(const NVec2f &pixelScale) : ZepDisplay(pixelScale)
+  ZepDisplay_ANCHOR(const NVec2f &pixelScale)
+    : ZepDisplay(pixelScale)
   {}
 
   void DrawChars(ZepFont &font,
@@ -75,10 +82,12 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
   {
     auto imFont = static_cast<ZepFont_ANCHOR &>(font).GetAnchorFont();
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
-    if (text_end == nullptr) {
+    if (text_end == nullptr)
+    {
       text_end = text_begin + strlen((const char *)text_begin);
     }
-    if (m_clipRect.Width() == 0) {
+    if (m_clipRect.Width() == 0)
+    {
       drawList->AddText(imFont,
                         float(font.GetPixelHeight()),
                         toNVec2f(pos),
@@ -86,7 +95,8 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
                         (const char *)text_begin,
                         (const char *)text_end);
     }
-    else {
+    else
+    {
       drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
       drawList->AddText(imFont,
                         float(font.GetPixelHeight()),
@@ -102,10 +112,12 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
   {
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
     // Background rect for numbers
-    if (m_clipRect.Width() == 0) {
+    if (m_clipRect.Width() == 0)
+    {
       drawList->AddLine(toNVec2f(start), toNVec2f(end), ToPackedABGR(color), width);
     }
-    else {
+    else
+    {
       drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
       drawList->AddLine(toNVec2f(start), toNVec2f(end), ToPackedABGR(color), width);
       drawList->PopClipRect();
@@ -116,10 +128,12 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
   {
     ImDrawList *drawList = ANCHOR::GetWindowDrawList();
     // Background rect for numbers
-    if (m_clipRect.Width() == 0) {
+    if (m_clipRect.Width() == 0)
+    {
       drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
     }
-    else {
+    else
+    {
       drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
       drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
       drawList->PopClipRect();
@@ -133,7 +147,8 @@ class ZepDisplay_ANCHOR : public ZepDisplay {
 
   virtual ZepFont &GetFont(ZepTextType type) override
   {
-    if (m_fonts[(int)type] == nullptr) {
+    if (m_fonts[(int)type] == nullptr)
+    {
       m_fonts[(int)type] = std::make_shared<ZepFont_ANCHOR>(
         *this, ANCHOR::GetIO().Fonts[0].Fonts[FONT_DANKMONO], int(16.0f * GetPixelScale().y));
     }

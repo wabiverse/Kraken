@@ -51,7 +51,8 @@ WABI_NAMESPACE_BEGIN
 /// apply to other graphics backends, such as Vulkan, where the shader functions
 /// are used during rendering.
 ///
-class HgiShaderFunction {
+class HgiShaderFunction
+{
  public:
   HGI_API
   virtual ~HgiShaderFunction();

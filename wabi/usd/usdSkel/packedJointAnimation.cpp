@@ -57,7 +57,8 @@ UsdSkelPackedJointAnimation::~UsdSkelPackedJointAnimation()
 /* static */
 UsdSkelPackedJointAnimation UsdSkelPackedJointAnimation::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelPackedJointAnimation();
   }
@@ -69,7 +70,8 @@ UsdSkelPackedJointAnimation UsdSkelPackedJointAnimation::Define(const UsdStagePt
                                                                 const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PackedJointAnimation");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelPackedJointAnimation();
   }

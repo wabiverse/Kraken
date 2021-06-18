@@ -38,12 +38,14 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 );
 // clang-format on
 
-namespace {
+namespace
+{
 // We have to subclass SdrShaderProperty, because it tries to read the SdfType
 // from a token, and it doesn't support all the parameter types cycles does,
 // like the 4 component color. Besides this, we also guarantee that the default
 // value will match the SdfType, as the SdfType comes from the default value.
-class CyclesShaderProperty : public SdrShaderProperty {
+class CyclesShaderProperty : public SdrShaderProperty
+{
  public:
   CyclesShaderProperty(const TfToken &name,
                        const SdfValueTypeName &typeName,

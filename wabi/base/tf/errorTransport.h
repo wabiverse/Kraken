@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 /// TfErrorTransport object.  Later the thread that wants to sink those errors
 /// (e.g. the parent thread) invokes TfErrorTransport::Post() to post all
 /// contained errors to its own thread's error list.
-class TfErrorTransport {
+class TfErrorTransport
+{
  public:
   typedef TfDiagnosticMgr::ErrorList ErrorList;
 

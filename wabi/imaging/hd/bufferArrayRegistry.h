@@ -52,7 +52,8 @@ using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 ///
 /// Manages the pool of buffer arrays.
 ///
-class HdBufferArrayRegistry {
+class HdBufferArrayRegistry
+{
  public:
   HF_MALLOC_TAG_NEW("new HdBufferArrayRegistry");
 
@@ -101,7 +102,8 @@ class HdBufferArrayRegistry {
   ///
   /// A constructed entry always has at least 1 buffer array in its list.
   ///
-  struct _Entry {
+  struct _Entry
+  {
     _HdBufferArraySharedPtrList bufferArrays;
     std::mutex lock;
     std::condition_variable emptyCondition;
@@ -119,9 +121,11 @@ class HdBufferArrayRegistry {
   /// Predicate class for determine if an entry
   /// has been consturcted (determined by there
   /// being at least 1 entry in the buffer array list.
-  class _EntryIsNotEmpty {
+  class _EntryIsNotEmpty
+  {
    public:
-    _EntryIsNotEmpty(const _Entry &entry) : _entry(entry)
+    _EntryIsNotEmpty(const _Entry &entry)
+      : _entry(entry)
     {}
 
     bool operator()()

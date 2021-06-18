@@ -45,11 +45,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GlfBindingMap : public TfRefBase, public TfWeakBase {
+class GlfBindingMap : public TfRefBase, public TfWeakBase
+{
  public:
   typedef TfHashMap<TfToken, int, TfToken::HashFunctor> BindingMap;
 
-  GlfBindingMap() : _samplerBindingBaseIndex(0), _uniformBindingBaseIndex(0)
+  GlfBindingMap()
+    : _samplerBindingBaseIndex(0),
+      _uniformBindingBaseIndex(0)
   {}
 
   GLF_API

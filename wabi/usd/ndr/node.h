@@ -52,7 +52,8 @@ WABI_NAMESPACE_BEGIN
 /// nodes can be created that derive from `NdrNode`; those specialized nodes can
 /// add their own domain-specific data and methods.
 ///
-class NdrNode {
+class NdrNode
+{
  public:
   /// Constructor.
   NDR_API

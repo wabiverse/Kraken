@@ -5,13 +5,21 @@
 
 class Timer;
 
-namespace Zep {
+namespace Zep
+{
 
 struct SpanInfo;
 
-enum class VimMotion { LineBegin, LineEnd, NonWhiteSpaceBegin, NonWhiteSpaceEnd };
+enum class VimMotion
+{
+  LineBegin,
+  LineEnd,
+  NonWhiteSpaceBegin,
+  NonWhiteSpaceEnd
+};
 
-class ZepMode_Vim : public ZepMode {
+class ZepMode_Vim : public ZepMode
+{
  public:
   ZepMode_Vim(ZepEditor &editor);
   virtual ~ZepMode_Vim();

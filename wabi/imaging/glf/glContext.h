@@ -55,7 +55,8 @@ typedef std::shared_ptr<class GlfGLContext> GlfGLContextSharedPtr;
 /// This mechanism depends on the application code registering callbacks to
 /// provide access to its GL contexts.
 ///
-class GlfGLContext {
+class GlfGLContext
+{
  public:
   GLF_API
   virtual ~GlfGLContext();
@@ -174,7 +175,8 @@ class GlfGLContext {
 /// The underlying calls to make GL contexts current can be moderately
 /// expensive.  So, this mechanism should be used carefully.
 ///
-class GlfGLContextScopeHolder {
+class GlfGLContextScopeHolder
+{
  public:
   /// Make the given context current and restore the current context
   /// when this object is destroyed.
@@ -239,9 +241,11 @@ class GlfGLContextScopeHolder {
 ///     };
 /// \endcode
 ///
-class GlfSharedGLContextScopeHolder final : private GlfGLContextScopeHolder {
+class GlfSharedGLContextScopeHolder final : private GlfGLContextScopeHolder
+{
  public:
-  GlfSharedGLContextScopeHolder() : GlfGLContextScopeHolder(_GetSharedContext())
+  GlfSharedGLContextScopeHolder()
+    : GlfGLContextScopeHolder(_GetSharedContext())
   {
     // Do nothing
   }
@@ -249,7 +253,8 @@ class GlfSharedGLContextScopeHolder final : private GlfGLContextScopeHolder {
  private:
   static GlfGLContextSharedPtr _GetSharedContext()
   {
-    if (GlfGLContext::IsInitialized() && ArchIsMainThread()) {
+    if (GlfGLContext::IsInitialized() && ArchIsMainThread())
+    {
       return GlfGLContext::GetSharedGLContext();
     }
     return GlfGLContextSharedPtr();
@@ -300,9 +305,11 @@ class GlfSharedGLContextScopeHolder final : private GlfGLContextScopeHolder {
 ///     };
 /// \endcode
 ///
-class GlfAnyGLContextScopeHolder final : private GlfGLContextScopeHolder {
+class GlfAnyGLContextScopeHolder final : private GlfGLContextScopeHolder
+{
  public:
-  GlfAnyGLContextScopeHolder() : GlfGLContextScopeHolder(_GetAnyContext())
+  GlfAnyGLContextScopeHolder()
+    : GlfGLContextScopeHolder(_GetAnyContext())
   {
     // Do nothing
   }
@@ -310,9 +317,11 @@ class GlfAnyGLContextScopeHolder final : private GlfGLContextScopeHolder {
  private:
   static GlfGLContextSharedPtr _GetAnyContext()
   {
-    if (GlfGLContext::IsInitialized() && ArchIsMainThread()) {
+    if (GlfGLContext::IsInitialized() && ArchIsMainThread())
+    {
       GlfGLContextSharedPtr const current = GlfGLContext::GetCurrentGLContext();
-      if (!(current && current->IsValid())) {
+      if (!(current && current->IsValid()))
+      {
         return GlfGLContext::GetSharedGLContext();
       }
     }
@@ -327,7 +336,8 @@ class GlfAnyGLContextScopeHolder final : private GlfGLContextScopeHolder {
 /// If you subclass GlfGLContext you should subclass this type and
 /// instantiate an instance on the heap.  It will be cleaned up
 /// automatically.
-class GlfGLContextRegistrationInterface {
+class GlfGLContextRegistrationInterface
+{
  public:
   GLF_API
   virtual ~GlfGLContextRegistrationInterface();

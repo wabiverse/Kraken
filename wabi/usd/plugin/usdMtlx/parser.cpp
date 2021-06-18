@@ -48,7 +48,8 @@ namespace mx = MaterialX;
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
@@ -64,7 +65,8 @@ TF_DEFINE_ENV_SETTING(USDMTLX_PRIMARY_UV_NAME,
 static const std::string _GetPrimaryUvSetName()
 {
   static const std::string env = TfGetEnvSetting(USDMTLX_PRIMARY_UV_NAME);
-  if (env.empty()) {
+  if (env.empty())
+  {
     return UsdUtilsGetPrimaryUVSetName().GetString();
   }
   return env;
@@ -73,7 +75,8 @@ static const std::string _GetPrimaryUvSetName()
 // A builder for shader nodes.  We find it convenient to build the
 // arguments to SdrShaderNode across multiple functions.  This type
 // holds the arguments.
-struct ShaderBuilder {
+struct ShaderBuilder
+{
  public:
   ShaderBuilder(const NdrNodeDiscoveryResult &discoveryResult)
     : discoveryResult(discoveryResult),
@@ -96,7 +99,8 @@ struct ShaderBuilder {
 
   NdrNodeUniquePtr Build()
   {
-    if (!*this) {
+    if (!*this)
+    {
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
 
@@ -114,7 +118,8 @@ struct ShaderBuilder {
 
   void AddPropertyNameRemapping(const std::string &from, const std::string &to)
   {
-    if (from != to) {
+    if (from != to)
+    {
       _propertyNameRemapping[from] = to;
     }
   }
@@ -147,29 +152,36 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
 
   const auto &mtlxType = element->getType();
   const auto converted = UsdMtlxGetUsdType(mtlxType);
-  if (converted.shaderPropertyType.IsEmpty()) {
+  if (converted.shaderPropertyType.IsEmpty())
+  {
     // Not found.  If an Sdf type exists use that.
-    if (converted.valueTypeName) {
+    if (converted.valueTypeName)
+    {
       type = converted.valueTypeName.GetAsToken();
     }
-    else {
+    else
+    {
       type = TfToken(mtlxType);
 
       // This could be a custom type.  Check the document.
-      if (!element->getDocument()->getTypeDef(mtlxType)) {
+      if (!element->getDocument()->getTypeDef(mtlxType))
+      {
         TF_WARN("MaterialX unrecognized type %s on %s", mtlxType.c_str(), element->getNamePath().c_str());
       }
     }
   }
-  else {
+  else
+  {
     // Get the sdr type.
     type = converted.shaderPropertyType;
-    if (converted.valueTypeName.IsArray() && converted.arraySize == 0) {
+    if (converted.valueTypeName.IsArray() && converted.arraySize == 0)
+    {
       metadata.emplace(SdrPropertyMetadata->IsDynamicArray, "");
     }
 
     // Check for an asset type.
-    if (converted.valueTypeName == SdfValueTypeNames->Asset) {
+    if (converted.valueTypeName == SdfValueTypeNames->Asset)
+    {
       metadata.emplace(SdrPropertyMetadata->IsAssetIdentifier, "");
     }
 
@@ -180,27 +192,33 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
 
   // If this is an output then save the defaultinput, if any.
   static const std::string defaultinputName("defaultinput");
-  if (isOutput) {
+  if (isOutput)
+  {
     const auto &defaultinput = element->getAttribute(defaultinputName);
-    if (!defaultinput.empty()) {
+    if (!defaultinput.empty())
+    {
       metadata.emplace(SdrPropertyMetadata->DefaultInput, defaultinput);
     }
   }
 
   // Record the targets on inputs.
   static const std::string targetName("target");
-  if (!isOutput) {
+  if (!isOutput)
+  {
     const auto &target = element->getAttribute(targetName);
-    if (!target.empty()) {
+    if (!target.empty())
+    {
       metadata.emplace(SdrPropertyMetadata->Target, target);
     }
   }
 
   // Record the colorspace on inputs and outputs.
   static const std::string colorspaceName("colorspace");
-  if (isOutput || element->isA<mx::Input>()) {
+  if (isOutput || element->isA<mx::Input>())
+  {
     const auto &colorspace = element->getAttribute(colorspaceName);
-    if (!colorspace.empty() && colorspace != element->getParent()->getActiveColorSpace()) {
+    if (!colorspace.empty() && colorspace != element->getParent()->getActiveColorSpace())
+    {
       metadata.emplace(SdrPropertyMetadata->Colorspace, colorspace);
     }
   }
@@ -210,20 +228,24 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
 
   // Record builtin primvar references for this node's inputs.
   static const std::string defaultgeompropName("defaultgeomprop");
-  if (!isOutput && primvars != nullptr) {
+  if (!isOutput && primvars != nullptr)
+  {
 
     // If an input has "defaultgeomprop", that means it reads from the
     // primvar specified unless connected. We mark these in Sdr as
     // always-required primvars; note that this means we might overestimate
     // which primvars are referenced in a material.
     const auto &defaultgeomprop = element->getAttribute(defaultgeompropName);
-    if (!defaultgeomprop.empty()) {
+    if (!defaultgeomprop.empty())
+    {
       // Note: MaterialX uses a default texcoord of "UV0", which we
       // inline replace with the configured default.
-      if (defaultgeomprop == "UV0") {
+      if (defaultgeomprop == "UV0")
+      {
         primvars->push_back(_GetPrimaryUvSetName());
       }
-      else {
+      else
+      {
         primvars->push_back(defaultgeomprop);
       }
     }
@@ -232,13 +254,15 @@ void ShaderBuilder::AddProperty(const mx::ConstTypedElementPtr &element,
   // MaterialX doesn't name the output of a nodedef unless it has
   // multiple outputs.  The default name would be the name of the
   // nodedef itself, which seems wrong.  We pick a different name.
-  if (auto nodeDef = element->asA<mx::NodeDef>()) {
+  if (auto nodeDef = element->asA<mx::NodeDef>())
+  {
     name = UsdMtlxTokens->DefaultOutputName.GetString();
   }
 
   // Remap property name.
   auto j = _propertyNameRemapping.find(name);
-  if (j != _propertyNameRemapping.end()) {
+  if (j != _propertyNameRemapping.end())
+  {
     metadata[SdrPropertyMetadata->ImplementationName] = j->second;
   }
 
@@ -253,12 +277,15 @@ static void ParseMetadata(ShaderBuilder *builder,
                           const std::string &attribute)
 {
   const auto &value = element->getAttribute(attribute);
-  if (!value.empty()) {
+  if (!value.empty())
+  {
     // Change the MaterialX Texture node role from 'texture2d' to 'texture'
-    if (key == SdrNodeMetadata->Role && value == "texture2d") {
+    if (key == SdrNodeMetadata->Role && value == "texture2d")
+    {
       builder->metadata[key] = "texture";
     }
-    else {
+    else
+    {
       builder->metadata[key] = value;
     }
   }
@@ -266,10 +293,13 @@ static void ParseMetadata(ShaderBuilder *builder,
 
 static TfToken GetContext(const mx::ConstDocumentPtr &doc, const std::string &type)
 {
-  if (doc) {
-    if (auto mtlxTypeDef = doc->getTypeDef(type)) {
+  if (doc)
+  {
+    if (auto mtlxTypeDef = doc->getTypeDef(type))
+    {
       // Use the context if the type has "shader" semantic.
-      if (mtlxTypeDef->getAttribute("semantic") == "shader") {
+      if (mtlxTypeDef->getAttribute("semantic") == "shader")
+      {
         return TfToken(mtlxTypeDef->getAttribute("context"));
       }
     }
@@ -279,7 +309,8 @@ static TfToken GetContext(const mx::ConstDocumentPtr &doc, const std::string &ty
 
 static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &nodeDef)
 {
-  if (!TF_VERIFY(nodeDef)) {
+  if (!TF_VERIFY(nodeDef))
+  {
     return;
   }
 
@@ -287,11 +318,13 @@ static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &node
 
   // Get the context.
   TfToken context = GetContext(nodeDef->getDocument(), type);
-  if (context.IsEmpty()) {
+  if (context.IsEmpty())
+  {
     // Fallback to standard typedefs.
     context = GetContext(UsdMtlxGetDocument(""), type);
   }
-  if (context.IsEmpty()) {
+  if (context.IsEmpty())
+  {
     context = SdrNodeContext->Pattern;
   }
 
@@ -314,19 +347,23 @@ static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &node
 
   // If the nodeDef name starts with ND_geompropvalue, it's a primvar reader
   // node and we want to add $geomprop to the list of referenced primvars.
-  if (TfStringStartsWith(nodeDef->getName(), "ND_geompropvalue")) {
+  if (TfStringStartsWith(nodeDef->getName(), "ND_geompropvalue"))
+  {
     primvars.push_back("$geomprop");
   }
 
   // Also check internalgeomprops.
   static const std::string internalgeompropsName("internalgeomprops");
   const auto &internalgeomprops = nodeDef->getAttribute(internalgeompropsName);
-  if (!internalgeomprops.empty()) {
+  if (!internalgeomprops.empty())
+  {
     std::vector<std::string> split = UsdMtlxSplitStringArray(internalgeomprops);
     // Note: MaterialX uses a default texcoord of "UV0", which we
     // inline replace with the configured default.
-    for (auto &name : split) {
-      if (name == "UV0") {
+    for (auto &name : split)
+    {
+      if (name == "UV0")
+      {
         name = _GetPrimaryUvSetName();
       }
     }
@@ -334,10 +371,12 @@ static void ParseElement(ShaderBuilder *builder, const mx::ConstNodeDefPtr &node
   }
 
   // Properties
-  for (const auto &mtlxInput : nodeDef->getInputs()) {
+  for (const auto &mtlxInput : nodeDef->getInputs())
+  {
     builder->AddProperty(mtlxInput, false, &primvars);
   }
-  for (const auto &mtlxOutput : nodeDef->getOutputs()) {
+  for (const auto &mtlxOutput : nodeDef->getOutputs())
+  {
     builder->AddProperty(mtlxOutput, true, nullptr);
   }
 
@@ -349,7 +388,8 @@ static void ParseElement(ShaderBuilder *builder,
                          const NdrNodeDiscoveryResult &discoveryResult)
 {
   ParseElement(builder, nodeGraph->getNodeDef());
-  if (*builder) {
+  if (*builder)
+  {
     // XXX -- Node graphs not supported yet.
   }
 }
@@ -359,24 +399,28 @@ static void ParseElement(ShaderBuilder *builder,
                          const NdrNodeDiscoveryResult &discoveryResult)
 {
   // Name remapping.
-  for (const auto &mtlxInput : impl->getInputs()) {
+  for (const auto &mtlxInput : impl->getInputs())
+  {
     builder->AddPropertyNameRemapping(mtlxInput->getName(), mtlxInput->getAttribute("implname"));
   }
 
   ParseElement(builder, impl->getNodeDef());
-  if (!*builder) {
+  if (!*builder)
+  {
     return;
   }
 
   // Get the implementation file.  Note we're not doing proper Ar asset
   // localization here yet.
   auto filename = impl->getFile();
-  if (filename.empty()) {
+  if (filename.empty())
+  {
     builder->SetInvalid();
     return;
   }
 
-  if (TfIsRelativePath(filename)) {
+  if (TfIsRelativePath(filename))
+  {
     // The path is relative to some library path but we don't know which.
     // We'll just check them all until we find an existing file.
     // XXX -- Since we're likely to do this with every implementation
@@ -385,14 +429,17 @@ static void ParseElement(ShaderBuilder *builder,
     // XXX -- A future version of the asset resolver that has protocols
     //        would make it easy for clients to resolve a relative path.
     //        We should switch to that when available.
-    for (const auto &dir : UsdMtlxStandardLibraryPaths()) {
+    for (const auto &dir : UsdMtlxStandardLibraryPaths())
+    {
       const auto path = TfStringCatPaths(dir, filename);
-      if (TfIsFile(path, true)) {
+      if (TfIsFile(path, true))
+      {
         filename = path;
         break;
       }
     }
-    if (TfIsRelativePath(filename)) {
+    if (TfIsRelativePath(filename))
+    {
       TF_DEBUG(NDR_PARSING)
         .Msg(
           "MaterialX implementation %s could "
@@ -406,7 +453,8 @@ static void ParseElement(ShaderBuilder *builder,
 
   // Function
   const auto &function = impl->getFunction();
-  if (!function.empty()) {
+  if (!function.empty())
+  {
     builder->metadata[SdrNodeMetadata->ImplementationName] = function;
   }
 }
@@ -414,7 +462,8 @@ static void ParseElement(ShaderBuilder *builder,
 }  // anonymous namespace
 
 /// Parses nodes in MaterialX files.
-class UsdMtlxParserPlugin : public NdrParserPlugin {
+class UsdMtlxParserPlugin : public NdrParserPlugin
+{
  public:
   UsdMtlxParserPlugin() = default;
   ~UsdMtlxParserPlugin() override = default;
@@ -428,20 +477,25 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
 {
   MaterialX::ConstDocumentPtr document = nullptr;
   // Get the MaterialX document.
-  if (!discoveryResult.resolvedUri.empty()) {
+  if (!discoveryResult.resolvedUri.empty())
+  {
     document = UsdMtlxGetDocument(discoveryResult.resolvedUri == "mtlx" ? "" : discoveryResult.resolvedUri);
-    if (!TF_VERIFY(document)) {
+    if (!TF_VERIFY(document))
+    {
       return GetInvalidNode(discoveryResult);
     }
   }
-  else if (!discoveryResult.sourceCode.empty()) {
+  else if (!discoveryResult.sourceCode.empty())
+  {
     document = UsdMtlxGetDocumentFromString(discoveryResult.sourceCode);
-    if (!document) {
+    if (!document)
+    {
       TF_WARN("Invalid mtlx source code.");
       return GetInvalidNode(discoveryResult);
     }
   }
-  else {
+  else
+  {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult for identifier '%s': both "
       "resolvedUri and sourceCode fields are empty.",
@@ -450,26 +504,31 @@ NdrNodeUniquePtr UsdMtlxParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
   }
 
   // Get the element.
-  if (discoveryResult.blindData.empty()) {
+  if (discoveryResult.blindData.empty())
+  {
     TF_WARN("Invalid MaterialX blindData; should have node name");
     return GetInvalidNode(discoveryResult);
   }
 
   auto element = document->getChild(discoveryResult.blindData);
-  if (!element) {
+  if (!element)
+  {
     TF_WARN("Invalid MaterialX blindData; unknown node name ' %s '", discoveryResult.blindData.c_str());
     return GetInvalidNode(discoveryResult);
   }
 
   // Handle nodegraphs and implementations differently.
   ShaderBuilder builder(discoveryResult);
-  if (auto nodeGraph = element->asA<mx::NodeGraph>()) {
+  if (auto nodeGraph = element->asA<mx::NodeGraph>())
+  {
     ParseElement(&builder, nodeGraph, discoveryResult);
   }
-  else if (auto impl = element->asA<mx::Implementation>()) {
+  else if (auto impl = element->asA<mx::Implementation>())
+  {
     ParseElement(&builder, impl, discoveryResult);
   }
-  else {
+  else
+  {
     TF_VERIFY(
       false, "MaterialX node '%s' isn't a nodegraph or implementation", element->getNamePath().c_str());
   }

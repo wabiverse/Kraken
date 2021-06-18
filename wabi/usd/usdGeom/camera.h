@@ -88,7 +88,8 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdGeomTokens->rightHanded
 /// as the value.
 ///
-class UsdGeomCamera : public UsdGeomXformable {
+class UsdGeomCamera : public UsdGeomXformable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -104,13 +105,15 @@ class UsdGeomCamera : public UsdGeomXformable {
   /// Equivalent to UsdGeomCamera::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomCamera(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim)
+  explicit UsdGeomCamera(const UsdPrim &prim = UsdPrim())
+    : UsdGeomXformable(prim)
   {}
 
   /// Construct a UsdGeomCamera on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomCamera(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomCamera(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj)
+  explicit UsdGeomCamera(const UsdSchemaBase &schemaObj)
+    : UsdGeomXformable(schemaObj)
   {}
 
   /// Destructor.

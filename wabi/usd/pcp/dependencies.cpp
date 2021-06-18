@@ -54,7 +54,9 @@ Pcp_Dependencies::ConcurrentPopulationContext::~ConcurrentPopulationContext()
   _deps._concurrentPopulationContext = nullptr;
 }
 
-Pcp_Dependencies::Pcp_Dependencies() : _layerStacksRevision(0), _concurrentPopulationContext(nullptr)
+Pcp_Dependencies::Pcp_Dependencies()
+  : _layerStacksRevision(0),
+    _concurrentPopulationContext(nullptr)
 {
   // Do nothing
 }
@@ -81,26 +83,31 @@ void Pcp_Dependencies::Add(const PcpPrimIndex &primIndex,
                            PcpDynamicFileFormatDependencyData &&fileFormatDependencyData)
 {
   TfAutoMallocTag2 tag("Pcp", "Pcp_Dependencies::Add");
-  if (!primIndex.GetRootNode()) {
+  if (!primIndex.GetRootNode())
+  {
     return;
   }
   const SdfPath &primIndexPath = primIndex.GetRootNode().GetPath();
   TF_DEBUG(PCP_DEPENDENCIES).Msg("Pcp_Dependencies: Adding deps for index <%s>:\n", primIndexPath.GetText());
 
   int nodeIndex = 0, count = 0;
-  for (const PcpNodeRef &n : primIndex.GetNodeRange()) {
+  for (const PcpNodeRef &n : primIndex.GetNodeRange())
+  {
     const int curNodeIndex = nodeIndex++;
     const PcpDependencyFlags depFlags = PcpClassifyNodeDependency(n);
-    if (_ShouldStoreDependency(depFlags)) {
+    if (_ShouldStoreDependency(depFlags))
+    {
       ++count;
       {
         tbb::spin_mutex::scoped_lock lock;
-        if (_concurrentPopulationContext) {
+        if (_concurrentPopulationContext)
+        {
           lock.acquire(_concurrentPopulationContext->_mutex);
         }
         auto iresult = _deps.emplace(n.GetLayerStack(), _SiteDepMap());
         _SiteDepMap &siteDepMap = iresult.first->second;
-        if (iresult.second) {
+        if (iresult.second)
+        {
           // If we inserted a new entry, bump the revision count.
           ++_layerStacksRevision;
         }
@@ -120,15 +127,18 @@ void Pcp_Dependencies::Add(const PcpPrimIndex &primIndex,
 
   // Store the prim index's dynamic file format dependency of the prim index
   // if possible
-  if (!fileFormatDependencyData.IsEmpty()) {
+  if (!fileFormatDependencyData.IsEmpty())
+  {
     // Update the cache of field names that are are possible dynamic file
     // format argument dependencies by incrementing its reference count,
     // adding the field to the cache if it isn't already there.
     tbb::spin_mutex::scoped_lock lock;
-    if (_concurrentPopulationContext) {
+    if (_concurrentPopulationContext)
+    {
       lock.acquire(_concurrentPopulationContext->_mutex);
     }
-    for (const TfToken &field : fileFormatDependencyData.GetRelevantFieldNames()) {
+    for (const TfToken &field : fileFormatDependencyData.GetRelevantFieldNames())
+    {
       auto it = _possibleDynamicFileFormatArgumentFields.emplace(field, 0);
       it.first->second++;
     }
@@ -136,14 +146,16 @@ void Pcp_Dependencies::Add(const PcpPrimIndex &primIndex,
     _fileFormatArgumentDependencyMap[primIndexPath] = std::move(fileFormatDependencyData);
   }
 
-  if (count == 0) {
+  if (count == 0)
+  {
     TF_DEBUG(PCP_DEPENDENCIES).Msg("    None\n");
   }
 }
 
 void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifeboat)
 {
-  if (!primIndex.GetRootNode()) {
+  if (!primIndex.GetRootNode())
+  {
     return;
   }
   const SdfPath &primIndexPath = primIndex.GetRootNode().GetPath();
@@ -151,10 +163,12 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
     .Msg("Pcp_Dependencies: Removing deps for index <%s>\n", primIndexPath.GetText());
 
   int nodeIndex = 0;
-  for (const PcpNodeRef &n : primIndex.GetNodeRange()) {
+  for (const PcpNodeRef &n : primIndex.GetNodeRange())
+  {
     const int curNodeIndex = nodeIndex++;
     const PcpDependencyFlags depFlags = PcpClassifyNodeDependency(n);
-    if (!_ShouldStoreDependency(depFlags)) {
+    if (!_ShouldStoreDependency(depFlags))
+    {
       continue;
     }
 
@@ -172,7 +186,8 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
     // Swap with last element, then remove that.
     // We are using the vector as an unordered set.
     std::vector<SdfPath>::iterator i = std::find(deps.begin(), deps.end(), primIndexPath);
-    if (!TF_VERIFY(i != deps.end())) {
+    if (!TF_VERIFY(i != deps.end()))
+    {
       continue;
     }
     std::vector<SdfPath>::iterator last = --deps.end();
@@ -182,34 +197,42 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
     // Reap container entries when no deps are left.
     // This is slightly tricky with SdfPathTable since we need
     // to examine subtrees and parents.
-    if (deps.empty()) {
+    if (deps.empty())
+    {
       TF_DEBUG(PCP_DEPENDENCIES).Msg("      Removed last dep on site\n");
 
       // Scan children to see if we can remove this subtree.
       _SiteDepMap::iterator i, iBegin, iEnd;
       std::tie(iBegin, iEnd) = siteDepMap.FindSubtreeRange(n.GetPath());
-      for (i = iBegin; i != iEnd && i->second.empty(); ++i) {
+      for (i = iBegin; i != iEnd && i->second.empty(); ++i)
+      {
       }
       bool subtreeIsEmpty = i == iEnd;
-      if (subtreeIsEmpty) {
+      if (subtreeIsEmpty)
+      {
         siteDepMap.erase(iBegin);
         TF_DEBUG(PCP_DEPENDENCIES).Msg("      No subtree deps\n");
 
         // Now scan upwards to reap parent entries.
-        for (SdfPath p = n.GetPath().GetParentPath(); !p.IsEmpty(); p = p.GetParentPath()) {
+        for (SdfPath p = n.GetPath().GetParentPath(); !p.IsEmpty(); p = p.GetParentPath())
+        {
           std::tie(iBegin, iEnd) = siteDepMap.FindSubtreeRange(p);
-          if (iBegin != iEnd && std::next(iBegin) == iEnd && iBegin->second.empty()) {
+          if (iBegin != iEnd && std::next(iBegin) == iEnd && iBegin->second.empty())
+          {
             TF_DEBUG(PCP_DEPENDENCIES).Msg("    Removing empty parent entry <%s>\n", p.GetText());
             siteDepMap.erase(iBegin);
           }
-          else {
+          else
+          {
             break;
           }
         }
 
         // Check if the entire table is empty.
-        if (siteDepMap.empty()) {
-          if (lifeboat) {
+        if (siteDepMap.empty())
+        {
+          if (lifeboat)
+          {
             lifeboat->Retain(n.GetLayerStack());
           }
           _deps.erase(n.GetLayerStack());
@@ -225,21 +248,27 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
   // We need to remove prim index's dynamic format dependency object
   // if there is one.
   auto it = _fileFormatArgumentDependencyMap.find(primIndexPath);
-  if (it != _fileFormatArgumentDependencyMap.end()) {
-    if (TF_VERIFY(!it->second.IsEmpty())) {
+  if (it != _fileFormatArgumentDependencyMap.end())
+  {
+    if (TF_VERIFY(!it->second.IsEmpty()))
+    {
       // We need to also update the reference counts for the
       // dependency's relevant fields in the field name cache.
-      for (const auto &field : it->second.GetRelevantFieldNames()) {
+      for (const auto &field : it->second.GetRelevantFieldNames())
+      {
         auto fieldIt = _possibleDynamicFileFormatArgumentFields.find(field);
-        if (TF_VERIFY(fieldIt != _possibleDynamicFileFormatArgumentFields.end())) {
+        if (TF_VERIFY(fieldIt != _possibleDynamicFileFormatArgumentFields.end()))
+        {
           // If the field's reference count will drop to 0, we
           // need to remove it completely as
           // IsPossibleDynamicFileFormatArgumentField only tests
           // existence.
-          if (fieldIt->second <= 1) {
+          if (fieldIt->second <= 1)
+          {
             _possibleDynamicFileFormatArgumentFields.erase(fieldIt);
           }
-          else {
+          else
+          {
             fieldIt->second--;
           }
         }
@@ -255,8 +284,9 @@ void Pcp_Dependencies::RemoveAll(PcpLifeboat *lifeboat)
   TF_DEBUG(PCP_DEPENDENCIES).Msg("Pcp_Dependencies::RemoveAll: Clearing all dependencies\n");
 
   // Retain all layerstacks in the lifeboat.
-  if (lifeboat) {
-    TF_FOR_ALL(i, _deps)
+  if (lifeboat)
+  {
+    TF_FOR_ALL (i, _deps)
     {
       lifeboat->Retain(i->first);
     }
@@ -272,7 +302,7 @@ SdfLayerHandleSet Pcp_Dependencies::GetUsedLayers() const
 {
   SdfLayerHandleSet reachedLayers;
 
-  TF_FOR_ALL(layerStack, _deps)
+  TF_FOR_ALL (layerStack, _deps)
   {
     const SdfLayerRefPtrVector &layers = layerStack->first->GetLayers();
     reachedLayers.insert(layers.begin(), layers.end());
@@ -285,7 +315,7 @@ SdfLayerHandleSet Pcp_Dependencies::GetUsedRootLayers() const
 {
   SdfLayerHandleSet reachedRootLayers;
 
-  TF_FOR_ALL(i, _deps)
+  TF_FOR_ALL (i, _deps)
   {
     const PcpLayerStackPtr &layerStack = i->first;
     reachedRootLayers.insert(layerStack->GetIdentifier().rootLayer);
@@ -316,7 +346,8 @@ const PcpDynamicFileFormatDependencyData &Pcp_Dependencies::GetDynamicFileFormat
 {
   static const PcpDynamicFileFormatDependencyData empty;
   auto it = _fileFormatArgumentDependencyMap.find(primIndexPath);
-  if (it == _fileFormatArgumentDependencyMap.end()) {
+  if (it == _fileFormatArgumentDependencyMap.end())
+  {
     return empty;
   }
   return it->second;

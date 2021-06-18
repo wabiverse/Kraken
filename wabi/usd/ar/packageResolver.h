@@ -99,7 +99,8 @@ class VtValue;
 /// }
 /// \endcode
 ///
-class ArPackageResolver {
+class ArPackageResolver
+{
  public:
   ArPackageResolver(const ArPackageResolver &) = delete;
   ArPackageResolver &operator=(const ArPackageResolver &) = delete;

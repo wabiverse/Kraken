@@ -39,7 +39,9 @@ WABI_NAMESPACE_BEGIN
 /// List editor implementation for list editing operations stored in an
 /// SdfListOp object.
 ///
-template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy> {
+template<class TypePolicy>
+class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
+{
  private:
   typedef Sdf_ListOpListEditor<TypePolicy> This;
   typedef Sdf_ListEditor<TypePolicy> Parent;
@@ -100,12 +102,14 @@ template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<Ty
 
   void _UpdateListOp(const ListOpType &newListOp, const SdfListOpType *updatedListOpType = NULL)
   {
-    if (!_GetOwner()) {
+    if (!_GetOwner())
+    {
       TF_CODING_ERROR("Invalid owner.");
       return;
     }
 
-    if (!_GetOwner()->GetLayer()->PermissionToEdit()) {
+    if (!_GetOwner()->GetLayer()->PermissionToEdit())
+    {
       TF_CODING_ERROR("Layer is not editable.");
       return;
     }
@@ -120,25 +124,30 @@ template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<Ty
                                                                 {SdfListOpTypeAppended, false}};
     bool anyChanged = false;
 
-    for (auto &opTypeAndChanged : opTypesAndChanged) {
+    for (auto &opTypeAndChanged : opTypesAndChanged)
+    {
       // If the consumer has specified that only a single op type has
       // changed, ignore all others.
-      if (updatedListOpType && *updatedListOpType != opTypeAndChanged.first) {
+      if (updatedListOpType && *updatedListOpType != opTypeAndChanged.first)
+      {
         continue;
       }
 
       opTypeAndChanged.second = _ListDiffers(opTypeAndChanged.first, newListOp, _listOp);
-      if (opTypeAndChanged.second) {
+      if (opTypeAndChanged.second)
+      {
         if (!_ValidateEdit(opTypeAndChanged.first,
                            _listOp.GetItems(opTypeAndChanged.first),
-                           newListOp.GetItems(opTypeAndChanged.first))) {
+                           newListOp.GetItems(opTypeAndChanged.first)))
+        {
           return;
         }
         anyChanged = true;
       }
     }
 
-    if (!anyChanged && (newListOp.IsExplicit() == _listOp.IsExplicit())) {
+    if (!anyChanged && (newListOp.IsExplicit() == _listOp.IsExplicit()))
+    {
       return;
     }
 
@@ -148,17 +157,21 @@ template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<Ty
     ListOpType oldListOp = newListOp;
     _listOp.Swap(oldListOp);
 
-    if (newListOp.HasKeys()) {
+    if (newListOp.HasKeys())
+    {
       _GetOwner()->SetField(_GetField(), VtValue(newListOp));
     }
-    else {
+    else
+    {
       _GetOwner()->ClearField(_GetField());
     }
 
     // For each operation list that changed, call helper function to allow
     // subclasses to execute additional behavior in response to changes.
-    for (auto &opTypeAndChanged : opTypesAndChanged) {
-      if (opTypeAndChanged.second) {
+    for (auto &opTypeAndChanged : opTypesAndChanged)
+    {
+      if (opTypeAndChanged.second)
+      {
         this->_OnEdit(opTypeAndChanged.first,
                       oldListOp.GetItems(opTypeAndChanged.first),
                       newListOp.GetItems(opTypeAndChanged.first));
@@ -178,25 +191,30 @@ Sdf_ListOpListEditor<TP>::Sdf_ListOpListEditor(const SdfSpecHandle &owner,
                                                const TP &typePolicy)
   : Parent(owner, listField, typePolicy)
 {
-  if (owner) {
+  if (owner)
+  {
     _listOp = owner->GetFieldAs<ListOpType>(_GetField());
   }
 }
 
-template<class TP> bool Sdf_ListOpListEditor<TP>::IsExplicit() const
+template<class TP>
+bool Sdf_ListOpListEditor<TP>::IsExplicit() const
 {
   return _listOp.IsExplicit();
 }
 
-template<class TP> bool Sdf_ListOpListEditor<TP>::IsOrderedOnly() const
+template<class TP>
+bool Sdf_ListOpListEditor<TP>::IsOrderedOnly() const
 {
   return false;
 }
 
-template<class TP> bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
+template<class TP>
+bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit) {
+  if (!rhsEdit)
+  {
     TF_CODING_ERROR("Could not copy from list editor of different type");
     return false;
   }
@@ -205,7 +223,8 @@ template<class TP> bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor
   return true;
 }
 
-template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEdits()
+template<class TP>
+bool Sdf_ListOpListEditor<TP>::ClearEdits()
 {
   ListOpType emptyAndNotExplicit;
 
@@ -213,7 +232,8 @@ template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEdits()
   return true;
 }
 
-template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
+template<class TP>
+bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
 {
   ListOpType emptyAndExplicit;
   emptyAndExplicit.ClearAndMakeExplicit();
@@ -222,7 +242,8 @@ template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
   return true;
 }
 
-template<class TP> void Sdf_ListOpListEditor<TP>::ModifyItemEdits(const ModifyCallback &cb)
+template<class TP>
+void Sdf_ListOpListEditor<TP>::ModifyItemEdits(const ModifyCallback &cb)
 {
   ListOpType modifiedListOp = _listOp;
   modifiedListOp.ModifyOperations(
@@ -244,7 +265,8 @@ bool Sdf_ListOpListEditor<TP>::ReplaceEdits(SdfListOpType opType,
                                             const value_vector_type &newItems)
 {
   ListOpType editedListOp = _listOp;
-  if (!editedListOp.ReplaceOperations(opType, index, n, _GetTypePolicy().Canonicalize(newItems))) {
+  if (!editedListOp.ReplaceOperations(opType, index, n, _GetTypePolicy().Canonicalize(newItems)))
+  {
     return false;
   }
 
@@ -257,7 +279,8 @@ void Sdf_ListOpListEditor<TP>::ApplyList(SdfListOpType opType, const Sdf_ListEdi
 
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit) {
+  if (!rhsEdit)
+  {
     TF_CODING_ERROR("Cannot apply from list editor of different type");
     return;
   }

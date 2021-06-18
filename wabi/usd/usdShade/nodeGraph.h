@@ -77,7 +77,8 @@ class SdfAssetPath;
 /// output on a shader inside the node-graph.
 ///
 ///
-class UsdShadeNodeGraph : public UsdTyped {
+class UsdShadeNodeGraph : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -93,13 +94,15 @@ class UsdShadeNodeGraph : public UsdTyped {
   /// Equivalent to UsdShadeNodeGraph::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeNodeGraph(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdShadeNodeGraph(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdShadeNodeGraph on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeNodeGraph(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeNodeGraph(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdShadeNodeGraph(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.
@@ -315,14 +318,16 @@ class UsdShadeNodeGraph : public UsdTyped {
   // UsdShadeNodeGraph until bug 143077 is resolved.
 
   /// Hash functor for UsdShadeNodeGraph objects.
-  struct NodeGraphHasher {
+  struct NodeGraphHasher
+  {
     inline size_t operator()(const UsdShadeNodeGraph &nodeGraph) const
     {
       return hash_value(nodeGraph.GetPrim());
     }
   };
   /// Equality comparator for UsdShadeNodeGraph objects.
-  struct NodeGraphEqualFn {
+  struct NodeGraphEqualFn
+  {
     inline bool operator()(UsdShadeNodeGraph const &s1, UsdShadeNodeGraph const &s2) const
     {
       return s1.GetPrim() == s2.GetPrim();
@@ -378,7 +383,8 @@ class UsdShadeNodeGraph : public UsdTyped {
 
   /// UsdShadeNodeGraph provides its own connectability behavior,
   /// to support nesting of node graphs.
-  class ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior {
+  class ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
+  {
     USDSHADE_API
     bool CanConnectOutputToSource(const UsdShadeOutput &output,
                                   const UsdAttribute &source,

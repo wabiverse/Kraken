@@ -41,7 +41,8 @@ using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 /// also includes writing texture metadata such as the sampling
 /// transform to the shader bar.
 ///
-class HdPh_TextureBinder {
+class HdPh_TextureBinder
+{
  public:
   using NamedTextureHandle = HdPhShaderCode::NamedTextureHandle;
   using NamedTextureHandleVector = HdPhShaderCode::NamedTextureHandleVector;

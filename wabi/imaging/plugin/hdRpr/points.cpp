@@ -43,15 +43,19 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
   bool dirtyPoints = false;
   bool isPointsComputed = false;
   auto extComputationDescs = sceneDelegate->GetExtComputationPrimvarDescriptors(id, HdInterpolationVertex);
-  for (auto &desc : extComputationDescs) {
-    if (desc.name != HdTokens->points) {
+  for (auto &desc : extComputationDescs)
+  {
+    if (desc.name != HdTokens->points)
+    {
       continue;
     }
 
-    if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, desc.name)) {
+    if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, desc.name))
+    {
       auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
       auto pointValueIt = valueStore.find(desc.name);
-      if (pointValueIt != valueStore.end()) {
+      if (pointValueIt != valueStore.end())
+      {
         m_points = pointValueIt->second.Get<VtVec3fArray>();
         isPointsComputed = true;
         dirtyPoints = true;
@@ -61,18 +65,22 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     break;
   }
 
-  if (!isPointsComputed && HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points)) {
+  if (!isPointsComputed && HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points))
+  {
     VtValue pointsValue = sceneDelegate->Get(id, HdTokens->points);
     m_points = pointsValue.Get<VtVec3fArray>();
     dirtyPoints = true;
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyWidths) {
+  if (*dirtyBits & HdChangeTracker::DirtyWidths)
+  {
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
-    if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation)) {
+    if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation))
+    {
       m_widths = sceneDelegate->Get(id, HdTokens->widths).Get<VtFloatArray>();
     }
-    else {
+    else
+    {
       m_widths = VtFloatArray(1, 1.0f);
       m_widthsInterpolation = HdInterpolationConstant;
       TF_WARN("[%s] Points does not have widths. Fallback value is 1.0f with a constant interpolation",
@@ -81,12 +89,15 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   bool dirtyDisplayColors = HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->displayColor);
-  if (dirtyDisplayColors) {
+  if (dirtyDisplayColors)
+  {
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
-    if (HdRprIsPrimvarExists(HdTokens->displayColor, primvarDescsPerInterpolation, &m_colorsInterpolation)) {
+    if (HdRprIsPrimvarExists(HdTokens->displayColor, primvarDescsPerInterpolation, &m_colorsInterpolation))
+    {
       m_colors = sceneDelegate->Get(GetId(), HdTokens->displayColor).Get<VtVec3fArray>();
     }
-    else {
+    else
+    {
       m_colors = VtVec3fArray(1, GfVec3f(1, 0, 1));
       m_colorsInterpolation = HdInterpolationConstant;
       TF_WARN(
@@ -96,59 +107,72 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyVisibility) {
+  if (*dirtyBits & HdChangeTracker::DirtyVisibility)
+  {
     _sharedData.visible = sceneDelegate->GetVisible(id);
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyTransform) {
+  if (*dirtyBits & HdChangeTracker::DirtyTransform)
+  {
     m_transform = GfMatrix4f(sceneDelegate->GetTransform(id));
   }
 
   bool dirtySubdivisionLevel = false;
   bool dirtyVisibilityMask = false;
-  if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
+  if (*dirtyBits & HdChangeTracker::DirtyPrimvar)
+  {
     HdRprGeometrySettings geomSettings;
     geomSettings.visibilityMask = kVisibleAll;
     HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
     HdRprParseGeometrySettings(sceneDelegate, id, primvarDescsPerInterpolation, &geomSettings);
 
-    if (m_subdivisionLevel != geomSettings.subdivisionLevel) {
+    if (m_subdivisionLevel != geomSettings.subdivisionLevel)
+    {
       m_subdivisionLevel = geomSettings.subdivisionLevel;
       dirtySubdivisionLevel = true;
     }
 
-    if (m_visibilityMask != geomSettings.visibilityMask) {
+    if (m_visibilityMask != geomSettings.visibilityMask)
+    {
       m_visibilityMask = geomSettings.visibilityMask;
       dirtyVisibilityMask = true;
     }
   }
 
-  if (dirtyDisplayColors) {
-    if (m_material) {
+  if (dirtyDisplayColors)
+  {
+    if (m_material)
+    {
       rprApi->Release(m_material);
       m_material = nullptr;
     }
 
-    if (m_colorsInterpolation == HdInterpolationVertex) {
+    if (m_colorsInterpolation == HdInterpolationVertex)
+    {
       m_material = rprApi->CreatePointsMaterial(m_colors);
     }
-    else if (!m_colors.empty()) {
+    else if (!m_colors.empty())
+    {
       m_material = rprApi->CreateDiffuseMaterial(m_colors[0]);
     }
 
-    if (m_material && RprUsdIsLeakCheckEnabled()) {
+    if (m_material && RprUsdIsLeakCheckEnabled())
+    {
       rprApi->SetName(m_material, id.GetText());
     }
   }
 
   bool dirtyPrototypeMesh = false;
   bool dirtyInstances = false;
-  if (m_instances.size() != m_points.size()) {
-    if (m_points.empty()) {
+  if (m_instances.size() != m_points.size())
+  {
+    if (m_points.empty())
+    {
       rprApi->Release(m_prototypeMesh);
       m_prototypeMesh = nullptr;
     }
-    else {
+    else
+    {
       auto &topology = UsdImagingGetUnitSphereMeshTopology();
       auto &points = UsdImagingGetUnitSphereMeshPoints();
 
@@ -165,25 +189,32 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
 
       dirtyPrototypeMesh = true;
 
-      if (RprUsdIsLeakCheckEnabled()) {
+      if (RprUsdIsLeakCheckEnabled())
+      {
         rprApi->SetName(m_prototypeMesh, id.GetText());
       }
     }
 
-    if (m_instances.size() > m_points.size()) {
-      for (size_t i = m_points.size(); i < m_instances.size(); ++i) {
+    if (m_instances.size() > m_points.size())
+    {
+      for (size_t i = m_points.size(); i < m_instances.size(); ++i)
+      {
         rprApi->Release(m_instances[i]);
       }
       m_instances.resize(m_points.size());
     }
-    else {
+    else
+    {
       m_instances.reserve(m_points.size());
-      for (size_t i = m_instances.size(); i < m_points.size(); ++i) {
-        if (auto instance = rprApi->CreateMeshInstance(m_prototypeMesh)) {
+      for (size_t i = m_instances.size(); i < m_points.size(); ++i)
+      {
+        if (auto instance = rprApi->CreateMeshInstance(m_prototypeMesh))
+        {
           rprApi->SetMeshId(instance, i);
           m_instances.push_back(instance);
 
-          if (RprUsdIsLeakCheckEnabled()) {
+          if (RprUsdIsLeakCheckEnabled())
+          {
             rprApi->SetName(instance, id.GetText());
           }
         }
@@ -194,22 +225,28 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     m_instances.shrink_to_fit();
   }
 
-  if (!m_instances.empty()) {
-    if (dirtySubdivisionLevel && !dirtyPrototypeMesh) {
+  if (!m_instances.empty())
+  {
+    if (dirtySubdivisionLevel && !dirtyPrototypeMesh)
+    {
       rprApi->SetMeshRefineLevel(m_prototypeMesh, m_subdivisionLevel);
     }
 
     if ((*dirtyBits & HdChangeTracker::DirtyTransform) || (*dirtyBits & HdChangeTracker::DirtyWidths) ||
-        dirtyPoints || dirtyInstances) {
+        dirtyPoints || dirtyInstances)
+    {
 
       std::function<float(size_t)> sampleWidth;
-      if (m_widthsInterpolation == HdInterpolationVertex) {
+      if (m_widthsInterpolation == HdInterpolationVertex)
+      {
         sampleWidth = [this](size_t idx) { return m_widths[idx]; };
       }
-      else if (m_widthsInterpolation == HdInterpolationConstant) {
+      else if (m_widthsInterpolation == HdInterpolationConstant)
+      {
         sampleWidth = [this](size_t) { return m_widths[0]; };
       }
-      else {
+      else
+      {
         sampleWidth = [](size_t) { return 1.0f; };
         TF_WARN(
           "[%s] Unsupported widths interpolation. Fallback value is 1.0f with a constant "
@@ -217,7 +254,8 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
           id.GetText());
       }
 
-      for (size_t i = 0; i < m_instances.size(); ++i) {
+      for (size_t i = 0; i < m_instances.size(); ++i)
+      {
         auto &position = m_points[i];
         auto width = sampleWidth(i);
         auto transform = GfMatrix4f(1.0f).SetScale(GfVec3f(width)).SetTranslateOnly(position) * m_transform;
@@ -226,19 +264,24 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
 
-    if (dirtyDisplayColors || dirtyInstances) {
-      for (size_t i = 0; i < m_instances.size(); ++i) {
+    if (dirtyDisplayColors || dirtyInstances)
+    {
+      for (size_t i = 0; i < m_instances.size(); ++i)
+      {
         rprApi->SetMeshMaterial(m_instances[i], m_material, false);
       }
     }
 
-    if (!_sharedData.visible) {
+    if (!_sharedData.visible)
+    {
       // if primitive is fully invisible then visibility mask has no effect
       dirtyVisibilityMask = false;
     }
-    if ((*dirtyBits & HdChangeTracker::DirtyVisibility) || dirtyVisibilityMask || dirtyInstances) {
+    if ((*dirtyBits & HdChangeTracker::DirtyVisibility) || dirtyVisibilityMask || dirtyInstances)
+    {
       auto visibilityMask = _sharedData.visible ? m_visibilityMask : kInvisible;
-      for (size_t i = 0; i < m_instances.size(); ++i) {
+      for (size_t i = 0; i < m_instances.size(); ++i)
+      {
         rprApi->SetMeshVisibility(m_instances[i], visibilityMask);
       }
     }
@@ -254,7 +297,8 @@ void HdRprPoints::Finalize(HdRenderParam *renderParam)
   rprApi->Release(m_prototypeMesh);
   m_prototypeMesh = nullptr;
 
-  for (auto instance : m_instances) {
+  for (auto instance : m_instances)
+  {
     rprApi->Release(instance);
   }
   m_instances.clear();

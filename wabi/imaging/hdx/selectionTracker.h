@@ -94,7 +94,8 @@ using HdxSelectionTrackerSharedPtr = std::shared_ptr<class HdxSelectionTracker>;
 /// HdxSelectionTask takes HdxSelectionTracker as a task parameter, and uploads
 /// the selection buffer encoding to the GPU.
 ///
-class HdxSelectionTracker {
+class HdxSelectionTracker
+{
  public:
   HDX_API
   HdxSelectionTracker();

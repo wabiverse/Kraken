@@ -45,7 +45,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 ///
 /// Container for layer asset information.
 ///
-struct Sdf_AssetInfo {
+struct Sdf_AssetInfo
+{
   std::string identifier;
   ArResolvedPath resolvedPath;
   ArResolverContext resolverContext;

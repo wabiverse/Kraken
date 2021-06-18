@@ -49,22 +49,27 @@ void HgiGLShaderSection::WriteDeclaration(std::ostream &ss) const
   // identifiers and indicies
   const HgiShaderSectionAttributeVector &attributes = GetAttributes();
 
-  if (!attributes.empty()) {
+  if (!attributes.empty())
+  {
     ss << "layout(";
-    for (size_t i = 0; i < attributes.size(); i++) {
-      if (i > 0) {
+    for (size_t i = 0; i < attributes.size(); i++)
+    {
+      if (i > 0)
+      {
         ss << ", ";
       }
       const HgiShaderSectionAttribute &a = attributes[i];
       ss << a.identifier;
-      if (!a.index.empty()) {
+      if (!a.index.empty())
+      {
         ss << " = " << a.index;
       }
     }
     ss << ") ";
   }
   // If it has a storage qualifier, declare it
-  if (!_storageQualifier.empty()) {
+  if (!_storageQualifier.empty())
+  {
     ss << _storageQualifier << " ";
   }
   WriteType(ss);
@@ -160,7 +165,8 @@ bool HgiGLBlockShaderSection::VisitGlobalMemberDeclarations(std::ostream &ss)
   WriteIdentifier(ss);
   ss << "\n";
   ss << "{\n";
-  for (const HgiShaderFunctionParamDesc &param : _parameters) {
+  for (const HgiShaderFunctionParamDesc &param : _parameters)
+  {
     ss << "        " << param.type << " " << param.nameInShader << ";\n";
   }
   ss << "\n};";
@@ -184,10 +190,12 @@ HgiGLTextureShaderSection::~HgiGLTextureShaderSection() = default;
 
 static std::string _GetTextureTypePrefix(HgiFormat const &format)
 {
-  if (format >= HgiFormatUInt16 && format <= HgiFormatUInt16Vec4) {
+  if (format >= HgiFormatUInt16 && format <= HgiFormatUInt16Vec4)
+  {
     return "u";  // e.g., usampler, uvec4
   }
-  if (format >= HgiFormatInt32 && format <= HgiFormatInt32Vec4) {
+  if (format >= HgiFormatInt32 && format <= HgiFormatInt32Vec4)
+  {
     return "i";  // e.g., isampler, ivec4
   }
   return "";  // e.g., sampler, vec4
@@ -205,7 +213,8 @@ void HgiGLTextureShaderSection::_WriteSampledDataType(std::ostream &ss) const
 
 void HgiGLTextureShaderSection::WriteType(std::ostream &ss) const
 {
-  if (_dimensions < 1 || _dimensions > 3) {
+  if (_dimensions < 1 || _dimensions > 3)
+  {
     TF_CODING_ERROR("Invalid texture dimension");
   }
   _WriteSamplerType(ss);  // e.g. sampler<N>D, isampler<N>D, usampler<N>D
@@ -235,7 +244,8 @@ bool HgiGLTextureShaderSection::VisitGlobalFunctionDefinitions(std::ostream &ss)
   ss << "}";
 
   // Same except for texelfetch
-  if (_dimensions != 2) {
+  if (_dimensions != 2)
+  {
     return true;
   }
 
@@ -275,15 +285,19 @@ bool HgiGLBufferShaderSection::VisitGlobalMemberDeclarations(std::ostream &ss)
   // identifiers and indicies
   const HgiShaderSectionAttributeVector &attributes = GetAttributes();
 
-  if (!attributes.empty()) {
+  if (!attributes.empty())
+  {
     ss << "layout(";
-    for (size_t i = 0; i < attributes.size(); i++) {
-      if (i > 0) {
+    for (size_t i = 0; i < attributes.size(); i++)
+    {
+      if (i > 0)
+      {
         ss << ", ";
       }
       const HgiShaderSectionAttribute &a = attributes[i];
       ss << a.identifier;
-      if (!a.index.empty()) {
+      if (!a.index.empty())
+      {
         ss << " = " << a.index;
       }
     }

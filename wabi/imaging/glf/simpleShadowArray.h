@@ -47,7 +47,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GlfSimpleShadowArray : public TfRefBase, public TfWeakBase {
+class GlfSimpleShadowArray : public TfRefBase, public TfWeakBase
+{
  public:
   GLF_API
   GlfSimpleShadowArray();

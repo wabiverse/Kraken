@@ -74,7 +74,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceScope);
 /// TraceCollection instances.
 ///
 /// All public methods of TraceCollector are safe to call from any thread.
-class TraceCollector : public TfWeakBase {
+class TraceCollector : public TfWeakBase
+{
  public:
   TF_MALLOC_TAG_NEW("Trace", "TraceCollector");
 
@@ -104,7 +105,8 @@ class TraceCollector : public TfWeakBase {
 
   /// Default Trace category which corresponds to events stored for TRACE_
   /// macros.
-  struct DefaultCategory {
+  struct DefaultCategory
+  {
     /// Returns TraceCategory::Default.
     static constexpr TraceCategoryId GetId()
     {
@@ -143,9 +145,11 @@ class TraceCollector : public TfWeakBase {
   /// \returns The TimeStamp of the TraceEvent or 0 if the collector is
   /// disabled.
   /// \sa BeginScope \sa Scope
-  template<typename Category = DefaultCategory> TimeStamp BeginEvent(const Key &key)
+  template<typename Category = DefaultCategory>
+  TimeStamp BeginEvent(const Key &key)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return 0;
     }
     return _BeginEvent(key, Category::GetId());
@@ -156,9 +160,11 @@ class TraceCollector : public TfWeakBase {
   /// This version of the method allows the passing of a specific number of
   /// elapsed milliseconds, \a ms, to use for this event.
   /// This method is used for testing and debugging code.
-  template<typename Category = DefaultCategory> void BeginEventAtTime(const Key &key, double ms)
+  template<typename Category = DefaultCategory>
+  void BeginEventAtTime(const Key &key, double ms)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return;
     }
     _BeginEventAtTime(key, ms, Category::GetId());
@@ -172,9 +178,11 @@ class TraceCollector : public TfWeakBase {
   /// \returns The TimeStamp of the TraceEvent or 0 if the collector is
   /// disabled.
   /// \sa EndScope \sa Scope
-  template<typename Category = DefaultCategory> TimeStamp EndEvent(const Key &key)
+  template<typename Category = DefaultCategory>
+  TimeStamp EndEvent(const Key &key)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return 0;
     }
     return _EndEvent(key, Category::GetId());
@@ -185,9 +193,11 @@ class TraceCollector : public TfWeakBase {
   /// This version of the method allows the passing of a specific number of
   /// elapsed milliseconds, \a ms, to use for this event.
   /// This method is used for testing and debugging code.
-  template<typename Category = DefaultCategory> void EndEventAtTime(const Key &key, double ms)
+  template<typename Category = DefaultCategory>
+  void EndEventAtTime(const Key &key, double ms)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return;
     }
     _EndEventAtTime(key, ms, Category::GetId());
@@ -197,9 +207,11 @@ class TraceCollector : public TfWeakBase {
   /// Unlike begin/end, there is no matching event for marker events
   ///
 
-  template<typename Category = DefaultCategory> TimeStamp MarkerEvent(const Key &key)
+  template<typename Category = DefaultCategory>
+  TimeStamp MarkerEvent(const Key &key)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return 0;
     }
     return _MarkerEvent(key, Category::GetId());
@@ -210,9 +222,11 @@ class TraceCollector : public TfWeakBase {
   /// This version of the method allows the passing of a specific number of
   /// elapsed milliseconds, \a ms, to use for this event.
   /// This method is used for testing and debugging code.
-  template<typename Category = DefaultCategory> void MarkerEventAtTime(const Key &key, double ms)
+  template<typename Category = DefaultCategory>
+  void MarkerEventAtTime(const Key &key, double ms)
   {
-    if (ARCH_LIKELY(!Category::IsEnabled())) {
+    if (ARCH_LIKELY(!Category::IsEnabled()))
+    {
       return;
     }
     _MarkerEventAtTime(key, ms, Category::GetId());
@@ -223,7 +237,8 @@ class TraceCollector : public TfWeakBase {
   /// It is more efficient to use the \c Scope method than to call both
   /// \c BeginScope and \c EndScope.
   /// \sa EndScope \sa Scope
-  template<typename Category = DefaultCategory> void BeginScope(const TraceKey &_key)
+  template<typename Category = DefaultCategory>
+  void BeginScope(const TraceKey &_key)
   {
     if (ARCH_LIKELY(!Category::IsEnabled()))
       return;
@@ -236,7 +251,8 @@ class TraceCollector : public TfWeakBase {
   /// The variadic arguments \a args must be an even number of parameters in
   /// the form TraceKey, Value.
   /// \sa EndScope \sa Scope \sa StoreData
-  template<typename Category, typename... Args> void BeginScope(const TraceKey &key, Args &&...args)
+  template<typename Category, typename... Args>
+  void BeginScope(const TraceKey &key, Args &&...args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -252,7 +268,8 @@ class TraceCollector : public TfWeakBase {
   /// arguments if \p Category is enabled. The variadic arguments \a args must
   /// be an even number of parameters in the form TraceKey, Value.
   /// \sa EndScope \sa Scope \sa StoreData
-  template<typename... Args> void BeginScope(const TraceKey &key, Args &&...args)
+  template<typename... Args>
+  void BeginScope(const TraceKey &key, Args &&...args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -265,7 +282,8 @@ class TraceCollector : public TfWeakBase {
   /// It is more efficient to use the \c Scope method than to call both
   /// \c BeginScope and \c EndScope.
   /// \sa BeginScope \sa Scope
-  template<typename Category = DefaultCategory> void EndScope(const TraceKey &key)
+  template<typename Category = DefaultCategory>
+  void EndScope(const TraceKey &key)
   {
     if (ARCH_LIKELY(!Category::IsEnabled()))
       return;
@@ -279,7 +297,8 @@ class TraceCollector : public TfWeakBase {
   /// This method is used by the TRACE_FUNCTION, TRACE_SCOPE and
   /// TRACE_FUNCTION_SCOPE macros.
   /// \sa BeginScope \sa EndScope
-  template<typename Category = DefaultCategory> void Scope(const TraceKey &key, TimeStamp start)
+  template<typename Category = DefaultCategory>
+  void Scope(const TraceKey &key, TimeStamp start)
   {
     if (ARCH_LIKELY(!Category::IsEnabled()))
       return;
@@ -291,7 +310,8 @@ class TraceCollector : public TfWeakBase {
   /// Record multiple data events with category \a cat if \p Category is
   /// enabled.
   /// \sa StoreData
-  template<typename Category, typename... Args> void ScopeArgs(Args &&...args)
+  template<typename Category, typename... Args>
+  void ScopeArgs(Args &&...args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -308,7 +328,8 @@ class TraceCollector : public TfWeakBase {
   /// the form TraceKey, Value. It is more efficient to use this method to
   /// store multiple data items than to use multiple calls to \c StoreData.
   /// \sa StoreData
-  template<typename... Args> void ScopeArgs(Args &&...args)
+  template<typename... Args>
+  void ScopeArgs(Args &&...args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -321,7 +342,8 @@ class TraceCollector : public TfWeakBase {
   /// This method is used by the TRACE_FUNCTION, TRACE_SCOPE and
   /// TRACE_FUNCTION_SCOPE macros.
   /// \sa BeginScope \sa EndScope
-  template<typename Category = DefaultCategory> void MarkerEventStatic(const TraceKey &key)
+  template<typename Category = DefaultCategory>
+  void MarkerEventStatic(const TraceKey &key)
   {
     if (ARCH_LIKELY(!Category::IsEnabled()))
       return;
@@ -337,35 +359,42 @@ class TraceCollector : public TfWeakBase {
   template<typename Category = DefaultCategory, typename T>
   void StoreData(const TraceKey &key, const T &value)
   {
-    if (ARCH_UNLIKELY(Category::IsEnabled())) {
+    if (ARCH_UNLIKELY(Category::IsEnabled()))
+    {
       _StoreData(_GetThreadData(), key, Category::GetId(), value);
     }
   }
 
   /// Record a counter \a delta for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory> void RecordCounterDelta(const TraceKey &key, double delta)
+  template<typename Category = DefaultCategory>
+  void RecordCounterDelta(const TraceKey &key, double delta)
   {
     // Only record counter values if the collector is enabled.
-    if (ARCH_UNLIKELY(Category::IsEnabled())) {
+    if (ARCH_UNLIKELY(Category::IsEnabled()))
+    {
       _PerThreadData *threadData = _GetThreadData();
       threadData->EmplaceEvent(TraceEvent::CounterDelta, key, delta, Category::GetId());
     }
   }
 
   /// Record a counter \a delta for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory> void RecordCounterDelta(const Key &key, double delta)
+  template<typename Category = DefaultCategory>
+  void RecordCounterDelta(const Key &key, double delta)
   {
-    if (ARCH_UNLIKELY(Category::IsEnabled())) {
+    if (ARCH_UNLIKELY(Category::IsEnabled()))
+    {
       _PerThreadData *threadData = _GetThreadData();
       threadData->CounterDelta(key, delta, Category::GetId());
     }
   }
 
   /// Record a counter \a value for a name \a key if \p Category is enabled.
-  template<typename Category = DefaultCategory> void RecordCounterValue(const TraceKey &key, double value)
+  template<typename Category = DefaultCategory>
+  void RecordCounterValue(const TraceKey &key, double value)
   {
     // Only record counter values if the collector is enabled.
-    if (ARCH_UNLIKELY(Category::IsEnabled())) {
+    if (ARCH_UNLIKELY(Category::IsEnabled()))
+    {
       _PerThreadData *threadData = _GetThreadData();
       threadData->EmplaceEvent(TraceEvent::CounterValue, key, value, Category::GetId());
     }
@@ -373,10 +402,12 @@ class TraceCollector : public TfWeakBase {
 
   /// Record a counter \a value for a name \a key and delta \a value if
   /// \p Category is enabled.
-  template<typename Category = DefaultCategory> void RecordCounterValue(const Key &key, double value)
+  template<typename Category = DefaultCategory>
+  void RecordCounterValue(const Key &key, double value)
   {
 
-    if (ARCH_UNLIKELY(Category::IsEnabled())) {
+    if (ARCH_UNLIKELY(Category::IsEnabled()))
+    {
       _PerThreadData *threadData = _GetThreadData();
       threadData->CounterValue(key, value, Category::GetId());
     }
@@ -488,7 +519,8 @@ class TraceCollector : public TfWeakBase {
 
   // Thread-local storage, accessed via _GetThreadData()
   //
-  class _PerThreadData {
+  class _PerThreadData
+  {
    public:
     using EventList = TraceCollection::EventList;
 
@@ -524,13 +556,15 @@ class TraceCollector : public TfWeakBase {
 
     TRACE_API void CounterValue(const Key &, double value, TraceCategoryId cat);
 
-    template<typename T> void StoreData(const TraceKey &key, const T &data, TraceCategoryId cat)
+    template<typename T>
+    void StoreData(const TraceKey &key, const T &data, TraceCategoryId cat)
     {
       AtomicRef lock(_writing);
       _events.load(std::memory_order_acquire)->EmplaceBack(TraceEvent::Data, key, data, cat);
     }
 
-    template<typename T> void StoreLargeData(const TraceKey &key, const T &data, TraceCategoryId cat)
+    template<typename T>
+    void StoreLargeData(const TraceKey &key, const T &data, TraceCategoryId cat)
     {
       AtomicRef lock(_writing);
       EventList *events = _events.load(std::memory_order_acquire);
@@ -538,7 +572,8 @@ class TraceCollector : public TfWeakBase {
       events->EmplaceBack(TraceEvent::Data, key, cached, cat);
     }
 
-    template<typename... Args> void EmplaceEvent(Args &&...args)
+    template<typename... Args>
+    void EmplaceEvent(Args &&...args)
     {
       AtomicRef lock(_writing);
       _events.load(std::memory_order_acquire)->EmplaceBack(std::forward<Args>(args)...);
@@ -566,9 +601,11 @@ class TraceCollector : public TfWeakBase {
     mutable std::atomic<bool> _writing;
     std::atomic<EventList *> _events;
 
-    class AtomicRef {
+    class AtomicRef
+    {
      public:
-      AtomicRef(std::atomic<bool> &b) : _bool(b)
+      AtomicRef(std::atomic<bool> &b)
+        : _bool(b)
       {
         _bool.store(true, std::memory_order_release);
       }
@@ -589,7 +626,8 @@ class TraceCollector : public TfWeakBase {
 
 #ifdef WITH_PYTHON
     // When auto-tracing python frames, this stores the stack of scopes.
-    struct PyScope {
+    struct PyScope
+    {
       Key key;
     };
     std::vector<PyScope> _pyScopes;

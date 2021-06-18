@@ -40,9 +40,11 @@ class HdSceneDelegate;
  * Heavily inspired by ReadeonProRenderUSD's Instancer.cpp
  *
  */
-class HdCyclesInstancer : public HdInstancer {
+class HdCyclesInstancer : public HdInstancer
+{
  public:
-  HdCyclesInstancer(HdSceneDelegate *delegate, SdfPath const &id) : HdInstancer(delegate, id)
+  HdCyclesInstancer(HdSceneDelegate *delegate, SdfPath const &id)
+    : HdInstancer(delegate, id)
   {}
 
   VtMatrix4dArray ComputeTransforms(SdfPath const &prototypeId);

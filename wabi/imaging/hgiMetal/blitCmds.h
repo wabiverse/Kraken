@@ -43,7 +43,8 @@ class HgiMetal;
 ///
 /// Metal implementation of HgiBlitCmds.
 ///
-class HgiMetalBlitCmds final : public HgiBlitCmds {
+class HgiMetalBlitCmds final : public HgiBlitCmds
+{
  public:
   HGIMETAL_API
   ~HgiMetalBlitCmds() override;

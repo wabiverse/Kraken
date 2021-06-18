@@ -39,7 +39,8 @@ using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 //
 // Phoenix implementation for basisCurves topology.
 //
-class HdPh_BasisCurvesTopology final : public HdBasisCurvesTopology {
+class HdPh_BasisCurvesTopology final : public HdBasisCurvesTopology
+{
  public:
   static HdPh_BasisCurvesTopologySharedPtr New(const HdBasisCurvesTopology &src);
 

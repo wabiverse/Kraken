@@ -36,13 +36,16 @@ RAPIDJSON_NAMESPACE_BEGIN
    UTF32LE, UTF32BE. \tparam InputByteStream Type of input byte stream. For example,
    FileReadStream.
 */
-template<typename Encoding, typename InputByteStream> class EncodedInputStream {
+template<typename Encoding, typename InputByteStream>
+class EncodedInputStream
+{
   RAPIDJSON_STATIC_ASSERT(sizeof(typename InputByteStream::Ch) == 1);
 
  public:
   typedef typename Encoding::Ch Ch;
 
-  EncodedInputStream(InputByteStream &is) : is_(is)
+  EncodedInputStream(InputByteStream &is)
+    : is_(is)
   {
     current_ = Encoding::TakeBOM(is_);
   }
@@ -91,11 +94,14 @@ template<typename Encoding, typename InputByteStream> class EncodedInputStream {
 };
 
 //! Specialized for UTF8 MemoryStream.
-template<> class EncodedInputStream<UTF8<>, MemoryStream> {
+template<>
+class EncodedInputStream<UTF8<>, MemoryStream>
+{
  public:
   typedef UTF8<>::Ch Ch;
 
-  EncodedInputStream(MemoryStream &is) : is_(is)
+  EncodedInputStream(MemoryStream &is)
+    : is_(is)
   {
     if (static_cast<unsigned char>(is_.Peek()) == 0xEFu)
       is_.Take();
@@ -140,13 +146,16 @@ template<> class EncodedInputStream<UTF8<>, MemoryStream> {
    UTF32LE, UTF32BE. \tparam OutputByteStream Type of input byte stream. For example,
    FileWriteStream.
 */
-template<typename Encoding, typename OutputByteStream> class EncodedOutputStream {
+template<typename Encoding, typename OutputByteStream>
+class EncodedOutputStream
+{
   RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputByteStream::Ch) == 1);
 
  public:
   typedef typename Encoding::Ch Ch;
 
-  EncodedOutputStream(OutputByteStream &os, bool putBOM = true) : os_(os)
+  EncodedOutputStream(OutputByteStream &os, bool putBOM = true)
+    : os_(os)
   {
     if (putBOM)
       Encoding::PutBOM(os_);
@@ -203,7 +212,9 @@ template<typename Encoding, typename OutputByteStream> class EncodedOutputStream
     \tparam CharType Type of character for reading.
     \tparam InputByteStream type of input byte stream to be wrapped.
 */
-template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
+template<typename CharType, typename InputByteStream>
+class AutoUTFInputStream
+{
   RAPIDJSON_STATIC_ASSERT(sizeof(typename InputByteStream::Ch) == 1);
 
  public:
@@ -214,7 +225,10 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       \param is input stream to be wrapped.
       \param type UTF encoding type if it is not detected from the stream.
   */
-  AutoUTFInputStream(InputByteStream &is, UTFType type = kUTF8) : is_(&is), type_(type), hasBOM_(false)
+  AutoUTFInputStream(InputByteStream &is, UTFType type = kUTF8)
+    : is_(&is),
+      type_(type),
+      hasBOM_(false)
   {
     RAPIDJSON_ASSERT(type >= kUTF8 && type <= kUTF32BE);
     DetectType();
@@ -287,7 +301,8 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
 
     unsigned bom = static_cast<unsigned>(c[0] | (c[1] << 8) | (c[2] << 16) | (c[3] << 24));
     hasBOM_ = false;
-    if (bom == 0xFFFE0000) {
+    if (bom == 0xFFFE0000)
+    {
       type_ = kUTF32BE;
       hasBOM_ = true;
       is_->Take();
@@ -295,7 +310,8 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       is_->Take();
       is_->Take();
     }
-    else if (bom == 0x0000FEFF) {
+    else if (bom == 0x0000FEFF)
+    {
       type_ = kUTF32LE;
       hasBOM_ = true;
       is_->Take();
@@ -303,19 +319,22 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
       is_->Take();
       is_->Take();
     }
-    else if ((bom & 0xFFFF) == 0xFFFE) {
+    else if ((bom & 0xFFFF) == 0xFFFE)
+    {
       type_ = kUTF16BE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
     }
-    else if ((bom & 0xFFFF) == 0xFEFF) {
+    else if ((bom & 0xFFFF) == 0xFEFF)
+    {
       type_ = kUTF16LE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
     }
-    else if ((bom & 0xFFFFFF) == 0xBFBBEF) {
+    else if ((bom & 0xFFFFFF) == 0xBFBBEF)
+    {
       type_ = kUTF8;
       hasBOM_ = true;
       is_->Take();
@@ -334,9 +353,11 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
     // xx 00 xx 00  UTF-16LE
     // xx xx xx xx  UTF-8
 
-    if (!hasBOM_) {
+    if (!hasBOM_)
+    {
       unsigned pattern = (c[0] ? 1 : 0) | (c[1] ? 2 : 0) | (c[2] ? 4 : 0) | (c[3] ? 8 : 0);
-      switch (pattern) {
+      switch (pattern)
+      {
         case 0x08:
           type_ = kUTF32BE;
           break;
@@ -378,7 +399,9 @@ template<typename CharType, typename InputByteStream> class AutoUTFInputStream {
     \tparam CharType Type of character for writing.
     \tparam OutputByteStream type of output byte stream to be wrapped.
 */
-template<typename CharType, typename OutputByteStream> class AutoUTFOutputStream {
+template<typename CharType, typename OutputByteStream>
+class AutoUTFOutputStream
+{
   RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputByteStream::Ch) == 1);
 
  public:
@@ -390,7 +413,9 @@ template<typename CharType, typename OutputByteStream> class AutoUTFOutputStream
       \param type UTF encoding type.
       \param putBOM Whether to write BOM at the beginning of the stream.
   */
-  AutoUTFOutputStream(OutputByteStream &os, UTFType type, bool putBOM) : os_(&os), type_(type)
+  AutoUTFOutputStream(OutputByteStream &os, UTFType type, bool putBOM)
+    : os_(&os),
+      type_(type)
   {
     RAPIDJSON_ASSERT(type >= kUTF8 && type <= kUTF32BE);
 

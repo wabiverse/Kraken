@@ -42,11 +42,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-class Sdf_PyListEditorUtils {
+class Sdf_PyListEditorUtils
+{
  public:
-  template<class T, class V> class ApplyHelper {
+  template<class T, class V>
+  class ApplyHelper
+  {
    public:
-    ApplyHelper(const T &owner, const boost::python::object &callback) : _owner(owner), _callback(callback)
+    ApplyHelper(const T &owner, const boost::python::object &callback)
+      : _owner(owner),
+        _callback(callback)
     {
       // Do nothing
     }
@@ -57,12 +62,15 @@ class Sdf_PyListEditorUtils {
 
       TfPyLock pyLock;
       object result = _callback(_owner, value, op);
-      if (!TfPyIsNone(result)) {
+      if (!TfPyIsNone(result))
+      {
         extract<V> e(result);
-        if (e.check()) {
+        if (e.check())
+        {
           return boost::optional<V>(e());
         }
-        else {
+        else
+        {
           TF_CODING_ERROR(
             "ApplyEditsToList callback has "
             "incorrect return type.");
@@ -76,9 +84,12 @@ class Sdf_PyListEditorUtils {
     TfPyCall<boost::python::object> _callback;
   };
 
-  template<class V> class ModifyHelper {
+  template<class V>
+  class ModifyHelper
+  {
    public:
-    ModifyHelper(const boost::python::object &callback) : _callback(callback)
+    ModifyHelper(const boost::python::object &callback)
+      : _callback(callback)
     {
       // Do nothing
     }
@@ -89,12 +100,15 @@ class Sdf_PyListEditorUtils {
 
       TfPyLock pyLock;
       object result = _callback(value);
-      if (!TfPyIsNone(result)) {
+      if (!TfPyIsNone(result))
+      {
         extract<V> e(result);
-        if (e.check()) {
+        if (e.check())
+        {
           return boost::optional<V>(e());
         }
-        else {
+        else
+        {
           TF_CODING_ERROR(
             "ModifyItemEdits callback has "
             "incorrect return type.");
@@ -108,7 +122,9 @@ class Sdf_PyListEditorUtils {
   };
 };
 
-template<class T> class SdfPyWrapListEditorProxy {
+template<class T>
+class SdfPyWrapListEditorProxy
+{
  public:
   typedef T Type;
   typedef typename Type::TypePolicy TypePolicy;

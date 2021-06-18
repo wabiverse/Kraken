@@ -59,7 +59,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdGeomTokens->accelerations);
 /// \endcode
-struct UsdGeomTokensType {
+struct UsdGeomTokensType
+{
   USDGEOM_API UsdGeomTokensType();
   /// \brief "accelerations"
   ///

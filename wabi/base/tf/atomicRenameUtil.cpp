@@ -51,7 +51,8 @@ bool Tf_AtomicRenameFileOver(std::string const &srcFileName,
   bool moved = MoveFileEx(srcFileName.c_str(),
                           dstFileName.c_str(),
                           MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED) != FALSE;
-  if (!moved) {
+  if (!moved)
+  {
     *error = TfStringPrintf("Failed to rename temporary file '%s' to '%s': %s",
                             srcFileName.c_str(),
                             dstFileName.c_str(),
@@ -67,22 +68,26 @@ bool Tf_AtomicRenameFileOver(std::string const &srcFileName,
   // with default permissions modulo umask.
   mode_t fileMode = 0;
   struct stat st;
-  if (stat(dstFileName.c_str(), &st) != -1) {
+  if (stat(dstFileName.c_str(), &st) != -1)
+  {
     fileMode = st.st_mode & DEFFILEMODE;
   }
-  else {
+  else
+  {
     const mode_t mask = umask(0);
     umask(mask);
     fileMode = DEFFILEMODE - mask;
   }
 
-  if (chmod(srcFileName.c_str(), fileMode) != 0) {
+  if (chmod(srcFileName.c_str(), fileMode) != 0)
+  {
     TF_WARN("Unable to set permissions for temporary file '%s': %s",
             srcFileName.c_str(),
             ArchStrerror(errno).c_str());
   }
 
-  if (rename(srcFileName.c_str(), dstFileName.c_str()) != 0) {
+  if (rename(srcFileName.c_str(), dstFileName.c_str()) != 0)
+  {
     *error = TfStringPrintf("Failed to rename temporary file '%s' to '%s': %s",
                             srcFileName.c_str(),
                             dstFileName.c_str(),
@@ -99,7 +104,8 @@ int Tf_CreateSiblingTempFile(std::string fileName,
                              std::string *error)
 {
   int result = -1;
-  if (fileName.empty()) {
+  if (fileName.empty())
+  {
     *error = "Empty fileName";
     return result;
   }
@@ -113,7 +119,8 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   std::string realFilePath = TfRealPath(fileName,
                                         /* allowInaccessibleSuffix */ true,
                                         &realPathError);
-  if (realFilePath.empty()) {
+  if (realFilePath.empty())
+  {
     *error = TfStringPrintf(
       "Unable to determine the real path for '%s': %s", fileName.c_str(), realPathError.c_str());
     return result;
@@ -130,7 +137,8 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   std::string dirPath = TfStringGetBeforeSuffix(realFilePath, '/');
 #endif
 
-  if (ArchFileAccess(dirPath.c_str(), W_OK) != 0) {
+  if (ArchFileAccess(dirPath.c_str(), W_OK) != 0)
+  {
     *error = TfStringPrintf(
       "Insufficient permissions to write to destination "
       "directory '%s'",
@@ -143,7 +151,8 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   // successfully even if we can't write to the file, but we retain the policy
   // that if the user couldn't open the file for writing, they can't write to
   // the file via this object.
-  if (ArchFileAccess(realFilePath.c_str(), W_OK) != 0 && errno != ENOENT) {
+  if (ArchFileAccess(realFilePath.c_str(), W_OK) != 0 && errno != ENOENT)
+  {
     *error = TfStringPrintf(
       "Insufficient permissions to write to destination "
       "file '%s'",
@@ -154,7 +163,8 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   std::string tmpFilePrefix = TfStringGetBeforeSuffix(TfGetBaseName(realFilePath));
   std::string tmpFN;
   result = ArchMakeTmpFile(dirPath, tmpFilePrefix, &tmpFN);
-  if (result == -1) {
+  if (result == -1)
+  {
     *error = TfStringPrintf(
       "Unable to create temporary file '%s': %s", tmpFN.c_str(), ArchStrerror(errno).c_str());
     return result;

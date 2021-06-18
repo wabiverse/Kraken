@@ -41,13 +41,16 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Expose C++ RAII class as python context manager.
-struct Usd_PyStageCacheContext {
+struct Usd_PyStageCacheContext
+{
   // Constructor stores off arguments to pass to the factory later.
   template<class Arg>
-  explicit Usd_PyStageCacheContext(Arg arg) : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
+  explicit Usd_PyStageCacheContext(Arg arg)
+    : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
   {}
 
   explicit Usd_PyStageCacheContext(UsdStageCache &cache)

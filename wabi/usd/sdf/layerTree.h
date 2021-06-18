@@ -55,7 +55,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 /// We use TfRefPtr<SdfLayerTree> as handles to LayerTrees, as a simple way
 /// to pass them around as immutable trees without worrying about lifetime.
 ///
-class SdfLayerTree : public TfRefBase, public TfWeakBase, boost::noncopyable {
+class SdfLayerTree : public TfRefBase, public TfWeakBase, boost::noncopyable
+{
  public:
   /// Create a new layer tree node.
   SDF_API

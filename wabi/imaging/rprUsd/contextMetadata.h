@@ -18,15 +18,24 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-enum RprUsdPluginType { kPluginInvalid = -1, kPluginTahoe, kPluginNorthstar, kPluginHybrid, kPluginsCount };
+enum RprUsdPluginType
+{
+  kPluginInvalid = -1,
+  kPluginTahoe,
+  kPluginNorthstar,
+  kPluginHybrid,
+  kPluginsCount
+};
 
-enum class RprUsdRenderDeviceType {
+enum class RprUsdRenderDeviceType
+{
   Invalid,
   CPU,
   GPU,
 };
 
-struct RprUsdContextMetadata {
+struct RprUsdContextMetadata
+{
   RprUsdPluginType pluginType = kPluginInvalid;
   RprUsdRenderDeviceType renderDeviceType = RprUsdRenderDeviceType::Invalid;
   bool isGlInteropEnabled = false;

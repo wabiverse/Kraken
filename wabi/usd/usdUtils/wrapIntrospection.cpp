@@ -33,7 +33,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 VtDictionary _WrapUsdUtilsComputeUsdStageStats_1(const std::string &rootLayerPath)
 {

@@ -32,7 +32,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiBuffer::HgiBuffer(HgiBufferDesc const &desc) : _descriptor(desc)
+HgiBuffer::HgiBuffer(HgiBufferDesc const &desc)
+  : _descriptor(desc)
 {}
 
 HgiBuffer::~HgiBuffer() = default;

@@ -46,7 +46,8 @@ using namespace boost::python;
 WABI_NAMESPACE_USING
 using namespace TfPyContainerConversions;
 
-namespace {
+namespace
+{
 
 static _NdrFilesystemDiscoveryPluginRefPtr New()
 {
@@ -61,7 +62,8 @@ static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(_NdrFilesystemDiscovery
 // This is testing discovery from Python.  We need a discovery context
 // but Python can't normally create one.  We implement a dummy context
 // for just that purpose.
-class _Context : public NdrDiscoveryPluginContext {
+class _Context : public NdrDiscoveryPluginContext
+{
  public:
   ~_Context() override = default;
 

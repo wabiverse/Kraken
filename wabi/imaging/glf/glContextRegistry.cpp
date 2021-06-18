@@ -51,7 +51,8 @@ TF_INSTANTIATE_SINGLETON(GlfGLContextRegistry);
 // GlfGLContextRegistry_Data
 //
 
-struct GlfGLContextRegistry_Data {
+struct GlfGLContextRegistry_Data
+{
   typedef std::unordered_map<GarchGLPlatformContextState, GlfGLContextWeakPtr> ContextsByState;
   typedef std::map<const GlfGLContext *, GarchGLPlatformContextState> StatesByContext;
 
@@ -87,14 +88,16 @@ bool GlfGLContextRegistry::IsInitialized() const
 
 void GlfGLContextRegistry::Add(GlfGLContextRegistrationInterface *iface)
 {
-  if (TF_VERIFY(iface, "NULL GlfGLContextRegistrationInterface")) {
+  if (TF_VERIFY(iface, "NULL GlfGLContextRegistrationInterface"))
+  {
     _interfaces.emplace_back(iface);
   }
 }
 
 GlfGLContextSharedPtr GlfGLContextRegistry::GetShared()
 {
-  if (!_sharedContextInitialized) {
+  if (!_sharedContextInitialized)
+  {
 
     // Don't do this again.
     _sharedContextInitialized = true;
@@ -102,8 +105,10 @@ GlfGLContextSharedPtr GlfGLContextRegistry::GetShared()
     _shared = GlfGLContextSharedPtr();
 
     // Find the first interface with a shared context.
-    for (std::unique_ptr<GlfGLContextRegistrationInterface> &iface : _interfaces) {
-      if (GlfGLContextSharedPtr shared = iface->GetShared()) {
+    for (std::unique_ptr<GlfGLContextRegistrationInterface> &iface : _interfaces)
+    {
+      if (GlfGLContextSharedPtr shared = iface->GetShared())
+      {
         _shared = shared;
         return _shared;
       }
@@ -121,19 +126,24 @@ GlfGLContextSharedPtr GlfGLContextRegistry::GetCurrent()
 
   // See if we know a context with this raw state.
   GlfGLContextRegistry_Data::ContextsByState::iterator i = _data->contextsByState.find(rawState);
-  if (i != _data->contextsByState.end()) {
+  if (i != _data->contextsByState.end())
+  {
     // Promote weak to shared.
     return GlfGLContextSharedPtr(i->second);
   }
 
   // We don't know this raw state.  Try syncing each interface to see
   // if any system thinks this state is current.
-  for (std::unique_ptr<GlfGLContextRegistrationInterface> &iface : _interfaces) {
-    if (GlfGLContextSharedPtr currentContext = iface->GetCurrent()) {
-      if (currentContext->IsValid()) {
+  for (std::unique_ptr<GlfGLContextRegistrationInterface> &iface : _interfaces)
+  {
+    if (GlfGLContextSharedPtr currentContext = iface->GetCurrent())
+    {
+      if (currentContext->IsValid())
+      {
         GlfGLContext::MakeCurrent(currentContext);
         GarchGLPlatformContextState currentRawState;
-        if (rawState == currentRawState) {
+        if (rawState == currentRawState)
+        {
           // Yes, currentContext has the raw state we're looking
           // for.  GlfGLContext::MakeCurrent() has already called
           // DidMakeCurrent() so this context is now registered
@@ -155,9 +165,11 @@ void GlfGLContextRegistry::DidMakeCurrent(const GlfGLContextSharedPtr &context)
 {
   // If we already know about this context then do nothing.  If we don't
   // but we already know about this state then still do nothing.
-  if (_data->statesByContext.find(context.get()) == _data->statesByContext.end()) {
+  if (_data->statesByContext.find(context.get()) == _data->statesByContext.end())
+  {
     GarchGLPlatformContextState currentState;
-    if (_data->contextsByState.find(currentState) == _data->contextsByState.end()) {
+    if (_data->contextsByState.find(currentState) == _data->contextsByState.end())
+    {
       // Register context under the current context state.
       _data->contextsByState[currentState] = context;
       _data->statesByContext[context.get()] = currentState;
@@ -168,7 +180,8 @@ void GlfGLContextRegistry::DidMakeCurrent(const GlfGLContextSharedPtr &context)
 void GlfGLContextRegistry::Remove(const GlfGLContext *context)
 {
   GlfGLContextRegistry_Data::StatesByContext::iterator i = _data->statesByContext.find(context);
-  if (i != _data->statesByContext.end()) {
+  if (i != _data->statesByContext.end())
+  {
     TF_VERIFY(_data->contextsByState.erase(i->second));
     _data->statesByContext.erase(i);
   }

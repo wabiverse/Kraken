@@ -42,15 +42,22 @@ WABI_NAMESPACE_BEGIN
 
 class HgiMetalCapabilities;
 
-enum { APIVersion_Metal1_0 = 0, APIVersion_Metal2_0, APIVersion_Metal3_0 };
+enum
+{
+  APIVersion_Metal1_0 = 0,
+  APIVersion_Metal2_0,
+  APIVersion_Metal3_0
+};
 
 /// \class HgiMetal
 ///
 /// Metal implementation of the Hydra Graphics Interface.
 ///
-class HgiMetal final : public Hgi {
+class HgiMetal final : public Hgi
+{
  public:
-  enum CommitCommandBufferWaitType {
+  enum CommitCommandBufferWaitType
+  {
     CommitCommandBuffer_NoWait = 0,
     CommitCommandBuffer_WaitUntilScheduled,
     CommitCommandBuffer_WaitUntilCompleted
@@ -185,7 +192,8 @@ class HgiMetal final : public Hgi {
 
   // Invalidates the resource handle and destroys the object.
   // Metal's internal garbage collection will handle the rest.
-  template<class T> void _TrashObject(HgiHandle<T> *handle)
+  template<class T>
+  void _TrashObject(HgiHandle<T> *handle)
   {
     delete handle->Get();
     *handle = HgiHandle<T>();

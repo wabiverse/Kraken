@@ -47,7 +47,8 @@ struct HgiGraphicsCmdsDesc;
 ///
 /// Metal implementation of HgiGraphicsEncoder.
 ///
-class HgiMetalGraphicsCmds final : public HgiGraphicsCmds {
+class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
+{
  public:
   HGIMETAL_API
   ~HgiMetalGraphicsCmds() override;

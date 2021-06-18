@@ -4,9 +4,11 @@
 #include <string>
 #include <unordered_map>
 
-namespace Zep {
+namespace Zep
+{
 
-class ZepSyntaxAdorn_RainbowBrackets : public ZepSyntaxAdorn {
+class ZepSyntaxAdorn_RainbowBrackets : public ZepSyntaxAdorn
+{
  public:
   using TParent = ZepSyntaxAdorn;
   ZepSyntaxAdorn_RainbowBrackets(ZepSyntax &syntax, ZepBuffer &buffer);
@@ -21,9 +23,16 @@ class ZepSyntaxAdorn_RainbowBrackets : public ZepSyntaxAdorn {
 
  private:
   void RefreshBrackets();
-  enum class BracketType { Bracket = 0, Brace = 1, Group = 2, Max = 3 };
+  enum class BracketType
+  {
+    Bracket = 0,
+    Brace = 1,
+    Group = 2,
+    Max = 3
+  };
 
-  struct Bracket {
+  struct Bracket
+  {
     int32_t indent;
     BracketType type;
     bool is_open;

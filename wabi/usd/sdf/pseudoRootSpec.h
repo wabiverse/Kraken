@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 
 SDF_DECLARE_HANDLES(SdfPseudoRootSpec);
 
-class SdfPseudoRootSpec : public SdfPrimSpec {
+class SdfPseudoRootSpec : public SdfPrimSpec
+{
   SDF_DECLARE_SPEC(SdfPseudoRootSpec, SdfPrimSpec);
 };
 

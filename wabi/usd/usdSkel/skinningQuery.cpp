@@ -44,9 +44,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
-enum UsdSkel_SkinningQueryFlags { UsdSkel_HasJointInfluences = 1 << 0, UsdSkel_HasBlendShapes = 1 << 1 };
+enum UsdSkel_SkinningQueryFlags
+{
+  UsdSkel_HasJointInfluences = 1 << 0,
+  UsdSkel_HasBlendShapes = 1 << 1
+};
 
 }  // namespace
 
@@ -71,11 +76,13 @@ UsdSkelSkinningQuery::UsdSkelSkinningQuery(const UsdPrim &prim,
     _blendShapeTargets(blendShapeTargets)
 {
   VtTokenArray order;
-  if (joints && joints.Get(&order)) {
+  if (joints && joints.Get(&order))
+  {
     _jointOrder = order;
     _jointMapper = std::make_shared<UsdSkelAnimMapper>(skelJointOrder, order);
   }
-  if (blendShapes && blendShapes.Get(&order)) {
+  if (blendShapes && blendShapes.Get(&order))
+  {
     _blendShapeOrder = order;
     _blendShapeMapper = std::make_shared<UsdSkelAnimMapper>(animBlendShapeOrder, order);
   }
@@ -87,7 +94,8 @@ UsdSkelSkinningQuery::UsdSkelSkinningQuery(const UsdPrim &prim,
 void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute &jointIndices,
                                                              const UsdAttribute &jointWeights)
 {
-  if (!jointIndices || !jointWeights) {
+  if (!jointIndices || !jointWeights)
+  {
     // Have incomplete joint influences.
     // Skipping remainder of validation.
     return;
@@ -97,7 +105,8 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
 
   const int indicesElementSize = _jointIndicesPrimvar.GetElementSize();
   const int weightsElementSize = _jointWeightsPrimvar.GetElementSize();
-  if (indicesElementSize != weightsElementSize) {
+  if (indicesElementSize != weightsElementSize)
+  {
     TF_WARN(
       "jointIndices element size (%d) != "
       "jointWeights element size (%d).",
@@ -106,7 +115,8 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
     return;
   }
 
-  if (indicesElementSize <= 0) {
+  if (indicesElementSize <= 0)
+  {
     TF_WARN(
       "Invalid element size [%d]: element size must "
       "be greater than zero.",
@@ -116,7 +126,8 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
 
   const TfToken indicesInterpolation = _jointIndicesPrimvar.GetInterpolation();
   const TfToken weightsInterpolation = _jointWeightsPrimvar.GetInterpolation();
-  if (indicesInterpolation != weightsInterpolation) {
+  if (indicesInterpolation != weightsInterpolation)
+  {
     TF_WARN(
       "jointIndices interpolation (%s) != "
       "jointWeights interpolation (%s).",
@@ -125,7 +136,8 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
     return;
   }
 
-  if (indicesInterpolation != UsdGeomTokens->constant && indicesInterpolation != UsdGeomTokens->vertex) {
+  if (indicesInterpolation != UsdGeomTokens->constant && indicesInterpolation != UsdGeomTokens->vertex)
+  {
     TF_WARN(
       "Invalid interpolation (%s) for joint influences: "
       "interpolation must be either 'constant' or 'vertex'.",
@@ -146,7 +158,8 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
 void UsdSkelSkinningQuery::_InitializeBlendShapeBindings(const UsdAttribute &blendShapes,
                                                          const UsdRelationship &blendShapeTargets)
 {
-  if (blendShapes && blendShapeTargets && _blendShapeMapper) {
+  if (blendShapes && blendShapeTargets && _blendShapeMapper)
+  {
     _flags |= UsdSkel_HasBlendShapes;
   }
 }
@@ -168,13 +181,16 @@ bool UsdSkelSkinningQuery::IsRigidlyDeformed() const
 
 bool UsdSkelSkinningQuery::GetJointOrder(VtTokenArray *jointOrder) const
 {
-  if (jointOrder) {
-    if (_jointOrder) {
+  if (jointOrder)
+  {
+    if (_jointOrder)
+    {
       *jointOrder = *_jointOrder;
       return true;
     }
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("'jointOrder' pointer is null.");
   }
   return false;
@@ -182,13 +198,16 @@ bool UsdSkelSkinningQuery::GetJointOrder(VtTokenArray *jointOrder) const
 
 bool UsdSkelSkinningQuery::GetBlendShapeOrder(VtTokenArray *blendShapeOrder) const
 {
-  if (blendShapeOrder) {
-    if (_blendShapeOrder) {
+  if (blendShapeOrder)
+  {
+    if (_blendShapeOrder)
+    {
       *blendShapeOrder = *_blendShapeOrder;
       return true;
     }
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("'blendShapeOrder' pointer is null.");
   }
   return false;
@@ -202,7 +221,8 @@ bool UsdSkelSkinningQuery::GetTimeSamples(std::vector<double> *times) const
 bool UsdSkelSkinningQuery::GetTimeSamplesInInterval(const GfInterval &interval,
                                                     std::vector<double> *times) const
 {
-  if (!times) {
+  if (!times)
+  {
     TF_CODING_ERROR("'times' pointer is null.");
     return false;
   }
@@ -210,12 +230,15 @@ bool UsdSkelSkinningQuery::GetTimeSamplesInInterval(const GfInterval &interval,
   // TODO: Use Usd_MergeTimeSamples if it becomes public.
 
   std::vector<double> tmpTimes;
-  for (const auto &pv : {_jointIndicesPrimvar, _jointWeightsPrimvar}) {
-    if (pv.GetTimeSamplesInInterval(interval, &tmpTimes)) {
+  for (const auto &pv : {_jointIndicesPrimvar, _jointWeightsPrimvar})
+  {
+    if (pv.GetTimeSamplesInInterval(interval, &tmpTimes))
+    {
       times->insert(times->end(), tmpTimes.begin(), tmpTimes.end());
     }
   }
-  if (_geomBindTransformAttr.GetTimeSamplesInInterval(interval, &tmpTimes)) {
+  if (_geomBindTransformAttr.GetTimeSamplesInInterval(interval, &tmpTimes))
+  {
     times->insert(times->end(), tmpTimes.begin(), tmpTimes.end());
   }
 
@@ -231,14 +254,17 @@ bool UsdSkelSkinningQuery::ComputeJointInfluences(VtIntArray *indices,
   TRACE_FUNCTION();
 
   if (!TF_VERIFY(IsValid(), "invalid skinning query") || !TF_VERIFY(_jointIndicesPrimvar) ||
-      !TF_VERIFY(_jointWeightsPrimvar)) {
+      !TF_VERIFY(_jointWeightsPrimvar))
+  {
     return false;
   }
 
   if (_jointIndicesPrimvar.ComputeFlattened(indices, time) &&
-      _jointWeightsPrimvar.ComputeFlattened(weights, time)) {
+      _jointWeightsPrimvar.ComputeFlattened(weights, time))
+  {
 
-    if (indices->size() != weights->size()) {
+    if (indices->size() != weights->size())
+    {
       TF_WARN(
         "Size of jointIndices [%zu] != size of "
         "jointWeights [%zu].",
@@ -247,11 +273,13 @@ bool UsdSkelSkinningQuery::ComputeJointInfluences(VtIntArray *indices,
       return false;
     }
 
-    if (!TF_VERIFY(_numInfluencesPerComponent > 0)) {
+    if (!TF_VERIFY(_numInfluencesPerComponent > 0))
+    {
       return false;
     }
 
-    if (indices->size() % _numInfluencesPerComponent != 0) {
+    if (indices->size() % _numInfluencesPerComponent != 0)
+    {
       TF_WARN(
         "unexpected size of jointIndices and jointWeights "
         "arrays [%zu]: size must be a multiple of the number of "
@@ -261,7 +289,8 @@ bool UsdSkelSkinningQuery::ComputeJointInfluences(VtIntArray *indices,
       return false;
     }
 
-    if (IsRigidlyDeformed() && indices->size() != static_cast<size_t>(_numInfluencesPerComponent)) {
+    if (IsRigidlyDeformed() && indices->size() != static_cast<size_t>(_numInfluencesPerComponent))
+    {
 
       TF_WARN(
         "Unexpected size of jointIndices and jointWeights "
@@ -285,16 +314,20 @@ bool UsdSkelSkinningQuery::ComputeVaryingJointInfluences(size_t numPoints,
 {
   TRACE_FUNCTION();
 
-  if (ComputeJointInfluences(indices, weights, time)) {
-    if (IsRigidlyDeformed()) {
+  if (ComputeJointInfluences(indices, weights, time))
+  {
+    if (IsRigidlyDeformed())
+    {
       if (!UsdSkelExpandConstantInfluencesToVarying(indices, numPoints) ||
-          !UsdSkelExpandConstantInfluencesToVarying(weights, numPoints)) {
+          !UsdSkelExpandConstantInfluencesToVarying(weights, numPoints))
+      {
         return false;
       }
       if (!TF_VERIFY(indices->size() == weights->size()))
         return false;
     }
-    else if (indices->size() != numPoints * _numInfluencesPerComponent) {
+    else if (indices->size() != numPoints * _numInfluencesPerComponent)
+    {
       TF_WARN(
         "Unexpected size of jointIndices and jointWeights "
         "arrays [%zu]: varying influences should be sized to "
@@ -316,21 +349,25 @@ bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<Matrix4> &xforms,
 {
   TRACE_FUNCTION();
 
-  if (!points) {
+  if (!points)
+  {
     TF_CODING_ERROR("'points' pointer is null.");
     return false;
   }
 
   VtIntArray jointIndices;
   VtFloatArray jointWeights;
-  if (ComputeVaryingJointInfluences(points->size(), &jointIndices, &jointWeights, time)) {
+  if (ComputeVaryingJointInfluences(points->size(), &jointIndices, &jointWeights, time))
+  {
 
     // If the binding site has a custom joint ordering, the query will have
     // a mapper that should be used to reorder transforms
     // (skel order -> binding order)
     VtArray<Matrix4> orderedXforms(xforms);
-    if (_jointMapper) {
-      if (!_jointMapper->RemapTransforms(xforms, &orderedXforms)) {
+    if (_jointMapper)
+    {
+      if (!_jointMapper->RemapTransforms(xforms, &orderedXforms))
+      {
         return false;
       }
     }
@@ -350,14 +387,20 @@ template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArr
                                                                      VtVec3fArray *,
                                                                      UsdTimeCode) const;
 
-template<class Matrix4> struct _Matrix3FromMatrix4 {
+template<class Matrix4>
+struct _Matrix3FromMatrix4
+{
 };
 
-template<> struct _Matrix3FromMatrix4<GfMatrix4d> {
+template<>
+struct _Matrix3FromMatrix4<GfMatrix4d>
+{
   using value_type = GfMatrix3d;
 };
 
-template<> struct _Matrix3FromMatrix4<GfMatrix4f> {
+template<>
+struct _Matrix3FromMatrix4<GfMatrix4f>
+{
   using value_type = GfMatrix3f;
 };
 
@@ -370,21 +413,25 @@ bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<Matrix4> &xforms,
 
   using Matrix3 = typename _Matrix3FromMatrix4<Matrix4>::value_type;
 
-  if (!normals) {
+  if (!normals)
+  {
     TF_CODING_ERROR("'normals' pointer is null.");
     return false;
   }
 
   VtIntArray jointIndices;
   VtFloatArray jointWeights;
-  if (ComputeVaryingJointInfluences(normals->size(), &jointIndices, &jointWeights, time)) {
+  if (ComputeVaryingJointInfluences(normals->size(), &jointIndices, &jointWeights, time))
+  {
 
     // If the binding site has a custom joint ordering, the query will have
     // a mapper that should be used to reorder transforms
     // (skel order -> binding order)
     VtArray<Matrix4> orderedXforms(xforms);
-    if (_jointMapper) {
-      if (!_jointMapper->RemapTransforms(xforms, &orderedXforms)) {
+    if (_jointMapper)
+    {
+      if (!_jointMapper->RemapTransforms(xforms, &orderedXforms))
+      {
         return false;
       }
     }
@@ -394,7 +441,8 @@ bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<Matrix4> &xforms,
     VtArray<Matrix3> invTransposeXforms(orderedXforms.size());
     {
       auto dst = TfMakeSpan(invTransposeXforms);
-      for (size_t i = 0; i < dst.size(); ++i) {
+      for (size_t i = 0; i < dst.size(); ++i)
+      {
         dst[i] = orderedXforms[i].ExtractRotationMatrix().GetInverse().GetTranspose();
       }
     }
@@ -428,12 +476,14 @@ bool UsdSkelSkinningQuery::ComputeSkinnedTransform(const VtArray<Matrix4> &xform
 {
   TRACE_FUNCTION();
 
-  if (!xform) {
+  if (!xform)
+  {
     TF_CODING_ERROR("'xform' pointer is null.");
     return false;
   }
 
-  if (!IsRigidlyDeformed()) {
+  if (!IsRigidlyDeformed())
+  {
     TF_CODING_ERROR(
       "Attempted to skin a transform, but "
       "joint influences are not constant.");
@@ -442,14 +492,17 @@ bool UsdSkelSkinningQuery::ComputeSkinnedTransform(const VtArray<Matrix4> &xform
 
   VtIntArray jointIndices;
   VtFloatArray jointWeights;
-  if (ComputeJointInfluences(&jointIndices, &jointWeights, time)) {
+  if (ComputeJointInfluences(&jointIndices, &jointWeights, time))
+  {
 
     // If the binding site has a custom joint ordering, the query will have
     // a mapper that should be used to reorder transforms
     // (skel order -> binding order)
     VtArray<Matrix4> orderedXforms(xforms);
-    if (_jointMapper) {
-      if (!_jointMapper->Remap(xforms, &orderedXforms)) {
+    if (_jointMapper)
+    {
+      if (!_jointMapper->Remap(xforms, &orderedXforms))
+      {
         return false;
       }
     }
@@ -477,10 +530,12 @@ float UsdSkelSkinningQuery::ComputeExtentsPadding(const VtArray<Matrix4> &skelRe
   const UsdTimeCode time = UsdTimeCode::EarliestTime();
 
   VtVec3fArray boundableExtent;
-  if (boundable && boundable.GetExtentAttr().Get(&boundableExtent, time) && boundableExtent.size() == 2) {
+  if (boundable && boundable.GetExtentAttr().Get(&boundableExtent, time) && boundableExtent.size() == 2)
+  {
 
     GfRange3f jointsRange;
-    if (UsdSkelComputeJointsExtent<Matrix4>(skelRestXforms, &jointsRange)) {
+    if (UsdSkelComputeJointsExtent<Matrix4>(skelRestXforms, &jointsRange))
+    {
 
       // Get the aligned range of the gprim in its bind pose.
       const GfRange3d gprimRange = GfBBox3d(GfRange3d(boundableExtent[0], boundableExtent[1]),
@@ -491,7 +546,8 @@ float UsdSkelSkinningQuery::ComputeExtentsPadding(const VtArray<Matrix4> &skelRe
       const GfVec3f maxDiff = GfVec3f(gprimRange.GetMax()) - jointsRange.GetMax();
 
       float padding = 0.0f;
-      for (int i = 0; i < 3; ++i) {
+      for (int i = 0; i < 3; ++i)
+      {
         padding = std::max(padding, minDiff[i]);
         padding = std::max(padding, maxDiff[i]);
       }
@@ -511,7 +567,8 @@ GfMatrix4d UsdSkelSkinningQuery::GetGeomBindTransform(UsdTimeCode time) const
 {
   // Geom bind transform attr is optional.
   GfMatrix4d xform;
-  if (!_geomBindTransformAttr || !_geomBindTransformAttr.Get(&xform, time)) {
+  if (!_geomBindTransformAttr || !_geomBindTransformAttr.Get(&xform, time))
+  {
     xform.SetIdentity();
   }
   return xform;
@@ -519,7 +576,8 @@ GfMatrix4d UsdSkelSkinningQuery::GetGeomBindTransform(UsdTimeCode time) const
 
 std::string UsdSkelSkinningQuery::GetDescription() const
 {
-  if (IsValid()) {
+  if (IsValid())
+  {
     return TfStringPrintf("UsdSkelSkinningQuery <%s>", _prim.GetPath().GetText());
   }
   return "invalid UsdSkelSkinningQuery";

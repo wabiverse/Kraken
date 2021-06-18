@@ -44,7 +44,8 @@ using HgiVulkanShaderSectionUniquePtrVector = std::vector<std::unique_ptr<HgiVul
 ///
 /// Takes in a descriptor and spits out GLSL code through it's execute function.
 ///
-class HgiVulkanShaderGenerator final : public HgiShaderGenerator {
+class HgiVulkanShaderGenerator final : public HgiShaderGenerator
+{
  public:
   HGIVULKAN_API
   explicit HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &descriptor);

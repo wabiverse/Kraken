@@ -50,7 +50,8 @@ using HgiGraphicsCmdsUniquePtr = std::unique_ptr<class HgiGraphicsCmds>;
 /// HgiGraphicsCmds is a lightweight object that cannot be re-used after it has
 /// been submitted. A new cmds object should be acquired for each frame.
 ///
-class HgiGraphicsCmds : public HgiCmds {
+class HgiGraphicsCmds : public HgiCmds
+{
  public:
   HGI_API
   ~HgiGraphicsCmds() override;

@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrmanInstancer : public HdInstancer {
+class HdPrmanInstancer : public HdInstancer
+{
  public:
   HdPrmanInstancer(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -65,7 +66,8 @@ class HdPrmanInstancer : public HdInstancer {
   void _SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits dirtyBits);
 
   // Map of the latest primvar data for this instancer, keyed by primvar name
-  struct _PrimvarValue {
+  struct _PrimvarValue
+  {
     HdPrimvarDescriptor desc;
     VtValue value;
   };

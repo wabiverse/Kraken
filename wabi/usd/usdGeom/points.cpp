@@ -50,7 +50,8 @@ UsdGeomPoints::~UsdGeomPoints()
 /* static */
 UsdGeomPoints UsdGeomPoints::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPoints();
   }
@@ -61,7 +62,8 @@ UsdGeomPoints UsdGeomPoints::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomPoints UsdGeomPoints::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Points");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPoints();
   }
@@ -130,7 +132,8 @@ UsdAttribute UsdGeomPoints::CreateIdsAttr(VtValue const &defaultValue, bool writ
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -179,7 +182,8 @@ TfToken UsdGeomPoints::GetWidthsInterpolation() const
   // Because widths is a builtin, we don't need to check validity
   // of the attribute before using it
   TfToken interp;
-  if (GetWidthsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp)) {
+  if (GetWidthsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp))
+  {
     return interp;
   }
 
@@ -188,7 +192,8 @@ TfToken UsdGeomPoints::GetWidthsInterpolation() const
 
 bool UsdGeomPoints::SetWidthsInterpolation(TfToken const &interpolation)
 {
-  if (UsdGeomPrimvar::IsValidInterpolation(interpolation)) {
+  if (UsdGeomPrimvar::IsValidInterpolation(interpolation))
+  {
     return GetWidthsAttr().SetMetadata(UsdGeomTokens->interpolation, interpolation);
   }
 
@@ -207,7 +212,8 @@ static bool _ComputeExtent(const VtVec3fArray &points,
                            VtVec3fArray *extent)
 {
   // Check for Valid Widths/Points Attributes Size
-  if (points.size() != widths.size()) {
+  if (points.size() != widths.size())
+  {
     return false;
   }
 
@@ -217,12 +223,13 @@ static bool _ComputeExtent(const VtVec3fArray &points,
   // Calculate bounds
   GfRange3d bbox;
   TfIterator<const VtFloatArray> widthsItr(widths);
-  TF_FOR_ALL(pointsItr, points)
+  TF_FOR_ALL (pointsItr, points)
   {
 
     float halfWidth = (*widthsItr) * 0.5;
 
-    if (transform) {
+    if (transform)
+    {
       // Union bbox with min and max of transformed sphere extents.
       VtVec3fArray sphereExtent;
 
@@ -232,7 +239,8 @@ static bool _ComputeExtent(const VtVec3fArray &points,
       GfMatrix4d transformDir(*transform);
       transformDir.SetTranslateOnly(GfVec3d(0.0));
 
-      if (!UsdGeomSphere::ComputeExtent(halfWidth, transformDir, &sphereExtent)) {
+      if (!UsdGeomSphere::ComputeExtent(halfWidth, transformDir, &sphereExtent))
+      {
         return false;
       }
 
@@ -240,7 +248,8 @@ static bool _ComputeExtent(const VtVec3fArray &points,
       bbox.UnionWith(transformedPoint + sphereExtent[0]);
       bbox.UnionWith(transformedPoint + sphereExtent[1]);
     }
-    else {
+    else
+    {
       GfVec3f widthVec(halfWidth);
       bbox.UnionWith(*pointsItr + widthVec);
       bbox.UnionWith(*pointsItr - widthVec);
@@ -276,29 +285,36 @@ static bool _ComputeExtentForPoints(const UsdGeomBoundable &boundable,
                                     VtVec3fArray *extent)
 {
   const UsdGeomPoints pointsSchema(boundable);
-  if (!TF_VERIFY(pointsSchema)) {
+  if (!TF_VERIFY(pointsSchema))
+  {
     return false;
   }
 
   VtVec3fArray points;
-  if (!pointsSchema.GetPointsAttr().Get(&points, time)) {
+  if (!pointsSchema.GetPointsAttr().Get(&points, time))
+  {
     return false;
   }
 
   VtFloatArray widths;
-  if (!pointsSchema.GetWidthsAttr().Get(&widths, time)) {
-    if (transform) {
+  if (!pointsSchema.GetWidthsAttr().Get(&widths, time))
+  {
+    if (transform)
+    {
       return UsdGeomPointBased::ComputeExtent(points, *transform, extent);
     }
-    else {
+    else
+    {
       return UsdGeomPointBased::ComputeExtent(points, extent);
     }
   }
 
-  if (transform) {
+  if (transform)
+  {
     return UsdGeomPoints::ComputeExtent(points, widths, *transform, extent);
   }
-  else {
+  else
+  {
     return UsdGeomPoints::ComputeExtent(points, widths, extent);
   }
 }

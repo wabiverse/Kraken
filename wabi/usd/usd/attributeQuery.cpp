@@ -48,7 +48,8 @@ std::vector<UsdAttributeQuery> UsdAttributeQuery::CreateQueries(const UsdPrim &p
 {
   std::vector<UsdAttributeQuery> rval;
   rval.reserve(attrNames.size());
-  for (const auto &attrName : attrNames) {
+  for (const auto &attrName : attrNames)
+  {
     rval.push_back(UsdAttributeQuery(prim, attrName));
   }
 
@@ -62,7 +63,8 @@ void UsdAttributeQuery::_Initialize(const UsdAttribute &attr)
 {
   TRACE_FUNCTION();
 
-  if (attr) {
+  if (attr)
+  {
     const UsdStage *stage = attr._GetStage();
     stage->_GetResolveInfo(attr, &_resolveInfo);
   }
@@ -75,7 +77,8 @@ const UsdAttribute &UsdAttributeQuery::GetAttribute() const
   return _attr;
 }
 
-template<typename T> USD_API bool UsdAttributeQuery::_Get(T *value, UsdTimeCode time) const
+template<typename T>
+USD_API bool UsdAttributeQuery::_Get(T *value, UsdTimeCode time) const
 {
   return _attr._GetStage()->_GetValueFromResolveInfo(_resolveInfo, time, _attr, value);
 }
@@ -112,7 +115,8 @@ bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAtt
   // Clear the vector first before proceeding to accumulate sample times.
   times->clear();
 
-  if (attrQueries.empty()) {
+  if (attrQueries.empty())
+  {
     return true;
   }
 
@@ -124,7 +128,8 @@ bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAtt
   // Temporary vector used to hold the union of two time-sample vectors.
   std::vector<double> tempUnionSampleTimes;
 
-  for (const auto &attrQuery : attrQueries) {
+  for (const auto &attrQuery : attrQueries)
+  {
     const UsdAttribute &attr = attrQuery.GetAttribute();
     if (!attr)
       continue;

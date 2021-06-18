@@ -54,7 +54,8 @@ WABI_NAMESPACE_BEGIN
 ///    Size of the constants in bytes. (max 256 bytes)</li>
 /// </ul>
 ///
-struct HgiComputeShaderConstantsDesc {
+struct HgiComputeShaderConstantsDesc
+{
   HGI_API
   HgiComputeShaderConstantsDesc();
 
@@ -78,7 +79,8 @@ bool operator!=(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShader
 ///   Describes the shader uniforms.</li>
 /// </ul>
 ///
-struct HgiComputePipelineDesc {
+struct HgiComputePipelineDesc
+{
   HGI_API
   HgiComputePipelineDesc();
 
@@ -102,7 +104,8 @@ bool operator!=(const HgiComputePipelineDesc &lhs, const HgiComputePipelineDesc 
 /// To the client (HdPh) compute pipeline resources are referred to via
 /// opaque, stateless handles (HgiComputePipelineHandle).
 ///
-class HgiComputePipeline {
+class HgiComputePipeline
+{
  public:
   HGI_API
   virtual ~HgiComputePipeline();

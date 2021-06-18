@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type CylinderLight
 ///
-class UsdImagingCylinderLightAdapter : public UsdImagingLightAdapter {
+class UsdImagingCylinderLightAdapter : public UsdImagingLightAdapter
+{
  public:
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingCylinderLightAdapter() : UsdImagingLightAdapter()
+  UsdImagingCylinderLightAdapter()
+    : UsdImagingLightAdapter()
   {}
 
   USDIMAGING_API

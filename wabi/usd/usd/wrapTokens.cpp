@@ -34,7 +34,8 @@
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 /**
  * Helper to return a static token as a string. We wrap tokens
@@ -42,9 +43,11 @@ namespace {
  * token using def_readonly bypasses  to-Python   conversion,
  * leading to the error that there's no Python type for the
  * C++ TfToken type.  So we wrap this functor instead. */
-class _WrapStaticToken {
+class _WrapStaticToken
+{
  public:
-  _WrapStaticToken(const TfToken *token) : _token(token)
+  _WrapStaticToken(const TfToken *token)
+    : _token(token)
   {}
 
   std::string operator()() const
@@ -56,7 +59,8 @@ class _WrapStaticToken {
   const TfToken *_token;
 };
 
-template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
+template<typename T>
+void _AddToken(T &cls, const char *name, const TfToken &token)
 {
   cls.add_static_property(
     name,

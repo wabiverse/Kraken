@@ -56,7 +56,8 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 /// can use this object to express these surface shaders in Phoenix. In addition
 /// to the shader itself, a binding from the Rprim to the SurfaceShader must be
 /// expressed as well.
-class HdPhSurfaceShader : public HdPhShaderCode {
+class HdPhSurfaceShader : public HdPhShaderCode
+{
  public:
   HDPH_API
   HdPhSurfaceShader();

@@ -116,7 +116,8 @@ static void Work_InitializeThreading()
   // with maximum physical concurrency, or will be left untouched if
   // previously initialized by the hosting environment (e.g. if we are running
   // as a plugin to another application.)
-  if (settingVal) {
+  if (settingVal)
+  {
     _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
   }
 }
@@ -131,7 +132,8 @@ void WorkSetConcurrencyLimit(unsigned n)
   // attempt to take control of the TBB scheduler if we can, i.e. if the host
   // environment has not already done so.
   unsigned threadLimit = 0;
-  if (n) {
+  if (n)
+  {
     // Get the thread limit from the environment setting. Note this value
     // may be 0 (default).
     const unsigned settingVal = Work_GetConcurrencyLimitSetting();
@@ -141,7 +143,8 @@ void WorkSetConcurrencyLimit(unsigned n)
     // setting has been set to a non-zero value.
     threadLimit = Work_OverrideConcurrencyLimit(n, settingVal);
   }
-  else {
+  else
+  {
     // Use the current thread limit.
     threadLimit = WorkGetConcurrencyLimit();
   }
@@ -155,13 +158,16 @@ void WorkSetConcurrencyLimit(unsigned n)
   // According to the documentation that should be the case, but we should
   // make sure.  If we do decide to delete it, we have to make sure to
   // note that it has already been initialized.
-  if (_tbbArena) {
-    if (_tbbArena->is_active()) {
+  if (_tbbArena)
+  {
+    if (_tbbArena->is_active())
+    {
       _tbbArena->terminate();
       _tbbArena->initialize(threadLimit);
     }
   }
-  else {
+  else
+  {
     _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
   }
 }

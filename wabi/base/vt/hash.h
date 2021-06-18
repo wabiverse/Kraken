@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Vt_HashDetail {
+namespace Vt_HashDetail
+{
 
 // Issue a coding error when we attempt to hash a t.
 VT_API void _IssueUnimplementedHashError(std::type_info const &t);
@@ -43,15 +44,18 @@ VT_API void _IssueUnimplementedHashError(std::type_info const &t);
 using boost::hash_value;
 
 // A constexpr function that determines hashability.
-template<class T, class = decltype(hash_value(std::declval<T>()))> constexpr bool _IsHashable(int)
+template<class T, class = decltype(hash_value(std::declval<T>()))>
+constexpr bool _IsHashable(int)
 {
   return true;
 }
-template<class T, class = decltype(TfHash()(std::declval<T>()))> constexpr bool _IsHashable(long)
+template<class T, class = decltype(TfHash()(std::declval<T>()))>
+constexpr bool _IsHashable(long)
 {
   return true;
 }
-template<class T> constexpr bool _IsHashable(...)
+template<class T>
+constexpr bool _IsHashable(...)
 {
   return false;
 }
@@ -71,7 +75,8 @@ inline size_t _HashValueImpl(T const &val, long)
   return TfHash()(val);
 }
 
-template<class T> inline size_t _HashValueImpl(T const &val, ...)
+template<class T>
+inline size_t _HashValueImpl(T const &val, ...)
 {
   Vt_HashDetail::_IssueUnimplementedHashError(typeid(T));
   return 0;
@@ -82,7 +87,8 @@ template<class T> inline size_t _HashValueImpl(T const &val, ...)
 /// A constexpr function that returns true if T is hashable via VtHashValue,
 /// false otherwise.  This is true if we can either invoke
 /// (boost::)hash_value() or TfHash()() on a T instance.
-template<class T> constexpr bool VtIsHashable()
+template<class T>
+constexpr bool VtIsHashable()
 {
   return Vt_HashDetail::_IsHashable<T>(0);
 }
@@ -90,7 +96,8 @@ template<class T> constexpr bool VtIsHashable()
 /// Compute a hash code for \p val by invoking (boost::)hash_value(val) if
 /// possible, otherwise by invoking TfHash()(val), or if neither are possible
 /// issue a coding error and return 0.
-template<class T> size_t VtHashValue(T const &val)
+template<class T>
+size_t VtHashValue(T const &val)
 {
   return Vt_HashDetail::_HashValueImpl(val, 0);
 }

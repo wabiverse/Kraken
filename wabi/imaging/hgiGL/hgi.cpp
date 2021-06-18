@@ -63,13 +63,17 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<HgiFactory<HgiGL>>();
 }
 
-HgiGL::HgiGL() : _device(nullptr), _garbageCollector(this), _frameDepth(0)
+HgiGL::HgiGL()
+  : _device(nullptr),
+    _garbageCollector(this),
+    _frameDepth(0)
 {
   static std::once_flag versionOnce;
   std::call_once(versionOnce, []() {
     const bool validate = TfGetEnvSetting(HGIGL_ENABLE_GL_VERSION_VALIDATION);
     GarchGLApiLoad();
-    if (validate && !HgiGLMeetsMinimumRequirements()) {
+    if (validate && !HgiGLMeetsMinimumRequirements())
+    {
       TF_WARN(
         "HgiGL minimum OpenGL requirements not met. Please ensure "
         "that OpenGL is initialized and supports version 4.5.");
@@ -120,7 +124,8 @@ void HgiGL::DestroyTexture(HgiTextureHandle *texHandle)
 
 HgiTextureViewHandle HgiGL::CreateTextureView(HgiTextureViewDesc const &desc)
 {
-  if (!desc.sourceTexture) {
+  if (!desc.sourceTexture)
+  {
     TF_CODING_ERROR("Source texture is null");
   }
 
@@ -218,10 +223,12 @@ TfToken const &HgiGL::GetAPIName() const
 void HgiGL::StartFrame()
 {
   // Protect against client calling StartFrame more than once (nested engines)
-  if (_frameDepth++ == 0) {
+  if (_frameDepth++ == 0)
+  {
 // Start Full Frame debug label
 #if defined(GL_KHR_debug)
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, "Full Hydra Frame");
     }
 #endif
@@ -230,12 +237,14 @@ void HgiGL::StartFrame()
 
 void HgiGL::EndFrame()
 {
-  if (--_frameDepth == 0) {
+  if (--_frameDepth == 0)
+  {
     _garbageCollector.PerformGarbageCollection();
 
 // End Full Frame debug label
 #if defined(GL_KHR_debug)
-    if (GARCH_GLAPI_HAS(KHR_debug)) {
+    if (GARCH_GLAPI_HAS(KHR_debug))
+    {
       glPopDebugGroup();
     }
 #endif
@@ -246,14 +255,16 @@ bool HgiGL::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
 {
   bool result = Hgi::_SubmitCmds(cmds, wait);
 
-  if (wait == HgiSubmitWaitTypeWaitUntilCompleted) {
+  if (wait == HgiSubmitWaitTypeWaitUntilCompleted)
+  {
     // CPU - GPU synchronization (stall) by client request only.
     static const uint64_t timeOut = 100000000000;
 
     GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     GLenum status = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, timeOut);
 
-    if (status != GL_ALREADY_SIGNALED && status != GL_CONDITION_SATISFIED) {
+    if (status != GL_ALREADY_SIGNALED && status != GL_CONDITION_SATISFIED)
+    {
       // We could loop, but we don't expect to timeout.
       TF_RUNTIME_ERROR("Unexpected ClientWaitSync timeout");
     }
@@ -262,7 +273,8 @@ bool HgiGL::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
   }
 
   // If the Hgi client does not call Hgi::EndFrame we garbage collect here.
-  if (_frameDepth == 0) {
+  if (_frameDepth == 0)
+  {
     _garbageCollector.PerformGarbageCollection();
   }
 

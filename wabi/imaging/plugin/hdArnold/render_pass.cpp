@@ -92,7 +92,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 TF_DEFINE_ENV_SETTING(HDARNOLD_default_filter, "box_filter", "Default filter type for RenderVars.");
 TF_DEFINE_ENV_SETTING(HDARNOLD_default_filter_attributes, "", "Default filter attributes for RenderVars.");
 
-namespace {
+namespace
+{
 
 template<typename T>
 T _GetOptionalSetting(const decltype(HdRenderPassAovBinding::aovSettings) &settings,
@@ -100,13 +101,15 @@ T _GetOptionalSetting(const decltype(HdRenderPassAovBinding::aovSettings) &setti
                       const T &defaultValue)
 {
   const auto it = settings.find(settingName);
-  if (it == settings.end()) {
+  if (it == settings.end())
+  {
     return defaultValue;
   }
   return it->second.IsHolding<T>() ? it->second.UncheckedGet<T>() : defaultValue;
 }
 
-struct ArnoldAOVType {
+struct ArnoldAOVType
+{
   const char *outputString;
   const AtString writer;
   const AtString reader;
@@ -196,7 +199,8 @@ const ArnoldAOVType &_GetArnoldAOVTypeFromTokenType(const TfToken &type)
 
 const TfToken _GetTokenFromHdFormat(HdFormat format)
 {
-  switch (format) {
+  switch (format)
+  {
     case HdFormatUNorm8:
       return _tokens->uint8;
     case HdFormatUNorm8Vec2:
@@ -246,7 +250,8 @@ const TfToken _GetTokenFromHdFormat(HdFormat format)
 const TfToken _GetTokenFromRenderBufferType(const HdRenderBuffer *buffer)
 {
   // Use a wide type to make sure all components are set.
-  if (Ai_unlikely(buffer == nullptr)) {
+  if (Ai_unlikely(buffer == nullptr))
+  {
     return _tokens->color4f;
   }
   return _GetTokenFromHdFormat(buffer->GetFormat());
@@ -256,10 +261,12 @@ GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
 {
 #if WABI_VERSION >= 2102
   const auto &framing = renderPassState->GetFraming();
-  if (framing.IsValid()) {
+  if (framing.IsValid())
+  {
     return framing.dataWindow;
   }
-  else {
+  else
+  {
 #endif
     // For applications that use the old viewport API instead of
     // the new camera framing API.
@@ -273,15 +280,19 @@ GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
 void _ReadNodeParameters(AtNode *node, const TfToken &prefix, const HdAovSettingsMap &settings)
 {
   const AtNodeEntry *nodeEntry = AiNodeGetNodeEntry(node);
-  for (const auto &setting : settings) {
-    if (TfStringStartsWith(setting.first, prefix)) {
+  for (const auto &setting : settings)
+  {
+    if (TfStringStartsWith(setting.first, prefix))
+    {
       const AtString parameterName(setting.first.GetText() + prefix.size());
       // name is special in arnold
-      if (parameterName == str::name) {
+      if (parameterName == str::name)
+      {
         continue;
       }
       const auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, parameterName);
-      if (paramEntry != nullptr) {
+      if (paramEntry != nullptr)
+      {
         HdArnoldSetParameter(node, paramEntry, setting.second);
       }
     }
@@ -293,11 +304,13 @@ AtNode *_CreateFilter(HdArnoldRenderDelegate *renderDelegate, const HdAovSetting
   // We need to make sure that it's holding a string, then try to create it to make sure
   // it's a node type supported by Arnold.
   const auto filterType = _GetOptionalSetting(aovSettings, _tokens->aovSettingFilter, std::string{});
-  if (filterType.empty()) {
+  if (filterType.empty())
+  {
     return nullptr;
   }
   AtNode *filter = AiNode(renderDelegate->GetUniverse(), AtString(filterType.c_str()));
-  if (filter == nullptr) {
+  if (filter == nullptr)
+  {
     return filter;
   }
   const auto filterNameStr = renderDelegate->GetLocalNodeName(
@@ -324,22 +337,26 @@ const std::string _CreateAOV(HdArnoldRenderDelegate *renderDelegate,
                              std::vector<AtString> &lightPathExpressions,
                              std::vector<AtNode *> &aovShaders)
 {
-  if (sourceType == _tokens->lpe) {
+  if (sourceType == _tokens->lpe)
+  {
     // We have to add the light path expression to the outputs node in the format of:
     // "aov_name lpe" like "beauty C.*"
     lightPathExpressions.emplace_back(TfStringPrintf("%s %s", name.c_str(), sourceName.c_str()).c_str());
     return name;
   }
-  else if (sourceType == _tokens->primvar) {
+  else if (sourceType == _tokens->primvar)
+  {
     // We need to add a aov write shader to the list of aov_shaders on the options node. Each
     // of this shader will be executed on every surface.
     writer = AiNode(renderDelegate->GetUniverse(), arnoldTypes.writer);
-    if (sourceName == "st" || sourceName == "uv") {  // st and uv are written to the built-in UV
+    if (sourceName == "st" || sourceName == "uv")
+    {  // st and uv are written to the built-in UV
       reader = AiNode(renderDelegate->GetUniverse(), str::utility);
       AiNodeSetStr(reader, str::color_mode, str::uv);
       AiNodeSetStr(reader, str::shade_mode, str::flat);
     }
-    else {
+    else
+    {
       reader = AiNode(renderDelegate->GetUniverse(), arnoldTypes.reader);
       AiNodeSetStr(reader, str::attribute, AtString(sourceName.c_str()));
     }
@@ -355,7 +372,8 @@ const std::string _CreateAOV(HdArnoldRenderDelegate *renderDelegate,
     aovShaders.push_back(writer);
     return name;
   }
-  else {
+  else
+  {
     return sourceName;
   }
 }
@@ -380,10 +398,12 @@ HdArnoldRenderPass::HdArnoldRenderPass(HdArnoldRenderDelegate *renderDelegate,
   _defaultFilter = AiNode(universe, AtString(defaultFilter.c_str()));
   // In case the defaultFilter string is an invalid filter type.
   if (_defaultFilter == nullptr ||
-      AiNodeEntryGetType(AiNodeGetNodeEntry(_defaultFilter)) != AI_NODE_FILTER) {
+      AiNodeEntryGetType(AiNodeGetNodeEntry(_defaultFilter)) != AI_NODE_FILTER)
+  {
     _defaultFilter = AiNode(universe, str::box_filter);
   }
-  if (!defaultFilterAttributes.empty()) {
+  if (!defaultFilterAttributes.empty())
+  {
     AiNodeSetAttributes(_defaultFilter, defaultFilterAttributes.c_str());
   }
   AiNodeSetStr(_defaultFilter, str::name, _renderDelegate->GetLocalNodeName(str::renderPassFilter));
@@ -425,18 +445,24 @@ HdArnoldRenderPass::~HdArnoldRenderPass()
   // We are not assigning this array to anything, so needs to be manually destroyed.
   AiArrayDestroy(_fallbackOutputs);
 
-  for (auto &deepProduct : _deepProducts) {
-    if (deepProduct.driver != nullptr) {
+  for (auto &deepProduct : _deepProducts)
+  {
+    if (deepProduct.driver != nullptr)
+    {
       AiNodeDestroy(deepProduct.driver);
     }
-    if (deepProduct.filter != nullptr) {
+    if (deepProduct.filter != nullptr)
+    {
       AiNodeDestroy(deepProduct.filter);
     }
-    for (auto &renderVar : deepProduct.renderVars) {
-      if (renderVar.writer != nullptr) {
+    for (auto &renderVar : deepProduct.renderVars)
+    {
+      if (renderVar.writer != nullptr)
+      {
         AiNodeDestroy(renderVar.writer);
       }
-      if (renderVar.reader != nullptr) {
+      if (renderVar.reader != nullptr)
+      {
         AiNodeDestroy(renderVar.reader);
       }
     }
@@ -459,16 +485,20 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
   AtNode *currentCamera = nullptr;
   // If camera is nullptr from the render pass state, we are using a camera created by the
   // renderpass.
-  if (useOwnedCamera) {
+  if (useOwnedCamera)
+  {
     currentCamera = _camera;
-    if (currentUniverseCamera != _camera) {
+    if (currentUniverseCamera != _camera)
+    {
       renderParam->Interrupt();
       AiNodeSetPtr(AiUniverseGetOptions(_renderDelegate->GetUniverse()), str::camera, _camera);
     }
   }
-  else {
+  else
+  {
     currentCamera = camera->GetCamera();
-    if (currentUniverseCamera != currentCamera) {
+    if (currentUniverseCamera != currentCamera)
+    {
       renderParam->Interrupt();
       AiNodeSetPtr(AiUniverseGetOptions(_renderDelegate->GetUniverse()), str::camera, currentCamera);
     }
@@ -476,13 +506,15 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
 
   const auto projMtx = renderPassState->GetProjectionMatrix();
   const auto viewMtx = renderPassState->GetWorldToViewMatrix();
-  if (projMtx != _projMtx || viewMtx != _viewMtx) {
+  if (projMtx != _projMtx || viewMtx != _viewMtx)
+  {
     _projMtx = projMtx;
     _viewMtx = viewMtx;
     renderParam->Interrupt(true, false);
     AiNodeSetMatrix(_mainDriver, str::projMtx, HdArnoldConvertMatrix(_projMtx));
     AiNodeSetMatrix(_mainDriver, str::viewMtx, HdArnoldConvertMatrix(_viewMtx));
-    if (useOwnedCamera) {
+    if (useOwnedCamera)
+    {
       const auto fov = static_cast<float>(GfRadiansToDegrees(atan(1.0 / _projMtx[0][0]) * 2.0));
       AiNodeSetFlt(_camera, str::fov, fov);
       AiNodeSetMatrix(_camera, str::matrix, HdArnoldConvertMatrix(_viewMtx.GetInverse()));
@@ -491,7 +523,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
 
   const auto width = static_cast<int>(dataWindow.GetWidth());
   const auto height = static_cast<int>(dataWindow.GetHeight());
-  if (width != _width || height != _height) {
+  if (width != _width || height != _height)
+  {
     renderParam->Interrupt(true, false);
     _width = width;
     _height = height;
@@ -515,18 +548,22 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
                    [](const HdRenderPassAovBinding &binding) -> bool {
                      if (binding.aovName == HdAovTokens->elementId ||
                          binding.aovName == HdAovTokens->instanceId ||
-                         binding.aovName == HdAovTokens->pointId) {
+                         binding.aovName == HdAovTokens->pointId)
+                     {
                        // Set these buffers to converged, as we never write any
                        // data.
-                       if (binding.renderBuffer != nullptr && !binding.renderBuffer->IsConverged()) {
+                       if (binding.renderBuffer != nullptr && !binding.renderBuffer->IsConverged())
+                       {
                          auto *renderBuffer = dynamic_cast<HdArnoldRenderBuffer *>(binding.renderBuffer);
-                         if (Ai_likely(renderBuffer != nullptr)) {
+                         if (Ai_likely(renderBuffer != nullptr))
+                         {
                            renderBuffer->SetConverged(true);
                          }
                        }
                        return true;
                      }
-                     else {
+                     else
+                     {
                        return false;
                      }
                    }),
@@ -535,8 +572,10 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
   auto clearBuffers = [&](HdArnoldRenderBufferStorage &storage) {
     static std::vector<uint8_t> zeroData;
     zeroData.resize(_width * _height * 4);
-    for (auto &buffer : storage) {
-      if (buffer.second.buffer != nullptr) {
+    for (auto &buffer : storage)
+    {
+      if (buffer.second.buffer != nullptr)
+      {
         buffer.second.buffer->WriteBucket(0, 0, _width, _height, HdFormatUNorm8Vec4, zeroData.data());
       }
     }
@@ -549,13 +588,15 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
   // Delegate Render Products are only introduced in Houdini 18.5, which is 20.8 that has
   // USD_DO_NOT_BLIT always set.
 #ifndef USD_DO_NOT_BLIT
-  if (aovBindings.empty()) {
+  if (aovBindings.empty())
+  {
     // We are first checking if the right storage pointer is set on the driver.
     // If not, then we need to reset the aov setup and set the outputs definition on the driver.
     // If it's the same pointer, we still need to check the dimensions, if they don't match the
     // global dimensions, then reallocate those render buffers. If USD has the newer compositor
     // class, we can allocate float buffers for the color, otherwise we need to stick to UNorm8.
-    if (!_usingFallbackBuffers) {
+    if (!_usingFallbackBuffers)
+    {
       renderParam->Interrupt(true, false);
       AiNodeSetArray(_renderDelegate->GetOptions(), str::outputs, AiArrayCopy(_fallbackOutputs));
       _usingFallbackBuffers = true;
@@ -565,7 +606,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       AiNodeSetPtr(_mainDriver, str::id_pointer, &_fallbackPrimId);
     }
     if (_fallbackColor.GetWidth() != static_cast<unsigned int>(_width) ||
-        _fallbackColor.GetHeight() != static_cast<unsigned int>(_height)) {
+        _fallbackColor.GetHeight() != static_cast<unsigned int>(_height))
+    {
       renderParam->Interrupt(true, false);
 #  ifdef USD_HAS_UPDATED_COMPOSITOR
       _fallbackColor.Allocate({_width, _height, 1}, HdFormatFloat32Vec4, false);
@@ -576,14 +618,16 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       _fallbackPrimId.Allocate({_width, _height, 1}, HdFormatInt32, false);
     }
   }
-  else {
+  else
+  {
 #endif
     // AOV bindings exists, so first we are checking if anything has changed.
     // If something has changed, then we rebuild the local storage class, and the outputs
     // definition. We expect Hydra to resize the render buffers.
     const auto &delegateRenderProducts = _renderDelegate->GetDelegateRenderProducts();
     if (_RenderBuffersChanged(aovBindings) || (!delegateRenderProducts.empty() && _deepProducts.empty()) ||
-        _usingFallbackBuffers) {
+        _usingFallbackBuffers)
+    {
       _usingFallbackBuffers = false;
       renderParam->Interrupt();
       _ClearRenderBuffers();
@@ -606,7 +650,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       const auto *boxName = AiNodeGetName(_defaultFilter);
       const auto *closestName = AiNodeGetName(_closestFilter);
       const auto *mainDriverName = AiNodeGetName(_mainDriver);
-      for (const auto &binding : aovBindings) {
+      for (const auto &binding : aovBindings)
+      {
         auto &buffer = _renderBuffers[binding.aovName];
         // Sadly we only get a raw pointer here, so we have to expect hydra not clearing up render
         // buffers while they are being used.
@@ -626,19 +671,23 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
         // use case.
         const auto isRaw = sourceType == _tokens->raw;
         AtString output;
-        if (isRaw && sourceName == HdAovTokens->color) {
+        if (isRaw && sourceName == HdAovTokens->color)
+        {
           output = AtString{TfStringPrintf("RGBA RGBA %s %s", filterName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::color_pointer, binding.renderBuffer);
         }
-        else if (isRaw && sourceName == HdAovTokens->depth) {
+        else if (isRaw && sourceName == HdAovTokens->depth)
+        {
           output = AtString{TfStringPrintf("P VECTOR %s %s", filterGeoName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::depth_pointer, binding.renderBuffer);
         }
-        else if (isRaw && sourceName == HdAovTokens->primId) {
+        else if (isRaw && sourceName == HdAovTokens->primId)
+        {
           output = AtString{TfStringPrintf("ID UINT %s %s", filterGeoName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::id_pointer, binding.renderBuffer);
         }
-        else {
+        else
+        {
           // Querying the data format from USD, with a default value of color3f.
           const auto format = _GetOptionalSetting<TfToken>(
             binding.aovSettings, _tokens->dataType, _GetTokenFromRenderBufferType(buffer.buffer));
@@ -650,24 +699,28 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
           AiNodeSetPtr(buffer.driver, str::aov_pointer, buffer.buffer);
           const auto arnoldTypes = _GetArnoldAOVTypeFromTokenType(format);
           const char *aovName = nullptr;
-          if (sourceType == _tokens->lpe) {
+          if (sourceType == _tokens->lpe)
+          {
             aovName = binding.aovName.GetText();
             // We have to add the light path expression to the outputs node in the format of:
             // "aov_name lpe" like "beauty C.*"
             lightPathExpressions.emplace_back(
               TfStringPrintf("%s %s", binding.aovName.GetText(), sourceName.c_str()).c_str());
           }
-          else if (sourceType == _tokens->primvar) {
+          else if (sourceType == _tokens->primvar)
+          {
             aovName = binding.aovName.GetText();
             // We need to add a aov write shader to the list of aov_shaders on the options node.
             // Each of this shader will be executed on every surface.
             buffer.writer = AiNode(_renderDelegate->GetUniverse(), arnoldTypes.writer);
-            if (sourceName == "st" || sourceName == "uv") {  // st and uv are written to the built-in UV
+            if (sourceName == "st" || sourceName == "uv")
+            {  // st and uv are written to the built-in UV
               buffer.reader = AiNode(_renderDelegate->GetUniverse(), str::utility);
               AiNodeSetStr(buffer.reader, str::color_mode, str::uv);
               AiNodeSetStr(buffer.reader, str::shade_mode, str::flat);
             }
-            else {
+            else
+            {
               buffer.reader = AiNode(_renderDelegate->GetUniverse(), arnoldTypes.reader);
               AiNodeSetStr(buffer.reader, str::attribute, AtString(sourceName.c_str()));
             }
@@ -682,7 +735,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
             AiNodeLink(buffer.reader, str::aov_input, buffer.writer);
             aovShaders.push_back(buffer.writer);
           }
-          else {
+          else
+          {
             aovName = sourceName.c_str();
           }
           output = AtString{
@@ -696,15 +750,19 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       // At the moment this won't work if delegate render products are set interactively, it's not
       // something we would potentially encounter as deep exrs are typically not rendered for
       // interactive sessions, and delegate render products are only set when rendering in husk.
-      if (!delegateRenderProducts.empty() && _deepProducts.empty()) {
+      if (!delegateRenderProducts.empty() && _deepProducts.empty())
+      {
         _deepProducts.reserve(delegateRenderProducts.size());
-        for (const auto &product : delegateRenderProducts) {
+        for (const auto &product : delegateRenderProducts)
+        {
           DeepProduct deepProduct;
-          if (product.renderVars.empty()) {
+          if (product.renderVars.empty())
+          {
             continue;
           }
           deepProduct.driver = AiNode(_renderDelegate->GetUniverse(), str::driver_deepexr);
-          if (Ai_unlikely(deepProduct.driver == nullptr)) {
+          if (Ai_unlikely(deepProduct.driver == nullptr))
+          {
             continue;
           }
           const AtString deepDriverName = AtString{
@@ -727,7 +785,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
           auto *enableFiltering = static_cast<bool *>(AiArrayMap(enableFilteringArray));
           auto *halfPrecisionArray = AiArrayAllocate(numRenderVars, 1, AI_TYPE_BOOLEAN);
           auto *halfPrecision = static_cast<bool *>(AiArrayMap(halfPrecisionArray));
-          for (const auto &renderVar : product.renderVars) {
+          for (const auto &renderVar : product.renderVars)
+          {
             DeepRenderVar deepRenderVar;
             *tolerance = _GetOptionalSetting<float>(
               renderVar.settings, _tokens->tolerance, defaultTolerance);
@@ -736,19 +795,23 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
             *halfPrecision = _GetOptionalSetting<bool>(
               renderVar.settings, _tokens->halfPrecision, defaultHalfPrecision);
             const auto isRaw = renderVar.sourceType == _tokens->raw;
-            if (isRaw && renderVar.sourceName == HdAovTokens->color) {
+            if (isRaw && renderVar.sourceName == HdAovTokens->color)
+            {
               deepRenderVar.output = AtString{
                 TfStringPrintf("RGBA RGBA %s %s", filterName, deepDriverName.c_str()).c_str()};
             }
-            else if (isRaw && renderVar.sourceName == HdAovTokens->depth) {
+            else if (isRaw && renderVar.sourceName == HdAovTokens->depth)
+            {
               deepRenderVar.output = AtString{
                 TfStringPrintf("Z FLOAT %s %s", filterName, deepDriverName.c_str()).c_str()};
             }
-            else if (isRaw && renderVar.sourceName == HdAovTokens->primId) {
+            else if (isRaw && renderVar.sourceName == HdAovTokens->primId)
+            {
               deepRenderVar.output = AtString{
                 TfStringPrintf("ID UINT %s %s", filterName, deepDriverName.c_str()).c_str()};
             }
-            else {
+            else
+            {
               // Querying the data format from USD, with a default value of color3f.
               const auto format = _GetOptionalSetting<TfToken>(
                 renderVar.settings, _tokens->dataType, _GetTokenFromHdFormat(renderVar.format));
@@ -784,17 +847,22 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
         }
       }
       // Add deep products to the outputs list.
-      if (!_deepProducts.empty()) {
-        for (const auto &product : _deepProducts) {
-          for (const auto &renderVar : product.renderVars) {
-            if (renderVar.writer != nullptr) {
+      if (!_deepProducts.empty())
+      {
+        for (const auto &product : _deepProducts)
+        {
+          for (const auto &renderVar : product.renderVars)
+          {
+            if (renderVar.writer != nullptr)
+            {
               aovShaders.push_back(renderVar.writer);
             }
             outputs.push_back(renderVar.output);
           }
         }
       }
-      if (!outputs.empty()) {
+      if (!outputs.empty())
+      {
         AiNodeSetArray(
           _renderDelegate->GetOptions(),
           str::outputs,
@@ -832,29 +900,36 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
   _isConverged = renderStatus != HdArnoldRenderParam::Status::Converging;
 
   // We need to set the converged status of the render buffers.
-  if (!aovBindings.empty()) {
+  if (!aovBindings.empty())
+  {
     // Clearing all AOVs if render was aborted.
-    if (renderStatus == HdArnoldRenderParam::Status::Aborted) {
+    if (renderStatus == HdArnoldRenderParam::Status::Aborted)
+    {
       clearBuffers(_renderBuffers);
     }
-    for (auto &buffer : _renderBuffers) {
-      if (buffer.second.buffer != nullptr) {
+    for (auto &buffer : _renderBuffers)
+    {
+      if (buffer.second.buffer != nullptr)
+      {
         buffer.second.buffer->SetConverged(_isConverged);
       }
     }
     // If the buffers are empty, we have to blit the data from the fallback buffers to OpenGL.
   }
 #ifndef USD_DO_NOT_BLIT
-  else {
+  else
+  {
     // Clearing all AOVs if render was aborted.
-    if (renderStatus == HdArnoldRenderParam::Status::Aborted) {
+    if (renderStatus == HdArnoldRenderParam::Status::Aborted)
+    {
       clearBuffers(_fallbackBuffers);
     }
     // No AOV bindings means blit current framebuffer contents.
     // TODO(pal): Only update the compositor and the fullscreen shader if something has changed.
     //  When using fallback buffers, it's enough to check if the color has any updates.
 #  ifdef USD_HAS_FULLSCREEN_SHADER
-    if (_fallbackColor.HasUpdates()) {
+    if (_fallbackColor.HasUpdates())
+    {
       auto *color = _fallbackColor.Map();
       auto *depth = _fallbackDepth.Map();
       _fullscreenShader.SetTexture(_tokens->color,
@@ -874,7 +949,8 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
     _fullscreenShader.SetProgramToCompositor(true);
     _fullscreenShader.Draw();
 #  else
-    if (_fallbackColor.HasUpdates()) {
+    if (_fallbackColor.HasUpdates())
+    {
       auto *color = _fallbackColor.Map();
       auto *depth = _fallbackDepth.Map();
 #    ifdef USD_HAS_UPDATED_COMPOSITOR
@@ -894,12 +970,15 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
 
 bool HdArnoldRenderPass::_RenderBuffersChanged(const HdRenderPassAovBindingVector &aovBindings)
 {
-  if (aovBindings.size() != _renderBuffers.size()) {
+  if (aovBindings.size() != _renderBuffers.size())
+  {
     return true;
   }
-  for (const auto &binding : aovBindings) {
+  for (const auto &binding : aovBindings)
+  {
     const auto it = _renderBuffers.find(binding.aovName);
-    if (it == _renderBuffers.end() || it->second.settings != binding.aovSettings) {
+    if (it == _renderBuffers.end() || it->second.settings != binding.aovSettings)
+    {
       return true;
     }
   }
@@ -909,17 +988,22 @@ bool HdArnoldRenderPass::_RenderBuffersChanged(const HdRenderPassAovBindingVecto
 
 void HdArnoldRenderPass::_ClearRenderBuffers()
 {
-  for (auto &buffer : _renderBuffers) {
-    if (buffer.second.filter != nullptr) {
+  for (auto &buffer : _renderBuffers)
+  {
+    if (buffer.second.filter != nullptr)
+    {
       AiNodeDestroy(buffer.second.filter);
     }
-    if (buffer.second.driver != nullptr) {
+    if (buffer.second.driver != nullptr)
+    {
       AiNodeDestroy(buffer.second.driver);
     }
-    if (buffer.second.writer != nullptr) {
+    if (buffer.second.writer != nullptr)
+    {
       AiNodeDestroy(buffer.second.writer);
     }
-    if (buffer.second.reader != nullptr) {
+    if (buffer.second.reader != nullptr)
+    {
       AiNodeDestroy(buffer.second.reader);
     }
   }

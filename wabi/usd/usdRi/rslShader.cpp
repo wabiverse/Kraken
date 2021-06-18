@@ -57,7 +57,8 @@ UsdRiRslShader::~UsdRiRslShader()
 /* static */
 UsdRiRslShader UsdRiRslShader::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRslShader();
   }
@@ -68,7 +69,8 @@ UsdRiRslShader UsdRiRslShader::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdRiRslShader UsdRiRslShader::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RslShader");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRslShader();
   }
@@ -122,7 +124,8 @@ UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue, bool
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

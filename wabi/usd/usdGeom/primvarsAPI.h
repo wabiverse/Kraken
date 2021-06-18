@@ -79,7 +79,8 @@ class SdfAssetPath;
 /// must first cache the results of FindIncrementallyInheritablePrimvars() for
 /// each non-leaf prim on the stage.
 ///
-class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
+class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -95,13 +96,15 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdGeomPrimvarsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPrimvarsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdGeomPrimvarsAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdGeomPrimvarsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPrimvarsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPrimvarsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdGeomPrimvarsAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.

@@ -41,9 +41,12 @@ WABI_NAMESPACE_BEGIN
 // Adapted from original at:
 // http://mail.python.org/pipermail/cplusplus-sig/2007-May/012003.html
 
-namespace TfPyOptional {
+namespace TfPyOptional
+{
 
-template<typename T, typename TfromPy> struct object_from_python {
+template<typename T, typename TfromPy>
+struct object_from_python
+{
   object_from_python()
   {
     boost::python::converter::registry::push_back(
@@ -51,7 +54,9 @@ template<typename T, typename TfromPy> struct object_from_python {
   }
 };
 
-template<typename T, typename TtoPy, typename TfromPy> struct register_python_conversion {
+template<typename T, typename TtoPy, typename TfromPy>
+struct register_python_conversion
+{
   register_python_conversion()
   {
     boost::python::to_python_converter<T, TtoPy>();
@@ -59,11 +64,15 @@ template<typename T, typename TtoPy, typename TfromPy> struct register_python_co
   }
 };
 
-template<typename T> struct python_optional : public boost::noncopyable {
-  struct optional_to_python {
+template<typename T>
+struct python_optional : public boost::noncopyable
+{
+  struct optional_to_python
+  {
     static PyObject *convert(const boost::optional<T> &value)
     {
-      if (value) {
+      if (value)
+      {
         boost::python::object obj = TfPyObject(*value);
         Py_INCREF(obj.ptr());
         return obj.ptr();
@@ -72,7 +81,8 @@ template<typename T> struct python_optional : public boost::noncopyable {
     }
   };
 
-  struct optional_from_python {
+  struct optional_from_python
+  {
     static void *convertible(PyObject *source)
     {
       using namespace boost::python::converter;
@@ -89,10 +99,12 @@ template<typename T> struct python_optional : public boost::noncopyable {
 
       void *const storage = ((rvalue_from_python_storage<T> *)data)->storage.bytes;
 
-      if (data->convertible == Py_None) {
+      if (data->convertible == Py_None)
+      {
         new (storage) boost::optional<T>();  // An uninitialized optional
       }
-      else {
+      else
+      {
         new (storage) boost::optional<T>(boost::python::extract<T>(source));
       }
 

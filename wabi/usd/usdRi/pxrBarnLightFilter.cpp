@@ -57,7 +57,8 @@ UsdRiPxrBarnLightFilter::~UsdRiPxrBarnLightFilter()
 /* static */
 UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrBarnLightFilter();
   }
@@ -68,7 +69,8 @@ UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Get(const UsdStagePtr &stage, c
 UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiBarnLightFilter");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrBarnLightFilter();
   }
@@ -520,7 +522,8 @@ UsdAttribute UsdRiPxrBarnLightFilter::CreateEdgeScaleRightAttr(VtValue const &de
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

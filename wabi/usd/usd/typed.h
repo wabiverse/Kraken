@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 /// UsdTyped implements a typeName-based query for its override of
 /// UsdSchemaBase::_IsCompatible().  It provides no other behavior.
 ///
-class UsdTyped : public UsdSchemaBase {
+class UsdTyped : public UsdSchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -59,13 +60,15 @@ class UsdTyped : public UsdSchemaBase {
   /// Equivalent to UsdTyped::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdTyped(const UsdPrim &prim = UsdPrim()) : UsdSchemaBase(prim)
+  explicit UsdTyped(const UsdPrim &prim = UsdPrim())
+    : UsdSchemaBase(prim)
   {}
 
   /// Construct a UsdTyped on the prim wrapped by \p schemaObj .
   /// Should be preferred over UsdTyped(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdTyped(const UsdSchemaBase &schemaObj) : UsdSchemaBase(schemaObj)
+  explicit UsdTyped(const UsdSchemaBase &schemaObj)
+    : UsdSchemaBase(schemaObj)
   {}
 
   USD_API

@@ -50,7 +50,8 @@ class HdPhResourceRegistry;
 /// around until garbage collection so that clients can safely drop their
 /// shared pointers from different threads.
 ///
-class HdPh_SamplerObjectRegistry final {
+class HdPh_SamplerObjectRegistry final
+{
  public:
   HDPH_API
   explicit HdPh_SamplerObjectRegistry(HdPhResourceRegistry *registry);

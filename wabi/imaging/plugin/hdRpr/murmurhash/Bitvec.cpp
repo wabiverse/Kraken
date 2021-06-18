@@ -18,7 +18,8 @@ void printbits(const void *blob, int len)
   const uint8_t *data = (const uint8_t *)blob;
 
   printf("[");
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     unsigned char byte = data[i];
 
     int hi = (byte >> 4);
@@ -44,10 +45,12 @@ void printbits2(const uint8_t *k, int nbytes)
 {
   printf("[");
 
-  for (int i = nbytes - 1; i >= 0; i--) {
+  for (int i = nbytes - 1; i >= 0; i--)
+  {
     uint8_t b = k[i];
 
-    for (int j = 7; j >= 0; j--) {
+    for (int j = 7; j >= 0; j--)
+    {
       uint8_t c = (b & (1 << j)) ? '#' : ' ';
 
       putc(c, stdout);
@@ -64,7 +67,8 @@ void printhex32(const void *blob, int len)
 
   printf("{ ");
 
-  for (int i = 0; i < len / 4; i++) {
+  for (int i = 0; i < len / 4; i++)
+  {
     printf("0x%08x, ", d[i]);
   }
 
@@ -77,7 +81,8 @@ void printbytes(const void *blob, int len)
 
   printf("{ ");
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     printf("0x%02x, ", d[i]);
   }
 
@@ -88,7 +93,8 @@ void printbytes2(const void *blob, int len)
 {
   uint8_t *d = (uint8_t *)blob;
 
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < len; i++)
+  {
     printf("%02x ", d[i]);
   }
 }
@@ -197,7 +203,8 @@ void lshift1(void *blob, int len, int c)
 {
   int nbits = len * 8;
 
-  for (int i = nbits - 1; i >= 0; i--) {
+  for (int i = nbits - 1; i >= 0; i--)
+  {
     setbit(blob, len, i, getbit(blob, len, i - c));
   }
 }
@@ -212,18 +219,21 @@ void lshift8(void *blob, int nbytes, int c)
   int b = c >> 3;
   c &= 7;
 
-  for (int i = nbytes - 1; i >= b; i--) {
+  for (int i = nbytes - 1; i >= b; i--)
+  {
     k[i] = k[i - b];
   }
 
-  for (int i = b - 1; i >= 0; i--) {
+  for (int i = b - 1; i >= 0; i--)
+  {
     k[i] = 0;
   }
 
   if (c == 0)
     return;
 
-  for (int i = nbytes - 1; i >= 0; i--) {
+  for (int i = nbytes - 1; i >= 0; i--)
+  {
     uint8_t a = k[i];
     uint8_t b = (i == 0) ? 0 : k[i - 1];
 
@@ -248,18 +258,21 @@ void lshift32(void *blob, int len, int c)
   int b = c / 32;
   c &= (32 - 1);
 
-  for (int i = ndwords - 1; i >= b; i--) {
+  for (int i = ndwords - 1; i >= b; i--)
+  {
     k[i] = k[i - b];
   }
 
-  for (int i = b - 1; i >= 0; i--) {
+  for (int i = b - 1; i >= 0; i--)
+  {
     k[i] = 0;
   }
 
   if (c == 0)
     return;
 
-  for (int i = ndwords - 1; i >= 0; i--) {
+  for (int i = ndwords - 1; i >= 0; i--)
+  {
     uint32_t a = k[i];
     uint32_t b = (i == 0) ? 0 : k[i - 1];
 
@@ -273,7 +286,8 @@ void rshift1(void *blob, int len, int c)
 {
   int nbits = len * 8;
 
-  for (int i = 0; i < nbits; i++) {
+  for (int i = 0; i < nbits; i++)
+  {
     setbit(blob, len, i, getbit(blob, len, i + c));
   }
 }
@@ -288,18 +302,21 @@ void rshift8(void *blob, int nbytes, int c)
   int b = c >> 3;
   c &= 7;
 
-  for (int i = 0; i < nbytes - b; i++) {
+  for (int i = 0; i < nbytes - b; i++)
+  {
     k[i] = k[i + b];
   }
 
-  for (int i = nbytes - b; i < nbytes; i++) {
+  for (int i = nbytes - b; i < nbytes; i++)
+  {
     k[i] = 0;
   }
 
   if (c == 0)
     return;
 
-  for (int i = 0; i < nbytes; i++) {
+  for (int i = 0; i < nbytes; i++)
+  {
     uint8_t a = (i == nbytes - 1) ? 0 : k[i + 1];
     uint8_t b = k[i];
 
@@ -324,18 +341,21 @@ void rshift32(void *blob, int len, int c)
   int b = c / 32;
   c &= (32 - 1);
 
-  for (int i = 0; i < ndwords - b; i++) {
+  for (int i = 0; i < ndwords - b; i++)
+  {
     k[i] = k[i + b];
   }
 
-  for (int i = ndwords - b; i < ndwords; i++) {
+  for (int i = ndwords - b; i < ndwords; i++)
+  {
     k[i] = 0;
   }
 
   if (c == 0)
     return;
 
-  for (int i = 0; i < ndwords; i++) {
+  for (int i = 0; i < ndwords; i++)
+  {
     uint32_t a = (i == ndwords - 1) ? 0 : k[i + 1];
     uint32_t b = k[i];
 
@@ -349,7 +369,8 @@ void lrot1(void *blob, int len, int c)
 {
   int nbits = len * 8;
 
-  for (int i = 0; i < c; i++) {
+  for (int i = 0; i < c; i++)
+  {
     uint32_t bit = getbit(blob, len, nbits - 1);
 
     lshift1(blob, len, 1);
@@ -372,10 +393,12 @@ void lrot8(void *blob, int len, int c)
   int b = c / 8;
   c &= (8 - 1);
 
-  for (int j = 0; j < b; j++) {
+  for (int j = 0; j < b; j++)
+  {
     uint8_t t = k[nbytes - 1];
 
-    for (int i = nbytes - 1; i > 0; i--) {
+    for (int i = nbytes - 1; i > 0; i--)
+    {
       k[i] = k[i - 1];
     }
 
@@ -387,7 +410,8 @@ void lrot8(void *blob, int len, int c)
   if (c == 0)
     return;
 
-  for (int i = nbytes - 1; i >= 0; i--) {
+  for (int i = nbytes - 1; i >= 0; i--)
+  {
     uint8_t a = k[i];
     uint8_t b = (i == 0) ? t : k[i - 1];
 
@@ -412,10 +436,12 @@ void lrot32(void *blob, int len, int c)
   int b = c / 32;
   c &= (32 - 1);
 
-  for (int j = 0; j < b; j++) {
+  for (int j = 0; j < b; j++)
+  {
     uint32_t t = k[ndwords - 1];
 
-    for (int i = ndwords - 1; i > 0; i--) {
+    for (int i = ndwords - 1; i > 0; i--)
+    {
       k[i] = k[i - 1];
     }
 
@@ -427,7 +453,8 @@ void lrot32(void *blob, int len, int c)
   if (c == 0)
     return;
 
-  for (int i = ndwords - 1; i >= 0; i--) {
+  for (int i = ndwords - 1; i >= 0; i--)
+  {
     uint32_t a = k[i];
     uint32_t b = (i == 0) ? t : k[i - 1];
 
@@ -441,7 +468,8 @@ void rrot1(void *blob, int len, int c)
 {
   int nbits = len * 8;
 
-  for (int i = 0; i < c; i++) {
+  for (int i = 0; i < c; i++)
+  {
     uint32_t bit = getbit(blob, len, 0);
 
     rshift1(blob, len, 1);
@@ -464,10 +492,12 @@ void rrot8(void *blob, int len, int c)
   int b = c / 8;
   c &= (8 - 1);
 
-  for (int j = 0; j < b; j++) {
+  for (int j = 0; j < b; j++)
+  {
     uint8_t t = k[0];
 
-    for (int i = 0; i < nbytes - 1; i++) {
+    for (int i = 0; i < nbytes - 1; i++)
+    {
       k[i] = k[i + 1];
     }
 
@@ -481,7 +511,8 @@ void rrot8(void *blob, int len, int c)
 
   uint8_t t = k[0];
 
-  for (int i = 0; i < nbytes; i++) {
+  for (int i = 0; i < nbytes; i++)
+  {
     uint8_t a = (i == nbytes - 1) ? t : k[i + 1];
     uint8_t b = k[i];
 
@@ -506,10 +537,12 @@ void rrot32(void *blob, int len, int c)
   int b = c / 32;
   c &= (32 - 1);
 
-  for (int j = 0; j < b; j++) {
+  for (int j = 0; j < b; j++)
+  {
     uint32_t t = k[0];
 
-    for (int i = 0; i < ndwords - 1; i++) {
+    for (int i = 0; i < ndwords - 1; i++)
+    {
       k[i] = k[i + 1];
     }
 
@@ -523,7 +556,8 @@ void rrot32(void *blob, int len, int c)
 
   uint32_t t = k[0];
 
-  for (int i = 0; i < ndwords; i++) {
+  for (int i = 0; i < ndwords; i++)
+  {
     uint32_t a = (i == ndwords - 1) ? t : k[i + 1];
     uint32_t b = k[i];
 
@@ -540,7 +574,8 @@ uint32_t window1(void *blob, int len, int start, int count)
 
   uint32_t t = 0;
 
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++)
+  {
     setbit(&t, sizeof(t), i, getbit_wrap(blob, len, start + i));
   }
 
@@ -561,7 +596,8 @@ uint32_t window8(void *blob, int len, int start, int count)
   int c = start & (8 - 1);
   int d = start / 8;
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++)
+  {
     int ia = (i + d + 1) % len;
     int ib = (i + d + 0) % len;
 
@@ -621,14 +657,16 @@ bool test_shift(void)
   int nbytes = nbits / 8;
   int reps = 10000;
 
-  for (int j = 0; j < reps; j++) {
+  for (int j = 0; j < reps; j++)
+  {
     if (j % (reps / 10) == 0)
       printf(".");
 
     uint64_t a = r.rand_u64();
     uint64_t b;
 
-    for (int i = 0; i < nbits; i++) {
+    for (int i = 0; i < nbits; i++)
+    {
       b = a;
       lshift1(&b, nbytes, i);
       assert(b == (a << i));
@@ -677,18 +715,21 @@ bool test_shift(void)
 
 //-----------------------------------------------------------------------------
 
-template<int nbits> bool test_window2(void)
+template<int nbits>
+bool test_window2(void)
 {
   Rand r(83874);
 
-  struct keytype {
+  struct keytype
+  {
     uint8_t bytes[nbits / 8];
   };
 
   int nbytes = nbits / 8;
   int reps = 10000;
 
-  for (int j = 0; j < reps; j++) {
+  for (int j = 0; j < reps; j++)
+  {
     if (j % (reps / 10) == 0)
       printf(".");
 
@@ -696,8 +737,10 @@ template<int nbits> bool test_window2(void)
 
     r.rand_p(&k, nbytes);
 
-    for (int start = 0; start < nbits; start++) {
-      for (int count = 0; count < 32; count++) {
+    for (int start = 0; start < nbits; start++)
+    {
+      for (int count = 0; count < 32; count++)
+      {
         uint32_t a = window1(&k, nbytes, start, count);
         uint32_t b = window8(&k, nbytes, start, count);
         uint32_t c = window(&k, nbytes, start, count);
@@ -719,7 +762,8 @@ bool test_window(void)
 
   int reps = 10000;
 
-  for (int j = 0; j < reps; j++) {
+  for (int j = 0; j < reps; j++)
+  {
     if (j % (reps / 10) == 0)
       printf(".");
 
@@ -728,8 +772,10 @@ bool test_window(void)
 
     uint64_t x = r.rand_u64();
 
-    for (int start = 0; start < nbits; start++) {
-      for (int count = 0; count < 32; count++) {
+    for (int start = 0; start < nbits; start++)
+    {
+      for (int count = 0; count < 32; count++)
+      {
         uint32_t a = (uint32_t)ROTR64(x, start);
         a &= ((1 << count) - 1);
 

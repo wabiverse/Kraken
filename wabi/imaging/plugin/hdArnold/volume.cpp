@@ -58,7 +58,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
+namespace
+{
 
 /// Houdini provides two function pointers to access Volume primitives via a
 /// dynamic library, removing the need for linking against Houdini libraries.
@@ -68,7 +69,8 @@ namespace {
 /// native Houdini volumes.
 using HoudiniGetVdbPrimitive = void *(*)(const char *, const char *);
 using HoudiniGetVolumePrimitive = void *(*)(const char *, const char *, int);
-struct HoudiniFnSet {
+struct HoudiniFnSet
+{
   HoudiniGetVdbPrimitive getVdbPrimitive = nullptr;
   HoudiniGetVolumePrimitive getVolumePrimitive = nullptr;
 
@@ -84,7 +86,8 @@ struct HoudiniFnSet {
     // We don't have to worry about unloading the library, as our library
     // will be unloaded before Houdini exits.
     auto *sopVol = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
-    if (sopVol == nullptr) {
+    if (sopVol == nullptr)
+    {
       return;
     }
     getVdbPrimitive = reinterpret_cast<HoudiniGetVdbPrimitive>(GETSYM(sopVol, getVdbName));
@@ -102,7 +105,8 @@ using HtoAConvertPrimVdbToArnold = void (*)(void *, int, void **);
 
 /// HtoA provides a function to read data from a Houdini OpenVDB primitive
 /// and write it to a volume node storing the VDB data in-memory.
-struct HtoAFnSet {
+struct HtoAFnSet
+{
   HtoAConvertPrimVdbToArnold convertPrimVdbToArnold = nullptr;
 
   HtoAFnSet()
@@ -115,7 +119,8 @@ struct HtoAFnSet {
     constexpr auto convertVdbName = "HtoAConvertPrimVdbToArnold";
     const auto HOUDINI_PATH = ArchGetEnv("HOUDINI_PATH");
     auto searchForPygeo = [&](const std::string &path) -> bool {
-      if (path == "&") {
+      if (path == "&")
+      {
         return false;
       }
       const auto dsoPath = path + ARCH_PATH_SEP + "python2.7libs" + ARCH_PATH_SEP + "_htoa_pygeo" +
@@ -127,26 +132,33 @@ struct HtoAFnSet {
 #endif
         ;
       void *htoaPygeo = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
-      if (htoaPygeo == nullptr) {
+      if (htoaPygeo == nullptr)
+      {
         return false;
       }
       convertPrimVdbToArnold = reinterpret_cast<HtoAConvertPrimVdbToArnold>(
         GETSYM(htoaPygeo, convertVdbName));
-      if (convertPrimVdbToArnold == nullptr) {
+      if (convertPrimVdbToArnold == nullptr)
+      {
         TF_WARN("Error loading %s from %s", convertVdbName, dsoPath.c_str());
       }
       return true;
     };
     const auto houdiniPaths = TfStringSplit(HOUDINI_PATH, ARCH_PATH_LIST_SEP);
-    for (const auto &houdiniPath : houdiniPaths) {
-      if (searchForPygeo(houdiniPath)) {
+    for (const auto &houdiniPath : houdiniPaths)
+    {
+      if (searchForPygeo(houdiniPath))
+      {
         return;
       }
 #ifndef ARCH_OS_WINDOWS
-      if (TfStringContains(houdiniPath, ";")) {
+      if (TfStringContains(houdiniPath, ";"))
+      {
         const auto subPaths = TfStringSplit(houdiniPath, ";");
-        for (const auto &subPath : subPaths) {
-          if (searchForPygeo(subPath)) {
+        for (const auto &subPath : subPaths)
+        {
+          if (searchForPygeo(subPath))
+          {
             return;
           }
         }
@@ -204,13 +216,15 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
   HdArnoldRenderParamInterrupt param(renderParam);
   const auto &id = GetId();
   auto volumesChanged = false;
-  if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsTopologyDirty(*dirtyBits, id))
+  {
     param.Interrupt();
     _CreateVolumes(id, sceneDelegate);
     volumesChanged = true;
   }
 
-  if (volumesChanged || (*dirtyBits & HdChangeTracker::DirtyMaterialId)) {
+  if (volumesChanged || (*dirtyBits & HdChangeTracker::DirtyMaterialId))
+  {
     param.Interrupt();
     const auto materialId = sceneDelegate->GetMaterialId(id);
     _materialTracker.TrackSingleMaterial(_renderDelegate, id, materialId);
@@ -222,30 +236,36 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
   }
 
   auto transformDirtied = false;
-  if (HdChangeTracker::IsTransformDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsTransformDirty(*dirtyBits, id))
+  {
     param.Interrupt();
     _ForEachVolume([&](HdArnoldShape *s) { HdArnoldSetTransform(s->GetShape(), sceneDelegate, GetId()); });
     transformDirtied = true;
   }
 
-  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id))
+  {
     param.Interrupt();
     _UpdateVisibility(sceneDelegate, dirtyBits);
     _ForEachVolume(
       [&](HdArnoldShape *s) { s->SetVisibility(_sharedData.visible ? AI_RAY_ALL : uint8_t{0}); });
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
+  if (*dirtyBits & HdChangeTracker::DirtyPrimvar)
+  {
     param.Interrupt();
     auto visibility = AI_RAY_ALL;
-    if (!_volumes.empty()) {
+    if (!_volumes.empty())
+    {
       visibility = _volumes.front()->GetVisibility();
     }
-    else if (!_inMemoryVolumes.empty()) {
+    else if (!_inMemoryVolumes.empty())
+    {
       visibility = _inMemoryVolumes.front()->GetVisibility();
     }
     for (const auto &primvar :
-         sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant)) {
+         sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant))
+    {
       _ForEachVolume([&](HdArnoldShape *s) {
         HdArnoldSetConstantPrimvar(s->GetShape(), id, sceneDelegate, primvar, &visibility);
       });
@@ -272,29 +292,36 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
   std::unordered_map<std::string, std::vector<TfToken>> openvdbs;
   std::unordered_map<std::string, std::vector<TfToken>> houVdbs;
   const auto fieldDescriptors = sceneDelegate->GetVolumeFieldDescriptors(id);
-  for (const auto &field : fieldDescriptors) {
+  for (const auto &field : fieldDescriptors)
+  {
     auto *openvdbAsset = dynamic_cast<HdArnoldOpenvdbAsset *>(
       sceneDelegate->GetRenderIndex().GetBprim(_tokens->openvdbAsset, field.fieldId));
-    if (openvdbAsset == nullptr) {
+    if (openvdbAsset == nullptr)
+    {
       continue;
     }
     openvdbAsset->TrackVolumePrimitive(id);
     const auto vv = sceneDelegate->Get(field.fieldId, _tokens->filePath);
-    if (vv.IsHolding<SdfAssetPath>()) {
+    if (vv.IsHolding<SdfAssetPath>())
+    {
       const auto &assetPath = vv.UncheckedGet<SdfAssetPath>();
       auto path = assetPath.GetResolvedPath();
-      if (path.empty()) {
+      if (path.empty())
+      {
         path = assetPath.GetAssetPath();
       }
-      if (TfStringStartsWith(path, "op:")) {
+      if (TfStringStartsWith(path, "op:"))
+      {
         auto &fields = houVdbs[path];
-        if (std::find(fields.begin(), fields.end(), field.fieldName) == fields.end()) {
+        if (std::find(fields.begin(), fields.end(), field.fieldName) == fields.end())
+        {
           fields.push_back(field.fieldName);
         }
         continue;
       }
       auto &fields = openvdbs[path];
-      if (std::find(fields.begin(), fields.end(), field.fieldName) == fields.end()) {
+      if (std::find(fields.begin(), fields.end(), field.fieldName) == fields.end())
+      {
         fields.push_back(field.fieldName);
       }
     }
@@ -305,7 +332,8 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
                                 [&openvdbs](HdArnoldShape *shape) -> bool {
                                   if (openvdbs.find(std::string(
                                         AiNodeGetStr(shape->GetShape(), str::filename).c_str())) ==
-                                      openvdbs.end()) {
+                                      openvdbs.end())
+                                  {
                                     delete shape;
                                     return true;
                                   }
@@ -313,16 +341,20 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
                                 }),
                  _volumes.end());
 
-  for (const auto &openvdb : openvdbs) {
+  for (const auto &openvdb : openvdbs)
+  {
     AtNode *volume = nullptr;
-    for (auto *shape : _volumes) {
+    for (auto *shape : _volumes)
+    {
       auto *v = shape->GetShape();
-      if (openvdb.first == AiNodeGetStr(v, str::filename).c_str()) {
+      if (openvdb.first == AiNodeGetStr(v, str::filename).c_str())
+      {
         volume = v;
         break;
       }
     }
-    if (volume == nullptr) {
+    if (volume == nullptr)
+    {
       auto *shape = new HdArnoldShape(str::volume, _renderDelegate, id, GetPrimId());
       volume = shape->GetShape();
       AiNodeSetStr(volume, str::filename, AtString(openvdb.first.c_str()));
@@ -331,41 +363,50 @@ void HdArnoldVolume::_CreateVolumes(const SdfPath &id, HdSceneDelegate *sceneDel
     }
     const auto numFields = openvdb.second.size();
     auto *fields = AiArrayAllocate(numFields, 1, AI_TYPE_STRING);
-    for (auto i = decltype(numFields){0}; i < numFields; ++i) {
+    for (auto i = decltype(numFields){0}; i < numFields; ++i)
+    {
       AiArraySetStr(fields, i, AtString(openvdb.second[i].GetText()));
     }
     AiNodeSetArray(volume, str::grids, fields);
   }
 
-  for (auto *volume : _inMemoryVolumes) {
+  for (auto *volume : _inMemoryVolumes)
+  {
     delete volume;
   }
   _inMemoryVolumes.clear();
 
-  if (houVdbs.empty()) {
+  if (houVdbs.empty())
+  {
     return;
   }
 
   const auto &houdiniFnSet = _GetHoudiniFunctionSet();
-  if (houdiniFnSet.getVdbPrimitive == nullptr || houdiniFnSet.getVolumePrimitive == nullptr) {
+  if (houdiniFnSet.getVdbPrimitive == nullptr || houdiniFnSet.getVolumePrimitive == nullptr)
+  {
     return;
   }
 
   const auto &htoaFnSet = _GetHtoAFunctionSet();
-  if (htoaFnSet.convertPrimVdbToArnold == nullptr) {
+  if (htoaFnSet.convertPrimVdbToArnold == nullptr)
+  {
     return;
   }
 
-  for (const auto &houVdb : houVdbs) {
+  for (const auto &houVdb : houVdbs)
+  {
     std::vector<void *> gridVec;
-    for (const auto &field : houVdb.second) {
+    for (const auto &field : houVdb.second)
+    {
       auto *primVdb = houdiniFnSet.getVdbPrimitive(houVdb.first.c_str(), field.GetText());
-      if (primVdb == nullptr) {
+      if (primVdb == nullptr)
+      {
         continue;
       }
       gridVec.push_back(primVdb);
     }
-    if (gridVec.empty()) {
+    if (gridVec.empty())
+    {
       continue;
     }
 

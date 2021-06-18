@@ -64,7 +64,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_ENV_SETTING(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID, "/", "Default usdImaging scene delegate id");
 
-namespace {
+namespace
+{
 
 bool _GetHydraEnabledEnvVar()
 {
@@ -84,7 +85,8 @@ SdfPath const &_GetUsdImagingDelegateId()
 
 bool _IsHydraEnabled()
 {
-  if (!_GetHydraEnabledEnvVar()) {
+  if (!_GetHydraEnabledEnvVar())
+  {
     return false;
   }
 
@@ -133,7 +135,8 @@ UsdApolloEngine::UsdApolloEngine(const SdfPath &rootPath,
     m_invisedPrimPaths(invisedPaths),
     m_isPopulated(false)
 {
-  if (!SetRendererPlugin(TfToken("HdPhoenixRendererPlugin"))) {
+  if (!SetRendererPlugin(TfToken("HdPhoenixRendererPlugin")))
+  {
     TF_CODING_ERROR("No renderer plugins found! Check before creation.");
   }
 }
@@ -167,8 +170,10 @@ void UsdApolloEngine::PrepareBatch(const UsdPrim &root, const UsdApolloRenderPar
 
   TF_VERIFY(m_sceneDelegate);
 
-  if (APOLLO_CanPrepare(root)) {
-    if (!m_isPopulated) {
+  if (APOLLO_CanPrepare(root))
+  {
+    if (!m_isPopulated)
+    {
       m_sceneDelegate->SetUsdDrawModesEnabled(params.enableUsdDrawModes);
       m_sceneDelegate->Populate(root.GetStage()->GetPrimAtPath(m_rootPath), m_excludedPrimPaths);
       m_sceneDelegate->SetInvisedPrimPaths(m_invisedPrimPaths);
@@ -217,7 +222,8 @@ void UsdApolloEngine::RenderBatch(const SdfPathVector &paths, const UsdApolloRen
    * that has clearColor in their descriptor. So for now we must pass this
    * clear color to the color AOV. */
   HdAovDescriptor colorAovDesc = m_taskController->GetRenderOutputSettings(HdAovTokens->color);
-  if (colorAovDesc.format != HdFormatInvalid) {
+  if (colorAovDesc.format != HdFormatInvalid)
+  {
     colorAovDesc.clearValue = VtValue(params.clearColor);
     m_taskController->SetRenderOutputSettings(HdAovTokens->color, colorAovDesc);
   }
@@ -273,21 +279,24 @@ void UsdApolloEngine::SetRootVisibility(bool isVisible)
 
 void UsdApolloEngine::SetFraming(CameraUtilFraming const &framing)
 {
-  if (TF_VERIFY(m_taskController)) {
+  if (TF_VERIFY(m_taskController))
+  {
     m_taskController->SetFraming(framing);
   }
 }
 
 void UsdApolloEngine::SetOverrideWindowPolicy(const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
-  if (TF_VERIFY(m_taskController)) {
+  if (TF_VERIFY(m_taskController))
+  {
     m_taskController->SetOverrideWindowPolicy(policy);
   }
 }
 
 void UsdApolloEngine::SetRenderBufferSize(GfVec2i const &size)
 {
-  if (TF_VERIFY(m_taskController)) {
+  if (TF_VERIFY(m_taskController))
+  {
     m_taskController->SetRenderBufferSize(size);
   }
 }
@@ -387,7 +396,8 @@ void UsdApolloEngine::SetSelected(SdfPathVector const &paths)
    * XXX: Usdview currently supports selection on click. If we extend
    * to rollover (locate) selection, we need to pass that mode here. */
   static const HdSelection::HighlightMode mode = HdSelection::HighlightModeSelect;
-  for (SdfPath const &path : paths) {
+  for (SdfPath const &path : paths)
+  {
     m_sceneDelegate->PopulateSelection(mode, path, UsdImagingDelegate::ALL_INSTANCES, selection);
   }
 
@@ -405,7 +415,8 @@ void UsdApolloEngine::ClearSelected()
 
 HdSelectionSharedPtr UsdApolloEngine::APOLLO_GetSelection() const
 {
-  if (HdSelectionSharedPtr const selection = m_selTracker->GetSelectionMap()) {
+  if (HdSelectionSharedPtr const selection = m_selTracker->GetSelectionMap())
+  {
     return selection;
   }
 
@@ -484,17 +495,20 @@ bool UsdApolloEngine::TestIntersection(const GfMatrix4d &viewMatrix,
   /**
    * Since we are in nearest-hit mode, we expect allHits to have
    * a single point in it. */
-  if (allHits.size() != 1) {
+  if (allHits.size() != 1)
+  {
     return false;
   }
 
   HdxPickHit &hit = allHits[0];
 
-  if (outHitPoint) {
+  if (outHitPoint)
+  {
     *outHitPoint = hit.worldSpaceHitPoint;
   }
 
-  if (outHitNormal) {
+  if (outHitNormal)
+  {
     *outHitNormal = hit.worldSpaceHitNormal;
   }
 
@@ -502,13 +516,16 @@ bool UsdApolloEngine::TestIntersection(const GfMatrix4d &viewMatrix,
   hit.instancerId =
     m_sceneDelegate->ConvertIndexPathToCachePath(hit.instancerId).GetAbsoluteRootOrPrimPath();
 
-  if (outHitPrimPath) {
+  if (outHitPrimPath)
+  {
     *outHitPrimPath = hit.objectId;
   }
-  if (outHitInstancerPath) {
+  if (outHitInstancerPath)
+  {
     *outHitInstancerPath = hit.instancerId;
   }
-  if (outHitInstanceIndex) {
+  if (outHitInstanceIndex)
+  {
     *outHitInstanceIndex = hit.instanceIndex;
   }
 
@@ -528,7 +545,8 @@ bool UsdApolloEngine::DecodeIntersection(unsigned char const primIdColor[4],
   const int instanceIdx = HdxPickTask::DecodeIDRenderColor(instanceIdColor);
   SdfPath primPath = m_sceneDelegate->GetRenderIndex().GetRprimPathFromPrimId(primId);
 
-  if (primPath.IsEmpty()) {
+  if (primPath.IsEmpty())
+  {
     return false;
   }
 
@@ -538,13 +556,16 @@ bool UsdApolloEngine::DecodeIntersection(unsigned char const primIdColor[4],
   primPath = m_sceneDelegate->GetScenePrimPath(primPath, instanceIdx, outInstancerContext);
   instancerId = m_sceneDelegate->ConvertIndexPathToCachePath(instancerId).GetAbsoluteRootOrPrimPath();
 
-  if (outHitPrimPath) {
+  if (outHitPrimPath)
+  {
     *outHitPrimPath = primPath;
   }
-  if (outHitInstancerPath) {
+  if (outHitInstancerPath)
+  {
     *outHitInstancerPath = instancerId;
   }
-  if (outHitInstanceIndex) {
+  if (outHitInstanceIndex)
+  {
     *outHitInstanceIndex = instanceIdx;
   }
 
@@ -563,7 +584,8 @@ TfTokenVector UsdApolloEngine::GetRendererPlugins()
   HdRendererPluginRegistry::GetInstance().GetPluginDescs(&pluginDescriptors);
 
   TfTokenVector plugins;
-  for (size_t i = 0; i < pluginDescriptors.size(); ++i) {
+  for (size_t i = 0; i < pluginDescriptors.size(); ++i)
+  {
     plugins.push_back(pluginDescriptors[i].id);
   }
   return plugins;
@@ -572,7 +594,8 @@ TfTokenVector UsdApolloEngine::GetRendererPlugins()
 /* static */
 std::string UsdApolloEngine::GetRendererDisplayName(TfToken const &id)
 {
-  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar() || id.IsEmpty())) {
+  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar() || id.IsEmpty()))
+  {
     /**
      * No renderer name is returned if the user requested to disable Hydra,
      * or if the machine does not support any of the available renderers. */
@@ -580,7 +603,8 @@ std::string UsdApolloEngine::GetRendererDisplayName(TfToken const &id)
   }
 
   HfPluginDesc pluginDescriptor;
-  if (!TF_VERIFY(HdRendererPluginRegistry::GetInstance().GetPluginDesc(id, &pluginDescriptor))) {
+  if (!TF_VERIFY(HdRendererPluginRegistry::GetInstance().GetPluginDesc(id, &pluginDescriptor)))
+  {
     return std::string();
   }
 
@@ -601,7 +625,8 @@ void UsdApolloEngine::APOLLO_InitializeHgiIfNecessary()
    * since you may have multiple UsdApolloEngines in one app
    * that ideally all use the same HdDriver and Hgi to share
    * GPU resources. */
-  if (m_hgiDriver.driver.IsEmpty()) {
+  if (m_hgiDriver.driver.IsEmpty())
+  {
     m_hgi = Hgi::CreatePlatformDefaultHgi();
     m_hgiDriver.name = HgiTokens->renderDriver;
     m_hgiDriver.driver = VtValue(m_hgi.get());
@@ -618,14 +643,16 @@ bool UsdApolloEngine::SetRendererPlugin(TfToken const &id)
    * Special case: id = TfToken() selects the first plugin in the list. */
   const TfToken resolvedId = id.IsEmpty() ? registry.GetDefaultPluginId() : id;
 
-  if (m_renderDelegate && m_renderDelegate.GetPluginId() == resolvedId) {
+  if (m_renderDelegate && m_renderDelegate.GetPluginId() == resolvedId)
+  {
     return true;
   }
 
   TF_PY_ALLOW_THREADS_IN_SCOPE();
 
   HdPluginRenderDelegateUniqueHandle renderDelegate = registry.CreateRenderDelegate(resolvedId);
-  if (!renderDelegate) {
+  if (!renderDelegate)
+  {
     return false;
   }
 
@@ -707,15 +734,18 @@ TfTokenVector UsdApolloEngine::GetRendererAovs() const
 {
   TF_VERIFY(m_renderIndex);
 
-  if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer)) {
+  if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
+  {
 
     static const TfToken candidates[] = {
       HdAovTokens->primId, HdAovTokens->depth, HdAovTokens->normal, HdAovTokensMakePrimvar(TfToken("st"))};
 
     TfTokenVector aovs = {HdAovTokens->color};
 
-    for (auto const &aov : candidates) {
-      if (m_renderDelegate->GetDefaultAovDescriptor(aov).format != HdFormatInvalid) {
+    for (auto const &aov : candidates)
+    {
+      if (m_renderDelegate->GetDefaultAovDescriptor(aov).format != HdFormatInvalid)
+      {
         aovs.push_back(aov);
       }
     }
@@ -727,7 +757,8 @@ TfTokenVector UsdApolloEngine::GetRendererAovs() const
 bool UsdApolloEngine::SetRendererAov(TfToken const &id)
 {
   TF_VERIFY(m_renderIndex);
-  if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer)) {
+  if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
+  {
     m_taskController->SetRenderOutputs({id});
     return true;
   }
@@ -739,8 +770,10 @@ HgiTextureHandle UsdApolloEngine::GetAovTexture(TfToken const &name) const
   VtValue aov;
   HgiTextureHandle aovTexture;
 
-  if (m_engine->GetTaskContextData(name, &aov)) {
-    if (aov.IsHolding<HgiTextureHandle>()) {
+  if (m_engine->GetTaskContextData(name, &aov))
+  {
+    if (aov.IsHolding<HgiTextureHandle>())
+    {
       aovTexture = aov.Get<HgiTextureHandle>();
     }
   }
@@ -755,7 +788,8 @@ UsdApolloRendererSettingsList UsdApolloEngine::GetRendererSettingsList() const
   const HdRenderSettingDescriptorList descriptors = m_renderDelegate->GetRenderSettingDescriptors();
   UsdApolloRendererSettingsList ret;
 
-  for (auto const &desc : descriptors) {
+  for (auto const &desc : descriptors)
+  {
     UsdApolloRendererSetting r;
     r.key = desc.key;
     r.name = desc.name;
@@ -764,23 +798,28 @@ UsdApolloRendererSettingsList UsdApolloEngine::GetRendererSettingsList() const
     /**
      * Use the type of the default value to tell us what kind of
      * widget to create... */
-    if (r.defValue.IsHolding<bool>()) {
+    if (r.defValue.IsHolding<bool>())
+    {
       r.type = UsdApolloRendererSetting::TYPE_FLAG;
     }
 
-    else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>()) {
+    else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>())
+    {
       r.type = UsdApolloRendererSetting::TYPE_INT;
     }
 
-    else if (r.defValue.IsHolding<float>()) {
+    else if (r.defValue.IsHolding<float>())
+    {
       r.type = UsdApolloRendererSetting::TYPE_FLOAT;
     }
 
-    else if (r.defValue.IsHolding<std::string>()) {
+    else if (r.defValue.IsHolding<std::string>())
+    {
       r.type = UsdApolloRendererSetting::TYPE_STRING;
     }
 
-    else {
+    else
+    {
       TF_WARN("Setting '%s' with type '%s' doesn't have a UI implementation...",
               r.name.c_str(),
               r.defValue.GetTypeName().c_str());
@@ -807,14 +846,16 @@ void UsdApolloEngine::SetRendererSetting(TfToken const &id, VtValue const &value
 
 void UsdApolloEngine::SetEnablePresentation(bool enabled)
 {
-  if (TF_VERIFY(m_taskController)) {
+  if (TF_VERIFY(m_taskController))
+  {
     m_taskController->SetEnablePresentation(enabled);
   }
 }
 
 void UsdApolloEngine::SetPresentationOutput(TfToken const &api, VtValue const &framebuffer)
 {
-  if (TF_VERIFY(m_taskController)) {
+  if (TF_VERIFY(m_taskController))
+  {
     m_userFramebuffer = framebuffer;
     m_taskController->SetPresentationOutput(api, framebuffer);
   }
@@ -827,7 +868,8 @@ void UsdApolloEngine::SetPresentationOutput(TfToken const &api, VtValue const &f
 
 HdCommandDescriptors UsdApolloEngine::GetRendererCommandDescriptors() const
 {
-  if (ARCH_UNLIKELY(!m_renderDelegate)) {
+  if (ARCH_UNLIKELY(!m_renderDelegate))
+  {
     return HdCommandDescriptors();
   }
 
@@ -836,7 +878,8 @@ HdCommandDescriptors UsdApolloEngine::GetRendererCommandDescriptors() const
 
 bool UsdApolloEngine::InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args) const
 {
-  if (ARCH_UNLIKELY(!m_renderDelegate)) {
+  if (ARCH_UNLIKELY(!m_renderDelegate))
+  {
     return false;
   }
 
@@ -899,7 +942,8 @@ bool UsdApolloEngine::RestartRenderer()
 
 void UsdApolloEngine::SetColorCorrectionSettings(TfToken const &id)
 {
-  if (!IsColorCorrectionCapable()) {
+  if (!IsColorCorrectionCapable())
+  {
     return;
   }
 
@@ -1061,7 +1105,8 @@ bool UsdApolloEngine::APOLLO_CanPrepare(const UsdPrim &root)
   if (!TF_VERIFY(root, "Attempting to draw an invalid/null prim\n"))
     return false;
 
-  if (!root.GetPath().HasPrefix(m_rootPath)) {
+  if (!root.GetPath().HasPrefix(m_rootPath))
+  {
     TF_CODING_ERROR("Attempting to draw path <%s>, but engine is rooted at <%s>\n",
                     root.GetPath().GetText(),
                     m_rootPath.GetText());
@@ -1082,34 +1127,44 @@ static int _GetRefineLevel(float c)
    * To avoid floating point inaccuracy (e.g. 1.3 > 1.3f). */
   c = std::min(c + 0.01f, 2.0f);
 
-  if (1.0f <= c && c < 1.1f) {
+  if (1.0f <= c && c < 1.1f)
+  {
     refineLevel = 0;
   }
-  else if (1.1f <= c && c < 1.2f) {
+  else if (1.1f <= c && c < 1.2f)
+  {
     refineLevel = 1;
   }
-  else if (1.2f <= c && c < 1.3f) {
+  else if (1.2f <= c && c < 1.3f)
+  {
     refineLevel = 2;
   }
-  else if (1.3f <= c && c < 1.4f) {
+  else if (1.3f <= c && c < 1.4f)
+  {
     refineLevel = 3;
   }
-  else if (1.4f <= c && c < 1.5f) {
+  else if (1.4f <= c && c < 1.5f)
+  {
     refineLevel = 4;
   }
-  else if (1.5f <= c && c < 1.6f) {
+  else if (1.5f <= c && c < 1.6f)
+  {
     refineLevel = 5;
   }
-  else if (1.6f <= c && c < 1.7f) {
+  else if (1.6f <= c && c < 1.7f)
+  {
     refineLevel = 6;
   }
-  else if (1.7f <= c && c < 1.8f) {
+  else if (1.7f <= c && c < 1.8f)
+  {
     refineLevel = 7;
   }
-  else if (1.8f <= c && c <= 2.0f) {
+  else if (1.8f <= c && c <= 2.0f)
+  {
     refineLevel = 8;
   }
-  else {
+  else
+  {
     TF_CODING_ERROR("Invalid complexity %f, expected range is [1.0,2.0]\n", c);
   }
 
@@ -1142,7 +1197,8 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
                                                    SdfPathVector const &roots,
                                                    UsdApolloRenderParams const &params)
 {
-  if (collection == nullptr) {
+  if (collection == nullptr)
+  {
     TF_CODING_ERROR("Null passed to APOLLO_UpdateHydraCollection");
     return false;
   }
@@ -1152,30 +1208,35 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
   HdReprSelector reprSelector = HdReprSelector(HdReprTokens->smoothHull);
   const bool refined = params.complexity > 1.0;
 
-  if (params.drawMode == UsdApolloDrawMode::DRAW_POINTS) {
+  if (params.drawMode == UsdApolloDrawMode::DRAW_POINTS)
+  {
     reprSelector = HdReprSelector(HdReprTokens->points);
   }
 
   else if (params.drawMode == UsdApolloDrawMode::DRAW_GEOM_FLAT ||
-           params.drawMode == UsdApolloDrawMode::DRAW_SHADED_FLAT) {
+           params.drawMode == UsdApolloDrawMode::DRAW_SHADED_FLAT)
+  {
     /**
      * Flat shading. */
     reprSelector = HdReprSelector(HdReprTokens->hull);
   }
 
-  else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME_ON_SURFACE) {
+  else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME_ON_SURFACE)
+  {
     /**
      * Wireframe on surface. */
     reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf : HdReprTokens->wireOnSurf);
   }
 
-  else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME) {
+  else if (params.drawMode == UsdApolloDrawMode::DRAW_WIREFRAME)
+  {
     /**
      * Wireframe. */
     reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWire : HdReprTokens->wire);
   }
 
-  else {
+  else
+  {
     /**
      * Smooth shading. */
     reprSelector = HdReprSelector(refined ? HdReprTokens->refined : HdReprTokens->smoothHull);
@@ -1196,17 +1257,20 @@ bool UsdApolloEngine::APOLLO_UpdateHydraCollection(HdRprimCollection *collection
 
   /**
    * Only take the time to compare root paths if everything else matches. */
-  if (match) {
+  if (match)
+  {
     /**
      * Note that oldRoots is guaranteed to be sorted. */
-    for (size_t i = 0; i < roots.size(); i++) {
+    for (size_t i = 0; i < roots.size(); i++)
+    {
       /**
        * Avoid binary search when both vectors are sorted. */
       if (oldRoots[i] == roots[i])
         continue;
       /**
        * Binary search to find the current root. */
-      if (!std::binary_search(oldRoots.begin(), oldRoots.end(), roots[i])) {
+      if (!std::binary_search(oldRoots.begin(), oldRoots.end(), roots[i]))
+      {
         match = false;
         break;
       }
@@ -1250,10 +1314,12 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
   params.wireframeColor = renderParams.wireframeColor;
 
   if (renderParams.drawMode == UsdApolloDrawMode::DRAW_GEOM_ONLY ||
-      renderParams.drawMode == UsdApolloDrawMode::DRAW_POINTS) {
+      renderParams.drawMode == UsdApolloDrawMode::DRAW_POINTS)
+  {
     params.enableLighting = false;
   }
-  else {
+  else
+  {
     params.enableLighting = renderParams.enableLighting && !renderParams.enableIdRender;
   }
 
@@ -1265,10 +1331,12 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
   /**
    * Decrease the alpha threshold if we are
    * using sample alpha to coverage. */
-  if (renderParams.alphaThreshold < 0.0) {
+  if (renderParams.alphaThreshold < 0.0)
+  {
     params.alphaThreshold = renderParams.enableSampleAlphaToCoverage ? 0.1f : 0.5f;
   }
-  else {
+  else
+  {
     params.alphaThreshold = renderParams.alphaThreshold;
   }
 
@@ -1293,13 +1361,16 @@ void UsdApolloEngine::APOLLO_ComputeRenderTags(UsdApolloRenderParams const &para
   renderTags->clear();
   renderTags->reserve(4);
   renderTags->push_back(HdRenderTagTokens->geometry);
-  if (params.showGuides) {
+  if (params.showGuides)
+  {
     renderTags->push_back(HdRenderTagTokens->guide);
   }
-  if (params.showProxy) {
+  if (params.showProxy)
+  {
     renderTags->push_back(HdRenderTagTokens->proxy);
   }
-  if (params.showRender) {
+  if (params.showRender)
+  {
     renderTags->push_back(HdRenderTagTokens->render);
   }
 }
@@ -1309,7 +1380,8 @@ TfToken UsdApolloEngine::APOLLO_GetDefaultRendererPluginId()
 {
   static const std::string defaultRendererDisplayName = TfGetenv("HD_DEFAULT_RENDERER", "");
 
-  if (defaultRendererDisplayName.empty()) {
+  if (defaultRendererDisplayName.empty())
+  {
     return TfToken();
   }
 
@@ -1318,8 +1390,10 @@ TfToken UsdApolloEngine::APOLLO_GetDefaultRendererPluginId()
 
   /**
    * Look for the one with the matching display name. */
-  for (size_t i = 0; i < pluginDescs.size(); ++i) {
-    if (pluginDescs[i].displayName == defaultRendererDisplayName) {
+  for (size_t i = 0; i < pluginDescs.size(); ++i)
+  {
+    if (pluginDescs[i].displayName == defaultRendererDisplayName)
+    {
       return pluginDescs[i].id;
     }
   }

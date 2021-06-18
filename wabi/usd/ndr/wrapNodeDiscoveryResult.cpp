@@ -41,7 +41,8 @@ namespace bp = boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static std::string _Repr(const NdrNodeDiscoveryResult &x)
 {
@@ -57,19 +58,24 @@ static std::string _Repr(const NdrNodeDiscoveryResult &x)
 #define ADD_KW_ARG(kwArgs, propName) \
   kwArgs.push_back(TfStringPrintf(#propName "=%s", TfPyRepr(x.propName).c_str()));
 
-  if (!x.sourceCode.empty()) {
+  if (!x.sourceCode.empty())
+  {
     ADD_KW_ARG(args, sourceCode);
   };
-  if (!x.metadata.empty()) {
+  if (!x.metadata.empty())
+  {
     ADD_KW_ARG(args, metadata);
   };
-  if (!x.blindData.empty()) {
+  if (!x.blindData.empty())
+  {
     ADD_KW_ARG(args, blindData);
   };
-  if (!x.subIdentifier.IsEmpty()) {
+  if (!x.subIdentifier.IsEmpty())
+  {
     ADD_KW_ARG(args, subIdentifier);
   };
-  if (!x.aliases.empty()) {
+  if (!x.aliases.empty())
+  {
     ADD_KW_ARG(args, aliases);
   };
 
@@ -79,7 +85,9 @@ static std::string _Repr(const NdrNodeDiscoveryResult &x)
 }
 
 // XXX: WBN if Tf provided this sort of converter for stl maps.
-template<typename MAP> struct MapConverter {
+template<typename MAP>
+struct MapConverter
+{
   typedef MAP Map;
   typedef typename Map::key_type Key;
   typedef typename Map::mapped_type Value;
@@ -90,14 +98,16 @@ template<typename MAP> struct MapConverter {
     boost::python::converter::registry::push_back(&convertible, &construct, info);
 
     const boost::python::converter::registration *reg = boost::python::converter::registry::query(info);
-    if (reg == NULL || reg->m_to_python == NULL) {
+    if (reg == NULL || reg->m_to_python == NULL)
+    {
       boost::python::to_python_converter<Map, MapConverter<Map>>();
     }
   }
   static PyObject *convert(const Map &map)
   {
     boost::python::dict result;
-    for (const auto &entry : map) {
+    for (const auto &entry : map)
+    {
       result[entry.first] = entry.second;
     }
     return boost::python::incref(result.ptr());
@@ -105,22 +115,26 @@ template<typename MAP> struct MapConverter {
 
   static void *convertible(PyObject *obj_ptr)
   {
-    if (!PyDict_Check(obj_ptr)) {
+    if (!PyDict_Check(obj_ptr))
+    {
       return nullptr;
     }
 
     boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
     boost::python::list keys = map.keys();
     boost::python::list values = map.values();
-    for (int i = 0; i < len(keys); ++i) {
+    for (int i = 0; i < len(keys); ++i)
+    {
 
       boost::python::object keyObj = keys[i];
-      if (!boost::python::extract<Key>(keyObj).check()) {
+      if (!boost::python::extract<Key>(keyObj).check())
+      {
         return nullptr;
       }
 
       boost::python::object valueObj = values[i];
-      if (!boost::python::extract<Value>(valueObj).check()) {
+      if (!boost::python::extract<Value>(valueObj).check())
+      {
         return nullptr;
       }
     }
@@ -138,7 +152,8 @@ template<typename MAP> struct MapConverter {
     boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
     boost::python::list keys = map.keys();
     boost::python::list values = map.values();
-    for (int i = 0; i < len(keys); ++i) {
+    for (int i = 0; i < len(keys); ++i)
+    {
 
       boost::python::object keyObj = keys[i];
       boost::python::object valueObj = values[i];

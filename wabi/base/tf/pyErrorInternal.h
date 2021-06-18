@@ -33,7 +33,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-enum Tf_PyExceptionErrorCode { TF_PYTHON_EXCEPTION };
+enum Tf_PyExceptionErrorCode
+{
+  TF_PYTHON_EXCEPTION
+};
 
 TF_API TfPyExceptionState Tf_PyFetchPythonExceptionState();
 TF_API void Tf_PyRestorePythonExceptionState(TfPyExceptionState state);
@@ -42,7 +45,8 @@ TF_API void Tf_PySetErrorExceptionClass(boost::python::object const &cls);
 
 /// RAII class to save and restore the Python exception state.  The client
 /// must hold the GIL during all methods, including the c'tor and d'tor.
-class TfPyExceptionStateScope {
+class TfPyExceptionStateScope
+{
  public:
   // Save the current exception state but don't unset it.
   TfPyExceptionStateScope();

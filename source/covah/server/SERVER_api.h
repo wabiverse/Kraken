@@ -42,7 +42,8 @@
 /**
  * Network IP Addressing
  */
-enum eServerNetworkPort {
+enum eServerNetworkPort
+{
   COVAH_COMM_PORT_ALPHA = 5589,
   COVAH_COMM_PORT_BRAVO,
   COVAH_COMM_PORT_CHARLIE,
@@ -75,7 +76,8 @@ enum eServerNetworkPort {
  * Server error codes
  */
 
-enum eServerErrorCode {
+enum eServerErrorCode
+{
   SERVER_SUCCESS = 0,
   SERVER_ERROR,
 };
@@ -84,7 +86,8 @@ enum eServerErrorCode {
  * Enum with the different server comm subtypes available within a server group.
  */
 
-enum eServerCommType {
+enum eServerCommType
+{
   COVAH_COMM_TYPE_COVAH = 10,
   COVAH_COMM_TYPE_APP,
 };
@@ -93,7 +96,8 @@ enum eServerCommType {
  * Enum with the different server comm modes available for each \ref eServerCommType.
  */
 
-enum eServerCommMode {
+enum eServerCommMode
+{
   COVAH_COMM_MODE_INTERPROCESS = 20,
   COVAH_COMM_MODE_INTRAPROCESS,
 };
@@ -103,7 +107,8 @@ enum eServerCommMode {
  * eServerCommType.
  */
 
-enum eServerCommColor {
+enum eServerCommColor
+{
   COVAH_COMM_COLOR_BLACK = 30,
   COVAH_COMM_COLOR_GREEN,
 };
@@ -113,7 +118,8 @@ enum eServerCommColor {
  * from \ref ServerStart.
  */
 
-enum eServerCommConnect {
+enum eServerCommConnect
+{
   COVAH_COMM_CONNECT_BLENDER = 40,
   COVAH_COMM_CONNECT_CUSTOM1,
   COVAH_COMM_CONNECT_CUSTOM2,

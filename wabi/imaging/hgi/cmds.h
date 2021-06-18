@@ -47,7 +47,8 @@ using HgiCmdsUniquePtr = std::unique_ptr<class HgiCmds>;
 /// Graphics commands are recorded in 'cmds' objects which are later submitted
 /// to hgi. HgiCmds is the base class for other cmds objects.
 ///
-class HgiCmds {
+class HgiCmds
+{
  public:
   HGI_API
   virtual ~HgiCmds();

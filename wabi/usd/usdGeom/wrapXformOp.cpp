@@ -38,7 +38,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static bool _Set(const UsdGeomXformOp &self, TfPyObjWrapper pyVal, UsdTimeCode time)
 {
@@ -113,11 +114,13 @@ static object __getattribute__(object selfObj, const char *name)
         strcmp(name, "GetNamespace") == 0 || strcmp(name, "SplitName") == 0)) ||
       // prim and attr are both invalid, let almost nothing through.
       strcmp(name, "IsDefined") == 0 || strcmp(name, "GetOpTypeToken") == 0 ||
-      strcmp(name, "GetOpTypeEnum") == 0 || strcmp(name, "GetAttr") == 0) {
+      strcmp(name, "GetOpTypeEnum") == 0 || strcmp(name, "GetAttr") == 0)
+  {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   }
-  else {
+  else
+  {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed schema on invalid prim"));
   }

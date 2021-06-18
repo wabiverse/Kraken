@@ -48,7 +48,8 @@ using HgiComputeCmdsUniquePtr = std::unique_ptr<class HgiComputeCmds>;
 /// HgiComputeCmds is a lightweight object that cannot be re-used after it has
 /// been submitted. A new cmds object should be acquired for each frame.
 ///
-class HgiComputeCmds : public HgiCmds {
+class HgiComputeCmds : public HgiCmds
+{
  public:
   HGI_API
   ~HgiComputeCmds() override;

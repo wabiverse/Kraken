@@ -34,17 +34,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct ArchAbiBase1 {
+struct ArchAbiBase1
+{
   void *dummy;
 };
 
-struct ArchAbiBase2 {
+struct ArchAbiBase2
+{
   virtual ~ArchAbiBase2()
   {}
   virtual const char *name() const = 0;
 };
 
-template<class T> struct ArchAbiDerived : public ArchAbiBase1, public ArchAbiBase2 {
+template<class T>
+struct ArchAbiDerived : public ArchAbiBase1, public ArchAbiBase2
+{
   virtual ~ArchAbiDerived()
   {}
   virtual const char *name() const

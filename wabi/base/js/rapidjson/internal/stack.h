@@ -24,7 +24,8 @@ RAPIDJSON_DIAG_OFF(c++ 98 - compat)
 #endif
 
 RAPIDJSON_NAMESPACE_BEGIN
-namespace internal {
+namespace internal
+{
 
 ///////////////////////////////////////////////////////////////////////////////
 // Stack
@@ -32,7 +33,9 @@ namespace internal {
 //! A type-unsafe stack for storing different types of data.
 /*! \tparam Allocator Allocator for allocating stack memory.
  */
-template<typename Allocator> class Stack {
+template<typename Allocator>
+class Stack
+{
  public:
   // Optimization note: Do not allocate memory for stack_ in constructor.
   // Do it lazily when first Push() -> Expand() -> Resize().
@@ -71,7 +74,8 @@ template<typename Allocator> class Stack {
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
   Stack &operator=(Stack &&rhs)
   {
-    if (&rhs != this) {
+    if (&rhs != this)
+    {
       Destroy();
 
       allocator_ = rhs.allocator_;
@@ -109,7 +113,8 @@ template<typename Allocator> class Stack {
 
   void ShrinkToFit()
   {
-    if (Empty()) {
+    if (Empty())
+    {
       // If the stack is empty, completely deallocate the memory.
       Allocator::Free(stack_);
       stack_ = 0;
@@ -122,20 +127,23 @@ template<typename Allocator> class Stack {
 
   // Optimization note: try to minimize the size of this function for force inline.
   // Expansion is run very infrequently, so it is moved to another (probably non-inline) function.
-  template<typename T> RAPIDJSON_FORCEINLINE void Reserve(size_t count = 1)
+  template<typename T>
+  RAPIDJSON_FORCEINLINE void Reserve(size_t count = 1)
   {
     // Expand the stack if needed
     if (RAPIDJSON_UNLIKELY(stackTop_ + sizeof(T) * count > stackEnd_))
       Expand<T>(count);
   }
 
-  template<typename T> RAPIDJSON_FORCEINLINE T *Push(size_t count = 1)
+  template<typename T>
+  RAPIDJSON_FORCEINLINE T *Push(size_t count = 1)
   {
     Reserve<T>(count);
     return PushUnsafe<T>(count);
   }
 
-  template<typename T> RAPIDJSON_FORCEINLINE T *PushUnsafe(size_t count = 1)
+  template<typename T>
+  RAPIDJSON_FORCEINLINE T *PushUnsafe(size_t count = 1)
   {
     RAPIDJSON_ASSERT(stackTop_ + sizeof(T) * count <= stackEnd_);
     T *ret = reinterpret_cast<T *>(stackTop_);
@@ -143,41 +151,48 @@ template<typename Allocator> class Stack {
     return ret;
   }
 
-  template<typename T> T *Pop(size_t count)
+  template<typename T>
+  T *Pop(size_t count)
   {
     RAPIDJSON_ASSERT(GetSize() >= count * sizeof(T));
     stackTop_ -= count * sizeof(T);
     return reinterpret_cast<T *>(stackTop_);
   }
 
-  template<typename T> T *Top()
+  template<typename T>
+  T *Top()
   {
     RAPIDJSON_ASSERT(GetSize() >= sizeof(T));
     return reinterpret_cast<T *>(stackTop_ - sizeof(T));
   }
 
-  template<typename T> const T *Top() const
+  template<typename T>
+  const T *Top() const
   {
     RAPIDJSON_ASSERT(GetSize() >= sizeof(T));
     return reinterpret_cast<T *>(stackTop_ - sizeof(T));
   }
 
-  template<typename T> T *End()
+  template<typename T>
+  T *End()
   {
     return reinterpret_cast<T *>(stackTop_);
   }
 
-  template<typename T> const T *End() const
+  template<typename T>
+  const T *End() const
   {
     return reinterpret_cast<T *>(stackTop_);
   }
 
-  template<typename T> T *Bottom()
+  template<typename T>
+  T *Bottom()
   {
     return reinterpret_cast<T *>(stack_);
   }
 
-  template<typename T> const T *Bottom() const
+  template<typename T>
+  const T *Bottom() const
   {
     return reinterpret_cast<T *>(stack_);
   }
@@ -207,17 +222,20 @@ template<typename Allocator> class Stack {
   }
 
  private:
-  template<typename T> void Expand(size_t count)
+  template<typename T>
+  void Expand(size_t count)
   {
     // Only expand the capacity if the current stack exists. Otherwise just create a stack with
     // initial capacity.
     size_t newCapacity;
-    if (stack_ == 0) {
+    if (stack_ == 0)
+    {
       if (!allocator_)
         ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
       newCapacity = initialCapacity_;
     }
-    else {
+    else
+    {
       newCapacity = GetCapacity();
       newCapacity += (newCapacity + 1) / 2;
     }

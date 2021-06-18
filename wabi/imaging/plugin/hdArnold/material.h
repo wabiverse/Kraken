@@ -44,7 +44,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for translating Hydra Materials to Arnold Materials.
-class HdArnoldMaterial : public HdMaterial {
+class HdArnoldMaterial : public HdMaterial
+{
  public:
   /// Constructor for HdArnoldMaterial.
   ///
@@ -101,9 +102,12 @@ class HdArnoldMaterial : public HdMaterial {
 
  protected:
   /// Utility struct to store Translated Materials.
-  struct MaterialData {
+  struct MaterialData
+  {
     /// Constructor for emplace functions.
-    MaterialData(AtNode *_node, bool _updated) : node(_node), updated(_updated)
+    MaterialData(AtNode *_node, bool _updated)
+      : node(_node),
+        updated(_updated)
     {}
     /// Pointer to the Arnold Node.
     AtNode *node = nullptr;

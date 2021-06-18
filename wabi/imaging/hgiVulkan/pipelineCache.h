@@ -43,7 +43,8 @@ class HgiVulkanDevice;
 ///
 /// Wrapper for Vulkan pipeline cache.
 ///
-class HgiVulkanPipelineCache final {
+class HgiVulkanPipelineCache final
+{
  public:
   HGIVULKAN_API
   HgiVulkanPipelineCache(HgiVulkanDevice *device);

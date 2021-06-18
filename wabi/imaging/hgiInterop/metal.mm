@@ -35,8 +35,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
-struct Vertex {
+namespace
+{
+struct Vertex
+{
   float position[2];
   float uv[2];
 };
@@ -49,19 +51,23 @@ static bool _ProcessGLErrors(bool silent = false)
   // Protect from doing infinite looping when glGetError
   // is called from an invalid context.
   int watchDogCount = 0;
-  while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR)) {
+  while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR))
+  {
     foundError = true;
     const GLubyte *errorString = gluErrorString(error);
 
     std::ostringstream errorMessage;
-    if (!errorString) {
+    if (!errorString)
+    {
       errorMessage << "GL error code: 0x" << std::hex << error << std::dec;
     }
-    else {
+    else
+    {
       errorMessage << "GL error: " << errorString;
     }
 
-    if (!silent) {
+    if (!silent)
+    {
       TF_WARN("%s", errorMessage.str().c_str());
     }
   }
@@ -99,7 +105,8 @@ static GLuint _compileShader(GLchar const *const shaderSource, GLenum shaderType
   glCompileShader(s);
 
   glGetShaderiv(s, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
+  if (status != GL_TRUE)
+  {
     GLint maxLength = 0;
 
     glGetShaderiv(s, GL_INFO_LOG_LENGTH, &maxLength);
@@ -119,7 +126,8 @@ static void _OutputShaderLog(GLuint program)
 {
   GLint maxLength = 2048;
   glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-  if (maxLength) {
+  if (maxLength)
+  {
     // The maxLength includes the NULL character
     GLchar *errorLog = (GLchar *)malloc(maxLength);
     glGetProgramInfoLog(program, maxLength, &maxLength, errorLog);
@@ -154,14 +162,16 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
 
   shader.vao = 0;
   glGenVertexArrays(1, &shader.vao);
-  if (shader.vao) {
+  if (shader.vao)
+  {
     glBindVertexArray(shader.vao);
   }
 
   glGenBuffers(1, &shader.vbo);
   glBindBuffer(GL_ARRAY_BUFFER, shader.vbo);
 
-  if (shader.vao) {
+  if (shader.vao)
+  {
     glEnableVertexAttribArray(shader.posAttrib);
     glVertexAttribPointer(
       shader.posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, position)));
@@ -194,7 +204,8 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
   glUseProgram(0);
 }
 
-HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
+HgiInteropMetal::HgiInteropMetal(Hgi *hgi)
+  : _hgiMetal(nullptr)
 {
   _hgiMetal = static_cast<HgiMetal *>(hgi);
   _device = _hgiMetal->GetPrimaryDevice();
@@ -349,7 +360,8 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
 
   _defaultLibrary = [_device newLibraryWithSource:shaderSource options:options error:&error];
 
-  if (!_defaultLibrary) {
+  if (!_defaultLibrary)
+  {
     NSString *errStr = [error localizedDescription];
     TF_FATAL_CODING_ERROR("Failed to create interop pipeline state: %s", [errStr UTF8String]);
   }
@@ -374,7 +386,8 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
                                                                    reflection:reflData
                                                                         error:&error];
 
-  if (!_computePipelineStateDepth) {
+  if (!_computePipelineStateDepth)
+  {
     NSString *errStr = [error localizedDescription];
     TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s", [errStr UTF8String]);
   }
@@ -389,7 +402,8 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
                                                                         error:&error];
   [computePipelineStateDescriptor release];
 
-  if (!_computePipelineStateColor) {
+  if (!_computePipelineStateColor)
+  {
     NSString *errStr = [error localizedDescription];
     TF_FATAL_CODING_ERROR("Failed to create compute pipeline state, error %s", [errStr UTF8String]);
   }
@@ -398,7 +412,8 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
 
   // Create the texture caches
   cvret = CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, _device, nil, &_cvmtlTextureCache);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR("Failed to create a Metal texture cache for Metal/GL interop");
   }
 
@@ -416,7 +431,8 @@ HgiInteropMetal::HgiInteropMetal(Hgi *hgi) : _hgiMetal(nullptr)
                                      glPixelFormat,
                                      nil,
                                      &_cvglTextureCache);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR("Failed to create an OpenGL texture cache for Metal/GL interop");
   }
 
@@ -434,11 +450,13 @@ HgiInteropMetal::~HgiInteropMetal()
 {
   _FreeTransientTextureCacheRefs();
 
-  if (_cvglTextureCache) {
+  if (_cvglTextureCache)
+  {
     CFRelease(_cvglTextureCache);
     _cvglTextureCache = nil;
   }
-  if (_cvmtlTextureCache) {
+  if (_cvmtlTextureCache)
+  {
     CFRelease(_cvmtlTextureCache);
     _cvmtlTextureCache = nil;
   }
@@ -446,20 +464,24 @@ HgiInteropMetal::~HgiInteropMetal()
 
 void HgiInteropMetal::_FreeTransientTextureCacheRefs()
 {
-  if (_glColorTexture) {
+  if (_glColorTexture)
+  {
     glDeleteTextures(1, &_glColorTexture);
     _glColorTexture = 0;
   }
-  if (_glDepthTexture) {
+  if (_glDepthTexture)
+  {
     glDeleteTextures(1, &_glDepthTexture);
     _glDepthTexture = 0;
   }
 
-  if (_mtlAliasedColorTexture) {
+  if (_mtlAliasedColorTexture)
+  {
     [_mtlAliasedColorTexture release];
     _mtlAliasedColorTexture = nil;
   }
-  if (_mtlAliasedDepthRegularFloatTexture) {
+  if (_mtlAliasedDepthRegularFloatTexture)
+  {
     [_mtlAliasedDepthRegularFloatTexture release];
     _mtlAliasedDepthRegularFloatTexture = nil;
   }
@@ -470,11 +492,13 @@ void HgiInteropMetal::_FreeTransientTextureCacheRefs()
   _cvglColorTexture = nil;
   _cvglDepthTexture = nil;
 
-  if (_pixelBuffer) {
+  if (_pixelBuffer)
+  {
     CFRelease(_pixelBuffer);
     _pixelBuffer = nil;
   }
-  if (_depthBuffer) {
+  if (_depthBuffer)
+  {
     CFRelease(_depthBuffer);
     _depthBuffer = nil;
   }
@@ -482,7 +506,8 @@ void HgiInteropMetal::_FreeTransientTextureCacheRefs()
 
 void HgiInteropMetal::_ValidateGLContext()
 {
-  if (_currentOpenGLContext != [NSOpenGLContext currentContext]) {
+  if (_currentOpenGLContext != [NSOpenGLContext currentContext])
+  {
     TF_FATAL_CODING_ERROR(
       "Current OpenGL context does not match that when HgiInteropMetal "
       "was created");
@@ -491,8 +516,10 @@ void HgiInteropMetal::_ValidateGLContext()
 
 void HgiInteropMetal::_SetAttachmentSize(int width, int height)
 {
-  if (_mtlAliasedColorTexture != nil) {
-    if (_mtlAliasedColorTexture.width == width && _mtlAliasedColorTexture.height == height) {
+  if (_mtlAliasedColorTexture != nil)
+  {
+    if (_mtlAliasedColorTexture.width == width && _mtlAliasedColorTexture.height == height)
+    {
       return;
     }
   }
@@ -527,7 +554,8 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
   // Create the OpenGL texture for the color buffer
   cvret = CVOpenGLTextureCacheCreateTextureFromImage(
     kCFAllocatorDefault, _cvglTextureCache, _pixelBuffer, nil, &_cvglColorTexture);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR(
       "Failed to create the shared OpenGL color texture "
       "for Metal/GL interop");
@@ -537,7 +565,8 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
   // Create the OpenGL texture for the depth buffer
   cvret = CVOpenGLTextureCacheCreateTextureFromImage(
     kCFAllocatorDefault, _cvglTextureCache, _depthBuffer, nil, &_cvglDepthTexture);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR(
       "Failed to create the shared OpenGL depth texture "
       "for Metal/GL interop");
@@ -557,7 +586,8 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
                                                     height,
                                                     0,
                                                     &_cvmtlColorTexture);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR(
       "Failed to create the shared Metal color texture "
       "for Metal/GL interop");
@@ -574,7 +604,8 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
                                                     height,
                                                     0,
                                                     &_cvmtlDepthTexture);
-  if (cvret != kCVReturnSuccess) {
+  if (cvret != kCVReturnSuccess)
+  {
     TF_FATAL_CODING_ERROR(
       "Failed to create the shared Metal depth texture "
       "for Metal/GL interop");
@@ -621,8 +652,10 @@ void HgiInteropMetal::_CaptureOpenGlState()
   glActiveTexture(GL_TEXTURE1);
   glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &_restoreTexture[1]);
 
-  if (!_restoreVao && _restoreVbo) {
-    for (int i = 0; i < 2; i++) {
+  if (!_restoreVao && _restoreVbo)
+  {
+    for (int i = 0; i < 2; i++)
+    {
       VertexAttribState &state(_restoreVertexAttribState[i]);
 
       glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &state.enabled);
@@ -641,10 +674,12 @@ void HgiInteropMetal::_CaptureOpenGlState()
 
 void HgiInteropMetal::_RestoreOpenGlState()
 {
-  if (_restoreAlphaToCoverage) {
+  if (_restoreAlphaToCoverage)
+  {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
-  else {
+  else
+  {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
 
@@ -652,10 +687,12 @@ void HgiInteropMetal::_RestoreOpenGlState()
     _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
-  if (_restoreblendEnabled) {
+  if (_restoreblendEnabled)
+  {
     glEnable(GL_BLEND);
   }
-  else {
+  else
+  {
     glDisable(GL_BLEND);
   }
 
@@ -664,37 +701,46 @@ void HgiInteropMetal::_RestoreOpenGlState()
   glDepthMask(_restoreDepthWriteMask);
   glStencilMask(_restoreStencilWriteMask);
 
-  if (_restoreCullFace) {
+  if (_restoreCullFace)
+  {
     glEnable(GL_CULL_FACE);
   }
-  else {
+  else
+  {
     glDisable(GL_CULL_FACE);
   }
   glFrontFace(_restoreFrontFace);
 
-  if (_restoreDepthTest) {
+  if (_restoreDepthTest)
+  {
     glEnable(GL_DEPTH_TEST);
   }
-  else {
+  else
+  {
     glDisable(GL_DEPTH_TEST);
   }
 
   glPolygonMode(GL_FRONT_AND_BACK, _restorePolygonMode);
 
-  if (_restoreVao) {
+  if (_restoreVao)
+  {
     glBindVertexArray(_restoreVao);
   }
   glBindBuffer(GL_ARRAY_BUFFER, _restoreVbo);
 
-  if (!_restoreVao && _restoreVbo) {
-    for (int i = 0; i < 2; i++) {
+  if (!_restoreVao && _restoreVbo)
+  {
+    for (int i = 0; i < 2; i++)
+    {
       VertexAttribState &state(_restoreVertexAttribState[i]);
-      if (state.enabled) {
+      if (state.enabled)
+      {
         glVertexAttribPointer(
           state.bufferBinding, state.size, state.type, state.normalized, state.stride, state.pointer);
         glEnableVertexAttribArray(state.bufferBinding);
       }
-      else {
+      else
+      {
         glDisableVertexAttribArray(state.bufferBinding);
       }
     }
@@ -722,11 +768,14 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
 
   _CaptureOpenGlState();
 
-  if (!framebuffer.IsEmpty()) {
-    if (framebuffer.IsHolding<uint32_t>()) {
+  if (!framebuffer.IsEmpty())
+  {
+    if (framebuffer.IsHolding<uint32_t>())
+    {
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
     }
-    else {
+    else
+    {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
   }
@@ -752,10 +801,12 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
   glUseProgram(shader.program);
 
   // Set up the vertex structure description
-  if (shader.vao) {
+  if (shader.vao)
+  {
     glBindVertexArray(shader.vao);
   }
-  else {
+  else
+  {
     glBindBuffer(GL_ARRAY_BUFFER, shader.vbo);
 
     glEnableVertexAttribArray(shader.posAttrib);
@@ -772,7 +823,8 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
   glBindTexture(GL_TEXTURE_RECTANGLE, _glColorTexture);
   glUniform1i(shader.samplerColorLoc, unit++);
 
-  if (shader.samplerDepthLoc != -1) {
+  if (shader.samplerDepthLoc != -1)
+  {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_RECTANGLE, _glDepthTexture);
     glUniform1i(shader.samplerDepthLoc, unit);
@@ -783,10 +835,12 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
   // Region of the framebuffer over which to composite.
   glViewport(compRegion[0], compRegion[1], compRegion[2], compRegion[3]);
 
-  if (flipY) {
+  if (flipY)
+  {
     glDrawArrays(GL_TRIANGLES, 6, 12);
   }
-  else {
+  else
+  {
     glDrawArrays(GL_TRIANGLES, 0, 6);
   }
 
@@ -799,7 +853,8 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
                                          VtValue const &framebuffer,
                                          GfVec4i const &compRegion)
 {
-  if (!ARCH_UNLIKELY(color)) {
+  if (!ARCH_UNLIKELY(color))
+  {
     TF_CODING_ERROR("No valid color texture provided");
     return;
   }
@@ -823,10 +878,12 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
 
   id<MTLTexture> colorTexture = nil;
   id<MTLTexture> depthTexture = nil;
-  if (color) {
+  if (color)
+  {
     colorTexture = id<MTLTexture>(color->GetRawResource());
   }
-  if (depth) {
+  if (depth)
+  {
     depthTexture = id<MTLTexture>(depth->GetRawResource());
   }
 
@@ -834,10 +891,12 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
 
   id<MTLComputeCommandEncoder> computeEncoder;
 
-  if (_hgiMetal->GetCapabilities().concurrentDispatchSupported) {
+  if (_hgiMetal->GetCapabilities().concurrentDispatchSupported)
+  {
     computeEncoder = [commandBuffer computeCommandEncoderWithDispatchType:MTLDispatchTypeConcurrent];
   }
-  else {
+  else
+  {
     computeEncoder = [commandBuffer computeCommandEncoder];
   }
 
@@ -845,7 +904,8 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   //
   // Depth
   //
-  if (depthTexture) {
+  if (depthTexture)
+  {
     NSUInteger exeWidth = [_computePipelineStateDepth threadExecutionWidth];
     NSUInteger maxThreadsPerThreadgroup = [_computePipelineStateDepth maxTotalThreadsPerThreadgroup];
 
@@ -865,7 +925,8 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   //
   // Color
   //
-  if (colorTexture) {
+  if (colorTexture)
+  {
     NSUInteger exeWidth = [_computePipelineStateColor threadExecutionWidth];
     NSUInteger maxThreadsPerThreadgroup = [_computePipelineStateColor maxTotalThreadsPerThreadgroup];
 
@@ -884,10 +945,12 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
 
   [computeEncoder endEncoding];
 
-  if (depthTexture && colorTexture) {
+  if (depthTexture && colorTexture)
+  {
     glShaderIndex = ShaderContextColorDepth;
   }
-  else if (colorTexture) {
+  else if (colorTexture)
+  {
     glShaderIndex = ShaderContextColor;
   }
 
@@ -895,7 +958,8 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   // calls are guaranteed to happen after the Metal work encoded above
   _hgiMetal->CommitPrimaryCommandBuffer(HgiMetal::CommitCommandBuffer_WaitUntilScheduled);
 
-  if (glShaderIndex != -1) {
+  if (glShaderIndex != -1)
+  {
     _BlitToOpenGL(framebuffer, compRegion, flipImage, glShaderIndex);
 
     _ProcessGLErrors();

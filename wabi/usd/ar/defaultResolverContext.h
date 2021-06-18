@@ -67,7 +67,8 @@ WABI_NAMESPACE_BEGIN
 /// // resolution.
 /// \endcode
 ///
-class ArDefaultResolverContext {
+class ArDefaultResolverContext
+{
  public:
   /// Default construct a context with no search path.
   ArDefaultResolverContext() = default;

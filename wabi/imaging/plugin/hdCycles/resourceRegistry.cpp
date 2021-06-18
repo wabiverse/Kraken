@@ -46,12 +46,15 @@ void HdCyclesResourceRegistry::_Commit()
   std::atomic_bool requires_reset{false};
 
   // * bind objects to the scene
-  for (auto &object_source : m_objects) {
-    if (!object_source.second.value->IsValid()) {
+  for (auto &object_source : m_objects)
+  {
+    if (!object_source.second.value->IsValid())
+    {
       continue;
     }
 
-    if (object_source.second.value->IsResolved()) {
+    if (object_source.second.value->IsResolved())
+    {
       continue;
     }
 
@@ -64,13 +67,15 @@ void HdCyclesResourceRegistry::_Commit()
     m_objects.begin(), m_objects.end(), [&requires_reset, scene](const ValueType &object_source) {
       // resolve per object
       size_t num_resolved_sources = object_source.second.value->ResolvePendingSources();
-      if (num_resolved_sources > 0) {
+      if (num_resolved_sources > 0)
+      {
         requires_reset = true;
       }
     });
 
   // * notify session that new resources have been committed and reset is required
-  if (requires_reset) {
+  if (requires_reset)
+  {
     // TODO: After we are done removing scene and session mutations from *::Sync. We can request
     // update and reset
   }

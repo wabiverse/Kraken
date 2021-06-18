@@ -121,7 +121,8 @@ bool UsdAttribute::GetUnionedTimeSamplesInInterval(const std::vector<UsdAttribut
   // Clear the vector first before proceeding to accumulate sample times.
   times->clear();
 
-  if (attrs.empty()) {
+  if (attrs.empty())
+  {
     return true;
   }
 
@@ -133,8 +134,10 @@ bool UsdAttribute::GetUnionedTimeSamplesInInterval(const std::vector<UsdAttribut
   // Temporary vector used to hold the union of two time-sample vectors.
   std::vector<double> tempUnionSampleTimes;
 
-  for (const auto &attr : attrs) {
-    if (!attr) {
+  for (const auto &attr : attrs)
+  {
+    if (!attr)
+    {
       success = false;
       continue;
     }
@@ -182,7 +185,8 @@ bool UsdAttribute::ValueMightBeTimeVarying() const
   return _GetStage()->_ValueMightBeTimeVarying(*this);
 }
 
-template<typename T> bool UsdAttribute::_Get(T *value, UsdTimeCode time) const
+template<typename T>
+bool UsdAttribute::_Get(T *value, UsdTimeCode time) const
 {
   return _GetStage()->_GetValue(time, *this, value);
 }
@@ -199,7 +203,8 @@ UsdResolveInfo UsdAttribute::GetResolveInfo(UsdTimeCode time) const
   return resolveInfo;
 }
 
-template<typename T> bool UsdAttribute::_Set(const T &value, UsdTimeCode time) const
+template<typename T>
+bool UsdAttribute::_Set(const T &value, UsdTimeCode time) const
 {
   return _GetStage()->_SetValue(time, *this, value);
 }
@@ -268,7 +273,8 @@ SdfAttributeSpecHandle UsdAttribute::_CreateSpec(const SdfValueTypeName &typeNam
   // means there was no existing authored scene description to go on (i.e. no
   // builtin info from prim type, and no existing authored spec).  Stamp a
   // spec with the provided default values.
-  if (m.IsClean()) {
+  if (m.IsClean())
+  {
     SdfChangeBlock block;
     return SdfAttributeSpec::New(
       stage->_CreatePrimSpecForEditing(GetPrim()), _PropName(), typeName, variability, custom);
@@ -311,10 +317,13 @@ ARCH_PRAGMA_POP
 SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *whyNot) const
 {
   SdfPath result;
-  if (!path.IsEmpty()) {
+  if (!path.IsEmpty())
+  {
     SdfPath absPath = path.MakeAbsolutePath(GetPath().GetAbsoluteRootOrPrimPath());
-    if (Usd_InstanceCache::IsPathInPrototype(absPath)) {
-      if (whyNot) {
+    if (Usd_InstanceCache::IsPathInPrototype(absPath))
+    {
+      if (whyNot)
+      {
         *whyNot =
           "Cannot refer to a prototype or an object within a "
           "prototype.";
@@ -326,10 +335,12 @@ SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *why
   // If this is a relative target path, we have to map both the anchor
   // and target path and then re-relativize them.
   const UsdEditTarget &editTarget = _GetStage()->GetEditTarget();
-  if (path.IsAbsolutePath()) {
+  if (path.IsAbsolutePath())
+  {
     result = editTarget.MapToSpecPath(path).StripAllVariantSelections();
   }
-  else {
+  else
+  {
     const SdfPath anchorPrim = GetPath().GetPrimPath();
     const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
     const SdfPath translatedPath =
@@ -337,8 +348,10 @@ SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *why
     result = translatedPath.MakeRelativePath(translatedAnchorPrim);
   }
 
-  if (result.IsEmpty()) {
-    if (whyNot) {
+  if (result.IsEmpty())
+  {
+    if (whyNot)
+    {
       *whyNot = TfStringPrintf("Cannot map <%s> to layer @%s@ via stage's EditTarget",
                                path.GetText(),
                                _GetStage()->GetEditTarget().GetLayer()->GetIdentifier().c_str());
@@ -352,7 +365,8 @@ bool UsdAttribute::AddConnection(const SdfPath &source, UsdListPosition position
 {
   std::string errMsg;
   const SdfPath pathToAuthor = _GetPathForAuthoring(source, &errMsg);
-  if (pathToAuthor.IsEmpty()) {
+  if (pathToAuthor.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot append connection <%s> to attribute <%s>: %s",
                     source.GetText(),
                     GetPath().GetText(),
@@ -380,7 +394,8 @@ bool UsdAttribute::RemoveConnection(const SdfPath &source) const
 {
   std::string errMsg;
   const SdfPath pathToAuthor = _GetPathForAuthoring(source, &errMsg);
-  if (pathToAuthor.IsEmpty()) {
+  if (pathToAuthor.IsEmpty())
+  {
     TF_CODING_ERROR("Cannot remove connection <%s> from attribute <%s>: %s",
                     source.GetText(),
                     GetPath().GetText(),
@@ -408,10 +423,12 @@ bool UsdAttribute::SetConnections(const SdfPathVector &sources) const
 {
   SdfPathVector mappedPaths;
   mappedPaths.reserve(sources.size());
-  for (const SdfPath &path : sources) {
+  for (const SdfPath &path : sources)
+  {
     std::string errMsg;
     mappedPaths.push_back(_GetPathForAuthoring(path, &errMsg));
-    if (mappedPaths.back().IsEmpty()) {
+    if (mappedPaths.back().IsEmpty())
+    {
       TF_CODING_ERROR("Cannot set connection <%s> on attribute <%s>: %s",
                       path.GetText(),
                       GetPath().GetText(),

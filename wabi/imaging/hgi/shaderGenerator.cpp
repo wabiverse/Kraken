@@ -39,7 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 static std::string _ExtractVersionString(const std::string &originalShader)
 {
-  if (TfStringStartsWith(originalShader, "#version")) {
+  if (TfStringStartsWith(originalShader, "#version"))
+  {
     return originalShader.substr(0, originalShader.find('\n'));
   }
   return std::string();

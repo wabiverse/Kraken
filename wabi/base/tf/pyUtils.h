@@ -97,11 +97,13 @@ TF_API void Tf_PyObjectError(bool printError);
 /// Return a python object for the given C++ object, loading the appropriate
 /// wrapper code if necessary. Spams users if complainOnFailure is true and
 /// conversion fails.
-template<typename T> boost::python::object TfPyObject(T const &t, bool complainOnFailure = true)
+template<typename T>
+boost::python::object TfPyObject(T const &t, bool complainOnFailure = true)
 {
   // initialize python if it isn't already, so at least we can try to return
   // an object
-  if (!TfPyIsInitialized()) {
+  if (!TfPyIsInitialized())
+  {
     TF_CODING_ERROR("Called TfPyObject without python being initialized!");
     TfPyInitialize();
   }
@@ -110,10 +112,12 @@ template<typename T> boost::python::object TfPyObject(T const &t, bool complainO
 
   // Will only be able to return objects which have been wrapped.
   // Returns None otherwise
-  try {
+  try
+  {
     return boost::python::object(t);
   }
-  catch (boost::python::error_already_set const &) {
+  catch (boost::python::error_already_set const &)
+  {
     Tf_PyObjectError(complainOnFailure);
     return boost::python::object();
   }
@@ -134,7 +138,8 @@ TF_API std::string TfPyObjectRepr(boost::python::object const &t);
 ///
 /// Converts t to its equivalent python object and then calls PyObject_Repr on
 /// that.
-template<typename T> std::string TfPyRepr(T const &t)
+template<typename T>
+std::string TfPyRepr(T const &t)
 {
   if (!TfPyIsInitialized())
     return "<python not initialized>";
@@ -143,15 +148,18 @@ template<typename T> std::string TfPyRepr(T const &t)
 }
 
 /// Return repr(t) for a vector as a python list.
-template<typename T> std::string TfPyRepr(const std::vector<T> &v)
+template<typename T>
+std::string TfPyRepr(const std::vector<T> &v)
 {
   std::string result("[");
   typename std::vector<T>::const_iterator i = v.begin();
-  if (i != v.end()) {
+  if (i != v.end())
+  {
     result += TfPyRepr(*i);
     ++i;
   }
-  while (i != v.end()) {
+  while (i != v.end())
+  {
     result += ", " + TfPyRepr(*i);
     ++i;
   }
@@ -180,7 +188,8 @@ TF_API boost::python::object TfPyGetClassObject(std::type_info const &type);
 
 /// Return the python class object for T if T has been wrapped.
 /// Otherwise return None.
-template<typename T> boost::python::object TfPyGetClassObject()
+template<typename T>
+boost::python::object TfPyGetClassObject()
 {
   return TfPyGetClassObject(typeid(T));
 }
@@ -195,15 +204,18 @@ void Tf_PyWrapOnceImpl(boost::python::type_info const &, std::function<void()> c
 ///
 /// TfPyWrapOnce will acquire the GIL prior to invoking \p wrapFunc. Does not
 /// invoke \p wrapFunc if Python has not been initialized.
-template<typename T> void TfPyWrapOnce(std::function<void()> const &wrapFunc)
+template<typename T>
+void TfPyWrapOnce(std::function<void()> const &wrapFunc)
 {
   // Don't try to wrap if python isn't initialized.
-  if (!TfPyIsInitialized()) {
+  if (!TfPyIsInitialized())
+  {
     return;
   }
 
   static bool isTypeWrapped = false;
-  if (isTypeWrapped) {
+  if (isTypeWrapped)
+  {
     return;
   }
 
@@ -218,7 +230,8 @@ TF_API
 void Tf_PyLoadScriptModule(std::string const &name);
 
 /// Creates a python dictionary from a std::map.
-template<class Map> boost::python::dict TfPyCopyMapToDictionary(Map const &map)
+template<class Map>
+boost::python::dict TfPyCopyMapToDictionary(Map const &map)
 {
   TfPyLock lock;
   boost::python::dict d;
@@ -227,7 +240,8 @@ template<class Map> boost::python::dict TfPyCopyMapToDictionary(Map const &map)
   return d;
 }
 
-template<class Seq> boost::python::list TfPyCopySequenceToList(Seq const &seq)
+template<class Seq>
+boost::python::list TfPyCopySequenceToList(Seq const &seq)
 {
   TfPyLock lock;
   boost::python::list l;
@@ -240,23 +254,28 @@ template<class Seq> boost::python::list TfPyCopySequenceToList(Seq const &seq)
 ///
 /// If Seq::value_type is not hashable, TypeError is raised via throwing
 /// boost::python::error_already_set.
-template<class Seq> boost::python::object TfPyCopySequenceToSet(Seq const &seq)
+template<class Seq>
+boost::python::object TfPyCopySequenceToSet(Seq const &seq)
 {
   TfPyLock lock;
   boost::python::handle<> set{boost::python::allow_null(PySet_New(nullptr))};
-  if (!set) {
+  if (!set)
+  {
     boost::python::throw_error_already_set();
   }
-  for (auto const &item : seq) {
+  for (auto const &item : seq)
+  {
     boost::python::object obj(item);
-    if (PySet_Add(set.get(), obj.ptr()) == -1) {
+    if (PySet_Add(set.get(), obj.ptr()) == -1)
+    {
       boost::python::throw_error_already_set();
     }
   }
   return boost::python::object(set);
 }
 
-template<class Seq> boost::python::tuple TfPyCopySequenceToTuple(Seq const &seq)
+template<class Seq>
+boost::python::tuple TfPyCopySequenceToTuple(Seq const &seq)
 {
   return boost::python::tuple(TfPyCopySequenceToList(seq));
 }
@@ -344,7 +363,8 @@ TF_API bool Tf_PyEvaluateWithErrorCheck(const std::string &expr, boost::python::
 /// Safely evaluates \p expr and extracts the return object of type T. If
 /// successful, returns \c true and sets *t to the return value, otherwise
 /// returns \c false.
-template<typename T> bool TfPyEvaluateAndExtract(const std::string &expr, T *t)
+template<typename T>
+bool TfPyEvaluateAndExtract(const std::string &expr, T *t)
 {
   if (expr.empty())
     return false;

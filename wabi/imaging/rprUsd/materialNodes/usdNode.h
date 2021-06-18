@@ -21,7 +21,8 @@ WABI_NAMESPACE_BEGIN
 class RprUsdCoreImage;
 class RprUsd_RprArithmeticNode;
 
-class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode {
+class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode
+{
  public:
   RprUsd_UsdPreviewSurface(RprUsd_MaterialBuilderContext *ctx,
                            std::map<TfToken, VtValue> const &hydraParameters);
@@ -54,7 +55,8 @@ class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode {
 
 TF_DECLARE_PUBLIC_TOKENS(RprUsd_UsdUVTextureTokens, RPRUSD_USD_UV_TEXTURE_TOKENS);
 
-class RprUsd_UsdUVTexture : public RprUsd_MaterialNode {
+class RprUsd_UsdUVTexture : public RprUsd_MaterialNode
+{
  public:
   RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx, std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdUVTexture() override = default;
@@ -74,7 +76,8 @@ class RprUsd_UsdUVTexture : public RprUsd_MaterialNode {
   std::map<TfToken, VtValue> m_outputs;
 };
 
-class RprUsd_UsdPrimvarReader : public RprUsd_BaseRuntimeNode {
+class RprUsd_UsdPrimvarReader : public RprUsd_BaseRuntimeNode
+{
  public:
   RprUsd_UsdPrimvarReader(RprUsd_MaterialBuilderContext *ctx,
                           std::map<TfToken, VtValue> const &hydraParameters);
@@ -83,7 +86,8 @@ class RprUsd_UsdPrimvarReader : public RprUsd_BaseRuntimeNode {
   bool SetInput(TfToken const &inputId, VtValue const &value) override;
 };
 
-class RprUsd_UsdTransform2d : public RprUsd_MaterialNode {
+class RprUsd_UsdTransform2d : public RprUsd_MaterialNode
+{
  public:
   RprUsd_UsdTransform2d(RprUsd_MaterialBuilderContext *ctx,
                         std::map<TfToken, VtValue> const &hydraParameters);

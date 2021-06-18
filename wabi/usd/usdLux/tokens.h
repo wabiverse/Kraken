@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdLuxTokens->angular);
 /// \endcode
-struct UsdLuxTokensType {
+struct UsdLuxTokensType
+{
   USDLUX_API UsdLuxTokensType();
   /// \brief "angular"
   ///

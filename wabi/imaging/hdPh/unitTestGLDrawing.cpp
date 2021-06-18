@@ -41,7 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPh_UnitTestWindow : public GarchGLDebugWindow {
+class HdPh_UnitTestWindow : public GarchGLDebugWindow
+{
  public:
   typedef HdPh_UnitTestWindow This;
 
@@ -157,7 +158,8 @@ void HdPh_UnitTestWindow::StartTimer()
 /* virtual */
 void HdPh_UnitTestWindow::OnIdle()
 {
-  if (_animate) {
+  if (_animate)
+  {
     _unitTest->Idle();
   }
 }
@@ -173,7 +175,8 @@ bool HdPh_UnitTestWindow::WriteToFile(std::string const &attachment, std::string
 /* virtual */
 void HdPh_UnitTestWindow::OnKeyRelease(int key)
 {
-  switch (key) {
+  switch (key)
+  {
     case 'q':
       ExitApp();
       return;
@@ -201,7 +204,8 @@ void HdPh_UnitTestWindow::OnMouseMove(int x, int y, int modKeys)
 
 ////////////////////////////////////////////////////////////
 
-HdPh_UnitTestGLDrawing::HdPh_UnitTestGLDrawing() : _widget(NULL)
+HdPh_UnitTestGLDrawing::HdPh_UnitTestGLDrawing()
+  : _widget(NULL)
 {
   _rotate[0] = _rotate[1] = 0;
   _translate[0] = _translate[1] = _translate[2] = 0;
@@ -232,11 +236,14 @@ void HdPh_UnitTestGLDrawing::RunTest(int argc, char *argv[])
 {
   bool offscreen = false;
   bool animate = false;
-  for (int i = 0; i < argc; ++i) {
-    if (std::string(argv[i]) == "--offscreen") {
+  for (int i = 0; i < argc; ++i)
+  {
+    if (std::string(argv[i]) == "--offscreen")
+    {
       offscreen = true;
     }
-    else if (std::string(argv[i]) == "--animate") {
+    else if (std::string(argv[i]) == "--animate")
+    {
       animate = true;
     }
   }
@@ -246,11 +253,13 @@ void HdPh_UnitTestGLDrawing::RunTest(int argc, char *argv[])
   _widget = new HdPh_UnitTestWindow(this, 640, 480);
   _widget->Init();
 
-  if (offscreen) {
+  if (offscreen)
+  {
     // no GUI mode (automated test)
     RunOffscreenTest();
   }
-  else {
+  else
+  {
     // Interactive mode
     if (animate)
       _widget->StartTimer();
@@ -295,16 +304,20 @@ void HdPh_UnitTestGLDrawing::MouseMove(int x, int y, int modKeys)
   int dx = x - _mousePos[0];
   int dy = y - _mousePos[1];
 
-  if (modKeys & GarchGLDebugWindow::Alt) {
-    if (_mouseButton[0]) {
+  if (modKeys & GarchGLDebugWindow::Alt)
+  {
+    if (_mouseButton[0])
+    {
       _rotate[1] += dx;
       _rotate[0] += dy;
     }
-    else if (_mouseButton[1]) {
+    else if (_mouseButton[1])
+    {
       _translate[0] += 0.1 * dx;
       _translate[1] -= 0.1 * dy;
     }
-    else if (_mouseButton[2]) {
+    else if (_mouseButton[2])
+    {
       _translate[2] += 0.1 * dx;
     }
   }

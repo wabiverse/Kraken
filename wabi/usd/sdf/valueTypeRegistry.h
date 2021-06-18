@@ -42,7 +42,8 @@ class TfType;
 ///
 /// A registry of value type names used by a schema.
 ///
-class Sdf_ValueTypeRegistry : boost::noncopyable {
+class Sdf_ValueTypeRegistry : boost::noncopyable
+{
  public:
   Sdf_ValueTypeRegistry();
   ~Sdf_ValueTypeRegistry();
@@ -79,7 +80,8 @@ class Sdf_ValueTypeRegistry : boost::noncopyable {
   /// \class Type
   /// Named parameter object for specifying an SdfValueTypeName to
   /// be added to the registry.
-  class Type {
+  class Type
+  {
    public:
     // Specify a type with the given name, default value, and default
     // array value.
@@ -98,7 +100,9 @@ class Sdf_ValueTypeRegistry : boost::noncopyable {
 
     // Specify a type with the given name and underlying C++ type.
     // No default value or array value will be registered.
-    Type(const TfToken &name, const TfType &type) : _name(name), _type(type)
+    Type(const TfToken &name, const TfType &type)
+      : _name(name),
+        _type(type)
     {}
 
     // Set C++ type name string for this type. Defaults to type name
@@ -106,7 +110,8 @@ class Sdf_ValueTypeRegistry : boost::noncopyable {
     Type &CPPTypeName(const std::string &cppTypeName)
     {
       _cppTypeName = cppTypeName;
-      if (!_defaultArrayValue.IsEmpty()) {
+      if (!_defaultArrayValue.IsEmpty())
+      {
         _arrayCppTypeName = "VtArray<" + cppTypeName + ">";
       }
       return *this;

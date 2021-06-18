@@ -55,14 +55,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Sdf_ParserHelpers {
+namespace Sdf_ParserHelpers
+{
 
 using std::string;
 using std::vector;
 
 // Check that there are enough values to parse so we don't overflow
 #define CHECK_BOUNDS(count, name) \
-  if (index + count > vars.size()) { \
+  if (index + count > vars.size()) \
+  { \
     TF_CODING_ERROR("Not enough values to parse value of type %s", name); \
     throw boost::bad_get(); \
   }
@@ -302,10 +304,12 @@ inline VtValue MakeScalarValueTemplate(vector<unsigned int> const &,
 {
   T t;
   size_t origIndex = index;
-  try {
+  try
+  {
     MakeScalarValueImpl(&t, vars, index);
   }
-  catch (const boost::bad_get &) {
+  catch (const boost::bad_get &)
+  {
     *errStrPtr = TfStringPrintf(
       "Failed to parse value (at sub-part %zd "
       "if there are multiple parts)",
@@ -325,20 +329,22 @@ inline VtValue MakeShapedValueTemplate(vector<unsigned int> const &shape,
     return VtValue(VtArray<T>());
   //    TF_AXIOM(shape.size() == 1);
   unsigned int size = 1;
-  TF_FOR_ALL(i, shape)
-  size *= *i;
+  TF_FOR_ALL (i, shape)
+    size *= *i;
 
   VtArray<T> array(size);
   size_t shapeIndex = 0;
   size_t origIndex = index;
-  try {
-    TF_FOR_ALL(i, array)
+  try
+  {
+    TF_FOR_ALL (i, array)
     {
       MakeScalarValueImpl(&(*i), vars, index);
       shapeIndex++;
     }
   }
-  catch (const boost::bad_get &) {
+  catch (const boost::bad_get &)
+  {
     *errStrPtr = TfStringPrintf(
       "Failed to parse at element %zd "
       "(at sub-part %zd if there are "
@@ -353,12 +359,15 @@ inline VtValue MakeShapedValueTemplate(vector<unsigned int> const &shape,
 typedef std::map<std::string, ValueFactory> _ValueFactoryMap;
 
 // Walk through types and register factories.
-struct _MakeFactoryMap {
+struct _MakeFactoryMap
+{
 
-  explicit _MakeFactoryMap(_ValueFactoryMap *factories) : _factories(factories)
+  explicit _MakeFactoryMap(_ValueFactoryMap *factories)
+    : _factories(factories)
   {}
 
-  template<class CppType> void add(const SdfValueTypeName &scalar, const char *alias = NULL)
+  template<class CppType>
+  void add(const SdfValueTypeName &scalar, const char *alias = NULL)
   {
     static const bool isShaped = true;
 
@@ -496,7 +505,8 @@ TF_MAKE_STATIC_DATA(_ValueFactoryMap, _valueFactories)
 ValueFactory const &GetValueFactoryForMenvaName(std::string const &name, bool *found)
 {
   _ValueFactoryMap::const_iterator it = _valueFactories->find(name);
-  if (it != _valueFactories->end()) {
+  if (it != _valueFactories->end())
+  {
     *found = true;
     return it->second;
   }
@@ -554,11 +564,14 @@ std::string Sdf_EvalQuotedString(const char *x, size_t n, size_t trimBothSides, 
   char *buf = n <= LocalSize ? localBuf : (char *)malloc(n);
 
   char *s = buf;
-  for (const char *p = x + trimBothSides, *end = x + trimBothSides + n; p != end; ++p) {
-    if (*p != '\\') {
+  for (const char *p = x + trimBothSides, *end = x + trimBothSides + n; p != end; ++p)
+  {
+    if (*p != '\\')
+    {
       *s++ = *p;
     }
-    else {
+    else
+    {
       TfEscapeStringReplaceChar(&p, &s);
     }
   }
@@ -582,7 +595,8 @@ std::string Sdf_EvalAssetPath(const char *x, size_t n, bool tripleDelimited)
   // no escape sequences except for the "@@@" delimiter.
   const int numDelimiters = tripleDelimited ? 3 : 1;
   std::string ret(x + numDelimiters, n - (2 * numDelimiters));
-  if (tripleDelimited) {
+  if (tripleDelimited)
+  {
     ret = TfStringReplace(ret, "\\@@@", "@@@");
   }
 

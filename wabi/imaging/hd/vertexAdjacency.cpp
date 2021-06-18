@@ -63,11 +63,14 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
   std::vector<int> vertexValence(_numPoints);
 
   int vertIndex = 0;
-  for (int i = 0; i < numFaces; ++i) {
+  for (int i = 0; i < numFaces; ++i)
+  {
     int nv = numVertsPtr[i];
-    for (int j = 0; j < nv; ++j) {
+    for (int j = 0; j < nv; ++j)
+    {
       int index = vertsPtr[vertIndex++];
-      if (index < 0 || index >= _numPoints) {
+      if (index < 0 || index >= _numPoints)
+      {
         TF_CODING_ERROR(
           "vertex index out of range "
           "index: %d numPoints: %d",
@@ -98,15 +101,18 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
   // know counts, don't fill them out now, so we know how many indices
   // we've written so far.
   int currentOffset = _numPoints * 2;
-  for (int pointNum = 0; pointNum < _numPoints; ++pointNum) {
+  for (int pointNum = 0; pointNum < _numPoints; ++pointNum)
+  {
     _adjacencyTable[pointNum * 2] = currentOffset;
     currentOffset += 2 * vertexValence[pointNum];
   }
 
   vertIndex = 0;
-  for (int i = 0; i < numFaces; ++i) {
+  for (int i = 0; i < numFaces; ++i)
+  {
     int nv = numVertsPtr[i];
-    for (int j = 0; j < nv; ++j) {
+    for (int j = 0; j < nv; ++j)
+    {
       int prev = vertsPtr[vertIndex + (j + nv - 1) % nv];
       int curr = vertsPtr[vertIndex + j];
       int next = vertsPtr[vertIndex + (j + 1) % nv];
@@ -133,13 +139,15 @@ HdBufferSourceSharedPtr Hd_VertexAdjacency::GetSharedAdjacencyBuilderComputation
 {
   // if there's a already requested (and unresolved) adjacency computation,
   // just returns it to make a dependency.
-  if (Hd_AdjacencyBuilderComputationSharedPtr builder = _sharedAdjacencyBuilder.lock()) {
+  if (Hd_AdjacencyBuilderComputationSharedPtr builder = _sharedAdjacencyBuilder.lock())
+  {
 
     return builder;
   }
 
   // if cpu adjacency table exists, no need to compute again
-  if (!(GetAdjacencyTable().empty())) {
+  if (!(GetAdjacencyTable().empty()))
+  {
     return Hd_AdjacencyBuilderComputationSharedPtr();
   }
 
@@ -169,7 +177,8 @@ bool Hd_AdjacencyBuilderComputation::Resolve()
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_adjacency->BuildAdjacencyTable(_topology)) {
+  if (!_adjacency->BuildAdjacencyTable(_topology))
+  {
     return false;
   }
 

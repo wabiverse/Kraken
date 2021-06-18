@@ -35,7 +35,8 @@ RAPIDJSON_NAMESPACE_BEGIN
 */
 inline const RAPIDJSON_ERROR_CHARTYPE *GetParseError_En(ParseErrorCode parseErrorCode)
 {
-  switch (parseErrorCode) {
+  switch (parseErrorCode)
+  {
     case kParseErrorNone:
       return RAPIDJSON_ERROR_STRING("No error.");
 

@@ -43,7 +43,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static vector<double> _GetTimeSamples(const UsdAttribute &self)
 {
@@ -79,7 +80,8 @@ static object _GetBracketingTimeSamples(const UsdAttribute &self, double desired
   double lower = 0.0, upper = 0.0;
   bool hasTimeSamples = false;
 
-  if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples)) {
+  if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
+  {
     return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
   }
   return object();

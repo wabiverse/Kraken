@@ -10,7 +10,8 @@
 
 #include "mcommon/string/stringutils.h"
 
-namespace Zep {
+namespace Zep
+{
 
 class ZepMode;
 
@@ -162,7 +163,8 @@ DECLARE_COMMANDID(InsertTab)
 
 // Insert Mode
 DECLARE_COMMANDID(Backspace)
-struct CommandNode {
+struct CommandNode
+{
   // <D> = digits
   // <R> = register
   // <.> = any char
@@ -171,12 +173,14 @@ struct CommandNode {
   std::unordered_map<std::string, std::shared_ptr<CommandNode>> children;
 };
 
-struct KeyMap {
+struct KeyMap
+{
   bool ignoreFinalDigit = false;
   std::shared_ptr<CommandNode> spRoot = std::make_shared<CommandNode>();
 };
 
-struct KeyMapResult {
+struct KeyMapResult
+{
   std::vector<int> captureNumbers;
   std::vector<char> captureChars;
   std::vector<char> captureRegisters;
@@ -188,7 +192,8 @@ struct KeyMapResult {
 
   int TotalCount() const
   {
-    if (captureNumbers.empty()) {
+    if (captureNumbers.empty())
+    {
       return 1;
     }
     return std::accumulate(captureNumbers.begin(), captureNumbers.end(), 0);
@@ -197,14 +202,19 @@ struct KeyMapResult {
   // Return the first register for commands that only want 1
   char RegisterName() const
   {
-    if (captureRegisters.empty()) {
+    if (captureRegisters.empty())
+    {
       return '"';
     }
     return captureRegisters[0];
   }
 };
 
-enum class KeyMapAdd { New, Replace };
+enum class KeyMapAdd
+{
+  New,
+  Replace
+};
 
 bool keymap_add(const std::vector<KeyMap *> &maps,
                 const std::vector<std::string> &strCommand,

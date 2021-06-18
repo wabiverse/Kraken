@@ -40,9 +40,11 @@ HgiMetalShaderProgram::HgiMetalShaderProgram(HgiShaderProgramDesc const &desc)
     _computeFunction(nil)
 {
   HgiShaderFunctionHandleVector const &shaderFuncs = desc.shaderFunctions;
-  for (auto const &func : shaderFuncs) {
+  for (auto const &func : shaderFuncs)
+  {
     HgiMetalShaderFunction const *metalFunction = static_cast<HgiMetalShaderFunction *>(func.Get());
-    switch (metalFunction->GetDescriptor().shaderStage) {
+    switch (metalFunction->GetDescriptor().shaderStage)
+    {
       case HgiShaderStageVertex:
         _vertexFunction = metalFunction->GetShaderId();
         break;
@@ -76,7 +78,8 @@ std::string const &HgiMetalShaderProgram::GetCompileErrors()
 size_t HgiMetalShaderProgram::GetByteSizeOfResource() const
 {
   size_t byteSize = 0;
-  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions) {
+  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions)
+  {
     byteSize += fn->GetByteSizeOfResource();
   }
   return byteSize;

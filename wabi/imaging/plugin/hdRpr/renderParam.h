@@ -26,7 +26,8 @@ class HdRprVolume;
 using HdRprVolumeFieldSubscription = std::shared_ptr<HdRprVolume>;
 using HdRprVolumeFieldSubscriptionHandle = std::weak_ptr<HdRprVolume>;
 
-class HdRprRenderParam final : public HdRenderParam {
+class HdRprRenderParam final : public HdRenderParam
+{
  public:
   HdRprRenderParam(HdRprApi *rprApi, HdRprRenderThread *renderThread)
     : m_rprApi(rprApi),

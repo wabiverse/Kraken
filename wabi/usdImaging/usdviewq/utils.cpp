@@ -80,14 +80,16 @@ UsdviewqUtils::PrimInfo::PrimInfo(const UsdPrim &prim, const UsdTimeCode time)
 
   isInstance = prim.IsInstance();
   isVisibilityInherited = false;
-  if (img) {
+  if (img)
+  {
     UsdAttributeQuery query(img.GetVisibilityAttr());
     TfToken visibility = UsdGeomTokens->inherited;
     query.Get(&visibility, time);
     isVisibilityInherited = (visibility == UsdGeomTokens->inherited);
     visVaries = query.ValueMightBeTimeVarying();
   }
-  else {
+  else
+  {
     visVaries = false;
   }
 

@@ -36,7 +36,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahWindow : public UsdUIWindow, public CovahObject {
+struct CovahWindow : public UsdUIWindow, public CovahObject
+{
 
   SdfPath path;
   wmWindow parent;
@@ -58,7 +59,8 @@ struct CovahWindow : public UsdUIWindow, public CovahObject {
 
   UsdRelationship workspace_rel;
 
-  struct {
+  struct
+  {
     Workspace workspace;
     cScreen screen;
   } prims;
@@ -128,7 +130,8 @@ CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stage
 
 {}
 
-struct CovahWindowManager : public CovahObject {
+struct CovahWindowManager : public CovahObject
+{
   /** All windows this manager controls. */
   TfHashMap<SdfPath, wmWindow, SdfPath::Hash> windows;
 };

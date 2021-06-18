@@ -34,7 +34,8 @@ WABI_NAMESPACE_BEGIN
 
 size_t HdPhGLConversions::GetComponentSize(int glDataType)
 {
-  switch (glDataType) {
+  switch (glDataType)
+  {
     case GL_BOOL:
       // Note that we don't use GLboolean here because according to
       // code in vtBufferSource, everything gets rounded up to
@@ -181,7 +182,8 @@ GLenum HdPhGLConversions::GetGlBlendFactor(HdBlendFactor factor)
 
 int HdPhGLConversions::GetGLAttribType(HdType type)
 {
-  switch (type) {
+  switch (type)
+  {
     case HdTypeInt32:
     case HdTypeInt32Vec2:
     case HdTypeInt32Vec3:
@@ -229,7 +231,8 @@ TF_DEFINE_PRIVATE_TOKENS(_glTypeNames,
 
 TfToken HdPhGLConversions::GetGLSLTypename(HdType type)
 {
-  switch (type) {
+  switch (type)
+  {
     case HdTypeInvalid:
     default:
       return TfToken();
@@ -294,22 +297,28 @@ static bool _IsIdentiferGLSLCompatible(std::string const &in)
   char const *p = in.c_str();
 
   // Leading non-alpha characters are not allowed.
-  if (*p && !isalpha(*p)) {
+  if (*p && !isalpha(*p))
+  {
     return false;
   }
   // Characters must be in [_a-zA-Z0-9]
-  while (*p) {
-    if (isalnum(*p)) {
+  while (*p)
+  {
+    if (isalnum(*p))
+    {
       p++;
     }
-    else {
+    else
+    {
       // _ is allowed, but __ isn't
-      if (*p == '_' && *(p - 1) != '_') {
+      if (*p == '_' && *(p - 1) != '_')
+      {
         // checking the last character is safe here, because of the
         // earlier check for leading non-alpha characters.
         p++;
       }
-      else {
+      else
+      {
         return false;
       }
     }
@@ -323,7 +332,8 @@ TfToken HdPhGLConversions::GetGLSLIdentifier(TfToken const &identifier)
   std::string const &in = identifier.GetString();
   // Avoid allocating a string and constructing a token for the general case,
   // wherein identifers conform to the naming rules.
-  if (_IsIdentiferGLSLCompatible(in)) {
+  if (_IsIdentiferGLSLCompatible(in))
+  {
     return identifier;
   }
 
@@ -338,29 +348,36 @@ TfToken HdPhGLConversions::GetGLSLIdentifier(TfToken const &identifier)
   char const *p = in.c_str();
 
   // Skip leading non-alpha characters.
-  while (*p && !isalpha(*p)) {
+  while (*p && !isalpha(*p))
+  {
     ++p;
   }
-  for (; *p; ++p) {
+  for (; *p; ++p)
+  {
     bool isValidChar = isalnum(*p) || (*p == '_');
-    if (!isValidChar) {
+    if (!isValidChar)
+    {
       // Replace characters not in [_a-zA-Z0-9] with _, unless the last
       // character  added was also _.
       // Calling back() is safe here because the first character is either
       // alpha-numeric or null, as guaranteed by the while loop above.
-      if (result.back() != '_') {
+      if (result.back() != '_')
+      {
         result.push_back('_');
       }
     }
-    else if (*p == '_' && result.back() == '_') {
+    else if (*p == '_' && result.back() == '_')
+    {
       // no-op to skip consecutive _
     }
-    else {
+    else
+    {
       result.push_back(*p);
     }
   }
 
-  if (result.empty()) {
+  if (result.empty())
+  {
     TF_CODING_ERROR("Invalid identifier '%s' could not be name-mangled", identifier.GetText());
     return identifier;
   }

@@ -42,7 +42,8 @@
 WABI_NAMESPACE_BEGIN
 
 // struct to hold attribute definitions
-struct HgiShaderSectionAttribute {
+struct HgiShaderSectionAttribute
+{
   std::string identifier;
   std::string index;
 };
@@ -57,7 +58,8 @@ using HgiShaderSectionAttributeVector = std::vector<HgiShaderSectionAttribute>;
 /// Can be subclassed to add more behaviour for complex cases
 /// and to hook into the visitor tree.
 ///
-class HgiShaderSection {
+class HgiShaderSection
+{
  public:
   HGI_API
   virtual ~HgiShaderSection();

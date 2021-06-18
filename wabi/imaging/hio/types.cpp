@@ -67,17 +67,20 @@ static_assert(TfArraySize(_hioFormats) == HioTypeCount,
 
 HioFormat HioGetFormat(uint32_t nchannels, HioType type, bool isSRGB)
 {
-  if (type >= HioTypeCount) {
+  if (type >= HioTypeCount)
+  {
     TF_CODING_ERROR("Invalid type");
     return HioFormatInvalid;
   }
 
-  if (nchannels == 0 || nchannels > 4) {
+  if (nchannels == 0 || nchannels > 4)
+  {
     TF_CODING_ERROR("Invalid channel count");
     return HioFormatInvalid;
   }
 
-  if (isSRGB && type == HioTypeUnsignedByte) {
+  if (isSRGB && type == HioTypeUnsignedByte)
+  {
     type = HioTypeUnsignedByteSRGB;
   }
 
@@ -86,7 +89,8 @@ HioFormat HioGetFormat(uint32_t nchannels, HioType type, bool isSRGB)
 
 HioType HioGetHioType(HioFormat format)
 {
-  switch (format) {
+  switch (format)
+  {
     case HioFormatUNorm8:
     case HioFormatUNorm8Vec2:
     case HioFormatUNorm8Vec3:
@@ -165,7 +169,8 @@ HioType HioGetHioType(HioFormat format)
 
 int HioGetComponentCount(HioFormat format)
 {
-  switch (format) {
+  switch (format)
+  {
     case HioFormatUNorm8:
     case HioFormatSNorm8:
     case HioFormatFloat16:
@@ -227,7 +232,8 @@ int HioGetComponentCount(HioFormat format)
 
 size_t HioGetDataSizeOfType(HioType type)
 {
-  switch (type) {
+  switch (type)
+  {
     case HioTypeCount:
       return 0;
     case HioTypeUnsignedByte:
@@ -256,14 +262,17 @@ size_t HioGetDataSizeOfType(HioFormat format)
 
 size_t HioGetDataSizeOfFormat(HioFormat format, size_t *const blockWidth, size_t *const blockHeight)
 {
-  if (blockWidth) {
+  if (blockWidth)
+  {
     *blockWidth = 1;
   }
-  if (blockHeight) {
+  if (blockHeight)
+  {
     *blockHeight = 1;
   }
 
-  switch (format) {
+  switch (format)
+  {
     case HioFormatUNorm8:
     case HioFormatSNorm8:
     case HioFormatUNorm8srgb:
@@ -330,10 +339,12 @@ size_t HioGetDataSizeOfFormat(HioFormat format, size_t *const blockWidth, size_t
     case HioFormatBC7UNorm8Vec4srgb:
     case HioFormatBC1UNorm8Vec4:
     case HioFormatBC3UNorm8Vec4:
-      if (blockWidth) {
+      if (blockWidth)
+      {
         *blockWidth = 4;
       }
-      if (blockHeight) {
+      if (blockHeight)
+      {
         *blockHeight = 4;
       }
       return 16;
@@ -348,7 +359,8 @@ size_t HioGetDataSizeOfFormat(HioFormat format, size_t *const blockWidth, size_t
 
 bool HioIsCompressed(HioFormat format)
 {
-  switch (format) {
+  switch (format)
+  {
     case HioFormatBC6FloatVec3:
     case HioFormatBC6UFloatVec3:
     case HioFormatBC7UNorm8Vec4:

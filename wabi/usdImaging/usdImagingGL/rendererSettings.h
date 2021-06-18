@@ -40,8 +40,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct UsdImagingGLRendererSetting {
-  enum Type { TYPE_FLAG, TYPE_INT, TYPE_FLOAT, TYPE_STRING };
+struct UsdImagingGLRendererSetting
+{
+  enum Type
+  {
+    TYPE_FLAG,
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+  };
   std::string name;
   TfToken key;
   Type type;

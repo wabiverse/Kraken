@@ -55,7 +55,8 @@ TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 /// Tracks the dependencies of PcpPrimIndex entries in a PcpCache.
 /// This is an internal class only meant for use by PcpCache.
 ///
-class Pcp_Dependencies {
+class Pcp_Dependencies
+{
  public:
   /// Construct with no dependencies.
   Pcp_Dependencies();
@@ -100,7 +101,8 @@ class Pcp_Dependencies {
   /// Structure for enabling cache population via concurrent calls to Add().
   /// Protects member data with a mutex during its lifetime.
   /// \sa Add().
-  struct ConcurrentPopulationContext {
+  struct ConcurrentPopulationContext
+  {
     explicit ConcurrentPopulationContext(Pcp_Dependencies &deps);
     ~ConcurrentPopulationContext();
     Pcp_Dependencies &_deps;
@@ -133,32 +135,43 @@ class Pcp_Dependencies {
                                const FN &fn) const
   {
     _LayerStackDepMap::const_iterator i = _deps.find(siteLayerStack);
-    if (i == _deps.end()) {
+    if (i == _deps.end())
+    {
       return;
     }
     const _SiteDepMap &siteDepMap = i->second;
-    if (recurseBelowSite) {
+    if (recurseBelowSite)
+    {
       auto range = siteDepMap.FindSubtreeRange(sitePath);
-      for (auto iter = range.first; iter != range.second; ++iter) {
-        for (const SdfPath &primIndexPath : iter->second) {
+      for (auto iter = range.first; iter != range.second; ++iter)
+      {
+        for (const SdfPath &primIndexPath : iter->second)
+        {
           fn(primIndexPath, iter->first);
         }
       }
     }
-    else {
+    else
+    {
       _SiteDepMap::const_iterator j = siteDepMap.find(sitePath);
-      if (j != siteDepMap.end()) {
-        for (const SdfPath &primIndexPath : j->second) {
+      if (j != siteDepMap.end())
+      {
+        for (const SdfPath &primIndexPath : j->second)
+        {
           fn(primIndexPath, sitePath);
         }
       }
     }
-    if (includeAncestral) {
+    if (includeAncestral)
+    {
       for (SdfPath ancestorSitePath = sitePath.GetParentPath(); !ancestorSitePath.IsEmpty();
-           ancestorSitePath = ancestorSitePath.GetParentPath()) {
+           ancestorSitePath = ancestorSitePath.GetParentPath())
+      {
         _SiteDepMap::const_iterator j = siteDepMap.find(ancestorSitePath);
-        if (j != siteDepMap.end()) {
-          for (const SdfPath &ancestorPrimIndexPath : j->second) {
+        if (j != siteDepMap.end())
+        {
+          for (const SdfPath &ancestorPrimIndexPath : j->second)
+          {
             fn(ancestorPrimIndexPath, ancestorSitePath);
           }
         }
@@ -255,17 +268,22 @@ static void Pcp_ForEachDependentNode(const SdfPath &sitePath,
   SdfPath indexPath;
   const PcpPrimIndex *primIndex = nullptr;
   for (indexPath = depIndexPath.GetAbsoluteRootOrPrimPath(); indexPath != SdfPath();
-       indexPath = indexPath.GetParentPath()) {
+       indexPath = indexPath.GetParentPath())
+  {
     primIndex = cache.FindPrimIndex(indexPath);
-    if (primIndex) {
+    if (primIndex)
+    {
       break;
     }
   }
-  if (primIndex) {
+  if (primIndex)
+  {
     // Find which node corresponds to (layer, oldPath).
-    for (const PcpNodeRef &node : primIndex->GetNodeRange()) {
+    for (const PcpNodeRef &node : primIndex->GetNodeRange())
+    {
       if (PcpNodeIntroducesDependency(node) && node.GetLayerStack()->HasLayer(layer) &&
-          sitePath.HasPrefix(node.GetPath())) {
+          sitePath.HasPrefix(node.GetPath()))
+      {
         nodeUsingSite = node;
         fn(depIndexPath, nodeUsingSite);
       }
@@ -293,17 +311,22 @@ static void Pcp_ForEachDependentNode(const SdfPath &sitePath,
   SdfPath indexPath;
   const PcpPrimIndex *primIndex = nullptr;
   for (indexPath = depIndexPath.GetAbsoluteRootOrPrimPath(); indexPath != SdfPath();
-       indexPath = indexPath.GetParentPath()) {
+       indexPath = indexPath.GetParentPath())
+  {
     primIndex = cache.FindPrimIndex(indexPath);
-    if (primIndex) {
+    if (primIndex)
+    {
       break;
     }
   }
-  if (primIndex) {
+  if (primIndex)
+  {
     // Find which node corresponds to (layerStack, oldPath).
-    for (const PcpNodeRef &node : primIndex->GetNodeRange()) {
+    for (const PcpNodeRef &node : primIndex->GetNodeRange())
+    {
       if (PcpNodeIntroducesDependency(node) && node.GetLayerStack() == layerStack &&
-          sitePath.HasPrefix(node.GetPath())) {
+          sitePath.HasPrefix(node.GetPath()))
+      {
         nodeUsingSite = node;
         fn(depIndexPath, nodeUsingSite);
       }

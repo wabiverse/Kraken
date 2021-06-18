@@ -53,7 +53,8 @@ std::string const &HgiVulkanShaderProgram::GetCompileErrors()
 size_t HgiVulkanShaderProgram::GetByteSizeOfResource() const
 {
   size_t byteSize = 0;
-  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions) {
+  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions)
+  {
     byteSize += fn->GetByteSizeOfResource();
   }
   return byteSize;

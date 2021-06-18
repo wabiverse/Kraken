@@ -73,10 +73,11 @@ void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
   // If any of the field attributes is time varying
   // we will assume all field params are time-varying.
   const std::vector<UsdAttribute> &attrs = prim.GetAttributes();
-  TF_FOR_ALL(attrIter, attrs)
+  TF_FOR_ALL (attrIter, attrs)
   {
     const UsdAttribute &attr = *attrIter;
-    if (attr.GetNumTimeSamples() > 1) {
+    if (attr.GetNumTimeSamples() > 1)
+    {
       *timeVaryingBits |= HdField::DirtyBits::DirtyParams;
     }
   }
@@ -127,10 +128,12 @@ VtValue UsdImagingFieldAdapter::Get(UsdPrim const &prim,
                                     UsdTimeCode time,
                                     VtIntArray *outIndices) const
 {
-  if (key == _tokens->textureMemory) {
+  if (key == _tokens->textureMemory)
+  {
     UsdAttribute const &attr = prim.GetAttribute(key);
     VtValue value;
-    if (attr && attr.Get(&value, time)) {
+    if (attr && attr.Get(&value, time))
+    {
       return value;
     }
 

@@ -106,7 +106,8 @@ void HdPh_ImageShaderRenderPass::_Prepare(TfTokenVector const &renderTags)
 
   // First time we must create a VertexPrimvar BAR for the triangle and setup
   // the geometric shader that provides the vertex and fragment shaders.
-  if (!_sharedData.barContainer.Get(_drawItem.GetDrawingCoord()->GetVertexPrimvarIndex())) {
+  if (!_sharedData.barContainer.Get(_drawItem.GetDrawingCoord()->GetVertexPrimvarIndex()))
+  {
     _SetupVertexPrimvarBAR(resourceRegistry);
 
     HdPh_ImageShaderShaderKey shaderKey;
@@ -144,7 +145,8 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   // custom prims that spawn an imagingGLengine  with a task controller that
   // has no aovBindings.
 
-  if (gfxCmds) {
+  if (gfxCmds)
+  {
     gfxCmds->PushDebugGroup(__ARCH_PRETTY_FUNCTION__);
   }
 
@@ -156,7 +158,8 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   HdPh_DrawBatchSharedPtr const &batch = _immediateBatch;
   HgiGLGraphicsCmds *glGfxCmds = dynamic_cast<HgiGLGraphicsCmds *>(gfxCmds.get());
 
-  if (gfxCmds && glGfxCmds) {
+  if (gfxCmds && glGfxCmds)
+  {
     // XXX Tmp code path to allow non-hgi code to insert functions into
     // HgiGL ops-stack. Will be removed once Phoenixs uses Hgi everywhere
     auto executeDrawOp = [batch, stRenderPassState, resourceRegistry] {
@@ -164,11 +167,13 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
     };
     glGfxCmds->InsertFunctionOp(executeDrawOp);
   }
-  else {
+  else
+  {
     _ExecuteDraw(batch, stRenderPassState, resourceRegistry);
   }
 
-  if (gfxCmds) {
+  if (gfxCmds)
+  {
     gfxCmds->PopDebugGroup();
     _hgi->SubmitCmds(gfxCmds.get());
   }

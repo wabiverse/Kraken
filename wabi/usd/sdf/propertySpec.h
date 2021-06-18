@@ -56,7 +56,8 @@ WABI_NAMESPACE_BEGIN
 /// NOTE: Do not use Python reserved words and keywords as attribute names.
 /// This will cause attribute resolution to fail.
 ///
-class SdfPropertySpec : public SdfSpec {
+class SdfPropertySpec : public SdfSpec
+{
   SDF_DECLARE_ABSTRACT_SPEC(SdfPropertySpec, SdfSpec);
 
  public:

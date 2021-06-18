@@ -73,7 +73,8 @@ std::ostream &VtStreamOut(double const &val, std::ostream &stream)
   return stream << TfStreamDouble(val);
 }
 
-namespace {
+namespace
+{
 
 void _StreamArrayRecursive(std::ostream &out,
                            VtStreamOutIterator *i,
@@ -83,17 +84,23 @@ void _StreamArrayRecursive(std::ostream &out,
                            size_t dimension)
 {
   out << '[';
-  if (dimension == shape.GetRank() - 1) {
-    for (size_t j = 0; j < lastDimSize; ++j) {
-      if (j) {
+  if (dimension == shape.GetRank() - 1)
+  {
+    for (size_t j = 0; j < lastDimSize; ++j)
+    {
+      if (j)
+      {
         out << ", ";
       }
       i->Next(out);
     }
   }
-  else {
-    for (size_t j = 0; j < shape.otherDims[dimension]; ++j) {
-      if (j) {
+  else
+  {
+    for (size_t j = 0; j < shape.otherDims[dimension]; ++j)
+    {
+      if (j)
+      {
         out << ", ";
       }
       _StreamArrayRecursive(out, i, shape, lastDimSize, index, dimension + 1);
@@ -121,7 +128,8 @@ void VtStreamOutArray(VtStreamOutIterator *i, size_t size, const Vt_ShapeData *s
 
   // If there's a remainder, make a rank-1 shapeData.
   Vt_ShapeData rank1;
-  if (remainder) {
+  if (remainder)
+  {
     rank1.totalSize = shapeData->totalSize;
     shapeData = &rank1;
   }

@@ -67,7 +67,8 @@ class SdfAssetPath;
 /// See the extended \ref UsdSkel_SkelRoot "Skel Root Schema" documentation for
 /// more information.
 ///
-class UsdSkelRoot : public UsdGeomBoundable {
+class UsdSkelRoot : public UsdGeomBoundable
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -83,13 +84,15 @@ class UsdSkelRoot : public UsdGeomBoundable {
   /// Equivalent to UsdSkelRoot::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelRoot(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim)
+  explicit UsdSkelRoot(const UsdPrim &prim = UsdPrim())
+    : UsdGeomBoundable(prim)
   {}
 
   /// Construct a UsdSkelRoot on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelRoot(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelRoot(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj)
+  explicit UsdSkelRoot(const UsdSchemaBase &schemaObj)
+    : UsdGeomBoundable(schemaObj)
   {}
 
   /// Destructor.

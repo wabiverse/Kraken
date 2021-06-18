@@ -45,7 +45,8 @@ class HgiMetal;
 ///
 /// Represents a Metal GPU buffer resource.
 ///
-class HgiMetalBuffer final : public HgiBuffer {
+class HgiMetalBuffer final : public HgiBuffer
+{
  public:
   HGIMETAL_API
   HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc);

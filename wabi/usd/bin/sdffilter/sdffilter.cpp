@@ -74,7 +74,8 @@ using std::vector;
 // A file format for the human readable "pseudoLayer" output.  We use this so
 // that the terse human-readable output we produce is not a valid layer nor may
 // be mistaken for one.
-class SdfFilterPseudoFileFormat : public SdfTextFileFormat {
+class SdfFilterPseudoFileFormat : public SdfTextFileFormat
+{
  private:
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
@@ -93,7 +94,8 @@ TF_REGISTRY_FUNCTION(TfType)
   SDF_DEFINE_FILE_FORMAT(SdfFilterPseudoFileFormat, SdfTextFileFormat);
 }
 
-namespace {
+namespace
+{
 
 // the basename of the executable.
 string progName;
@@ -124,14 +126,20 @@ void ErrExit(char const *fmt, ...)
 }
 
 // The sorting key for 'outline' output.
-enum SortKey { SortByPath, SortByField };
+enum SortKey
+{
+  SortByPath,
+  SortByField
+};
 
 std::ostream &operator<<(std::ostream &os, SortKey key)
 {
-  if (key == SortByPath) {
+  if (key == SortByPath)
+  {
     return os << "path";
   }
-  else if (key == SortByField) {
+  else if (key == SortByField)
+  {
     return os << "field";
   }
   TF_CODING_ERROR("Invalid value for SortKey (%d)", static_cast<int>(key));
@@ -142,20 +150,24 @@ std::istream &operator>>(std::istream &is, SortKey &key)
 {
   std::string txt;
   is >> txt;
-  if (txt == "path") {
+  if (txt == "path")
+  {
     key = SortByPath;
   }
-  else if (txt == "field") {
+  else if (txt == "field")
+  {
     key = SortByField;
   }
-  else {
+  else
+  {
     is.setstate(std::ios_base::failbit);
   }
   return is;
 }
 
 // An enum representing the type of output to produce.
-enum OutputType {
+enum OutputType
+{
   OutputValidity,     // only check file validity by reading all values.
   OutputSummary,      // report a brief summary with file statistics.
   OutputOutline,      // report as an outilne, either by path or by field.
@@ -166,19 +178,24 @@ enum OutputType {
 
 std::ostream &operator<<(std::ostream &os, OutputType outputType)
 {
-  if (outputType == OutputValidity) {
+  if (outputType == OutputValidity)
+  {
     return os << "validity";
   }
-  else if (outputType == OutputSummary) {
+  else if (outputType == OutputSummary)
+  {
     return os << "summary";
   }
-  else if (outputType == OutputOutline) {
+  else if (outputType == OutputOutline)
+  {
     return os << "outline";
   }
-  else if (outputType == OutputPseudoLayer) {
+  else if (outputType == OutputPseudoLayer)
+  {
     return os << "pseudoLayer";
   }
-  else if (outputType == OutputLayer) {
+  else if (outputType == OutputLayer)
+  {
     return os << "layer";
   }
   TF_CODING_ERROR("Invalid value for OutputType (%d)", static_cast<int>(outputType));
@@ -189,22 +206,28 @@ std::istream &operator>>(std::istream &is, OutputType &outputType)
 {
   std::string txt;
   is >> txt;
-  if (txt == "validity") {
+  if (txt == "validity")
+  {
     outputType = OutputValidity;
   }
-  else if (txt == "summary") {
+  else if (txt == "summary")
+  {
     outputType = OutputSummary;
   }
-  else if (txt == "outline") {
+  else if (txt == "outline")
+  {
     outputType = OutputOutline;
   }
-  else if (txt == "pseudoLayer") {
+  else if (txt == "pseudoLayer")
+  {
     outputType = OutputPseudoLayer;
   }
-  else if (txt == "layer") {
+  else if (txt == "layer")
+  {
     outputType = OutputLayer;
   }
-  else {
+  else
+  {
     is.setstate(std::ios_base::failbit);
   }
   return is;
@@ -212,7 +235,8 @@ std::istream &operator>>(std::istream &is, OutputType &outputType)
 
 // We use this structure to represent all the parameters for reporting.  We fill
 // this using command-line args.
-struct ReportParams {
+struct ReportParams
+{
   std::shared_ptr<TfPatternMatcher> pathMatcher;
   std::shared_ptr<TfPatternMatcher> fieldMatcher;
 
@@ -231,7 +255,8 @@ struct ReportParams {
 };
 
 // Summary statistics for 'summary' output.
-struct SummaryStats {
+struct SummaryStats
+{
   size_t numSpecs = 0;
   size_t numPrimSpecs = 0;
   size_t numPropertySpecs = 0;
@@ -245,20 +270,26 @@ void ParseTimes(vector<string> const &timeSpecs,
                 vector<double> *literalTimes,
                 vector<pair<double, double>> *timeRanges)
 {
-  for (auto const &spec : timeSpecs) {
-    try {
-      if (TfStringContains(spec, "..")) {
+  for (auto const &spec : timeSpecs)
+  {
+    try
+    {
+      if (TfStringContains(spec, ".."))
+      {
         auto elts = TfStringSplit(spec, "..");
-        if (elts.size() != 2) {
+        if (elts.size() != 2)
+        {
           throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
         }
         timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]), boost::lexical_cast<double>(elts[1]));
       }
-      else {
+      else
+      {
         literalTimes->emplace_back(boost::lexical_cast<double>(spec));
       }
     }
-    catch (boost::bad_lexical_cast const &) {
+    catch (boost::bad_lexical_cast const &)
+    {
       throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
     }
   }
@@ -306,7 +337,8 @@ bool IsClose(double a, double b, double tol)
 VtValue GetReportValue(VtValue const &value, ReportParams const &p)
 {
   if (p.outputType != OutputLayer && p.arraySizeLimit >= 0 && value.IsArrayValued() &&
-      value.GetArraySize() > static_cast<uint64_t>(p.arraySizeLimit)) {
+      value.GetArraySize() > static_cast<uint64_t>(p.arraySizeLimit))
+  {
     return VtValue(SdfHumanReadableValue(
       TfStringPrintf("%s[%zu]", ArchGetDemangled(value.GetElementTypeid()).c_str(), value.GetArraySize())));
   }
@@ -323,11 +355,14 @@ VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &pa
   std::vector<double> selectedTimes;
   selectedTimes.reserve(times.size());
 
-  if (takeAllTimes) {
+  if (takeAllTimes)
+  {
     selectedTimes.assign(times.begin(), times.end());
   }
-  else {
-    for (auto time : times) {
+  else
+  {
+    for (auto time : times)
+    {
       // Check literalTimes.
       auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
         return IsClose(a, b, p.timeTolerance) ? false : a < b;
@@ -336,7 +371,8 @@ VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &pa
         selectedTimes.push_back(time);
 
       // Check ranges.
-      for (auto const &range : p.timeRanges) {
+      for (auto const &range : p.timeRanges)
+      {
         if (range.first <= time && time <= range.second)
           selectedTimes.push_back(time);
       }
@@ -350,14 +386,17 @@ VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &pa
 
   VtValue val;
   if (p.outputType != OutputLayer && p.timeSamplesSizeLimit >= 0 &&
-      selectedTimes.size() > static_cast<uint64_t>(p.timeSamplesSizeLimit)) {
+      selectedTimes.size() > static_cast<uint64_t>(p.timeSamplesSizeLimit))
+  {
     return VtValue(SdfHumanReadableValue(TfStringPrintf("%zu samples in [%s, %s]",
                                                         times.size(),
                                                         TfStringify(*times.begin()).c_str(),
                                                         TfStringify(*(--times.end())).c_str())));
   }
-  else {
-    for (auto time : selectedTimes) {
+  else
+  {
+    for (auto time : selectedTimes)
+    {
       TF_VERIFY(layer->QueryTimeSample(path, time, &val));
       result[time] = GetReportValue(val, p);
     }
@@ -375,10 +414,12 @@ VtValue GetReportFieldValue(SdfLayerHandle const &layer,
 {
   VtValue result;
   // Handle timeSamples specially:
-  if (field == SdfFieldKeys->TimeSamples) {
+  if (field == SdfFieldKeys->TimeSamples)
+  {
     result = GetReportTimeSamplesValue(layer, path, p);
   }
-  else {
+  else
+  {
     TF_VERIFY(layer->HasField(path, field, &result));
     result = GetReportValue(result, p);
   }
@@ -390,19 +431,23 @@ void GetReportByPath(SdfLayerHandle const &layer, ReportParams const &p, std::ve
 {
   std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
   sort(paths.begin(), paths.end());
-  for (auto const &path : paths) {
+  for (auto const &path : paths)
+  {
     SdfSpecType specType = layer->GetSpecType(path);
     report.push_back(TfStringPrintf("<%s> : %s", path.GetText(), TfStringify(specType).c_str()));
 
     std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
     if (fields.empty())
       continue;
-    for (auto const &field : fields) {
-      if (p.showValues) {
+    for (auto const &field : fields)
+    {
+      if (p.showValues)
+      {
         report.push_back(TfStringPrintf(
           "  %s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str()));
       }
-      else {
+      else
+      {
         report.push_back(TfStringPrintf("  %s", field.GetText()));
       }
     }
@@ -416,17 +461,21 @@ void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, std::v
   std::unordered_map<std::string, std::vector<std::string>> pathsByFieldString;
   std::unordered_set<std::string> allFieldStrings;
   sort(paths.begin(), paths.end());
-  for (auto const &path : paths) {
+  for (auto const &path : paths)
+  {
     std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
     if (fields.empty())
       continue;
-    for (auto const &field : fields) {
+    for (auto const &field : fields)
+    {
       std::string fieldString;
-      if (p.showValues) {
+      if (p.showValues)
+      {
         fieldString = TfStringPrintf(
           "%s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str());
       }
-      else {
+      else
+      {
         fieldString = TfStringPrintf("%s", field.GetText());
       }
       pathsByFieldString[fieldString].push_back(TfStringPrintf("  <%s>", path.GetText()));
@@ -436,7 +485,8 @@ void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, std::v
   std::vector<std::string> fsvec(allFieldStrings.begin(), allFieldStrings.end());
   sort(fsvec.begin(), fsvec.end());
 
-  for (auto const &fs : fsvec) {
+  for (auto const &fs : fsvec)
+  {
     report.push_back(fs);
     auto const &ps = pathsByFieldString[fs];
     report.insert(report.end(), ps.begin(), ps.end());
@@ -473,18 +523,22 @@ void FilterLayer(SdfLayerHandle const &inLayer, SdfLayerHandle const &outLayer, 
                           const SdfPath &dstPath,
                           bool fieldInDst,
                           boost::optional<VtValue> *valueToCopy) {
-    if (!p.fieldMatcher || p.fieldMatcher->Match(field.GetString())) {
+    if (!p.fieldMatcher || p.fieldMatcher->Match(field.GetString()))
+    {
       *valueToCopy = GetReportFieldValue(srcLayer, srcPath, field, p);
       return !(*valueToCopy)->IsEmpty();
     }
-    else {
+    else
+    {
       return false;
     }
   };
 
   vector<SdfPath> paths = CollectMatchingSpecPaths(inLayer, p.pathMatcher.get());
-  for (auto const &path : paths) {
-    if (path == SdfPath::AbsoluteRootPath() || path.IsPrimOrPrimVariantSelectionPath()) {
+  for (auto const &path : paths)
+  {
+    if (path == SdfPath::AbsoluteRootPath() || path.IsPrimOrPrimVariantSelectionPath())
+    {
       SdfPrimSpecHandle outPrim = SdfCreatePrimInLayer(outLayer, path);
       SdfCopySpec(inLayer,
                   path,
@@ -518,14 +572,17 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
     paths.push_back(path);
   });
   sort(paths.begin(), paths.end());
-  for (auto const &path : paths) {
+  for (auto const &path : paths)
+  {
     TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
     vector<TfToken> fields = layer->ListFields(path);
     if (fields.empty())
       continue;
-    for (auto const &field : fields) {
+    for (auto const &field : fields)
+    {
       VtValue value;
-      if (field == SdfFieldKeys->TimeSamples) {
+      if (field == SdfFieldKeys->TimeSamples)
+      {
         // Pull each sample value individually.
         TF_DESCRIBE_SCOPE("Getting sample times for '%s' on <%s> in @%s@",
                           field.GetText(),
@@ -533,7 +590,8 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
                           layer->GetIdentifier().c_str());
         auto times = layer->ListTimeSamplesForPath(path);
 
-        for (auto time : times) {
+        for (auto time : times)
+        {
           TF_DESCRIBE_SCOPE(
             "Getting sample value at time "
             "%f for '%s' on <%s> in @%s@",
@@ -544,7 +602,8 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
           layer->QueryTimeSample(path, time, &value);
         }
       }
-      else {
+      else
+      {
         // Just pull value.
         TF_DESCRIBE_SCOPE("Getting value for '%s' on <%s> in @%s@",
                           field.GetText(),
@@ -559,23 +618,29 @@ void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report
 
 // Output helper struct.  Manages fclosing the file handle, and appending output
 // for multi-layer inputs.
-struct OutputFile {
-  struct Closer {
+struct OutputFile
+{
+  struct Closer
+  {
     void operator()(FILE *f) const
     {
-      if (f && f != stdout) {
+      if (f && f != stdout)
+      {
         fclose(f);
       }
     }
   };
   explicit OutputFile(ReportParams const &p)
   {
-    if (!p.outputFile.empty()) {
-      if (p.outputType != OutputLayer) {
+    if (!p.outputFile.empty())
+    {
+      if (p.outputType != OutputLayer)
+      {
         _file.reset(fopen(p.outputFile.c_str(), "a"));
       }
     }
-    else {
+    else
+    {
       _file.reset(stdout);
     }
   }
@@ -590,12 +655,14 @@ struct OutputFile {
 void Process(SdfLayerHandle layer, ReportParams const &p)
 {
   OutputFile output(p);
-  if (p.outputType == OutputValidity) {
+  if (p.outputType == OutputValidity)
+  {
     std::string validateText;
     Validate(layer, p, validateText);
     output.Write(TfStringPrintf("@%s@ - %s\n", layer->GetIdentifier().c_str(), validateText.c_str()));
   }
-  else if (p.outputType == OutputSummary) {
+  else if (p.outputType == OutputSummary)
+  {
     auto stats = GetSummaryStats(layer);
     output.Write(
       TfStringPrintf("@%s@\n"
@@ -608,32 +675,40 @@ void Process(SdfLayerHandle layer, ReportParams const &p)
                      stats.numFields,
                      stats.numSampleTimes));
   }
-  else if (p.outputType == OutputOutline) {
+  else if (p.outputType == OutputOutline)
+  {
     vector<string> report;
-    if (p.sortKey == SortByPath) {
+    if (p.sortKey == SortByPath)
+    {
       GetReportByPath(layer, p, report);
     }
-    else if (p.sortKey == SortByField) {
+    else if (p.sortKey == SortByField)
+    {
       GetReportByField(layer, p, report);
     }
     TfStringPrintf("@%s@\n", layer->GetIdentifier().c_str());
-    for (string const &line : report) {
+    for (string const &line : report)
+    {
       output.Write(line);
       output.Write("\n");
     }
   }
-  else if (p.outputType == OutputPseudoLayer || p.outputType == OutputLayer) {
+  else if (p.outputType == OutputPseudoLayer || p.outputType == OutputLayer)
+  {
     // Make the layer and copy into it, then export.
     SdfLayerRefPtr outputLayer;
     SdfFileFormatConstRefPtr fmt;
-    if (p.outputType == OutputPseudoLayer) {
+    if (p.outputType == OutputPseudoLayer)
+    {
       fmt = TfCreateRefPtr(
         new SdfFilterPseudoFileFormat(TfStringPrintf("from @%s@", layer->GetIdentifier().c_str())));
       outputLayer = SdfLayer::CreateAnonymous(".pseudosdf", fmt);
     }
-    else {
+    else
+    {
       SdfLayer::FileFormatArguments formatArgs;
-      if (!p.outputFormat.empty()) {
+      if (!p.outputFormat.empty())
+      {
         formatArgs["format"] = p.outputFormat;
       }
       outputLayer = !p.outputFile.empty() ?
@@ -646,12 +721,14 @@ void Process(SdfLayerHandle layer, ReportParams const &p)
     FilterLayer(layer, outputLayer, p);
 
     // If this layer is anonymous, it means we're writing to stdout.
-    if (outputLayer->IsAnonymous()) {
+    if (outputLayer->IsAnonymous())
+    {
       string txt;
       outputLayer->ExportToString(&txt);
       output.Write(txt);
     }
-    else {
+    else
+    {
       outputLayer->Save();
     }
   }
@@ -682,59 +759,39 @@ int main(int argc, char const *argv[])
   bool noValues = false;
 
   po::options_description argOpts("Options");
-  argOpts.add_options()
-        ("help,h", "Show help message.")
-        ("path,p", po::value<string>(&pathRegex)->value_name("regex"),
-         "Report only paths matching this regex.  For 'layer' and "
-         "'pseudoLayer' output types, include all descendants of matching "
-         "paths.")
-        ("field,f", po::value<string>(&fieldRegex)->value_name("regex"),
-         "Report only fields matching this regex.")
-        ("time,t", po::value<vector<string>>(&timeSpecs)->
-         multitoken()->value_name("n or ff..lf"),
-         "Report only these times or time ranges for 'timeSamples' fields.")
-        ("timeTolerance", po::value<double>(&timeTolerance)->
-         default_value(timeTolerance)->value_name("tol"),
-         "Report times that are close to those requested within this "
-         "relative tolerance.")
-        ("arraySizeLimit", po::value<int64_t>(&arraySizeLimit)->value_name("N"),
-         "Truncate arrays with more than this many elements.  If -1, do not "
-         "truncate arrays.  Default: 0 for 'outline' output, 8 for "
-         "'pseudoLayer' output, and -1 for 'layer' output.")
-        ("timeSamplesSizeLimit",
-         po::value<int64_t>(&timeSamplesSizeLimit)->value_name("N"),
-         "Truncate timeSamples with more than this many values.  If -1, do not "
-         "truncate timeSamples.  Default: 0 for 'outline' output, 8 for "
-         "'pseudoLayer' output, and -1 for 'layer' output.  Truncation "
-         "performed after initial filtering by --time arguments.")
-        ("out,o",
-         po::value<string>(&outputFile)->default_value(std::string())->
-         value_name("outputFile"),
-         "Direct output to this file.  Use the "
-         "'outputFormat' for finer control over the underlying format for "
-         "output formats that are not uniquely determined by file extension.")
-        ("outputType",
-         po::value<OutputType>(&outputType)->default_value(outputType)->
-         value_name("validity|summary|outline|pseudoLayer|layer"),
-         "Specify output format; 'summary' reports overall statistics, "
-         "'outline' is a flat text report of paths and fields, "
-         "'pseudoLayer' is similar to the sdf file format but with truncated "
-         "array values and timeSamples for human readability, and 'layer' is "
-         "true layer output, with the format controlled by the 'outputFile' "
-         "and 'outputFormat' arguments.")
-        ("outputFormat",
-         po::value<string>(&outputFormat)->value_name("format"),
-         "Supply this as the 'format' entry of SdfFileFormatArguments for "
-         "'layer' output to a file.  Requires both 'layer' output and a "
-         "specified 'outputFile'.")
-        ("sortBy", po::value<SortKey>(&sortKey)->default_value(sortKey)->
-         value_name("path|field"),
-         "Group 'outline' output by either path or field.  Ignored for other "
-         "output types.")
-        ("noValues", po::bool_switch(&noValues),
-         "Do not report field values for 'outline' output.  Ignored for other "
-         "output types.")
-        ;
+  argOpts.add_options()("help,h", "Show help message.")("path,p", po::value<string>(&pathRegex)->value_name("regex"),
+                                                        "Report only paths matching this regex.  For 'layer' and "
+                                                        "'pseudoLayer' output types, include all descendants of matching "
+                                                        "paths.")("field,f", po::value<string>(&fieldRegex)->value_name("regex"), "Report only fields matching this regex.")("time,t", po::value<vector<string>>(&timeSpecs)->multitoken()->value_name("n or ff..lf"), "Report only these times or time ranges for 'timeSamples' fields.")("timeTolerance", po::value<double>(&timeTolerance)->default_value(timeTolerance)->value_name("tol"),
+                                                                                                                                                                                                                                                                                                                                           "Report times that are close to those requested within this "
+                                                                                                                                                                                                                                                                                                                                           "relative tolerance.")("arraySizeLimit", po::value<int64_t>(&arraySizeLimit)->value_name("N"),
+                                                                                                                                                                                                                                                                                                                                                                  "Truncate arrays with more than this many elements.  If -1, do not "
+                                                                                                                                                                                                                                                                                                                                                                  "truncate arrays.  Default: 0 for 'outline' output, 8 for "
+                                                                                                                                                                                                                                                                                                                                                                  "'pseudoLayer' output, and -1 for 'layer' output.")("timeSamplesSizeLimit",
+                                                                                                                                                                                                                                                                                                                                                                                                                      po::value<int64_t>(&timeSamplesSizeLimit)->value_name("N"),
+                                                                                                                                                                                                                                                                                                                                                                                                                      "Truncate timeSamples with more than this many values.  If -1, do not "
+                                                                                                                                                                                                                                                                                                                                                                                                                      "truncate timeSamples.  Default: 0 for 'outline' output, 8 for "
+                                                                                                                                                                                                                                                                                                                                                                                                                      "'pseudoLayer' output, and -1 for 'layer' output.  Truncation "
+                                                                                                                                                                                                                                                                                                                                                                                                                      "performed after initial filtering by --time arguments.")("out,o",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                po::value<string>(&outputFile)->default_value(std::string())->value_name("outputFile"),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Direct output to this file.  Use the "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "'outputFormat' for finer control over the underlying format for "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "output formats that are not uniquely determined by file extension.")("outputType",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      po::value<OutputType>(&outputType)->default_value(outputType)->value_name("validity|summary|outline|pseudoLayer|layer"),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "Specify output format; 'summary' reports overall statistics, "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "'outline' is a flat text report of paths and fields, "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "'pseudoLayer' is similar to the sdf file format but with truncated "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "array values and timeSamples for human readability, and 'layer' is "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "true layer output, with the format controlled by the 'outputFile' "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "and 'outputFormat' arguments.")("outputFormat",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       po::value<string>(&outputFormat)->value_name("format"),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "Supply this as the 'format' entry of SdfFileFormatArguments for "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "'layer' output to a file.  Requires both 'layer' output and a "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "specified 'outputFile'.")("sortBy", po::value<SortKey>(&sortKey)->default_value(sortKey)->value_name("path|field"),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "Group 'outline' output by either path or field.  Ignored for other "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "output types.")("noValues", po::bool_switch(&noValues),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "Do not report field values for 'outline' output.  Ignored for other "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "output types.");
 
   po::options_description inputFile("Input");
   inputFile.add_options()("input-file", po::value<vector<string>>(&inputFiles), "input files");
@@ -743,18 +800,21 @@ int main(int argc, char const *argv[])
   allOpts.add(argOpts).add(inputFile);
 
   po::variables_map vm;
-  try {
+  try
+  {
     po::positional_options_description p;
     p.add("input-file", -1);
     po::store(po::command_line_parser(argc, argv).options(allOpts).positional(p).run(), vm);
     po::notify(vm);
     ParseTimes(timeSpecs, &literalTimes, &timeRanges);
   }
-  catch (std::exception const &e) {
+  catch (std::exception const &e)
+  {
     ErrExit("%s", e.what());
   }
 
-  if (vm.count("help") || inputFiles.empty()) {
+  if (vm.count("help") || inputFiles.empty())
+  {
     fprintf(stderr, "Usage: %s [options] <input files>\n", progName.c_str());
     fprintf(stderr, "%s\n", TfStringify(argOpts).c_str());
     exit(1);
@@ -762,13 +822,15 @@ int main(int argc, char const *argv[])
 
   std::shared_ptr<TfPatternMatcher> pathMatcher(pathRegex != ".*" ? new TfPatternMatcher(pathRegex) :
                                                                     nullptr);
-  if (pathMatcher && !pathMatcher->IsValid()) {
+  if (pathMatcher && !pathMatcher->IsValid())
+  {
     ErrExit("path regex '%s' : %s", pathRegex.c_str(), pathMatcher->GetInvalidReason().c_str());
   }
 
   std::shared_ptr<TfPatternMatcher> fieldMatcher(fieldRegex != ".*" ? new TfPatternMatcher(fieldRegex) :
                                                                       nullptr);
-  if (fieldMatcher && !fieldMatcher->IsValid()) {
+  if (fieldMatcher && !fieldMatcher->IsValid())
+  {
     ErrExit("field regex '%s' : %s", fieldRegex.c_str(), fieldMatcher->GetInvalidReason().c_str());
   }
 
@@ -777,26 +839,33 @@ int main(int argc, char const *argv[])
   // Sdf file format and we must have exactly one input file.  If the output
   // type is not 'layer', then the extension must not correspond to a known
   // Sdf file format.
-  if (!outputFile.empty()) {
-    if (TfIsFile(outputFile) && !TfIsWritable(outputFile)) {
+  if (!outputFile.empty())
+  {
+    if (TfIsFile(outputFile) && !TfIsWritable(outputFile))
+    {
       ErrExit("no write permission for existing output file '%s'", outputFile.c_str());
     }
     // Using --out With 'layer' outputType there must be exactly one input
     // file, and the output file must have a known Sdf file format.
-    if (outputType == OutputLayer) {
-      if (inputFiles.size() > 1) {
+    if (outputType == OutputLayer)
+    {
+      if (inputFiles.size() > 1)
+      {
         ErrExit(
           "must supply exactly one input file with "
           "'--outputType layer'");
       }
-      if (!SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile))) {
+      if (!SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile)))
+      {
         ErrExit("no known Sdf file format for output file '%s'", outputFile.c_str());
       }
     }
     // On the other hand, using --out with any other output type must not
     // correspond to an Sdf format.
-    if (outputType != OutputLayer) {
-      if (SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile))) {
+    if (outputType != OutputLayer)
+    {
+      if (SdfFileFormat::FindByExtension(TfStringGetSuffix(outputFile)))
+      {
         ErrExit(
           "output type '%s' does not produce content compatible "
           "with the format for output file '%s'",
@@ -807,18 +876,23 @@ int main(int argc, char const *argv[])
 
     // Truncate the output file to start.
     FILE *f = fopen(outputFile.c_str(), "w");
-    if (!f) {
+    if (!f)
+    {
       ErrExit("Failed to truncate output file '%s'", outputFile.c_str());
     }
     fclose(f);
   }
 
   // Set defaults for arraySizeLimit and timeSamplesSizeLimit.
-  if (arraySizeLimit == -2 /* unset */) {
-    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
+  if (arraySizeLimit == -2 /* unset */)
+  {
+    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
+                                                                                       0;
   }
-  if (timeSamplesSizeLimit == -2 /* unset */) {
-    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
+  if (timeSamplesSizeLimit == -2 /* unset */)
+  {
+    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
+                                                                                             0;
   }
 
   ReportParams params;
@@ -838,13 +912,16 @@ int main(int argc, char const *argv[])
   params.timeSamplesSizeLimit = timeSamplesSizeLimit;
   params.showValues = !noValues;
 
-  for (auto const &file : inputFiles) {
+  for (auto const &file : inputFiles)
+  {
     TF_DESCRIBE_SCOPE("Opening layer @%s@", file.c_str());
     auto layer = SdfLayer::FindOrOpen(file);
-    if (!layer) {
+    if (!layer)
+    {
       Err("failed to open layer <%s>", file.c_str());
     }
-    else {
+    else
+    {
       Process(layer, params);
     }
   }

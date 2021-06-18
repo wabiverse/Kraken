@@ -64,9 +64,14 @@ WABI_NAMESPACE_BEGIN
 ///   of the HgiBuffer has returned.</li>
 /// </ul>
 ///
-struct HgiBufferDesc {
+struct HgiBufferDesc
+{
   HGI_API
-  HgiBufferDesc() : usage(HgiBufferUsageUniform), byteSize(0), vertexStride(0), initialData(nullptr)
+  HgiBufferDesc()
+    : usage(HgiBufferUsageUniform),
+      byteSize(0),
+      vertexStride(0),
+      initialData(nullptr)
   {}
 
   std::string debugName;
@@ -90,7 +95,8 @@ inline bool operator!=(const HgiBufferDesc &lhs, const HgiBufferDesc &rhs);
 /// The fill the buffer with data you supply `initialData` in the descriptor.
 /// To update the data inside the buffer later on, use blitCmds.
 ///
-class HgiBuffer {
+class HgiBuffer
+{
  public:
   HGI_API
   virtual ~HgiBuffer();

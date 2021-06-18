@@ -39,7 +39,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 ///
 /// List editor implementation for sublayer path lists.
 ///
-class Sdf_SubLayerListEditor : public Sdf_VectorListEditor<SdfSubLayerTypePolicy> {
+class Sdf_SubLayerListEditor : public Sdf_VectorListEditor<SdfSubLayerTypePolicy>
+{
  public:
   Sdf_SubLayerListEditor(const SdfLayerHandle &owner);
 

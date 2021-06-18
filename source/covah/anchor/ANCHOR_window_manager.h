@@ -30,7 +30,8 @@
 
 /**
  * Manages system windows (platform independent implementation). */
-class ANCHOR_WindowManager {
+class ANCHOR_WindowManager
+{
  public:
   /**
    * Constructor.

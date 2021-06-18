@@ -48,7 +48,8 @@ GlfGLRawContextSharedPtr GlfGLRawContext::New(const GarchGLPlatformContextState 
   return GlfGLRawContextSharedPtr(new GlfGLRawContext(state));
 }
 
-GlfGLRawContext::GlfGLRawContext(const GarchGLPlatformContextState &state) : _state(state)
+GlfGLRawContext::GlfGLRawContext(const GarchGLPlatformContextState &state)
+  : _state(state)
 {
   // Do nothing
 }
@@ -75,7 +76,8 @@ bool GlfGLRawContext::_IsSharing(const GlfGLContextSharedPtr &rhs) const
 
 bool GlfGLRawContext::_IsEqual(const GlfGLContextSharedPtr &rhs) const
 {
-  if (const GlfGLRawContext *rhsRaw = dynamic_cast<const GlfGLRawContext *>(rhs.get())) {
+  if (const GlfGLRawContext *rhsRaw = dynamic_cast<const GlfGLRawContext *>(rhs.get()))
+  {
     return _state == rhsRaw->_state;
   }
   return false;

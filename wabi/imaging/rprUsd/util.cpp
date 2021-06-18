@@ -24,9 +24,11 @@ TF_DEFINE_PRIVATE_TOKENS(RprUsdUDIMTags, ((arnoldTag, "<UDIM>"))((sidefxTag, "%(
 
 bool RprUsdGetUDIMFormatString(std::string const &filepath, std::string *out_formatString)
 {
-  for (auto &udimTag : RprUsdUDIMTags->allTokens) {
+  for (auto &udimTag : RprUsdUDIMTags->allTokens)
+  {
     auto idx = filepath.rfind(udimTag.GetString());
-    if (idx != std::string::npos) {
+    if (idx != std::string::npos)
+    {
       *out_formatString = filepath;
       out_formatString->replace(idx, udimTag.size(), "%i");
       return true;
@@ -119,7 +121,8 @@ std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &fil
 {
   auto ret = std::make_unique<RprUsdTextureData>();
   auto hioImage = HioImage::OpenForReading(filepath);
-  if (!hioImage) {
+  if (!hioImage)
+  {
     return nullptr;
   }
 
@@ -134,7 +137,8 @@ std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &fil
   ret->_data = std::make_unique<uint8_t[]>(dataSize);
   ret->_hioStorageSpec.data = ret->_data.get();
 
-  if (!hioImage->Read(ret->_hioStorageSpec)) {
+  if (!hioImage->Read(ret->_hioStorageSpec))
+  {
     return nullptr;
   }
 
@@ -168,7 +172,8 @@ std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &fil
   auto ret = std::make_unique<RprUsdTextureData>();
 
   ret->_uvTextureData = GlfUVTextureData::New(filepath, INT_MAX, 0, 0, 0, 0);
-  if (!ret->_uvTextureData || !ret->_uvTextureData->Read(0, false)) {
+  if (!ret->_uvTextureData || !ret->_uvTextureData->Read(0, false))
+  {
     return nullptr;
   }
 

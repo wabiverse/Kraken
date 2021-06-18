@@ -46,7 +46,8 @@ WABI_NAMESPACE_BEGIN
  * ---------------------------------------------------------------------
  */
 
-enum eSceneDrawMode {
+enum eSceneDrawMode
+{
   DRAW_POINTS,
   DRAW_WIREFRAME,
   DRAW_WIREFRAME_ON_SURFACE,
@@ -57,7 +58,8 @@ enum eSceneDrawMode {
   DRAW_GEOM_SMOOTH
 };
 
-enum eSceneCullStyle {
+enum eSceneCullStyle
+{
   CULL_STYLE_NO_OPINION,
   CULL_STYLE_NOTHING,
   CULL_STYLE_BACK,
@@ -75,7 +77,8 @@ enum eSceneCullStyle {
  * shift+a.
  */
 
-enum eScenePrimitives {
+enum eScenePrimitives
+{
   MESH_CUBE = 0,
   MESH_SPHERE,
   MESH_GRID,
@@ -93,7 +96,8 @@ enum eScenePrimitives {
  * from the plugins directory.
  */
 
-enum eSceneRenderEngine {
+enum eSceneRenderEngine
+{
   ENGINE_PHOENIX = 0,
   ENGINE_ARNOLD,
   ENGINE_EMBREE,
@@ -102,9 +106,14 @@ enum eSceneRenderEngine {
   ENGINE_MAX,
 };
 
-enum eSceneLoadSet { SCENE_LOAD_ALL, SCENE_LOAD_NONE };
+enum eSceneLoadSet
+{
+  SCENE_LOAD_ALL,
+  SCENE_LOAD_NONE
+};
 
-struct CovahScene : public CovahObject {
+struct CovahScene : public CovahObject
+{
 
   /** This scenes active stage. */
   UsdStageRefPtr stage;

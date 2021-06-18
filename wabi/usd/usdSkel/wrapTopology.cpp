@@ -42,7 +42,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 tuple _Validate(const UsdSkelTopology &self)
 {

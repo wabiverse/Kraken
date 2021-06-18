@@ -39,19 +39,27 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T, bool AS_REF_PTR> struct Tf_TypeFactoryType {
-  struct FactoryType : public TfType::FactoryBase {
+template<typename T, bool AS_REF_PTR>
+struct Tf_TypeFactoryType
+{
+  struct FactoryType : public TfType::FactoryBase
+  {
     TfRefPtr<T> New()
     {
       return T::New();
     }
   };
 };
-template<class T> struct TfTest_RefPtrFactory {
+template<class T>
+struct TfTest_RefPtrFactory
+{
 };
 
-template<typename T> struct Tf_TypeFactoryType<T, false> {
-  struct FactoryType : public TfType::FactoryBase {
+template<typename T>
+struct Tf_TypeFactoryType<T, false>
+{
+  struct FactoryType : public TfType::FactoryBase
+  {
     T *New()
     {
       return new T;
@@ -60,7 +68,9 @@ template<typename T> struct Tf_TypeFactoryType<T, false> {
 };
 
 // Make the type actually manufacturable.
-template<typename T, bool MANUFACTURABLE> struct Tf_MakeTypeManufacturable {
+template<typename T, bool MANUFACTURABLE>
+struct Tf_MakeTypeManufacturable
+{
   static void Doit(TfType t)
   {
     typedef typename Tf_TypeFactoryType<T, TF_SUPPORTS_REFPTR(T)>::FactoryType FT;
@@ -69,7 +79,9 @@ template<typename T, bool MANUFACTURABLE> struct Tf_MakeTypeManufacturable {
 };
 
 // Don't make it manufacturable.
-template<typename T> struct Tf_MakeTypeManufacturable<T, false> {
+template<typename T>
+struct Tf_MakeTypeManufacturable<T, false>
+{
   static void Doit(TfType)
   {}
 };

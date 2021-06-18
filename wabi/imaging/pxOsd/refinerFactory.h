@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 
 typedef std::shared_ptr<class OpenSubdiv::Far::TopologyRefiner> PxOsdTopologyRefinerSharedPtr;
 
-class PxOsdRefinerFactory {
+class PxOsdRefinerFactory
+{
 
  public:
   /// Returns an OpenSubdiv TopologyRefiner

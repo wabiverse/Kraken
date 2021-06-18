@@ -49,7 +49,8 @@
 WABI_NAMESPACE_BEGIN
 
 /// Utility class for handling Render Passes.
-class HdArnoldRenderPass : public HdRenderPass {
+class HdArnoldRenderPass : public HdRenderPass
+{
  public:
   /// Constructor for HdArnoldRenderPass.
   ///
@@ -105,9 +106,10 @@ class HdArnoldRenderPass : public HdRenderPass {
   AtNode *_camera = nullptr;                ///< Pointer to the Arnold Camera.
   AtNode *_defaultFilter = nullptr;         ///< Pointer to the default Arnold Filter.
   AtNode *_closestFilter = nullptr;         ///< Pointer to the closest Arnold Filter.
-  AtNode *_mainDriver = nullptr;  ///< Pointer to the Arnold Driver writing color, position and depth.
+  AtNode *_mainDriver = nullptr;            ///< Pointer to the Arnold Driver writing color, position and depth.
 
-  struct DeepRenderVar {
+  struct DeepRenderVar
+  {
     /// Definition for the output string.
     AtString output;
     /// Optional writer node for each AOV.
@@ -117,7 +119,8 @@ class HdArnoldRenderPass : public HdRenderPass {
   };
 
   // Each deep driver handles multiple AOVs.
-  struct DeepProduct {
+  struct DeepProduct
+  {
     /// List of the RenderVars.
     std::vector<DeepRenderVar> renderVars;
     /// Deep EXR driver.

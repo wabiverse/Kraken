@@ -57,7 +57,8 @@ UsdVolOpenVDBAsset::~UsdVolOpenVDBAsset()
 /* static */
 UsdVolOpenVDBAsset UsdVolOpenVDBAsset::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolOpenVDBAsset();
   }
@@ -68,7 +69,8 @@ UsdVolOpenVDBAsset UsdVolOpenVDBAsset::Get(const UsdStagePtr &stage, const SdfPa
 UsdVolOpenVDBAsset UsdVolOpenVDBAsset::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("OpenVDBAsset");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolOpenVDBAsset();
   }
@@ -138,7 +140,8 @@ UsdAttribute UsdVolOpenVDBAsset::CreateFieldClassAttr(VtValue const &defaultValu
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

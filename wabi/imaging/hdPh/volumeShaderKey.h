@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct HdPh_VolumeShaderKey : public HdPh_ShaderKey {
+struct HdPh_VolumeShaderKey : public HdPh_ShaderKey
+{
   HdPh_VolumeShaderKey();
   ~HdPh_VolumeShaderKey();
 

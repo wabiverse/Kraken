@@ -38,11 +38,13 @@ class UsdPrim;
 ///
 /// Adapter class for lights of type PluginLightFilter
 ///
-class UsdImagingPluginLightFilterAdapter : public UsdImagingLightFilterAdapter {
+class UsdImagingPluginLightFilterAdapter : public UsdImagingLightFilterAdapter
+{
  public:
   typedef UsdImagingLightFilterAdapter BaseAdapter;
 
-  UsdImagingPluginLightFilterAdapter() : UsdImagingLightFilterAdapter()
+  UsdImagingPluginLightFilterAdapter()
+    : UsdImagingLightFilterAdapter()
   {}
 
   USDIMAGING_API

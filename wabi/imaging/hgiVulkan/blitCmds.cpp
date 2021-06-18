@@ -42,7 +42,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanBlitCmds::HgiVulkanBlitCmds(HgiVulkan *hgi) : _hgi(hgi), _commandBuffer(nullptr)
+HgiVulkanBlitCmds::HgiVulkanBlitCmds(HgiVulkan *hgi)
+  : _hgi(hgi),
+    _commandBuffer(nullptr)
 {
   // We do not acquire the command buffer here, because the Cmds object may
   // have been created on the main thread, but used on a secondary thread.
@@ -70,11 +72,13 @@ void HgiVulkanBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
 
   HgiVulkanTexture *srcTexture = static_cast<HgiVulkanTexture *>(copyOp.gpuSourceTexture.Get());
 
-  if (!TF_VERIFY(srcTexture && srcTexture->GetImage(), "Invalid texture handle")) {
+  if (!TF_VERIFY(srcTexture && srcTexture->GetImage(), "Invalid texture handle"))
+  {
     return;
   }
 
-  if (copyOp.destinationBufferByteSize == 0) {
+  if (copyOp.destinationBufferByteSize == 0)
+  {
     TF_WARN("The size of the data to copy was zero (aborted)");
     return;
   }
@@ -166,7 +170,8 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
   // was created, we can skip the memcpy since the src and dst buffer are
   // the same and dst staging buffer already contains the desired data.
   // See also: HgiVulkanTexture::GetCPUStagingAddress.
-  if (!dstTexture->IsCPUStagingAddress(copyOp.cpuSourceBuffer)) {
+  if (!dstTexture->IsCPUStagingAddress(copyOp.cpuSourceBuffer))
+  {
 
     // We need to memcpy at the mip's location in the staging buffer.
     // It is possible we CopyTextureCpuToGpu a bunch of mips in a row
@@ -175,7 +180,8 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
     const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
       texDesc.format, texDesc.dimensions, 1 /*HgiTextureCpuToGpuOp does one layer at a time*/);
 
-    if (mipInfos.size() > copyOp.mipLevel) {
+    if (mipInfos.size() > copyOp.mipLevel)
+    {
       HgiMipInfo const &mipInfo = mipInfos[copyOp.mipLevel];
 
       uint8_t *dst = static_cast<uint8_t *>(dstTexture->GetCPUStagingAddress());
@@ -189,7 +195,8 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
 
   // Schedule transfer from staging buffer to device-local texture
   HgiVulkanBuffer *stagingBuffer = dstTexture->GetStagingBuffer();
-  if (TF_VERIFY(stagingBuffer, "Invalid staging buffer for texture")) {
+  if (TF_VERIFY(stagingBuffer, "Invalid staging buffer for texture"))
+  {
     dstTexture->CopyBufferToTexture(
       _commandBuffer, dstTexture->GetStagingBuffer(), copyOp.destinationTexelOffset, copyOp.mipLevel);
   }
@@ -202,18 +209,21 @@ void HgiVulkanBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
   HgiBufferHandle const &srcBufHandle = copyOp.gpuSourceBuffer;
   HgiVulkanBuffer *srcBuffer = static_cast<HgiVulkanBuffer *>(srcBufHandle.Get());
 
-  if (!TF_VERIFY(srcBuffer && srcBuffer->GetVulkanBuffer(), "Invalid source buffer handle")) {
+  if (!TF_VERIFY(srcBuffer && srcBuffer->GetVulkanBuffer(), "Invalid source buffer handle"))
+  {
     return;
   }
 
   HgiBufferHandle const &dstBufHandle = copyOp.gpuDestinationBuffer;
   HgiVulkanBuffer *dstBuffer = static_cast<HgiVulkanBuffer *>(dstBufHandle.Get());
 
-  if (!TF_VERIFY(dstBuffer && dstBuffer->GetVulkanBuffer(), "Invalid destination buffer handle")) {
+  if (!TF_VERIFY(dstBuffer && dstBuffer->GetVulkanBuffer(), "Invalid destination buffer handle"))
+  {
     return;
   }
 
-  if (copyOp.byteSize == 0) {
+  if (copyOp.byteSize == 0)
+  {
     TF_WARN("The size of the data to copy was zero (aborted)");
     return;
   }
@@ -235,7 +245,8 @@ void HgiVulkanBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 {
   _CreateCommandBuffer();
 
-  if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer) {
+  if (copyOp.byteSize == 0 || !copyOp.cpuSourceBuffer || !copyOp.gpuDestinationBuffer)
+  {
     return;
   }
 
@@ -246,7 +257,8 @@ void HgiVulkanBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   // the same and dst staging buffer already contains the desired data.
   // See also: HgiBuffer::GetCPUStagingAddress.
   if (!buffer->IsCPUStagingAddress(copyOp.cpuSourceBuffer) ||
-      copyOp.sourceByteOffset != copyOp.destinationByteOffset) {
+      copyOp.sourceByteOffset != copyOp.destinationByteOffset)
+  {
 
     uint8_t *dst = static_cast<uint8_t *>(buffer->GetCPUStagingAddress());
     size_t dstOffset = copyOp.destinationByteOffset;
@@ -261,7 +273,8 @@ void HgiVulkanBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   // Schedule copy data from staging buffer to device-local buffer.
   HgiVulkanBuffer *stagingBuffer = buffer->GetStagingBuffer();
 
-  if (TF_VERIFY(stagingBuffer)) {
+  if (TF_VERIFY(stagingBuffer))
+  {
     VkBufferCopy copyRegion = {};
     copyRegion.srcOffset = copyOp.sourceByteOffset;
     copyRegion.dstOffset = copyOp.destinationByteOffset;
@@ -279,7 +292,8 @@ void HgiVulkanBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
 {
   _CreateCommandBuffer();
 
-  if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer) {
+  if (copyOp.byteSize == 0 || !copyOp.cpuDestinationBuffer || !copyOp.gpuSourceBuffer)
+  {
     return;
   }
 
@@ -288,7 +302,8 @@ void HgiVulkanBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
   // Make sure there is a staging buffer in the buffer by asking for cpuAddr.
   void *cpuAddress = buffer->GetCPUStagingAddress();
   HgiVulkanBuffer *stagingBuffer = buffer->GetStagingBuffer();
-  if (!TF_VERIFY(stagingBuffer)) {
+  if (!TF_VERIFY(stagingBuffer))
+  {
     return;
   }
 
@@ -340,7 +355,8 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
   int32_t width = desc.dimensions[0];
   int32_t height = desc.dimensions[1];
 
-  if (desc.layerCount > 1) {
+  if (desc.layerCount > 1)
+  {
     TF_CODING_ERROR("Missing implementation generating mips for layers");
   }
 
@@ -348,7 +364,8 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
   VkFormatProperties formatProps;
   vkGetPhysicalDeviceFormatProperties(device->GetVulkanPhysicalDevice(), format, &formatProps);
   if (!(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) ||
-      !(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
+      !(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT))
+  {
     TF_CODING_ERROR(
       "Texture format does not support "
       "blit source and destination");
@@ -366,7 +383,8 @@ void HgiVulkanBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
                                            0);
 
   // Copy down the whole mip chain doing a blit from mip-1 to mip
-  for (uint32_t i = 1; i < desc.mipLevels; i++) {
+  for (uint32_t i = 1; i < desc.mipLevels; i++)
+  {
     VkImageBlit imageBlit{};
 
     // Source
@@ -439,7 +457,8 @@ HgiVulkanCommandBuffer *HgiVulkanBlitCmds::GetCommandBuffer()
 
 bool HgiVulkanBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
-  if (!_commandBuffer) {
+  if (!_commandBuffer)
+  {
     return false;
   }
 
@@ -454,7 +473,8 @@ bool HgiVulkanBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 
 void HgiVulkanBlitCmds::_CreateCommandBuffer()
 {
-  if (!_commandBuffer) {
+  if (!_commandBuffer)
+  {
     HgiVulkanDevice *device = _hgi->GetPrimaryDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
     _commandBuffer = queue->AcquireCommandBuffer();

@@ -42,7 +42,8 @@ WABI_NAMESPACE_BEGIN
 /// List of changes to prototype prims due to the discovery of new
 /// or destroyed instanceable prim indexes.
 ///
-class Usd_InstanceChanges {
+class Usd_InstanceChanges
+{
  public:
   void AppendChanges(const Usd_InstanceChanges &c)
   {
@@ -110,7 +111,8 @@ class Usd_InstanceChanges {
 /// using prim index".  For example GetPrototypeUsingPrimIndexPath() finds the
 /// prototype using the given prim index path as its source, if there is one.
 ///
-class Usd_InstanceCache {
+class Usd_InstanceCache
+{
   Usd_InstanceCache(Usd_InstanceCache const &) = delete;
   Usd_InstanceCache &operator=(Usd_InstanceCache const &) = delete;
 

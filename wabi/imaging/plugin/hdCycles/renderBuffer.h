@@ -36,7 +36,8 @@ class HdCyclesRenderDelegate;
  * This handles 2d images for render output.
  *
  */
-class HdCyclesRenderBuffer : public HdRenderBuffer {
+class HdCyclesRenderBuffer : public HdRenderBuffer
+{
  public:
   /**
    * @brief Construct a new HdCycles Render Buffer object

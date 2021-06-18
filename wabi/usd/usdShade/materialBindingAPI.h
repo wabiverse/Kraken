@@ -148,7 +148,8 @@ class SdfAssetPath;
 /// <i>authored</i> properties.
 ///
 ///
-class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase {
+class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -164,13 +165,15 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase {
   /// Equivalent to UsdShadeMaterialBindingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeMaterialBindingAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim)
+  explicit UsdShadeMaterialBindingAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
   {}
 
   /// Construct a UsdShadeMaterialBindingAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeMaterialBindingAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeMaterialBindingAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
+  explicit UsdShadeMaterialBindingAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -289,7 +292,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase {
 
   /// \class DirectBinding
   /// This class represents a direct material binding.
-  class DirectBinding {
+  class DirectBinding
+  {
    public:
     /// Default constructor initializes a DirectBinding object with
     /// invalid material and bindingRel data members.
@@ -337,7 +341,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase {
   /// \class CollectionBinding
   /// This struct is used to represent a collection-based material binding,
   /// which contains two objects - a collection and a bound material.
-  class CollectionBinding {
+  class CollectionBinding
+  {
    public:
     /// Default constructor initializes a CollectionBinding object with
     /// invalid collection, material and bindingRel data members.
@@ -648,7 +653,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase {
   /// Alias for a unique_ptr to a DirectBinding object.
   using DirectBindingPtr = std::unique_ptr<DirectBinding>;
 
-  struct BindingsAtPrim {
+  struct BindingsAtPrim
+  {
     /// Inspects all the material:binding* properties on the \p prim and
     /// computes direct and collection-based bindings for the given
     /// value of \p materialPurpose.

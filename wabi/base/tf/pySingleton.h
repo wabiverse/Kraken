@@ -45,30 +45,35 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace Tf_PySingleton {
+namespace Tf_PySingleton
+{
 
 namespace bp = boost::python;
 
 TF_API
 bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
 
-template<class T> TfWeakPtr<T> GetWeakPtr(T &t)
+template<class T>
+TfWeakPtr<T> GetWeakPtr(T &t)
 {
   return TfCreateWeakPtr(&t);
 }
 
-template<class T> TfWeakPtr<T> GetWeakPtr(T const &t)
+template<class T>
+TfWeakPtr<T> GetWeakPtr(T const &t)
 {
   // cast away constness for python...
   return TfConst_cast<TfWeakPtr<T>>(TfCreateWeakPtr(&t));
 }
 
-template<class T> TfWeakPtr<T> GetWeakPtr(TfWeakPtr<T> const &t)
+template<class T>
+TfWeakPtr<T> GetWeakPtr(TfWeakPtr<T> const &t)
 {
   return t;
 }
 
-template<typename PtrType> PtrType _GetSingletonWeakPtr(bp::object const & /* classObj */)
+template<typename PtrType>
+PtrType _GetSingletonWeakPtr(bp::object const & /* classObj */)
 {
   typedef typename PtrType::DataType Singleton;
   return GetWeakPtr(Singleton::GetInstance());
@@ -77,12 +82,15 @@ template<typename PtrType> PtrType _GetSingletonWeakPtr(bp::object const & /* cl
 TF_API
 std::string _Repr(bp::object const &self, std::string const &prefix);
 
-struct Visitor : bp::def_visitor<Visitor> {
-  explicit Visitor(std::string const &reprPrefix = std::string()) : _reprPrefix(reprPrefix)
+struct Visitor : bp::def_visitor<Visitor>
+{
+  explicit Visitor(std::string const &reprPrefix = std::string())
+    : _reprPrefix(reprPrefix)
   {}
 
   friend class bp::def_visitor_access;
-  template<typename CLS> void visit(CLS &c) const
+  template<typename CLS>
+  void visit(CLS &c) const
   {
     typedef typename CLS::metadata::held_type PtrType;
 

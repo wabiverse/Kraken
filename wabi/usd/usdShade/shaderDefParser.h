@@ -39,7 +39,8 @@ class UsdStageCache;
 /// Parses shader definitions represented using USD scene description using the
 /// schemas provided by UsdShade.
 ///
-class UsdShadeShaderDefParserPlugin : public NdrParserPlugin {
+class UsdShadeShaderDefParserPlugin : public NdrParserPlugin
+{
  public:
   USDSHADE_API
   UsdShadeShaderDefParserPlugin() = default;

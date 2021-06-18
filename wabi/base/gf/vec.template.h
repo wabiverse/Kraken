@@ -76,13 +76,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-class {
+class
+{
   {
     VEC
   }
 };
 
-template<> struct GfIsGfVec<class {{VEC}}> {
+template<>
+struct GfIsGfVec<class {{VEC}}>
+{
   static const bool value = true;
 };
 
@@ -94,7 +97,8 @@ template<> struct GfIsGfVec<class {{VEC}}> {
 /// Represents a vector of {{ DIM }} components of type \c {{ SCL }}.
 /// It is intended to be fast and simple.
 ///
-class {
+class
+{
   {
     VEC
   }
@@ -124,11 +128,14 @@ class {
   {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr {{VEC}}({{LIST(SCL + " s%(i)s")}}) : _data{{{LIST("s%(i)s")}}}
+  constexpr {{VEC}}({{LIST(SCL + " s%(i)s")}})
+    : _data{{{LIST("s%(i)s")}}}
   {}
 
   /// Construct with pointer to values.
-  template<class Scl> constexpr explicit {{VEC}}(Scl const *p) : _data{{{LIST("p[%(i)s]")}}} {}
+  template<class Scl>
+  constexpr explicit {{VEC}}(Scl const *p)
+    : _data{{{LIST("p[%(i)s]")}}} {}
   {
     % if IS_FLOATING_POINT (SCL) %
   }

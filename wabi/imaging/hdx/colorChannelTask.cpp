@@ -52,14 +52,17 @@ void HdxColorChannelTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, H
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_compositor) {
+  if (!_compositor)
+  {
     _compositor = std::make_unique<HdxFullscreenShader>(_GetHgi(), "ColorChannel");
   }
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
+  {
     HdxColorChannelTaskParams params;
 
-    if (_GetTaskParams(delegate, &params)) {
+    if (_GetTaskParams(delegate, &params))
+    {
       _channel = params.channel;
     }
   }
@@ -93,7 +96,8 @@ void HdxColorChannelTask::Execute(HdTaskContext *ctx)
   _compositor->SetProgram(HdxPackageColorChannelShader(), _tokens->colorChannelFrag, fragDesc);
   const auto &aovDesc = aovTexture->GetDescriptor();
   if (_UpdateParameterBuffer(static_cast<float>(aovDesc.dimensions[0]),
-                             static_cast<float>(aovDesc.dimensions[1]))) {
+                             static_cast<float>(aovDesc.dimensions[1])))
+  {
     size_t byteSize = sizeof(_ParameterBuffer);
     _compositor->SetShaderConstants(byteSize, &_parameterData);
   }
@@ -112,7 +116,8 @@ bool HdxColorChannelTask::_UpdateParameterBuffer(float screenSizeX, float screen
   // (see the `#define CHANNEL_*` lines in the shader).
   // If _channel contains an invalid entry the shader will return 'color'.
   int i = 0;
-  for (const TfToken &channelToken : HdxColorChannelTokens->allTokens) {
+  for (const TfToken &channelToken : HdxColorChannelTokens->allTokens)
+  {
     if (channelToken == _channel)
       break;
     ++i;
@@ -122,7 +127,8 @@ bool HdxColorChannelTask::_UpdateParameterBuffer(float screenSizeX, float screen
   pb.screenSize[1] = screenSizeY;
 
   // All data is still the same, no need to update the storage buffer
-  if (pb == _parameterData) {
+  if (pb == _parameterData)
+  {
     return false;
   }
 

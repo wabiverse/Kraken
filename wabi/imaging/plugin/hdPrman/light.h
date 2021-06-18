@@ -37,7 +37,8 @@ struct HdPrman_Context;
 ///
 /// A representation for lights.
 ///
-class HdPrmanLight final : public HdLight {
+class HdPrmanLight final : public HdLight
+{
  public:
   HdPrmanLight(SdfPath const &id, TfToken const &lightType);
   virtual ~HdPrmanLight();

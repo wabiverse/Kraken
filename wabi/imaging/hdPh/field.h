@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Represents a Field Buffer Prim.
 ///
-class HdPhField : public HdField {
+class HdPhField : public HdField
+{
  public:
   /// For now, only fieldType HdPhTokens->openvdbAsset is supported.
   HDPH_API

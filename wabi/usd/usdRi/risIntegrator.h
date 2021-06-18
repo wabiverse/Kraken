@@ -65,7 +65,8 @@ class SdfAssetPath;
 ///
 /// Integrator. Only one can be declared in a rib scene.
 ///
-class UsdRiRisIntegrator : public UsdTyped {
+class UsdRiRisIntegrator : public UsdTyped
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -81,13 +82,15 @@ class UsdRiRisIntegrator : public UsdTyped {
   /// Equivalent to UsdRiRisIntegrator::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRisIntegrator(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim)
+  explicit UsdRiRisIntegrator(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
   {}
 
   /// Construct a UsdRiRisIntegrator on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRisIntegrator(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRisIntegrator(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj)
+  explicit UsdRiRisIntegrator(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
   {}
 
   /// Destructor.

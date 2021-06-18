@@ -57,7 +57,8 @@ UsdLuxDiskLight::~UsdLuxDiskLight()
 /* static */
 UsdLuxDiskLight UsdLuxDiskLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDiskLight();
   }
@@ -68,7 +69,8 @@ UsdLuxDiskLight UsdLuxDiskLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxDiskLight UsdLuxDiskLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("DiskLight");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDiskLight();
   }
@@ -122,7 +124,8 @@ UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue, bool
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;

@@ -142,7 +142,8 @@ TF_DECLARE_PUBLIC_TOKENS(HioGlslfxTokens, HIO_API, HIO_GLSLFX_TOKENS);
 /// }
 /// \endcode
 ///
-class HioGlslfx {
+class HioGlslfx
+{
  public:
   /// Create an invalid glslfx object
   HIO_API
@@ -226,12 +227,16 @@ class HioGlslfx {
   static std::vector<std::string> ExtractImports(const std::string &filename);
 
  private:
-  class _ParseContext {
+  class _ParseContext
+  {
    public:
     _ParseContext()
     {}
 
-    _ParseContext(std::string const &filePath) : filename(filePath), lineNo(0), version(-1.0)
+    _ParseContext(std::string const &filePath)
+      : filename(filePath),
+        lineNo(0),
+        version(-1.0)
     {}
 
     std::string filename;

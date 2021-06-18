@@ -43,7 +43,8 @@ class PcpLayerStackSite;
 ///
 /// A site specifies a path in a layer stack of scene description.
 ///
-class PcpSite : boost::totally_ordered<PcpSite> {
+class PcpSite : boost::totally_ordered<PcpSite>
+{
  public:
   PcpLayerStackIdentifier layerStackIdentifier;
   SdfPath path;
@@ -66,7 +67,8 @@ class PcpSite : boost::totally_ordered<PcpSite> {
   PCP_API
   bool operator<(const PcpSite &rhs) const;
 
-  struct Hash {
+  struct Hash
+  {
     PCP_API
     size_t operator()(const PcpSite &) const;
   };
@@ -77,7 +79,8 @@ class PcpSite : boost::totally_ordered<PcpSite> {
 /// A "string-based" version of PcpSite.  This stores layer identifiers as
 /// strings rather than SdfLayerHandles, making it stable wrt layer lifetimes.
 ///
-class PcpSiteStr : boost::totally_ordered<PcpSiteStr> {
+class PcpSiteStr : boost::totally_ordered<PcpSiteStr>
+{
  public:
   PcpLayerStackIdentifierStr layerStackIdentifierStr;
   SdfPath path;
@@ -102,7 +105,8 @@ class PcpSiteStr : boost::totally_ordered<PcpSiteStr> {
   PCP_API
   bool operator<(const PcpSiteStr &rhs) const;
 
-  struct Hash {
+  struct Hash
+  {
     PCP_API
     size_t operator()(const PcpSiteStr &) const;
   };
@@ -112,7 +116,8 @@ class PcpSiteStr : boost::totally_ordered<PcpSiteStr> {
 ///
 /// A site specifies a path in a layer stack of scene description.
 ///
-class PcpLayerStackSite : boost::totally_ordered<PcpLayerStackSite> {
+class PcpLayerStackSite : boost::totally_ordered<PcpLayerStackSite>
+{
  public:
   PcpLayerStackRefPtr layerStack;
   SdfPath path;
@@ -129,7 +134,8 @@ class PcpLayerStackSite : boost::totally_ordered<PcpLayerStackSite> {
   PCP_API
   bool operator<(const PcpLayerStackSite &rhs) const;
 
-  struct Hash {
+  struct Hash
+  {
     PCP_API
     size_t operator()(const PcpLayerStackSite &) const;
   };

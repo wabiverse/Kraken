@@ -33,7 +33,8 @@ class HdRprDiagnosticMgrDelegate;
 class HdRprRenderParam;
 class HdRprApi;
 
-class HdRprDelegate final : public HdRenderDelegate {
+class HdRprDelegate final : public HdRenderDelegate
+{
  public:
   HdRprDelegate(HdRenderSettingsMap const &renderSettings);
   ~HdRprDelegate() override;

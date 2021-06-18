@@ -49,7 +49,8 @@ class HdRprim;
 /// A small bit of state attached to each bit of prototype geometry in embree,
 /// for the benefit of HdEmbreeRenderer::_TraceRay.
 ///
-struct HdEmbreePrototypeContext {
+struct HdEmbreePrototypeContext
+{
   /// A pointer back to the owning HdEmbree rprim.
   HdRprim *rprim;
   /// A name-indexed map of primvar samplers.
@@ -64,7 +65,8 @@ struct HdEmbreePrototypeContext {
 /// A small bit of state attached to each bit of instanced geometry in embree,
 /// for the benefit of HdEmbreeRenderer::_TraceRay.
 ///
-struct HdEmbreeInstanceContext {
+struct HdEmbreeInstanceContext
+{
   /// The object-to-world transform, for transforming normals to worldspace.
   GfMatrix4f objectToWorldMatrix;
   /// The scene the prototype geometry lives in, for passing to

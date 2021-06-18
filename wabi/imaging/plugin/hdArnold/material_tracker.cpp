@@ -20,7 +20,8 @@ WABI_NAMESPACE_BEGIN
 VtArray<SdfPath> HdArnoldMaterialTracker::GetCurrentMaterials(size_t newArraySize)
 {
   auto currentMaterials = _materials;
-  if (_materials.size() != newArraySize) {
+  if (_materials.size() != newArraySize)
+  {
     _materials.resize(newArraySize);
   }
   return currentMaterials;
@@ -28,9 +29,11 @@ VtArray<SdfPath> HdArnoldMaterialTracker::GetCurrentMaterials(size_t newArraySiz
 
 void HdArnoldMaterialTracker::SetMaterial(const SdfPath &id, size_t arrayId)
 {
-  if (Ai_likely(_materials.size() > arrayId)) {
+  if (Ai_likely(_materials.size() > arrayId))
+  {
     // cdata is a simple way to access the data without triggering a copy.
-    if (id != _materials.cdata()[arrayId]) {
+    if (id != _materials.cdata()[arrayId])
+    {
       // Trigger detaching.
       _materials[arrayId] = id;
     }
@@ -41,10 +44,12 @@ void HdArnoldMaterialTracker::TrackMaterialChanges(HdArnoldRenderDelegate *rende
                                                    const SdfPath &shapeId,
                                                    const VtArray<SdfPath> &oldMaterials)
 {
-  if (!oldMaterials.IsIdentical(_materials)) {
+  if (!oldMaterials.IsIdentical(_materials))
+  {
     // All the VtArrays are shared, so we don't have to worry about duplicating data here.
     // Untracking the old materials.
-    if (!oldMaterials.empty()) {
+    if (!oldMaterials.empty())
+    {
       renderDelegate->UntrackShapeMaterials(shapeId, oldMaterials);
     }
     // Tracking the new materials.
@@ -57,13 +62,16 @@ void HdArnoldMaterialTracker::TrackSingleMaterial(HdArnoldRenderDelegate *render
                                                   const SdfPath &materialId)
 {
   // Initial assignment.
-  if (_materials.empty()) {
+  if (_materials.empty())
+  {
     _materials.assign(1, materialId);
     renderDelegate->TrackShapeMaterials(shapeId, _materials);
     // We already have a single material stored, check if it has changed.
   }
-  else {
-    if (_materials.cdata()[0] != materialId) {
+  else
+  {
+    if (_materials.cdata()[0] != materialId)
+    {
       renderDelegate->UntrackShapeMaterials(shapeId, _materials);
       _materials[0] = materialId;
       renderDelegate->TrackShapeMaterials(shapeId, _materials);
@@ -74,7 +82,8 @@ void HdArnoldMaterialTracker::TrackSingleMaterial(HdArnoldRenderDelegate *render
 void HdArnoldMaterialTracker::UntrackMaterials(HdArnoldRenderDelegate *renderDelegate,
                                                const SdfPath &shapeId)
 {
-  if (!_materials.empty()) {
+  if (!_materials.empty())
+  {
     renderDelegate->UntrackShapeMaterials(shapeId, _materials);
   }
 }

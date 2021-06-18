@@ -35,10 +35,12 @@ class RixContext;
 // the top-level namespace so that prman can find the expected symbols.
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 // Per TextureCtx user data.
-struct RtxHioImagePluginUserData {
+struct RtxHioImagePluginUserData
+{
   HioImageSharedPtr image;
 
   std::mutex mipLevelsMutex;
@@ -47,7 +49,8 @@ struct RtxHioImagePluginUserData {
 
 /// A Renderman Rtx texture plugin that uses HioImage to read files,
 /// allowing support for additional file types beyond .tex.
-class RtxHioImagePlugin : public RtxPlugin {
+class RtxHioImagePlugin : public RtxPlugin
+{
  public:
   RtxHioImagePlugin(RixContext *rixCtx, const char *pluginName);
   ~RtxHioImagePlugin() override;
@@ -81,7 +84,8 @@ static bool _ConvertWrapMode(HioAddressMode hioWrapMode,
                              const std::string &filename,
                              RtxPlugin::TextureCtx::WrapMode *rmanWrapMode)
 {
-  switch (hioWrapMode) {
+  switch (hioWrapMode)
+  {
     case HioAddressModeRepeat:
       *rmanWrapMode = RtxPlugin::TextureCtx::k_Periodic;
       return true;
@@ -115,11 +119,13 @@ static void _ConvertSRGBtoLinear(T *dest, unsigned nPixels, unsigned nChannels, 
   const bool hasAlphaChannel = (channelOffset + nChannels == 4);
 
   T *s = dest;
-  for (unsigned i = 0; i < (nPixels * nChannels); i++) {
+  for (unsigned i = 0; i < (nPixels * nChannels); i++)
+  {
 
     // The alpha channel is generally linear already -- skip pixel
     const bool isAlphaChannel = hasAlphaChannel && ((i + 1) % nChannels == 0);
-    if (!isAlphaChannel) {
+    if (!isAlphaChannel)
+    {
       *s = GfConvertDisplayToLinear(*s);
     }
 
@@ -134,21 +140,26 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
   // Parse args.
   std::string filename;
   std::string wrapS, wrapT;
-  for (unsigned int i = 0; i < tCtx.argc; i += 2) {
-    if (strcmp(tCtx.argv[i], "filename") == 0) {
+  for (unsigned int i = 0; i < tCtx.argc; i += 2)
+  {
+    if (strcmp(tCtx.argv[i], "filename") == 0)
+    {
       filename = tCtx.argv[i + 1];
     }
-    else if (strcmp(tCtx.argv[i], "wrapS") == 0) {
+    else if (strcmp(tCtx.argv[i], "wrapS") == 0)
+    {
       wrapS = tCtx.argv[i + 1];
     }
-    else if (strcmp(tCtx.argv[i], "wrapT") == 0) {
+    else if (strcmp(tCtx.argv[i], "wrapT") == 0)
+    {
       wrapT = tCtx.argv[i + 1];
     }
   }
 
   // Open HioImage.
   HioImageSharedPtr image = HioImage::OpenForReading(filename);
-  if (!image) {
+  if (!image)
+  {
     m_msgHandler->ErrorAlways(
       "RtxHioImagePlugin %p: "
       "failed to open '%s'\n",
@@ -169,7 +180,8 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
   tCtx.numChannels = HioGetComponentCount(image->GetFormat());
   // Component data type.
   HioType channelType = HioGetHioType(image->GetFormat());
-  switch (channelType) {
+  switch (channelType)
+  {
     case HioTypeFloat:
       tCtx.dataType = TextureCtx::k_Float;
       break;
@@ -191,32 +203,42 @@ int RtxHioImagePlugin::Open(TextureCtx &tCtx)
   tCtx.sWrap = TextureCtx::k_Black;
   tCtx.tWrap = TextureCtx::k_Black;
   HioAddressMode wrapModeS, wrapModeT;
-  if (wrapS.empty() || wrapS == "useMetadata") {
-    if (image->GetSamplerMetadata(HioAddressDimensionU, &wrapModeS)) {
+  if (wrapS.empty() || wrapS == "useMetadata")
+  {
+    if (image->GetSamplerMetadata(HioAddressDimensionU, &wrapModeS))
+    {
       _ConvertWrapMode(wrapModeS, m_msgHandler, filename, &tCtx.sWrap);
     }
   }
-  else if (wrapS == "black") {
+  else if (wrapS == "black")
+  {
     tCtx.sWrap = RtxPlugin::TextureCtx::k_Black;
   }
-  else if (wrapS == "clamp") {
+  else if (wrapS == "clamp")
+  {
     tCtx.sWrap = RtxPlugin::TextureCtx::k_Clamp;
   }
-  else if (wrapS == "repeat") {
+  else if (wrapS == "repeat")
+  {
     tCtx.sWrap = RtxPlugin::TextureCtx::k_Periodic;
   }
-  if (wrapT.empty() || wrapT == "useMetadata") {
-    if (image->GetSamplerMetadata(HioAddressDimensionV, &wrapModeT)) {
+  if (wrapT.empty() || wrapT == "useMetadata")
+  {
+    if (image->GetSamplerMetadata(HioAddressDimensionV, &wrapModeT))
+    {
       _ConvertWrapMode(wrapModeT, m_msgHandler, filename, &tCtx.tWrap);
     }
   }
-  else if (wrapT == "black") {
+  else if (wrapT == "black")
+  {
     tCtx.tWrap = RtxPlugin::TextureCtx::k_Black;
   }
-  else if (wrapT == "clamp") {
+  else if (wrapT == "clamp")
+  {
     tCtx.tWrap = RtxPlugin::TextureCtx::k_Clamp;
   }
-  else if (wrapT == "repeat") {
+  else if (wrapT == "repeat")
+  {
     tCtx.tWrap = RtxPlugin::TextureCtx::k_Periodic;
   }
 
@@ -240,20 +262,24 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
   {
     // Lock mutex while scanning or modifying mipLevels.
     std::lock_guard<std::mutex> lock(data->mipLevelsMutex);
-    for (HioImage::StorageSpec &cachedLevel : data->mipLevels) {
-      if (cachedLevel.width == fillReq.imgRes.X && cachedLevel.height == fillReq.imgRes.Y) {
+    for (HioImage::StorageSpec &cachedLevel : data->mipLevels)
+    {
+      if (cachedLevel.width == fillReq.imgRes.X && cachedLevel.height == fillReq.imgRes.Y)
+      {
         level = cachedLevel;
         break;
       }
     }
-    if (!level.data) {
+    if (!level.data)
+    {
       // Allocate a new MIP level.
       level.width = fillReq.imgRes.X;
       level.height = fillReq.imgRes.Y;
       level.depth = data->image->GetBytesPerPixel();
       level.format = data->image->GetFormat();
 
-      if (tCtx.dataType != TextureCtx::k_Byte && tCtx.dataType != TextureCtx::k_Float) {
+      if (tCtx.dataType != TextureCtx::k_Byte && tCtx.dataType != TextureCtx::k_Float)
+      {
         m_msgHandler->ErrorAlways("RtxHioImagePlugin %p: unsupported data type\n", this);
         return 1;
       }
@@ -286,18 +312,23 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
   // If fill request wants all channels in the image, just memcpy each row.
   // Otherwise we need to iterate over each pixel and copy just the
   // requested channels.
-  if (fillReq.channelOffset == 0 && fillReq.numChannels == numImageChannels) {
+  if (fillReq.channelOffset == 0 && fillReq.numChannels == numImageChannels)
+  {
 
-    for (int y = startY; y < endY; y++) {
+    for (int y = startY; y < endY; y++)
+    {
       memcpy(dest, src, bytesPerTileRow);
       src += bytesPerImageRow;
       dest += bytesPerTileRow;
     }
   }
-  else {
-    for (int y = startY; y < endY; y++) {
+  else
+  {
+    for (int y = startY; y < endY; y++)
+    {
       for (char *d = dest, *dEnd = dest + bytesPerTileRow, *s = src; d != dEnd;
-           d += bytesPerTilePixel, s += bytesPerImagePixel) {
+           d += bytesPerTilePixel, s += bytesPerImagePixel)
+      {
         memcpy(d, s, bytesPerTilePixel);
       }
       src += bytesPerImageRow;
@@ -306,14 +337,17 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
   }
 
   // Make sure texture data is linear
-  if (isSRGB) {
-    if (channelType == HioTypeFloat) {
+  if (isSRGB)
+  {
+    if (channelType == HioTypeFloat)
+    {
       _ConvertSRGBtoLinear((float *)fillReq.tileData,
                            fillReq.tile.size.X * fillReq.tile.size.Y,
                            fillReq.numChannels,
                            fillReq.channelOffset);
     }
-    else if (channelType == HioTypeUnsignedByte) {
+    else if (channelType == HioTypeUnsignedByte)
+    {
       _ConvertSRGBtoLinear((unsigned char *)fillReq.tileData,
                            fillReq.tile.size.X * fillReq.tile.size.Y,
                            fillReq.numChannels,
@@ -327,8 +361,10 @@ int RtxHioImagePlugin::Fill(TextureCtx &tCtx, FillRequest &fillReq)
 int RtxHioImagePlugin::Close(TextureCtx &tCtx)
 {
   RtxHioImagePluginUserData *data = this->data(tCtx);
-  if (nullptr != data) {
-    for (HioImage::StorageSpec &cachedLevel : data->mipLevels) {
+  if (nullptr != data)
+  {
+    for (HioImage::StorageSpec &cachedLevel : data->mipLevels)
+    {
       delete[](char *) cachedLevel.data;
     }
     delete data;

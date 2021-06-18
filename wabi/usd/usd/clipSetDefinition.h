@@ -46,9 +46,12 @@ TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 ///
 /// Collection of metadata from scene description and other information that
 /// uniquely defines a clip set.
-class Usd_ClipSetDefinition {
+class Usd_ClipSetDefinition
+{
  public:
-  Usd_ClipSetDefinition() : interpolateMissingClipValues(false), indexOfLayerWhereAssetPathsFound(0)
+  Usd_ClipSetDefinition()
+    : interpolateMissingClipValues(false),
+      indexOfLayerWhereAssetPathsFound(0)
   {}
 
   bool operator==(const Usd_ClipSetDefinition &rhs) const
@@ -71,30 +74,39 @@ class Usd_ClipSetDefinition {
     boost::hash_combine(hash, sourceLayerStack);
     boost::hash_combine(hash, sourcePrimPath);
 
-    if (clipAssetPaths) {
-      for (const auto &assetPath : *clipAssetPaths) {
+    if (clipAssetPaths)
+    {
+      for (const auto &assetPath : *clipAssetPaths)
+      {
         boost::hash_combine(hash, assetPath.GetHash());
       }
     }
-    if (clipManifestAssetPath) {
+    if (clipManifestAssetPath)
+    {
       boost::hash_combine(hash, clipManifestAssetPath->GetHash());
     }
-    if (clipPrimPath) {
+    if (clipPrimPath)
+    {
       boost::hash_combine(hash, *clipPrimPath);
     }
-    if (clipActive) {
-      for (const auto &active : *clipActive) {
+    if (clipActive)
+    {
+      for (const auto &active : *clipActive)
+      {
         boost::hash_combine(hash, active[0]);
         boost::hash_combine(hash, active[1]);
       }
     }
-    if (clipTimes) {
-      for (const auto &time : *clipTimes) {
+    if (clipTimes)
+    {
+      for (const auto &time : *clipTimes)
+      {
         boost::hash_combine(hash, time[0]);
         boost::hash_combine(hash, time[1]);
       }
     }
-    if (interpolateMissingClipValues) {
+    if (interpolateMissingClipValues)
+    {
       boost::hash_combine(hash, *interpolateMissingClipValues);
     }
 

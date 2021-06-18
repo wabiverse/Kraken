@@ -48,7 +48,8 @@ using std::vector;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static vector<SdfPath> GetPrefixesHelper(const SdfPath &path)
 {
@@ -57,10 +58,12 @@ static vector<SdfPath> GetPrefixesHelper(const SdfPath &path)
 
 static string _Repr(const SdfPath &self)
 {
-  if (self.IsEmpty()) {
+  if (self.IsEmpty())
+  {
     return TF_PY_REPR_PREFIX + "Path.emptyPath";
   }
-  else {
+  else
+  {
     return string(TF_PY_REPR_PREFIX + "Path(") + TfPyRepr(self.GetAsString()) + ")";
   }
 }
@@ -103,8 +106,10 @@ static object _FindLongestStrictPrefix(SdfPathVector const &paths, SdfPath const
   return object(*result);
 }
 
-struct Sdf_PathIsValidPathStringResult : public TfPyAnnotatedBoolResult<string> {
-  Sdf_PathIsValidPathStringResult(bool val, string const &msg) : TfPyAnnotatedBoolResult<string>(val, msg)
+struct Sdf_PathIsValidPathStringResult : public TfPyAnnotatedBoolResult<string>
+{
+  Sdf_PathIsValidPathStringResult(bool val, string const &msg)
+    : TfPyAnnotatedBoolResult<string>(val, msg)
   {}
 };
 
@@ -138,11 +143,14 @@ static void _PathStressTask(size_t index, std::vector<SdfPath> &paths)
   auto begin = paths.begin() + pathsPerThread * index;
   auto end = begin + pathsPerThread;
 
-  for (size_t stressIter = 0; stressIter != StressIters; ++stressIter) {
-    for (auto i = begin; i != end; ++i) {
+  for (size_t stressIter = 0; stressIter != StressIters; ++stressIter)
+  {
+    for (auto i = begin; i != end; ++i)
+    {
       SdfPath p = SdfPath::AbsoluteRootPath();
       // size_t offset = (i - begin) * index + stressIter;
-      for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j) {
+      for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j)
+      {
         char name[2];
         name[0] = 'a' + (rand() % 26);
         name[1] = '\0';
@@ -166,15 +174,18 @@ static void _PathStress()
   std::vector<std::thread> threads(NumStressThreads);
 
   size_t index = 0;
-  for (auto &t : threads) {
+  for (auto &t : threads)
+  {
     t = std::thread(_PathStressTask, index++, std::ref(manyPaths));
   }
-  for (auto &t : threads) {
+  for (auto &t : threads)
+  {
     t.join();
   }
 }
 
-struct Sdf_PyPathAncestorsRangeIterator {
+struct Sdf_PyPathAncestorsRangeIterator
+{
   Sdf_PyPathAncestorsRangeIterator(const SdfPathAncestorsRange::iterator &begin,
                                    const SdfPathAncestorsRange::iterator &end)
     : _it(begin),
@@ -184,7 +195,8 @@ struct Sdf_PyPathAncestorsRangeIterator {
   SdfPath next()
   {
     _RaiseIfAtEnd();
-    if (_didFirst) {
+    if (_didFirst)
+    {
       ++_it;
       _RaiseIfAtEnd();
     }
@@ -195,7 +207,8 @@ struct Sdf_PyPathAncestorsRangeIterator {
  private:
   void _RaiseIfAtEnd() const
   {
-    if (_it == _end) {
+    if (_it == _end)
+    {
       PyErr_SetString(PyExc_StopIteration, "Iterator at end");
       throw_error_already_set();
     }

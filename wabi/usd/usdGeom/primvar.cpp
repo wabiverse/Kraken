@@ -36,7 +36,8 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          ((primvarsPrefix, "primvars:"))((idFrom, ":idFrom"))((indicesSuffix, ":indices")));
 
-UsdGeomPrimvar::UsdGeomPrimvar(const UsdAttribute &attr) : _attr(attr)
+UsdGeomPrimvar::UsdGeomPrimvar(const UsdAttribute &attr)
+  : _attr(attr)
 {
   _SetIdTargetRelName();
 }
@@ -81,16 +82,20 @@ bool UsdGeomPrimvar::_IsNamespaced(const TfToken &name)
 TfToken UsdGeomPrimvar::_MakeNamespaced(const TfToken &name, bool quiet)
 {
   TfToken result;
-  if (_IsNamespaced(name)) {
+  if (_IsNamespaced(name))
+  {
     result = name;
   }
-  else {
+  else
+  {
     result = TfToken(_tokens->primvarsPrefix.GetString() + name.GetString());
   }
 
-  if (!IsValidPrimvarName(result)) {
+  if (!IsValidPrimvarName(result))
+  {
     result = TfToken();
-    if (!quiet) {
+    if (!quiet)
+    {
       // XXX if we add more reserved keywords we'll need to extract
       // the offending keyword rather than assume it is "indices".
       TF_CODING_ERROR(
@@ -113,7 +118,8 @@ TfToken UsdGeomPrimvar::GetInterpolation() const
 {
   TfToken interpolation;
 
-  if (!_attr.GetMetadata(UsdGeomTokens->interpolation, &interpolation)) {
+  if (!_attr.GetMetadata(UsdGeomTokens->interpolation, &interpolation))
+  {
     interpolation = UsdGeomTokens->constant;
   }
 
@@ -134,7 +140,8 @@ bool UsdGeomPrimvar::IsValidInterpolation(const TfToken &interpolation)
 
 bool UsdGeomPrimvar::SetInterpolation(const TfToken &interpolation)
 {
-  if (!IsValidInterpolation(interpolation)) {
+  if (!IsValidInterpolation(interpolation))
+  {
     TF_CODING_ERROR(
       "Attempt to set invalid primvar interpolation "
       "\"%s\" for attribute %s",
@@ -155,7 +162,8 @@ int UsdGeomPrimvar::GetElementSize() const
 
 bool UsdGeomPrimvar::SetElementSize(int eltSize)
 {
-  if (eltSize < 1) {
+  if (eltSize < 1)
+  {
     TF_CODING_ERROR(
       "Attempt to set elementSize to %d for attribute "
       "%s (must be a positive, non-zero value)",
@@ -190,11 +198,13 @@ UsdAttribute UsdGeomPrimvar::_GetIndicesAttr(bool create) const
 {
   TfToken indicesAttrName(GetName().GetString() + _tokens->indicesSuffix.GetString());
 
-  if (create) {
+  if (create)
+  {
     return _attr.GetPrim().CreateAttribute(
       indicesAttrName, SdfValueTypeNames->IntArray, /*custom*/ false, SdfVariabilityVarying);
   }
-  else {
+  else
+  {
     return _attr.GetPrim().GetAttribute(indicesAttrName);
   }
 }
@@ -214,7 +224,8 @@ bool UsdGeomPrimvar::SetIndices(const VtIntArray &indices, UsdTimeCode time) con
   // Check if the typeName is array valued here and issue a warning
   // if it's not.
   SdfValueTypeName typeName = GetTypeName();
-  if (!typeName.IsArray()) {
+  if (!typeName.IsArray())
+  {
     TF_CODING_ERROR(
       "Setting indices on non-array valued primvar of type "
       "'%s'.",
@@ -229,7 +240,8 @@ void UsdGeomPrimvar::BlockIndices() const
   // Check if the typeName is array valued here and issue a warning
   // if it's not.
   SdfValueTypeName typeName = GetTypeName();
-  if (!typeName.IsArray()) {
+  if (!typeName.IsArray())
+  {
     TF_CODING_ERROR(
       "Setting indices on non-array valued primvar of type "
       "'%s'.",
@@ -278,7 +290,8 @@ bool UsdGeomPrimvar::_ComputeFlattenedArray(const VtValue &attrVal,
     return false;
 
   ArrayType result;
-  if (_ComputeFlattenedHelper(attrVal.UncheckedGet<ArrayType>(), indices, &result, errorString)) {
+  if (_ComputeFlattenedHelper(attrVal.UncheckedGet<ArrayType>(), indices, &result, errorString))
+  {
     *value = VtValue::Take(result);
   }
 
@@ -288,26 +301,30 @@ bool UsdGeomPrimvar::_ComputeFlattenedArray(const VtValue &attrVal,
 bool UsdGeomPrimvar::ComputeFlattened(VtValue *value, UsdTimeCode time) const
 {
   VtValue attrVal;
-  if (!Get(&attrVal, time)) {
+  if (!Get(&attrVal, time))
+  {
     return false;
   }
 
   // If the primvar attr value is not an array or if the primvar isn't
   // indexed, simply return the attribute value.
-  if (!attrVal.IsArrayValued() || !IsIndexed()) {
+  if (!attrVal.IsArrayValued() || !IsIndexed())
+  {
     *value = VtValue::Take(attrVal);
     return true;
   }
 
   VtIntArray indices;
-  if (!GetIndices(&indices, time)) {
+  if (!GetIndices(&indices, time))
+  {
     TF_CODING_ERROR("No indices authored for indexed primvar <%s>.", _attr.GetPath().GetText());
     return false;
   }
 
   std::string errStr;
   bool res = ComputeFlattened(value, attrVal, indices, &errStr);
-  if (!errStr.empty()) {
+  if (!errStr.empty())
+  {
     TF_WARN("For primvar %s: %s", UsdDescribe(_attr).c_str(), errStr.c_str());
   }
   return res;
@@ -320,7 +337,8 @@ bool UsdGeomPrimvar::ComputeFlattened(VtValue *value,
 {
   // If the primvar attr value is not an array simply return the
   // attribute value.
-  if (!attrVal.IsArrayValued()) {
+  if (!attrVal.IsArrayValued())
+  {
     *value = attrVal;
     return true;
   }
@@ -347,7 +365,8 @@ bool UsdGeomPrimvar::ComputeFlattened(VtValue *value,
                             _ComputeFlattenedArray<VtFloatArray>(attrVal, indices, value, errStr) ||
                             _ComputeFlattenedArray<VtHalfArray>(attrVal, indices, value, errStr);
 
-  if (!foundSupportedType && errStr) {
+  if (!foundSupportedType && errStr)
+  {
     std::string thisErr = TfStringPrintf("Unsupported indexed primvar value type %s.",
                                          attrVal.GetTypeName().c_str());
     *errStr = errStr->empty() ? thisErr : *errStr + "\n" + thisErr;
@@ -364,7 +383,8 @@ UsdGeomPrimvar::UsdGeomPrimvar(const UsdPrim &prim,
 
   TfToken attrName = _MakeNamespaced(primvarName);
 
-  if (!attrName.IsEmpty()) {
+  if (!attrName.IsEmpty())
+  {
     _attr = prim.CreateAttribute(attrName, typeName, /* custom = */ false);
   }
   // If a problem occurred, an error should already have been issued,
@@ -375,12 +395,14 @@ UsdGeomPrimvar::UsdGeomPrimvar(const UsdPrim &prim,
 
 void UsdGeomPrimvar::_SetIdTargetRelName()
 {
-  if (!_attr) {
+  if (!_attr)
+  {
     return;
   }
 
   const SdfValueTypeName &typeName = _attr.GetTypeName();
-  if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->StringArray) {
+  if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->StringArray)
+  {
     std::string name(_attr.GetName().GetString());
     _idTargetRelName = TfToken(name.append(_tokens->idFrom.GetText()));
   }
@@ -388,10 +410,12 @@ void UsdGeomPrimvar::_SetIdTargetRelName()
 
 UsdRelationship UsdGeomPrimvar::_GetIdTargetRel(bool create) const
 {
-  if (create) {
+  if (create)
+  {
     return _attr.GetPrim().CreateRelationship(_idTargetRelName);
   }
-  else {
+  else
+  {
     return _attr.GetPrim().GetRelationship(_idTargetRelName);
   }
 }
@@ -403,7 +427,8 @@ bool UsdGeomPrimvar::IsIdTarget() const
 
 bool UsdGeomPrimvar::SetIdTarget(const SdfPath &path) const
 {
-  if (_idTargetRelName.IsEmpty()) {
+  if (_idTargetRelName.IsEmpty())
+  {
     TF_CODING_ERROR(
       "Can only set ID Target for string or string[] typed"
       " primvars (primvar type is '%s')",
@@ -411,7 +436,8 @@ bool UsdGeomPrimvar::SetIdTarget(const SdfPath &path) const
     return false;
   }
 
-  if (UsdRelationship rel = _GetIdTargetRel(true)) {
+  if (UsdRelationship rel = _GetIdTargetRel(true))
+  {
     SdfPathVector targets;
     targets.push_back(path.IsEmpty() ? _attr.GetPrimPath() : path);
     return rel.SetTargets(targets);
@@ -419,14 +445,18 @@ bool UsdGeomPrimvar::SetIdTarget(const SdfPath &path) const
   return false;
 }
 
-template<> bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const
+template<>
+bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const
 {
   // check if there is a relationship and if so use the target path string to
   // get the string value.
-  if (!_idTargetRelName.IsEmpty()) {
-    if (UsdRelationship rel = _GetIdTargetRel(false)) {
+  if (!_idTargetRelName.IsEmpty())
+  {
+    if (UsdRelationship rel = _GetIdTargetRel(false))
+    {
       SdfPathVector targets;
-      if (rel.GetForwardedTargets(&targets) && targets.size() == 1) {
+      if (rel.GetForwardedTargets(&targets) && targets.size() == 1)
+      {
         *value = targets[0].GetString();
         return true;
       }
@@ -442,15 +472,19 @@ template<> bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const
 //   string[] primvars:handleids (interpolation = "uniform")
 //   int[]    primvars:handleids:indices = [0, 1, 1, 1, 0, ...., 1]
 //   rel      primvars:handleids:idFrom = [</a/t1>, </a/t2>]
-template<> bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) const
+template<>
+bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) const
 {
   // check if there is a relationship and if so use the target path string to
   // get the string value... Just take the first target, for now.
-  if (!_idTargetRelName.IsEmpty()) {
-    if (UsdRelationship rel = _GetIdTargetRel(false)) {
+  if (!_idTargetRelName.IsEmpty())
+  {
+    if (UsdRelationship rel = _GetIdTargetRel(false))
+    {
       value->clear();
       SdfPathVector targets;
-      if (rel.GetForwardedTargets(&targets) && targets.size() > 1) {
+      if (rel.GetForwardedTargets(&targets) && targets.size() > 1)
+      {
         value->push_back(targets[0].GetString());
         return true;
       }
@@ -461,22 +495,28 @@ template<> bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) cons
   return _attr.Get(value, time);
 }
 
-template<> bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const
+template<>
+bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const
 {
-  if (!_idTargetRelName.IsEmpty()) {
+  if (!_idTargetRelName.IsEmpty())
+  {
     const SdfValueTypeName &typeName = _attr.GetTypeName();
-    if (typeName == SdfValueTypeNames->String) {
+    if (typeName == SdfValueTypeNames->String)
+    {
       std::string s;
       bool ret = Get(&s, time);
-      if (ret) {
+      if (ret)
+      {
         *value = VtValue(s);
       }
       return ret;
     }
-    else if (typeName == SdfValueTypeNames->StringArray) {
+    else if (typeName == SdfValueTypeNames->StringArray)
+    {
       VtStringArray s;
       bool ret = Get(&s, time);
-      if (ret) {
+      if (ret)
+      {
         *value = VtValue(s);
       }
       return ret;
@@ -493,8 +533,10 @@ bool UsdGeomPrimvar::GetTimeSamples(std::vector<double> *times) const
 
 bool UsdGeomPrimvar::GetTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const
 {
-  if (IsIndexed()) {
-    if (UsdAttribute indicesAttr = _GetIndicesAttr(false)) {
+  if (IsIndexed())
+  {
+    if (UsdAttribute indicesAttr = _GetIndicesAttr(false))
+    {
       return UsdAttribute::GetUnionedTimeSamplesInInterval({_attr, indicesAttr}, interval, times);
     }
   }
@@ -504,9 +546,12 @@ bool UsdGeomPrimvar::GetTimeSamplesInInterval(const GfInterval &interval, std::v
 
 bool UsdGeomPrimvar::ValueMightBeTimeVarying() const
 {
-  if (IsIndexed()) {
-    if (UsdAttribute indicesAttr = _GetIndicesAttr(false)) {
-      if (indicesAttr.ValueMightBeTimeVarying()) {
+  if (IsIndexed())
+  {
+    if (UsdAttribute indicesAttr = _GetIndicesAttr(false))
+    {
+      if (indicesAttr.ValueMightBeTimeVarying())
+      {
         return true;
       }
     }

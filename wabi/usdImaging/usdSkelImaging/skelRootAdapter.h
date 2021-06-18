@@ -48,11 +48,13 @@ WABI_NAMESPACE_BEGIN
 ///     in the SkeletonAdapter (the latter is stateful).
 /// Both of these happen during Populate(..)
 ///
-class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter {
+class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdSkelImagingSkelRootAdapter() : BaseAdapter()
+  UsdSkelImagingSkelRootAdapter()
+    : BaseAdapter()
   {}
 
   USDSKELIMAGING_API

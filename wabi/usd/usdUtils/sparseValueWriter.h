@@ -85,7 +85,8 @@ WABI_NAMESPACE_BEGIN
 /// values. If not, a coding error is issued and the authored animation may be
 /// incorrect.
 ///
-class UsdUtilsSparseAttrValueWriter {
+class UsdUtilsSparseAttrValueWriter
+{
  public:
   /// The constructor initializes the data required for run-length encoding of
   /// time-samples. It also sets the default value of \p attr to
@@ -226,7 +227,8 @@ class UsdUtilsSparseAttrValueWriter {
 /// <li>The last time-sample at time=4.0 will also be skipped for "height"
 /// since it matches the previously written value at time=3.0.</li>
 /// </ul>
-class UsdUtilsSparseValueWriter {
+class UsdUtilsSparseValueWriter
+{
  public:
   /// Sets the value of \p attr to \p value at time \p time. The value
   /// is written sparsely, i.e., the default value is authored only if
@@ -271,9 +273,11 @@ class UsdUtilsSparseValueWriter {
 
  private:
   // Templated helper method used by the two public SetAttribute() methods.
-  template<typename T> bool _SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time);
+  template<typename T>
+  bool _SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time);
 
-  struct _AttrHash {
+  struct _AttrHash
+  {
     inline size_t operator()(const UsdAttribute &attr) const
     {
       return hash_value(attr);

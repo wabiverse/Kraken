@@ -47,9 +47,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> \
+static void _CustomWrapCode(Cls &_class)
 
 // fwd decl.
 WRAP_CUSTOM;
@@ -171,7 +173,8 @@ void wrapUsdLuxShadowAPI()
 
 #include "wabi/usd/usdShade/connectableAPI.h"
 
-namespace {
+namespace
+{
 
 WRAP_CUSTOM
 {

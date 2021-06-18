@@ -89,7 +89,8 @@ bool UsdPythonToMetadataValue(const TfToken &key,
 
   SdfSchema::FieldDefinition const *fieldDef = schema.GetFieldDefinition(key);
 
-  if (!fieldDef) {
+  if (!fieldDef)
+  {
     TF_CODING_ERROR("Unregistered metadata key: %s", key.GetText());
     return false;
   }
@@ -97,7 +98,8 @@ bool UsdPythonToMetadataValue(const TfToken &key,
   VtValue value = extract<VtValue>(pyVal.Get())();
 
   // Empty values are always considered valid.
-  if (value.IsEmpty()) {
+  if (value.IsEmpty())
+  {
     *result = value;
     return true;
   }
@@ -105,11 +107,13 @@ bool UsdPythonToMetadataValue(const TfToken &key,
   // Attempt to obtain a fallback value.
   VtValue fallback = fieldDef->GetFallbackValue();
 
-  if (value.IsHolding<VtDictionary>()) {
+  if (value.IsHolding<VtDictionary>())
+  {
     VtDictionary inDict;
     value.UncheckedSwap(inDict);
     std::string errMsg;
-    if (!SdfConvertToValidMetadataDictionary(&inDict, &errMsg)) {
+    if (!SdfConvertToValidMetadataDictionary(&inDict, &errMsg))
+    {
       TfPyThrowValueError(TfStringPrintf("Invalid value type for %s%s%s: %s.",
                                          key.GetText(),
                                          keyPath.IsEmpty() ? "" : ":",
@@ -119,8 +123,10 @@ bool UsdPythonToMetadataValue(const TfToken &key,
     value.UncheckedSwap(inDict);
   }
 
-  if (!keyPath.IsEmpty() && fallback.IsHolding<VtDictionary>()) {
-    if (!fieldDef->IsValidMapValue(value)) {
+  if (!keyPath.IsEmpty() && fallback.IsHolding<VtDictionary>())
+  {
+    if (!fieldDef->IsValidMapValue(value))
+    {
       TfPyThrowValueError(TfStringPrintf("Invalid value type for dictionary key-path '%s:%s': '%s'.",
                                          key.GetString().c_str(),
                                          keyPath.GetText(),
@@ -133,22 +139,28 @@ bool UsdPythonToMetadataValue(const TfToken &key,
 
   // We have to handle a few things as special cases to disambiguate
   // types from Python.
-  if (!fallback.IsEmpty()) {
-    if (fallback.IsHolding<TfTokenVector>()) {
+  if (!fallback.IsEmpty())
+  {
+    if (fallback.IsHolding<TfTokenVector>())
+    {
       value = extract<TfTokenVector>(pyVal.Get())();
     }
-    else if (fallback.IsHolding<std::vector<std::string>>()) {
+    else if (fallback.IsHolding<std::vector<std::string>>())
+    {
       extract<std::vector<std::string>> getVecString(pyVal.Get());
       extract<VtStringArray> getStringArray(pyVal.Get());
-      if (getVecString.check()) {
+      if (getVecString.check())
+      {
         value = getVecString();
       }
-      else if (getStringArray.check()) {
+      else if (getStringArray.check())
+      {
         VtStringArray a = getStringArray();
         value = std::vector<std::string>(a.begin(), a.end());
       }
     }
-    else {
+    else
+    {
       value.CastToTypeOf(fallback);
     }
   }
@@ -156,7 +168,8 @@ bool UsdPythonToMetadataValue(const TfToken &key,
   // value we do have is not valid for either the field definition or the
   // schema, then complain.
   if (value.IsEmpty() ||
-      (fallback.IsEmpty() && (!fieldDef->IsValidValue(value) || !schema.IsValidValue(value)))) {
+      (fallback.IsEmpty() && (!fieldDef->IsValidValue(value) || !schema.IsValidValue(value))))
+  {
     VtValue origValue = extract<VtValue>(pyVal.Get())();
     TfPyThrowValueError(TfStringPrintf(
       "Invalid value '%s' (type '%s') for key '%s%s'.%s",

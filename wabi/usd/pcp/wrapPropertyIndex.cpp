@@ -36,7 +36,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static SdfPropertySpecHandleVector _WrapPropertyStack(const PcpPropertyIndex &propIndex)
 {

@@ -88,7 +88,8 @@ using HdPhDispatchBufferSharedPtr = std::shared_ptr<class HdPhDispatchBuffer>;
 /// XXX: it would be better to generalize this class not only for dispatch
 /// buffer, if we see other similar use-cases.
 ///
-class HdPhDispatchBuffer : public HdBufferArray {
+class HdPhDispatchBuffer : public HdBufferArray
+{
  public:
   /// Constructor. commandNumUints is given in how many integers.
   HDPH_API

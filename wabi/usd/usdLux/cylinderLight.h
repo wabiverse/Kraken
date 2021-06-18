@@ -64,7 +64,8 @@ class SdfAssetPath;
 /// The cylinder does not emit light from the flat end-caps.
 ///
 ///
-class UsdLuxCylinderLight : public UsdLuxLight {
+class UsdLuxCylinderLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -80,13 +81,15 @@ class UsdLuxCylinderLight : public UsdLuxLight {
   /// Equivalent to UsdLuxCylinderLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxCylinderLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxCylinderLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxCylinderLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxCylinderLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxCylinderLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxCylinderLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

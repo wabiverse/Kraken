@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Base class for all Sdf spec classes.
 ///
-class SdfSpec {
+class SdfSpec
+{
   SDF_DECLARE_BASE_SPEC(SdfSpec);
 
  public:
@@ -200,9 +201,11 @@ class SdfSpec {
   /// Returns \c true if the object has a non-empty value with name
   /// \p name and type \p T.  If value ptr is provided, returns the
   /// value found.
-  template<class T> bool HasField(const TfToken &name, T *value) const
+  template<class T>
+  bool HasField(const TfToken &name, T *value) const
   {
-    if (!value) {
+    if (!value)
+    {
       return HasField(name);
     }
 
@@ -217,7 +220,8 @@ class SdfSpec {
   /// Returns a field value by name.  If the object is invalid, or the
   /// value doesn't exist, isn't set, or isn't of the given type then
   /// returns defaultValue.
-  template<typename T> T GetFieldAs(const TfToken &name, const T &defaultValue = T()) const
+  template<typename T>
+  T GetFieldAs(const TfToken &name, const T &defaultValue = T()) const
   {
     VtValue v = GetField(name);
     if (v.IsEmpty() || !v.IsHolding<T>())
@@ -230,7 +234,8 @@ class SdfSpec {
   bool SetField(const TfToken &name, const VtValue &value);
 
   /// Sets a field value of type T.
-  template<typename T> bool SetField(const TfToken &name, const T &value)
+  template<typename T>
+  bool SetField(const TfToken &name, const T &value)
   {
     return SetField(name, VtValue(value));
   }

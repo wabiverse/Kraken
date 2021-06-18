@@ -87,7 +87,8 @@ WABI_NAMESPACE_BEGIN
 /// hydra instancers with two sets of hydra prototypes.  This cuts into the
 /// efficiency of instancing, so we try to minimize it.
 ///
-class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
+class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
+{
  public:
   using BaseAdapter = UsdImagingPrimAdapter;
 
@@ -384,7 +385,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
   // Computes the value of a primvar for all instances corresponding to the
   // given instancer. The templated version runs the templated functor,
   // and the un-templated version does type dispatch.
-  template<typename T> struct _ComputeInheritedPrimvarFn;
+  template<typename T>
+  struct _ComputeInheritedPrimvarFn;
 
   template<typename T>
   bool _ComputeInheritedPrimvar(UsdPrim const &instancer,
@@ -433,7 +435,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
   // ultimately affect the final drawn instance. For example, the
   // transform of each instance to draw is the combined transforms
   // of the prims in each context.
-  template<typename Functor> void _RunForAllInstancesToDraw(UsdPrim const &instancer, Functor *fn) const;
+  template<typename Functor>
+  void _RunForAllInstancesToDraw(UsdPrim const &instancer, Functor *fn) const;
   template<typename Functor>
   bool _RunForAllInstancesToDrawImpl(UsdPrim const &instancer,
                                      std::vector<UsdPrim> *instanceContext,
@@ -446,7 +449,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
 
   // A proto prim represents a single adapter under a prototype root declared
   // on the instancer.
-  struct _ProtoPrim {
+  struct _ProtoPrim
+  {
     _ProtoPrim()
     {}
     // Each prim will become a prototype "child" under the instancer. This
@@ -463,8 +467,11 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
   // All data associated with a given instancer prim. PrimMap could
   // technically be split out to avoid two lookups, however it seems cleaner
   // to keep everything bundled up under the instancer path.
-  struct _InstancerData {
-    _InstancerData() : numInstancesToDraw(0), refreshVariability(false)
+  struct _InstancerData
+  {
+    _InstancerData()
+      : numInstancesToDraw(0),
+        refreshVariability(false)
     {}
 
     // The prototype prim path associated with this instancer.
@@ -481,7 +488,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
     TfToken inheritablePurpose;
 
     // Inherited primvar
-    struct PrimvarInfo {
+    struct PrimvarInfo
+    {
       TfToken name;
       SdfValueTypeName type;
       bool operator==(const PrimvarInfo &rhs) const;
@@ -502,7 +510,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter {
 
     // Cached visibility. This vector contains an entry for each instance
     // that will be drawn (i.e., visibility.size() == numInstancesToDraw).
-    enum Visibility {
+    enum Visibility
+    {
       Invisible,  //< Invisible over all time
       Visible,    //< Visible over all time
       Varying,    //< Visibility varies over time

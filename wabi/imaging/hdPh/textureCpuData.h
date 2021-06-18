@@ -36,7 +36,8 @@ struct HgiTextureDesc;
 /// Represents CPU data that can be stored in a HdPhUvTextureObject, mostly,
 /// likely during the load phase to be committed to the GPU.
 ///
-class HdPhTextureCpuData {
+class HdPhTextureCpuData
+{
  public:
   HDPH_API
   virtual ~HdPhTextureCpuData();

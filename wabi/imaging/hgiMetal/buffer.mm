@@ -39,22 +39,27 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc) : HgiBuffer(desc), _bufferId(nil)
+HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc)
+  : HgiBuffer(desc),
+    _bufferId(nil)
 {
 
-  if (desc.byteSize == 0) {
+  if (desc.byteSize == 0)
+  {
     TF_CODING_ERROR("Buffers must have a non-zero length");
   }
 
   MTLResourceOptions options = MTLResourceCPUCacheModeDefaultCache |
                                hgi->GetCapabilities().defaultStorageMode;
 
-  if (desc.initialData) {
+  if (desc.initialData)
+  {
     _bufferId = [hgi->GetPrimaryDevice() newBufferWithBytes:desc.initialData
                                                      length:desc.byteSize
                                                     options:options];
   }
-  else {
+  else
+  {
     _bufferId = [hgi->GetPrimaryDevice() newBufferWithLength:desc.byteSize options:options];
   }
 
@@ -65,7 +70,8 @@ HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc) : HgiBu
 
 HgiMetalBuffer::~HgiMetalBuffer()
 {
-  if (_bufferId != nil) {
+  if (_bufferId != nil)
+  {
     [_bufferId release];
     _bufferId = nil;
   }
@@ -83,7 +89,8 @@ uint64_t HgiMetalBuffer::GetRawResource() const
 
 void *HgiMetalBuffer::GetCPUStagingAddress()
 {
-  if (_bufferId) {
+  if (_bufferId)
+  {
     return [_bufferId contents];
   }
 

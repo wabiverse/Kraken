@@ -16,13 +16,26 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-namespace rif {
+namespace rif
+{
 
-namespace {
+namespace
+{
 
-class FilterAIDenoise final : public Filter {
-  enum { RemapDepthFilter, RemapNormalFilter, AuxFilterMax };
-  enum { RemappedDepthImage, RemappedNormalImage, AuxImageMax };
+class FilterAIDenoise final : public Filter
+{
+  enum
+  {
+    RemapDepthFilter,
+    RemapNormalFilter,
+    AuxFilterMax
+  };
+  enum
+  {
+    RemappedDepthImage,
+    RemappedNormalImage,
+    AuxImageMax
+  };
 
  public:
   explicit FilterAIDenoise(Context *rifContext, std::uint32_t width, std::uint32_t height);
@@ -31,10 +44,21 @@ class FilterAIDenoise final : public Filter {
   void AttachFilter(rif_image inputImage) override;
 };
 
-class FilterEaw final : public Filter {
-  enum { ColorVar, Mlaa, AuxFilterMax };
+class FilterEaw final : public Filter
+{
+  enum
+  {
+    ColorVar,
+    Mlaa,
+    AuxFilterMax
+  };
 
-  enum { ColorVarianceImage, DenoisedOutputImage, AuxImageMax };
+  enum
+  {
+    ColorVarianceImage,
+    DenoisedOutputImage,
+    AuxImageMax
+  };
 
  public:
   explicit FilterEaw(Context *rifContext, std::uint32_t width, std::uint32_t height);
@@ -43,7 +67,8 @@ class FilterEaw final : public Filter {
   void AttachFilter(rif_image inputImage) override;
 };
 
-class FilterResample final : public Filter {
+class FilterResample final : public Filter
+{
  public:
   explicit FilterResample(Context *rifContext, std::uint32_t width, std::uint32_t height);
   ~FilterResample() override = default;
@@ -51,9 +76,11 @@ class FilterResample final : public Filter {
   void Resize(std::uint32_t width, std::uint32_t height) override;
 };
 
-class FilterCustom final : public Filter {
+class FilterCustom final : public Filter
+{
  public:
-  explicit FilterCustom(Context *rifContext, rif_image_filter_type type) : Filter(rifContext)
+  explicit FilterCustom(Context *rifContext, rif_image_filter_type type)
+    : Filter(rifContext)
   {
     m_rifFilter = rifContext->CreateImageFilter(type);
   }
@@ -121,7 +148,8 @@ void FilterAIDenoise::AttachFilter(rif_image inputImage)
   Filter::AttachFilter(inputImage);
 }
 
-FilterEaw::FilterEaw(Context *rifContext, std::uint32_t width, std::uint32_t height) : Filter(rifContext)
+FilterEaw::FilterEaw(Context *rifContext, std::uint32_t width, std::uint32_t height)
+  : Filter(rifContext)
 {
   // main EAW filter
   m_rifFilter = rifContext->CreateImageFilter(RIF_IMAGE_FILTER_EAW_DENOISE);
@@ -213,11 +241,13 @@ std::unique_ptr<Filter> Filter::Create(FilterType type,
                                        std::uint32_t width,
                                        std::uint32_t height)
 {
-  if (!width || !height) {
+  if (!width || !height)
+  {
     return nullptr;
   }
 
-  switch (type) {
+  switch (type)
+  {
     case FilterType::AIDenoise:
       return std::unique_ptr<FilterAIDenoise>(new FilterAIDenoise(rifContext, width, height));
     case FilterType::EawDenoise:
@@ -230,7 +260,8 @@ std::unique_ptr<Filter> Filter::Create(FilterType type,
 }
 std::unique_ptr<Filter> Filter::CreateCustom(rif_image_filter_type type, Context *rifContext)
 {
-  if (!rifContext) {
+  if (!rifContext)
+  {
     return nullptr;
   }
 
@@ -243,12 +274,14 @@ Filter::~Filter()
 
   rif_int rifStatus = RIF_SUCCESS;
 
-  for (const rif_image_filter &auxFilter : m_auxFilters) {
+  for (const rif_image_filter &auxFilter : m_auxFilters)
+  {
     rifStatus = rifObjectDelete(auxFilter);
     assert(RIF_SUCCESS == rifStatus);
   }
 
-  if (m_rifFilter != nullptr) {
+  if (m_rifFilter != nullptr)
+  {
     rifStatus = rifObjectDelete(m_rifFilter);
     assert(RIF_SUCCESS == rifStatus);
   }
@@ -312,7 +345,8 @@ void Filter::SetOutput(HdRprApiFramebuffer *rprFrameBuffer)
 rif_image Filter::GetInput(FilterInputType inputType) const
 {
   auto inputIter = m_inputs.find(inputType);
-  if (inputIter != m_inputs.end()) {
+  if (inputIter != m_inputs.end())
+  {
     return inputIter->second.rifImage;
   }
 
@@ -332,7 +366,8 @@ void Filter::SetParam(const char *name, FilterParam param)
 
 void Filter::SetParamFilter(const char *name, Filter *filter)
 {
-  if (filter) {
+  if (filter)
+  {
     SetParam(name, rif_image(filter->m_rifFilter));
   }
 }
@@ -340,17 +375,22 @@ void Filter::SetParamFilter(const char *name, Filter *filter)
 void Filter::Resize(std::uint32_t width, std::uint32_t height)
 {
   auto desc = Image::GetDesc(width, height, HdFormatFloat32Vec4);
-  for (auto &image : m_auxImages) {
-    if (image) {
+  for (auto &image : m_auxImages)
+  {
+    if (image)
+    {
       image = m_rifContext->CreateImage(desc);
     }
   }
 }
 
-template<typename Iter> void UpdateInputs(Iter begin, Iter end, Context *context)
+template<typename Iter>
+void UpdateInputs(Iter begin, Iter end, Context *context)
 {
-  for (; begin != end; ++begin) {
-    if (begin->second.rprFrameBuffer) {
+  for (; begin != end; ++begin)
+  {
+    if (begin->second.rprFrameBuffer)
+    {
       context->UpdateInputImage(begin->second.rprFrameBuffer, begin->second.rifImage);
     }
   }
@@ -358,12 +398,15 @@ template<typename Iter> void UpdateInputs(Iter begin, Iter end, Context *context
 
 void Filter::Update()
 {
-  if (m_dirtyFlags & DirtyParameters) {
+  if (m_dirtyFlags & DirtyParameters)
+  {
     ApplyParameters();
   }
-  if (m_dirtyFlags & DirtyIOImage) {
+  if (m_dirtyFlags & DirtyIOImage)
+  {
     DetachFilter();
-    if (m_outputImage) {
+    if (m_outputImage)
+    {
       AttachFilter(GetInput(Color));
       m_isAttached = true;
     }
@@ -385,18 +428,21 @@ void Filter::AttachFilter(rif_image inputImage)
 
 void Filter::DetachFilter()
 {
-  if (!m_rifContext || !m_isAttached) {
+  if (!m_rifContext || !m_isAttached)
+  {
     return;
   }
   m_isAttached = false;
 
-  for (const rif_image_filter &auxFilter : m_auxFilters) {
+  for (const rif_image_filter &auxFilter : m_auxFilters)
+  {
     m_rifContext->DetachFilter(auxFilter);
   }
   m_rifContext->DetachFilter(m_rifFilter);
 }
 
-struct ParameterSetter : public BOOST_NS::static_visitor<rif_int> {
+struct ParameterSetter : public BOOST_NS::static_visitor<rif_int>
+{
   const char *paramName;
   rif_image_filter filter;
 
@@ -433,15 +479,18 @@ struct ParameterSetter : public BOOST_NS::static_visitor<rif_int> {
 
 void Filter::ApplyParameters()
 {
-  for (const auto &param : m_params) {
+  for (const auto &param : m_params)
+  {
     ParameterSetter setter;
     setter.paramName = param.first.c_str();
     setter.filter = m_rifFilter;
     RIF_ERROR_CHECK_THROW(BOOST_NS::apply_visitor(setter, param.second),
                           "Failed to set image filter parameter");
   }
-  for (const auto &namedInput : m_namedInputs) {
-    if (namedInput.second.rifImage) {
+  for (const auto &namedInput : m_namedInputs)
+  {
+    if (namedInput.second.rifImage)
+    {
       RIF_ERROR_CHECK_THROW(
         rifImageFilterSetParameterImage(m_rifFilter, namedInput.first.c_str(), namedInput.second.rifImage),
         "Failed to set image filter named parameter");

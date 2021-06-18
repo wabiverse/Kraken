@@ -35,7 +35,8 @@ WABI_NAMESPACE_BEGIN
 /// A GPU computation which transfers a vbo range specified by src and name to
 /// the given range.
 ///
-class HdPhCopyComputationGPU : public HdComputation {
+class HdPhCopyComputationGPU : public HdComputation
+{
  public:
   HDPH_API
   HdPhCopyComputationGPU(HdBufferArrayRangeSharedPtr const &src, TfToken const &name);

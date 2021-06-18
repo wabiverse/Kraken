@@ -267,7 +267,8 @@ static_assert(HgiPrimitiveTypeCount == 5, "");
 
 VkFormat HgiVulkanConversions::GetFormat(HgiFormat inFormat)
 {
-  if (!TF_VERIFY(inFormat != HgiFormatInvalid)) {
+  if (!TF_VERIFY(inFormat != HgiFormatInvalid))
+  {
     return VK_FORMAT_UNDEFINED;
   }
   return VkFormat(_FormatTable[inFormat][1]);
@@ -275,17 +276,20 @@ VkFormat HgiVulkanConversions::GetFormat(HgiFormat inFormat)
 
 HgiFormat HgiVulkanConversions::GetFormat(VkFormat inFormat)
 {
-  if (!TF_VERIFY(inFormat != VK_FORMAT_UNDEFINED)) {
+  if (!TF_VERIFY(inFormat != VK_FORMAT_UNDEFINED))
+  {
     return HgiFormatInvalid;
   }
 
   // While HdFormat/HgiFormat do not support BGRA channel ordering it may
   // be used for the native window swapchain on some platforms.
-  if (inFormat == VK_FORMAT_B8G8R8A8_UNORM) {
+  if (inFormat == VK_FORMAT_B8G8R8A8_UNORM)
+  {
     return HgiFormatUNorm8Vec4;
   }
 
-  for (auto const &f : _FormatTable) {
+  for (auto const &f : _FormatTable)
+  {
     if (f[1] == inFormat)
       return HgiFormat(f[0]);
   }
@@ -296,8 +300,10 @@ HgiFormat HgiVulkanConversions::GetFormat(VkFormat inFormat)
 
 VkImageAspectFlags HgiVulkanConversions::GetImageAspectFlag(HgiTextureUsage usage)
 {
-  if (usage & HgiTextureUsageBitsDepthTarget) {
-    if (usage & HgiTextureUsageBitsStencilTarget) {
+  if (usage & HgiTextureUsageBitsDepthTarget)
+  {
+    if (usage & HgiTextureUsageBitsStencilTarget)
+    {
       return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
     }
     return VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -309,12 +315,14 @@ VkImageAspectFlags HgiVulkanConversions::GetImageAspectFlag(HgiTextureUsage usag
 VkImageUsageFlags HgiVulkanConversions::GetTextureUsage(HgiTextureUsage tu)
 {
   VkImageUsageFlags vkFlags = 0;
-  for (const auto &f : _TextureUsageTable) {
+  for (const auto &f : _TextureUsageTable)
+  {
     if (tu & f[0])
       vkFlags |= f[1];
   }
 
-  if (vkFlags == 0) {
+  if (vkFlags == 0)
+  {
     TF_CODING_ERROR("Missing texture usage table entry");
   }
   return vkFlags;
@@ -323,12 +331,14 @@ VkImageUsageFlags HgiVulkanConversions::GetTextureUsage(HgiTextureUsage tu)
 VkFormatFeatureFlags HgiVulkanConversions::GetFormatFeature(HgiTextureUsage tu)
 {
   VkFormatFeatureFlags vkFlags = 0;
-  for (const auto &f : _FormatFeatureTable) {
+  for (const auto &f : _FormatFeatureTable)
+  {
     if (tu & f[0])
       vkFlags |= f[1];
   }
 
-  if (vkFlags == 0) {
+  if (vkFlags == 0)
+  {
     TF_CODING_ERROR("Missing texture usage table entry");
   }
   return vkFlags;
@@ -346,7 +356,8 @@ VkAttachmentStoreOp HgiVulkanConversions::GetStoreOp(HgiAttachmentStoreOp op)
 
 VkSampleCountFlagBits HgiVulkanConversions::GetSampleCount(HgiSampleCount sc)
 {
-  for (auto const &s : _SampleCountTable) {
+  for (auto const &s : _SampleCountTable)
+  {
     if (s[0] == sc)
       return VkSampleCountFlagBits(s[1]);
   }
@@ -358,12 +369,14 @@ VkSampleCountFlagBits HgiVulkanConversions::GetSampleCount(HgiSampleCount sc)
 VkShaderStageFlags HgiVulkanConversions::GetShaderStages(HgiShaderStage ss)
 {
   VkShaderStageFlags vkFlags = 0;
-  for (const auto &f : _ShaderStageTable) {
+  for (const auto &f : _ShaderStageTable)
+  {
     if (ss & f[0])
       vkFlags |= f[1];
   }
 
-  if (vkFlags == 0) {
+  if (vkFlags == 0)
+  {
     TF_CODING_ERROR("Missing shader stage table entry");
   }
   return vkFlags;
@@ -372,12 +385,14 @@ VkShaderStageFlags HgiVulkanConversions::GetShaderStages(HgiShaderStage ss)
 VkBufferUsageFlags HgiVulkanConversions::GetBufferUsage(HgiBufferUsage bu)
 {
   VkBufferUsageFlags vkFlags = 0;
-  for (const auto &f : _BufferUsageTable) {
+  for (const auto &f : _BufferUsageTable)
+  {
     if (bu & f[0])
       vkFlags |= f[1];
   }
 
-  if (vkFlags == 0) {
+  if (vkFlags == 0)
+  {
     TF_CODING_ERROR("Missing buffer usage table entry");
   }
   return vkFlags;

@@ -50,7 +50,8 @@ using Usd_ClipSetRefPtr = std::shared_ptr<Usd_ClipSet>;
 /// consists of a list of Usd_Clip objects from which attribute values
 /// are retrieved during value resolution.
 ///
-class Usd_ClipSet {
+class Usd_ClipSet
+{
  public:
   /// Create a new clip set based on the given definition. If clip
   /// set creation fails, returns a null pointer and populates
@@ -120,7 +121,8 @@ inline bool Usd_ClipSet::QueryTimeSample(const SdfPath &path,
   const Usd_ClipRefPtr &clip = GetActiveClip(time);
 
   // First query the clip for time samples at the specified time.
-  if (clip->QueryTimeSample(path, time, interpolator, value)) {
+  if (clip->QueryTimeSample(path, time, interpolator, value))
+  {
     return true;
   }
 

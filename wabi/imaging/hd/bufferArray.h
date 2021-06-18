@@ -66,15 +66,18 @@ using HdBufferArrayRangePtr = std::weak_ptr<HdBufferArrayRange>;
 /// (changing).  However, these logically impossible combinations are
 /// not enforced and remain valid potential values.
 ///
-union HdBufferArrayUsageHint {
-  struct _Bits {
+union HdBufferArrayUsageHint
+{
+  struct _Bits
+  {
     uint32_t immutable   : 1;
     uint32_t sizeVarying : 1;
     uint32_t pad         : 30;
   } bits;
   uint32_t value;
 
-  HdBufferArrayUsageHint() : value(0)
+  HdBufferArrayUsageHint()
+    : value(0)
   {}
 };
 
@@ -84,7 +87,8 @@ union HdBufferArrayUsageHint {
 /// can be shared across multiple HdRprims, in the context of buffer
 /// aggregation.
 ///
-class HdBufferArray : public std::enable_shared_from_this<HdBufferArray> {
+class HdBufferArray : public std::enable_shared_from_this<HdBufferArray>
+{
  public:
   HD_API
   HdBufferArray(TfToken const &role,

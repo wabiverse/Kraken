@@ -61,7 +61,8 @@ class SdfAssetPath;
 ///
 /// Light emitted outward from a sphere.
 ///
-class UsdLuxSphereLight : public UsdLuxLight {
+class UsdLuxSphereLight : public UsdLuxLight
+{
  public:
   /// Compile time constant representing what kind of schema this class is.
   ///
@@ -77,13 +78,15 @@ class UsdLuxSphereLight : public UsdLuxLight {
   /// Equivalent to UsdLuxSphereLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxSphereLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim)
+  explicit UsdLuxSphereLight(const UsdPrim &prim = UsdPrim())
+    : UsdLuxLight(prim)
   {}
 
   /// Construct a UsdLuxSphereLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxSphereLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxSphereLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj)
+  explicit UsdLuxSphereLight(const UsdSchemaBase &schemaObj)
+    : UsdLuxLight(schemaObj)
   {}
 
   /// Destructor.

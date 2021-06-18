@@ -32,7 +32,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static string _GetFileString(TfCallContext const &cc)
 {

@@ -42,12 +42,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Field::HdPrman_Field(TfToken const &typeId, SdfPath const &id) : HdField(id), _typeId(typeId)
+HdPrman_Field::HdPrman_Field(TfToken const &typeId, SdfPath const &id)
+  : HdField(id),
+    _typeId(typeId)
 {}
 
 void HdPrman_Field::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
-  if (*dirtyBits & DirtyParams) {
+  if (*dirtyBits & DirtyParams)
+  {
     // Force volume prim to pick up the new field resources -
     // in the same way as in HdStField::Sync.
     //
@@ -73,7 +76,8 @@ HdDirtyBits HdPrman_Field::GetInitialDirtyBitsMask() const
   return (HdDirtyBits)mask;
 }
 
-HdPrman_Volume::HdPrman_Volume(SdfPath const &id) : BASE(id)
+HdPrman_Volume::HdPrman_Volume(SdfPath const &id)
+  : BASE(id)
 {}
 
 HdDirtyBits HdPrman_Volume::GetInitialDirtyBitsMask() const
@@ -88,12 +92,14 @@ HdDirtyBits HdPrman_Volume::GetInitialDirtyBitsMask() const
   return (HdDirtyBits)mask;
 }
 
-namespace {  // anonymous namespace
+namespace
+{  // anonymous namespace
 
 HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
 {
   VtValue fieldDataTypeValue = sceneDelegate->Get(fieldId, UsdVolTokens->fieldDataType);
-  if (!fieldDataTypeValue.IsHolding<TfToken>()) {
+  if (!fieldDataTypeValue.IsHolding<TfToken>())
+  {
     TF_WARN(
       "Missing fieldDataType attribute on volume field prim %s. "
       "Assuming float.",
@@ -103,53 +109,65 @@ HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDeleg
   const TfToken &fieldDataType = fieldDataTypeValue.UncheckedGet<TfToken>();
 
   if (fieldDataType == UsdVolTokens->half || fieldDataType == UsdVolTokens->float_ ||
-      fieldDataType == UsdVolTokens->double_) {
+      fieldDataType == UsdVolTokens->double_)
+  {
     return HdPrman_Volume::FieldType::FloatType;
   }
 
   if (fieldDataType == UsdVolTokens->int_ || fieldDataType == UsdVolTokens->uint ||
-      fieldDataType == UsdVolTokens->int64) {
+      fieldDataType == UsdVolTokens->int64)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::IntType;
   }
 
   if (fieldDataType == UsdVolTokens->half2 || fieldDataType == UsdVolTokens->float2 ||
-      fieldDataType == UsdVolTokens->double2) {
+      fieldDataType == UsdVolTokens->double2)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::Float2Type;
   }
 
-  if (fieldDataType == UsdVolTokens->int2) {
+  if (fieldDataType == UsdVolTokens->int2)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::Int2Type;
   }
 
   if (fieldDataType == UsdVolTokens->half3 || fieldDataType == UsdVolTokens->float3 ||
-      fieldDataType == UsdVolTokens->double3) {
+      fieldDataType == UsdVolTokens->double3)
+  {
 
     // The role hint for vector data is optional
     TfToken vectorDataRoleHint;
     VtValue roleHint = sceneDelegate->Get(fieldId, UsdVolTokens->vectorDataRoleHint);
-    if (roleHint.IsHolding<TfToken>()) {
+    if (roleHint.IsHolding<TfToken>())
+    {
       vectorDataRoleHint = roleHint.UncheckedGet<TfToken>();
     }
 
-    if (vectorDataRoleHint == UsdVolTokens->color) {
+    if (vectorDataRoleHint == UsdVolTokens->color)
+    {
       return HdPrman_Volume::FieldType::ColorType;
     }
-    else if (vectorDataRoleHint == UsdVolTokens->point) {
+    else if (vectorDataRoleHint == UsdVolTokens->point)
+    {
       return HdPrman_Volume::FieldType::PointType;
     }
-    else if (vectorDataRoleHint == UsdVolTokens->normal) {
+    else if (vectorDataRoleHint == UsdVolTokens->normal)
+    {
       return HdPrman_Volume::FieldType::NormalType;
     }
-    else if (vectorDataRoleHint == UsdVolTokens->vector) {
+    else if (vectorDataRoleHint == UsdVolTokens->vector)
+    {
       return HdPrman_Volume::FieldType::VectorType;
     }
-    else if (vectorDataRoleHint == UsdVolTokens->none) {
+    else if (vectorDataRoleHint == UsdVolTokens->none)
+    {
       // Fall through
     }
-    else if (!vectorDataRoleHint.IsEmpty()) {
+    else if (!vectorDataRoleHint.IsEmpty())
+    {
       TF_WARN(
         "Unknown vectorDataRoleHint value '%s' on volume field prim"
         " %s. Treating it as a regular float3 field.",
@@ -160,27 +178,32 @@ HdPrman_Volume::FieldType _DetermineOpenVDBFieldType(HdSceneDelegate *sceneDeleg
     return HdPrman_Volume::FieldType::Float3Type;
   }
 
-  if (fieldDataType == UsdVolTokens->int3) {
+  if (fieldDataType == UsdVolTokens->int3)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::Int3Type;
   }
 
-  if (fieldDataType == UsdVolTokens->matrix3d || fieldDataType == UsdVolTokens->matrix4d) {
+  if (fieldDataType == UsdVolTokens->matrix3d || fieldDataType == UsdVolTokens->matrix4d)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::MatrixType;
   }
 
-  if (fieldDataType == UsdVolTokens->quatd) {
+  if (fieldDataType == UsdVolTokens->quatd)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::Float4Type;
   }
 
-  if (fieldDataType == UsdVolTokens->bool_ || fieldDataType == UsdVolTokens->mask) {
+  if (fieldDataType == UsdVolTokens->bool_ || fieldDataType == UsdVolTokens->mask)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::IntType;
   }
 
-  if (fieldDataType == UsdVolTokens->string) {
+  if (fieldDataType == UsdVolTokens->string)
+  {
     // Not yet supported by impl_openvdb plugin
     return HdPrman_Volume::FieldType::StringType;
   }
@@ -201,7 +224,8 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
 {
   static const RtUString blobbydsoImplOpenVDB("blobbydso:impl_openvdb");
 
-  if (fields.empty()) {
+  if (fields.empty())
+  {
     return;
   }
 
@@ -214,7 +238,8 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
   SdfAssetPath fileAssetPath = filePath.Get<SdfAssetPath>();
 
   std::string volumeAssetPath = fileAssetPath.GetResolvedPath();
-  if (volumeAssetPath.empty()) {
+  if (volumeAssetPath.empty())
+  {
     volumeAssetPath = fileAssetPath.GetAssetPath();
   }
 
@@ -224,7 +249,8 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
   primvars->SetStringArray(RixStr.k_blobbydso_stringargs, sa, 2);
 
   // The individual fields of this volume need to be declared as primvars
-  for (HdVolumeFieldDescriptor const &field : fields) {
+  for (HdVolumeFieldDescriptor const &field : fields)
+  {
     HdPrman_Volume::DeclareFieldPrimvar(primvars,
                                         RtUString(field.fieldName.GetText()),
                                         _DetermineOpenVDBFieldType(sceneDelegate, field.fieldId));
@@ -236,7 +262,8 @@ void _EmitOpenVDBVolume(HdSceneDelegate *sceneDelegate,
 // the empty token.
 TfToken _DetermineConsistentFieldPrimType(const HdVolumeFieldDescriptorVector &fields)
 {
-  if (fields.empty()) {
+  if (fields.empty())
+  {
     return TfToken();
   }
 
@@ -244,8 +271,10 @@ TfToken _DetermineConsistentFieldPrimType(const HdVolumeFieldDescriptorVector &f
   TfToken const &fieldPrimType = iter->fieldPrimType;
   ++iter;
 
-  for (; iter != fields.end(); ++iter) {
-    if (iter->fieldPrimType != fieldPrimType) {
+  for (; iter != fields.end(); ++iter)
+  {
+    if (iter->fieldPrimType != fieldPrimType)
+    {
       return TfToken();
     }
   }
@@ -276,7 +305,8 @@ bool HdPrman_Volume::AddVolumeTypeEmitter(TfToken const &fieldPrimType,
 {
   auto pair = _GetVolumeEmitterMap().insert({fieldPrimType, emitterFunc});
   // Set entry if overriding and there was a previous entry
-  if (overrideExisting || pair.second) {
+  if (overrideExisting || pair.second)
+  {
     pair.first->second = emitterFunc;
     return true;
   }
@@ -292,7 +322,8 @@ void HdPrman_Volume::DeclareFieldPrimvar(RtParamList *primvars, RtUString const 
   // Note, the Set*Detail calls below declare a primvar for each field,
   // but do not provide the data. The data itself has to be provided by
   // the plugin that extracts the actual data from the volume files.
-  switch (type) {
+  switch (type)
+  {
     case FloatType:
       primvars->SetFloatDetail(fieldName, nullptr, detailType);
       break;
@@ -343,12 +374,14 @@ RtParamList HdPrman_Volume::_ConvertGeometry(HdPrman_Context *context,
 {
   HdVolumeFieldDescriptorVector fields = sceneDelegate->GetVolumeFieldDescriptors(id);
 
-  if (fields.empty()) {
+  if (fields.empty())
+  {
     return RtParamList();
   }
 
   TfToken fieldPrimType = _DetermineConsistentFieldPrimType(fields);
-  if (fieldPrimType.IsEmpty()) {
+  if (fieldPrimType.IsEmpty())
+  {
     TF_WARN(
       "The fields on volume %s have inconsistent types and can't be "
       "emitted as a single volume",
@@ -360,7 +393,8 @@ RtParamList HdPrman_Volume::_ConvertGeometry(HdPrman_Context *context,
   // Prman
   _VolumeEmitterMap const &volumeEmitters = _GetVolumeEmitterMap();
   auto const iter = volumeEmitters.find(fieldPrimType);
-  if (iter == volumeEmitters.end()) {
+  if (iter == volumeEmitters.end())
+  {
     TF_WARN(
       "No volume emitter registered for field type '%s' "
       "on prim %s",

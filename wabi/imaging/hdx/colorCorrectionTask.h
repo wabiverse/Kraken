@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 /// A task for performing color correction (and optionally color grading) on a
 /// color buffer to transform its color for display.
 ///
-class HdxColorCorrectionTask : public HdxTask {
+class HdxColorCorrectionTask : public HdxTask
+{
  public:
   HDX_API
   HdxColorCorrectionTask(HdSceneDelegate *delegate, SdfPath const &id);
@@ -129,7 +130,8 @@ class HdxColorCorrectionTask : public HdxTask {
 /// `lut3dSizeOCIO`: We default to 65 (0-64) samples which works well with
 //                   OCIO resampling.
 ///
-struct HdxColorCorrectionTaskParams {
+struct HdxColorCorrectionTaskParams
+{
   HDX_API
   HdxColorCorrectionTaskParams();
 

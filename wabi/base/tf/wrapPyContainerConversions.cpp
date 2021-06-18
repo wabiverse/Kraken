@@ -32,13 +32,16 @@
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
-template<typename CONTAINER_TYPE> struct Set_ToPython {
+template<typename CONTAINER_TYPE>
+struct Set_ToPython
+{
   static PyObject *convert(CONTAINER_TYPE const &c)
   {
     PyObject *set = PySet_New(NULL);
-    TF_FOR_ALL(i, c)
+    TF_FOR_ALL (i, c)
     {
       PySet_Add(set, boost::python::object(*i).ptr());
     }
@@ -46,7 +49,8 @@ template<typename CONTAINER_TYPE> struct Set_ToPython {
   }
 };
 
-template<typename T> void _RegisterToAndFromSetConversions()
+template<typename T>
+void _RegisterToAndFromSetConversions()
 {
   boost::python::to_python_converter<std::set<T>, Set_ToPython<std::set<T>>>();
   TfPyContainerConversions::from_python_sequence<std::set<T>, TfPyContainerConversions::set_policy>();

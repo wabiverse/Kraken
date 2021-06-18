@@ -38,9 +38,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace wabi_double_conversion {
+namespace wabi_double_conversion
+{
 
-class Bignum {
+class Bignum
+{
  public:
   // 3584 = 128 * 28. We can represent 2^3584 > 10^1000 accurately.
   // This bignum can encode much bigger numbers, since it contains an
@@ -130,7 +132,8 @@ class Bignum {
 
   void EnsureCapacity(int size)
   {
-    if (size > kBigitCapacity) {
+    if (size > kBigitCapacity)
+    {
       UNREACHABLE();
     }
   }

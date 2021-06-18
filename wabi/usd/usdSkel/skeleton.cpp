@@ -57,7 +57,8 @@ UsdSkelSkeleton::~UsdSkelSkeleton()
 /* static */
 UsdSkelSkeleton UsdSkelSkeleton::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelSkeleton();
   }
@@ -68,7 +69,8 @@ UsdSkelSkeleton UsdSkelSkeleton::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdSkelSkeleton UsdSkelSkeleton::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Skeleton");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelSkeleton();
   }
@@ -167,7 +169,8 @@ UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultVal
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -224,7 +227,8 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
                            VtVec3fArray *extent)
 {
   UsdSkelSkeleton skel(boundable);
-  if (!TF_VERIFY(skel)) {
+  if (!TF_VERIFY(skel))
+  {
     return false;
   }
 
@@ -232,11 +236,13 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
 
   UsdSkelSkeletonQuery skelQuery = skelCache.GetSkelQuery(UsdSkelSkeleton(boundable.GetPrim()));
 
-  if (TF_VERIFY(skelQuery)) {
+  if (TF_VERIFY(skelQuery))
+  {
     // Compute skel-space joint transforms.
     // The extent for this skel is based on the pivots of all joints.
     VtMatrix4dArray skelXforms;
-    if (skelQuery.ComputeJointSkelTransforms(&skelXforms, time)) {
+    if (skelQuery.ComputeJointSkelTransforms(&skelXforms, time))
+    {
       return UsdSkelComputeJointsExtent(skelXforms,
                                         extent,
                                         /*padding*/ 0,

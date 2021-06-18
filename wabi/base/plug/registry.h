@@ -340,7 +340,8 @@ class Plug_RegistrationMetadata;
 /// \endcode
 ///
 
-class PlugRegistry : public TfWeakBase {
+class PlugRegistry : public TfWeakBase
+{
   PlugRegistry(PlugRegistry const &) = delete;
   PlugRegistry &operator=(PlugRegistry const &) = delete;
 
@@ -394,7 +395,8 @@ class PlugRegistry : public TfWeakBase {
   ///
   /// Note that additional plugins may be registered during program runtime.
   /// \sa \ref Plug_Discovery
-  template<class Base> static TfType FindDerivedTypeByName(std::string const &typeName)
+  template<class Base>
+  static TfType FindDerivedTypeByName(std::string const &typeName)
   {
     return FindDerivedTypeByName(TfType::Find<Base>(), typeName);
   }
@@ -421,7 +423,8 @@ class PlugRegistry : public TfWeakBase {
   ///
   /// Note that additional plugins may be registered during program runtime.
   /// \sa \ref Plug_Discovery
-  template<class Base> static void GetAllDerivedTypes(std::set<TfType> *result)
+  template<class Base>
+  static void GetAllDerivedTypes(std::set<TfType> *result)
   {
     return GetAllDerivedTypes(TfType::Find<Base>(), result);
   }

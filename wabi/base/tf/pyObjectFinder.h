@@ -36,12 +36,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Tf_PyObjectFinderBase {
+struct Tf_PyObjectFinderBase
+{
   TF_API virtual ~Tf_PyObjectFinderBase();
   virtual boost::python::object Find(void const *objPtr) const = 0;
 };
 
-template<class T, class PtrType> struct Tf_PyObjectFinder : public Tf_PyObjectFinderBase {
+template<class T, class PtrType>
+struct Tf_PyObjectFinder : public Tf_PyObjectFinderBase
+{
   virtual ~Tf_PyObjectFinder()
   {}
   virtual boost::python::object Find(void const *objPtr) const
@@ -57,7 +60,8 @@ template<class T, class PtrType> struct Tf_PyObjectFinder : public Tf_PyObjectFi
 TF_API
 void Tf_RegisterPythonObjectFinderInternal(std::type_info const &type, Tf_PyObjectFinderBase const *finder);
 
-template<class T, class PtrType> void Tf_RegisterPythonObjectFinder()
+template<class T, class PtrType>
+void Tf_RegisterPythonObjectFinder()
 {
   Tf_RegisterPythonObjectFinderInternal(typeid(T), new Tf_PyObjectFinder<T, PtrType>());
 }

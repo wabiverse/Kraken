@@ -45,7 +45,8 @@ TraceEventTreeRefPtr TraceEventTree::New(const TraceCollection &collection,
                                          const CounterMap *initialCounterValues)
 {
   Trace_EventTreeBuilder graphBuilder;
-  if (initialCounterValues) {
+  if (initialCounterValues)
+  {
     graphBuilder.SetCounterValues(*initialCounterValues);
   }
   graphBuilder.CreateTree(collection);
@@ -63,7 +64,8 @@ TraceEventTreeRefPtr TraceEventTree::Add(const TraceCollection &collection)
 void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
 {
   // Add the node to the tree.
-  for (TraceEventNodeRefPtr newThreadNode : tree->GetRoot()->GetChildrenRef()) {
+  for (TraceEventNodeRefPtr newThreadNode : tree->GetRoot()->GetChildrenRef())
+  {
 
     const TraceEventNodeRefPtrVector &threadNodes = _root->GetChildrenRef();
 
@@ -72,28 +74,34 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
       return node->GetKey() == newThreadNode->GetKey();
     });
 
-    if (it != threadNodes.end()) {
+    if (it != threadNodes.end())
+    {
       // Add the nodes thread children from child into the current tree.
-      for (TraceEventNodeRefPtr threadChild : newThreadNode->GetChildrenRef()) {
+      for (TraceEventNodeRefPtr threadChild : newThreadNode->GetChildrenRef())
+      {
         (*it)->Append(threadChild);
       }
       // Update the thread times from the newly added children.
       (*it)->SetBeginAndEndTimesFromChildren();
     }
-    else {
+    else
+    {
       // Add the thread if it wasn't already in the tree.
       _root->Append(newThreadNode);
     }
   }
 
   // Add the counter data.
-  for (CounterValuesMap::value_type &p : tree->_counters) {
+  for (CounterValuesMap::value_type &p : tree->_counters)
+  {
     CounterValuesMap::iterator it = _counters.find(p.first);
-    if (it == _counters.end()) {
+    if (it == _counters.end())
+    {
       // Add new counter values;
       _counters.insert(p);
     }
-    else {
+    else
+    {
       // Merge new counter values to existing counter values.
       const size_t originalSize = it->second.size();
       it->second.insert(it->second.end(), p.second.begin(), p.second.end());
@@ -102,13 +110,16 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
   }
 
   // Add the marker data.
-  for (MarkerValuesMap::value_type &p : tree->_markers) {
+  for (MarkerValuesMap::value_type &p : tree->_markers)
+  {
     MarkerValuesMap::iterator it = _markers.find(p.first);
-    if (it == _markers.end()) {
+    if (it == _markers.end())
+    {
       // Add new markers values;
       _markers.insert(p);
     }
-    else {
+    else
+    {
       // Merge new marker values to existing marker values.
       const size_t originalSize = it->second.size();
       it->second.insert(it->second.end(), p.second.begin(), p.second.end());
@@ -133,8 +144,10 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
 
   // Add begin time
   std::vector<std::string> catList = TraceCategory::GetInstance().GetCategories(node->GetCategory());
-  for (const std::string &catName : catList) {
-    if (categoryList.length() > 0) {
+  for (const std::string &catName : catList)
+  {
+    if (categoryList.length() > 0)
+    {
       categoryList.append(",");
     }
     categoryList.append(catName);
@@ -150,23 +163,28 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
   writeCommonEventData();
   js.WriteKeyValue("ts", _TimeStampToChromeTraceValue(node->GetBeginTime()));
 
-  if (!node->GetAttributes().empty()) {
+  if (!node->GetAttributes().empty())
+  {
     js.WriteKey("args");
     js.BeginObject();
 
     using AttributeMap = TraceEventNode::AttributeMap;
     std::unordered_set<TfToken, TfToken::HashFunctor> visitedKeys;
-    for (const AttributeMap::value_type &it : node->GetAttributes()) {
-      if (visitedKeys.find(it.first) == visitedKeys.end()) {
+    for (const AttributeMap::value_type &it : node->GetAttributes())
+    {
+      if (visitedKeys.find(it.first) == visitedKeys.end())
+      {
         visitedKeys.insert(it.first);
         using AttrItr = AttributeMap::const_iterator;
         using Range = std::pair<AttrItr, AttrItr>;
         Range range = node->GetAttributes().equal_range(it.first);
-        if (std::distance(range.first, range.second) == 1) {
+        if (std::distance(range.first, range.second) == 1)
+        {
           js.WriteKey(range.first->first.GetString());
           range.first->second.WriteJson(js);
         }
-        else {
+        else
+        {
           js.WriteKey(it.first.GetString());
           js.WriteArray(range.first, range.second, [](JsWriter &js, AttrItr i) { i->second.WriteJson(js); });
         }
@@ -175,12 +193,14 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
     js.EndObject();
   }
 
-  if (!node->IsFromSeparateEvents()) {
+  if (!node->IsFromSeparateEvents())
+  {
     js.WriteKeyValue("ph", "X");  // Complete event
     js.WriteKeyValue("dur", _TimeStampToChromeTraceValue(node->GetEndTime() - node->GetBeginTime()));
     js.EndObject();
   }
-  else {
+  else
+  {
     js.WriteKeyValue("ph", "B");  // begin event
     js.EndObject();
 
@@ -191,7 +211,8 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
   }
 
   // Recurse on the children
-  for (const TraceEventNodeRefPtr &c : node->GetChildrenRef()) {
+  for (const TraceEventNodeRefPtr &c : node->GetChildrenRef())
+  {
     TraceEventTree_WriteToJsonArray(c, pid, threadId, js);
   }
 }
@@ -201,8 +222,10 @@ static void TraceEventTree_WriteCounters(const int pid,
                                          const TraceEventTree::CounterValuesMap &counters,
                                          JsWriter &js)
 {
-  for (const TraceEventTree::CounterValuesMap::value_type &c : counters) {
-    for (const TraceEventTree::CounterValues::value_type &v : c.second) {
+  for (const TraceEventTree::CounterValuesMap::value_type &c : counters)
+  {
+    for (const TraceEventTree::CounterValues::value_type &v : c.second)
+    {
 
       js.WriteObject("cat",
                      "",
@@ -229,8 +252,10 @@ static void TraceEventTree_WriteMarkers(const int pid,
                                         const TraceEventTree::MarkerValuesMap &markers,
                                         JsWriter &js)
 {
-  for (const TraceEventTree::MarkerValuesMap::value_type &m : markers) {
-    for (const TraceEventTree::MarkerValues::value_type &v : m.second) {
+  for (const TraceEventTree::MarkerValuesMap::value_type &m : markers)
+  {
+    for (const TraceEventTree::MarkerValues::value_type &v : m.second)
+    {
 
       js.WriteObject("cat",
                      "",
@@ -259,11 +284,13 @@ void TraceEventTree::WriteChromeTraceObject(JsWriter &writer, ExtraFieldFn extra
   // Chrome Trace format has a pid for each event.  We use a dummy pid.
   const int pid = 0;
 
-  for (const TraceEventNodeRefPtr &c : _root->GetChildrenRef()) {
+  for (const TraceEventNodeRefPtr &c : _root->GetChildrenRef())
+  {
     // The children of the root represent threads
     TraceThreadId threadId(c->GetKey().GetString());
 
-    for (const TraceEventNodeRefPtr &gc : c->GetChildrenRef()) {
+    for (const TraceEventNodeRefPtr &gc : c->GetChildrenRef())
+    {
       TraceEventTree_WriteToJsonArray(gc, pid, threadId, writer);
     }
   }
@@ -273,7 +300,8 @@ void TraceEventTree::WriteChromeTraceObject(JsWriter &writer, ExtraFieldFn extra
   writer.EndArray();
 
   // Write any extra fields into the object.
-  if (extraFields) {
+  if (extraFields)
+  {
     extraFields(writer);
   }
 
@@ -284,9 +312,11 @@ TraceEventTree::CounterMap TraceEventTree::GetFinalCounterValues() const
 {
   CounterMap finalValues;
 
-  for (const CounterValuesMap::value_type &p : _counters) {
+  for (const CounterValuesMap::value_type &p : _counters)
+  {
     const CounterValues &counterValues = p.second;
-    if (!counterValues.empty()) {
+    if (!counterValues.empty())
+    {
       finalValues[p.first] = counterValues.rbegin()->second;
     }
   }

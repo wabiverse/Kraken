@@ -81,26 +81,31 @@ void UsdImagingLightFilterAdapter::TrackVariability(UsdPrim const &prim,
     prim, HdLight::DirtyBits::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
 
   // Determine if the light filter material network is time varying.
-  if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim)) {
+  if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim))
+  {
     *timeVaryingBits |= HdLight::DirtyBits::DirtyResource;
   }
 
   // If any of the light attributes is time varying
   // we will assume all light params are time-varying.
   const std::vector<UsdAttribute> &attrs = prim.GetAttributes();
-  for (UsdAttribute const &attr : attrs) {
+  for (UsdAttribute const &attr : attrs)
+  {
     // Don't double-count transform attrs.
-    if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(attr.GetBaseName())) {
+    if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(attr.GetBaseName()))
+    {
       continue;
     }
-    if (attr.GetNumTimeSamples() > 1) {
+    if (attr.GetNumTimeSamples() > 1)
+    {
       *timeVaryingBits |= HdLight::DirtyBits::DirtyParams;
       break;
     }
   }
 
   UsdLuxLightFilter lightFilter(prim);
-  if (TF_VERIFY(lightFilter)) {
+  if (TF_VERIFY(lightFilter))
+  {
     UsdImaging_CollectionCache &collectionCache = _GetCollectionCache();
     collectionCache.UpdateCollection(lightFilter.GetFilterLinkCollectionAPI());
     // TODO: When collections change we need to invalidate affected
@@ -121,7 +126,8 @@ HdDirtyBits UsdImagingLightFilterAdapter::ProcessPropertyChange(UsdPrim const &p
                                                                 SdfPath const &cachePath,
                                                                 TfToken const &propertyName)
 {
-  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName)) {
+  if (UsdGeomXformable::IsTransformationAffectedByAttrNamed(propertyName))
+  {
     return HdLight::DirtyBits::DirtyTransform;
   }
   // "DirtyParam" is the catch-all bit for light params.
@@ -156,7 +162,8 @@ VtValue UsdImagingLightFilterAdapter::GetMaterialResource(UsdPrim const &prim,
                                                           UsdTimeCode time) const
 {
   UsdLuxLightFilter lightFilter(prim);
-  if (!lightFilter) {
+  if (!lightFilter)
+  {
     TF_RUNTIME_ERROR(
       "Expected light filter prim at <%s> to be a subclass of type "
       "'UsdLuxLightFilter', not type '%s'; ignoring",

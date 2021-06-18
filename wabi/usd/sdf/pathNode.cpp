@@ -59,8 +59,10 @@ SDF_INSTANTIATE_POOL(Sdf_PathPropTag, Sdf_SizeofPropPathNode, /*regionBits=*/8);
 static_assert(sizeof(Sdf_PrimPathNode) == 3 * sizeof(void *), "");
 static_assert(sizeof(Sdf_PrimPropertyPathNode) == 3 * sizeof(void *), "");
 
-struct Sdf_PathNodePrivateAccess {
-  template<class Handle> static inline tbb::atomic<unsigned int> &GetRefCount(Handle h)
+struct Sdf_PathNodePrivateAccess
+{
+  template<class Handle>
+  static inline tbb::atomic<unsigned int> &GetRefCount(Handle h)
   {
     Sdf_PathNode const *p = reinterpret_cast<Sdf_PathNode const *>(h.GetPtr());
     return p->_refCount;
@@ -79,19 +81,25 @@ struct Sdf_PathNodePrivateAccess {
 
 typedef Sdf_PathNodePrivateAccess Access;
 
-namespace {
+namespace
+{
 
-template<class T> struct _ParentAnd {
+template<class T>
+struct _ParentAnd
+{
   const Sdf_PathNode *parent;
   T value;
 };
 
 // Allow void for 'expression' path case, which has no additional data.
-template<> struct _ParentAnd<void> {
+template<>
+struct _ParentAnd<void>
+{
   const Sdf_PathNode *parent;
 };
 
-template<class T> inline _ParentAnd<T> _MakeParentAnd(const Sdf_PathNode *parent, const T &value)
+template<class T>
+inline _ParentAnd<T> _MakeParentAnd(const Sdf_PathNode *parent, const T &value)
 {
   _ParentAnd<T> ret;
   ret.parent = parent;
@@ -111,7 +119,9 @@ inline size_t hash_value(const Sdf_PathNode *p)
   return TfHash()(p);
 }
 
-template<class T> struct _HashParentAnd {
+template<class T>
+struct _HashParentAnd
+{
   inline bool equal(const T &l, const T &r) const
   {
     return l.parent == r.parent && l.value == r.value;
@@ -125,7 +135,9 @@ template<class T> struct _HashParentAnd {
   }
 };
 
-template<> struct _HashParentAnd<_ParentAnd<void>> {
+template<>
+struct _HashParentAnd<_ParentAnd<void>>
+{
   inline bool equal(const _ParentAnd<void> &l, const _ParentAnd<void> &r) const
   {
     return l.parent == r.parent;
@@ -137,7 +149,9 @@ template<> struct _HashParentAnd<_ParentAnd<void>> {
   }
 };
 
-template<class T> struct _PrimTable {
+template<class T>
+struct _PrimTable
+{
   using Pool = Sdf_PathPrimPartPool;
   using PoolHandle = Sdf_PathPrimHandle;
   using NodeHandle = Sdf_PathPrimNodeHandle;
@@ -146,7 +160,9 @@ template<class T> struct _PrimTable {
   Type map;
 };
 
-template<class T> struct _PropTable {
+template<class T>
+struct _PropTable
+{
   using Pool = Sdf_PathPropPartPool;
   using PoolHandle = Sdf_PathPropHandle;
   using NodeHandle = Sdf_PathPropNodeHandle;
@@ -168,7 +184,8 @@ inline typename Table::NodeHandle _FindOrCreate(Table &table,
 {
   typename Table::Type::accessor accessor;
   if (table.map.insert(accessor, _MakeParentAnd(parent, args...)) ||
-      Access::GetRefCount(accessor->second).fetch_and_increment() == 0) {
+      Access::GetRefCount(accessor->second).fetch_and_increment() == 0)
+  {
     // Either there was no entry in the table, or there was but it had begun
     // dying (another client dropped its refcount to 0).  We have to create
     // a new entry in the table.  When the client that is killing the other
@@ -192,7 +209,8 @@ inline void _Remove(const Sdf_PathNode *pathNode,
   // destroyed.  If it is this node, we remove it.
   typename Table::Type::accessor accessor;
   if (table.map.find(accessor, _MakeParentAnd(parent.get(), args...)) &&
-      accessor->second.GetPtr() == reinterpret_cast<char const *>(pathNode)) {
+      accessor->second.GetPtr() == reinterpret_cast<char const *>(pathNode))
+  {
     table.map.erase(accessor);
   }
 }
@@ -329,15 +347,18 @@ const Sdf_PathNode::VariantSelectionType &Sdf_PathNode::_GetEmptyVariantSelectio
   return _emptyVariantSelection;
 }
 
-namespace {
+namespace
+{
 // This "table" is a thread-safe mapping from property node to path token.  Each
 // entry in the _pathTokenTable points to one of these, and will have an entry
 // for the path string for the prim path itself (which will be keyed with a
 // nullptr property node pointer) plus all the properties that hang off it.
-struct _PropToTokenTable {
+struct _PropToTokenTable
+{
   // Note that this function returns a TfToken lvalue reference that needs to
   // live/be valid as long as this object is around.
-  template<class Fn> TfToken const &FindOrCreate(Sdf_PathNode const *prop, Fn &&makeToken)
+  template<class Fn>
+  TfToken const &FindOrCreate(Sdf_PathNode const *prop, Fn &&makeToken)
   {
     _Data &d = *_data;
     // We try first without creating the token -- if that fails we try
@@ -345,7 +366,8 @@ struct _PropToTokenTable {
     // paths shouldn't be a bottleneck for clients.
     tbb::spin_mutex::scoped_lock lock(d.mutex);
     auto iter = d.propsToToks.find(prop);
-    if (iter == d.propsToToks.end()) {
+    if (iter == d.propsToToks.end())
+    {
       // No entry yet.  Drop the lock, make the token, and try to insert
       // it.  We *must* drop the lock since creating the token can
       // re-enter here (e.g. if there are embedded target paths that have
@@ -362,7 +384,8 @@ struct _PropToTokenTable {
   }
 
  private:
-  struct _Data {
+  struct _Data
+  {
     std::map<Sdf_PathNode const *, TfToken> propsToToks;
     tbb::spin_mutex mutex;
   };
@@ -406,7 +429,8 @@ TfToken Sdf_PathNode::_CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNod
 {
   TRACE_FUNCTION();
 
-  if (primPart == GetRelativeRootNode() && !propPart) {
+  if (primPart == GetRelativeRootNode() && !propPart)
+  {
     return SdfPathTokens->relativeRoot;
   }
 
@@ -417,18 +441,21 @@ TfToken Sdf_PathNode::_CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNod
   nodes.reserve(primPart->GetElementCount() + (propPart ? propPart->GetElementCount() : 0));
 
   Sdf_PathNode const *curNode = propPart;
-  while (curNode) {
+  while (curNode)
+  {
     nodes.push_back(curNode);
     curNode = curNode->GetParentNode();
   }
   curNode = primPart;
-  while (curNode && (curNode != root)) {
+  while (curNode && (curNode != root))
+  {
     nodes.push_back(curNode);
     curNode = curNode->GetParentNode();
   }
 
   std::string str;
-  if (primPart->IsAbsolutePath()) {
+  if (primPart->IsAbsolutePath())
+  {
     // Put the leading / on absolute
     str.append(SdfPathTokens->absoluteIndicator.GetString());
   }
@@ -441,7 +468,8 @@ TfToken Sdf_PathNode::_CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNod
     Sdf_PathNode::NodeType curNodeType = node->GetNodeType();
     if (prevNodeType == Sdf_PathNode::PrimNode && (curNodeType == Sdf_PathNode::PrimNode ||
                                                    // This covers cases like '../.property'
-                                                   prevElem == SdfPathTokens->parentPathElement)) {
+                                                   prevElem == SdfPathTokens->parentPathElement))
+    {
       str.append(SdfPathTokens->childDelimiter.GetString());
     }
     TfToken elem = node->GetElement();
@@ -471,7 +499,8 @@ bool Sdf_PathNode::_IsNamespacedImpl() const
 
 void Sdf_PathNode::AppendText(std::string *str) const
 {
-  switch (_nodeType) {
+  switch (_nodeType)
+  {
     case RootNode:
       return;
     case PrimNode:
@@ -607,7 +636,8 @@ Sdf_ExpressionPathNode::~Sdf_ExpressionPathNode()
   _Remove(this, *_expressionNodes, GetParentNode());
 }
 
-struct Sdf_Stats {
+struct Sdf_Stats
+{
   // Counts
   int numNodes;
   int numNodeRefs;
@@ -623,7 +653,7 @@ static void _GatherChildrenFrom(Sdf_PathNode const *parent,
                                 Table const &table,
                                 vector<Sdf_PathNodeConstRefPtr> *result)
 {
-  TF_FOR_ALL(i, table.map)
+  TF_FOR_ALL (i, table.map)
   {
     if (i->first.parent == parent)
       result->emplace_back(reinterpret_cast<Sdf_PathNode const *>(i->second.GetPtr()));
@@ -665,7 +695,7 @@ static void _Visit(Sdf_PathNode const *path, Sdf_Stats *stats)
     stats->numChildrenTable.push_back(0);
   stats->numChildrenTable[numChildren]++;
 
-  TF_FOR_ALL(child, children)
+  TF_FOR_ALL (child, children)
   {
     _Visit(child->get(), stats);
   }
@@ -701,7 +731,8 @@ void Sdf_DumpPathStats()
 
   printf("------------------------------------------------");
   printf("-- By Type\n");
-  for (size_t i = 0; i != Sdf_PathNode::NumNodeTypes; ++i) {
+  for (size_t i = 0; i != Sdf_PathNode::NumNodeTypes; ++i)
+  {
     printf("\t%32ss: %8zu -- %6.2f%%\n",
            enumNameMap[i],
            stats.typeTable[i],
@@ -711,7 +742,8 @@ void Sdf_DumpPathStats()
   printf("------------------------------------------------");
   printf("-- By Length\n");
   size_t totalLen = 0;
-  for (size_t i = 0; i < stats.lengthTable.size(); ++i) {
+  for (size_t i = 0; i < stats.lengthTable.size(); ++i)
+  {
     printf("\tnum nodes with %3zu components : %i\n", i, stats.lengthTable[i]);
     totalLen += i * stats.lengthTable[i];
   }
@@ -719,12 +751,14 @@ void Sdf_DumpPathStats()
 
   printf("------------------------------------------------");
   printf("-- By Number of Children\n");
-  for (size_t i = 0; i < stats.numChildrenTable.size(); ++i) {
+  for (size_t i = 0; i < stats.numChildrenTable.size(); ++i)
+  {
     printf("\tnum nodes with %3zu children : %i\n", i, stats.numChildrenTable[i]);
   }
 
   size_t numChildren = 0;
-  for (size_t i = 1; i < stats.numChildrenTable.size(); ++i) {
+  for (size_t i = 1; i < stats.numChildrenTable.size(); ++i)
+  {
     numChildren += i * stats.numChildrenTable[i];
   }
   printf("\tavg num children (for nodes with any children): %g\n",

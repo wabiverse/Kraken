@@ -30,7 +30,8 @@ WABI_NAMESPACE_BEGIN
 static std::unique_ptr<const HdPhSubtextureIdentifier> _CloneSubtextureId(
   std::unique_ptr<const HdPhSubtextureIdentifier> const &subtextureId)
 {
-  if (subtextureId) {
+  if (subtextureId)
+  {
     return subtextureId->Clone();
   }
   return nullptr;
@@ -38,7 +39,8 @@ static std::unique_ptr<const HdPhSubtextureIdentifier> _CloneSubtextureId(
 
 HdPhTextureIdentifier::HdPhTextureIdentifier() = default;
 
-HdPhTextureIdentifier::HdPhTextureIdentifier(const TfToken &filePath) : _filePath(filePath)
+HdPhTextureIdentifier::HdPhTextureIdentifier(const TfToken &filePath)
+  : _filePath(filePath)
 {}
 
 HdPhTextureIdentifier::HdPhTextureIdentifier(const TfToken &filePath,
@@ -66,7 +68,8 @@ HdPhTextureIdentifier::~HdPhTextureIdentifier() = default;
 
 static std::pair<bool, HdPhTextureIdentifier::ID> _OptionalSubidentifierHash(const HdPhTextureIdentifier &id)
 {
-  if (const HdPhSubtextureIdentifier *subId = id.GetSubtextureIdentifier()) {
+  if (const HdPhSubtextureIdentifier *subId = id.GetSubtextureIdentifier())
+  {
     return {true, TfHash()(*subId)};
   }
   return {false, 0};
@@ -85,10 +88,12 @@ bool HdPhTextureIdentifier::operator!=(const HdPhTextureIdentifier &other) const
 
 size_t hash_value(const HdPhTextureIdentifier &id)
 {
-  if (const HdPhSubtextureIdentifier *const subId = id.GetSubtextureIdentifier()) {
+  if (const HdPhSubtextureIdentifier *const subId = id.GetSubtextureIdentifier())
+  {
     return TfHash::Combine(id.GetFilePath(), *subId);
   }
-  else {
+  else
+  {
     return TfHash()(id.GetFilePath());
   }
 }

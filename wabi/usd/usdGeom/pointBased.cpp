@@ -43,7 +43,8 @@ UsdGeomPointBased::~UsdGeomPointBased()
 /* static */
 UsdGeomPointBased UsdGeomPointBased::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPointBased();
   }
@@ -143,7 +144,8 @@ UsdAttribute UsdGeomPointBased::CreateNormalsAttr(VtValue const &defaultValue, b
                                     writeSparsely);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -198,7 +200,8 @@ TfToken UsdGeomPointBased::GetNormalsInterpolation() const
   // Because normals is a builtin, we don't need to check validity
   // of the attribute before using it
   TfToken interp;
-  if (GetNormalsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp)) {
+  if (GetNormalsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp))
+  {
     return interp;
   }
 
@@ -207,7 +210,8 @@ TfToken UsdGeomPointBased::GetNormalsInterpolation() const
 
 bool UsdGeomPointBased::SetNormalsInterpolation(TfToken const &interpolation)
 {
-  if (UsdGeomPrimvar::IsValidInterpolation(interpolation)) {
+  if (UsdGeomPrimvar::IsValidInterpolation(interpolation))
+  {
     return GetNormalsAttr().SetMetadata(UsdGeomTokens->interpolation, interpolation);
   }
 
@@ -220,7 +224,8 @@ bool UsdGeomPointBased::SetNormalsInterpolation(TfToken const &interpolation)
   return false;
 }
 
-namespace {
+namespace
+{
 template<typename Reduction>
 bool _ComputeExtentImpl(const VtVec3fArray &points, VtVec3fArray *extent, Reduction &&reduction)
 {
@@ -244,7 +249,8 @@ bool _ComputeExtentImpl(const VtVec3fArray &points, VtVec3fArray *extent, Reduct
 bool UsdGeomPointBased::ComputeExtent(const VtVec3fArray &points, VtVec3fArray *extent)
 {
   return _ComputeExtentImpl(points, extent, [&points](size_t b, size_t e, GfRange3d init) {
-    for (size_t i = b; i != e; ++i) {
+    for (size_t i = b; i != e; ++i)
+    {
       init.UnionWith(points[i]);
     }
     return init;
@@ -256,7 +262,8 @@ bool UsdGeomPointBased::ComputeExtent(const VtVec3fArray &points,
                                       VtVec3fArray *extent)
 {
   return _ComputeExtentImpl(points, extent, [&points, &transform](size_t b, size_t e, GfRange3d init) {
-    for (size_t i = b; i != e; ++i) {
+    for (size_t i = b; i != e; ++i)
+    {
       init.UnionWith(transform.Transform(points[i]));
     }
     return init;
@@ -269,19 +276,23 @@ static bool _ComputeExtentForPointBased(const UsdGeomBoundable &boundable,
                                         VtVec3fArray *extent)
 {
   const UsdGeomPointBased pointBased(boundable);
-  if (!TF_VERIFY(pointBased)) {
+  if (!TF_VERIFY(pointBased))
+  {
     return false;
   }
 
   VtVec3fArray points;
-  if (!pointBased.GetPointsAttr().Get(&points, time)) {
+  if (!pointBased.GetPointsAttr().Get(&points, time))
+  {
     return false;
   }
 
-  if (transform) {
+  if (transform)
+  {
     return UsdGeomPointBased::ComputeExtent(points, *transform, extent);
   }
-  else {
+  else
+  {
     return UsdGeomPointBased::ComputeExtent(points, extent);
   }
 }
@@ -292,7 +303,8 @@ bool UsdGeomPointBased::ComputePointsAtTime(VtArray<GfVec3f> *points,
 {
   std::vector<VtVec3fArray> pointsArray;
   std::vector<UsdTimeCode> times({time});
-  if (!ComputePointsAtTimes(&pointsArray, times, baseTime)) {
+  if (!ComputePointsAtTimes(&pointsArray, times, baseTime))
+  {
     return false;
   }
   *points = pointsArray.at(0);
@@ -305,8 +317,10 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
                                              const UsdTimeCode baseTime) const
 {
   size_t numSamples = times.size();
-  for (auto time : times) {
-    if (time.IsNumeric() != baseTime.IsNumeric()) {
+  for (auto time : times)
+  {
+    if (time.IsNumeric() != baseTime.IsNumeric())
+    {
       TF_CODING_ERROR(
         "%s -- all sample times in times and baseTime must either all "
         "be numeric or all be default",
@@ -332,12 +346,14 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
                                                       &velocitiesSampleTime,
                                                       &accelerations,
                                                       &velocityScale,
-                                                      GetPrim())) {
+                                                      GetPrim()))
+  {
     return false;
   }
 
   size_t numPoints = positions.size();
-  if (numPoints == 0) {
+  if (numPoints == 0)
+  {
     pointsArray->clear();
     pointsArray->resize(numSamples);
     return true;
@@ -348,27 +364,31 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
   std::vector<VtArray<GfVec3f>> pointsArrayData;
   pointsArrayData.resize(numSamples);
   bool useInterpolated = velocities.empty();
-  for (size_t i = 0; i < numSamples; i++) {
+  for (size_t i = 0; i < numSamples; i++)
+  {
 
     UsdTimeCode time = times[i];
     VtArray<GfVec3f> *points = &(pointsArrayData[i]);
 
     // If there are no valid velocities or angular velocities, we fallback to
     // "standard" computation logic (linear interpolation between samples).
-    if (useInterpolated) {
+    if (useInterpolated)
+    {
 
       // Try to fetch the points at the sample time. If this fails or the
       // fetched data don't have the correct topology, we fallback to the
       // data from the base time.
 
       VtVec3fArray interpolatedPoints;
-      if (GetPointsAttr().Get(&interpolatedPoints, time) && interpolatedPoints.size() == numPoints) {
+      if (GetPointsAttr().Get(&interpolatedPoints, time) && interpolatedPoints.size() == numPoints)
+      {
         positions = interpolatedPoints;
       }
     }
 
     if (!ComputePointsAtTime(
-          points, stage, time, positions, velocities, velocitiesSampleTime, accelerations, velocityScale)) {
+          points, stage, time, positions, velocities, velocitiesSampleTime, accelerations, velocityScale))
+    {
       return false;
     }
   }
@@ -396,11 +416,14 @@ bool UsdGeomPointBased::ComputePointsAtTime(VtArray<GfVec3f> *points,
 
   const auto computePoints =
     [&velocityTimeDelta, &positions, &velocities, &accelerations, &points](size_t start, size_t end) {
-      for (size_t pointId = start; pointId < end; ++pointId) {
+      for (size_t pointId = start; pointId < end; ++pointId)
+      {
         GfVec3f translation = positions[pointId];
-        if (velocities.size() != 0) {
+        if (velocities.size() != 0)
+        {
           GfVec3f velocity = velocities[pointId];
-          if (accelerations.size() != 0) {
+          if (accelerations.size() != 0)
+          {
             velocity += velocityTimeDelta * accelerations[pointId] * 0.5;
           }
           translation += velocityTimeDelta * velocity;

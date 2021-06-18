@@ -50,7 +50,8 @@ UsdGeomPointInstancer::~UsdGeomPointInstancer()
 /* static */
 UsdGeomPointInstancer UsdGeomPointInstancer::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPointInstancer();
   }
@@ -61,7 +62,8 @@ UsdGeomPointInstancer UsdGeomPointInstancer::Get(const UsdStagePtr &stage, const
 UsdGeomPointInstancer UsdGeomPointInstancer::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PointInstancer");
-  if (!stage) {
+  if (!stage)
+  {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPointInstancer();
   }
@@ -253,7 +255,8 @@ UsdRelationship UsdGeomPointInstancer::CreatePrototypesRel() const
                                       /* custom = */ false);
 }
 
-namespace {
+namespace
+{
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
 {
   TfTokenVector result;
@@ -333,12 +336,15 @@ TF_REGISTRY_FUNCTION(TfEnum)
 // operation on a set rather than a list.  A side effect is
 // ensuring that it does not use added or ordered items,
 // and can therefore be used with ApplyOperations().
-template<typename T> static SdfListOp<T> _CanonicalizeListOp(const SdfListOp<T> &op)
+template<typename T>
+static SdfListOp<T> _CanonicalizeListOp(const SdfListOp<T> &op)
 {
-  if (op.IsExplicit()) {
+  if (op.IsExplicit())
+  {
     return op;
   }
-  else {
+  else
+  {
     std::vector<T> items;
     op.ApplyOperations(&items);
     std::sort(items.begin(), items.end());
@@ -364,26 +370,31 @@ bool UsdGeomPointInstancerSetOrMergeOverOp(std::vector<int64_t> const &items,
   UsdEditTarget editTarget = stage->GetEditTarget();
   SdfPrimSpecHandle primSpec = editTarget.GetPrimSpecForScenePath(prim.GetPath());
 
-  if (primSpec) {
+  if (primSpec)
+  {
     VtValue existingOp = primSpec->GetInfo(metadataName);
-    if (existingOp.IsHolding<SdfInt64ListOp>()) {
+    if (existingOp.IsHolding<SdfInt64ListOp>())
+    {
       current = existingOp.UncheckedGet<SdfInt64ListOp>();
     }
   }
 
   proposed.SetItems(items, op);
 
-  if (TfGetEnvSetting(USDGEOM_POINTINSTANCER_NEW_APPLYOPS)) {
+  if (TfGetEnvSetting(USDGEOM_POINTINSTANCER_NEW_APPLYOPS))
+  {
     current = _CanonicalizeListOp(current);
     return prim.SetMetadata(UsdGeomTokens->inactiveIds, *proposed.ApplyOperations(current));
   }
 
-  if (current.IsExplicit()) {
+  if (current.IsExplicit())
+  {
     std::vector<int64_t> explicitItems = current.GetExplicitItems();
     proposed.ApplyOperations(&explicitItems);
     current.SetExplicitItems(explicitItems);
   }
-  else {
+  else
+  {
     // We can't use ApplyOperations on an extant, non-explicit listOp
     // because the result is always flat and explicit.
     current.ComposeOperations(proposed, op);
@@ -393,13 +404,16 @@ bool UsdGeomPointInstancerSetOrMergeOverOp(std::vector<int64_t> const &items,
     // from the added in current, since when applying ops, we first
     // remove, then add.  Bug #139215 filed to track; when it gets fixed
     // we can remove this code!
-    if (op == SdfListOpTypeDeleted) {
+    if (op == SdfListOpTypeDeleted)
+    {
       std::vector<int64_t> addedItems = current.GetAddedItems();
-      if (!addedItems.empty()) {
+      if (!addedItems.empty())
+      {
         std::set<int64_t> toRemove(items.begin(), items.end());
         std::vector<int64_t> newAdded;
         newAdded.reserve(addedItems.size());
-        for (auto elt : addedItems) {
+        for (auto elt : addedItems)
+        {
           if (!toRemove.count(elt))
             newAdded.push_back(elt);
         }
@@ -407,13 +421,16 @@ bool UsdGeomPointInstancerSetOrMergeOverOp(std::vector<int64_t> const &items,
           current.SetAddedItems(newAdded);
       }
     }
-    else if (op == SdfListOpTypeAdded) {
+    else if (op == SdfListOpTypeAdded)
+    {
       std::vector<int64_t> deletedItems = current.GetDeletedItems();
-      if (!deletedItems.empty()) {
+      if (!deletedItems.empty())
+      {
         std::set<int64_t> toAdd(items.begin(), items.end());
         std::vector<int64_t> newDeleted;
         newDeleted.reserve(deletedItems.size());
-        for (auto elt : deletedItems) {
+        for (auto elt : deletedItems)
+        {
           if (!toAdd.count(elt))
             newDeleted.push_back(elt);
         }
@@ -482,14 +499,17 @@ bool UsdGeomPointInstancer::VisIds(VtInt64Array const &ids, UsdTimeCode const &t
   std::set<int64_t> invisSet(invised.begin(), invised.end());
   size_t numRemoved = 0;
 
-  for (int64_t id : ids) {
+  for (int64_t id : ids)
+  {
     numRemoved += invisSet.erase(id);
   }
 
-  if (numRemoved) {
+  if (numRemoved)
+  {
     invised.clear();
     invised.reserve(invisSet.size());
-    for (int64_t id : invisSet) {
+    for (int64_t id : invisSet)
+    {
       invised.push_back(id);
     }
   }
@@ -522,7 +542,8 @@ bool UsdGeomPointInstancer::InvisIds(VtInt64Array const &ids, UsdTimeCode const 
 
   std::set<int64_t> invisSet(invised.begin(), invised.end());
 
-  for (int64_t id : ids) {
+  for (int64_t id : ids)
+  {
     if (invisSet.find(id) == invisSet.end())
       invised.push_back(id);
   }
@@ -540,24 +561,30 @@ std::vector<bool> UsdGeomPointInstancer::ComputeMaskAtTime(UsdTimeCode time, VtI
   GetPrim().GetMetadata(UsdGeomTokens->inactiveIds, &inactiveIdsListOp);
   std::vector<int64_t> inactiveIds = inactiveIdsListOp.GetExplicitItems();
   GetInvisibleIdsAttr().Get(&invisedIds, time);
-  if (inactiveIds.size() > 0 || invisedIds.size() > 0) {
+  if (inactiveIds.size() > 0 || invisedIds.size() > 0)
+  {
     bool anyPruned = false;
     std::set<int64_t> maskedIds(inactiveIds.begin(), inactiveIds.end());
     maskedIds.insert(invisedIds.begin(), invisedIds.end());
-    if (!ids) {
-      if (GetIdsAttr().Get(&idVals, time)) {
+    if (!ids)
+    {
+      if (GetIdsAttr().Get(&idVals, time))
+      {
         ids = &idVals;
       }
-      if (!ids) {
+      if (!ids)
+      {
         VtIntArray protoIndices;
-        if (!GetProtoIndicesAttr().Get(&protoIndices, time)) {
+        if (!GetProtoIndicesAttr().Get(&protoIndices, time))
+        {
           // not a functional PointInstancer... just return
           // trivial pass
           return mask;
         }
         size_t numInstances = protoIndices.size();
         idVals.reserve(numInstances);
-        for (size_t i = 0; i < numInstances; ++i) {
+        for (size_t i = 0; i < numInstances; ++i)
+        {
           idVals.push_back(i);
         }
         ids = &idVals;
@@ -565,13 +592,15 @@ std::vector<bool> UsdGeomPointInstancer::ComputeMaskAtTime(UsdTimeCode time, VtI
     }
 
     mask.reserve(ids->size());
-    for (int64_t id : *ids) {
+    for (int64_t id : *ids)
+    {
       bool pruned = (maskedIds.find(id) != maskedIds.end());
       anyPruned = anyPruned || pruned;
       mask.push_back(!pruned);
     }
 
-    if (!anyPruned) {
+    if (!anyPruned)
+    {
       mask.resize(0);
     }
   }
@@ -582,27 +611,33 @@ std::vector<bool> UsdGeomPointInstancer::ComputeMaskAtTime(UsdTimeCode time, VtI
 bool UsdGeomPointInstancer::_GetProtoIndicesForInstanceTransforms(UsdTimeCode baseTime,
                                                                   VtIntArray *protoIndices) const
 {
-  if (baseTime.IsNumeric()) {
+  if (baseTime.IsNumeric())
+  {
     double sampleTimeValue = 0.0;
     double upperTimeValue = 0.0;
     bool hasSamples;
     if (!GetProtoIndicesAttr().GetBracketingTimeSamples(
-          baseTime.GetValue(), &sampleTimeValue, &upperTimeValue, &hasSamples)) {
+          baseTime.GetValue(), &sampleTimeValue, &upperTimeValue, &hasSamples))
+    {
       return false;
     }
 
     UsdTimeCode sampleTime = UsdTimeCode::Default();
-    if (hasSamples) {
+    if (hasSamples)
+    {
       sampleTime = UsdTimeCode(sampleTimeValue);
     }
 
-    if (!GetProtoIndicesAttr().Get(protoIndices, sampleTime)) {
+    if (!GetProtoIndicesAttr().Get(protoIndices, sampleTime))
+    {
       return false;
     }
   }
-  else {
+  else
+  {
     // baseTime is UsdTimeCode.Default()
-    if (!GetProtoIndicesAttr().Get(protoIndices, baseTime)) {
+    if (!GetProtoIndicesAttr().Get(protoIndices, baseTime))
+    {
       return false;
     }
   }
@@ -613,13 +648,16 @@ bool UsdGeomPointInstancer::_GetPrototypePathsForInstanceTransforms(const VtIntA
                                                                     SdfPathVector *protoPaths) const
 {
   SdfPathVector protoPathData;
-  if (!GetPrototypesRel().GetTargets(&protoPathData) || protoPathData.empty()) {
+  if (!GetPrototypesRel().GetTargets(&protoPathData) || protoPathData.empty())
+  {
     TF_WARN("%s -- no prototypes", GetPrim().GetPath().GetText());
     return false;
   }
 
-  for (const auto &protoIndex : protoIndices) {
-    if (protoIndex < 0 || static_cast<size_t>(protoIndex) >= protoPathData.size()) {
+  for (const auto &protoIndex : protoIndices)
+  {
+    if (protoIndex < 0 || static_cast<size_t>(protoIndex) >= protoPathData.size())
+    {
       TF_WARN("%s -- invalid prototype index: %d. Should be in [0, %zu)",
               GetPrim().GetPath().GetText(),
               protoIndex,
@@ -641,21 +679,26 @@ bool UsdGeomPointInstancer::_ComputePointInstancerAttributesPreamble(const UsdTi
 {
   TRACE_FUNCTION();
 
-  if (!_GetProtoIndicesForInstanceTransforms(baseTime, protoIndices)) {
+  if (!_GetProtoIndicesForInstanceTransforms(baseTime, protoIndices))
+  {
     return false;
   }
 
   size_t numInstances = protoIndices->size();
 
-  if (doProtoXforms == IncludeProtoXform) {
-    if (!_GetPrototypePathsForInstanceTransforms(*protoIndices, protoPaths)) {
+  if (doProtoXforms == IncludeProtoXform)
+  {
+    if (!_GetPrototypePathsForInstanceTransforms(*protoIndices, protoPaths))
+    {
       return false;
     }
   }
 
-  if (applyMask == ApplyMask) {
+  if (applyMask == ApplyMask)
+  {
     *mask = ComputeMaskAtTime(baseTime);
-    if (!(mask->empty() || mask->size() == numInstances)) {
+    if (!(mask->empty() || mask->size() == numInstances))
+    {
       TF_WARN("%s -- found mask of size [%zu], but expected size [%zu]",
               GetPrim().GetPath().GetText(),
               mask->size(),
@@ -677,7 +720,8 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(VtArray<GfMatrix4d> 
 
   std::vector<VtArray<GfMatrix4d>> xformsArray;
   std::vector<UsdTimeCode> times({time});
-  if (!ComputeInstanceTransformsAtTimes(&xformsArray, times, baseTime, doProtoXforms, applyMask)) {
+  if (!ComputeInstanceTransformsAtTimes(&xformsArray, times, baseTime, doProtoXforms, applyMask))
+  {
     return false;
   }
   *xforms = xformsArray.at(0);
@@ -692,8 +736,10 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
                                                              const MaskApplication applyMask) const
 {
   size_t numSamples = times.size();
-  for (auto time : times) {
-    if (time.IsNumeric() != baseTime.IsNumeric()) {
+  for (auto time : times)
+  {
+    if (time.IsNumeric() != baseTime.IsNumeric())
+    {
       TF_CODING_ERROR(
         "%s -- all sample times in times and baseTime must either all "
         "be numeric or all be default",
@@ -715,7 +761,8 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
   float velocityScale;
 
   if (!_ComputePointInstancerAttributesPreamble(
-        baseTime, doProtoXforms, applyMask, &protoIndices, &protoPaths, &mask)) {
+        baseTime, doProtoXforms, applyMask, &protoIndices, &protoPaths, &mask))
+  {
     return false;
   }
 
@@ -731,7 +778,8 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
                                                       &velocitiesSampleTime,
                                                       &accelerations,
                                                       &velocityScale,
-                                                      GetPrim())) {
+                                                      GetPrim()))
+  {
     return false;
   }
 
@@ -746,7 +794,8 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
                                               &angularVelocitiesSampleTime,
                                               GetPrim());
 
-  if (numInstances == 0) {
+  if (numInstances == 0)
+  {
     xformsArray->clear();
     xformsArray->resize(numSamples);
     return true;
@@ -757,14 +806,16 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
   std::vector<VtArray<GfMatrix4d>> xformsArrayData;
   xformsArrayData.resize(numSamples);
   bool useInterpolated = (velocities.empty() && angularVelocities.empty());
-  for (size_t i = 0; i < numSamples; i++) {
+  for (size_t i = 0; i < numSamples; i++)
+  {
 
     UsdTimeCode time = times[i];
     VtArray<GfMatrix4d> *xforms = &(xformsArrayData[i]);
 
     // If there are no valid velocities or angular velocities, we fallback to
     // "standard" computation logic (linear interpolation between samples).
-    if (useInterpolated) {
+    if (useInterpolated)
+    {
 
       // Try to fetch the positions, scales, and orientations at the sample
       // time. If this fails or the fetched data don't have the correct
@@ -772,18 +823,21 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
 
       VtVec3fArray interpolatedPositions;
       if (GetPositionsAttr().Get(&interpolatedPositions, time) &&
-          interpolatedPositions.size() == numInstances) {
+          interpolatedPositions.size() == numInstances)
+      {
         positions = interpolatedPositions;
       }
 
       VtVec3fArray interpolatedScales;
-      if (GetScalesAttr().Get(&interpolatedScales, time) && interpolatedScales.size() == numInstances) {
+      if (GetScalesAttr().Get(&interpolatedScales, time) && interpolatedScales.size() == numInstances)
+      {
         scales = interpolatedScales;
       }
 
       VtQuathArray interpolatedOrientations;
       if (GetOrientationsAttr().Get(&interpolatedOrientations, time) &&
-          interpolatedOrientations.size() == numInstances) {
+          interpolatedOrientations.size() == numInstances)
+      {
         orientations = interpolatedOrientations;
       }
     }
@@ -802,7 +856,8 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(std::vector<VtArray
                                                                 angularVelocitiesSampleTime,
                                                                 protoPaths,
                                                                 mask,
-                                                                velocityScale)) {
+                                                                velocityScale))
+    {
       return false;
     }
   }
@@ -842,10 +897,13 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(VtArray<GfMatrix4d> 
   const GfMatrix4d identity(1.0);
   std::vector<GfMatrix4d> protoXforms(protoPaths.size(), identity);
   UsdGeomXformCache xformCache(time);
-  if (protoPaths.size() != 0) {
-    for (size_t protoIndex = 0; protoIndex < protoPaths.size(); ++protoIndex) {
+  if (protoPaths.size() != 0)
+  {
+    for (size_t protoIndex = 0; protoIndex < protoPaths.size(); ++protoIndex)
+    {
       const SdfPath &protoPath = protoPaths[protoIndex];
-      if (const UsdPrim &protoPrim = stage->GetPrimAtPath(protoPath)) {
+      if (const UsdPrim &protoPrim = stage->GetPrimAtPath(protoPath))
+      {
         // Get the prototype's local transformation.
         bool resetsXformStack;
         protoXforms[protoIndex] = xformCache.GetLocalTransformation(protoPrim, &resetsXformStack);
@@ -867,20 +925,25 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(VtArray<GfMatrix4d> 
                                       &protoIndices,
                                       &protoPaths,
                                       &xforms](size_t start, size_t end) {
-    for (size_t instanceId = start; instanceId < end; ++instanceId) {
-      if (!mask.empty() && !mask[instanceId]) {
+    for (size_t instanceId = start; instanceId < end; ++instanceId)
+    {
+      if (!mask.empty() && !mask[instanceId])
+      {
         continue;
       }
 
       GfTransform instanceTransform;
 
-      if (!scales.empty()) {
+      if (!scales.empty())
+      {
         instanceTransform.SetScale(scales[instanceId]);
       }
 
-      if (!orientations.empty()) {
+      if (!orientations.empty())
+      {
         GfRotation rotation = GfRotation(orientations[instanceId]);
-        if (angularVelocities.size() != 0) {
+        if (angularVelocities.size() != 0)
+        {
           GfVec3f angularVelocity = angularVelocities[instanceId];
           rotation *= GfRotation(angularVelocity, angularVelocityTimeDelta * angularVelocity.GetLength());
         }
@@ -888,9 +951,11 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(VtArray<GfMatrix4d> 
       }
 
       GfVec3f translation = positions[instanceId];
-      if (velocities.size() != 0) {
+      if (velocities.size() != 0)
+      {
         GfVec3f velocity = velocities[instanceId];
-        if (accelerations.size() != 0) {
+        if (accelerations.size() != 0)
+        {
           velocity += velocityTimeDelta * accelerations[instanceId] * 0.5;
         }
         translation += velocityTimeDelta * velocity;
@@ -918,13 +983,15 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimePreamble(UsdTimeCode baseTime,
                                                          UsdRelationship *prototypes,
                                                          SdfPathVector *protoPaths) const
 {
-  if (!GetProtoIndicesAttr().Get(protoIndices, baseTime)) {
+  if (!GetProtoIndicesAttr().Get(protoIndices, baseTime))
+  {
     TF_WARN("%s -- no prototype indices", GetPrim().GetPath().GetText());
     return false;
   }
 
   *mask = ComputeMaskAtTime(baseTime);
-  if (!mask->empty() && mask->size() != protoIndices->size()) {
+  if (!mask->empty() && mask->size() != protoIndices->size())
+  {
     TF_WARN("%s -- mask.size() [%zu] != protoIndices.size() [%zu]",
             GetPrim().GetPath().GetText(),
             mask->size(),
@@ -933,16 +1000,18 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimePreamble(UsdTimeCode baseTime,
   }
 
   *prototypes = GetPrototypesRel();
-  if (!prototypes->GetTargets(protoPaths) || protoPaths->empty()) {
+  if (!prototypes->GetTargets(protoPaths) || protoPaths->empty())
+  {
     TF_WARN("%s -- no prototypes", GetPrim().GetPath().GetText());
     return false;
   }
 
   // verify that all the protoIndices are in bounds.
-  TF_FOR_ALL(iter, *protoIndices)
+  TF_FOR_ALL (iter, *protoIndices)
   {
     const int protoIndex = *iter;
-    if (protoIndex < 0 || static_cast<size_t>(protoIndex) >= protoPaths->size()) {
+    if (protoIndex < 0 || static_cast<size_t>(protoIndex) >= protoPaths->size())
+    {
       TF_WARN("%s -- invalid prototype index: %d. Should be in [0, %zu)",
               GetPrim().GetPath().GetText(),
               protoIndex,
@@ -967,7 +1036,8 @@ bool UsdGeomPointInstancer::_ComputeExtentFromTransforms(VtVec3fArray *extent,
 
   UsdStageWeakPtr stage = GetPrim().GetStage();
 
-  if (protoIndices.size() <= protoPaths.size()) {
+  if (protoIndices.size() <= protoPaths.size())
+  {
     TF_DEBUG(USDGEOM_BBOX)
       .Msg(
         "Number of prototypes (%zu) is >= number"
@@ -984,7 +1054,8 @@ bool UsdGeomPointInstancer::_ComputeExtentFromTransforms(VtVec3fArray *extent,
   UsdGeomBBoxCache bboxCache(
     time,
     /*purposes*/ {UsdGeomTokens->default_, UsdGeomTokens->proxy, UsdGeomTokens->render});
-  for (size_t protoId = 0; protoId < protoPaths.size(); ++protoId) {
+  for (size_t protoId = 0; protoId < protoPaths.size(); ++protoId)
+  {
     const SdfPath &protoPath = protoPaths[protoId];
     const UsdPrim &protoPrim = stage->GetPrimAtPath(protoPath);
     const GfBBox3d protoBounds = bboxCache.ComputeUntransformedBound(protoPrim);
@@ -999,8 +1070,10 @@ bool UsdGeomPointInstancer::_ComputeExtentFromTransforms(VtVec3fArray *extent,
                                             &protoUntransformedBounds,
                                             &instanceTransforms,
                                             &instanceAlignedRanges](size_t start, size_t end) {
-    for (size_t instanceId = start; instanceId < end; ++instanceId) {
-      if (!mask.empty() && !mask[instanceId]) {
+    for (size_t instanceId = start; instanceId < end; ++instanceId)
+    {
+      if (!mask.empty() && !mask[instanceId])
+      {
         continue;
       }
 
@@ -1012,7 +1085,8 @@ bool UsdGeomPointInstancer::_ComputeExtentFromTransforms(VtVec3fArray *extent,
       thisBounds.Transform(instanceTransforms[instanceId]);
 
       // Apply the optional transform.
-      if (transform) {
+      if (transform)
+      {
         thisBounds.Transform(*transform);
       }
       instanceAlignedRanges[instanceId] = thisBounds.ComputeAlignedRange();
@@ -1025,7 +1099,8 @@ bool UsdGeomPointInstancer::_ComputeExtentFromTransforms(VtVec3fArray *extent,
     GfRange3d(),
     instanceAlignedRanges.size(),
     [&instanceAlignedRanges](size_t b, size_t e, GfRange3d init) {
-      for (auto i = b; i < e; ++i) {
+      for (auto i = b; i < e; ++i)
+      {
         init.UnionWith(instanceAlignedRanges[i]);
       }
       return init;
@@ -1048,7 +1123,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTime(VtVec3fArray *extent,
                                                  const UsdTimeCode baseTime,
                                                  const GfMatrix4d *transform) const
 {
-  if (!extent) {
+  if (!extent)
+  {
     TF_CODING_ERROR("%s -- null container passed to ComputeExtentAtTime()", GetPrim().GetPath().GetText());
     return false;
   }
@@ -1057,7 +1133,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTime(VtVec3fArray *extent,
   std::vector<bool> mask;
   UsdRelationship prototypes;
   SdfPathVector protoPaths;
-  if (!_ComputeExtentAtTimePreamble(baseTime, &protoIndices, &mask, &prototypes, &protoPaths)) {
+  if (!_ComputeExtentAtTimePreamble(baseTime, &protoIndices, &mask, &prototypes, &protoPaths))
+  {
     return false;
   }
 
@@ -1068,7 +1145,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTime(VtVec3fArray *extent,
   // mapping to the prototypes.
   // Masked instances will be culled before being applied to the extent below.
   VtMatrix4dArray instanceTransforms;
-  if (!ComputeInstanceTransformsAtTime(&instanceTransforms, time, baseTime, IncludeProtoXform, IgnoreMask)) {
+  if (!ComputeInstanceTransformsAtTime(&instanceTransforms, time, baseTime, IncludeProtoXform, IgnoreMask))
+  {
     TF_WARN("%s -- could not compute instance transforms", GetPrim().GetPath().GetText());
     return false;
   }
@@ -1082,7 +1160,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimes(std::vector<VtVec3fArray> *ext
                                                   const UsdTimeCode baseTime,
                                                   const GfMatrix4d *transform) const
 {
-  if (!extents) {
+  if (!extents)
+  {
     TF_CODING_ERROR("%s -- null container passed to ComputeExtentAtTimes()", GetPrim().GetPath().GetText());
     return false;
   }
@@ -1091,7 +1170,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimes(std::vector<VtVec3fArray> *ext
   std::vector<bool> mask;
   UsdRelationship prototypes;
   SdfPathVector protoPaths;
-  if (!_ComputeExtentAtTimePreamble(baseTime, &protoIndices, &mask, &prototypes, &protoPaths)) {
+  if (!_ComputeExtentAtTimePreamble(baseTime, &protoIndices, &mask, &prototypes, &protoPaths))
+  {
     return false;
   }
 
@@ -1103,7 +1183,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimes(std::vector<VtVec3fArray> *ext
   // Masked instances will be culled before being applied to the extent below.
   std::vector<VtMatrix4dArray> instanceTransformsArray;
   if (!ComputeInstanceTransformsAtTimes(
-        &instanceTransformsArray, times, baseTime, IncludeProtoXform, IgnoreMask)) {
+        &instanceTransformsArray, times, baseTime, IncludeProtoXform, IgnoreMask))
+  {
     TF_WARN("%s -- could not compute instance transforms", GetPrim().GetPath().GetText());
     return false;
   }
@@ -1111,7 +1192,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimes(std::vector<VtVec3fArray> *ext
   std::vector<VtVec3fArray> computedExtents;
   computedExtents.resize(times.size());
 
-  for (size_t i = 0; i < times.size(); i++) {
+  for (size_t i = 0; i < times.size(); i++)
+  {
 
     const UsdTimeCode &time = times[i];
     const VtMatrix4dArray &instanceTransforms = instanceTransformsArray[i];
@@ -1123,7 +1205,8 @@ bool UsdGeomPointInstancer::_ComputeExtentAtTimes(std::vector<VtVec3fArray> *ext
                                       protoPaths,
                                       instanceTransforms,
                                       time,
-                                      transform)) {
+                                      transform))
+    {
       return false;
     }
   }
@@ -1170,16 +1253,19 @@ static bool _ComputeExtentForPointInstancer(const UsdGeomBoundable &boundable,
   TRACE_FUNCTION();
 
   const UsdGeomPointInstancer pointInstancerSchema(boundable);
-  if (!TF_VERIFY(pointInstancerSchema)) {
+  if (!TF_VERIFY(pointInstancerSchema))
+  {
     return false;
   }
 
   // We use the input time as the baseTime because we don't care about
   // velocity or angularVelocity.
-  if (transform) {
+  if (transform)
+  {
     return pointInstancerSchema.ComputeExtentAtTime(extent, time, time, *transform);
   }
-  else {
+  else
+  {
     return pointInstancerSchema.ComputeExtentAtTime(extent, time, time);
   }
 }

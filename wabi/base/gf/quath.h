@@ -51,7 +51,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<> struct GfIsGfQuat<class GfQuath> {
+template<>
+struct GfIsGfQuat<class GfQuath>
+{
   static const bool value = true;
 };
 
@@ -64,7 +66,8 @@ GfHalf GfDot(const GfQuath &q1, const GfQuath &q2);
 /// Basic type: a quaternion, a complex number with a real coefficient and
 /// three imaginary coefficients, stored as a 3-vector.
 ///
-class GfQuath {
+class GfQuath
+{
  public:
   typedef GfHalf ScalarType;
   typedef GfVec3h ImaginaryType;
@@ -80,15 +83,21 @@ class GfQuath {
   /// \p realVal are -1, 0, or 1.  Other values are legal but are likely to
   /// be meaningless.
   ///
-  explicit GfQuath(GfHalf realVal) : _imaginary(0), _real(realVal)
+  explicit GfQuath(GfHalf realVal)
+    : _imaginary(0),
+      _real(realVal)
   {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuath(GfHalf real, GfHalf i, GfHalf j, GfHalf k) : _imaginary(i, j, k), _real(real)
+  GfQuath(GfHalf real, GfHalf i, GfHalf j, GfHalf k)
+    : _imaginary(i, j, k),
+      _real(real)
   {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuath(GfHalf real, const GfVec3h &imaginary) : _imaginary(imaginary), _real(real)
+  GfQuath(GfHalf real, const GfVec3h &imaginary)
+    : _imaginary(imaginary),
+      _real(real)
   {}
 
   /// Construct from GfQuatd.

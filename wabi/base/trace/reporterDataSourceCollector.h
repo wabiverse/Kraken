@@ -55,7 +55,8 @@ TF_DECLARE_WEAK_PTRS(TraceReporterDataSourceCollector);
 /// This class is an implementation of TraceReporterDataSourceBase which
 /// retrieves TraceCollections from the TraceCollector singleton.
 ///
-class TraceReporterDataSourceCollector : public TraceReporterDataSourceBase, public TfWeakBase {
+class TraceReporterDataSourceCollector : public TraceReporterDataSourceBase, public TfWeakBase
+{
  public:
   using This = TraceReporterDataSourceCollector;
   using ThisPtr = TraceReporterDataSourceCollectorPtr;

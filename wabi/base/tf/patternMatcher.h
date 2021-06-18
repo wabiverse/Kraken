@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 /// pattern. This is because the matcher will only compile the regular
 /// expression once.
 ///
-class TfPatternMatcher {
+class TfPatternMatcher
+{
 
  public:
   /// Construct an empty (invalid) TfPatternMatcher.

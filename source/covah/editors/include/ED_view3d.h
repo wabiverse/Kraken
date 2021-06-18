@@ -80,9 +80,15 @@
 WABI_NAMESPACE_BEGIN
 
 /** Use with #View3D.shading.mode */
-enum eView3DShadingMode { VIEW3D_MODE_WIREFRAME = 0, VIEW3D_MODE_SOLID, VIEW3D_MODE_SHADED };
+enum eView3DShadingMode
+{
+  VIEW3D_MODE_WIREFRAME = 0,
+  VIEW3D_MODE_SOLID,
+  VIEW3D_MODE_SHADED
+};
 
-struct View3DShading {
+struct View3DShading
+{
   /** Shading type (WIREFRAME, ..). */
   eView3DShadingMode mode;
 
@@ -107,7 +113,8 @@ struct View3DShading {
 };
 
 /** Use with #View3D.status */
-enum eView3DStatusFlag {
+enum eView3DStatusFlag
+{
   VIEW3D_SUCCESS = 0,
   VIEW3D_ERROR,
   VIEW3D_UPDATE,
@@ -115,7 +122,8 @@ enum eView3DStatusFlag {
   VIEW3D_INIT,
 };
 
-struct View3DStatus {
+struct View3DStatus
+{
   /** Hydra graphics interface status flag. */
   eView3DStatusFlag hgi_flag;
   /** Render engine selection status flag. */
@@ -135,7 +143,8 @@ struct View3DStatus {
   UsdTimeCode timecode;
 };
 
-struct View3DOverlay {
+struct View3DOverlay
+{
   /** Edit mode settings. */
   int edit_flag;
   float normals_length;
@@ -173,7 +182,8 @@ struct View3DOverlay {
   float etcher_vertex_paint_opacity;
 };
 
-struct View3D {
+struct View3D
+{
   /** Viewport camera settings. */
   UsdGeomCamera camera;
   float lens;

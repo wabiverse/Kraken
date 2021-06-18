@@ -125,7 +125,8 @@ void HdPh_IndirectDrawBatch::_Init(HdPhDrawItemInstance *drawItemInstance)
   //       if we decide always to use instance culling.
   _useGpuInstanceCulling = _useInstancing && _useGpuCulling && IsEnabledGPUInstanceFrustumCulling();
 
-  if (_useGpuCulling) {
+  if (_useGpuCulling)
+  {
     _cullingProgram.Initialize(_useDrawArrays, _useGpuInstanceCulling, _bufferArraysHash);
   }
 
@@ -136,7 +137,8 @@ void HdPh_IndirectDrawBatch::_Init(HdPhDrawItemInstance *drawItemInstance)
 HdPh_IndirectDrawBatch::_CullingProgram &HdPh_IndirectDrawBatch::_GetCullingProgram(
   HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
-  if (!_cullingProgram.GetGLSLProgram() || _dirtyCullingProgram) {
+  if (!_cullingProgram.GetGLSLProgram() || _dirtyCullingProgram)
+  {
     // create a culling shader key
     HdPh_CullingShaderKey shaderKey(
       _useGpuInstanceCulling, _useTinyPrimCulling, IsEnabledGPUCountVisibleInstances());
@@ -159,7 +161,8 @@ HdPh_IndirectDrawBatch::~HdPh_IndirectDrawBatch()
 
 void HdPh_IndirectDrawBatch::SetEnableTinyPrimCulling(bool tinyPrimCulling)
 {
-  if (_useTinyPrimCulling != tinyPrimCulling) {
+  if (_useTinyPrimCulling != tinyPrimCulling)
+  {
     _useTinyPrimCulling = tinyPrimCulling;
     _dirtyCullingProgram = true;
   }
@@ -214,7 +217,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   // drawcommand is configured as one of followings:
   //
   // DrawArrays + non-instance culling  : 15 integers (+ numInstanceLevels)
-  struct _DrawArraysCommand {
+  struct _DrawArraysCommand
+  {
     uint32_t count;
     uint32_t instanceCount;
     uint32_t first;
@@ -238,7 +242,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   };
 
   // DrawArrays + Instance culling : 18 integers (+ numInstanceLevels)
-  struct _DrawArraysInstanceCullCommand {
+  struct _DrawArraysInstanceCullCommand
+  {
     uint32_t count;
     uint32_t instanceCount;
     uint32_t first;
@@ -260,7 +265,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   };
 
   // DrawElements + non-instance culling : 15 integers (+ numInstanceLevels)
-  struct _DrawElementsCommand {
+  struct _DrawElementsCommand
+  {
     uint32_t count;
     uint32_t instanceCount;
     uint32_t first;
@@ -279,7 +285,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   };
 
   // DrawElements + Instance culling : 19 integers (+ numInstanceLevels)
-  struct _DrawElementsInstanceCullCommand {
+  struct _DrawElementsInstanceCullCommand
+  {
     uint32_t count;
     uint32_t instanceCount;
     uint32_t first;
@@ -337,7 +344,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
 
   TF_DEBUG(HD_MDI).Msg(" - Processing Items:\n");
   _barElementOffsetsHash = 0;
-  for (size_t item = 0; item < numDrawItemInstances; ++item) {
+  for (size_t item = 0; item < numDrawItemInstances; ++item)
+  {
     HdPhDrawItemInstance const *instance = _drawItemInstances[item];
     HdPhDrawItem const *drawItem = _drawItemInstances[item]->GetDrawItem();
 
@@ -383,7 +391,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
     //
     int instanceIndexWidth = instancerNumLevels + 1;
     std::vector<HdBufferArrayRangeSharedPtr> instanceBars(instancerNumLevels);
-    for (size_t i = 0; i < instancerNumLevels; ++i) {
+    for (size_t i = 0; i < instancerNumLevels; ++i)
+    {
       HdBufferArrayRangeSharedPtr const &ins = drawItem->GetInstancePrimvarRange(i);
 
       instanceBars[i] = ins;
@@ -410,7 +419,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
     uint32_t numElements = indexBar ? indexBar->GetNumElements() : 0;
     uint32_t vertexOffset = 0;
     uint32_t vertexCount = 0;
-    if (vertexBar) {
+    if (vertexBar)
+    {
       vertexOffset = vertexBar->GetElementOffset();
       vertexCount = vertexBar->GetNumElements();
     }
@@ -442,8 +452,10 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
       instanceCount = 0;
     uint32_t firstIndex = indexBar ? indexBar->GetElementOffset() * numIndicesPerPrimitive : 0;
 
-    if (_useDrawArrays) {
-      if (_useGpuInstanceCulling) {
+    if (_useDrawArrays)
+    {
+      if (_useGpuInstanceCulling)
+      {
         *cmdIt++ = vertexCount;
         *cmdIt++ = instanceCount;
         *cmdIt++ = vertexOffset;
@@ -463,7 +475,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = topologyVisibilityDC;
         *cmdIt++ = varyingDC;
       }
-      else {
+      else
+      {
         *cmdIt++ = vertexCount;
         *cmdIt++ = instanceCount;
         *cmdIt++ = vertexOffset;
@@ -481,8 +494,10 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = varyingDC;
       }
     }
-    else {
-      if (_useGpuInstanceCulling) {
+    else
+    {
+      if (_useGpuInstanceCulling)
+      {
         *cmdIt++ = indicesCount;
         *cmdIt++ = instanceCount;
         *cmdIt++ = firstIndex;
@@ -503,7 +518,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = topologyVisibilityDC;
         *cmdIt++ = varyingDC;
       }
-      else {
+      else
+      {
         *cmdIt++ = indicesCount;
         *cmdIt++ = instanceCount;
         *cmdIt++ = firstIndex;
@@ -521,15 +537,18 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = varyingDC;
       }
     }
-    for (size_t i = 0; i < instancerNumLevels; ++i) {
+    for (size_t i = 0; i < instancerNumLevels; ++i)
+    {
       uint32_t instanceDC = _GetElementOffset(instanceBars[i]);
       *cmdIt++ = instanceDC;
     }
 
-    if (TfDebug::IsEnabled(HD_MDI)) {
+    if (TfDebug::IsEnabled(HD_MDI))
+    {
       std::vector<uint32_t>::iterator cmdIt2 = cmdIt - commandNumUints;
       std::cout << "   - ";
-      while (cmdIt2 != cmdIt) {
+      while (cmdIt2 != cmdIt)
+      {
         std::cout << *cmdIt2 << " ";
         cmdIt2++;
       }
@@ -552,8 +571,10 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   _dispatchBuffer = resourceRegistry->RegisterDispatchBuffer(
     _tokens->drawIndirect, drawCount, commandNumUints);
   // define binding views
-  if (_useDrawArrays) {
-    if (_useGpuInstanceCulling) {
+  if (_useDrawArrays)
+  {
+    if (_useGpuInstanceCulling)
+    {
       // draw indirect command
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysInstanceCullCommand, count));
@@ -568,13 +589,15 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
                                              {HdTypeInt32Vec2, 1},
                                              offsetof(_DrawArraysInstanceCullCommand, topologyVisibilityDC));
       // instance drawing coords
-      if (instancerNumLevels > 0) {
+      if (instancerNumLevels > 0)
+      {
         _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoordI,
                                                {HdTypeInt32, instancerNumLevels},
                                                sizeof(_DrawArraysInstanceCullCommand));
       }
     }
-    else {
+    else
+    {
       // draw indirect command
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, count));
@@ -588,14 +611,17 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawingCoord2, {HdTypeInt32Vec2, 1}, offsetof(_DrawArraysCommand, topologyVisibilityDC));
       // instance drawing coords
-      if (instancerNumLevels > 0) {
+      if (instancerNumLevels > 0)
+      {
         _dispatchBuffer->AddBufferResourceView(
           HdTokens->drawingCoordI, {HdTypeInt32, instancerNumLevels}, sizeof(_DrawArraysCommand));
       }
     }
   }
-  else {
-    if (_useGpuInstanceCulling) {
+  else
+  {
+    if (_useGpuInstanceCulling)
+    {
       // draw indirect command
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsInstanceCullCommand, count));
@@ -611,13 +637,15 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         {HdTypeInt32Vec2, 1},
         offsetof(_DrawElementsInstanceCullCommand, topologyVisibilityDC));
       // instance drawing coords
-      if (instancerNumLevels > 0) {
+      if (instancerNumLevels > 0)
+      {
         _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoordI,
                                                {HdTypeInt32, instancerNumLevels},
                                                sizeof(_DrawElementsInstanceCullCommand));
       }
     }
-    else {
+    else
+    {
       // draw indirect command
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, count));
@@ -631,7 +659,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawingCoord2, {HdTypeInt32Vec2, 1}, offsetof(_DrawElementsCommand, topologyVisibilityDC));
       // instance drawing coords
-      if (instancerNumLevels > 0) {
+      if (instancerNumLevels > 0)
+      {
         _dispatchBuffer->AddBufferResourceView(
           HdTokens->drawingCoordI, {HdTypeInt32, instancerNumLevels}, sizeof(_DrawElementsCommand));
       }
@@ -641,7 +670,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   // copy data
   _dispatchBuffer->CopyData(_drawCommandBuffer);
 
-  if (_useGpuCulling) {
+  if (_useGpuCulling)
+  {
     // Make a duplicate of the draw dispatch buffer to use as an input
     // for GPU frustum culling (a single buffer cannot be bound for
     // both reading and xform feedback). We use only the instanceCount
@@ -682,8 +712,10 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
     // Since drawingCoord2 contains only topological visibility and varying,
     // we skip it for the culling pass.
     //
-    if (_useDrawArrays) {
-      if (_useGpuInstanceCulling) {
+    if (_useDrawArrays)
+    {
+      if (_useGpuInstanceCulling)
+      {
         // cull indirect command
         _dispatchBufferCullInput->AddBufferResourceView(
           HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysInstanceCullCommand, cullCount));
@@ -697,7 +729,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           {HdTypeInt32Vec2, 1},
           offsetof(_DrawArraysInstanceCullCommand, fvarDC));
         // cull instance drawing coord
-        if (instancerNumLevels > 0) {
+        if (instancerNumLevels > 0)
+        {
           _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoordI,
                                                           {HdTypeInt32, instancerNumLevels},
                                                           sizeof(_DrawArraysInstanceCullCommand));
@@ -708,7 +741,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           {HdTypeInt32, 1},
           offsetof(_DrawArraysInstanceCullCommand, baseInstance));
       }
-      else {
+      else
+      {
         // cull indirect command
         _dispatchBufferCullInput->AddBufferResourceView(
           HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, count));
@@ -723,8 +757,10 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           _tokens->instanceCountInput, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, instanceCount));
       }
     }
-    else {
-      if (_useGpuInstanceCulling) {
+    else
+    {
+      if (_useGpuInstanceCulling)
+      {
         // cull indirect command
         _dispatchBufferCullInput->AddBufferResourceView(
           HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsInstanceCullCommand, cullCount));
@@ -739,7 +775,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           {HdTypeInt32Vec2, 1},
           offsetof(_DrawElementsInstanceCullCommand, fvarDC));
         // cull instance drawing coord
-        if (instancerNumLevels > 0) {
+        if (instancerNumLevels > 0)
+        {
           _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoordI,
                                                           {HdTypeInt32, instancerNumLevels},
                                                           sizeof(_DrawElementsInstanceCullCommand));
@@ -750,7 +787,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           {HdTypeInt32, 1},
           offsetof(_DrawElementsInstanceCullCommand, baseInstance));
       }
-      else {
+      else
+      {
         // cull indirect command
         _dispatchBufferCullInput->AddBufferResourceView(
           HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, count));
@@ -772,24 +810,30 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
 
   // cache the location of instanceCount, to be used at
   // DrawItemInstanceChanged().
-  if (_useDrawArrays) {
-    if (_useGpuInstanceCulling) {
+  if (_useDrawArrays)
+  {
+    if (_useGpuInstanceCulling)
+    {
       _instanceCountOffset = offsetof(_DrawArraysInstanceCullCommand, instanceCount) / sizeof(uint32_t);
       _cullInstanceCountOffset = offsetof(_DrawArraysInstanceCullCommand, cullInstanceCount) /
                                  sizeof(uint32_t);
     }
-    else {
+    else
+    {
       _instanceCountOffset = _cullInstanceCountOffset = offsetof(_DrawArraysCommand, instanceCount) /
                                                         sizeof(uint32_t);
     }
   }
-  else {
-    if (_useGpuInstanceCulling) {
+  else
+  {
+    if (_useGpuInstanceCulling)
+    {
       _instanceCountOffset = offsetof(_DrawElementsInstanceCullCommand, instanceCount) / sizeof(uint32_t);
       _cullInstanceCountOffset = offsetof(_DrawElementsInstanceCullCommand, cullInstanceCount) /
                                  sizeof(uint32_t);
     }
-    else {
+    else
+    {
       _instanceCountOffset = _cullInstanceCountOffset = offsetof(_DrawElementsCommand, instanceCount) /
                                                         sizeof(uint32_t);
     }
@@ -798,7 +842,8 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
 
 HdPh_DrawBatch::ValidationResult HdPh_IndirectDrawBatch::Validate(bool deepValidation)
 {
-  if (!TF_VERIFY(!_drawItemInstances.empty())) {
+  if (!TF_VERIFY(!_drawItemInstances.empty()))
+  {
     return ValidationResult::RebuildAllBatches;
   }
 
@@ -812,7 +857,8 @@ HdPh_DrawBatch::ValidationResult HdPh_IndirectDrawBatch::Validate(bool deepValid
   HdPhDrawItem const *batchItem = _drawItemInstances.front()->GetDrawItem();
   size_t const bufferArraysHash = batchItem->GetBufferArraysHash();
 
-  if (_bufferArraysHash != bufferArraysHash) {
+  if (_bufferArraysHash != bufferArraysHash)
+  {
     _bufferArraysHash = bufferArraysHash;
     TF_DEBUG(HDPH_DRAW_BATCH).Msg("   Buffer arrays hash changed. Need to rebuild batch.\n");
     return ValidationResult::RebuildBatch;
@@ -821,21 +867,25 @@ HdPh_DrawBatch::ValidationResult HdPh_IndirectDrawBatch::Validate(bool deepValid
   // Deep validation is flagged explicitly when a drawItem has changes to
   // its BARs (e.g. buffer spec, aggregation, element offsets) or when its
   // surface shader or geometric shader changes.
-  if (deepValidation) {
+  if (deepValidation)
+  {
     HD_TRACE_SCOPE("Indirect draw batch deep validation");
     // look through all draw items to be still compatible
 
     size_t numDrawItemInstances = _drawItemInstances.size();
     size_t barElementOffsetsHash = 0;
 
-    for (size_t item = 0; item < numDrawItemInstances; ++item) {
+    for (size_t item = 0; item < numDrawItemInstances; ++item)
+    {
       HdPhDrawItem const *drawItem = _drawItemInstances[item]->GetDrawItem();
 
-      if (!TF_VERIFY(drawItem->GetGeometricShader())) {
+      if (!TF_VERIFY(drawItem->GetGeometricShader()))
+      {
         return ValidationResult::RebuildAllBatches;
       }
 
-      if (!_IsAggregated(batchItem, drawItem)) {
+      if (!_IsAggregated(batchItem, drawItem))
+      {
         TF_DEBUG(HDPH_DRAW_BATCH)
           .Msg(
             "   Deep validation: Found draw item that fails aggregation"
@@ -846,7 +896,8 @@ HdPh_DrawBatch::ValidationResult HdPh_IndirectDrawBatch::Validate(bool deepValid
       barElementOffsetsHash = TfHash::Combine(barElementOffsetsHash, drawItem->GetElementOffsetsHash());
     }
 
-    if (_barElementOffsetsHash != barElementOffsetsHash) {
+    if (_barElementOffsetsHash != barElementOffsetsHash)
+    {
       TF_DEBUG(HDPH_DRAW_BATCH)
         .Msg(
           "   Deep validation: Element offsets hash mismatch."
@@ -874,56 +925,70 @@ void HdPh_IndirectDrawBatch::_ValidateCompatibility(
 {
   HdPhDrawItem const *failed = nullptr;
 
-  for (HdPhDrawItemInstance const *itemInstance : _drawItemInstances) {
+  for (HdPhDrawItemInstance const *itemInstance : _drawItemInstances)
+  {
     HdPhDrawItem const *itm = itemInstance->GetDrawItem();
 
-    if (constantBar && !TF_VERIFY(constantBar->IsAggregatedWith(itm->GetConstantPrimvarRange()))) {
+    if (constantBar && !TF_VERIFY(constantBar->IsAggregatedWith(itm->GetConstantPrimvarRange())))
+    {
       failed = itm;
       break;
     }
-    if (indexBar && !TF_VERIFY(indexBar->IsAggregatedWith(itm->GetTopologyRange()))) {
+    if (indexBar && !TF_VERIFY(indexBar->IsAggregatedWith(itm->GetTopologyRange())))
+    {
       failed = itm;
       break;
     }
     if (topologyVisibilityBar &&
-        !TF_VERIFY(topologyVisibilityBar->IsAggregatedWith(itm->GetTopologyVisibilityRange()))) {
+        !TF_VERIFY(topologyVisibilityBar->IsAggregatedWith(itm->GetTopologyVisibilityRange())))
+    {
       failed = itm;
       break;
     }
-    if (elementBar && !TF_VERIFY(elementBar->IsAggregatedWith(itm->GetElementPrimvarRange()))) {
+    if (elementBar && !TF_VERIFY(elementBar->IsAggregatedWith(itm->GetElementPrimvarRange())))
+    {
       failed = itm;
       break;
     }
-    if (fvarBar && !TF_VERIFY(fvarBar->IsAggregatedWith(itm->GetFaceVaryingPrimvarRange()))) {
+    if (fvarBar && !TF_VERIFY(fvarBar->IsAggregatedWith(itm->GetFaceVaryingPrimvarRange())))
+    {
       failed = itm;
       break;
     }
-    if (varyingBar && !TF_VERIFY(varyingBar->IsAggregatedWith(itm->GetVaryingPrimvarRange()))) {
+    if (varyingBar && !TF_VERIFY(varyingBar->IsAggregatedWith(itm->GetVaryingPrimvarRange())))
+    {
       failed = itm;
       break;
     }
-    if (vertexBar && !TF_VERIFY(vertexBar->IsAggregatedWith(itm->GetVertexPrimvarRange()))) {
+    if (vertexBar && !TF_VERIFY(vertexBar->IsAggregatedWith(itm->GetVertexPrimvarRange())))
+    {
       failed = itm;
       break;
     }
-    if (!TF_VERIFY(instancerNumLevels == itm->GetInstancePrimvarNumLevels())) {
+    if (!TF_VERIFY(instancerNumLevels == itm->GetInstancePrimvarNumLevels()))
+    {
       failed = itm;
       break;
     }
-    if (instanceIndexBar && !TF_VERIFY(instanceIndexBar->IsAggregatedWith(itm->GetInstanceIndexRange()))) {
+    if (instanceIndexBar && !TF_VERIFY(instanceIndexBar->IsAggregatedWith(itm->GetInstanceIndexRange())))
+    {
       failed = itm;
       break;
     }
-    if (!TF_VERIFY(instancerNumLevels == (int)instanceBars.size())) {
+    if (!TF_VERIFY(instancerNumLevels == (int)instanceBars.size()))
+    {
       failed = itm;
       break;
     }
 
     std::vector<HdPhBufferArrayRangeSharedPtr> itmInstanceBars(instancerNumLevels);
-    if (instanceIndexBar) {
-      for (int i = 0; i < instancerNumLevels; ++i) {
+    if (instanceIndexBar)
+    {
+      for (int i = 0; i < instancerNumLevels; ++i)
+      {
         if (itmInstanceBars[i] &&
-            !TF_VERIFY(itmInstanceBars[i]->IsAggregatedWith(itm->GetInstancePrimvarRange(i)), "%d", i)) {
+            !TF_VERIFY(itmInstanceBars[i]->IsAggregatedWith(itm->GetInstancePrimvarRange(i)), "%d", i))
+        {
           failed = itm;
           break;
         }
@@ -931,7 +996,8 @@ void HdPh_IndirectDrawBatch::_ValidateCompatibility(
     }
   }
 
-  if (failed) {
+  if (failed)
+  {
     std::cout << failed->GetRprimID() << std::endl;
   }
 }
@@ -947,7 +1013,8 @@ void HdPh_IndirectDrawBatch::PrepareDraw(HdPhRenderPassStateSharedPtr const &ren
   // compile
   //
 
-  if (!_dispatchBuffer) {
+  if (!_dispatchBuffer)
+  {
     _CompileBatch(resourceRegistry);
   }
 
@@ -962,7 +1029,8 @@ void HdPh_IndirectDrawBatch::PrepareDraw(HdPhRenderPassStateSharedPtr const &ren
 
   bool gpuCulling = _useGpuCulling;
 
-  if (gpuCulling && !_useGpuInstanceCulling) {
+  if (gpuCulling && !_useGpuInstanceCulling)
+  {
     // disable GPU culling when instancing enabled and
     // not using instance culling.
     if (batchItem->GetInstanceIndexRange())
@@ -974,10 +1042,12 @@ void HdPh_IndirectDrawBatch::PrepareDraw(HdPhRenderPassStateSharedPtr const &ren
   // On the first time through, after batches have just been compiled,
   // the flag will be false because the resource registry will have already
   // uploaded the buffer.
-  if (_drawCommandBufferDirty) {
+  if (_drawCommandBufferDirty)
+  {
     _dispatchBuffer->CopyData(_drawCommandBuffer);
 
-    if (gpuCulling) {
+    if (gpuCulling)
+    {
       _dispatchBufferCullInput->CopyData(_drawCommandBuffer);
     }
     _drawCommandBufferDirty = false;
@@ -987,21 +1057,25 @@ void HdPh_IndirectDrawBatch::PrepareDraw(HdPhRenderPassStateSharedPtr const &ren
   // cull
   //
 
-  if (gpuCulling && !freezeCulling) {
-    if (_useGpuInstanceCulling) {
+  if (gpuCulling && !freezeCulling)
+  {
+    if (_useGpuInstanceCulling)
+    {
       _GPUFrustumInstanceCulling(batchItem,
                                  GfMatrix4f(renderPassState->GetCullMatrix()),
                                  renderPassState->GetDrawingRangeNDC(),
                                  resourceRegistry);
     }
-    else {
+    else
+    {
       _GPUFrustumNonInstanceCulling(batchItem,
                                     GfMatrix4f(renderPassState->GetCullMatrix()),
                                     renderPassState->GetDrawingRangeNDC(),
                                     resourceRegistry);
     }
 
-    if (IsEnabledGPUCountVisibleInstances()) {
+    if (IsEnabledGPUCountVisibleInstances())
+    {
       _EndGPUCountVisibleInstances(resourceRegistry, &_numVisibleItems);
     }
   }
@@ -1057,7 +1131,8 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
 
   // XXX: for surfaces shader, we need to iterate all drawItems to
   //      make textures resident, instead of just the first batchItem
-  for (HdPhShaderCodeSharedPtr const &shader : shaders) {
+  for (HdPhShaderCodeSharedPtr const &shader : shaders)
+  {
     shader->BindResources(programId, binder, *renderPassState);
   }
 
@@ -1104,11 +1179,13 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
   HdBufferArrayRangeSharedPtr instanceIndexBar_ = batchItem->GetInstanceIndexRange();
   HdPhBufferArrayRangeSharedPtr instanceIndexBar = std::static_pointer_cast<HdPhBufferArrayRange>(
     instanceIndexBar_);
-  if (instanceIndexBar) {
+  if (instanceIndexBar)
+  {
     // note that while instanceIndexBar is mandatory for instancing but
     // instanceBar can technically be empty (it doesn't make sense though)
     // testHdInstance --noprimvars covers that case.
-    for (int i = 0; i < instancerNumLevels; ++i) {
+    for (int i = 0; i < instancerNumLevels; ++i)
+    {
       HdBufferArrayRangeSharedPtr ins_ = batchItem->GetInstancePrimvarRange(i);
       HdPhBufferArrayRangeSharedPtr ins = std::static_pointer_cast<HdPhBufferArrayRange>(ins_);
       instanceBars[i] = ins;
@@ -1117,7 +1194,8 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
     binder.BindBufferArray(instanceIndexBar);
   }
 
-  if (false && ARCH_UNLIKELY(TfDebug::IsEnabled(HD_SAFE_MODE))) {
+  if (false && ARCH_UNLIKELY(TfDebug::IsEnabled(HD_SAFE_MODE)))
+  {
     _ValidateCompatibility(constantBar,
                            indexBar,
                            topVisBar,
@@ -1132,10 +1210,12 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
 
   // shader buffer bind
   HdPhBufferArrayRangeSharedPtr shaderBar;
-  for (HdPhShaderCodeSharedPtr const &shader : shaders) {
+  for (HdPhShaderCodeSharedPtr const &shader : shaders)
+  {
     HdBufferArrayRangeSharedPtr shaderBar_ = shader->GetShaderData();
     shaderBar = std::static_pointer_cast<HdPhBufferArrayRange>(shaderBar_);
-    if (shaderBar) {
+    if (shaderBar)
+    {
       binder.BindBuffer(HdTokens->materialParams, shaderBar->GetResource());
     }
   }
@@ -1149,7 +1229,8 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
 
   uint32_t batchCount = _dispatchBuffer->GetCount();
 
-  if (_useDrawArrays) {
+  if (_useDrawArrays)
+  {
     TF_DEBUG(HD_MDI).Msg(
       "MDI Drawing Arrays:\n"
       " - primitive mode: %d\n"
@@ -1166,7 +1247,8 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
                               batchCount,
                               _dispatchBuffer->GetCommandNumUints() * sizeof(uint32_t));
   }
-  else {
+  else
+  {
     TF_DEBUG(HD_MDI).Msg(
       "MDI Drawing Elements:\n"
       " - primitive mode: %d\n"
@@ -1200,18 +1282,22 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
   binder.UnbindBufferArray(vertexBar);
   binder.UnbindBufferArray(varyingBar);
   binder.UnbindBufferArray(dispatchBar);
-  if (shaderBar) {
+  if (shaderBar)
+  {
     binder.UnbindBuffer(HdTokens->materialParams, shaderBar->GetResource());
   }
 
-  if (instanceIndexBar) {
-    for (int i = 0; i < instancerNumLevels; ++i) {
+  if (instanceIndexBar)
+  {
+    for (int i = 0; i < instancerNumLevels; ++i)
+    {
       binder.UnbindInstanceBufferArray(instanceBars[i], i);
     }
     binder.UnbindBufferArray(instanceIndexBar);
   }
 
-  for (HdPhShaderCodeSharedPtr const &shader : shaders) {
+  for (HdPhShaderCodeSharedPtr const &shader : shaders)
+  {
     shader->UnbindResources(programId, binder, *renderPassState);
   }
   program.GetGeometricShader()->UnbindResources(programId, binder, *renderPassState);
@@ -1230,7 +1316,8 @@ static HgiGraphicsPipelineSharedPtr _GetCullPipeline(HdPhResourceRegistrySharedP
   HdInstance<HgiGraphicsPipelineSharedPtr> pipelineInstance = resourceRegistry->RegisterGraphicsPipeline(
     hash);
 
-  if (pipelineInstance.IsFirstInstance()) {
+  if (pipelineInstance.IsFirstInstance())
+  {
     // Create a points primitive, vertex shader only pipeline that uses
     // a uniform block data for the 'cullParams' in the shader.
     HgiGraphicsPipelineDesc pipeDesc;
@@ -1261,7 +1348,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   HdPhBufferArrayRangeSharedPtr constantBar = std::static_pointer_cast<HdPhBufferArrayRange>(constantBar_);
   int instancerNumLevels = batchItem->GetInstancePrimvarNumLevels();
   std::vector<HdPhBufferArrayRangeSharedPtr> instanceBars(instancerNumLevels);
-  for (int i = 0; i < instancerNumLevels; ++i) {
+  for (int i = 0; i < instancerNumLevels; ++i)
+  {
     HdBufferArrayRangeSharedPtr ins_ = batchItem->GetInstancePrimvarRange(i);
 
     HdPhBufferArrayRangeSharedPtr ins = std::static_pointer_cast<HdPhBufferArrayRange>(ins_);
@@ -1283,7 +1371,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   if (!TF_VERIFY(glslProgram->Validate()))
     return;
 
-  struct Uniforms {
+  struct Uniforms
+  {
     GfMatrix4f cullMatrix;
     GfVec2f drawRangeNDC;
     uint32_t drawCommandNumUints;
@@ -1308,15 +1397,18 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   // bind per-drawitem attribute (drawingCoord, instanceCount, drawCommand)
   binder.BindBufferArray(cullDispatchBar);
 
-  if (instanceIndexBar) {
+  if (instanceIndexBar)
+  {
     int instancerNumLevels = batchItem->GetInstancePrimvarNumLevels();
-    for (int i = 0; i < instancerNumLevels; ++i) {
+    for (int i = 0; i < instancerNumLevels; ++i)
+    {
       binder.BindInstanceBufferArray(instanceBars[i], i);
     }
     binder.BindBufferArray(instanceIndexBar);
   }
 
-  if (IsEnabledGPUCountVisibleInstances()) {
+  if (IsEnabledGPUCountVisibleInstances())
+  {
     _BeginGPUCountVisibleInstances(resourceRegistry);
     binder.BindBuffer(_tokens->drawIndirectResult, _resultBuffer);
   }
@@ -1336,11 +1428,13 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   // XXX: should we cache cull command offset?
   HdPhBufferResourceSharedPtr cullCommandBuffer = _dispatchBufferCullInput->GetResource(
     HdTokens->drawDispatch);
-  if (!TF_VERIFY(cullCommandBuffer)) {
+  if (!TF_VERIFY(cullCommandBuffer))
+  {
     validProgram = false;
   }
 
-  if (validProgram) {
+  if (validProgram)
+  {
     Hgi *hgi = resourceRegistry->GetHgi();
 
     HgiGraphicsPipelineSharedPtr const &pso = _GetCullPipeline(
@@ -1396,9 +1490,11 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   // with same attrib divisors again.
   binder.UnbindConstantBuffer(constantBar);
   binder.UnbindBufferArray(cullDispatchBar);
-  if (instanceIndexBar) {
+  if (instanceIndexBar)
+  {
     int instancerNumLevels = batchItem->GetInstancePrimvarNumLevels();
-    for (int i = 0; i < instancerNumLevels; ++i) {
+    for (int i = 0; i < instancerNumLevels; ++i)
+    {
       binder.UnbindInstanceBufferArray(instanceBars[i], i);
     }
     binder.UnbindBufferArray(instanceIndexBar);
@@ -1407,7 +1503,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   // unbind destination dispatch buffer
   binder.UnbindBuffer(_tokens->dispatchBuffer, _dispatchBuffer->GetEntireResource());
 
-  if (IsEnabledGPUCountVisibleInstances()) {
+  if (IsEnabledGPUCountVisibleInstances())
+  {
     binder.UnbindBuffer(_tokens->drawIndirectResult, _resultBuffer);
   }
 }
@@ -1436,7 +1533,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumNonInstanceCulling(
   // dispatch buffer to 0 for primitives that are culled, skipping
   // over other elements.
 
-  struct Uniforms {
+  struct Uniforms
+  {
     GfMatrix4f cullMatrix;
     GfVec2f drawRangeNDC;
     uint32_t drawCommandNumUints;
@@ -1454,7 +1552,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumNonInstanceCulling(
   // bind drawing coord, instance count
   binder.BindBufferArray(cullDispatchBar);
 
-  if (IsEnabledGPUCountVisibleInstances()) {
+  if (IsEnabledGPUCountVisibleInstances())
+  {
     _BeginGPUCountVisibleInstances(resourceRegistry);
     binder.BindBuffer(_tokens->drawIndirectResult, _resultBuffer);
   }
@@ -1507,7 +1606,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumNonInstanceCulling(
   binder.UnbindConstantBuffer(constantBar);
   binder.UnbindBufferArray(cullDispatchBar);
 
-  if (IsEnabledGPUCountVisibleInstances()) {
+  if (IsEnabledGPUCountVisibleInstances())
+  {
     binder.UnbindBuffer(_tokens->drawIndirectResult, _resultBuffer);
   }
 }
@@ -1515,7 +1615,8 @@ void HdPh_IndirectDrawBatch::_GPUFrustumNonInstanceCulling(
 void HdPh_IndirectDrawBatch::DrawItemInstanceChanged(HdPhDrawItemInstance const *instance)
 {
   // We need to check the visibility and update if needed
-  if (_dispatchBuffer) {
+  if (_dispatchBuffer)
+  {
     size_t batchIndex = instance->GetBatchIndex();
     int commandNumUints = _dispatchBuffer->GetCommandNumUints();
     int numLevels = instance->GetDrawItem()->GetInstancePrimvarNumLevels();
@@ -1540,7 +1641,8 @@ void HdPh_IndirectDrawBatch::DrawItemInstanceChanged(HdPhDrawItemInstance const 
     TF_DEBUG(HD_MDI).Msg("\nInstance Count changed: %d -> %d\n", *instanceCountIt, newInstanceCount);
 
     // Update instance count and overall count of visible items.
-    if (static_cast<size_t>(newInstanceCount) != (*instanceCountIt)) {
+    if (static_cast<size_t>(newInstanceCount) != (*instanceCountIt))
+    {
       _numVisibleItems += (newInstanceCount - (*instanceCountIt));
       *instanceCountIt = newInstanceCount;
       *cullInstanceCountIt = newInstanceCount;
@@ -1552,7 +1654,8 @@ void HdPh_IndirectDrawBatch::DrawItemInstanceChanged(HdPhDrawItemInstance const 
 void HdPh_IndirectDrawBatch::_BeginGPUCountVisibleInstances(
   HdPhResourceRegistrySharedPtr const &resourceRegistry)
 {
-  if (!_resultBuffer) {
+  if (!_resultBuffer)
+  {
     HdTupleType tupleType;
     tupleType.type = HdTypeInt32;
     tupleType.count = 1;
@@ -1609,7 +1712,8 @@ void HdPh_IndirectDrawBatch::_CullingProgram::Initialize(bool useDrawArrays,
                                                          size_t bufferArrayHash)
 {
   if (useDrawArrays != _useDrawArrays || useInstanceCulling != _useInstanceCulling ||
-      bufferArrayHash != _bufferArrayHash) {
+      bufferArrayHash != _bufferArrayHash)
+  {
     // reset shader
     Reset();
   }
@@ -1630,10 +1734,12 @@ void HdPh_IndirectDrawBatch::_CullingProgram::_GetCustomBindings(HdBindingReques
   customBindings->push_back(HdBindingRequest(HdBinding::SSBO, _tokens->dispatchBuffer));
   customBindings->push_back(HdBindingRequest(HdBinding::UBO, _tokens->ulocCullParams));
 
-  if (_useInstanceCulling) {
+  if (_useInstanceCulling)
+  {
     customBindings->push_back(HdBindingRequest(HdBinding::DRAW_INDEX_INSTANCE, _tokens->drawCommandIndex));
   }
-  else {
+  else
+  {
     // non-instance culling
     customBindings->push_back(HdBindingRequest(HdBinding::DRAW_INDEX, _tokens->drawCommandIndex));
     customBindings->push_back(HdBindingRequest(HdBinding::DRAW_INDEX, _tokens->instanceCountInput));

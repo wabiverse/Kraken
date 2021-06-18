@@ -49,16 +49,22 @@ typedef std::vector<struct HdBufferSpec> HdBufferSpecVector;
 ///    1: name = normals, tupleType = {HdTypeFloatVec3, 1}
 ///    2: name = colors,  tupleType = {HdTypeFloatVec3, 1}
 ///
-struct HdBufferSpec final {
+struct HdBufferSpec final
+{
   /// Constructor.
-  HdBufferSpec(TfToken const &name, HdTupleType tupleType) : name(name), tupleType(tupleType)
+  HdBufferSpec(TfToken const &name, HdTupleType tupleType)
+    : name(name),
+      tupleType(tupleType)
   {}
 
   /// Util function for adding buffer specs of sources into bufferspecs.
-  template<typename T> static void GetBufferSpecs(T const &sources, HdBufferSpecVector *bufferSpecs)
+  template<typename T>
+  static void GetBufferSpecs(T const &sources, HdBufferSpecVector *bufferSpecs)
   {
-    for (auto const &src : sources) {
-      if (src->IsValid()) {
+    for (auto const &src : sources)
+    {
+      if (src->IsValid())
+      {
         src->GetBufferSpecs(bufferSpecs);
       }
     }
@@ -89,7 +95,8 @@ struct HdBufferSpec final {
   size_t Hash() const;
 
   /// Functor to use for unorderd sets, maps.
-  struct HashFunctor {
+  struct HashFunctor
+  {
     size_t operator()(HdBufferSpec const &spec) const
     {
       return spec.Hash();
@@ -117,7 +124,8 @@ struct HdBufferSpec final {
 };
 
 // Support TfHash.
-template<class HashState> void TfHashAppend(HashState &h, HdBufferSpec const &bs)
+template<class HashState>
+void TfHashAppend(HashState &h, HdBufferSpec const &bs)
 {
   h.Append(bs.name, bs.tupleType);
 }

@@ -40,7 +40,8 @@ using HdPhRenderPassShaderSharedPtr = std::shared_ptr<HdPhRenderPassShader>;
 /// A task for rendering transparent geometry into OIT buffers.
 /// Its companion task, OITResolveTask, will blend the buffers to screen.
 ///
-class HdxOitRenderTask : public HdxRenderTask {
+class HdxOitRenderTask : public HdxRenderTask
+{
  public:
   HDX_API
   HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id);

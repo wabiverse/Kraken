@@ -9,11 +9,14 @@
 #include <type_traits>  // std::is_same
 #include <vector>       // std::vector
 
-namespace Zep {
+namespace Zep
+{
 // implementational details
-namespace detail {
+namespace detail
+{
 /// Interface for type erasure when disconnecting slots
-struct disconnector {
+struct disconnector
+{
   virtual void operator()(std::size_t index) const = 0;
 };
 /// Deleter that doesn't delete
@@ -21,7 +24,8 @@ inline void no_delete(disconnector *){};
 }  // namespace detail
 
 /// Base template for the signal class
-template<class P, class T> class signal_type;
+template<class P, class T>
+class signal_type;
 
 /// Connection class.
 ///
@@ -32,10 +36,12 @@ template<class P, class T> class signal_type;
 /// Connections are not copy constructible or copy assignable.
 /// Connections are move constructible and move assignable.
 ///
-class connection {
+class connection
+{
  public:
   /// Default constructor
-  connection() : _index()
+  connection()
+    : _index()
   {}
 
   // Connection are not copy constructible or copy assignable
@@ -75,7 +81,8 @@ class connection {
  private:
   /// The signal template is a friend of the connection, since it is the
   /// only one allowed to create instances using the meaningful constructor.
-  template<class P, class T> friend class signal_type;
+  template<class P, class T>
+  friend class signal_type;
 
   /// Create a connection.
   /// @param shared_disconnector   Disconnector instance that will be used to disconnect
@@ -99,7 +106,8 @@ class connection {
 /// This type of connection is automatically disconnected when
 /// the connection object is destructed.
 ///
-class scoped_connection {
+class scoped_connection
+{
  public:
   /// Scoped are default constructible
   scoped_connection() = default;
@@ -109,7 +117,8 @@ class scoped_connection {
   scoped_connection &operator=(scoped_connection const &) = delete;
 
   /// Move constructor
-  scoped_connection(scoped_connection &&other) : _connection(std::move(other._connection))
+  scoped_connection(scoped_connection &&other)
+    : _connection(std::move(other._connection))
   {}
 
   /// Move assign operator.
@@ -122,7 +131,8 @@ class scoped_connection {
 
   /// Construct a scoped connection from a connection object
   /// @param connection   The connection object to manage
-  scoped_connection(connection &&c) : _connection(std::forward<connection>(c))
+  scoped_connection(connection &&c)
+    : _connection(std::forward<connection>(c))
   {}
 
   /// destructor
@@ -192,7 +202,8 @@ class scoped_connection {
 ///
 /// This policy is used in the `nod::signal` type provided
 /// by the library.
-struct multithread_policy {
+struct multithread_policy
+{
   using mutex_type = std::mutex;
   using mutex_lock_type = std::unique_lock<mutex_type>;
   /// Function that yields the current thread, allowing
@@ -221,12 +232,15 @@ struct multithread_policy {
 ///
 /// This policy is used in the `nod::unsafe_signal` type
 /// provided by the library.
-struct singlethread_policy {
+struct singlethread_policy
+{
   /// Dummy mutex type that doesn't do anything
-  struct mutex_type {
+  struct mutex_type
+  {
   };
   /// Dummy lock type, that doesn't do any locking.
-  struct mutex_lock_type {
+  struct mutex_lock_type
+  {
     /// A lock type must be constructible from a
     /// mutex type from the same thread policy.
     explicit mutex_lock_type(mutex_type const &)
@@ -266,7 +280,9 @@ struct singlethread_policy {
 /// @tparam F      Type of accumulation function.
 /// @tparam A...   Argument types of the underlying signal type.
 ///
-template<class S, class T, class F, class... A> class signal_accumulator {
+template<class S, class T, class F, class... A>
+class signal_accumulator
+{
  public:
   /// Result type when calling the accumulating function operator.
   using result_type = typename std::result_of<F(T, typename S::slot_type::result_type)>::type;
@@ -289,7 +305,10 @@ template<class S, class T, class F, class... A> class signal_accumulator {
   ///                  - The type `S::slot_type::result_type` (return type of
   ///                    the signals slots) must be implicitly convertible to
   ///                    type `T2`.
-  signal_accumulator(S const &signal, T init, F func) : _signal(signal), _init(init), _func(func)
+  signal_accumulator(S const &signal, T init, F func)
+    : _signal(signal),
+      _init(init),
+      _func(func)
   {}
 
   /// Function call operator.
@@ -340,7 +359,9 @@ template<class S, class T, class F, class... A> class signal_accumulator {
 ///
 /// @tparam R      Return value type of the slots connected to the signal.
 /// @tparam A...   Argument types of the slots connected to the signal.
-template<class P, class R, class... A> class signal_type<P, R(A...)> {
+template<class P, class R, class... A>
+class signal_type<P, R(A...)>
+{
  public:
   /// signals are not copy constructible
   signal_type(signal_type const &) = delete;
@@ -352,7 +373,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
     mutex_lock_type lock{other._mutex};
     _slot_count = std::move(other._slot_count);
     _slots = std::move(other._slots);
-    if (other._shared_disconnector != nullptr) {
+    if (other._shared_disconnector != nullptr)
+    {
       _disconnector = disconnector{this};
       _shared_disconnector = std::move(other._shared_disconnector);
       // replace the disconnector with our own disconnector
@@ -368,7 +390,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
 
     _slot_count = std::move(other._slot_count);
     _slots = std::move(other._slots);
-    if (other._shared_disconnector != nullptr) {
+    if (other._shared_disconnector != nullptr)
+    {
       _disconnector = disconnector{this};
       _shared_disconnector = std::move(other._shared_disconnector);
       // replace the disconnector with our own disconnector
@@ -378,7 +401,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   }
 
   /// signals are default constructible
-  signal_type() : _slot_count(0)
+  signal_type()
+    : _slot_count(0)
   {}
 
   // Destruct the signal object.
@@ -400,12 +424,14 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///               the same signature as the signal itself.
   /// @return       A connection object is returned, and can be used to
   ///               disconnect the slot.
-  template<class T> connection connect(T &&slot)
+  template<class T>
+  connection connect(T &&slot)
   {
     mutex_lock_type lock{_mutex};
     _slots.push_back(std::forward<T>(slot));
     std::size_t index = _slots.size() - 1;
-    if (_shared_disconnector == nullptr) {
+    if (_shared_disconnector == nullptr)
+    {
       _disconnector = disconnector{this};
       _shared_disconnector = std::shared_ptr<detail::disconnector>{&_disconnector, detail::no_delete};
     }
@@ -425,8 +451,10 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///               connected slots when they are called.
   void operator()(A const &...args) const
   {
-    for (auto const &slot : copy_slots()) {
-      if (slot) {
+    for (auto const &slot : copy_slots())
+    {
+      if (slot)
+      {
         slot(args...);
       }
     }
@@ -465,7 +493,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///                 - The type `S::slot_type::result_type` (return type of
   ///                   the signals slots) must be implicitly convertible to
   ///                   type `T2`.
-  template<class T, class F> signal_accumulator<signal_type, T, F, A...> accumulate(T init, F op) const
+  template<class T, class F>
+  signal_accumulator<signal_type, T, F, A...> accumulate(T init, F op) const
   {
     static_assert(std::is_same<R, void>::value == false,
                   "Unable to accumulate slot return values with 'void' as return type.");
@@ -480,14 +509,17 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///               `std::back_insert_iterator`. Additionally it
   ///               must be either copyable or moveable.
   /// @param args   The arguments to propagate to the slots.
-  template<class C> C aggregate(A const &...args) const
+  template<class C>
+  C aggregate(A const &...args) const
   {
     static_assert(std::is_same<R, void>::value == false,
                   "Unable to aggregate slot return values with 'void' as return type.");
     C container;
     auto iterator = std::back_inserter(container);
-    for (auto const &slot : copy_slots()) {
-      if (slot) {
+    for (auto const &slot : copy_slots())
+    {
+      if (slot)
+      {
         (*iterator) = slot(args...);
       }
     }
@@ -521,7 +553,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   }
 
  private:
-  template<class, class, class, class...> friend class signal_accumulator;
+  template<class, class, class, class...>
+  friend class signal_accumulator;
   /// Thread policy currently in use
   using thread_policy = P;
   /// Type of mutex, provided by threading policy
@@ -549,7 +582,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
     // we will get a nullptr when locking our weak pointer).
     std::weak_ptr<detail::disconnector> weak{_shared_disconnector};
     _shared_disconnector.reset();
-    while (weak.lock() != nullptr) {
+    while (weak.lock() != nullptr)
+    {
       // we just yield here, allowing the OS to reschedule. We do
       // this until all threads has released the disconnector object.
       thread_policy::yield_thread();
@@ -576,8 +610,10 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
     F &func,
     A const &...args) const
   {
-    for (auto const &slot : copy_slots()) {
-      if (slot) {
+    for (auto const &slot : copy_slots())
+    {
+      if (slot)
+      {
         value = func(value, slot(args...));
       }
     }
@@ -594,11 +630,13 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   {
     mutex_lock_type lock(_mutex);
     assert(_slots.size() > index);
-    if (_slots[index] != nullptr) {
+    if (_slots[index] != nullptr)
+    {
       --_slot_count;
     }
     _slots[index] = slot_type{};
-    while (_slots.size() > 0 && !_slots.back()) {
+    while (_slots.size() > 0 && !_slots.back())
+    {
       _slots.pop_back();
     }
   }
@@ -608,15 +646,18 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
   ///
   /// This inherits the @ref detail::disconnector interface
   /// for type erasure.
-  struct disconnector : detail::disconnector {
+  struct disconnector : detail::disconnector
+  {
     /// Default constructor, resulting in a no-op disconnector.
-    disconnector() : _ptr(nullptr)
+    disconnector()
+      : _ptr(nullptr)
     {}
 
     /// Create a disconnector that works with a given signal instance.
     /// @param ptr   Pointer to the signal instance that the disconnector
     ///              should work with.
-    disconnector(signal_type<P, R(A...)> *ptr) : _ptr(ptr)
+    disconnector(signal_type<P, R(A...)> *ptr)
+      : _ptr(ptr)
     {}
 
     /// Disconnect a given slot on the current signal instance.
@@ -626,7 +667,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
     /// @param index   The index of the slot to disconnect.
     void operator()(std::size_t index) const override
     {
-      if (_ptr) {
+      if (_ptr)
+      {
         _ptr->disconnect(index);
       }
     }
@@ -653,7 +695,8 @@ template<class P, class R, class... A> class signal_type<P, R(A...)> {
 inline void connection::disconnect()
 {
   auto ptr = _weak_disconnector.lock();
-  if (ptr) {
+  if (ptr)
+  {
     (*ptr)(_index);
   }
   _weak_disconnector.reset();
@@ -666,7 +709,8 @@ inline void connection::disconnect()
 ///
 /// This is the recommended signal type, even for single threaded
 /// environments.
-template<class T> using signal = signal_type<multithread_policy, T>;
+template<class T>
+using signal = signal_type<multithread_policy, T>;
 
 /// Signal type that is unsafe in multithreaded environments.
 /// No synchronizations are provided to the signal_type for accessing
@@ -674,5 +718,6 @@ template<class T> using signal = signal_type<multithread_policy, T>;
 ///
 /// Only use this signal type if you are sure that your environment is
 /// single threaded and performance is of importance.
-template<class T> using unsafe_signal = signal_type<singlethread_policy, T>;
+template<class T>
+using unsafe_signal = signal_type<singlethread_policy, T>;
 }  // namespace Zep

@@ -89,7 +89,8 @@ bool HdRprim::CanSkipDirtyBitPropagationAndSync(HdDirtyBits bits) const
 
   HdDirtyBits mask = (HdChangeTracker::DirtyVisibility | HdChangeTracker::NewRepr);
 
-  if (!IsVisible() && !(bits & mask)) {
+  if (!IsVisible() && !(bits & mask))
+  {
     // By setting the propagated dirty bits to Clean, we effectively
     // disable delegate and rprim sync
     skip = true;
@@ -103,19 +104,22 @@ HdDirtyBits HdRprim::PropagateRprimDirtyBits(HdDirtyBits bits)
 {
   // If the dependent computations changed - assume all
   // primvars are dirty
-  if (bits & HdChangeTracker::DirtyComputationPrimvarDesc) {
+  if (bits & HdChangeTracker::DirtyComputationPrimvarDesc)
+  {
     bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
              HdChangeTracker::DirtyPrimvar);
   }
 
   // when refine level changes, topology becomes dirty.
   // XXX: can we remove DirtyDisplayStyle then?
-  if (bits & HdChangeTracker::DirtyDisplayStyle) {
+  if (bits & HdChangeTracker::DirtyDisplayStyle)
+  {
     bits |= HdChangeTracker::DirtyTopology;
   }
 
   // if topology changes, all dependent bits become dirty.
-  if (bits & HdChangeTracker::DirtyTopology) {
+  if (bits & HdChangeTracker::DirtyTopology)
+  {
     bits |= (HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyPrimvar);
   }
 
@@ -133,7 +137,8 @@ void HdRprim::InitRepr(HdSceneDelegate *delegate, TfToken const &reprToken, HdDi
 // -------------------------------------------------------------------------- //
 const HdRepr::DrawItemUniquePtrVector &HdRprim::GetDrawItems(TfToken const &reprToken) const
 {
-  if (HdReprSharedPtr const repr = _GetRepr(reprToken)) {
+  if (HdReprSharedPtr const repr = _GetRepr(reprToken))
+  {
     return repr->GetDrawItems();
   }
 
@@ -177,7 +182,8 @@ bool HdRprim::IsDirty(HdChangeTracker &changeTracker) const
 void HdRprim::UpdateReprSelector(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits)
 {
   SdfPath const &id = GetId();
-  if (HdChangeTracker::IsReprDirty(*dirtyBits, id)) {
+  if (HdChangeTracker::IsReprDirty(*dirtyBits, id))
+  {
     _authoredReprSelector = delegate->GetReprSelector(id);
     *dirtyBits &= ~HdChangeTracker::DirtyRepr;
   }
@@ -190,7 +196,8 @@ HdReprSharedPtr const &HdRprim::_GetRepr(TfToken const &reprToken) const
 {
   _ReprVector::const_iterator reprIt = std::find_if(
     _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
-  if (reprIt == _reprs.end()) {
+  if (reprIt == _reprs.end())
+  {
     TF_CODING_ERROR(
       "_InitRepr() should be called for repr %s on prim %s.", reprToken.GetText(), GetId().GetText());
     static const HdReprSharedPtr ERROR_RETURN;
@@ -201,26 +208,31 @@ HdReprSharedPtr const &HdRprim::_GetRepr(TfToken const &reprToken) const
 
 void HdRprim::_UpdateVisibility(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits)
 {
-  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, GetId())) {
+  if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, GetId()))
+  {
     _sharedData.visible = delegate->GetVisible(GetId());
   }
 }
 
 void HdRprim::_UpdateInstancer(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits)
 {
-  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, GetId())) {
+  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, GetId()))
+  {
     SdfPath const &instancerId = delegate->GetInstancerId(GetId());
-    if (instancerId == _instancerId) {
+    if (instancerId == _instancerId)
+    {
       return;
     }
 
     // If we have a new instancer ID, we need to update the dependency
     // map and also update the stored instancer ID.
     HdChangeTracker &tracker = delegate->GetRenderIndex().GetChangeTracker();
-    if (!_instancerId.IsEmpty()) {
+    if (!_instancerId.IsEmpty())
+    {
       tracker.RemoveInstancerRprimDependency(_instancerId, GetId());
     }
-    if (!instancerId.IsEmpty()) {
+    if (!instancerId.IsEmpty())
+    {
       tracker.AddInstancerRprimDependency(instancerId, GetId());
     }
     _instancerId = instancerId;
@@ -234,13 +246,16 @@ VtMatrix4dArray HdRprim::GetInstancerTransforms(HdSceneDelegate *delegate)
 
   HdRenderIndex &renderIndex = delegate->GetRenderIndex();
 
-  while (!instancerId.IsEmpty()) {
+  while (!instancerId.IsEmpty())
+  {
     transforms.push_back(delegate->GetInstancerTransform(instancerId));
     HdInstancer *instancer = renderIndex.GetInstancer(instancerId);
-    if (instancer) {
+    if (instancer)
+    {
       instancerId = instancer->GetParentId();
     }
-    else {
+    else
+    {
       instancerId = SdfPath();
     }
   }

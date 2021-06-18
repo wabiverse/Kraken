@@ -43,12 +43,14 @@ SdfVariantSetSpecHandle SdfVariantSetSpec::New(const SdfPrimSpecHandle &owner, c
 {
   TRACE_FUNCTION();
 
-  if (!owner) {
+  if (!owner)
+  {
     TF_CODING_ERROR("NULL owner prim");
     return TfNullPtr;
   }
 
-  if (!Sdf_ChildrenUtils<Sdf_VariantSetChildPolicy>::IsValidName(name)) {
+  if (!Sdf_ChildrenUtils<Sdf_VariantSetChildPolicy>::IsValidName(name))
+  {
     TF_CODING_ERROR(
       "Cannot create variant set spec with invalid "
       "identifier: '%s'",
@@ -61,7 +63,8 @@ SdfVariantSetSpecHandle SdfVariantSetSpec::New(const SdfPrimSpecHandle &owner, c
   SdfLayerHandle layer = owner->GetLayer();
   SdfPath path = owner->GetPath().AppendVariantSelection(name, "");
 
-  if (!path.IsPrimVariantSelectionPath()) {
+  if (!path.IsPrimVariantSelectionPath())
+  {
     TF_CODING_ERROR(
       "Cannot create variant set spec at invalid "
       "path <%s{%s=}>",
@@ -80,12 +83,14 @@ SdfVariantSetSpecHandle SdfVariantSetSpec::New(const SdfVariantSpecHandle &owner
 {
   TRACE_FUNCTION();
 
-  if (!owner) {
+  if (!owner)
+  {
     TF_CODING_ERROR("NULL owner variant");
     return TfNullPtr;
   }
 
-  if (!Sdf_ChildrenUtils<Sdf_VariantSetChildPolicy>::IsValidName(name)) {
+  if (!Sdf_ChildrenUtils<Sdf_VariantSetChildPolicy>::IsValidName(name))
+  {
     TF_CODING_ERROR(
       "Cannot create variant set spec with invalid "
       "identifier: '%s'",
@@ -98,7 +103,8 @@ SdfVariantSetSpecHandle SdfVariantSetSpec::New(const SdfVariantSpecHandle &owner
   SdfLayerHandle layer = owner->GetLayer();
   SdfPath path = owner->GetPath().AppendVariantSelection(name, "");
 
-  if (!path.IsPrimVariantSelectionPath()) {
+  if (!path.IsPrimVariantSelectionPath())
+  {
     TF_CODING_ERROR(
       "Cannot create variant set spec at invalid "
       "path <%s{%s=}>",
@@ -156,14 +162,16 @@ void SdfVariantSetSpec::RemoveVariant(const SdfVariantSpecHandle &variant)
   const SdfPath &path = GetPath();
 
   SdfPath parentPath = Sdf_VariantChildPolicy::GetParentPath(variant->GetPath());
-  if (variant->GetLayer() != layer || parentPath != path) {
+  if (variant->GetLayer() != layer || parentPath != path)
+  {
     TF_CODING_ERROR(
       "Cannot remove a variant that does not belong to "
       "this variant set.");
     return;
   }
 
-  if (!Sdf_ChildrenUtils<Sdf_VariantChildPolicy>::RemoveChild(layer, path, variant->GetNameToken())) {
+  if (!Sdf_ChildrenUtils<Sdf_VariantChildPolicy>::RemoveChild(layer, path, variant->GetNameToken()))
+  {
     TF_CODING_ERROR("Unable to remove child: %s", variant->GetName().c_str());
   }
 }

@@ -47,7 +47,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfLayer);
 /// singleton usd stage cache for use by all USD clients. This way code from
 /// any location can make use of the same cache to maximize stage reuse.
 ///
-class UsdUtilsStageCache {
+class UsdUtilsStageCache
+{
  public:
   /// Returns the singleton stage cache.
   USDUTILS_API

@@ -51,7 +51,9 @@ TF_REGISTRY_FUNCTION(TfType)
 HdRenderParam::~HdRenderParam() = default;
 HdRenderDelegate::~HdRenderDelegate() = default;
 
-HdRenderDelegate::HdRenderDelegate() : _settingsMap(), _settingsVersion(1)
+HdRenderDelegate::HdRenderDelegate()
+  : _settingsMap(),
+    _settingsVersion(1)
 {}
 
 HdRenderDelegate::HdRenderDelegate(HdRenderSettingsMap const &settingsMap)
@@ -59,9 +61,11 @@ HdRenderDelegate::HdRenderDelegate(HdRenderSettingsMap const &settingsMap)
     _settingsVersion(1)
 {
   _settingsMap = settingsMap;
-  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS)) {
+  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS))
+  {
     std::cout << "Initial Render Settings" << std::endl;
-    for (auto const &pair : _settingsMap) {
+    for (auto const &pair : _settingsMap)
+    {
       std::cout << "\t[" << pair.first << "] = " << pair.second << std::endl;
     }
   }
@@ -116,16 +120,19 @@ HdRenderSettingDescriptorList HdRenderDelegate::GetRenderSettingDescriptors() co
 void HdRenderDelegate::SetRenderSetting(TfToken const &key, VtValue const &value)
 {
   auto iter = _settingsMap.find(key);
-  if (iter == _settingsMap.end()) {
+  if (iter == _settingsMap.end())
+  {
     _settingsMap[key] = value;
     ++_settingsVersion;
   }
-  else if (iter->second != value) {
+  else if (iter->second != value)
+  {
     iter->second = value;
     ++_settingsVersion;
   }
 
-  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS)) {
+  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS))
+  {
     std::cout << "Render Setting [" << key << "] = " << value << std::endl;
   }
 }
@@ -133,11 +140,13 @@ void HdRenderDelegate::SetRenderSetting(TfToken const &key, VtValue const &value
 VtValue HdRenderDelegate::GetRenderSetting(TfToken const &key) const
 {
   auto it = _settingsMap.find(key);
-  if (it != _settingsMap.end()) {
+  if (it != _settingsMap.end())
+  {
     return it->second;
   }
 
-  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS)) {
+  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS))
+  {
     std::cout << "Render setting not found for key [" << key << "]" << std::endl;
   }
   return VtValue();
@@ -166,8 +175,10 @@ VtDictionary HdRenderDelegate::GetRenderStats() const
 
 void HdRenderDelegate::_PopulateDefaultSettings(HdRenderSettingDescriptorList const &defaultSettings)
 {
-  for (size_t i = 0; i < defaultSettings.size(); ++i) {
-    if (_settingsMap.count(defaultSettings[i].key) == 0) {
+  for (size_t i = 0; i < defaultSettings.size(); ++i)
+  {
+    if (_settingsMap.count(defaultSettings[i].key) == 0)
+    {
       _settingsMap[defaultSettings[i].key] = defaultSettings[i].defaultValue;
     }
   }

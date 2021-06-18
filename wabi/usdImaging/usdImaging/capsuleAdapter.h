@@ -38,11 +38,13 @@ class UsdGeomCapsule;
 ///
 /// Delegate support for UsdGeomCapsule.
 ///
-class UsdImagingCapsuleAdapter : public UsdImagingGprimAdapter {
+class UsdImagingCapsuleAdapter : public UsdImagingGprimAdapter
+{
  public:
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingCapsuleAdapter() : UsdImagingGprimAdapter()
+  UsdImagingCapsuleAdapter()
+    : UsdImagingGprimAdapter()
   {}
   USDIMAGING_API
   virtual ~UsdImagingCapsuleAdapter();

@@ -37,8 +37,12 @@ WABI_NAMESPACE_BEGIN
 ///
 /// PresentTask parameters.
 ///
-struct HdxPresentTaskParams {
-  HdxPresentTaskParams() : dstApi(HgiTokens->OpenGL), dstRegion(0), enabled(true)
+struct HdxPresentTaskParams
+{
+  HdxPresentTaskParams()
+    : dstApi(HgiTokens->OpenGL),
+      dstRegion(0),
+      enabled(true)
   {}
 
   // The graphics lib that is used by the application / viewer.
@@ -71,7 +75,8 @@ struct HdxPresentTaskParams {
 /// context. The 'color' aov is expected to use non-integer
 /// (i.e., float or norm) types to keep the interop step simple.
 ///
-class HdxPresentTask : public HdxTask {
+class HdxPresentTask : public HdxTask
+{
  public:
   // Returns true if the format is supported for presentation. This is useful
   // for upstream tasks to prepare the AOV data accordingly, and keeps the

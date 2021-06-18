@@ -20,16 +20,19 @@ limitations under the License.
 #include "wabi/imaging/hd/sprim.h"
 #include "wabi/usd/sdf/path.h"
 
-namespace rpr {
+namespace rpr
+{
 class DirectionalLight;
 }
 
 WABI_NAMESPACE_BEGIN
 
-class HdRprDistantLight : public HdSprim {
+class HdRprDistantLight : public HdSprim
+{
 
  public:
-  HdRprDistantLight(SdfPath const &id) : HdSprim(id)
+  HdRprDistantLight(SdfPath const &id)
+    : HdSprim(id)
   {}
 
   void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;

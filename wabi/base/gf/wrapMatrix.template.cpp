@@ -66,7 +66,8 @@
 
   WABI_NAMESPACE_USING
 
-  namespace {
+  namespace
+  {
 
   ////////////////////////////////////////////////////////////////////////
   // Python buffer protocol support.
@@ -75,7 +76,8 @@
   // Python's getreadbuf interface function.
   static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    if (segment != 0) {
+    if (segment != 0)
+    {
       // Always one-segment.
       PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
       return -1;
@@ -114,13 +116,15 @@
   // Python's getbuffer interface function.
   static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
-    if (view == NULL) {
+    if (view == NULL)
+    {
       PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
     // We don't support fortran order.
-    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
+    {
       PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
@@ -132,26 +136,32 @@
     view->len = sizeof({{MAT}});
     view->readonly = 0;
     view->itemsize = sizeof({{SCL}});
-    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
+    {
       view->format = Gf_GetPyBufferFmtFor<{{SCL}}>();
     }
-    else {
+    else
+    {
       view->format = NULL;
     }
-    if ((flags & PyBUF_ND) == PyBUF_ND) {
+    if ((flags & PyBUF_ND) == PyBUF_ND)
+    {
       view->ndim = 2;
       static Py_ssize_t shape[] = {{{DIM}}, {{DIM}}};
       view->shape = shape;
     }
-    else {
+    else
+    {
       view->ndim = 0;
       view->shape = NULL;
     }
-    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
+    {
       static Py_ssize_t strides[] = {{{DIM}} * sizeof({{SCL}}), sizeof({{SCL}})};
       view->strides = strides;
     }
-    else {
+    else
+    {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
@@ -240,7 +250,8 @@
     tuple index)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2) {
+    if (len(index) == 2)
+    {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     }
@@ -274,7 +285,8 @@
   } value)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2) {
+    if (len(index) == 2)
+    {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     }
@@ -359,7 +371,8 @@
   // This adds support for python's builtin pickling library
   // This is used by our Shake plugins which need to pickle entire classes
   // (including code), which we don't support in pxml.
-  struct {
+  struct
+  {
     {
       MAT
     }

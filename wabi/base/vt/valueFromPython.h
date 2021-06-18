@@ -43,7 +43,8 @@ WABI_NAMESPACE_BEGIN
 
 /// \class Vt_ValueFromPythonRegistry
 ///
-class Vt_ValueFromPythonRegistry {
+class Vt_ValueFromPythonRegistry
+{
  public:
   static bool HasConversions()
   {
@@ -52,9 +53,11 @@ class Vt_ValueFromPythonRegistry {
 
   VT_API static VtValue Invoke(PyObject *obj);
 
-  template<class T> static void Register(bool registerRvalue)
+  template<class T>
+  static void Register(bool registerRvalue)
   {
-    if (!TfPyIsInitialized()) {
+    if (!TfPyIsInitialized())
+    {
       TF_FATAL_ERROR(
         "Tried to register a VtValue from python conversion "
         "but python is not initialized!");
@@ -77,27 +80,32 @@ class Vt_ValueFromPythonRegistry {
 
   friend class TfSingleton<Vt_ValueFromPythonRegistry>;
 
-  class _Extractor {
+  class _Extractor
+  {
    private:
     using _ExtractFunc = VtValue (*)(PyObject *);
 
     // _ExtractLValue will attempt to obtain an l-value T from the python
     // object it's passed.  This effectively disallows type conversions
     // (other than things like derived-to-base type conversions).
-    template<class T> static VtValue _ExtractLValue(PyObject *);
+    template<class T>
+    static VtValue _ExtractLValue(PyObject *);
 
     // _ExtractRValue will attempt to obtain an r-value T from the python
     // object it's passed.  This allows boost.python to invoke type
     // conversions to produce the T.
-    template<class T> static VtValue _ExtractRValue(PyObject *);
+    template<class T>
+    static VtValue _ExtractRValue(PyObject *);
 
    public:
-    template<class T> static _Extractor MakeLValue()
+    template<class T>
+    static _Extractor MakeLValue()
     {
       return _Extractor(&_ExtractLValue<T>);
     }
 
-    template<class T> static _Extractor MakeRValue()
+    template<class T>
+    static _Extractor MakeRValue()
     {
       return _Extractor(&_ExtractRValue<T>);
     }
@@ -108,7 +116,8 @@ class Vt_ValueFromPythonRegistry {
     }
 
    private:
-    explicit _Extractor(_ExtractFunc extract) : _extract(extract)
+    explicit _Extractor(_ExtractFunc extract)
+      : _extract(extract)
     {}
 
     _ExtractFunc _extract;
@@ -131,7 +140,8 @@ class Vt_ValueFromPythonRegistry {
 
 VT_API_TEMPLATE_CLASS(TfSingleton<Vt_ValueFromPythonRegistry>);
 
-template<class T> VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractLValue(PyObject *obj)
+template<class T>
+VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractLValue(PyObject *obj)
 {
   boost::python::extract<T &> x(obj);
   if (x.check())
@@ -139,7 +149,8 @@ template<class T> VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractLValue
   return VtValue();
 }
 
-template<class T> VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractRValue(PyObject *obj)
+template<class T>
+VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractRValue(PyObject *obj)
 {
   boost::python::extract<T> x(obj);
   if (x.check())
@@ -147,12 +158,14 @@ template<class T> VtValue Vt_ValueFromPythonRegistry::_Extractor::_ExtractRValue
   return VtValue();
 }
 
-template<class T> void VtValueFromPython()
+template<class T>
+void VtValueFromPython()
 {
   Vt_ValueFromPythonRegistry::Register<T>(/* registerRvalue = */ true);
 }
 
-template<class T> void VtValueFromPythonLValue()
+template<class T>
+void VtValueFromPythonLValue()
 {
   Vt_ValueFromPythonRegistry::Register<T>(/* registerRvalue = */ false);
 }

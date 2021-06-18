@@ -43,7 +43,8 @@ SDF_DECLARE_HANDLES(SdfSpec);
 /// When the last Sdf_CleanupEnabler goes out of scope, the specs are removed
 /// from the layer if they are inert.
 ///
-class Sdf_CleanupTracker : public TfWeakBase {
+class Sdf_CleanupTracker : public TfWeakBase
+{
  public:
   /// Retrieves singleton instance.
   static Sdf_CleanupTracker &GetInstance();

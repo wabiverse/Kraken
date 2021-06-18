@@ -25,7 +25,8 @@ HdRprApiFramebuffer::HdRprApiFramebuffer(rpr::Context *context, uint32_t width, 
     m_height(0),
     m_aov(kAovNone)
 {
-  if (!m_context) {
+  if (!m_context)
+  {
     RPR_THROW_ERROR_MSG("Failed to create framebuffer: missing rpr context");
   }
 
@@ -59,11 +60,13 @@ HdRprApiFramebuffer &HdRprApiFramebuffer::operator=(HdRprApiFramebuffer &&fb) no
 
 void HdRprApiFramebuffer::AttachAs(rpr::Aov aov)
 {
-  if (m_aov != kAovNone || aov == kAovNone) {
+  if (m_aov != kAovNone || aov == kAovNone)
+  {
     RPR_ERROR_CHECK(m_context->SetAOV(m_aov, nullptr), "Failed to detach aov framebuffer");
   }
 
-  if (aov != kAovNone) {
+  if (aov != kAovNone)
+  {
     RPR_ERROR_CHECK_THROW(m_context->SetAOV(aov, m_rprFb), "Failed to attach aov framebuffer");
   }
 
@@ -72,7 +75,8 @@ void HdRprApiFramebuffer::AttachAs(rpr::Aov aov)
 
 void HdRprApiFramebuffer::Clear(float r, float g, float b, float a)
 {
-  if (m_width == 0 || m_height == 0) {
+  if (m_width == 0 || m_height == 0)
+  {
     return;
   }
   RPR_ERROR_CHECK(m_rprFb->Clear(), "Failed to clear framebuffer");
@@ -89,7 +93,8 @@ void HdRprApiFramebuffer::Clear(float r, float g, float b, float a)
 
 void HdRprApiFramebuffer::Resolve(HdRprApiFramebuffer *dstFrameBuffer)
 {
-  if (!m_rprFb || !dstFrameBuffer || !dstFrameBuffer->m_rprFb) {
+  if (!m_rprFb || !dstFrameBuffer || !dstFrameBuffer->m_rprFb)
+  {
     return;
   }
   RPR_ERROR_CHECK_THROW(m_context->ResolveFrameBuffer(m_rprFb, dstFrameBuffer->m_rprFb, true),
@@ -98,7 +103,8 @@ void HdRprApiFramebuffer::Resolve(HdRprApiFramebuffer *dstFrameBuffer)
 
 bool HdRprApiFramebuffer::Resize(uint32_t width, uint32_t height)
 {
-  if (m_width == width && m_height == height) {
+  if (m_width == width && m_height == height)
+  {
     return false;
   }
 
@@ -106,7 +112,8 @@ bool HdRprApiFramebuffer::Resize(uint32_t width, uint32_t height)
   Delete();
   Create(width, height);
 
-  if (aov != kAovNone) {
+  if (aov != kAovNone)
+  {
     AttachAs(aov);
   }
 
@@ -115,12 +122,14 @@ bool HdRprApiFramebuffer::Resize(uint32_t width, uint32_t height)
 
 bool HdRprApiFramebuffer::GetData(void *dstBuffer, size_t dstBufferSize)
 {
-  if (m_width == 0 || m_height == 0 || !m_rprFb) {
+  if (m_width == 0 || m_height == 0 || !m_rprFb)
+  {
     return false;
   }
 
   auto size = GetSize();
-  if (size > dstBufferSize) {
+  if (size > dstBufferSize)
+  {
     return false;
   }
 
@@ -143,7 +152,8 @@ rpr::FramebufferDesc HdRprApiFramebuffer::GetDesc() const
 
 rpr_cl_mem HdRprApiFramebuffer::GetCLMem()
 {
-  if (m_width == 0 || m_height == 0 || !m_rprFb) {
+  if (m_width == 0 || m_height == 0 || !m_rprFb)
+  {
     return nullptr;
   }
 
@@ -152,7 +162,8 @@ rpr_cl_mem HdRprApiFramebuffer::GetCLMem()
 
 void HdRprApiFramebuffer::Create(uint32_t width, uint32_t height)
 {
-  if (width == 0 || height == 0) {
+  if (width == 0 || height == 0)
+  {
     return;
   }
 
@@ -166,7 +177,8 @@ void HdRprApiFramebuffer::Create(uint32_t width, uint32_t height)
 
   rpr::Status status;
   m_rprFb = m_context->CreateFrameBuffer(format, desc, &status);
-  if (!m_rprFb) {
+  if (!m_rprFb)
+  {
     RPR_ERROR_CHECK_THROW(status, "Failed to create framebuffer");
   }
 
@@ -176,10 +188,12 @@ void HdRprApiFramebuffer::Create(uint32_t width, uint32_t height)
 
 void HdRprApiFramebuffer::Delete()
 {
-  if (m_aov != kAovNone) {
+  if (m_aov != kAovNone)
+  {
     AttachAs(kAovNone);
   }
-  if (m_rprFb) {
+  if (m_rprFb)
+  {
     delete m_rprFb;
     m_rprFb = nullptr;
   }

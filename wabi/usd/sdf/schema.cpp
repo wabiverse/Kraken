@@ -173,7 +173,8 @@ TfTokenVector SdfSchemaBase::SpecDefinition::GetFields() const
 
   TfTokenVector rval(_fields.size());
   TfToken *cur = rval.data();
-  for (auto const &p : _fields) {
+  for (auto const &p : _fields)
+  {
     *cur++ = p.first;
   }
   return rval;
@@ -184,9 +185,10 @@ TfTokenVector SdfSchemaBase::SpecDefinition::GetMetadataFields() const
   TRACE_FUNCTION();
 
   TfTokenVector rval;
-  TF_FOR_ALL(field, _fields)
+  TF_FOR_ALL (field, _fields)
   {
-    if (field->second.metadata) {
+    if (field->second.metadata)
+    {
       rval.push_back(field->first);
     }
   }
@@ -196,7 +198,8 @@ TfTokenVector SdfSchemaBase::SpecDefinition::GetMetadataFields() const
 
 bool SdfSchemaBase::SpecDefinition::IsMetadataField(const TfToken &name) const
 {
-  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name)) {
+  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name))
+  {
     return fieldInfo->metadata;
   }
   return false;
@@ -204,7 +207,8 @@ bool SdfSchemaBase::SpecDefinition::IsMetadataField(const TfToken &name) const
 
 TfToken SdfSchemaBase::SpecDefinition ::GetMetadataFieldDisplayGroup(const TfToken &name) const
 {
-  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name)) {
+  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name))
+  {
     return fieldInfo->metadata ? fieldInfo->metadataDisplayGroup : TfToken();
   }
   return TfToken();
@@ -212,7 +216,8 @@ TfToken SdfSchemaBase::SpecDefinition ::GetMetadataFieldDisplayGroup(const TfTok
 
 bool SdfSchemaBase::SpecDefinition::IsRequiredField(const TfToken &name) const
 {
-  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name)) {
+  if (const _FieldInfo *fieldInfo = TfMapLookupPtr(_fields, name))
+  {
     return fieldInfo->required;
   }
   return false;
@@ -257,11 +262,13 @@ SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::Field(const TfToken &n
 void SdfSchemaBase::SpecDefinition::_AddField(const TfToken &name, const _FieldInfo &fieldInfo)
 {
   std::pair<_FieldMap::iterator, bool> insertStatus = _fields.insert(std::make_pair(name, fieldInfo));
-  if (!insertStatus.second) {
+  if (!insertStatus.second)
+  {
     TF_CODING_ERROR("Duplicate registration for field '%s'", name.GetText());
     return;
   }
-  if (fieldInfo.required) {
+  if (fieldInfo.required)
+  {
     _requiredFields.insert(std::lower_bound(_requiredFields.begin(), _requiredFields.end(), name), name);
   }
 }
@@ -278,7 +285,8 @@ SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::CopyFrom(const SpecDef
 
 static SdfAllowed _ValidateFramesPerSecond(const SdfSchemaBase &, const VtValue &value)
 {
-  if (!value.IsHolding<double>()) {
+  if (!value.IsHolding<double>())
+  {
     return SdfAllowed("Expected value of type double");
   }
 
@@ -287,7 +295,8 @@ static SdfAllowed _ValidateFramesPerSecond(const SdfSchemaBase &, const VtValue 
 
 static SdfAllowed _ValidateIsString(const SdfSchemaBase &, const VtValue &value)
 {
-  if (!value.IsHolding<std::string>()) {
+  if (!value.IsHolding<std::string>())
+  {
     return SdfAllowed("Expected value of type string");
   }
   return true;
@@ -296,7 +305,8 @@ static SdfAllowed _ValidateIsString(const SdfSchemaBase &, const VtValue &value)
 static SdfAllowed _ValidateIsNonEmptyString(const SdfSchemaBase &schema, const VtValue &value)
 {
   SdfAllowed result = _ValidateIsString(schema, value);
-  if (result && value.Get<std::string>().empty()) {
+  if (result && value.Get<std::string>().empty())
+  {
     result = SdfAllowed("Expected non-empty string");
   }
   return result;
@@ -304,7 +314,8 @@ static SdfAllowed _ValidateIsNonEmptyString(const SdfSchemaBase &schema, const V
 
 static SdfAllowed _ValidateIdentifierToken(const SdfSchemaBase &, const VtValue &value)
 {
-  if (!value.IsHolding<TfToken>()) {
+  if (!value.IsHolding<TfToken>())
+  {
     return SdfAllowed("Expected value of type TfToken");
   }
   return SdfSchemaBase::IsValidIdentifier(value.Get<TfToken>());
@@ -312,7 +323,8 @@ static SdfAllowed _ValidateIdentifierToken(const SdfSchemaBase &, const VtValue 
 
 static SdfAllowed _ValidateNamespacedIdentifierToken(const SdfSchemaBase &, const VtValue &value)
 {
-  if (!value.IsHolding<TfToken>()) {
+  if (!value.IsHolding<TfToken>())
+  {
     return SdfAllowed("Expected value of type TfToken");
   }
   return SdfSchemaBase::IsValidNamespacedIdentifier(value.Get<TfToken>());
@@ -326,7 +338,8 @@ static SdfAllowed _ValidateIsSceneDescriptionValue(const SdfSchemaBase &schema, 
 #define SDF_VALIDATE_WRAPPER(name_, expectedType_) \
   static SdfAllowed _Validate##name_(const SdfSchemaBase &schema, const VtValue &value) \
   { \
-    if (!value.IsHolding<expectedType_>()) { \
+    if (!value.IsHolding<expectedType_>()) \
+    { \
       return SdfAllowed("Expected value of type " #expectedType_); \
     } \
     return SdfSchemaBase::IsValid##name_(value.Get<expectedType_>()); \
@@ -350,12 +363,15 @@ TF_DEFINE_PUBLIC_TOKENS(SdfFieldKeys, SDF_FIELD_KEYS);
 // Registration for built-in fields for various spec types.
 //
 
-struct Sdf_SchemaFieldTypeRegistrar {
+struct Sdf_SchemaFieldTypeRegistrar
+{
  public:
-  Sdf_SchemaFieldTypeRegistrar(SdfSchemaBase *schema) : _schema(schema)
+  Sdf_SchemaFieldTypeRegistrar(SdfSchemaBase *schema)
+    : _schema(schema)
   {}
 
-  template<class T> void RegisterField(const TfToken &fieldName)
+  template<class T>
+  void RegisterField(const TfToken &fieldName)
   {
     _schema->_CreateField(fieldName, VtValue(T()));
   }
@@ -493,13 +509,15 @@ static void _AddLegacyTypesToRegistry(Sdf_ValueTypeRegistry *r)
   r->AddType(T("FaceIndex", int()).Role(SdfValueRoleNames->FaceIndex));
 }
 
-class SdfSchemaBase::_ValueTypeRegistrar::Type::_Impl {
+class SdfSchemaBase::_ValueTypeRegistrar::Type::_Impl
+{
  public:
   _Impl(const TfToken &name, const VtValue &defaultValue, const VtValue &defaultArrayValue)
     : type(name, defaultValue, defaultArrayValue)
   {}
 
-  _Impl(const TfToken &name, const TfType &type_) : type(name, type_)
+  _Impl(const TfToken &name, const TfType &type_)
+    : type(name, type_)
   {}
 
   Sdf_ValueTypeRegistry::Type type;
@@ -565,7 +583,8 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfSchemaBase>();
 }
 
-SdfSchemaBase::SdfSchemaBase() : _valueTypeRegistry(new Sdf_ValueTypeRegistry)
+SdfSchemaBase::SdfSchemaBase()
+  : _valueTypeRegistry(new Sdf_ValueTypeRegistry)
 {
   _RegisterStandardTypes();
   _RegisterLegacyTypes();
@@ -574,7 +593,8 @@ SdfSchemaBase::SdfSchemaBase() : _valueTypeRegistry(new Sdf_ValueTypeRegistry)
   _RegisterPluginFields();
 }
 
-SdfSchemaBase::SdfSchemaBase(EmptyTag) : _valueTypeRegistry(new Sdf_ValueTypeRegistry)
+SdfSchemaBase::SdfSchemaBase(EmptyTag)
+  : _valueTypeRegistry(new Sdf_ValueTypeRegistry)
 {}
 
 SdfSchemaBase::~SdfSchemaBase()
@@ -855,13 +875,15 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_CreateField(const TfToken &key,
                                                             bool plugin)
 {
   FieldDefinition def(*this, key, value);
-  if (plugin) {
+  if (plugin)
+  {
     def.Plugin();
   }
 
   const std::pair<_FieldDefinitionMap::iterator, bool> insertStatus = _fieldDefinitions.insert(
     std::make_pair(key, def));
-  if (!insertStatus.second) {
+  if (!insertStatus.second)
+  {
     TF_CODING_ERROR("Duplicate creation for field '%s'", key.GetText());
   }
 
@@ -874,7 +896,8 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &k
   // information must have already been created with a call to
   // _CreateField. See comment in SdfSchemaBase::_RegisterStandardFields.
   _FieldDefinitionMap::iterator fieldIt = _fieldDefinitions.find(key);
-  if (fieldIt == _fieldDefinitions.end()) {
+  if (fieldIt == _fieldDefinitions.end())
+  {
     TF_FATAL_ERROR("Field '%s' has not been created.", key.GetText());
   }
 
@@ -883,7 +906,8 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &k
   // The new fallback value's type must match the type of
   // the fallback value the field was created with. This ensures
   // we stay in sync with the fields in SchemaTypeRegistration.h.
-  if (!TfSafeTypeCompare(fieldDef.GetFallbackValue().GetTypeid(), v.GetTypeid())) {
+  if (!TfSafeTypeCompare(fieldDef.GetFallbackValue().GetTypeid(), v.GetTypeid()))
+  {
     TF_FATAL_ERROR(
       "Registered fallback value for field '%s' does "
       "not match field type definition. "
@@ -899,7 +923,8 @@ SdfSchemaBase::FieldDefinition &SdfSchemaBase::_DoRegisterField(const TfToken &k
 
 SdfSchemaBase::_SpecDefiner SdfSchemaBase::_ExtendSpecDefinition(SdfSpecType specType)
 {
-  if (!_specDefinitions[specType].second) {
+  if (!_specDefinitions[specType].second)
+  {
     TF_FATAL_ERROR("No definition for spec type %s", TfEnum::GetName(specType).c_str());
   }
   return _SpecDefiner(this, &_specDefinitions[specType].first);
@@ -921,11 +946,13 @@ const VtValue &SdfSchemaBase::GetFallback(const TfToken &fieldKey) const
 bool SdfSchemaBase::IsRegistered(const TfToken &fieldKey, VtValue *fallback) const
 {
   const FieldDefinition *def = GetFieldDefinition(fieldKey);
-  if (!def) {
+  if (!def)
+  {
     return false;
   }
 
-  if (fallback) {
+  if (fallback)
+  {
     *fallback = def->GetFallbackValue();
   }
 
@@ -941,11 +968,13 @@ bool SdfSchemaBase::HoldsChildren(const TfToken &fieldKey) const
 VtValue SdfSchemaBase::CastToTypeOf(const TfToken &fieldKey, const VtValue &value) const
 {
   VtValue fallback;
-  if (!SdfSchemaBase::IsRegistered(fieldKey, &fallback)) {
+  if (!SdfSchemaBase::IsRegistered(fieldKey, &fallback))
+  {
     return VtValue();
   }
 
-  if (fallback.IsEmpty()) {
+  if (fallback.IsEmpty())
+  {
     return value;
   }
 
@@ -955,7 +984,8 @@ VtValue SdfSchemaBase::CastToTypeOf(const TfToken &fieldKey, const VtValue &valu
 const SdfSchemaBase::SpecDefinition *SdfSchemaBase::_CheckAndGetSpecDefinition(SdfSpecType specType) const
 {
   const SpecDefinition *def = GetSpecDefinition(specType);
-  if (!def) {
+  if (!def)
+  {
     TF_CODING_ERROR("No definition for spec type %s", TfStringify(specType).c_str());
   }
 
@@ -988,7 +1018,8 @@ TfToken SdfSchemaBase::GetMetadataFieldDisplayGroup(SdfSpecType specType, TfToke
 
 const TfTokenVector &SdfSchemaBase::GetRequiredFields(SdfSpecType specType) const
 {
-  if (const SpecDefinition *def = _CheckAndGetSpecDefinition(specType)) {
+  if (const SpecDefinition *def = _CheckAndGetSpecDefinition(specType))
+  {
     return def->GetRequiredFields();
   }
   // Intentionally leak to avoid static destruction issues.
@@ -998,23 +1029,27 @@ const TfTokenVector &SdfSchemaBase::GetRequiredFields(SdfSpecType specType) cons
 
 SdfAllowed SdfSchemaBase::IsValidValue(const VtValue &value) const
 {
-  if (value.IsEmpty()) {
+  if (value.IsEmpty())
+  {
     return true;
   }
 
-  if (value.IsHolding<VtDictionary>()) {
+  if (value.IsHolding<VtDictionary>())
+  {
     // Although dictionaries are not explicitly registered as a value
     // type, they are valid scene description and can be written/read
     // to/from layers as long as each individual value is valid scene
     // description. Note that we don't have to check keys because
     // VtDictionary's keys are always strings.
     //
-    TF_FOR_ALL(it, value.UncheckedGet<VtDictionary>())
+    TF_FOR_ALL (it, value.UncheckedGet<VtDictionary>())
     {
-      if (SdfAllowed valueStatus = IsValidValue(it->second)) {
+      if (SdfAllowed valueStatus = IsValidValue(it->second))
+      {
         // Value is OK, so do nothing.
       }
-      else {
+      else
+      {
         const std::string error = TfStringPrintf(
           "Value for key '%s' does not have a valid scene "
           "description type (%s)",
@@ -1024,7 +1059,8 @@ SdfAllowed SdfSchemaBase::IsValidValue(const VtValue &value) const
       }
     }
   }
-  else if (!FindType(value)) {
+  else if (!FindType(value))
+  {
     return SdfAllowed(
       "Value does not have a valid scene description type "
       "(" +
@@ -1076,7 +1112,8 @@ SdfSchemaBase::_ValueTypeRegistrar SdfSchemaBase::_GetTypeRegistrar() const
 
 SdfAllowed SdfSchemaBase::IsValidIdentifier(const std::string &identifier)
 {
-  if (!SdfPath::IsValidIdentifier(identifier)) {
+  if (!SdfPath::IsValidIdentifier(identifier))
+  {
     return SdfAllowed("\"" + identifier + "\" is not a valid identifier");
   }
   return true;
@@ -1084,7 +1121,8 @@ SdfAllowed SdfSchemaBase::IsValidIdentifier(const std::string &identifier)
 
 SdfAllowed SdfSchemaBase::IsValidNamespacedIdentifier(const std::string &identifier)
 {
-  if (!SdfPath::IsValidNamespacedIdentifier(identifier)) {
+  if (!SdfPath::IsValidNamespacedIdentifier(identifier))
+  {
     return SdfAllowed("\"" + identifier + "\" is not a valid identifier");
   }
   return true;
@@ -1098,13 +1136,16 @@ SdfAllowed SdfSchemaBase::IsValidVariantIdentifier(const std::string &identifier
   std::string::const_iterator last = identifier.end();
 
   // Allow optional leading dot.
-  if (first != last && *first == '.') {
+  if (first != last && *first == '.')
+  {
     ++first;
   }
 
-  for (; first != last; ++first) {
+  for (; first != last; ++first)
+  {
     char c = *first;
-    if (!(isalnum(c) || (c == '_') || (c == '|') || (c == '-'))) {
+    if (!(isalnum(c) || (c == '_') || (c == '|') || (c == '-')))
+    {
       return SdfAllowed(
         TfStringPrintf("\"%s\" is not a valid variant "
                        "name due to '%c' at index %d",
@@ -1119,7 +1160,8 @@ SdfAllowed SdfSchemaBase::IsValidVariantIdentifier(const std::string &identifier
 
 SdfAllowed SdfSchemaBase::IsValidRelocatesPath(const SdfPath &path)
 {
-  if (path == SdfPath::AbsoluteRootPath()) {
+  if (path == SdfPath::AbsoluteRootPath())
+  {
     return SdfAllowed("Root paths not allowed in relocates map");
   }
 
@@ -1128,7 +1170,8 @@ SdfAllowed SdfSchemaBase::IsValidRelocatesPath(const SdfPath &path)
 
 SdfAllowed SdfSchemaBase::IsValidInheritPath(const SdfPath &path)
 {
-  if (!(path.IsAbsolutePath() && path.IsPrimPath())) {
+  if (!(path.IsAbsolutePath() && path.IsPrimPath()))
+  {
     return SdfAllowed("Inherit paths must be an absolute prim path");
   }
   return true;
@@ -1136,7 +1179,8 @@ SdfAllowed SdfSchemaBase::IsValidInheritPath(const SdfPath &path)
 
 SdfAllowed SdfSchemaBase::IsValidSpecializesPath(const SdfPath &path)
 {
-  if (!(path.IsAbsolutePath() && path.IsPrimPath())) {
+  if (!(path.IsAbsolutePath() && path.IsPrimPath()))
+  {
     return SdfAllowed("Specializes paths must be absolute prim path");
   }
   return true;
@@ -1144,15 +1188,18 @@ SdfAllowed SdfSchemaBase::IsValidSpecializesPath(const SdfPath &path)
 
 SdfAllowed SdfSchemaBase::IsValidAttributeConnectionPath(const SdfPath &path)
 {
-  if (path.ContainsPrimVariantSelection()) {
+  if (path.ContainsPrimVariantSelection())
+  {
     return SdfAllowed(
       "Attribute connection paths cannot contain "
       "variant selections");
   }
-  if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath())) {
+  if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath()))
+  {
     return true;
   }
-  else {
+  else
+  {
     return SdfAllowed(
       TfStringPrintf("Connection paths must be absolute prim or "
                      "property paths: <%s>",
@@ -1162,15 +1209,18 @@ SdfAllowed SdfSchemaBase::IsValidAttributeConnectionPath(const SdfPath &path)
 
 SdfAllowed SdfSchemaBase::IsValidRelationshipTargetPath(const SdfPath &path)
 {
-  if (path.ContainsPrimVariantSelection()) {
+  if (path.ContainsPrimVariantSelection())
+  {
     return SdfAllowed(
       "Relationship target paths cannot contain "
       "variant selections");
   }
-  if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath() || path.IsMapperPath())) {
+  if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath() || path.IsMapperPath()))
+  {
     return true;
   }
-  else {
+  else
+  {
     return SdfAllowed(
       "Relationship target paths must be absolute prim, "
       "property or mapper paths");
@@ -1180,7 +1230,8 @@ SdfAllowed SdfSchemaBase::IsValidRelationshipTargetPath(const SdfPath &path)
 SdfAllowed SdfSchemaBase::IsValidReference(const SdfReference &ref)
 {
   const SdfPath &path = ref.GetPrimPath();
-  if (!path.IsEmpty() && !(path.IsAbsolutePath() && path.IsPrimPath())) {
+  if (!path.IsEmpty() && !(path.IsAbsolutePath() && path.IsPrimPath()))
+  {
     return SdfAllowed("Reference prim path <" + path.GetString() +
                       "> must be either empty or an absolute prim path");
   }
@@ -1191,7 +1242,8 @@ SdfAllowed SdfSchemaBase::IsValidReference(const SdfReference &ref)
 SdfAllowed SdfSchemaBase::IsValidPayload(const SdfPayload &p)
 {
   const SdfPath &path = p.GetPrimPath();
-  if (!path.IsEmpty() && !(path.IsAbsolutePath() && path.IsPrimPath())) {
+  if (!path.IsEmpty() && !(path.IsAbsolutePath() && path.IsPrimPath()))
+  {
     return SdfAllowed("Payload prim path <" + path.GetString() +
                       "> must be either empty or an absolute prim path");
   }
@@ -1201,7 +1253,8 @@ SdfAllowed SdfSchemaBase::IsValidPayload(const SdfPayload &p)
 
 SdfAllowed SdfSchemaBase::IsValidSubLayer(const std::string &sublayer)
 {
-  if (sublayer.empty()) {
+  if (sublayer.empty())
+  {
     return SdfAllowed("Sublayer paths must not be empty");
   }
 
@@ -1209,9 +1262,11 @@ SdfAllowed SdfSchemaBase::IsValidSubLayer(const std::string &sublayer)
   // to check.
   TfErrorMark m;
   SdfAssetPath test(sublayer);
-  if (!m.IsClean()) {
+  if (!m.IsClean())
+  {
     std::vector<std::string> errs;
-    for (TfError const &err : m) {
+    for (TfError const &err : m)
+    {
       errs.push_back(err.GetCommentary());
     }
     m.Clear();
@@ -1225,15 +1280,19 @@ typedef Sdf_ParserHelpers::Value Value;
 // Helper function that adds values of type T to the value list that are
 // either stored directly or stored as elements of a vector<T>. Returns true
 // on success and false on failure.
-template<typename T> static bool _AccumulateTypedValues(const JsValue &value, std::deque<Value> *values)
+template<typename T>
+static bool _AccumulateTypedValues(const JsValue &value, std::deque<Value> *values)
 {
-  if (value.IsArrayOf<T>()) {
-    for (const T &v : value.GetArrayOf<T>()) {
+  if (value.IsArrayOf<T>())
+  {
+    for (const T &v : value.GetArrayOf<T>())
+    {
       values->push_back(v);
     }
     return true;
   }
-  else if (value.Is<T>()) {
+  else if (value.Is<T>())
+  {
     values->push_back(value.Get<T>());
     return true;
   }
@@ -1247,20 +1306,25 @@ static void _AddValuesToValueContext(std::deque<Value> *values,
                                      Sdf_ParserValueContext *context,
                                      int level = 0)
 {
-  if (context->valueTupleDimensions.size == 0) {
-    while (!values->empty()) {
+  if (context->valueTupleDimensions.size == 0)
+  {
+    while (!values->empty())
+    {
       context->AppendValue(values->front());
       values->pop_front();
     }
   }
-  else if (static_cast<size_t>(level) < context->valueTupleDimensions.size) {
+  else if (static_cast<size_t>(level) < context->valueTupleDimensions.size)
+  {
     context->BeginTuple();
-    for (size_t i = 0; i < context->valueTupleDimensions.d[level]; i++) {
+    for (size_t i = 0; i < context->valueTupleDimensions.d[level]; i++)
+    {
       _AddValuesToValueContext(values, context, level + 1);
     }
     context->EndTuple();
   }
-  else if (!values->empty()) {
+  else if (!values->empty())
+  {
     context->AppendValue(values->front());
     values->pop_front();
   }
@@ -1277,7 +1341,8 @@ static VtValue _ParseValue(const std::string &valueTypeName, const JsValue &valu
   // that's what _ConvertDict() in Plugin.cpp parses out of plugInfo.json
   std::deque<Value> values;
   if (!_AccumulateTypedValues<std::string>(value, &values) && !_AccumulateTypedValues<int>(value, &values) &&
-      !_AccumulateTypedValues<double>(value, &values)) {
+      !_AccumulateTypedValues<double>(value, &values))
+  {
     *errorText =
       "Value was not a string, an int, a double, or a "
       "vector of those types";
@@ -1286,7 +1351,8 @@ static VtValue _ParseValue(const std::string &valueTypeName, const JsValue &valu
 
   // Initialize the ParserValueContext
   Sdf_ParserValueContext context;
-  if (!context.SetupFactory(valueTypeName)) {
+  if (!context.SetupFactory(valueTypeName))
+  {
     *errorText = TfStringPrintf("\"%s\" is not a valid type", valueTypeName.c_str());
     return VtValue();
   }
@@ -1309,10 +1375,12 @@ static VtValue _ParseValue(const std::string &valueTypeName, const JsValue &valu
 }
 
 // Helper function to make reading from dictionaries easier
-template<typename T> static bool _GetKey(const JsObject &dict, const std::string &key, T *value)
+template<typename T>
+static bool _GetKey(const JsObject &dict, const std::string &key, T *value)
 {
   JsObject::const_iterator i = dict.find(key);
-  if (i != dict.end() && i->second.Is<T>()) {
+  if (i != dict.end() && i->second.Is<T>())
+  {
     *value = i->second.Get<T>();
     return true;
   }
@@ -1320,10 +1388,12 @@ template<typename T> static bool _GetKey(const JsObject &dict, const std::string
 }
 
 // Helper function to read and extract from dictionaries
-template<typename T> static bool _ExtractKey(JsObject &dict, const std::string &key, T *value)
+template<typename T>
+static bool _ExtractKey(JsObject &dict, const std::string &key, T *value)
 {
   JsObject::const_iterator i = dict.find(key);
-  if (i != dict.end() && i->second.Is<T>()) {
+  if (i != dict.end() && i->second.Is<T>())
+  {
     *value = i->second.Get<T>();
     dict.erase(i);
     return true;
@@ -1333,22 +1403,28 @@ template<typename T> static bool _ExtractKey(JsObject &dict, const std::string &
 
 static VtValue _GetDefaultValueForListOp(const std::string &valueTypeName)
 {
-  if (valueTypeName == "intlistop") {
+  if (valueTypeName == "intlistop")
+  {
     return VtValue(SdfIntListOp());
   }
-  else if (valueTypeName == "int64listop") {
+  else if (valueTypeName == "int64listop")
+  {
     return VtValue(SdfInt64ListOp());
   }
-  if (valueTypeName == "uintlistop") {
+  if (valueTypeName == "uintlistop")
+  {
     return VtValue(SdfUIntListOp());
   }
-  else if (valueTypeName == "uint64listop") {
+  else if (valueTypeName == "uint64listop")
+  {
     return VtValue(SdfUInt64ListOp());
   }
-  if (valueTypeName == "stringlistop") {
+  if (valueTypeName == "stringlistop")
+  {
     return VtValue(SdfStringListOp());
   }
-  else if (valueTypeName == "tokenlistop") {
+  else if (valueTypeName == "tokenlistop")
+  {
     return VtValue(SdfTokenListOp());
   }
   return VtValue();
@@ -1358,8 +1434,10 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
                                         const std::string &valueTypeName,
                                         const JsValue &defaultValue)
 {
-  if (valueTypeName == "dictionary") {
-    if (!defaultValue.IsNull()) {
+  if (valueTypeName == "dictionary")
+  {
+    if (!defaultValue.IsNull())
+    {
       // Defaults aren't allowed for dictionaries because we have
       // no way of parsing them at the moment
       TF_CODING_ERROR(
@@ -1372,8 +1450,10 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
   }
 
   const VtValue listOpValue = _GetDefaultValueForListOp(valueTypeName);
-  if (!listOpValue.IsEmpty()) {
-    if (!defaultValue.IsNull()) {
+  if (!listOpValue.IsEmpty())
+  {
+    if (!defaultValue.IsNull())
+    {
       // Defaults aren't allowed for list ops because we have
       // no way of parsing them at the moment
       TF_CODING_ERROR(
@@ -1386,14 +1466,18 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
     return listOpValue;
   }
 
-  if (const SdfValueTypeName valueType = schema.FindType(valueTypeName)) {
-    if (defaultValue.IsNull()) {
+  if (const SdfValueTypeName valueType = schema.FindType(valueTypeName))
+  {
+    if (defaultValue.IsNull())
+    {
       return valueType.GetDefaultValue();
     }
-    else {
+    else
+    {
       std::string errorText;
       const VtValue parsedValue = _ParseValue(valueTypeName, defaultValue, &errorText);
-      if (parsedValue.IsEmpty()) {
+      if (parsedValue.IsEmpty())
+      {
         TF_CODING_ERROR("Could not parse default value: %s", errorText.c_str());
       }
       return parsedValue;
@@ -1416,7 +1500,8 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
 
   // Update the schema with new metadata fields from each plugin, if they
   // contain any
-  for (const PlugPluginPtr &plug : plugins) {
+  for (const PlugPluginPtr &plug : plugins)
+  {
     // Get the top-level dictionary key specified by the metadata tag.
     JsObject fields;
     const JsObject &metadata = plug->GetMetadata();
@@ -1424,12 +1509,14 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
       continue;
 
     // Register new fields
-    for (const std::pair<const std::string, JsValue> &field : fields) {
+    for (const std::pair<const std::string, JsValue> &field : fields)
+    {
       const TfToken fieldName(field.first);
 
       // Validate field
       JsObject fieldInfo;
-      if (!_GetKey(fields, fieldName, &fieldInfo)) {
+      if (!_GetKey(fields, fieldName, &fieldInfo))
+      {
         TF_CODING_ERROR(
           "Value must be a dictionary (at \"%s\" in "
           "plugin \"%s\")",
@@ -1439,7 +1526,8 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
       }
 
       std::string valueTypeName;
-      if (!_ExtractKey(fieldInfo, _tokens->Type.GetString(), &valueTypeName)) {
+      if (!_ExtractKey(fieldInfo, _tokens->Type.GetString(), &valueTypeName))
+      {
         TF_CODING_ERROR(
           "Could not read a string for \"type\" "
           "(at \"%s\" in plugin \"%s\")",
@@ -1448,7 +1536,8 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
         continue;
       }
 
-      if (IsRegistered(fieldName)) {
+      if (IsRegistered(fieldName))
+      {
         TF_CODING_ERROR(
           "\"%s\" is already a registered field "
           "(in plugin \"%s\")",
@@ -1465,11 +1554,13 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
         TfErrorMark m;
 
         defaultValue = _GetDefaultMetadataValue(*this, valueTypeName, pluginDefault);
-        if (defaultValue.IsEmpty() && defFactory) {
+        if (defaultValue.IsEmpty() && defFactory)
+        {
           defaultValue = defFactory(valueTypeName, pluginDefault);
         }
 
-        if (defaultValue.IsEmpty()) {
+        if (defaultValue.IsEmpty())
+        {
           // If an error wasn't emitted but we still don't have a
           // default value, emit an error indicating this.
           //
@@ -1477,14 +1568,16 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
           // provides more context about where that error was
           // encountered, since the default value factory isn't
           // given enough info to do this itself.
-          if (m.IsClean()) {
+          if (m.IsClean())
+          {
             TF_CODING_ERROR(
               "No default value for metadata "
               "(at \"%s\" in plugin \"%s\")",
               fieldName.GetText(),
               plug->GetPath().c_str());
           }
-          else {
+          else
+          {
             TF_CODING_ERROR(
               "Error parsing default value for "
               "metadata (at \"%s\" in plugin \"%s\")",
@@ -1493,7 +1586,8 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
           }
           continue;
         }
-        else {
+        else
+        {
           // We can drop errors that had been issued from
           // _GetDefaultMetadataValue (e.g., due to this metadata
           // type not being recognized) if the passed-in factory
@@ -1518,44 +1612,52 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
       set<string> appliesTo;
       {
         const JsValue val = TfMapLookupByValue(fieldInfo, _tokens->AppliesTo.GetString(), JsValue());
-        if (val.IsArrayOf<string>()) {
+        if (val.IsArrayOf<string>())
+        {
           const vector<string> vec = val.GetArrayOf<string>();
           appliesTo.insert(vec.begin(), vec.end());
         }
-        else if (val.Is<string>()) {
+        else if (val.Is<string>())
+        {
           appliesTo.insert(val.Get<string>());
         }
 
         // this is so appliesTo does not show up in fieldDef's info
         fieldInfo.erase(_tokens->AppliesTo.GetString());
       }
-      if (appliesTo.empty() || appliesTo.count("layers")) {
+      if (appliesTo.empty() || appliesTo.count("layers"))
+      {
         _ExtendSpecDefinition(SdfSpecTypePseudoRoot).MetadataField(fieldName, displayGroup);
       }
 
-      if (appliesTo.empty() || appliesTo.count("prims")) {
+      if (appliesTo.empty() || appliesTo.count("prims"))
+      {
         _ExtendSpecDefinition(SdfSpecTypePrim).MetadataField(fieldName, displayGroup);
       }
 
-      if (appliesTo.empty() || appliesTo.count("properties") || appliesTo.count("attributes")) {
+      if (appliesTo.empty() || appliesTo.count("properties") || appliesTo.count("attributes"))
+      {
         _ExtendSpecDefinition(SdfSpecTypeAttribute).MetadataField(fieldName, displayGroup);
       }
 
-      if (appliesTo.empty() || appliesTo.count("properties") || appliesTo.count("relationships")) {
+      if (appliesTo.empty() || appliesTo.count("properties") || appliesTo.count("relationships"))
+      {
         _ExtendSpecDefinition(SdfSpecTypeRelationship).MetadataField(fieldName, displayGroup);
       }
 
       // All metadata on prims should also apply to variants.
       // This matches how the variant spec definition is copied
       // from the prim spec definition in _RegisterStandardFields.
-      if (appliesTo.empty() || appliesTo.count("variants") || appliesTo.count("prims")) {
+      if (appliesTo.empty() || appliesTo.count("variants") || appliesTo.count("prims"))
+      {
         _ExtendSpecDefinition(SdfSpecTypeVariant).MetadataField(fieldName, displayGroup);
       }
 
       // All remaining values in the fieldInfo will are unknown to sdf,
       // so store them off in our field definitions for other libraries
       // to use.
-      for (const std::pair<const std::string, JsValue> &it : fieldInfo) {
+      for (const std::pair<const std::string, JsValue> &it : fieldInfo)
+      {
         const std::string &metadataInfoName = it.first;
         const JsValue &metadataInfoValue = it.second;
 
@@ -1602,7 +1704,8 @@ SdfSchema::~SdfSchema()
 //
 const Sdf_ValueTypeNamesType *Sdf_InitializeValueTypeNames()
 {
-  struct _Registry {
+  struct _Registry
+  {
     _Registry()
     {
       _AddStandardTypesToRegistry(&registry);

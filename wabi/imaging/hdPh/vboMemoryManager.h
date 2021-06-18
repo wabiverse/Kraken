@@ -47,7 +47,8 @@ class HdPhResourceRegistry;
 ///
 /// VBO memory manager.
 ///
-class HdPhVBOMemoryManager : public HdAggregationStrategy {
+class HdPhVBOMemoryManager : public HdAggregationStrategy
+{
  public:
   HdPhVBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdAggregationStrategy(),
@@ -82,7 +83,8 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy {
   class _StripedBufferArray;
 
   /// specialized buffer array range
-  class _StripedBufferArrayRange : public HdPhBufferArrayRange {
+  class _StripedBufferArrayRange : public HdPhBufferArrayRange
+  {
    public:
     /// Constructor.
     _StripedBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
@@ -233,7 +235,8 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy {
   using _StripedBufferArrayRangePtr = std::weak_ptr<_StripedBufferArrayRange>;
 
   /// striped buffer array
-  class _StripedBufferArray : public HdBufferArray {
+  class _StripedBufferArray : public HdBufferArray
+  {
    public:
     /// Constructor.
     HDPH_API

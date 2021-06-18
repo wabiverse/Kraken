@@ -8,15 +8,27 @@
 #include <string>
 #include <vector>
 
-namespace Zep {
+namespace Zep
+{
 
-namespace RegionFlags {
-enum Flags { Fixed = (1 << 0), Expanding = (1 << 1), AlignCenter = (1 << 2) };
+namespace RegionFlags
+{
+enum Flags
+{
+  Fixed = (1 << 0),
+  Expanding = (1 << 1),
+  AlignCenter = (1 << 2)
+};
 };
 
-enum class RegionLayoutType { VBox, HBox };
+enum class RegionLayoutType
+{
+  VBox,
+  HBox
+};
 
-struct Region {
+struct Region
+{
   RegionLayoutType layoutType = RegionLayoutType::VBox;
 
   uint32_t flags = RegionFlags::Expanding;
@@ -42,9 +54,11 @@ inline std::ostream &operator<<(std::ostream &str, const Region &region)
   str << std::hex << &region << "(" << region.name << ") -> ";
 
   str << "RC: " << region.rect << ", pParent: " << std::hex << region.pParent;
-  if (!region.children.empty()) {
+  if (!region.children.empty())
+  {
     str << std::endl;
-    for (auto &child : region.children) {
+    for (auto &child : region.children)
+    {
       indent++;
       str << *child;
       indent--;

@@ -40,7 +40,8 @@ using HdResourceSharedPtr = std::shared_ptr<class HdResource>;
 ///
 /// Base class for all GPU resource objects.
 ///
-class HdResource {
+class HdResource
+{
  public:
   HD_API
   HdResource(TfToken const &role);

@@ -40,7 +40,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 static size_t __hash__(const UsdTimeCode &self)
 {
@@ -55,11 +56,14 @@ static std::string _Str(const UsdTimeCode &self)
 static string __repr__(const UsdTimeCode &self)
 {
   string tail = ".Default()";
-  if (self.IsNumeric()) {
-    if (self.IsEarliestTime()) {
+  if (self.IsNumeric())
+  {
+    if (self.IsEarliestTime())
+    {
       tail = ".EarliestTime()";
     }
-    else {
+    else
+    {
       tail = self.GetValue() == 0.0 ? string("()") :
                                       TfStringPrintf("(%s)", TfPyRepr(self.GetValue()).c_str());
     }

@@ -78,7 +78,8 @@ static std::string _IndentString(int indent)
 
   // Insert '|' characters every 4 spaces.
   // The magic value of 2 makes it line up with the outer scope.
-  for (int i = 2; i < indent; i += 4) {
+  for (int i = 2; i < indent; i += 4)
+  {
     s[i] = '|';
   }
   return s;
@@ -114,7 +115,8 @@ static void _PrintLineTimes(ostream &s,
   else
     countStr = TfStringPrintf("%10.3f samples ", double(count) / iterationCount);
 
-  if (count <= 0) {
+  if (count <= 0)
+  {
     // CODE_COVERAGE_OFF -- shouldn't get a count of zero
     countStr = string(countStr.size(), ' ');
     // CODE_COVERAGE_ON
@@ -148,9 +150,11 @@ static void _PrintNodeTimes(ostream &s, TraceAggregateNodeRefPtr node, int inden
 {
   // The root of the tree has id == -1, no useful stats there.
 
-  if (node->GetId().IsValid()) {
+  if (node->GetId().IsValid())
+  {
 
-    if (node->IsRecursionMarker()) {
+    if (node->IsRecursionMarker())
+    {
       _PrintRecursionMarker(s, _GetKeyName(node->GetKey()), indent);
       return;
     }
@@ -168,11 +172,13 @@ static void _PrintNodeTimes(ostream &s, TraceAggregateNodeRefPtr node, int inden
 
   // sort children by inclusive time on output
   std::vector<TraceAggregateNodeRefPtr> sortedKids;
-  for (const TraceAggregateNodeRefPtr &it : node->GetChildrenRef()) {
+  for (const TraceAggregateNodeRefPtr &it : node->GetChildrenRef())
+  {
     sortedKids.push_back(it);
   }
 
-  for (const TraceAggregateNodeRefPtr &it : sortedKids) {
+  for (const TraceAggregateNodeRefPtr &it : sortedKids)
+  {
     _PrintNodeTimes(s, it, indent + 2, iterationCount);
   }
 }
@@ -182,10 +188,12 @@ void TraceReporter::_PrintTimes(ostream &s)
   using SortedTimes = std::multimap<TimeStamp, TfToken>;
 
   SortedTimes sortedTimes;
-  for (const TraceAggregateTree::EventTimes::value_type &it : _aggregateTree->GetEventTimes()) {
+  for (const TraceAggregateTree::EventTimes::value_type &it : _aggregateTree->GetEventTimes())
+  {
     sortedTimes.insert(SortedTimes::value_type(it.second, it.first));
   }
-  for (const SortedTimes::value_type &it : sortedTimes) {
+  for (const SortedTimes::value_type &it : sortedTimes)
+  {
     s << TfStringPrintf("%9.3f ms ", ArchTicksToSeconds((uint64_t)(it.first * 1e3)))
       << _GetKeyName(it.second) << "\n";
   }
@@ -193,7 +201,8 @@ void TraceReporter::_PrintTimes(ostream &s)
 
 void TraceReporter::Report(std::ostream &s, int iterationCount)
 {
-  if (iterationCount < 1) {
+  if (iterationCount < 1)
+  {
     TF_CODING_ERROR("iterationCount %d is invalid; falling back to 1", iterationCount);
     iterationCount = 1;
   }
@@ -201,7 +210,8 @@ void TraceReporter::Report(std::ostream &s, int iterationCount)
   UpdateTraceTrees();
 
   // Fold recursive calls if we need to.
-  if (GetFoldRecursiveCalls()) {
+  if (GetFoldRecursiveCalls())
+  {
     _aggregateTree->GetRoot()->MarkRecursiveChildren();
   }
 
@@ -211,7 +221,8 @@ void TraceReporter::Report(std::ostream &s, int iterationCount)
   s << "\nTree view  ==============\n";
   if (iterationCount == 1)
     s << "   inclusive    exclusive        \n";
-  else {
+  else
+  {
     s << "  incl./iter   excl./iter       samples/iter\n";
   }
 
@@ -247,7 +258,8 @@ void TraceReporter::_RebuildEventAndAggregateTrees()
   // by the memory tagging, unless there was nothing reported anyway.
   // XXX: add "WARNING" token that Spy can use.
   TraceAggregateNodePtr root = _aggregateTree->GetRoot();
-  if (root && !root->GetChildrenRef().empty() && TfMallocTag::IsInitialized()) {
+  if (root && !root->GetChildrenRef().empty() && TfMallocTag::IsInitialized())
+  {
     root->Append(TraceAggregateNode::Id(),
                  TfToken(TraceReporterTokens->warningString.GetString() + " MallocTags enabled"),
                  0,
@@ -326,7 +338,8 @@ TraceAggregateNode::Id TraceReporter::CreateValidEventId()
 
 void TraceReporter::_ProcessCollection(const TraceReporterBase::CollectionPtr &collection)
 {
-  if (collection) {
+  if (collection)
+  {
 
     // We just always build the single (additional) event tree for the
     // (additional) new collection given and pass it on to the aggregate

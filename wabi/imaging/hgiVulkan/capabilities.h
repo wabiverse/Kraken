@@ -43,7 +43,8 @@ class HgiVulkanDevice;
 ///
 /// Reports the capabilities of the Vulkan device.
 ///
-class HgiVulkanCapabilities final {
+class HgiVulkanCapabilities final
+{
  public:
   HGIVULKAN_API
   HgiVulkanCapabilities(HgiVulkanDevice *device);

@@ -24,19 +24,23 @@
 
 #include <unordered_set>
 
-namespace {
+namespace
+{
 
 ///
 /// Hashable helper class for motion sample overlap elimination
 ///
-struct HdCyclesIndexedTimeSample {
+struct HdCyclesIndexedTimeSample
+{
   using index_type = ccl::uint;
   using time_type = float;
 
   static constexpr time_type epsilon = static_cast<time_type>(1e-5);
   static constexpr index_type resolution = static_cast<index_type>(static_cast<time_type>(1.0) / epsilon);
 
-  HdCyclesIndexedTimeSample(index_type _index, time_type _time) : index{_index}, time{_time}
+  HdCyclesIndexedTimeSample(index_type _index, time_type _time)
+    : index{_index},
+      time{_time}
   {
     assert(time >= static_cast<time_type>(-1.0) && time <= static_cast<time_type>(1.0));
   }
@@ -62,9 +66,12 @@ bool operator==(const HdCyclesIndexedTimeSample &lhs, const HdCyclesIndexedTimeS
 
 }  // namespace
 
-namespace std {
+namespace std
+{
 
-template<> struct hash<HdCyclesIndexedTimeSample> {
+template<>
+struct hash<HdCyclesIndexedTimeSample>
+{
   using This = HdCyclesIndexedTimeSample;
   std::size_t operator()(const This &s) const noexcept
   {
@@ -76,19 +83,22 @@ template<> struct hash<HdCyclesIndexedTimeSample> {
 
 WABI_NAMESPACE_USING
 
-namespace {
+namespace
+{
 
 template<typename TYPE, unsigned int CAPACITY>
 HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
   const HdTimeSampleArray<TYPE, CAPACITY> &samples)
 {
-  if (samples.count == 1) {
+  if (samples.count == 1)
+  {
     return samples;
   }
 
   // 2x number of buckets to cover negative and positive time samples
   std::unordered_set<HdCyclesIndexedTimeSample> unique{2 * HdCyclesIndexedTimeSample::resolution};
-  for (unsigned int i = 0; i < samples.count; ++i) {
+  for (unsigned int i = 0; i < samples.count; ++i)
+  {
     using index_type = HdCyclesIndexedTimeSample::index_type;
     unique.insert(HdCyclesIndexedTimeSample{static_cast<index_type>(i), samples.times[i]});
   }
@@ -100,7 +110,8 @@ HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
   result.Resize(static_cast<unsigned int>(unique.size()));
 
   using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
-  for (size_type i = 0; i < sorted.size(); ++i) {
+  for (size_type i = 0; i < sorted.size(); ++i)
+  {
     result.times[i] = sorted[i].time;
     result.values[i] = samples.values[sorted[i].index];
   }
@@ -111,7 +122,8 @@ HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
 template<typename TYPE, unsigned int CAPACITY>
 bool HdCyclesAreTimeSamplesUniformlyDistributed(const HdTimeSampleArray<TYPE, CAPACITY> &array)
 {
-  if (array.count < 3) {
+  if (array.count < 3)
+  {
     return true;
   }
 
@@ -120,9 +132,11 @@ bool HdCyclesAreTimeSamplesUniformlyDistributed(const HdTimeSampleArray<TYPE, CA
 
   // reference segment - samples must be sorted in ascending order
   const value_type ref_segment = array.times[1] - array.times[0];
-  for (size_type i = 2; i < array.count; ++i) {
+  for (size_type i = 2; i < array.count; ++i)
+  {
     auto l = array.times[i] - array.times[i - 1];
-    if (std::abs(l - ref_segment) > HdCyclesIndexedTimeSample::epsilon) {
+    if (std::abs(l - ref_segment) > HdCyclesIndexedTimeSample::epsilon)
+    {
       return false;
     }
   }
@@ -144,7 +158,8 @@ HdCyclesTransformSource::HdCyclesTransformSource(ccl::Object *object,
 
 bool HdCyclesTransformSource::_CheckValid() const
 {
-  if (!m_object) {
+  if (!m_object)
+  {
     return false;
   }
 
@@ -171,12 +186,15 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
 
   //
   unsigned int sample = 1;
-  for (unsigned int i = 0; i < new_num_samples; ++i) {
+  for (unsigned int i = 0; i < new_num_samples; ++i)
+  {
     const float time = samples.times.front() + static_cast<float>(i) * new_segment_width;
 
     // Search for segment: [sample - 1, sample]
-    for (; sample < samples.count;) {
-      if (time >= samples.times[sample - 1] && time <= samples.times[sample]) {
+    for (; sample < samples.count;)
+    {
+      if (time >= samples.times[sample - 1] && time <= samples.times[sample])
+      {
         break;
       }
       ++sample;
@@ -188,12 +206,14 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
     const unsigned int iXfNext = sample;
 
     // boundary conditions and any other overlapping sample
-    if (std::abs(time - samples.times[iXfPrev]) <= HdCyclesIndexedTimeSample::epsilon) {
+    if (std::abs(time - samples.times[iXfPrev]) <= HdCyclesIndexedTimeSample::epsilon)
+    {
       resampled.values[i] = mat4d_to_transform(samples.values[iXfPrev]);
       continue;
     }
 
-    if (std::abs(time - samples.times[iXfNext]) <= HdCyclesIndexedTimeSample::epsilon) {
+    if (std::abs(time - samples.times[iXfNext]) <= HdCyclesIndexedTimeSample::epsilon)
+    {
       resampled.values[i] = mat4d_to_transform(samples.values[iXfNext]);
       continue;
     }
@@ -207,7 +227,8 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
     transform_motion_decompose(dxf + 1, &xfNext, 1);
 
     // Preferring the smaller rotation difference
-    if (ccl::len_squared(dxf[0].x - dxf[1].x) > ccl::len_squared(dxf[0].x + dxf[1].x)) {
+    if (ccl::len_squared(dxf[0].x - dxf[1].x) > ccl::len_squared(dxf[0].x + dxf[1].x))
+    {
       dxf[1].x = -dxf[1].x;
     }
 
@@ -224,7 +245,8 @@ HdCyclesTransformTimeSampleArray HdCyclesTransformSource::ResampleUniform(
 
 bool HdCyclesTransformSource::Resolve()
 {
-  if (!_TryLock()) {
+  if (!_TryLock())
+  {
     return false;
   }
 
@@ -235,7 +257,8 @@ bool HdCyclesTransformSource::Resolve()
   m_samples = HdCyclesTimeSamplesRemoveOverlaps(m_samples);
 
   // No motion samples, no motion blur use fallback value
-  if (m_samples.count == 0) {
+  if (m_samples.count == 0)
+  {
     object->motion.resize(0);
     object->tfm = mat4d_to_transform(m_fallback);
 
@@ -245,7 +268,8 @@ bool HdCyclesTransformSource::Resolve()
   }
 
   // Only one motion sample - no motion blur
-  if (m_samples.count == 1) {
+  if (m_samples.count == 1)
+  {
     object->motion.resize(0);
     object->tfm = mat4d_to_transform(m_samples.values[0]);
 
@@ -257,7 +281,8 @@ bool HdCyclesTransformSource::Resolve()
   // Frame centered motion blur only, with fallback to default value
   const float shutter_open = m_samples.times[0];
   const float shutter_close = m_samples.times[static_cast<unsigned int>(m_samples.count) - 1];
-  if (std::abs(std::abs(shutter_close) - std::abs(shutter_open)) > HdCyclesIndexedTimeSample::epsilon) {
+  if (std::abs(std::abs(shutter_close) - std::abs(shutter_open)) > HdCyclesIndexedTimeSample::epsilon)
+  {
     object->motion.resize(0);
     object->tfm = mat4d_to_transform(m_fallback);
 
@@ -279,18 +304,22 @@ bool HdCyclesTransformSource::Resolve()
 
   // Check if resampling is required
   bool requires_resampling = false;
-  if (num_inp_samples != num_req_samples || !HdCyclesAreTimeSamplesUniformlyDistributed(m_samples)) {
+  if (num_inp_samples != num_req_samples || !HdCyclesAreTimeSamplesUniformlyDistributed(m_samples))
+  {
     requires_resampling = true;
   }
 
   // Resampling
   HdCyclesTransformTimeSampleArray motion_transforms;
-  if (requires_resampling) {
+  if (requires_resampling)
+  {
     motion_transforms = ResampleUniform(m_samples, num_req_samples);
   }
-  else {
+  else
+  {
     motion_transforms.Resize(num_req_samples);
-    for (unsigned int i = 0; i < num_req_samples; ++i) {
+    for (unsigned int i = 0; i < num_req_samples; ++i)
+    {
       motion_transforms.values[i] = mat4d_to_transform(m_samples.values[i]);
     }
   }
@@ -298,7 +327,8 @@ bool HdCyclesTransformSource::Resolve()
   // Commit samples
   object->tfm = ccl::transform_identity();
   object->motion.resize(motion_transforms.count);
-  for (unsigned int i{}; i < motion_transforms.count; ++i) {
+  for (unsigned int i{}; i < motion_transforms.count; ++i)
+  {
     object->motion[i] = motion_transforms.values[i];
   }
 

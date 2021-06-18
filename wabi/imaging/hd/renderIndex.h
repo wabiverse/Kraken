@@ -111,7 +111,8 @@ using HdDriverVector = std::vector<HdDriver *>;
 /// If two viewers use different HdRenderDelegate's, then it may unfortunately
 /// require populating two HdRenderIndex's.
 ///
-class HdRenderIndex final {
+class HdRenderIndex final
+{
  public:
   typedef std::vector<HdDrawItem const *> HdDrawItemPtrVector;
 
@@ -275,7 +276,8 @@ class HdRenderIndex final {
   // ---------------------------------------------------------------------- //
 
   /// Inserts a new task into the render index with an identifier of \p id.
-  template<typename T> void InsertTask(HdSceneDelegate *delegate, SdfPath const &id);
+  template<typename T>
+  void InsertTask(HdSceneDelegate *delegate, SdfPath const &id);
 
   /// Removes the given task from the RenderIndex.
   HD_API
@@ -386,7 +388,8 @@ class HdRenderIndex final {
   HD_API
   void _TrackDelegateTask(HdSceneDelegate *delegate, SdfPath const &taskId, HdTaskSharedPtr const &task);
 
-  template<typename T> static inline const TfToken &_GetTypeId();
+  template<typename T>
+  static inline const TfToken &_GetTypeId();
 
   void _RemoveRprimSubtree(const SdfPath &root, HdSceneDelegate *sceneDelegate);
   void _RemoveInstancerSubtree(const SdfPath &root, HdSceneDelegate *sceneDelegate);
@@ -396,12 +399,14 @@ class HdRenderIndex final {
   // ---------------------------------------------------------------------- //
   // Index State
   // ---------------------------------------------------------------------- //
-  struct _RprimInfo {
+  struct _RprimInfo
+  {
     HdSceneDelegate *sceneDelegate;
     HdRprim *rprim;
   };
 
-  struct _TaskInfo {
+  struct _TaskInfo
+  {
     HdSceneDelegate *sceneDelegate;
     HdTaskSharedPtr task;
   };
@@ -428,7 +433,8 @@ class HdRenderIndex final {
   typedef TfHashMap<SdfPath, HdInstancer *, SdfPath::Hash> _InstancerMap;
   _InstancerMap _instancerMap;
 
-  struct _SyncQueueEntry {
+  struct _SyncQueueEntry
+  {
     HdDirtyListSharedPtr dirtyList;
     HdRprimCollection collection;
   };
@@ -493,7 +499,8 @@ class HdRenderIndex final {
   HdRenderIndex &operator=(const HdRenderIndex &) = delete;
 };
 
-template<typename T> void HdRenderIndex::InsertTask(HdSceneDelegate *delegate, SdfPath const &id)
+template<typename T>
+void HdRenderIndex::InsertTask(HdSceneDelegate *delegate, SdfPath const &id)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();

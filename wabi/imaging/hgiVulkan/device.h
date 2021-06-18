@@ -49,7 +49,8 @@ class HgiVulkanPipelineCache;
 ///
 /// Vulkan implementation of GPU device.
 ///
-class HgiVulkanDevice final {
+class HgiVulkanDevice final
+{
  public:
   HGIVULKAN_API
   HgiVulkanDevice(HgiVulkanInstance *instance);

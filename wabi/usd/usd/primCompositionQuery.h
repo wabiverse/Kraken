@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 /// root arc is not an authored arc; it exists to target the root node of the
 /// graph which represents any local opinions that may be defined for the prim
 /// in the root layer stack.
-class UsdPrimCompositionQueryArc {
+class UsdPrimCompositionQueryArc
+{
  public:
   ~UsdPrimCompositionQueryArc() = default;
 
@@ -216,10 +217,12 @@ class UsdPrimCompositionQueryArc {
 /// dispose of it in response to a resync change to the associated prim.
 /// Failing to do so may result in incorrect values or crashes due to
 /// dereferencing invalid objects.
-class UsdPrimCompositionQuery {
+class UsdPrimCompositionQuery
+{
  public:
   /// Choices for filtering composition arcs based on arc type
-  enum class ArcTypeFilter {
+  enum class ArcTypeFilter
+  {
     All = 0,
 
     // Single arc types
@@ -242,7 +245,8 @@ class UsdPrimCompositionQuery {
   /// Choices for filtering composition arcs on dependency type. This can
   /// be direct (arc introduced at the prim's level in namespace) or ancestral
   /// (arc introduced by a namespace parent of the prim).
-  enum class DependencyTypeFilter {
+  enum class DependencyTypeFilter
+  {
     All = 0,
 
     Direct,
@@ -251,7 +255,8 @@ class UsdPrimCompositionQuery {
 
   /// Choices for filtering composition arcs based on where the arc is
   /// introduced.
-  enum class ArcIntroducedFilter {
+  enum class ArcIntroducedFilter
+  {
     All = 0,
 
     // Indicates that we only want arcs that are authored somewhere in the
@@ -265,7 +270,8 @@ class UsdPrimCompositionQuery {
 
   /// Choices for filtering composition arcs on whether the node contributes
   /// specs to the prim.
-  enum class HasSpecsFilter {
+  enum class HasSpecsFilter
+  {
     All = 0,
 
     HasSpecs,
@@ -274,7 +280,8 @@ class UsdPrimCompositionQuery {
 
   /// Aggregate filter for filtering composition arcs by the previously
   /// defined criteria.
-  struct Filter {
+  struct Filter
+  {
     /// Filters by arc type
     ArcTypeFilter arcTypeFilter{ArcTypeFilter::All};
 

@@ -37,11 +37,13 @@ WABI_NAMESPACE_BEGIN
 ///
 /// Delegate support for UsdGeomBasisCurves.
 ///
-class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter {
+class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
+{
  public:
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingBasisCurvesAdapter() : UsdImagingGprimAdapter()
+  UsdImagingBasisCurvesAdapter()
+    : UsdImagingGprimAdapter()
   {}
 
   USDIMAGING_API

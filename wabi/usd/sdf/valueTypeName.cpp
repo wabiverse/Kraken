@@ -31,12 +31,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-namespace {
-
-template<typename C, typename V> bool IsValueIn(const C &container, V value)
+namespace
 {
-  for (const auto &element : container) {
-    if (element == value) {
+
+template<typename C, typename V>
+bool IsValueIn(const C &container, V value)
+{
+  for (const auto &element : container)
+  {
+    if (element == value)
+    {
       return true;
     }
   }
@@ -51,13 +55,16 @@ template<typename C, typename V> bool IsValueIn(const C &container, V value)
 
 bool SdfTupleDimensions::operator==(const SdfTupleDimensions &rhs) const
 {
-  if (size != rhs.size) {
+  if (size != rhs.size)
+  {
     return false;
   }
-  if (size >= 1 && d[0] != rhs.d[0]) {
+  if (size >= 1 && d[0] != rhs.d[0])
+  {
     return false;
   }
-  if (size >= 2 && d[1] != rhs.d[1]) {
+  if (size >= 2 && d[1] != rhs.d[1])
+  {
     return false;
   }
   return true;
@@ -67,12 +74,14 @@ bool SdfTupleDimensions::operator==(const SdfTupleDimensions &rhs) const
 // SdfValueTypeName
 //
 
-SdfValueTypeName::SdfValueTypeName() : _impl(Sdf_ValueTypePrivate::GetEmptyTypeName())
+SdfValueTypeName::SdfValueTypeName()
+  : _impl(Sdf_ValueTypePrivate::GetEmptyTypeName())
 {
   // Do nothing
 }
 
-SdfValueTypeName::SdfValueTypeName(const Sdf_ValueTypeImpl *impl) : _impl(impl)
+SdfValueTypeName::SdfValueTypeName(const Sdf_ValueTypeImpl *impl)
+  : _impl(impl)
 {
   // Do nothing
 }

@@ -77,7 +77,8 @@ WABI_NAMESPACE_BEGIN
 /// values in namespace (and time).
 ///
 ///
-class PcpMapFunction {
+class PcpMapFunction
+{
  public:
   /// A mapping from path to path.
   typedef std::map<SdfPath, SdfPath, SdfPath::FastLessThan> PathMap;
@@ -195,7 +196,8 @@ class PcpMapFunction {
   friend PcpMapFunction *Pcp_MakeIdentity();
 
   static const int _MaxLocalPairs = 2;
-  struct _Data final {
+  struct _Data final
+  {
     _Data(){};
 
     _Data(PathPair const *begin, PathPair const *end, bool hasRootIdentity)
@@ -204,42 +206,54 @@ class PcpMapFunction {
     {
       if (numPairs == 0)
         return;
-      if (numPairs <= _MaxLocalPairs) {
+      if (numPairs <= _MaxLocalPairs)
+      {
         std::uninitialized_copy(begin, end, localPairs);
       }
-      else {
+      else
+      {
         new (&remotePairs)
           std::shared_ptr<PathPair>(new PathPair[numPairs], std::default_delete<PathPair[]>());
         std::copy(begin, end, remotePairs.get());
       }
     }
 
-    _Data(_Data const &other) : numPairs(other.numPairs), hasRootIdentity(other.hasRootIdentity)
+    _Data(_Data const &other)
+      : numPairs(other.numPairs),
+        hasRootIdentity(other.hasRootIdentity)
     {
-      if (numPairs <= _MaxLocalPairs) {
+      if (numPairs <= _MaxLocalPairs)
+      {
         std::uninitialized_copy(other.localPairs, other.localPairs + other.numPairs, localPairs);
       }
-      else {
+      else
+      {
         new (&remotePairs) std::shared_ptr<PathPair>(other.remotePairs);
       }
     }
-    _Data(_Data &&other) : numPairs(other.numPairs), hasRootIdentity(other.hasRootIdentity)
+    _Data(_Data &&other)
+      : numPairs(other.numPairs),
+        hasRootIdentity(other.hasRootIdentity)
     {
-      if (numPairs <= _MaxLocalPairs) {
+      if (numPairs <= _MaxLocalPairs)
+      {
         PathPair *dst = localPairs;
         PathPair *src = other.localPairs;
         PathPair *srcEnd = other.localPairs + other.numPairs;
-        for (; src != srcEnd; ++src, ++dst) {
+        for (; src != srcEnd; ++src, ++dst)
+        {
           ::new (static_cast<void *>(std::addressof(*dst))) PathPair(std::move(*src));
         }
       }
-      else {
+      else
+      {
         new (&remotePairs) std::shared_ptr<PathPair>(std::move(other.remotePairs));
       }
     }
     _Data &operator=(_Data const &other)
     {
-      if (this != &other) {
+      if (this != &other)
+      {
         this->~_Data();
         new (this) _Data(other);
       }
@@ -247,7 +261,8 @@ class PcpMapFunction {
     }
     _Data &operator=(_Data &&other)
     {
-      if (this != &other) {
+      if (this != &other)
+      {
         this->~_Data();
         new (this) _Data(std::move(other));
       }
@@ -255,12 +270,15 @@ class PcpMapFunction {
     }
     ~_Data()
     {
-      if (numPairs <= _MaxLocalPairs) {
-        for (PathPair *p = localPairs; numPairs--; ++p) {
+      if (numPairs <= _MaxLocalPairs)
+      {
+        for (PathPair *p = localPairs; numPairs--; ++p)
+        {
           p->~PathPair();
         }
       }
-      else {
+      else
+      {
         remotePairs.~shared_ptr<PathPair>();
       }
     }
@@ -291,7 +309,8 @@ class PcpMapFunction {
       return !(*this == other);
     }
 
-    union {
+    union
+    {
       PathPair localPairs[_MaxLocalPairs > 0 ? _MaxLocalPairs : 1];
       std::shared_ptr<PathPair> remotePairs;
     };

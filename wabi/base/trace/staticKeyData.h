@@ -47,20 +47,25 @@ WABI_NAMESPACE_BEGIN
 /// This class holds data necessary to create keys for TraceEvent instances.
 /// This class is meant to be used as constexpr static data.
 ///
-class TraceStaticKeyData {
+class TraceStaticKeyData
+{
  public:
   /// \class StringLiteral
   ///
   /// This is a helper class for the constructors of TraceStaticKeyData.
   ///
-  class StringLiteral {
+  class StringLiteral
+  {
    public:
     /// Constructor from string literals.
-    template<size_t N> constexpr StringLiteral(const char (&s)[N]) : str(s)
+    template<size_t N>
+    constexpr StringLiteral(const char (&s)[N])
+      : str(s)
     {}
 
     /// Default Constructor.
-    constexpr StringLiteral() : str(nullptr)
+    constexpr StringLiteral()
+      : str(nullptr)
     {}
 
    private:
@@ -70,7 +75,8 @@ class TraceStaticKeyData {
   };
 
   /// Constructor for a \p name.
-  constexpr TraceStaticKeyData(const StringLiteral name) : _name(name.str)
+  constexpr TraceStaticKeyData(const StringLiteral name)
+    : _name(name.str)
   {}
 
   /// Constructor for a function (\p func, \p prettyFunc) and optional

@@ -129,7 +129,8 @@ typedef boost::iterator_range<UsdPrimSubtreeIterator> UsdPrimSubtreeRange;
 ///
 /// Please refer to \ref UsdNotice for a listing of
 /// the events that could cause UsdNotice::ObjectsChanged to be emitted.
-class UsdPrim : public UsdObject {
+class UsdPrim : public UsdObject
+{
  public:
   /// Convenience typedefs.
   typedef UsdPrimSiblingIterator SiblingIterator;
@@ -140,7 +141,8 @@ class UsdPrim : public UsdObject {
   typedef UsdPrimSubtreeRange SubtreeRange;
 
   /// Construct an invalid prim.
-  UsdPrim() : UsdObject(_Null<UsdPrim>())
+  UsdPrim()
+    : UsdObject(_Null<UsdPrim>())
   {}
 
   /// Return the prim's full type info composed from its type name, applied
@@ -543,7 +545,8 @@ class UsdPrim : public UsdObject {
   /// \sa GetPrimTypeInfo
   /// \sa UsdPrimTypeInfo::GetSchemaType
   /// \sa \ref Usd_OM_FallbackPrimTypes
-  template<typename T> bool IsA() const
+  template<typename T>
+  bool IsA() const
   {
     static_assert(std::is_base_of<UsdSchemaBase, T>::value, "Provided type must derive UsdSchemaBase.");
     return _IsA(TfType::Find<T>(), /*validateSchemaType=*/false);
@@ -593,7 +596,8 @@ class UsdPrim : public UsdObject {
   /// assert(prim.HasAPI(Usd.CollectionAPI))
   /// assert(prim.HasAPI(Usd.CollectionAPI, instanceName="geom"))
   /// \endcode
-  template<typename T> bool HasAPI(const TfToken &instanceName = TfToken()) const
+  template<typename T>
+  bool HasAPI(const TfToken &instanceName = TfToken()) const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, T>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -602,7 +606,8 @@ class UsdPrim : public UsdObject {
       (T::schemaType == UsdSchemaKind::SingleApplyAPI || T::schemaType == UsdSchemaKind::MultipleApplyAPI),
       "Provided schema type must be an applied API schema.");
 
-    if (T::schemaType != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty()) {
+    if (T::schemaType != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty())
+    {
       TF_CODING_ERROR(
         "HasAPI: single application API schemas like %s do "
         "not contain an application instanceName ( %s ).",
@@ -636,7 +641,8 @@ class UsdPrim : public UsdObject {
   /// The return value of this function only indicates whether it would be
   /// valid to apply this schema to the prim. It has no bearing on whether
   /// calling ApplyAPI will be successful or not.
-  template<typename SchemaType> bool CanApplyAPI(std::string *whyNot = nullptr) const
+  template<typename SchemaType>
+  bool CanApplyAPI(std::string *whyNot = nullptr) const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -711,7 +717,8 @@ class UsdPrim : public UsdObject {
   /// \li this prim is valid, but cannot be reached or overridden in the
   /// current edit target
   /// \li the schema name cannot be added to the apiSchemas listOp metadata
-  template<typename SchemaType> bool ApplyAPI() const
+  template<typename SchemaType>
+  bool ApplyAPI() const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -753,7 +760,8 @@ class UsdPrim : public UsdObject {
   /// \li this prim is valid, but cannot be reached or overridden in the
   /// current edit target
   /// \li the schema name cannot be added to the apiSchemas listOp metadata
-  template<typename SchemaType> bool ApplyAPI(const TfToken &instanceName) const
+  template<typename SchemaType>
+  bool ApplyAPI(const TfToken &instanceName) const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -791,7 +799,8 @@ class UsdPrim : public UsdObject {
   /// \li this prim is valid, but cannot be reached or overridden in the
   /// current edit target
   /// \li the schema name cannot be deleted in the apiSchemas listOp metadata
-  template<typename SchemaType> bool RemoveAPI() const
+  template<typename SchemaType>
+  bool RemoveAPI() const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -834,7 +843,8 @@ class UsdPrim : public UsdObject {
   /// \li this prim is valid, but cannot be reached or overridden in the
   /// current edit target
   /// \li the schema name cannot be deleted in the apiSchemas listOp metadata
-  template<typename SchemaType> bool RemoveAPI(const TfToken &instanceName) const
+  template<typename SchemaType>
+  bool RemoveAPI(const TfToken &instanceName) const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must derive UsdAPISchemaBase.");
@@ -1582,7 +1592,8 @@ class UsdPrim : public UsdObject {
   /// invalid UsdPrim.
   UsdPrim GetPrimInPrototype() const
   {
-    if (IsInstanceProxy()) {
+    if (IsInstanceProxy())
+    {
       return UsdPrim(_Prim(), SdfPath());
     }
     return UsdPrim();
@@ -1717,7 +1728,8 @@ class UsdPrim : public UsdObject {
 
 /// Forward traversal iterator of sibling ::UsdPrim s.  This is a
 /// standard-compliant iterator that may be used with STL algorithms, etc.
-class UsdPrimSiblingIterator {
+class UsdPrimSiblingIterator
+{
  public:
   /// Iterator value type.
   typedef UsdPrim value_type;
@@ -1745,7 +1757,8 @@ class UsdPrimSiblingIterator {
 /// pair of UsdPrimSiblingIterator s, denoting a half-open range of UsdPrim
 /// siblings.  It provides a subset of container-like API, such as begin(),
 /// end(), front(), empty(), etc.
-class UsdPrimSiblingRange {
+class UsdPrimSiblingRange
+{
  public:
   /// Iterator type.
   typedef UsdPrimSiblingIterator iterator;
@@ -1762,10 +1775,12 @@ class UsdPrimSiblingRange {
   UsdPrimSiblingRange(UsdPrimSiblingIterator begin, UsdPrimSiblingIterator end);
 
   /// Construct/convert from another compatible range type.
-  template<class ForwardRange> UsdPrimSiblingRange(const ForwardRange &r);
+  template<class ForwardRange>
+  UsdPrimSiblingRange(const ForwardRange &r);
 
   /// Assign from another compatible range type.
-  template<class ForwardRange> UsdPrimSiblingRange &operator=(const ForwardRange &r);
+  template<class ForwardRange>
+  UsdPrimSiblingRange &operator=(const ForwardRange &r);
 
   /// First iterator.
   iterator begin() const;
@@ -1802,11 +1817,11 @@ class UsdPrimSiblingRange {
 
 // Sibling iterator class.  Converts ref to weak and filters according to a
 // supplied predicate.
-class UsdPrimSiblingIterator : public boost::iterator_adaptor<UsdPrimSiblingIterator,  // crtp base.
-                                                              const Usd_PrimData *,    // base iterator.
-                                                              UsdPrim,                 // value type.
+class UsdPrimSiblingIterator : public boost::iterator_adaptor<UsdPrimSiblingIterator,        // crtp base.
+                                                              const Usd_PrimData *,          // base iterator.
+                                                              UsdPrim,                       // value type.
                                                               boost::forward_traversal_tag,  // traversal
-                                                              UsdPrim>  // reference type.
+                                                              UsdPrim>                       // reference type.
 {
  public:
   // Default ctor.
@@ -1840,7 +1855,8 @@ class UsdPrimSiblingIterator : public boost::iterator_adaptor<UsdPrimSiblingIter
   void increment()
   {
     base_type &base = base_reference();
-    if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate)) {
+    if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate))
+    {
       base = nullptr;
       _proxyPrimPath = SdfPath();
     }
@@ -1859,9 +1875,13 @@ class UsdPrimSiblingIterator : public boost::iterator_adaptor<UsdPrimSiblingIter
 typedef boost::iterator_range<UsdPrimSiblingIterator> UsdPrimSiblingRange;
 
 // Inform TfIterator it should feel free to make copies of the range type.
-template<> struct Tf_ShouldIterateOverCopy<UsdPrimSiblingRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<UsdPrimSiblingRange> : boost::true_type
+{
 };
-template<> struct Tf_ShouldIterateOverCopy<const UsdPrimSiblingRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<const UsdPrimSiblingRange> : boost::true_type
+{
 };
 
 #endif  // doxygen
@@ -1886,7 +1906,8 @@ UsdPrim::SiblingRange UsdPrim::_MakeSiblingRange(const Usd_PrimFlagsPredicate &p
 {
   Usd_PrimDataConstPtr firstChild = get_pointer(_Prim());
   SdfPath firstChildPath = _ProxyPrimPath();
-  if (!Usd_MoveToChild(firstChild, firstChildPath, pred)) {
+  if (!Usd_MoveToChild(firstChild, firstChildPath, pred))
+  {
     firstChild = nullptr;
     firstChildPath = SdfPath();
   }
@@ -1899,7 +1920,8 @@ UsdPrim::SiblingRange UsdPrim::_MakeSiblingRange(const Usd_PrimFlagsPredicate &p
 
 /// Forward traversal iterator of sibling ::UsdPrim s.  This is a
 /// standard-compliant iterator that may be used with STL algorithms, etc.
-class UsdPrimSubtreeIterator {
+class UsdPrimSubtreeIterator
+{
  public:
   /// Iterator value type.
   typedef UsdPrim value_type;
@@ -1927,7 +1949,8 @@ class UsdPrimSubtreeIterator {
 /// pair of UsdPrimSubtreeIterator s, denoting a half-open range of UsdPrim
 /// siblings.  It provides a subset of container-like API, such as begin(),
 /// end(), front(), empty(), etc.
-class UsdPrimSubtreeRange {
+class UsdPrimSubtreeRange
+{
  public:
   /// Iterator type.
   typedef UsdPrimSubtreeIterator iterator;
@@ -1944,10 +1967,12 @@ class UsdPrimSubtreeRange {
   UsdPrimSubtreeRange(UsdPrimSubtreeIterator begin, UsdPrimSubtreeIterator end);
 
   /// Construct/convert from another compatible range type.
-  template<class ForwardRange> UsdPrimSubtreeRange(const ForwardRange &r);
+  template<class ForwardRange>
+  UsdPrimSubtreeRange(const ForwardRange &r);
 
   /// Assign from another compatible range type.
-  template<class ForwardRange> UsdPrimSubtreeRange &operator=(const ForwardRange &r);
+  template<class ForwardRange>
+  UsdPrimSubtreeRange &operator=(const ForwardRange &r);
 
   /// First iterator.
   iterator begin() const;
@@ -1984,11 +2009,11 @@ class UsdPrimSubtreeRange {
 
 // Subtree iterator class.  Converts ref to weak and filters according to a
 // supplied predicate.
-class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIterator,  // crtp base.
-                                                              const Usd_PrimData *,    // base iterator.
-                                                              UsdPrim,                 // value type.
+class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIterator,        // crtp base.
+                                                              const Usd_PrimData *,          // base iterator.
+                                                              UsdPrim,                       // value type.
                                                               boost::forward_traversal_tag,  // traversal
-                                                              UsdPrim>  // reference type.
+                                                              UsdPrim>                       // reference type.
 {
  public:
   // Default ctor.
@@ -2008,8 +2033,10 @@ class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIter
   {
     // Need to advance iterator to first matching element.
     base_type &base = base_reference();
-    if (base && !Usd_EvalPredicate(_predicate, base, _proxyPrimPath)) {
-      if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate)) {
+    if (base && !Usd_EvalPredicate(_predicate, base, _proxyPrimPath))
+    {
+      if (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate))
+      {
         base = nullptr;
         _proxyPrimPath = SdfPath();
       }
@@ -2027,8 +2054,10 @@ class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIter
   void increment()
   {
     base_type &base = base_reference();
-    if (!Usd_MoveToChild(base, _proxyPrimPath, _predicate)) {
-      while (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate)) {
+    if (!Usd_MoveToChild(base, _proxyPrimPath, _predicate))
+    {
+      while (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, _predicate))
+      {
       }
     }
   }
@@ -2046,9 +2075,13 @@ class UsdPrimSubtreeIterator : public boost::iterator_adaptor<UsdPrimSubtreeIter
 typedef boost::iterator_range<UsdPrimSubtreeIterator> UsdPrimSubtreeRange;
 
 // Inform TfIterator it should feel free to make copies of the range type.
-template<> struct Tf_ShouldIterateOverCopy<UsdPrimSubtreeRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<UsdPrimSubtreeRange> : boost::true_type
+{
 };
-template<> struct Tf_ShouldIterateOverCopy<const UsdPrimSubtreeRange> : boost::true_type {
+template<>
+struct Tf_ShouldIterateOverCopy<const UsdPrimSubtreeRange> : boost::true_type
+{
 };
 
 #endif  // doxygen
@@ -2075,8 +2108,10 @@ UsdPrim::SubtreeRange UsdPrim::_MakeDescendantsRange(const Usd_PrimFlagsPredicat
   SdfPath firstChildPath = _ProxyPrimPath();
   Usd_PrimDataConstPtr endChild = firstChild;
   SdfPath endChildPath = firstChildPath;
-  if (Usd_MoveToChild(firstChild, firstChildPath, pred)) {
-    while (Usd_MoveToNextSiblingOrParent(endChild, endChildPath, pred)) {
+  if (Usd_MoveToChild(firstChild, firstChildPath, pred))
+  {
+    while (Usd_MoveToNextSiblingOrParent(endChild, endChildPath, pred))
+    {
     }
   }
 

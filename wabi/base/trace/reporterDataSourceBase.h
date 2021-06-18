@@ -48,7 +48,8 @@ WABI_NAMESPACE_BEGIN
 /// TraceReporterBase uses an instance of a TraceReporterDataSourceBase derived
 /// class to access TraceCollections.
 ///
-class TraceReporterDataSourceBase {
+class TraceReporterDataSourceBase
+{
  public:
   using CollectionPtr = std::shared_ptr<TraceCollection>;
 

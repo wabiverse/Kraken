@@ -22,7 +22,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-class RprUsdConfig {
+class RprUsdConfig
+{
  public:
   RPRUSD_API
   static std::unique_lock<std::mutex> GetInstance(RprUsdConfig **instance);

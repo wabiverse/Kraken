@@ -61,7 +61,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceAggregateNode);
 /// node.
 ///
 
-class TraceAggregateNode : public TfRefBase, public TfWeakBase {
+class TraceAggregateNode : public TfRefBase, public TfWeakBase
+{
  public:
   using This = TraceAggregateNode;
   using ThisPtr = TraceAggregateNodePtr;
@@ -71,11 +72,14 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase {
 
   // This class is only used for validity checks.
   // FIXME: This class should be removed.
-  class Id {
+  class Id
+  {
    public:
-    Id() : _valid(false)
+    Id()
+      : _valid(false)
     {}
-    Id(const TraceThreadId &) : _valid(true)
+    Id(const TraceThreadId &)
+      : _valid(true)
     {}
     bool IsValid() const
     {
@@ -267,8 +271,11 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase {
   // A structure that holds on to the inclusive and exclusive counter
   // values. These values are usually populated together, so it's beneficial
   // to maintain them in a tightly packed structure.
-  struct _CounterValue {
-    _CounterValue() : inclusive(0.0), exclusive(0.0)
+  struct _CounterValue
+  {
+    _CounterValue()
+      : inclusive(0.0),
+        exclusive(0.0)
     {}
     double inclusive;
     double exclusive;

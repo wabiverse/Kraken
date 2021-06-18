@@ -51,9 +51,11 @@ using HdBufferSourceWeakPtr = std::weak_ptr<HdBufferSource>;
 /// resource registry with the buffer array range that specifies the
 /// destination resource.
 ///
-class HdBufferSource {
+class HdBufferSource
+{
  public:
-  HdBufferSource() : _state(UNRESOLVED)
+  HdBufferSource()
+    : _state(UNRESOLVED)
   {}
 
   HD_API
@@ -202,7 +204,13 @@ class HdBufferSource {
   HdBufferSource(const HdBufferSource &) = delete;
   HdBufferSource &operator=(const HdBufferSource &) = delete;
 
-  enum State { UNRESOLVED = 0, BEING_RESOLVED, RESOLVED, RESOLVE_ERROR };
+  enum State
+  {
+    UNRESOLVED = 0,
+    BEING_RESOLVED,
+    RESOLVED,
+    RESOLVE_ERROR
+  };
   std::atomic<State> _state;
 };
 
@@ -214,7 +222,8 @@ class HdBufferSource {
 ///   virtual void Resolve();
 /// and set the result via _SetResult().
 ///
-class HdComputedBufferSource : public HdBufferSource {
+class HdComputedBufferSource : public HdBufferSource
+{
  public:
   HD_API
   virtual TfToken const &GetName() const override;
@@ -240,7 +249,8 @@ class HdComputedBufferSource : public HdBufferSource {
 /// A abstract base class for pure cpu computation.
 /// the result won't be scheduled for GPU transfer.
 ///
-class HdNullBufferSource : public HdBufferSource {
+class HdNullBufferSource : public HdBufferSource
+{
  public:
   HD_API
   virtual TfToken const &GetName() const override;

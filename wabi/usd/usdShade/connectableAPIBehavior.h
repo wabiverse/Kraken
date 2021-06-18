@@ -45,11 +45,13 @@ class UsdShadeOutput;
 ///
 /// This enables schema libraries to enable UsdShadeConnectableAPI for
 /// their prim types and define its behavior.
-class UsdShadeConnectableAPIBehavior {
+class UsdShadeConnectableAPIBehavior
+{
  public:
   /// An enum describing the types of connectable nodes which will govern what
   /// connectibility rule is invoked for these.
-  enum ConnectableNodeTypes {
+  enum ConnectableNodeTypes
+  {
     BasicNodes,             // Shader, NodeGraph
     DerivedContainerNodes,  // Material, etc
   };

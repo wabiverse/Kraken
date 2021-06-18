@@ -72,31 +72,38 @@ HdxColorCorrectionTask::HdxColorCorrectionTask(HdSceneDelegate *delegate, SdfPat
 
 HdxColorCorrectionTask::~HdxColorCorrectionTask()
 {
-  if (_texture3dLUT) {
+  if (_texture3dLUT)
+  {
     _GetHgi()->DestroyTexture(&_texture3dLUT);
   }
 
-  if (_sampler) {
+  if (_sampler)
+  {
     _GetHgi()->DestroySampler(&_sampler);
   }
 
-  if (_vertexBuffer) {
+  if (_vertexBuffer)
+  {
     _GetHgi()->DestroyBuffer(&_vertexBuffer);
   }
 
-  if (_indexBuffer) {
+  if (_indexBuffer)
+  {
     _GetHgi()->DestroyBuffer(&_indexBuffer);
   }
 
-  if (_shaderProgram) {
+  if (_shaderProgram)
+  {
     _DestroyShaderProgram();
   }
 
-  if (_resourceBindings) {
+  if (_resourceBindings)
+  {
     _GetHgi()->DestroyResourceBindings(&_resourceBindings);
   }
 
-  if (_pipeline) {
+  if (_pipeline)
+  {
     _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
   }
 }
@@ -108,7 +115,8 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 #ifdef WABI_OCIO_PLUGIN_ENABLED
   // Only use if $OCIO environment variable is set.
   // (Otherwise this option should be disabled.)
-  if (TfGetenv("OCIO") == "") {
+  if (TfGetenv("OCIO") == "")
+  {
     return false;
   }
 
@@ -129,12 +137,15 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   const char *view = _viewOCIO.empty() ? config->getDefaultView(display) : _viewOCIO.c_str();
 
   std::string inputColorSpace = _colorspaceOCIO;
-  if (inputColorSpace.empty()) {
+  if (inputColorSpace.empty())
+  {
     OCIO::ConstColorSpaceRcPtr cs = config->getColorSpace("default");
-    if (cs) {
+    if (cs)
+    {
       inputColorSpace = cs->getName();
     }
-    else {
+    else
+    {
       inputColorSpace = OCIO::ROLE_SCENE_LINEAR;
     }
   }
@@ -144,11 +155,13 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   transform->setDisplay(display);
   transform->setView(view);
   transform->setInputColorSpaceName(inputColorSpace.c_str());
-  if (!_looksOCIO.empty()) {
+  if (!_looksOCIO.empty())
+  {
     transform->setLooksOverride(_looksOCIO.c_str());
     transform->setLooksOverrideEnabled(true);
   }
-  else {
+  else
+  {
     transform->setLooksOverrideEnabled(false);
   }
 
@@ -166,7 +179,8 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   processor->getGpuLut3D(lut3d.data(), shaderDesc);
 
   // Load the data into an OpenGL 3D Texture
-  if (_texture3dLUT) {
+  if (_texture3dLUT)
+  {
     _GetHgi()->DestroyTexture(&_texture3dLUT);
   }
 
@@ -193,7 +207,8 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
 
 bool HdxColorCorrectionTask::_CreateShaderResources()
 {
-  if (_shaderProgram) {
+  if (_shaderProgram)
+  {
     return true;
   }
 
@@ -207,7 +222,8 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
   vertDesc.shaderStage = HgiShaderStageVertex;
   HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4");
   HgiShaderFunctionAddStageInput(&vertDesc, "uvIn", "vec2");
-  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
+  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan)
+  {
     vsCode = "#version 450 \n";
   }
   HgiShaderFunctionAddStageOutput(&vertDesc, "gl_Position", "vec4", "position");
@@ -221,23 +237,27 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
   HgiShaderFunctionDesc fragDesc;
   HgiShaderFunctionAddStageInput(&fragDesc, "uvOut", "vec2");
   HgiShaderFunctionAddTexture(&fragDesc, "colorIn");
-  if (useOCIO) {
+  if (useOCIO)
+  {
     HgiShaderFunctionAddTexture(&fragDesc, "Lut3DIn", 3);
   }
   HgiShaderFunctionAddStageOutput(&fragDesc, "hd_FragColor", "vec4", "color");
   HgiShaderFunctionAddConstantParam(&fragDesc, "screenSize", "vec2");
   fragDesc.debugName = _tokens->colorCorrectionFragment.GetString();
   fragDesc.shaderStage = HgiShaderStageFragment;
-  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
+  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan)
+  {
     fsCode = "#version 450 \n";
   }
-  if (useOCIO) {
+  if (useOCIO)
+  {
     fsCode += "#define GLSLFX_USE_OCIO\n";
     // Our current version of OCIO outputs 130 glsl and texture3D is
     // removed from glsl in 140.
     fsCode += "#define texture3D texture\n";
   }
-  if (useOCIO) {
+  if (useOCIO)
+  {
     std::string ocioGpuShaderText = _CreateOpenColorIOResources();
     fsCode = fsCode + ocioGpuShaderText;
   }
@@ -253,7 +273,8 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
   programDesc.shaderFunctions.push_back(std::move(fragFn));
   _shaderProgram = _GetHgi()->CreateShaderProgram(programDesc);
 
-  if (!_shaderProgram->IsValid() || !vertFn->IsValid() || !fragFn->IsValid()) {
+  if (!_shaderProgram->IsValid() || !vertFn->IsValid() || !fragFn->IsValid())
+  {
     TF_CODING_ERROR("Failed to create color correction shader");
     _PrintCompileErrors();
     _DestroyShaderProgram();
@@ -265,7 +286,8 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
 
 bool HdxColorCorrectionTask::_CreateBufferResources()
 {
-  if (_vertexBuffer) {
+  if (_vertexBuffer)
+  {
     return true;
   }
 
@@ -309,7 +331,8 @@ bool HdxColorCorrectionTask::_CreateResourceBindings(HgiTextureHandle const &aov
   texBind0.samplers.push_back(_sampler);
   resourceDesc.textures.push_back(std::move(texBind0));
 
-  if (useOCIO && _texture3dLUT) {
+  if (useOCIO && _texture3dLUT)
+  {
     HgiTextureBindDesc texBind1;
     texBind1.bindingIndex = 1;
     texBind1.stageUsage = HgiShaderStageFragment;
@@ -320,12 +343,15 @@ bool HdxColorCorrectionTask::_CreateResourceBindings(HgiTextureHandle const &aov
 
   // If nothing has changed in the descriptor we avoid re-creating the
   // resource bindings object.
-  if (_resourceBindings) {
+  if (_resourceBindings)
+  {
     HgiResourceBindingsDesc const &desc = _resourceBindings->GetDescriptor();
-    if (desc == resourceDesc) {
+    if (desc == resourceDesc)
+    {
       return true;
     }
-    else {
+    else
+    {
       _GetHgi()->DestroyResourceBindings(&_resourceBindings);
     }
   }
@@ -337,8 +363,10 @@ bool HdxColorCorrectionTask::_CreateResourceBindings(HgiTextureHandle const &aov
 
 bool HdxColorCorrectionTask::_CreatePipeline(HgiTextureHandle const &aovTexture)
 {
-  if (_pipeline) {
-    if (_attachment0.format == aovTexture->GetDescriptor().format) {
+  if (_pipeline)
+  {
+    if (_attachment0.format == aovTexture->GetDescriptor().format)
+    {
       return true;
     }
 
@@ -407,7 +435,8 @@ bool HdxColorCorrectionTask::_CreatePipeline(HgiTextureHandle const &aovTexture)
 
 bool HdxColorCorrectionTask::_CreateSampler()
 {
-  if (_sampler) {
+  if (_sampler)
+  {
     return true;
   }
 
@@ -456,10 +485,12 @@ void HdxColorCorrectionTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
+  {
     HdxColorCorrectionTaskParams params;
 
-    if (_GetTaskParams(delegate, &params)) {
+    if (_GetTaskParams(delegate, &params))
+    {
       _colorCorrectionMode = params.colorCorrectionMode;
       _displayOCIO = params.displayOCIO;
       _viewOCIO = params.viewOCIO;
@@ -468,17 +499,20 @@ void HdxColorCorrectionTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx
       _lut3dSizeOCIO = params.lut3dSizeOCIO;
       _aovName = params.aovName;
 
-      if (_lut3dSizeOCIO <= 0) {
+      if (_lut3dSizeOCIO <= 0)
+      {
         TF_CODING_ERROR("Invalid OCIO LUT size.");
         _lut3dSizeOCIO = 65;
       }
 
       // Rebuild Hgi objects when ColorCorrection params change
       _DestroyShaderProgram();
-      if (_resourceBindings) {
+      if (_resourceBindings)
+      {
         _GetHgi()->DestroyResourceBindings(&_resourceBindings);
       }
-      if (_pipeline) {
+      if (_pipeline)
+      {
         _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
       }
     }
@@ -496,7 +530,8 @@ void HdxColorCorrectionTask::Execute(HdTaskContext *ctx)
   HF_MALLOC_TAG_FUNCTION();
 
   // We currently only color correct the color aov.
-  if (_aovName != HdAovTokens->color) {
+  if (_aovName != HdAovTokens->color)
+  {
     return;
   }
 
@@ -504,7 +539,8 @@ void HdxColorCorrectionTask::Execute(HdTaskContext *ctx)
   // color correct it into colorIntermediate aov to ensure we do not
   // read from the same color target that we write into.
   if (!_HasTaskContextData(ctx, HdAovTokens->color) ||
-      !_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate)) {
+      !_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate))
+  {
     return;
   }
 
@@ -512,19 +548,24 @@ void HdxColorCorrectionTask::Execute(HdTaskContext *ctx)
   _GetTaskContextData(ctx, HdAovTokens->color, &aovTexture);
   _GetTaskContextData(ctx, HdxAovTokens->colorIntermediate, &aovTextureIntermediate);
 
-  if (!TF_VERIFY(_CreateBufferResources())) {
+  if (!TF_VERIFY(_CreateBufferResources()))
+  {
     return;
   }
-  if (!TF_VERIFY(_CreateSampler())) {
+  if (!TF_VERIFY(_CreateSampler()))
+  {
     return;
   }
-  if (!TF_VERIFY(_CreateShaderResources())) {
+  if (!TF_VERIFY(_CreateShaderResources()))
+  {
     return;
   }
-  if (!TF_VERIFY(_CreateResourceBindings(aovTexture))) {
+  if (!TF_VERIFY(_CreateResourceBindings(aovTexture)))
+  {
     return;
   }
-  if (!TF_VERIFY(_CreatePipeline(aovTextureIntermediate))) {
+  if (!TF_VERIFY(_CreatePipeline(aovTextureIntermediate)))
+  {
     return;
   }
 
@@ -539,7 +580,8 @@ void HdxColorCorrectionTask::_DestroyShaderProgram()
   if (!_shaderProgram)
     return;
 
-  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions()) {
+  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions())
+  {
     _GetHgi()->DestroyShaderFunction(&fn);
   }
   _GetHgi()->DestroyShaderProgram(&_shaderProgram);
@@ -550,7 +592,8 @@ void HdxColorCorrectionTask::_PrintCompileErrors()
   if (!_shaderProgram)
     return;
 
-  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions()) {
+  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions())
+  {
     std::cout << fn->GetCompileErrors() << std::endl;
   }
   std::cout << _shaderProgram->GetCompileErrors() << std::endl;

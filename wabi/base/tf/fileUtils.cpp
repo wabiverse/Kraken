@@ -68,7 +68,8 @@ WABI_NAMESPACE_BEGIN
 // attributes by testing: (actual & attributes) == expected
 bool Tf_HasAttribute(string const &path, bool resolveSymlinks, DWORD attribute, DWORD expected)
 {
-  if (path.empty()) {
+  if (path.empty())
+  {
     SetLastError(ERROR_SUCCESS);
     return false;
   }
@@ -80,14 +81,17 @@ bool Tf_HasAttribute(string const &path, bool resolveSymlinks, DWORD attribute, 
     resolveSymlinks = true;
 
   const DWORD attribs = GetFileAttributes(path.c_str());
-  if (attribs == INVALID_FILE_ATTRIBUTES) {
-    if (attribute == 0 && GetLastError() == ERROR_FILE_NOT_FOUND) {
+  if (attribs == INVALID_FILE_ATTRIBUTES)
+  {
+    if (attribute == 0 && GetLastError() == ERROR_FILE_NOT_FOUND)
+    {
       // Don't report an error if we're just testing existence.
       SetLastError(ERROR_SUCCESS);
     }
     return false;
   }
-  if (!resolveSymlinks || (attribs & FILE_ATTRIBUTE_REPARSE_POINT) == 0) {
+  if (!resolveSymlinks || (attribs & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
+  {
     return attribute == 0 || (attribs & attribute) == expected;
   }
 
@@ -104,17 +108,20 @@ bool Tf_HasAttribute(string const &path, bool resolveSymlinks, DWORD attribute)
 
 static bool Tf_Stat(string const &path, bool resolveSymlinks, ArchStatType *st = 0)
 {
-  if (path.empty()) {
+  if (path.empty())
+  {
     return false;
   }
 
   ArchStatType unused;
-  if (!st) {
+  if (!st)
+  {
     st = &unused;
   }
 
 #if defined(ARCH_OS_WINDOWS)
-  if (!resolveSymlinks) {
+  if (!resolveSymlinks)
+  {
     TF_CODING_ERROR("resolveSymlinks must be true on Windows");
     return false;
   }
@@ -130,11 +137,13 @@ bool TfPathExists(string const &path, bool resolveSymlinks)
 #if defined(ARCH_OS_WINDOWS)
   return Tf_HasAttribute(path, resolveSymlinks, 0);
 #else
-  if (Tf_Stat(path, resolveSymlinks)) {
+  if (Tf_Stat(path, resolveSymlinks))
+  {
     return true;
   }
   // Reset error code if path doesn't exist.
-  if (errno == ENOENT) {
+  if (errno == ENOENT)
+  {
     errno = 0;
   }
   return false;
@@ -152,7 +161,8 @@ bool TfIsDir(string const &path, bool resolveSymlinks)
                          FILE_ATTRIBUTE_DIRECTORY);
 #else
   ArchStatType st;
-  if (Tf_Stat(path, resolveSymlinks, &st)) {
+  if (Tf_Stat(path, resolveSymlinks, &st))
+  {
     return S_ISDIR(st.st_mode);
   }
   return false;
@@ -166,7 +176,8 @@ bool TfIsFile(string const &path, bool resolveSymlinks)
   return Tf_HasAttribute(path, resolveSymlinks, FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT, 0);
 #else
   ArchStatType st;
-  if (Tf_Stat(path, resolveSymlinks, &st)) {
+  if (Tf_Stat(path, resolveSymlinks, &st))
+  {
     return S_ISREG(st.st_mode);
   }
   return false;
@@ -179,7 +190,8 @@ bool TfIsLink(string const &path)
   return Tf_HasAttribute(path, /* resolveSymlinks = */ false, FILE_ATTRIBUTE_REPARSE_POINT);
 #else
   ArchStatType st;
-  if (Tf_Stat(path, /* resolveSymlinks */ false, &st)) {
+  if (Tf_Stat(path, /* resolveSymlinks */ false, &st))
+  {
     return S_ISLNK(st.st_mode);
   }
 #endif
@@ -195,7 +207,8 @@ bool TfIsWritable(string const &path)
   return faccessat(AT_FDCWD, path.c_str(), W_OK, AT_EACCESS) == 0;
 #else
   ArchStatType st;
-  if (Tf_Stat(path, /* resolveSymlinks */ true, &st)) {
+  if (Tf_Stat(path, /* resolveSymlinks */ true, &st))
+  {
     return ArchStatIsWritable(&st);
   }
   return false;
@@ -209,10 +222,13 @@ bool TfIsDirEmpty(string const &path)
 #if defined(ARCH_OS_WINDOWS)
   return PathIsDirectoryEmpty(path.c_str()) == TRUE;
 #else
-  if (DIR *dirp = opendir(path.c_str())) {
+  if (DIR *dirp = opendir(path.c_str()))
+  {
     struct dirent *dent;
-    while ((dent = readdir(dirp)) != NULL) {
-      if ((dent->d_ino > 0) && (strcmp(dent->d_name, ".") != 0) && (strcmp(dent->d_name, "..") != 0)) {
+    while ((dent = readdir(dirp)) != NULL)
+    {
+      if ((dent->d_ino > 0) && (strcmp(dent->d_name, ".") != 0) && (strcmp(dent->d_name, "..") != 0))
+      {
         (void)closedir(dirp);
         return false;
       }
@@ -227,7 +243,8 @@ bool TfIsDirEmpty(string const &path)
 bool TfSymlink(string const &src, string const &dst)
 {
 #if defined(ARCH_OS_WINDOWS)
-  if (CreateSymbolicLink(dst.c_str(), src.c_str(), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0)) {
+  if (CreateSymbolicLink(dst.c_str(), src.c_str(), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0))
+  {
     return true;
   }
 
@@ -235,7 +252,8 @@ bool TfSymlink(string const &src, string const &dst)
   // to something else.  This is used by tests to disable symlink
   // testing.
   errno = EACCES;
-  if (GetLastError() == ERROR_PRIVILEGE_NOT_HELD) {
+  if (GetLastError() == ERROR_PRIVILEGE_NOT_HELD)
+  {
     errno = EPERM;
   }
   return false;
@@ -246,7 +264,8 @@ bool TfSymlink(string const &src, string const &dst)
 
 bool TfDeleteFile(std::string const &path)
 {
-  if (ArchUnlinkFile(path.c_str()) != 0) {
+  if (ArchUnlinkFile(path.c_str()) != 0)
+  {
     TF_RUNTIME_ERROR("Failed to delete '%s': %s", path.c_str(), ArchStrerror(errno).c_str());
     return false;
   }
@@ -277,8 +296,10 @@ static bool Tf_MakeDirsRec(string const &path, int mode, bool existOk)
   const string head = TfStringTrimRight(TfGetPathName(path), pathsep.c_str());
   const string tail = TfGetBaseName(path);
 
-  if (!head.empty() && !tail.empty() && !TfPathExists(head) && head != path) {
-    if (!Tf_MakeDirsRec(head, mode, existOk)) {
+  if (!head.empty() && !tail.empty() && !TfPathExists(head) && head != path)
+  {
+    if (!Tf_MakeDirsRec(head, mode, existOk))
+    {
 #if defined(ARCH_OS_WINDOWS)
       if (GetLastError() != ERROR_ALREADY_EXISTS)
 #else
@@ -290,8 +311,10 @@ static bool Tf_MakeDirsRec(string const &path, int mode, bool existOk)
     }
   }
 
-  if (!TfMakeDir(path, mode)) {
-    if (!existOk || !TfIsDir(path)) {
+  if (!TfMakeDir(path, mode))
+  {
+    if (!existOk || !TfIsDir(path))
+    {
       return false;
     }
   }
@@ -317,20 +340,27 @@ bool TfReadDir(const string &dirPath,
 
   PathCombine(szPath, dirPath.c_str(), "*.*");
 
-  if ((hFind = FindFirstFile(szPath, &fdFile)) == INVALID_HANDLE_VALUE) {
-    if (errMsg) {
+  if ((hFind = FindFirstFile(szPath, &fdFile)) == INVALID_HANDLE_VALUE)
+  {
+    if (errMsg)
+    {
       *errMsg = TfStringPrintf("Path not found: %s", szPath);
     }
     return false;
   }
-  else {
-    do {
-      if (strcmp(fdFile.cFileName, ".") != 0 && strcmp(fdFile.cFileName, "..") != 0) {
-        if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+  else
+  {
+    do
+    {
+      if (strcmp(fdFile.cFileName, ".") != 0 && strcmp(fdFile.cFileName, "..") != 0)
+      {
+        if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        {
           if (dirnames)
             dirnames->push_back(fdFile.cFileName);
         }
-        else {
+        else
+        {
           if (filenames)
             filenames->push_back(fdFile.cFileName);
         }
@@ -345,14 +375,17 @@ bool TfReadDir(const string &dirPath,
   DIR *dir;
   struct dirent *entry;
 
-  if ((dir = opendir(dirPath.c_str())) == NULL) {
-    if (errMsg) {
+  if ((dir = opendir(dirPath.c_str())) == NULL)
+  {
+    if (errMsg)
+    {
       *errMsg = TfStringPrintf("opendir failed: %s", ArchStrerror(errno).c_str());
     }
     return false;
   }
 
-  while ((entry = readdir(dir)) != NULL) {
+  while ((entry = readdir(dir)) != NULL)
+  {
 
     if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       continue;
@@ -362,13 +395,16 @@ bool TfReadDir(const string &dirPath,
 #  if defined(_DIRENT_HAVE_D_TYPE)
     // If we are on a BSD-like system, and the underlying filesystem has
     // support for it, we can use dirent.d_type to avoid lstat.
-    if (entry->d_type == DT_DIR) {
+    if (entry->d_type == DT_DIR)
+    {
       entryIsDir = true;
     }
-    else if (entry->d_type == DT_LNK) {
+    else if (entry->d_type == DT_LNK)
+    {
       entryIsLnk = true;
     }
-    else if (entry->d_type == DT_UNKNOWN) {
+    else if (entry->d_type == DT_UNKNOWN)
+    {
 #  endif
       // If d_type is not available, or the filesystem has no support
       // for d_type, fall back to lstat.
@@ -376,25 +412,30 @@ bool TfReadDir(const string &dirPath,
       if (fstatat(dirfd(dir), entry->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
         continue;
 
-      if (S_ISDIR(st.st_mode)) {
+      if (S_ISDIR(st.st_mode))
+      {
         entryIsDir = true;
       }
-      else if (S_ISLNK(st.st_mode)) {
+      else if (S_ISLNK(st.st_mode))
+      {
         entryIsLnk = true;
       }
 #  if defined(_DIRENT_HAVE_D_TYPE)
     }
 #  endif
 
-    if (entryIsDir) {
+    if (entryIsDir)
+    {
       if (dirnames)
         dirnames->push_back(entry->d_name);
     }
-    else if (entryIsLnk) {
+    else if (entryIsLnk)
+    {
       if (symlinknames)
         symlinknames->push_back(entry->d_name);
     }
-    else if (filenames) {
+    else if (filenames)
+    {
       filenames->push_back(entry->d_name);
     }
   }
@@ -415,13 +456,17 @@ static void Tf_ReadDir(const string &dirPath,
 
   string errMsg;
   if (!TfReadDir(dirPath, dirnames, filenames, symlinknames, &errMsg))
-    if (onError) {
+    if (onError)
+    {
       onError(dirPath, errMsg);
     }
 }
 
-struct Tf_FileId {
-  Tf_FileId(const ArchStatType &st) : dev(st.st_dev), ino(st.st_ino)
+struct Tf_FileId
+{
+  Tf_FileId(const ArchStatType &st)
+    : dev(st.st_dev),
+      ino(st.st_ino)
   {}
 
   bool operator==(const Tf_FileId &other) const
@@ -461,13 +506,17 @@ static bool Tf_WalkDirsRec(const string &dirpath,
   // directory to which the symlink points. If we visit this directory via a
   // symbolic link again, omit it from the directory list to prevent the
   // directory from being followed until stat() eventually fails with ELOOP.
-  if (followLinks) {
-    for (const auto &name : symlinknames) {
+  if (followLinks)
+  {
+    for (const auto &name : symlinknames)
+    {
       ArchStatType st;
       if (Tf_Stat(string(dirpath + "/" + name).c_str(),
                   /* resolveSymlinks */ true,
-                  &st)) {
-        if (S_ISDIR(st.st_mode)) {
+                  &st))
+      {
+        if (S_ISDIR(st.st_mode))
+        {
           Tf_FileId fileId(st);
           if (linkTargets->find(fileId) != linkTargets->end())
             continue;
@@ -488,7 +537,8 @@ static bool Tf_WalkDirsRec(const string &dirpath,
   if (topDown && !func(dirpath, &dirnames, filenames))
     return false;
 
-  for (const auto &name : dirnames) {
+  for (const auto &name : dirnames)
+  {
     if (!Tf_WalkDirsRec(dirpath + "/" + name, func, topDown, onError, followLinks, linkTargets))
       return false;
   }
@@ -505,7 +555,8 @@ void TfWalkDirs(const string &top,
                 TfWalkErrorHandler onError,
                 bool followLinks)
 {
-  if (!TfIsDir(top, /* followSymlinks */ true)) {
+  if (!TfIsDir(top, /* followSymlinks */ true))
+  {
     if (onError)
       onError(top, TfStringPrintf("%s is not a directory", top.c_str()));
     return;
@@ -524,14 +575,17 @@ static bool Tf_RmTree(string const &dirpath,
                       TfWalkErrorHandler onError)
 {
   vector<string>::const_iterator it;
-  for (it = filenames.begin(); it != filenames.end(); ++it) {
+  for (it = filenames.begin(); it != filenames.end(); ++it)
+  {
     string path = dirpath + "/" + *it;
-    if (ArchUnlinkFile(path.c_str()) != 0) {
+    if (ArchUnlinkFile(path.c_str()) != 0)
+    {
       // CODE_COVERAGE_OFF this could happen if the file is removed by
       // another process before we get there, or a file exists but is
       // not writable by us, or the parent directory is not writable by
       // us.
-      if (onError) {
+      if (onError)
+      {
         onError(
           dirpath,
           TfStringPrintf("ArchUnlinkFile failed for '%s': %s", path.c_str(), ArchStrerror(errno).c_str()));
@@ -540,10 +594,12 @@ static bool Tf_RmTree(string const &dirpath,
     }
   }
 
-  if (ArchRmDir(dirpath.c_str()) != 0) {
+  if (ArchRmDir(dirpath.c_str()) != 0)
+  {
     // CODE_COVERAGE_OFF this could happen for all the same reasons the
     // ArchUnlinkFile above could fail.
-    if (onError) {
+    if (onError)
+    {
       onError(dirpath,
               TfStringPrintf("rmdir failed for '%s': %s", dirpath.c_str(), ArchStrerror(errno).c_str()));
     }
@@ -573,7 +629,8 @@ static bool Tf_ListDir(string const &dirpath,
                        vector<string> *paths,
                        bool recursive)
 {
-  for (vector<string>::const_iterator it = dirnames->begin(); it != dirnames->end(); ++it) {
+  for (vector<string>::const_iterator it = dirnames->begin(); it != dirnames->end(); ++it)
+  {
     paths->push_back(dirpath + "/" + *it + "/");
   }
 
@@ -593,7 +650,8 @@ vector<string> TfListDir(string const &path, bool recursive)
 
 TF_API bool TfTouchFile(string const &fileName, bool create)
 {
-  if (create) {
+  if (create)
+  {
 #if !defined(ARCH_OS_WINDOWS)
     // Attempt to create the file so it is readable and writable by user,
     // group and other.
@@ -612,7 +670,8 @@ TF_API bool TfTouchFile(string const &fileName, bool create)
                                      FILE_ATTRIBUTE_NORMAL,  // normal file
                                      NULL);                  // no template
 
-    if (fileHandle == INVALID_HANDLE_VALUE) {
+    if (fileHandle == INVALID_HANDLE_VALUE)
+    {
       return false;
     }
 

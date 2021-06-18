@@ -47,7 +47,8 @@ WABI_NAMESPACE_BEGIN
 /// Interface for accessing the contents of an asset.
 ///
 /// \see ArResolver::OpenAsset for how to retrieve instances of this object.
-class ArAsset {
+class ArAsset
+{
  public:
   AR_API
   virtual ~ArAsset();
