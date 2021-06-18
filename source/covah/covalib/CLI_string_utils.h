@@ -32,13 +32,6 @@
 #  define strncasecmp _strnicmp
 #endif
 
-#define STREQ(a, b) (strcmp(a, b) == 0)
-#define STRCASEEQ(a, b) (strcasecmp(a, b) == 0)
-#define STREQLEN(a, b, n) (strncmp(a, b, n) == 0)
-#define STRCASEEQLEN(a, b, n) (strncasecmp(a, b, n) == 0)
-
-#define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
-
 /* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
 
 COVAH_LIB_API
@@ -77,6 +70,23 @@ bool CLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        char delim,
                        char *name,
                        size_t name_len);
+
+#define STRNCPY(dst, src) CLI_strncpy(dst, src, ARRAY_SIZE(dst))
+#define STRNCPY_RLEN(dst, src) CLI_strncpy_rlen(dst, src, ARRAY_SIZE(dst))
+#define SNPRINTF(dst, format, ...) CLI_snprintf(dst, ARRAY_SIZE(dst), format, __VA_ARGS__)
+#define SNPRINTF_RLEN(dst, format, ...) \
+  CLI_snprintf_rlen(dst, ARRAY_SIZE(dst), format, __VA_ARGS__)
+#define STR_CONCAT(dst, len, suffix) \
+  len += CLI_strncpy_rlen(dst + len, suffix, ARRAY_SIZE(dst) - len)
+#define STR_CONCATF(dst, len, format, ...) \
+  len += CLI_snprintf_rlen(dst + len, ARRAY_SIZE(dst) - len, format, __VA_ARGS__)
+
+#define STREQ(a, b) (strcmp(a, b) == 0)
+#define STRCASEEQ(a, b) (strcasecmp(a, b) == 0)
+#define STREQLEN(a, b, n) (strncmp(a, b, n) == 0)
+#define STRCASEEQLEN(a, b, n) (strncasecmp(a, b, n) == 0)
+
+#define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
 
 /* ------------------------------------------------------ MODERN CXX STD::STRING UTILITIES ----- */
 

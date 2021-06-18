@@ -26,7 +26,8 @@
 
 #include "ANCHOR_api.h"
 
-class ANCHOR_ISystemWindow {
+class ANCHOR_ISystemWindow
+{
  public:
   /**
    * Destructor. */
@@ -68,9 +69,29 @@ class ANCHOR_ISystemWindow {
   virtual eAnchorStatus setModifiedState(bool isUnsavedChanges) = 0;
 
   /**
+   * Sets the order of the window (bottom, top).
+   * @param order: The order of the window.
+   * @return Indication of success. */
+  virtual eAnchorStatus setOrder(eAnchorWindowOrder order) = 0;
+
+  /**
+   * Returns the state of the window (normal, minimized, maximized).
+   * @return The state of the window.
+   */
+  virtual eAnchorWindowState getState() const = 0;
+
+  /**
+   * Sets the state of the window (normal, minimized, maximized).
+   * @param state: The state of the window.
+   * @return Indication of success. */
+  virtual eAnchorStatus setState(eAnchorWindowState state) = 0;
+
+  /**
    * Returns the window user data.
    * @return The window user data. */
   virtual ANCHOR_UserPtr getUserData() const = 0;
+
+  virtual bool isDialog() const = 0;
 
   /**
    * Gets the window "modified" status, indicating unsaved changes
@@ -94,7 +115,8 @@ class ANCHOR_ISystemWindow {
   virtual AnchorU16 getDPIHint() = 0;
 };
 
-class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
+class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
+{
  public:
   /**
    * Constructor.
@@ -126,6 +148,11 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow {
    * Returns the associated OS object/handle
    * @return The associated OS object/handle */
   virtual void *getOSWindow() const;
+
+  inline bool isDialog() const
+  {
+    return false;
+  }
 
   /**
    * Swaps front and back buffers of a window.

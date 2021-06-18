@@ -37,6 +37,7 @@ struct CovahArea;
 struct CovahMain;
 struct CovahScene;
 struct CovahScreen;
+struct CovahUserPrefs;
 struct CovahWindowManager;
 struct CovahWindow;
 struct CovahWorkspace;
@@ -46,6 +47,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(CovahArea);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahMain);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahScene);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahScreen);
+TF_DECLARE_WEAK_AND_REF_PTRS(CovahUserPrefs);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahWindowManager);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahWindow);
 TF_DECLARE_WEAK_AND_REF_PTRS(CovahWorkspace);
@@ -62,6 +64,7 @@ typedef CovahAreaRefPtr          /* Use -> */ Area;
 typedef CovahMainRefPtr          /* Use -> */ Main;
 typedef CovahSceneRefPtr         /* Use -> */ Scene;
 typedef CovahScreenRefPtr        /* Use -> */ cScreen;
+typedef CovahUserPrefsRefPtr     /* Use -> */ UserDef;
 typedef CovahWindowManagerRefPtr /* Use -> */ wmWindowManager;
 typedef CovahWindowRefPtr        /* Use -> */ wmWindow;
 typedef CovahWorkspaceRefPtr     /* Use -> */ Workspace;
@@ -88,6 +91,7 @@ wmWindowManager CTX_wm_manager(const cContext &C);
 wmWindow CTX_wm_window(const cContext &C);
 Scene CTX_data_scene(const cContext &C);
 Stage CTX_data_stage(const cContext &C);
+UserDef CTX_data_uprefs(const cContext &C);
 
 /**
  * Covah Context Setters:
@@ -100,24 +104,29 @@ void CTX_data_main_set(const cContext &C, const Main &cmain);
 void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm);
 void CTX_wm_window_set(const cContext &C, const wmWindow &win);
 void CTX_data_scene_set(const cContext &C, const Scene &cscene);
+void CTX_data_uprefs_set(const cContext &C, const UserDef &cscene);
 
-struct CovahContext : public CovahObject {
+struct CovahContext : public CovahObject
+{
 
   CovahContext() = default;
 
   int thread;
 
   /* windowmanager context */
-  struct {
+  struct
+  {
     wmWindowManager manager;
     wmWindow window;
   } wm;
 
   /* data context */
-  struct {
+  struct
+  {
     Main main;
     Scene scene;
     Stage stage;
+    UserDef uprefs;
   } data;
 };
 

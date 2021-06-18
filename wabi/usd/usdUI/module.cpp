@@ -41,6 +41,7 @@ TF_WRAP_MODULE
   TF_WRAP(UsdUISceneGraphPrimAPI);
   TF_WRAP(UsdUIScreen);
   TF_WRAP(UsdUITokens);
+  TF_WRAP(UsdUIUserPref);
   TF_WRAP(UsdUIWindow);
   TF_WRAP(UsdUIWorkspace);
 }

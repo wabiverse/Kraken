@@ -28,6 +28,7 @@
 
 #include "UNI_object.h"
 #include "UNI_system.h"
+#include "UNI_userpref.h"
 #include "UNI_window.h"
 
 #include <wabi/base/tf/mallocTag.h>
@@ -84,6 +85,11 @@ Stage CTX_data_stage(const cContext &C)
   return C->data.stage;
 }
 
+UserDef CTX_data_uprefs(const cContext &C)
+{
+  return C->data.uprefs;
+}
+
 /**
  * Setters. */
 
@@ -106,6 +112,11 @@ void CTX_data_scene_set(const cContext &C, const Scene &cscene)
 {
   C->data.scene = cscene;
   C->data.stage = cscene->stage;
+}
+
+void CTX_data_uprefs_set(const cContext &C, const UserDef &win)
+{
+  C->data.uprefs = win;
 }
 
 WABI_NAMESPACE_END

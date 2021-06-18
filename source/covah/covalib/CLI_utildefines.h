@@ -61,3 +61,19 @@
 #else
 #  define UNUSED_FUNCTION(x) UNUSED_##x
 #endif
+
+#define IFACE_(msgid) msgid
+
+#if defined(__GNUC__) && !defined(__cplusplus) && !defined(__clang__) && !defined(__INTEL_COMPILER)
+#  define ARRAY_SIZE(arr) \
+    ((sizeof(struct { int isnt_array : ((const void *)&(arr) == &(arr)[0]); }) * 0) + \
+     (sizeof(arr) / sizeof(*(arr))))
+#else
+#  define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(*(arr)))
+#endif
+
+#ifdef __GNUC__
+#  define ATTR_NONNULL(args...) __attribute__((nonnull(args)))
+#else
+#  define ATTR_NONNULL(...)
+#endif

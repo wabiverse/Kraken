@@ -63,6 +63,11 @@ static UsdAttribute _CreateNameAttr(UsdUIArea & self, object defaultVal, bool wr
   return self.CreateNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
 }
 
+static UsdAttribute _CreateSpacetypeAttr(UsdUIArea & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateSpacetypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
+
 static UsdAttribute _CreateIconAttr(UsdUIArea & self, object defaultVal, bool writeSparsely)
 {
   return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
@@ -117,6 +122,9 @@ void wrapUsdUIArea()
     .def("GetNameAttr", &This::GetNameAttr)
     .def("CreateNameAttr", &_CreateNameAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetSpacetypeAttr", &This::GetSpacetypeAttr)
+    .def("CreateSpacetypeAttr", &_CreateSpacetypeAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("GetIconAttr", &This::GetIconAttr)
     .def("CreateIconAttr", &_CreateIconAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -149,6 +157,8 @@ void wrapUsdUIArea()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
 
 
 

@@ -24,6 +24,30 @@ over "GLOBAL" (
 {
 }
 
+class UserPref "UserPref" (
+    inherits = </Typed>
+    doc = """
+    Provides preferences and options to display
+    and customize a DCC to your liking, such as
+    setting themes, fonts, or managing system
+    options like whether or not to display
+    certain prompts.
+    """
+)
+{
+    uniform bool ui:userpref:showSavePrompt = 1 (
+        doc = """
+        When quitting the application, it is usually helpful to be
+        prompted whether or not you have unsaved changes giving you
+        one last chance to save your work. Modifying this setting
+        controls whether or not this prompt is enabled.
+        """
+        customData = {
+            string apiName = "showSavePrompt"
+        }        
+    )
+}
+
 class Window "Window" (
     inherits = </Typed>
     doc = """
@@ -264,6 +288,17 @@ class Area "Area" (
         customData = {
             token apiName = "name"
         }       
+    )
+    uniform token ui:area:spacetype = "SpaceEmpty" (
+        allowedTokens = ["SpaceEmpty", "SpaceView3D", "SpaceGraph", "SpaceOutliner", "SpaceProperties", "SpaceFile", "SpaceImage", "SpaceInfo", "SpaceSequence", "SpaceText", "SpaceNode", "SpaceConsole", "SpacePref", "SpaceClip", "SpaceTopbar", "SpaceStatusbar", "SpaceSpreadsheet"]
+        doc = """
+        A SpaceType is the type of area this
+        authored token will create. For example
+        SpaceView3D will create a 3D Viewport.
+        """
+        customData = {
+            token apiName = "spacetype"
+        }
     )
     uniform asset ui:area:icon (
         doc = """

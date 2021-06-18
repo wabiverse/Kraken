@@ -15,6 +15,7 @@ wabi_library(usdUI
         sceneGraphPrimAPI
         screen
         tokens
+        userPref
         window
         workspace
 
@@ -32,6 +33,7 @@ wabi_library(usdUI
         wrapSceneGraphPrimAPI.cpp
         wrapScreen.cpp
         wrapTokens.cpp
+        wrapUserPref.cpp
         wrapWindow.cpp
         wrapWorkspace.cpp
 

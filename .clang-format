@@ -35,7 +35,7 @@ BinPackArguments: false
 BinPackParameters: false
 
 # Line width (don't exceed 110).
-ColumnLimit: 109
+ColumnLimit: 0
 
 # Setup preferred inheritance list to break before the colon and after the
 # commas
@@ -73,13 +73,13 @@ ContinuationIndentWidth: 2
 # This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
 BraceWrapping: {
-    AfterClass: 'false'
-    AfterControlStatement: 'false'
-    AfterEnum : 'false'
+    AfterClass: 'true'
+    AfterControlStatement: 'true'
+    AfterEnum : 'true'
     AfterFunction : 'true'
-    AfterNamespace : 'false'
-    AfterStruct : 'false'
-    AfterUnion : 'false'
+    AfterNamespace : 'true'
+    AfterStruct : 'true'
+    AfterUnion : 'true'
     BeforeCatch : 'true'
     BeforeElse : 'true'
     IndentBraces : 'false'
@@ -163,12 +163,15 @@ AlignEscapedNewlines: DontAlign
 #
 AlwaysBreakBeforeMultilineStrings: true
 
-# Setup bracket alignment
-AlignAfterOpenBracket: true
+MaxEmptyLinesToKeep: 2
 
 # Setup consecutive alignment 
 #AlignConsecutiveAssignments: true
 AlignConsecutiveBitFields: true
+
+#ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: BeforeColon
 
 # We don't want literal strings to break,
 # however clang-format seems to ignore this (sigh).
@@ -180,6 +183,7 @@ PenaltyBreakString: 1000000
 # To find these use multi-line regex search:
 # "^\s+[A-Z][A-Z0-9_]+\s*\([^\n]*\)\n\s*\{"
 ForEachMacros:
+  - TF_FOR_ALL
   - foreach
 
 StatementMacros:

@@ -3,6 +3,25 @@
     "Generated for use with Covah.  Copyright (C) 2021 Wabi Animation Studios."
 )
 
+class UserPref "UserPref" (
+    doc = """
+    Provides preferences and options to display
+    and customize a DCC to your liking, such as
+    setting themes, fonts, or managing system
+    options like whether or not to display
+    certain prompts.
+    """
+)
+{
+    uniform bool ui:userpref:showSavePrompt = 1 (
+        doc = """
+        When quitting the application, it is usually helpful
+        to be prompted whether or not to save your work. This
+        setting controls whether or not this prompt is enabled.
+        """
+    )
+}
+
 class Window "Window" (
     doc = """
     Provides a window for the purpose of displaying an application's GUI.
@@ -195,6 +214,14 @@ class Area "Area" (
         In the X axis it measures the width of this area within a
         window and on the Y Axis it measures the height of this
         area within the window.
+        """
+    )
+    uniform token ui:area:spacetype = "SpaceEmpty" (
+        allowedTokens = ["SpaceEmpty", "SpaceView3D", "SpaceGraph", "SpaceOutliner", "SpaceProperties", "SpaceFile", "SpaceImage", "SpaceInfo", "SpaceSequence", "SpaceText", "SpaceNode", "SpaceConsole", "SpacePref", "SpaceClip", "SpaceTopbar", "SpaceStatusbar", "SpaceSpreadsheet"]
+        doc = """
+        A SpaceType is the type of area this
+        authored token will create. For example
+        SpaceView3D will create a 3D Viewport.
         """
     )
 }

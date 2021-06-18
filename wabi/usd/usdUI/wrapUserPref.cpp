@@ -32,7 +32,7 @@
 /* clang-format off */
 
 #include "wabi/usd/usd/schemaBase.h"
-#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
+#include "wabi/usd/usdUI/userPref.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
@@ -58,31 +58,26 @@ namespace {
 WRAP_CUSTOM;
 
 
-static UsdAttribute _CreateDisplayNameAttr(UsdUISceneGraphPrimAPI & self, object defaultVal, bool writeSparsely)
+static UsdAttribute _CreateShowSavePromptAttr(UsdUIUserPref & self, object defaultVal, bool writeSparsely)
 {
-  return self.CreateDisplayNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  return self.CreateShowSavePromptAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
-static UsdAttribute _CreateDisplayGroupAttr(UsdUISceneGraphPrimAPI & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDisplayGroupAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
-
-static std::string _Repr(const UsdUISceneGraphPrimAPI & self)
+static std::string _Repr(const UsdUIUserPref & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdUI.SceneGraphPrimAPI(%s)",
+  return TfStringPrintf("UsdUI.UserPref(%s)",
                         primRepr.c_str());
 }
 
 }  /* anonymous */
 
 /* clang-format off */
-void wrapUsdUISceneGraphPrimAPI()
+void wrapUsdUIUserPref()
 {
-  typedef UsdUISceneGraphPrimAPI This;
+  typedef UsdUIUserPref This;
 
-  class_<This, bases<UsdAPISchemaBase>> cls("SceneGraphPrimAPI");
+  class_<This, bases<UsdTyped>> cls("UserPref");
 
   cls
     .def(init<UsdPrim>
@@ -93,8 +88,8 @@ void wrapUsdUISceneGraphPrimAPI()
     .def("Get", &This::Get,
         (arg("stage"), arg("path")))
     .staticmethod("Get")
-    .def("Apply", &This::Apply, (arg("prim")))
-    .staticmethod("Apply")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
     .def("GetSchemaAttributeNames", &This::GetSchemaAttributeNames,
         arg("includeInherited") = true,
         return_value_policy<TfPySequenceToList>())
@@ -104,11 +99,8 @@ void wrapUsdUISceneGraphPrimAPI()
         return_value_policy<return_by_value>())
     .staticmethod("_GetStaticTfType")
     .def(!self)
-    .def("GetDisplayNameAttr", &This::GetDisplayNameAttr)
-    .def("CreateDisplayNameAttr", &_CreateDisplayNameAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetDisplayGroupAttr", &This::GetDisplayGroupAttr)
-    .def("CreateDisplayGroupAttr", &_CreateDisplayGroupAttr,
+    .def("GetShowSavePromptAttr", &This::GetShowSavePromptAttr)
+    .def("CreateShowSavePromptAttr", &_CreateShowSavePromptAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("__repr__", ::_Repr)
   ;
@@ -135,35 +127,9 @@ void wrapUsdUISceneGraphPrimAPI()
    * --(BEGIN CUSTOM CODE)-- */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace {
 
-WRAP_CUSTOM
-{}
+WRAP_CUSTOM {
+}
 
-}  // namespace
+}

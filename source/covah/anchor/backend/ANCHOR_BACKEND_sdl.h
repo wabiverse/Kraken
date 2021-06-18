@@ -44,7 +44,8 @@ typedef union SDL_Event SDL_Event;
 /** SDL Window Forward -> */
 class ANCHOR_WindowSDL;
 
-class ANCHOR_SystemSDL : public ANCHOR_System {
+class ANCHOR_SystemSDL : public ANCHOR_System
+{
  public:
   ANCHOR_SystemSDL();
   ~ANCHOR_SystemSDL();
@@ -92,7 +93,8 @@ class ANCHOR_SystemSDL : public ANCHOR_System {
   ANCHOR_WindowSDL *m_sdl_window;
 };
 
-class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager {
+class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager
+{
  public:
   ANCHOR_DisplayManagerSDL(ANCHOR_SystemSDL *system);
 
@@ -113,7 +115,8 @@ class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager {
   SDL_DisplayMode m_mode;
 };
 
-class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
+class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
+{
  private:
   ANCHOR_SystemSDL *m_system;
   bool m_valid_setup;
@@ -159,6 +162,16 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow {
 
   void setTitle(const char *title);
   void setIcon(const char *icon);
+
+  eAnchorStatus setState(eAnchorWindowState state);
+
+  eAnchorWindowState getState() const;
+
+  eAnchorStatus setOrder(eAnchorWindowOrder order)
+  {
+    // TODO
+    return ANCHOR_SUCCESS;
+  }
 
   eAnchorStatus beginFullScreen() const
   {

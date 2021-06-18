@@ -260,6 +260,108 @@ struct UsdUITokensType {
   const TfToken right;
 
   /**
+   * @brief "SpaceClip"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceClip;
+
+  /**
+   * @brief "SpaceConsole"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceConsole;
+
+  /**
+   * @brief "SpaceEmpty"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr(), Default value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceEmpty;
+
+  /**
+   * @brief "SpaceFile"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceFile;
+
+  /**
+   * @brief "SpaceGraph"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceGraph;
+
+  /**
+   * @brief "SpaceImage"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceImage;
+
+  /**
+   * @brief "SpaceInfo"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceInfo;
+
+  /**
+   * @brief "SpaceNode"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceNode;
+
+  /**
+   * @brief "SpaceOutliner"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceOutliner;
+
+  /**
+   * @brief "SpacePref"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spacePref;
+
+  /**
+   * @brief "SpaceProperties"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceProperties;
+
+  /**
+   * @brief "SpaceSequence"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceSequence;
+
+  /**
+   * @brief "SpaceSpreadsheet"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceSpreadsheet;
+
+  /**
+   * @brief "SpaceStatusbar"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceStatusbar;
+
+  /**
+   * @brief "SpaceText"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceText;
+
+  /**
+   * @brief "SpaceTopbar"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceTopbar;
+
+  /**
+   * @brief "SpaceView3D"
+   *
+   * Possible value for UsdUIArea::GetSpacetypeAttr() */
+  const TfToken spaceView3D;
+
+  /**
    * @brief "stop"
    *
    * Possible value for UsdUIWindow::GetCursorAttr() */
@@ -306,6 +408,12 @@ struct UsdUITokensType {
    *
    * UsdUIArea */
   const TfToken uiAreaSize;
+
+  /**
+   * @brief "ui:area:spacetype"
+   *
+   * UsdUIArea */
+  const TfToken uiAreaSpacetype;
 
   /**
    * @brief "ui:description"
@@ -378,6 +486,12 @@ struct UsdUITokensType {
    *
    * UsdUIScreen */
   const TfToken uiScreenCollectionAreasIncludeRoot;
+
+  /**
+   * @brief "ui:userpref:showSavePrompt"
+   *
+   * UsdUIUserPref */
+  const TfToken uiUserprefShowSavePrompt;
 
   /**
    * @brief "ui:window:alignment"

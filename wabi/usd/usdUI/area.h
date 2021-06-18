@@ -223,6 +223,44 @@ class UsdUIArea : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
+   * SPACETYPE
+   * ---------------------------------------------------------------------
+   * 
+   * A SpaceType is the type of area this
+   * authored token will create. For example
+   * SpaceView3D will create a 3D Viewport.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform token ui:area:spacetype = "SpaceEmpty"` |
+   *
+   * | C++ Type | TfToken |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   *
+   * | @ref UsdUITokens "Allowed Values" | SpaceEmpty, SpaceView3D, SpaceGraph, SpaceOutliner, SpaceProperties, SpaceFile, SpaceImage, SpaceInfo, SpaceSequence, SpaceText, SpaceNode, SpaceConsole, SpacePref, SpaceClip, SpaceTopbar, SpaceStatusbar, SpaceSpreadsheet |
+   */
+  USDUI_API
+  UsdAttribute GetSpacetypeAttr() const;
+
+  /**
+   * See GetSpacetypeAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateSpacetypeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
    * ICON
    * ---------------------------------------------------------------------
    * 
