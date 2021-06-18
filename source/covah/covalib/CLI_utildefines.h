@@ -77,3 +77,11 @@
 #else
 #  define ATTR_NONNULL(...)
 #endif
+
+#define STRINGALL(x) TfStringify(x)
+#define CHARALL(x) TfStringify(x).c_str()
+
+#define CONCAT(a, b) TfStringCatPaths(a, b).c_str()
+#define STRCAT(a, b) TfStringCatPaths(a, b)
+
+#define CHARSTR(a) a.c_str()

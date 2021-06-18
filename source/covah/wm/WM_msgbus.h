@@ -41,11 +41,15 @@ WABI_NAMESPACE_BEGIN
 /* ------ */
 
 
+/**
+ *  -----  The Base Notice. ----- */
+
+
 struct BaseNotice : public TfNotice
 {
   BaseNotice(const std::string &what);
 
-  const std::string &BaseNotice::GetWhat() const;
+  const std::string &GetWhat() const;
 
   ~BaseNotice();
 
@@ -57,6 +61,10 @@ struct BaseNotice : public TfNotice
 /* ------ */
 
 
+/**
+ *  -----  The Msg Notice. ----- */
+
+
 struct MainNotice : public BaseNotice
 {
   MainNotice(const std::string &what);
@@ -64,6 +72,10 @@ struct MainNotice : public BaseNotice
 
 
 /* ------ */
+
+
+/**
+ *  -----  The Msg Listener. ----- */
 
 
 struct MainListener : public TfWeakBase
@@ -87,6 +99,10 @@ struct MainListener : public TfWeakBase
 
 
 /* ------ */
+
+
+/**
+ *  -----  MsgBus Initialization. ----- */
 
 
 void WM_msgbus_register(void);

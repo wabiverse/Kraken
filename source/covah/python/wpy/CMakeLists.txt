@@ -4,6 +4,7 @@ set(INC
   ../editors/include
   ../../covakernel
   ../../covalib
+  ../../universe
 )
 
 set(WPY_INSTALL_PATH "release/scripts/modules/wpy")
@@ -24,15 +25,6 @@ set(INC_SYS
 
 set(LIB
   covahverse
-  # covah_io
-  # usdEmber
-  # hdArnold
-  # ndrArnold
-  # covah_engine_etcher
-  # covah_engine_overlay
-  # covah_editor_etcher
-  # covah_editor_spacenodes
-  # covah_editor_spaceview3d
 
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

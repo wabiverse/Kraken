@@ -12,6 +12,8 @@ covah_include_dirs(
 
 set(LIB
   covah_wm
+  covah_kernel
+  covah_universe
 )
 
 list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
@@ -52,9 +54,10 @@ endif()
 # Setup the exe sources and buildinfo
 set(SRC
   creator.cpp
+  creator_args.cpp
   environment.cpp
 
-  environment.h
+  creator.h
 )
 
 # MSVC 2010 gives linking errors with the manifest

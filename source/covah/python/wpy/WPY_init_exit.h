@@ -26,18 +26,30 @@
 
 #include "WPY_api.h"
 
+#include "CKE_main.h"
+
+/**
+ *  -----  The Covah Python Module. ----- */
+
+
 WABI_NAMESPACE_BEGIN
 
-/*
- * ---------------------------------------------------------------------
- *  MAIN PYTHON INIT AND CLEANUP
- * ---------------------------------------------------------------------
- */
+
+/* ------ */
+
+
+/**
+ *  -----  Python Init & Exit. ----- */
+
 
 COVAH_PYTHON_API
-void WPY_python_init(const std::string &sys_paths);
+void WPY_python_init(const cContext &C);
 
 COVAH_PYTHON_API
 void WPY_python_exit(void);
+
+
+/* ------ */
+
 
 WABI_NAMESPACE_END

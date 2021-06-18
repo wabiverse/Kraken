@@ -18,16 +18,37 @@
 
 /**
  * @file
- * Creator.
- * Creating Chaos.
+ * Universe.
+ * Set the Stage.
  */
 
-#pragma once
+#include "UNI_pixar_utils.h"
 
-#include <wabi/wabi.h>
+#include <wabi/usd/usd/stage.h>
 
 WABI_NAMESPACE_BEGIN
 
-void CREATOR_covah_env_init();
+
+void UNI_pixutil_convert(const std::string &args)
+{
+  static std::vector<std::string> extra_args;
+  extra_args.push_back(args);
+
+  UsdStageRefPtr stage = UsdStage::Open(extra_args.at(0));
+
+  SdfLayer::FileFormatArguments extrafmt = SdfLayer::FileFormatArguments();
+  TF_FOR_ALL (arg, extra_args)
+  {
+    static int index = 0;
+    static std::string prev = extra_args.at(index);
+    if ((index += 1) < extra_args.size())
+    {
+      extrafmt.insert(std::make_pair(prev, extra_args.at(index)));
+    }
+  }
+
+  stage->Export(extra_args.at(0), true, extrafmt);
+}
+
 
 WABI_NAMESPACE_END

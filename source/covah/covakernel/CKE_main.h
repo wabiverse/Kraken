@@ -41,6 +41,7 @@ struct CovahMain : public CovahObject
   std::string temp_dir;
   std::string styles_path;
   std::string icons_path;
+  std::string python_path;
   std::string datafiles_path;
 
   std::filesystem::path stage_id;
@@ -63,7 +64,6 @@ enum ckeStatusCode
 {
   COVAH_SUCCESS = 0,
   COVAH_ERROR,
-  COVAH_RUN
 };
 
 enum ckeErrorType
@@ -87,13 +87,17 @@ COVAH_KERNEL_API
 void CKE_covah_plugins_init(void);
 
 COVAH_KERNEL_API
-void CKE_covah_python_init(void);
-
-COVAH_KERNEL_API
-bool CKE_has_kill_signal(ckeStatusCode signal = COVAH_RUN);
+void CKE_covah_python_init(const cContext &C);
 
 COVAH_KERNEL_API
 ckeStatusCode CKE_main_runtime(int backend);
+
+COVAH_KERNEL_API
+void CKE_covah_enable_debug_codes(void);
+
+
+/* ------ */
+
 
 /* Setup in CKE_covah. */
 COVAH_KERNEL_API

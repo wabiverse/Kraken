@@ -18,40 +18,27 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * COVAH Kernel.
+ * Purple Underground.
  */
 
-#include "WM_init_exit.h" /* Own include. */
-#include "WM_cursors.h"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
-#include "WM_window.h"
+#pragma once
 
-#include "ANCHOR_api.h"
-#include "ANCHOR_system_paths.h"
-
-#include "UNI_context.h"
-
-#include "CLI_icons.h"
-
-#include "CKE_context.h"
+#include "CKE_api.h"
 #include "CKE_main.h"
 
-#include "ED_debug_codes.h"
-
+#include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/stringUtils.h>
 
 WABI_NAMESPACE_BEGIN
 
+std::string covah_exe_path_init(void);
+std::string covah_system_tempdir_path(void);
 
-void WM_init(cContext C, int argc, const char **argv)
-{
-  WM_anchor_init(C);
-  WM_init_cursor_data();
-
-  WM_msgbus_register();
-}
-
+std::string covah_datafiles_path_init(Global KERNEL_GLOBALS);
+std::string covah_python_path_init(Global KERNEL_GLOBALS);
+std::string covah_icon_path_init(Global KERNEL_GLOBALS);
+std::string covah_styles_path_init(Global KERNEL_GLOBALS);
+std::string covah_startup_file_init(Global KERNEL_GLOBALS);
 
 WABI_NAMESPACE_END

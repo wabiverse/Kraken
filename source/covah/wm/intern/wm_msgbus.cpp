@@ -48,7 +48,7 @@ WABI_NAMESPACE_BEGIN
 
 
 /**
- *  -----  The Base Class. ----- */
+ *  -----  The Base Notice. ----- */
 
 
 BaseNotice::BaseNotice(const std::string &what)
@@ -65,10 +65,6 @@ const std::string &BaseNotice::GetWhat() const
 {
   return m_what;
 }
-
-
-BaseNotice::~BaseNotice()
-{}
 
 
 /* ------ */
@@ -103,11 +99,10 @@ void MainListener::WM_msgbus_dump(std::ostream *log, std::vector<std::string> *l
 {
   std::lock_guard<std::mutex> lock(*mutex);
   std::sort(li->begin(), li->end());
-  TF_FOR_ALL (lines, li)
+  for (std::vector<std::string>::const_iterator n = li->begin(); n != li->end(); ++n)
   {
-    *log << *lines << std::endl;
+    *log << *n << std::endl;
   }
-
   li->clear();
 }
 
@@ -125,8 +120,6 @@ void MainListener::ProcessNotice(const TfNotice &n)
     "MainListener::ProcessNotice"
     " got notice of type " +
     TfType::Find(n).GetTypeName());
-
-  printf("%s\n", mainThreadList.data()->c_str());
 }
 
 
@@ -134,8 +127,6 @@ void MainListener::ProcessMainNotice(const MainNotice &n)
 {
   std::lock_guard<std::mutex> lock(_mainThreadLock);
   mainThreadList.push_back("MainListener::ProcessMainNotice got " + n.GetWhat());
-
-  printf("%s\n", mainThreadList.data()->c_str());
 }
 
 

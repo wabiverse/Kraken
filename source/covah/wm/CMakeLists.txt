@@ -19,6 +19,7 @@ set(INC_SYS
 
 set(SRC
   intern/wm_cursors.c
+  intern/wm_debug_codes.cpp
   intern/wm_draw.cpp
   intern/wm_event_system.cpp
   intern/wm_init_exit.cpp
@@ -30,6 +31,7 @@ set(SRC
 
   WM_api.h
   WM_cursors.h
+  WM_debug_codes.h
   WM_draw.h
   WM_event_system.h
   WM_init_exit.h

@@ -29,27 +29,45 @@
 #include "CKE_context.h"
 #include "CKE_main.h"
 
+#include "UNI_pixar_utils.h"
+
 #include "WM_api.h"
 #include "WM_init_exit.h"
 #include "WM_window.h"
 
-#include "environment.h"
+#include "creator.h"
+
+WABI_NAMESPACE_USING
 
 int main(int argc, const char **argv)
 {
 #ifdef _WIN32
+  /* Hide Windows Terminal on Startup. */
   HWND hwnd = GetConsoleWindow();
   ShowWindow(hwnd, 0);
 #endif
 
-  wabi::CREATOR_covah_env_init();
+  /* Environment variables. */
+  CREATOR_covah_env_init();
 
-  wabi::cContext C = wabi::CTX_create();
+  /* Create Context C. */
+  cContext C = CTX_create();
 
-  wabi::CKE_covah_globals_init();
-  wabi::CKE_covah_main_init(C, argc, (const char **)argv);
+  CKE_covah_globals_init();
 
-  wabi::WM_init(C, argc, (const char **)argv);
-  wabi::WM_main(C);
-  return wabi::COVAH_SUCCESS;
+  /* Init plugins. */
+  CKE_covah_plugins_init();
+
+  /* Init & parse args. */
+  CREATOR_setup_args(argc, (const char **)argv);
+  CREATOR_parse_args(argc, (const char **)argv);
+
+  /* Determining Stage Configuration and Loadup. */
+  CKE_covah_main_init(C, argc, (const char **)argv);
+
+  /* Runtime. */
+  WM_init(C, argc, (const char **)argv);
+  WM_main(C);
+
+  return COVAH_SUCCESS;
 }

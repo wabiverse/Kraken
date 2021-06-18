@@ -24,6 +24,8 @@
 
 #include "WPY_init_exit.h" /* Own Include. */
 
+#include "CKE_context.h"
+
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/arch/vsnprintf.h>
 
@@ -32,23 +34,39 @@
 #include <wabi/base/tf/pyInterpreter.h>
 #include <wabi/base/tf/stringUtils.h>
 
+
+/**
+ *  -----  The Covah Python Module. ----- */
+
+
 WABI_NAMESPACE_BEGIN
 
-void WPY_python_init(const std::string &sys_paths)
-{
 
-  /**
-   * Embeds the python interpreter
-   * imports wabi and all of it's
-   * submodules. */
-  // TfPyInitialize();
+/* ------ */
+
+
+/**
+ *  -----  Python Init & Exit. ----- */
+
+
+void WPY_python_init(const cContext &C)
+{
+  Main cmain = CTX_data_main(C);
+
+  setenv("PYTHONPATH", CHARSTR(cmain->python_path), true);
+
+  TfPyInitialize();
 }
+
 
 void WPY_python_exit()
 {
   /**
-   * TODO: STUBBED
-   */
+   * TODO: STUBBED */
 }
+
+
+/* ------ */
+
 
 WABI_NAMESPACE_END

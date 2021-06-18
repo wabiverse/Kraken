@@ -25,23 +25,16 @@
 #pragma once
 
 #include "UNI_api.h"
-#include "UNI_context.h"
-#include "UNI_scene.h"
-#include "UNI_system.h"
 
-#include <wabi/usdImaging/usdImagingGL/engine.h>
+#include <wabi/base/tf/hash.h>
+#include <wabi/base/tf/hashmap.h>
+
+#include <map>
+#include <string>
+#include <vector>
 
 WABI_NAMESPACE_BEGIN
 
-typedef std::shared_ptr<class UsdImagingGLEngine> EnginePtr;
-
-COVAH_UNIVERSE_API
-void UNI_enable_all_debug_codes(void);
-
-COVAH_UNIVERSE_API
-void UNI_diagnostics_check(void);
-
-COVAH_UNIVERSE_API
-void UNI_diagnostics_hydra_test(void);
+void UNI_pixutil_convert(const std::string &args);
 
 WABI_NAMESPACE_END

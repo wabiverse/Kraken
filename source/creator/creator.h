@@ -18,40 +18,25 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Creator.
+ * Creating Chaos.
  */
 
-#include "WM_init_exit.h" /* Own include. */
-#include "WM_cursors.h"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
-#include "WM_window.h"
-
-#include "ANCHOR_api.h"
-#include "ANCHOR_system_paths.h"
-
-#include "UNI_context.h"
-
-#include "CLI_icons.h"
-
-#include "CKE_context.h"
-#include "CKE_main.h"
-
-#include "ED_debug_codes.h"
-
-#include <wabi/base/tf/stringUtils.h>
-
-WABI_NAMESPACE_BEGIN
+#pragma once
 
 
-void WM_init(cContext C, int argc, const char **argv)
-{
-  WM_anchor_init(C);
-  WM_init_cursor_data();
-
-  WM_msgbus_register();
-}
+/**
+ *  -----  The Covah Creator. ----- */
 
 
-WABI_NAMESPACE_END
+void CREATOR_covah_env_init();
+
+/**
+ *  -----  Creator's Args. ----- */
+
+void CREATOR_setup_args(int argc, const char **argv);
+
+int CREATOR_parse_args(int argc, const char **argv);
+
+
+/* ------ */

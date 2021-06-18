@@ -15,13 +15,16 @@ set(INC
 set(SRC
   intern/CKE_context.cpp
   intern/CKE_covah.cpp
+  intern/CKE_diagnostics.cpp
   intern/CKE_plugins.cpp
   intern/CKE_python.cpp
+  intern/CKE_utils.cpp
 
   CKE_api.h
   CKE_context.h
   CKE_main.h
   CKE_space.h
+  CKE_utils.h
   CKE_version.h
 )
 

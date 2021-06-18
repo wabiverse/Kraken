@@ -15,13 +15,14 @@ set(INC_SYS
 
 set(SRC
   intern/UNI_create.cpp
-  intern/UNI_diagnostics.cpp
+  intern/UNI_pixar_utils.cpp
 
   UNI_api.h
+  UNI_area.h
   UNI_context.h
-  UNI_diagnostics.h
   UNI_object.h
   UNI_path_defaults.h
+  UNI_pixar_utils.h
   UNI_scene.h
   UNI_screen.h
   UNI_system.h

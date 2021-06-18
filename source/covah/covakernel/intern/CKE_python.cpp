@@ -22,7 +22,8 @@
  * Purple Underground.
  */
 
-#include "CKE_api.h" /* Own Include. */
+#include "CKE_api.h"
+#include "CKE_context.h"
 #include "CKE_main.h"
 
 #include "wpy/WPY_init_exit.h"
@@ -32,11 +33,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-void CKE_covah_python_init()
-{
-  const std::string sys_paths = TfStringCatPaths(G.main->datafiles_path, "../python/lib/");
 
-  WPY_python_init(sys_paths);
+void CKE_covah_python_init(const cContext &C)
+{
+  WPY_python_init(C);
 }
+
 
 WABI_NAMESPACE_END

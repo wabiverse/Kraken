@@ -22,35 +22,17 @@
  * Making GUI Fly.
  */
 
-#include "WM_init_exit.h" /* Own include. */
-#include "WM_cursors.h"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
-#include "WM_window.h"
+#include "WM_debug_codes.h"
 
-#include "ANCHOR_api.h"
-#include "ANCHOR_system_paths.h"
-
-#include "UNI_context.h"
-
-#include "CLI_icons.h"
-
-#include "CKE_context.h"
-#include "CKE_main.h"
-
-#include "ED_debug_codes.h"
-
-#include <wabi/base/tf/stringUtils.h>
+#include <wabi/base/tf/registryManager.h>
+#include <wabi/wabi.h>
 
 WABI_NAMESPACE_BEGIN
 
 
-void WM_init(cContext C, int argc, const char **argv)
+TF_REGISTRY_FUNCTION(TfDebug)
 {
-  WM_anchor_init(C);
-  WM_init_cursor_data();
-
-  WM_msgbus_register();
+  TF_DEBUG_ENVIRONMENT_SYMBOL(COVAH_DEBUG_MSGBUS, "Dump Covah MsgBus messages for debugging purposes");
 }
 
 
