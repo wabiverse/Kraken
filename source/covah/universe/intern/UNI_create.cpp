@@ -121,10 +121,10 @@ void UNI_set_defaults(const cContext &C)
 
   /** Default Outliner. */
   Area outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
-  v3d->name.Set(TfToken("Outliner"));
-  v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
-  v3d->pos.Set(GfVec2f(1800, 0));
-  v3d->size.Set(GfVec2f(120, 1080));
+  outliner->name.Set(TfToken("Outliner"));
+  outliner->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
+  outliner->pos.Set(GfVec2f(1800, 0));
+  outliner->size.Set(GfVec2f(120, 1080));
 
   /* ----- */
 

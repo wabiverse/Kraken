@@ -1,51 +1,58 @@
 #usda 1.0
 (
     doc = "Covah v1.50"
+    upAxis = "Z"
 )
 
 def "Covah"
 {
-    def "Windows"
+    def Window "MainWindow"
     {
-        def Window "MainWindow"
+        uniform token ui:window:alignment = "alignAbsolute"
+        uniform token ui:window:cursor = "default"
+        uniform float ui:window:dpi = 1
+        uniform float ui:window:dpifac = 1
+        uniform asset ui:window:icon = @/usr/local/share/covah/1.50/datafiles/icons/covah-desktop.png@
+        uniform float ui:window:linewidth = 1
+        uniform float ui:window:pixelsz = 1
+        uniform float2 ui:window:pos = (0, 0)
+        uniform float ui:window:scale = 1
+        uniform float2 ui:window:size = (1920, 1080)
+        uniform token ui:window:state = "maximized"
+        uniform token ui:window:title = "Covah"
+        uniform token ui:window:type = "normal"
+        uniform float ui:window:widgetunit = 20
+        prepend rel ui:window:workspace = </Covah/MainWindow/Workspaces/Layout>
+
+        def "Workspaces"
         {
-            uniform asset ui:window:icon = @/usr/local/share/covah/1.50/datafiles/icons/covah-desktop.png@
-            uniform float2 ui:window:pos = (0, 0)
-            uniform float2 ui:window:size = (1920, 1080)
-            uniform token ui:window:title = "Covah"
-            uniform token ui:window:type = "normal"
-            prepend rel ui:window:workspace = </Covah/Windows/MainWindow/WorkSpaces/Layout>
-
-            def "WorkSpaces"
+            def Workspace "Layout"
             {
-                def Workspace "Layout"
+                uniform token ui:workspace:name = "Layout"
+                prepend rel ui:workspace:screen = </Covah/MainWindow/Workspaces/Layout/Screen>
+
+                def Screen "Screen"
                 {
-                    uniform token ui:workspace:name = "Layout"
-                    prepend rel ui:workspace:screen = </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen>
+                    uniform token ui:screen:alignment = "verticalSplit"
+                    prepend rel ui:screen:areas = [
+                        </Covah/MainWindow/Workspaces/Layout/Screen/View3D>,
+                        </Covah/MainWindow/Workspaces/Layout/Screen/Outliner>,
+                    ]
 
-                    def Screen "Screen"
+                    def Area "View3D"
                     {
-                        uniform token ui:screen:alignment = "verticalSplit"
-                        prepend rel ui:screen:areas = [
-                            </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen/View3D>,
-                            </Covah/Windows/MainWindow/WorkSpaces/Layout/Screen/Outliner>,
-                        ]
+                        uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/hydra.png@
+                        uniform token ui:area:name = "View3D"
+                        uniform float2 ui:area:pos = (0, 0)
+                        uniform float2 ui:area:size = (1800, 1080)
+                    }
 
-                        def Area "View3D"
-                        {
-                            uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/hydra.png@
-                            uniform token ui:area:name = "View3D"
-                            uniform float2 ui:area:pos = (0, 0)
-                            uniform float2 ui:area:size = (1800, 1080)
-                        }
-
-                        def Area "Outliner"
-                        {
-                            uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/luxo.png@
-                            uniform token ui:area:name = "Outliner"
-                            uniform float2 ui:area:pos = (1800, 0)
-                            uniform float2 ui:area:size = (120, 1080)
-                        }
+                    def Area "Outliner"
+                    {
+                        uniform asset ui:area:icon = @/usr/local/share/covah/1.50/datafiles/icons/luxo.png@
+                        uniform token ui:area:name = "Outliner"
+                        uniform float2 ui:area:pos = (1800, 0)
+                        uniform float2 ui:area:size = (120, 1080)
                     }
                 }
             }
