@@ -26,6 +26,8 @@
 
 #include "WM_api.h"
 
+#include "UNI_path_defaults.h"
+
 #include <wabi/usd/usd/prim.h>
 
 WABI_NAMESPACE_BEGIN
@@ -42,6 +44,8 @@ enum
 
 struct wmOperatorType
 {
+  SdfPath path;
+
   /** Text for UI, undo. */
   const char *name;
   /** Unique identifier. */
@@ -49,11 +53,14 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
+  /** Signal changes, allow for Pub/Sub. */
+  const TfNotice notice;
+
   int (*exec)(const cContext &C, UsdAttribute *op) ATTR_WARN_UNUSED_RESULT;
 
   bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
 
-  int (*invoke)(const cContext &C, UsdAttribute *op, const struct wmEvent *) ATTR_WARN_UNUSED_RESULT;
+  int (*invoke)(const cContext &C, const UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
 };
 
 WABI_NAMESPACE_END

@@ -80,4 +80,14 @@ void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow
 int wm_window_new_exec(const cContext &C, UsdAttribute *op);
 int wm_window_new_main_exec(const cContext &C, UsdAttribute *op);
 
+
+void WM_OT_window_close(wmOperatorType *ot);
+void WM_OT_window_new(wmOperatorType *ot);
+void WM_OT_window_new_main(wmOperatorType *ot);
+void WM_OT_window_fullscreen_toggle(wmOperatorType *ot);
+void WM_OT_quit_covah(wmOperatorType *ot);
+
+int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op));
+int wm_exit_covah_invoke(const cContext &C, UsdAttribute *UNUSED(op), const wmEvent *UNUSED(event));
+
 WABI_NAMESPACE_END

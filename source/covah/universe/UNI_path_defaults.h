@@ -24,6 +24,11 @@
  * Set the Stage.
  */
 
+#include <wabi/base/tf/token.h>
+
+
+WABI_NAMESPACE_BEGIN
+
 /**
  * These are the default Covah data  structure  locations
  * relative to a Stage's Root Path. Hardcoded - well and
@@ -35,24 +40,29 @@
  *
  * !! IF YOU ADD A NEW PATH.  INCLUDE IT HERE. */
 
-/* clang-format off */
 
-/** Covah Root Namespace. */
-#define COVAH_ROOT/Covah
+struct COVAH_PATH_DEFAULTS
+{
+  /** Covah Root Namespace. */
+  const inline static TfToken COVAH_ROOT = TfToken("Covah");
 
-/** Covah :: UserDef Root. */
-#define COVAH_USERPREFS COVAH_ROOT/UserDef
+  /** Covah :: Ops Root. */
+  const inline static TfToken COVAH_OPERATORS = TfToken("Covah/Ops");
 
-/** Covah :: MainWindow Root. */
-#define COVAH_WINDOW COVAH_ROOT/MainWindow
+  /** Covah :: UserDef Root. */
+  const inline static TfToken COVAH_USERPREFS = TfToken("Covah/UserDef");
 
-/** Covah :: MainWindow :: Workspaces Root. */
-#define COVAH_WORKSPACES COVAH_WINDOW/Workspaces
+  /** Covah :: MainWindow Root. */
+  const inline static TfToken COVAH_WINDOW = TfToken("Covah/MainWindow");
 
-/** Covah :: MainWindow :: Workspaces :: Layout Root. */
-#define COVAH_WORKSPACES_LAYOUT COVAH_WORKSPACES/Layout
+  /** Covah :: MainWindow :: Workspaces Root. */
+  const inline static TfToken COVAH_WORKSPACES = TfToken("Covah/MainWindow/Workspaces");
 
-/** Covah :: MainWindow :: Workspaces :: Layout :: Screen Root. */
-#define COVAH_SCREEN_LAYOUT COVAH_WORKSPACES_LAYOUT/Screen
+  /** Covah :: MainWindow :: Workspaces :: Layout Root. */
+  const inline static TfToken COVAH_WORKSPACES_LAYOUT = TfToken("Covah/MainWindow/Workspaces/Layout");
 
-/* clang-format on */
+  /** Covah :: MainWindow :: Workspaces :: Layout :: Screen Root. */
+  const inline static TfToken COVAH_SCREEN_LAYOUT = TfToken("Covah/MainWindow/Workspaces/Layout/Screen");
+};
+
+WABI_NAMESPACE_END

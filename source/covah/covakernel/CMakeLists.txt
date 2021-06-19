@@ -23,6 +23,7 @@ set(SRC
   CKE_api.h
   CKE_context.h
   CKE_main.h
+  CKE_robinhood.h
   CKE_space.h
   CKE_utils.h
   CKE_version.h

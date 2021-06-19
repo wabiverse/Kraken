@@ -25,10 +25,13 @@
 #pragma once
 
 #include "WM_api.h"
+#include "WM_operators.h"
 
 #include "CKE_context.h"
+#include "CKE_robinhood.h"
 
 #include <wabi/base/tf/notice.h>
+#include <wabi/base/tf/refBase.h>
 
 #include <tbb/atomic.h>
 
@@ -60,18 +63,23 @@ typedef MsgBusCallbackPtr MsgBus;
 
 struct MsgBusCallback : public TfWeakBase
 {
+  /** Runs & Invokes all the Ops. */
+  MsgBusCallback(wmOperatorType *ot);
 
-  MsgBusCallback(int identity, TfNotice const &notice);
+  /** Comm Link. You've got mail. */
+  void COMM(const TfNotice &notice,
+            MsgBus const &sender);
 
-  void PushNotif(const TfNotice &notice,
-                 MsgBus const &sender);
+  /** Reference Count. */
+  tbb::atomic<int> ref;
 
- private:
-  int m_ident;
-  std::string m_name;
-  TfNotice m_notice;
-  tbb::atomic<int> m_counter;
-  bool m_flag = true;
+  /** Notify @ Subscribe MsgBus. */
+  TfNotice notice;
+
+  struct
+  {
+    wmOperatorType *type;
+  } op;
 };
 
 
@@ -82,7 +90,7 @@ struct MsgBusCallback : public TfWeakBase
  *  -----  MsgBus Initialization. ----- */
 
 
-void WM_msgbus_register(void);
+void WM_msgbus_register(const cContext &C);
 
 
 WABI_NAMESPACE_END

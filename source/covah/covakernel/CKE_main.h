@@ -27,10 +27,13 @@
 
 #include "CKE_api.h"
 #include "CKE_context.h"
+#include "CKE_robinhood.h"
 
 #include "UNI_object.h"
 
 WABI_NAMESPACE_BEGIN
+
+typedef robin_hood::unordered_map<TfToken, SdfPath, TfToken::Hash> RHash;
 
 struct CovahMain : public CovahObject
 {

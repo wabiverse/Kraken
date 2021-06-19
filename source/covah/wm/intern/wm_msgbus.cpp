@@ -27,14 +27,16 @@
 #include "WM_operators.h"
 #include "WM_window.h"
 
+#include "UNI_path_defaults.h"
 #include "UNI_screen.h"
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 
 #include "CKE_context.h"
+#include "CKE_main.h"
 
 #include <mutex>
-#include <string>
+#include <string>*
 #include <vector>
 
 
@@ -52,83 +54,75 @@ WABI_NAMESPACE_BEGIN
  *  -----  The MsgBus Callback. ----- */
 
 
-MsgBusCallback::MsgBusCallback(int identity, TfNotice const &notice)
-  : m_counter(1),
-    m_ident(identity),
-    m_notice(notice)
+MsgBusCallback::MsgBusCallback(wmOperatorType *ot)
+  : ref(1),
+    notice(ot->notice),
+    op({.type = ot})
 {}
 
 
-void MsgBusCallback::PushNotif(const TfNotice &notice,
-                               MsgBus const &sender)
+void MsgBusCallback::COMM(const TfNotice &notice,
+                          MsgBus const &sender)
 {
   TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("!! Hello from MsgBus.\n");
-  m_flag = (sender->m_ident == m_ident) ? true : false;
-  m_name = (m_ident == IDENT_ROMEO) ? STRINGIFY_ARG(IDENT_ROMEO) :
-                                      STRINGIFY_ARG(IDENT_JULIET);
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("%s\n", m_flag ? "true" : "false");
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("ID: %s\n", CHARSTR(m_name));
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Count: %s\n", CHARALL(m_counter));
-  ++m_counter;
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Operator: %s\n", op.type->idname);
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("RefCount: %s\n", CHARALL(ref));
+  ++ref;
 }
 
+
+void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
+{
+  /* ------ */
+
+  wmWindowManager wm = CTX_wm_manager(C);
+
+  /** 
+   * We keep all operators in
+   * a RobinHood HashMap. Hashed
+   * with a Unique TfToken, and
+   * stored on a UsdPrim. As is
+   * the same for the rest of
+   * the Covah Stack. */
+
+  RHash *rh = new RHash();
+
+  wmOperatorType *ot = new wmOperatorType();
+  opfunc(ot);
+
+  /** Hashed. */
+  rh->insert(typename RHash::value_type(
+    std::make_pair(TfToken(ot->idname),
+                   COVAH_PRIM_OPERATOR_CREATE(C, ot->idname).GetPath())));
+
+  /** 
+   * Have this Operator Shoot a message back up
+   * to COMM, and any clients which have oppted
+   * to SubcribeTo<SomeType>() will now be getting
+   * notifications of this operator's state. */
+  TfNotice notice = TfNotice();
+  MsgBusCallback *cb = new MsgBusCallback(ot);
+  MsgBus invoker(cb);
+  TfNotice::Register(invoker, &MsgBusCallback::COMM, invoker);
+
+  notice.Send(invoker); /* Operator says Hello. */
+}
 
 /**
  *  -----  MsgBus Initialization. ----- */
 
 
-void WM_msgbus_register(void)
+void WM_msgbus_register(const cContext &C)
 {
   /* ------ */
 
+  WM_operatortype_append((C), WM_OT_window_close);
+  WM_operatortype_append((C), WM_OT_window_new);
+  WM_operatortype_append((C), WM_OT_window_new_main);
+  WM_operatortype_append((C), WM_OT_window_fullscreen_toggle);
+  WM_operatortype_append((C), WM_OT_quit_covah);
 
-  /** 
-   * Sends a notification. */
-
-  TfNotice notice = TfNotice();
-
-
-  /**
-   *  -----  Romeo. ----- */
-
-  /** 
-   * A callback function instance. */
-  MsgBusCallback *callbackFunctionRomeo = new MsgBusCallback(IDENT_ROMEO, notice);
-
-  /** 
-   * A sender, invokes a callback function. */
-  MsgBus romeo(callbackFunctionRomeo);
-
-  /** 
-   * This sender is the only one allowed to
-   * call this callback, since it was registered
-   * to it via the TfNotice Register call. This
-   * sender will remain able to continue sending 
-   * push notifications until it's key is revoked. */
-  auto romeokey = TfNotice::Register(romeo, &MsgBusCallback::PushNotif, romeo);
-
-
-  /**
-   *  -----  Juliet. ----- */
-
-  /** 
-   * Now Create Juliet. */
-  MsgBusCallback *callbackFunctionJuliet = new MsgBusCallback(IDENT_JULIET, notice);
-  MsgBus juliet(callbackFunctionJuliet);
-  TfNotice::Register(juliet, &MsgBusCallback::PushNotif, juliet);
-
-
-  /** 
-   * Have Romeo Subscribe to Juliet. */
-  TfNotice::Register(romeo, &MsgBusCallback::PushNotif, juliet);
-
-
-  notice.Send(romeo);
-  notice.Send(juliet);
-
-
-  TfNotice::Revoke(romeokey);
-  notice.Send(romeo);
+  /* ------ */
 }
 
 

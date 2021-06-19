@@ -50,7 +50,7 @@ void WM_init(cContext C, int argc, const char **argv)
   WM_anchor_init(C);
   WM_init_cursor_data();
 
-  WM_msgbus_register();
+  WM_msgbus_register(C);
 }
 
 

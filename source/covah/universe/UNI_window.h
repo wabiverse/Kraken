@@ -82,6 +82,7 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
   inline CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath);
 };
 
+
 CovahWindow::CovahWindow(const cContext &C,
                          const SdfPath &stagepath,
                          const SdfPath &wspace,
