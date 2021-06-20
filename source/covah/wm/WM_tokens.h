@@ -26,44 +26,28 @@
 
 #include "WM_api.h"
 
-#include "WM_init_exit.h"
+#include "UNI_api.h"
 
-#include "CKE_robinhood.h"
-
-#include "UNI_path_defaults.h"
-
-#include <wabi/base/tf/hash.h>
-#include <wabi/usd/usd/prim.h>
+#include <wabi/base/tf/token.h>
 
 WABI_NAMESPACE_BEGIN
 
-enum
+struct COVAH_OPERATOR_TOKENS_TYPE
 {
-  OPERATOR_RUNNING_MODAL = (1 << 0),
-  OPERATOR_CANCELLED = (1 << 1),
-  OPERATOR_FINISHED = (1 << 2),
-  OPERATOR_PASS_THROUGH = (1 << 3),
-  OPERATOR_HANDLED = (1 << 4),
-  OPERATOR_INTERFACE = (1 << 5),
+  COVAH_WM_API
+  COVAH_OPERATOR_TOKENS_TYPE();
+
+  COVAH_DECLARE_STATIC_TOKEN(WM_OT_window_close);
+  COVAH_DECLARE_STATIC_TOKEN(WM_OT_window_new);
+  COVAH_DECLARE_STATIC_TOKEN(WM_OT_window_new_main);
+  COVAH_DECLARE_STATIC_TOKEN(WM_OT_window_fullscreen_toggle);
+  COVAH_DECLARE_STATIC_TOKEN(WM_OT_quit_covah);
+
+  const std::vector<TfToken> allTokens;
 };
 
-struct wmOperatorType
-{
-  /** Text for UI, undo. */
-  const char *name;
-  /** Unique identifier. */
-  TfToken idname;
-  /** Use for tool-tips and Python docs. */
-  const char *description;
-
-  /** Signal changes, allow for Pub/Sub. */
-  const TfNotice notice;
-
-  int (*exec)(const cContext &C, UsdAttribute *op) ATTR_WARN_UNUSED_RESULT;
-
-  bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
-
-  int (*invoke)(const cContext &C, const UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
-};
+extern COVAH_WM_API
+  TfStaticData<COVAH_OPERATOR_TOKENS_TYPE>
+    COVAH_OPERATOR_TOKENS;
 
 WABI_NAMESPACE_END

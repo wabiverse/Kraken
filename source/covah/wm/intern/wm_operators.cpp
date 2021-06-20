@@ -24,6 +24,7 @@
 
 #include "WM_operators.h"
 #include "WM_msgbus.h"
+#include "WM_tokens.h"
 #include "WM_window.h"
 
 #include "UNI_screen.h"
@@ -69,7 +70,7 @@ static bool wm_operator_winactive_normal(const cContext &C)
 void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
-  ot->idname = "WM_OT_window_close";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_close);
   ot->description = "Close the current window";
 
   ot->exec = wm_window_close_exec;
@@ -79,7 +80,7 @@ void WM_OT_window_close(wmOperatorType *ot)
 void WM_OT_window_new(wmOperatorType *ot)
 {
   ot->name = "New Window";
-  ot->idname = "WM_OT_window_new";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new);
   ot->description = "Create a new window";
 
   ot->exec = wm_window_new_exec;
@@ -89,7 +90,7 @@ void WM_OT_window_new(wmOperatorType *ot)
 void WM_OT_window_new_main(wmOperatorType *ot)
 {
   ot->name = "New Main Window";
-  ot->idname = "WM_OT_window_new_main";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new_main);
   ot->description = "Create a new main window with its own workspace and scene selection";
 
   ot->exec = wm_window_new_main_exec;
@@ -99,7 +100,7 @@ void WM_OT_window_new_main(wmOperatorType *ot)
 void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Window Fullscreen";
-  ot->idname = "WM_OT_window_fullscreen_toggle";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_fullscreen_toggle);
   ot->description = "Toggle the current window fullscreen";
 
   ot->exec = wm_window_fullscreen_toggle_exec;
@@ -133,7 +134,7 @@ int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &UNUSED(op), cons
 void WM_OT_quit_covah(wmOperatorType *ot)
 {
   ot->name = "Quit Covah";
-  ot->idname = "WM_OT_quit_covah";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_quit_covah);
   ot->description = "Quit Covah";
 
   ot->invoke = wm_exit_covah_invoke;

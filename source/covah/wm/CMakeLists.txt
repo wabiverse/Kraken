@@ -26,6 +26,7 @@ set(SRC
   intern/wm_msgbus.cpp
   intern/wm_operators.cpp
   intern/wm_styles.cpp
+  intern/wm_tokens.cpp
   intern/wm_window.cpp
   intern/wm.cpp
 
@@ -38,6 +39,7 @@ set(SRC
   WM_inline_tools.h
   WM_msgbus.h
   WM_operators.h
+  WM_tokens.h
   WM_window.h
 )
 

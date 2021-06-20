@@ -45,3 +45,7 @@
 #  endif
 #  define COVAH_UNIVERSE_LOCAL ARCH_HIDDEN
 #endif
+
+#define COVAH_DECLARE_STATIC_TOKEN(x) const TfToken x
+#define COVAH_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
+#define COVAH_OPERATOR_IDNAME(z) COVAH_OPERATOR_TOKENS->z

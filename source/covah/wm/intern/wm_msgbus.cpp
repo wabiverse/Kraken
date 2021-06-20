@@ -67,7 +67,7 @@ void MsgBusCallback::COMM(const TfNotice &notice,
                           MsgBus const &sender)
 {
   TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("!! Hello from MsgBus.\n");
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Operator: %s\n", op.type->idname);
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Operator: %s\n", CHARALL(op.type->idname));
   TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("RefCount: %s\n", CHARALL(ref));
   ++ref;
 }
@@ -85,7 +85,7 @@ void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
   /** Hashed. */
   wmWindowManager wm = CTX_wm_manager(C);
   wm->operators->insert(typename RHashOp::value_type(
-    std::make_pair(TfToken(ot->idname), ot)));
+    std::make_pair(ot->idname, ot)));
 
   /* ------ */
 
