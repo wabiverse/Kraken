@@ -66,4 +66,8 @@ struct wmOperatorType
   int (*invoke)(const cContext &C, const UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
 };
 
+void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *));
+void WM_operators_init(const cContext &C);
+void WM_operators_register(const cContext &C);
+
 WABI_NAMESPACE_END

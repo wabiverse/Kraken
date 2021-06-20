@@ -25,6 +25,7 @@
 #include "WM_window.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
+#include "WM_tokens.h"
 
 #include "UNI_area.h"
 #include "UNI_context.h"
@@ -569,7 +570,7 @@ wmWindow wm_window_copy_test(const cContext &C,
 }
 
 
-int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
 {
   wmWindowManager wm = CTX_wm_manager(C);
   wmWindow win = CTX_wm_window(C);
@@ -578,7 +579,7 @@ int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
 }
 
 
-int wm_window_new_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_new_exec(const cContext &C, UsdAttribute *UNUSED(op))
 {
   Stage stage = CTX_data_stage(C);
   wmWindow win_src = CTX_wm_window(C);
@@ -620,35 +621,6 @@ int wm_window_new_exec(const cContext &C, UsdAttribute *UNUSED(op))
                             false) != NULL);
 
   return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
-}
-
-
-int wm_window_new_main_exec(const cContext &C, UsdAttribute *UNUSED(op))
-{
-  wmWindow win_src = CTX_wm_window(C);
-
-  bool ok = (wm_window_copy_test(C, win_src, true, false) != NULL);
-
-  return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
-}
-
-
-/* fullscreen operator callback */
-int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *UNUSED(op))
-{
-  wmWindow window = CTX_wm_window(C);
-
-  eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin);
-  if (state != ANCHOR_WindowStateFullScreen)
-  {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateFullScreen);
-  }
-  else
-  {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateNormal);
-  }
-
-  return OPERATOR_FINISHED;
 }
 
 
@@ -694,6 +666,167 @@ void WM_window_process_events(const cContext &C)
 void WM_window_swap_buffers(wmWindow win)
 {
   ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)win->anchorwin);
+}
+
+
+/**
+ *  -----  The Window Operators. ----- */
+
+
+static int wm_window_new_main_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wmWindow win_src = CTX_wm_window(C);
+
+  bool ok = (wm_window_copy_test(C, win_src, true, false) != NULL);
+
+  return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+
+static int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wmWindow window = CTX_wm_window(C);
+
+  eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin);
+  if (state != ANCHOR_WindowStateFullScreen)
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateFullScreen);
+  }
+  else
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateNormal);
+  }
+
+  return OPERATOR_FINISHED;
+}
+
+
+static bool wm_operator_winactive(const cContext &C)
+{
+  if (CTX_wm_window(C) == NULL)
+  {
+    return 0;
+  }
+  return 1;
+}
+
+
+static bool wm_operator_winactive_normal(const cContext &C)
+{
+  wmWindow win = CTX_wm_window(C);
+
+  if (win == NULL)
+  {
+    return 0;
+  }
+
+  if (!(win->prims.screen))
+  {
+    return 0;
+  }
+
+  // TfToken alignment;
+  // win->prims.screen->align.Get(&alignment);
+  // if (!(alignment == UsdUITokens->none)) {
+  //   return 0;
+  // }
+
+  return 1;
+}
+
+
+int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
+{
+  wm_exit_schedule_delayed(C);
+  return OPERATOR_FINISHED;
+}
+
+
+int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
+{
+  UserDef uprefs = CTX_data_uprefs(C);
+
+  bool showsave;
+  uprefs->showsave.Get(&showsave);
+
+  if (showsave)
+  {
+    wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
+  }
+  else
+  {
+    wm_exit_schedule_delayed(C);
+  }
+  return OPERATOR_FINISHED;
+}
+
+
+static void WM_OT_window_close(wmOperatorType *ot)
+{
+  ot->name = "Close Window";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_close);
+  ot->description = "Close the current window";
+
+  ot->exec = wm_window_close_exec;
+  ot->poll = wm_operator_winactive;
+}
+
+
+static void WM_OT_window_new(wmOperatorType *ot)
+{
+  ot->name = "New Window";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new);
+  ot->description = "Create a new window";
+
+  ot->exec = wm_window_new_exec;
+  ot->poll = wm_operator_winactive_normal;
+}
+
+
+static void WM_OT_window_new_main(wmOperatorType *ot)
+{
+  ot->name = "New Main Window";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new_main);
+  ot->description = "Create a new main window with its own workspace and scene selection";
+
+  ot->exec = wm_window_new_main_exec;
+  ot->poll = wm_operator_winactive_normal;
+}
+
+
+static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
+{
+  ot->name = "Toggle Window Fullscreen";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_fullscreen_toggle);
+  ot->description = "Toggle the current window fullscreen";
+
+  ot->exec = wm_window_fullscreen_toggle_exec;
+  ot->poll = wm_operator_winactive;
+}
+
+
+static void WM_OT_quit_covah(wmOperatorType *ot)
+{
+  ot->name = "Quit Covah";
+  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_quit_covah);
+  ot->description = "Quit Covah";
+
+  ot->invoke = wm_exit_covah_invoke;
+  ot->exec = wm_exit_covah_exec;
+}
+
+
+void WM_window_operators_register(const cContext &C)
+{
+  /* ------ */
+
+  WM_operatortype_append((C), WM_OT_window_close);
+  WM_operatortype_append((C), WM_OT_window_new);
+  WM_operatortype_append((C), WM_OT_window_new_main);
+  WM_operatortype_append((C), WM_OT_window_fullscreen_toggle);
+  WM_operatortype_append((C), WM_OT_quit_covah);
+
+  /* ------ */
 }
 
 WABI_NAMESPACE_END

@@ -63,61 +63,16 @@ MsgBusCallback::MsgBusCallback(wmOperatorType *ot)
 {}
 
 
-void MsgBusCallback::COMM(const TfNotice &notice,
-                          MsgBus const &sender)
+void MsgBusCallback::OperatorCOMM(const TfNotice &notice,
+                                  MsgBus const &sender)
 {
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("!! Hello from MsgBus.\n");
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("Operator: %s\n", CHARALL(op.type->idname));
-  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("RefCount: %s\n", CHARALL(ref));
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("MsgBus\n");
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("  Type: Operator\n");
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("    ID: %s\n", CHARALL(op.type->idname));
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("    Name: %s\n", op.type->name);
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("    Description: %s\n", op.type->description);
+  TF_DEBUG(COVAH_DEBUG_MSGBUS).Msg("\n");
   ++ref;
-}
-
-
-void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
-{
-  /* ------ */
-
-  wmOperatorType *ot = new wmOperatorType();
-  opfunc(ot);
-
-  /* ------ */
-
-  /** Hashed. */
-  wmWindowManager wm = CTX_wm_manager(C);
-  wm->operators->insert(typename RHashOp::value_type(
-    std::make_pair(ot->idname, ot)));
-
-  /* ------ */
-
-  TfNotice notice = TfNotice();
-  MsgBusCallback *cb = new MsgBusCallback(ot);
-  MsgBus invoker(cb);
-  TfNotice::Register(invoker, &MsgBusCallback::COMM, invoker);
-
-  /* ------ */
-
-  /** Operator says Hello. */
-  notice.Send(invoker);
-}
-
-/**
- *  -----  MsgBus Initialization. ----- */
-
-
-void WM_msgbus_register(const cContext &C)
-{
-  wmWindowManager wm = CTX_wm_manager(C);
-  wm->operators = new RHashOp();
-
-  /* ------ */
-
-  WM_operatortype_append((C), WM_OT_window_close);
-  WM_operatortype_append((C), WM_OT_window_new);
-  WM_operatortype_append((C), WM_OT_window_new_main);
-  WM_operatortype_append((C), WM_OT_window_fullscreen_toggle);
-  WM_operatortype_append((C), WM_OT_quit_covah);
-
-  /* ------ */
 }
 
 

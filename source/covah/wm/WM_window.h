@@ -68,29 +68,9 @@ void WM_anchor_exit(void);
 void WM_window_process_events(const cContext &C);
 void WM_window_swap_buffers(wmWindow win);
 
-/** Poll Callback, Context Checks. */
-bool WM_operator_winactive(const cContext &C);
-
 /** Cleanup. */
 void wm_exit_schedule_delayed(const cContext &C);
 
-
-/** Window Operators */
-int wm_window_close_exec(const cContext &C, UsdAttribute *op);
-int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *op);
-void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win) ATTR_NONNULL();
-
-int wm_window_new_exec(const cContext &C, UsdAttribute *op);
-int wm_window_new_main_exec(const cContext &C, UsdAttribute *op);
-
-
-void WM_OT_window_close(wmOperatorType *ot);
-void WM_OT_window_new(wmOperatorType *ot);
-void WM_OT_window_new_main(wmOperatorType *ot);
-void WM_OT_window_fullscreen_toggle(wmOperatorType *ot);
-void WM_OT_quit_covah(wmOperatorType *ot);
-
-int wm_exit_covah_exec(const cContext &C, wmOperatorType *ot);
-int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &op, const TfNotice &event);
+void WM_window_operators_register(const cContext &C);
 
 WABI_NAMESPACE_END

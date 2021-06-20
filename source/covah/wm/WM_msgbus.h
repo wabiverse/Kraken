@@ -63,9 +63,9 @@ struct MsgBusCallback : public TfWeakBase
   /** Runs & Invokes all the Ops. */
   MsgBusCallback(wmOperatorType *ot);
 
-  /** Comm Link. You've got mail. */
-  void COMM(const TfNotice &notice,
-            MsgBus const &sender);
+  /** Covah Operators COMM. */
+  void OperatorCOMM(const TfNotice &notice,
+                    MsgBus const &sender);
 
   /** Reference Count. */
   tbb::atomic<int> ref;
@@ -78,9 +78,6 @@ struct MsgBusCallback : public TfWeakBase
     wmOperatorType *type;
   } op;
 };
-
-
-void WM_msgbus_register(const cContext &C);
 
 /* ------ */
 

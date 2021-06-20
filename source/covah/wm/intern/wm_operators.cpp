@@ -35,110 +35,42 @@
 
 WABI_NAMESPACE_BEGIN
 
-bool WM_operator_winactive(const cContext &C)
+void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
 {
-  if (CTX_wm_window(C) == NULL)
-  {
-    return 0;
-  }
-  return 1;
+  /* ------ */
+
+  wmOperatorType *ot = new wmOperatorType();
+  opfunc(ot);
+
+  /* ------ */
+
+  /** Hashed. */
+  wmWindowManager wm = CTX_wm_manager(C);
+  wm->operators->insert(typename RHashOp::value_type(
+    std::make_pair(ot->idname, ot)));
+
+  /* ------ */
+
+  TfNotice notice = TfNotice();
+  MsgBusCallback *cb = new MsgBusCallback(ot);
+  MsgBus invoker(cb);
+  TfNotice::Register(invoker, &MsgBusCallback::OperatorCOMM, invoker);
+
+  /* ------ */
+
+  /** Operator says Hello. */
+  notice.Send(invoker);
 }
 
-static bool wm_operator_winactive_normal(const cContext &C)
+void WM_operators_init(const cContext &C)
 {
-  wmWindow win = CTX_wm_window(C);
-
-  if (win == NULL)
-  {
-    return 0;
-  }
-
-  if (!(win->prims.screen))
-  {
-    return 0;
-  }
-
-  // TfToken alignment;
-  // win->prims.screen->align.Get(&alignment);
-  // if (!(alignment == UsdUITokens->none)) {
-  //   return 0;
-  // }
-
-  return 1;
+  wmWindowManager wm = CTX_wm_manager(C);
+  wm->operators = new RHashOp();
 }
 
-void WM_OT_window_close(wmOperatorType *ot)
+void WM_operators_register(const cContext &C)
 {
-  ot->name = "Close Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_close);
-  ot->description = "Close the current window";
-
-  ot->exec = wm_window_close_exec;
-  ot->poll = WM_operator_winactive;
-}
-
-void WM_OT_window_new(wmOperatorType *ot)
-{
-  ot->name = "New Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new);
-  ot->description = "Create a new window";
-
-  ot->exec = wm_window_new_exec;
-  ot->poll = wm_operator_winactive_normal;
-}
-
-void WM_OT_window_new_main(wmOperatorType *ot)
-{
-  ot->name = "New Main Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new_main);
-  ot->description = "Create a new main window with its own workspace and scene selection";
-
-  ot->exec = wm_window_new_main_exec;
-  ot->poll = wm_operator_winactive_normal;
-}
-
-void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
-{
-  ot->name = "Toggle Window Fullscreen";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_fullscreen_toggle);
-  ot->description = "Toggle the current window fullscreen";
-
-  ot->exec = wm_window_fullscreen_toggle_exec;
-  ot->poll = WM_operator_winactive;
-}
-
-int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
-{
-  wm_exit_schedule_delayed(C);
-  return OPERATOR_FINISHED;
-}
-
-int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
-{
-  UserDef uprefs = CTX_data_uprefs(C);
-
-  bool showsave;
-  uprefs->showsave.Get(&showsave);
-
-  if (showsave)
-  {
-    wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
-  }
-  else
-  {
-    wm_exit_schedule_delayed(C);
-  }
-  return OPERATOR_FINISHED;
-}
-
-void WM_OT_quit_covah(wmOperatorType *ot)
-{
-  ot->name = "Quit Covah";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_quit_covah);
-  ot->description = "Quit Covah";
-
-  ot->invoke = wm_exit_covah_invoke;
-  ot->exec = wm_exit_covah_exec;
+  WM_window_operators_register(C);
 }
 
 WABI_NAMESPACE_END
