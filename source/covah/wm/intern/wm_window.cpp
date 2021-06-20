@@ -570,7 +570,7 @@ wmWindow wm_window_copy_test(const cContext &C,
 }
 
 
-static int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_close_exec(const cContext &C, UsdAttribute &UNUSED(op))
 {
   wmWindowManager wm = CTX_wm_manager(C);
   wmWindow win = CTX_wm_window(C);
@@ -579,7 +579,7 @@ static int wm_window_close_exec(const cContext &C, UsdAttribute *UNUSED(op))
 }
 
 
-static int wm_window_new_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_new_exec(const cContext &C, UsdAttribute &UNUSED(op))
 {
   Stage stage = CTX_data_stage(C);
   wmWindow win_src = CTX_wm_window(C);
@@ -673,7 +673,7 @@ void WM_window_swap_buffers(wmWindow win)
  *  -----  The Window Operators. ----- */
 
 
-static int wm_window_new_main_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_new_main_exec(const cContext &C, UsdAttribute &UNUSED(op))
 {
   wmWindow win_src = CTX_wm_window(C);
 
@@ -683,7 +683,7 @@ static int wm_window_new_main_exec(const cContext &C, UsdAttribute *UNUSED(op))
 }
 
 
-static int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute &UNUSED(op))
 {
   wmWindow window = CTX_wm_window(C);
 
@@ -735,14 +735,14 @@ static bool wm_operator_winactive_normal(const cContext &C)
 }
 
 
-int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
+static int wm_exit_covah_exec(const cContext &C, UsdAttribute &UNUSED(op))
 {
   wm_exit_schedule_delayed(C);
   return OPERATOR_FINISHED;
 }
 
 
-int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
+static int wm_exit_covah_invoke(const cContext &C, UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
 {
   UserDef uprefs = CTX_data_uprefs(C);
 

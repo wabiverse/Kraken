@@ -59,11 +59,19 @@ struct wmOperatorType
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;
 
-  int (*exec)(const cContext &C, UsdAttribute *op) ATTR_WARN_UNUSED_RESULT;
+  /**
+   * The use of UsdAttributes in operator callbacks 
+   * directly ties stage data to their respective UI
+   * controls within the Covah Application. If this 
+   * is not necessary behavior for a given operator
+   * callback, simply issue a UNUSED(x) macro on the
+   * unused argument(s). */
+
+  int (*exec)(const cContext &C, UsdAttribute &op) ATTR_WARN_UNUSED_RESULT;
+
+  int (*invoke)(const cContext &C, UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
 
   bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
-
-  int (*invoke)(const cContext &C, const UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
 };
 
 void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *));
