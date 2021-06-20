@@ -33,8 +33,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-typedef robin_hood::unordered_map<TfToken, SdfPath, TfToken::Hash> RHash;
-
 struct CovahMain : public CovahObject
 {
   uint64_t build_commit_timestamp;

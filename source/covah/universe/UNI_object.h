@@ -26,8 +26,6 @@
 
 #include "UNI_api.h"
 
-#include "WM_msgbus.h"
-
 #include <wabi/base/tf/hashmap.h>
 #include <wabi/base/tf/notice.h>
 #include <wabi/base/tf/singleton.h>
@@ -36,15 +34,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-
-#define __STRUCT_NAME__ OT_CREATE(__PRETTY_FUNCTION__)
-
-
 struct CovahObject : public TfRefBase, public TfWeakBase
 {
-  SdfPath path;
-  size_t hash;
-
   TfNotice notice = TfNotice();
 
   virtual ~CovahObject()
@@ -55,9 +46,6 @@ struct CovahObject : public TfRefBase, public TfWeakBase
 
 CovahObject::CovahObject()
   : notice(TfNotice())
-{
-  __STRUCT_NAME__(__PRETTY_FUNCTION__);
-}
-
+{}
 
 WABI_NAMESPACE_END

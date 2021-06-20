@@ -44,25 +44,25 @@ WABI_NAMESPACE_BEGIN
 struct COVAH_PATH_DEFAULTS
 {
   /** Covah Root Namespace. */
-  const inline static TfToken COVAH_ROOT = TfToken("Covah");
+  const inline static TfToken COVAH_ROOT = TfToken("/Covah");
 
   /** Covah :: Ops Root. */
-  const inline static TfToken COVAH_OPERATORS = TfToken("Covah/Ops");
+  const inline static TfToken COVAH_OPERATORS = TfToken("/Covah/Ops");
 
   /** Covah :: UserDef Root. */
-  const inline static TfToken COVAH_USERPREFS = TfToken("Covah/UserDef");
+  const inline static TfToken COVAH_USERPREFS = TfToken("/Covah/UserDef");
 
   /** Covah :: MainWindow Root. */
-  const inline static TfToken COVAH_WINDOW = TfToken("Covah/MainWindow");
+  const inline static TfToken COVAH_WINDOW = TfToken("/Covah/MainWindow");
 
   /** Covah :: MainWindow :: Workspaces Root. */
-  const inline static TfToken COVAH_WORKSPACES = TfToken("Covah/MainWindow/Workspaces");
+  const inline static TfToken COVAH_WORKSPACES = TfToken("/Covah/MainWindow/Workspaces");
 
   /** Covah :: MainWindow :: Workspaces :: Layout Root. */
-  const inline static TfToken COVAH_WORKSPACES_LAYOUT = TfToken("Covah/MainWindow/Workspaces/Layout");
+  const inline static TfToken COVAH_WORKSPACES_LAYOUT = TfToken("/Covah/MainWindow/Workspaces/Layout");
 
   /** Covah :: MainWindow :: Workspaces :: Layout :: Screen Root. */
-  const inline static TfToken COVAH_SCREEN_LAYOUT = TfToken("Covah/MainWindow/Workspaces/Layout/Screen");
+  const inline static TfToken COVAH_SCREEN_LAYOUT = TfToken("/Covah/MainWindow/Workspaces/Layout/Screen");
 };
 
 WABI_NAMESPACE_END

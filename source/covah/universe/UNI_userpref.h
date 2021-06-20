@@ -43,7 +43,7 @@ struct CovahUserPrefs : public UsdUIUserPref, public CovahObject
   UsdAttribute showsave;
 
   inline CovahUserPrefs(const cContext &C,
-                        const SdfPath &stagepath = SdfPath(STRINGIFY(COVAH_USERPREFS)));
+                        const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_USERPREFS));
 };
 
 CovahUserPrefs::CovahUserPrefs(const cContext &C, const SdfPath &stagepath)

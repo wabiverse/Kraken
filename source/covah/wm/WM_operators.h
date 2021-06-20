@@ -26,8 +26,13 @@
 
 #include "WM_api.h"
 
+#include "WM_init_exit.h"
+
+#include "CKE_robinhood.h"
+
 #include "UNI_path_defaults.h"
 
+#include <wabi/base/tf/hash.h>
 #include <wabi/usd/usd/prim.h>
 
 WABI_NAMESPACE_BEGIN
@@ -44,8 +49,6 @@ enum
 
 struct wmOperatorType
 {
-  SdfPath path;
-
   /** Text for UI, undo. */
   const char *name;
   /** Unique identifier. */

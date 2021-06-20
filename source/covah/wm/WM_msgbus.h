@@ -24,16 +24,17 @@
 
 #pragma once
 
+#include <wabi/base/tf/notice.h>
+#include <wabi/base/tf/refBase.h>
+#include <wabi/usd/usd/common.h>
+
+#include <tbb/atomic.h>
+
 #include "WM_api.h"
 #include "WM_operators.h"
 
 #include "CKE_context.h"
 #include "CKE_robinhood.h"
-
-#include <wabi/base/tf/notice.h>
-#include <wabi/base/tf/refBase.h>
-
-#include <tbb/atomic.h>
 
 /**
  *  -----  The Covah WindowManager. ----- */
@@ -52,10 +53,6 @@ WABI_NAMESPACE_BEGIN
 TF_DECLARE_WEAK_AND_REF_PTRS(MsgBusCallback);
 
 typedef MsgBusCallbackPtr MsgBus;
-
-
-#define IDENT_ROMEO 48484
-#define IDENT_JULIET 64121
 
 /**
  *  -----  The MsgBus Callback. ----- */
@@ -83,14 +80,8 @@ struct MsgBusCallback : public TfWeakBase
 };
 
 
-/* ------ */
-
-
-/**
- *  -----  MsgBus Initialization. ----- */
-
-
 void WM_msgbus_register(const cContext &C);
 
+/* ------ */
 
 WABI_NAMESPACE_END

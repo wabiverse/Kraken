@@ -16,13 +16,13 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
  * Window Manager.
  * Making GUI Fly.
  */
-
-#pragma once
 
 #include "WM_api.h"
 
@@ -33,6 +33,9 @@ void WM_init_default_styles();
 
 COVAH_WM_API
 void WM_init(cContext C, int argc, const char **argv);
+
+COVAH_WM_API
+void WM_main(const cContext &C);
 
 enum eWmModes
 {

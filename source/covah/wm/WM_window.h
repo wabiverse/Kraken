@@ -26,6 +26,9 @@
 
 #include "WM_api.h"
 
+#include "WM_msgbus.h"
+#include "WM_operators.h"
+
 #include "CKE_context.h"
 
 WABI_NAMESPACE_BEGIN
@@ -87,7 +90,7 @@ void WM_OT_window_new_main(wmOperatorType *ot);
 void WM_OT_window_fullscreen_toggle(wmOperatorType *ot);
 void WM_OT_quit_covah(wmOperatorType *ot);
 
-int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op));
-int wm_exit_covah_invoke(const cContext &C, UsdAttribute *UNUSED(op), const wmEvent *UNUSED(event));
+int wm_exit_covah_exec(const cContext &C, wmOperatorType *ot);
+int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &op, const TfNotice &event);
 
 WABI_NAMESPACE_END

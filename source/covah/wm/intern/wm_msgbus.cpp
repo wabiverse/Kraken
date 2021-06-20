@@ -22,8 +22,10 @@
  * Making GUI Fly.
  */
 
-#include "WM_msgbus.h"
+#include "WM_api.h"
+
 #include "WM_debug_codes.h"
+#include "WM_msgbus.h"
 #include "WM_operators.h"
 #include "WM_window.h"
 
@@ -36,7 +38,7 @@
 #include "CKE_main.h"
 
 #include <mutex>
-#include <string>*
+#include <string>
 #include <vector>
 
 
@@ -75,37 +77,27 @@ void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
 {
   /* ------ */
 
-  wmWindowManager wm = CTX_wm_manager(C);
-
-  /** 
-   * We keep all operators in
-   * a RobinHood HashMap. Hashed
-   * with a Unique TfToken, and
-   * stored on a UsdPrim. As is
-   * the same for the rest of
-   * the Covah Stack. */
-
-  RHash *rh = new RHash();
-
   wmOperatorType *ot = new wmOperatorType();
   opfunc(ot);
 
-  /** Hashed. */
-  rh->insert(typename RHash::value_type(
-    std::make_pair(TfToken(ot->idname),
-                   COVAH_PRIM_OPERATOR_CREATE(C, ot->idname).GetPath())));
+  /* ------ */
 
-  /** 
-   * Have this Operator Shoot a message back up
-   * to COMM, and any clients which have oppted
-   * to SubcribeTo<SomeType>() will now be getting
-   * notifications of this operator's state. */
+  /** Hashed. */
+  wmWindowManager wm = CTX_wm_manager(C);
+  wm->operators->insert(typename RHashOp::value_type(
+    std::make_pair(TfToken(ot->idname), ot)));
+
+  /* ------ */
+
   TfNotice notice = TfNotice();
   MsgBusCallback *cb = new MsgBusCallback(ot);
   MsgBus invoker(cb);
   TfNotice::Register(invoker, &MsgBusCallback::COMM, invoker);
 
-  notice.Send(invoker); /* Operator says Hello. */
+  /* ------ */
+
+  /** Operator says Hello. */
+  notice.Send(invoker);
 }
 
 /**
@@ -114,6 +106,9 @@ void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
 
 void WM_msgbus_register(const cContext &C)
 {
+  wmWindowManager wm = CTX_wm_manager(C);
+  wm->operators = new RHashOp();
+
   /* ------ */
 
   WM_operatortype_append((C), WM_OT_window_close);

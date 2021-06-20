@@ -23,6 +23,7 @@
  */
 
 #include "WM_operators.h"
+#include "WM_msgbus.h"
 #include "WM_window.h"
 
 #include "UNI_screen.h"
@@ -65,7 +66,7 @@ static bool wm_operator_winactive_normal(const cContext &C)
   return 1;
 }
 
-static void WM_OT_window_close(wmOperatorType *ot)
+void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
   ot->idname = "WM_OT_window_close";
@@ -75,7 +76,7 @@ static void WM_OT_window_close(wmOperatorType *ot)
   ot->poll = WM_operator_winactive;
 }
 
-static void WM_OT_window_new(wmOperatorType *ot)
+void WM_OT_window_new(wmOperatorType *ot)
 {
   ot->name = "New Window";
   ot->idname = "WM_OT_window_new";
@@ -85,7 +86,7 @@ static void WM_OT_window_new(wmOperatorType *ot)
   ot->poll = wm_operator_winactive_normal;
 }
 
-static void WM_OT_window_new_main(wmOperatorType *ot)
+void WM_OT_window_new_main(wmOperatorType *ot)
 {
   ot->name = "New Main Window";
   ot->idname = "WM_OT_window_new_main";
@@ -95,7 +96,7 @@ static void WM_OT_window_new_main(wmOperatorType *ot)
   ot->poll = wm_operator_winactive_normal;
 }
 
-static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
+void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Window Fullscreen";
   ot->idname = "WM_OT_window_fullscreen_toggle";
@@ -105,13 +106,13 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
   ot->poll = WM_operator_winactive;
 }
 
-static int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
+int wm_exit_covah_exec(const cContext &C, UsdAttribute *UNUSED(op))
 {
   wm_exit_schedule_delayed(C);
   return OPERATOR_FINISHED;
 }
 
-static int wm_exit_covah_invoke(const cContext &C, UsdAttribute *UNUSED(op), const wmEvent *UNUSED(event))
+int wm_exit_covah_invoke(const cContext &C, const UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
 {
   UserDef uprefs = CTX_data_uprefs(C);
 
@@ -129,7 +130,7 @@ static int wm_exit_covah_invoke(const cContext &C, UsdAttribute *UNUSED(op), con
   return OPERATOR_FINISHED;
 }
 
-static void WM_OT_quit_covah(wmOperatorType *ot)
+void WM_OT_quit_covah(wmOperatorType *ot)
 {
   ot->name = "Quit Covah";
   ot->idname = "WM_OT_quit_covah";

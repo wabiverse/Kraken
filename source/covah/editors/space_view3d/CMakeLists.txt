@@ -6,6 +6,7 @@ set(INC
   ../../covalib
   ../../covakernel
   ../../universe
+  ../../wm
 )
 
 set(INC_SYS
