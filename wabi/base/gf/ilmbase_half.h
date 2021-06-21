@@ -253,9 +253,10 @@ GF_API void printBits(char c[35], float f);
 
 #  define WABI_HALF_MAX 65504.0f  // Largest positive half
 
-#  define WABI_HALF_EPSILON \
-    0.00097656f  // Smallest positive e for which \
-                 // half (1.0 + e) != half (1.0)
+// Smallest positive e for which
+// half (1.0 + e) != half (1.0)
+#  define WABI_HALF_EPSILON 0.00097656f
+
 #else
 
 #  define WABI_HALF_MIN 5.96046448e-08  // Smallest positive half
@@ -268,45 +269,51 @@ GF_API void printBits(char c[35], float f);
 // half (1.0 + e) != half (1.0)
 #endif
 
-#define WABI_HALF_MANT_DIG \
-  11  // Number of digits in mantissa \
-      // (significand + hidden leading 1)
+// Number of digits in mantissa
+// (significand + hidden leading 1)
+#define WABI_HALF_MANT_DIG 11
+
 
 //
 // floor( (WABI_HALF_MANT_DIG - 1) * log10(2) ) => 3.01... -> 3
-#define WABI_HALF_DIG \
-  3  // Number of base 10 digits that \
-     // can be represented without change
+// Number of base 10 digits that
+// can be represented without change
+#define WABI_HALF_DIG 3
+
 
 // ceil(WABI_HALF_MANT_DIG * log10(2) + 1) => 4.31... -> 5
-#define WABI_HALF_DECIMAL_DIG \
-  5  // Number of base-10 digits that are \
-     // necessary to uniquely represent all \
-     // distinct values
+// Number of base-10 digits that are
+// necessary to uniquely represent all
+// distinct values
+#define WABI_HALF_DECIMAL_DIG 5
+
 
 #define WABI_HALF_RADIX 2  // Base of the exponent
 
-#define WABI_HALF_MIN_EXP \
-  -13  // Minimum negative integer such that \
-       // WABI_HALF_RADIX raised to the power of \
-       // one less than that integer is a \
-       // normalized half
+// Minimum negative integer such that
+// WABI_HALF_RADIX raised to the power of
+// one less than that integer is a
+// normalized half
+#define WABI_HALF_MIN_EXP -13
 
-#define WABI_HALF_MAX_EXP \
-  16  // Maximum positive integer such that \
-      // WABI_HALF_RADIX raised to the power of \
-      // one less than that integer is a \
-      // normalized half
 
-#define WABI_HALF_MIN_10_EXP \
-  -4  // Minimum positive integer such \
-      // that 10 raised to that power is \
-      // a normalized half
+// Maximum positive integer such that
+// WABI_HALF_RADIX raised to the power of
+// one less than that integer is a
+// normalized half
+#define WABI_HALF_MAX_EXP 16
 
-#define WABI_HALF_MAX_10_EXP \
-  4  // Maximum positive integer such \
-     // that 10 raised to that power is \
-     // a normalized half
+// Minimum positive integer such
+// that 10 raised to that power is
+// a normalized half
+#define WABI_HALF_MIN_10_EXP -4
+
+
+// Maximum positive integer such
+// that 10 raised to that power is
+// a normalized half
+#define WABI_HALF_MAX_10_EXP 4
+
 
 //---------------------------------------------------------------------------
 //
