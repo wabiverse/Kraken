@@ -16,35 +16,45 @@
  * Copyright 2021, Wabi.
  */
 
-/**
- * @file
- * COVAH Kernel.
- * Purple Underground.
- */
-
 #pragma once
 
-#include "CKE_api.h"
-#include "CKE_main.h"
-#include "CKE_robinhood.h"
+/**
+ * @file
+ * Universe.
+ * Set the Stage.
+ */
 
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/base/tf/token.h>
+#include "UNI_context.h"
+
+#include <wabi/usd/usd/attribute.h>
 
 WABI_NAMESPACE_BEGIN
 
-std::string covah_exe_path_init(void);
-std::string covah_system_tempdir_path(void);
+struct wmOperator
+{
+  /* saved */
+  /** Used to retrieve type pointer. */
+  TfToken idname;
+  /** Saved, user-settable properties. */
+  UsdAttributeVector properties;
 
-std::string covah_datafiles_path_init(Global KERNEL_GLOBALS);
-std::string covah_python_path_init(Global KERNEL_GLOBALS);
-std::string covah_icon_path_init(Global KERNEL_GLOBALS);
-std::string covah_styles_path_init(Global KERNEL_GLOBALS);
-std::string covah_startup_file_init(Global KERNEL_GLOBALS);
+  /* runtime */
+  /** Operator type definition from idname. */
+  struct wmOperatorType *type;
+  /** Custom storage, only while operator runs. */
+  void *customdata;
 
-typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
+  /** Errors and warnings storage. */
+  struct ReportList *reports;
 
-void *CKE_rhash_lookup(RHash *rh, const TfToken &key);
+  /** List of operators. */
+  std::vector<wmOperator> macro;
+  /** Current running macro, not saved. */
+  struct wmOperator *opm;
+  /** Runtime for drawing. */
+  struct uiLayout *layout;
+  short flag;
+  char _pad[6];
+};
 
 WABI_NAMESPACE_END

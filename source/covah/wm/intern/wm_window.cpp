@@ -30,6 +30,7 @@
 #include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_object.h"
+#include "UNI_operator.h"
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 #include "UNI_workspace.h"
@@ -412,7 +413,7 @@ void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow
   wmWindow win_ctx = CTX_wm_window(C);
 
   Stage stage = CTX_data_stage(C);
-  UserDef uprefs = CTX_data_uprefs(C);
+  UserDef uprefs = CTX_data_prefs(C);
 
   /* The popup will be displayed in the context window which may not be set
    * here (this function gets called outside of normal event handling loop). */
@@ -531,7 +532,7 @@ wmWindow wm_window_copy(cContext C,
 
   /* ----- */
 
-  Workspace workspace = win_src->prims.workspace;
+  WorkSpace workspace = win_src->prims.workspace;
 
   GfVec2f srcpos;
   win_src->pos.Get(&srcpos);
@@ -570,7 +571,7 @@ wmWindow wm_window_copy_test(const cContext &C,
 }
 
 
-static int wm_window_close_exec(const cContext &C, UsdAttribute &UNUSED(op))
+static int wm_window_close_exec(const cContext &C, wmOperator *UNUSED(op))
 {
   wmWindowManager wm = CTX_wm_manager(C);
   wmWindow win = CTX_wm_window(C);
@@ -579,7 +580,7 @@ static int wm_window_close_exec(const cContext &C, UsdAttribute &UNUSED(op))
 }
 
 
-static int wm_window_new_exec(const cContext &C, UsdAttribute &UNUSED(op))
+static int wm_window_new_exec(const cContext &C, wmOperator *UNUSED(op))
 {
   Stage stage = CTX_data_stage(C);
   wmWindow win_src = CTX_wm_window(C);
@@ -673,7 +674,7 @@ void WM_window_swap_buffers(wmWindow win)
  *  -----  The Window Operators. ----- */
 
 
-static int wm_window_new_main_exec(const cContext &C, UsdAttribute &UNUSED(op))
+static int wm_window_new_main_exec(const cContext &C, wmOperator *UNUSED(op))
 {
   wmWindow win_src = CTX_wm_window(C);
 
@@ -683,7 +684,7 @@ static int wm_window_new_main_exec(const cContext &C, UsdAttribute &UNUSED(op))
 }
 
 
-static int wm_window_fullscreen_toggle_exec(const cContext &C, UsdAttribute &UNUSED(op))
+static int wm_window_fullscreen_toggle_exec(const cContext &C, wmOperator *UNUSED(op))
 {
   wmWindow window = CTX_wm_window(C);
 
@@ -735,16 +736,16 @@ static bool wm_operator_winactive_normal(const cContext &C)
 }
 
 
-static int wm_exit_covah_exec(const cContext &C, UsdAttribute &UNUSED(op))
+static int wm_exit_covah_exec(const cContext &C, wmOperator *UNUSED(op))
 {
   wm_exit_schedule_delayed(C);
   return OPERATOR_FINISHED;
 }
 
 
-static int wm_exit_covah_invoke(const cContext &C, UsdAttribute &UNUSED(op), const TfNotice &UNUSED(event))
+static int wm_exit_covah_invoke(const cContext &C, wmOperator *UNUSED(op), wmEvent *UNUSED(event))
 {
-  UserDef uprefs = CTX_data_uprefs(C);
+  UserDef uprefs = CTX_data_prefs(C);
 
   bool showsave;
   uprefs->showsave.Get(&showsave);
@@ -816,15 +817,15 @@ static void WM_OT_quit_covah(wmOperatorType *ot)
 }
 
 
-void WM_window_operators_register(const cContext &C)
+void WM_window_operators_register()
 {
   /* ------ */
 
-  WM_operatortype_append((C), WM_OT_window_close);
-  WM_operatortype_append((C), WM_OT_window_new);
-  WM_operatortype_append((C), WM_OT_window_new_main);
-  WM_operatortype_append((C), WM_OT_window_fullscreen_toggle);
-  WM_operatortype_append((C), WM_OT_quit_covah);
+  WM_operatortype_append(WM_OT_window_close);
+  WM_operatortype_append(WM_OT_window_new);
+  WM_operatortype_append(WM_OT_window_new_main);
+  WM_operatortype_append(WM_OT_window_fullscreen_toggle);
+  WM_operatortype_append(WM_OT_quit_covah);
 
   /* ------ */
 }

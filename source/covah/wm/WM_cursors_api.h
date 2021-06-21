@@ -18,33 +18,27 @@
 
 /**
  * @file
- * COVAH Kernel.
- * Purple Underground.
+ * Window Manager.
+ * Making GUI Fly.
  */
 
 #pragma once
 
-#include "CKE_api.h"
-#include "CKE_main.h"
-#include "CKE_robinhood.h"
+#include "WM_api.h"
 
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/base/tf/token.h>
+#include "UNI_window.h"
+
+#include "ANCHOR_api.h"
+
+#include "CKE_context.h"
+
+#include <wabi/base/tf/debug.h>
+#include <wabi/wabi.h>
 
 WABI_NAMESPACE_BEGIN
 
-std::string covah_exe_path_init(void);
-std::string covah_system_tempdir_path(void);
+void WM_cursor_grab_enable(const wmWindow &win, int wrap, bool hide, int bounds[4]);
 
-std::string covah_datafiles_path_init(Global KERNEL_GLOBALS);
-std::string covah_python_path_init(Global KERNEL_GLOBALS);
-std::string covah_icon_path_init(Global KERNEL_GLOBALS);
-std::string covah_styles_path_init(Global KERNEL_GLOBALS);
-std::string covah_startup_file_init(Global KERNEL_GLOBALS);
-
-typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
-
-void *CKE_rhash_lookup(RHash *rh, const TfToken &key);
+void WM_cursor_position_to_anchor(const wmWindow &win, int *x, int *y);
 
 WABI_NAMESPACE_END

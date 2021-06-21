@@ -24,9 +24,13 @@
  * Set the Stage.
  */
 
+#include "UNI_area.h"
 #include "UNI_context.h"
+#include "UNI_region.h"
 
 #include "CKE_context.h"
+#include "CKE_robinhood.h"
+#include "CKE_utils.h"
 
 #include <wabi/usd/usdUI/screen.h>
 
@@ -34,11 +38,14 @@ WABI_NAMESPACE_BEGIN
 
 struct CovahScreen : public UsdUIScreen, public CovahObject
 {
-
   SdfPath path;
 
   UsdAttribute align;
   UsdRelationship areas_rel;
+
+  std::vector<ScrArea> areas;
+
+  ARegion active_region;
 
   inline CovahScreen(const cContext &C, const SdfPath &stagepath);
 };
@@ -47,7 +54,8 @@ CovahScreen::CovahScreen(const cContext &C, const SdfPath &stagepath)
   : UsdUIScreen(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     align(CreateAlignmentAttr()),
-    areas_rel(CreateAreasRel())
+    areas_rel(CreateAreasRel()),
+    areas()
 {}
 
 WABI_NAMESPACE_END

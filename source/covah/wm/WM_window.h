@@ -71,6 +71,6 @@ void WM_window_swap_buffers(wmWindow win);
 /** Cleanup. */
 void wm_exit_schedule_delayed(const cContext &C);
 
-void WM_window_operators_register(const cContext &C);
+void WM_window_operators_register();
 
 WABI_NAMESPACE_END

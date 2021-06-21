@@ -25,13 +25,15 @@
 #pragma once
 
 #include "UNI_api.h"
+#include "UNI_area.h"
 #include "UNI_object.h"
+#include "UNI_region.h"
 #include "UNI_scene.h"
+#include "UNI_screen.h"
 #include "UNI_system.h"
+#include "UNI_window.h"
 
 #include "CKE_context.h"
-
-#include "UNI_path_defaults.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -64,10 +66,6 @@ void UNI_set_defaults(const cContext &C);
 
 COVAH_UNIVERSE_API
 void UNI_author_default_scene(const cContext &C);
-
-#define COVAH_UNIVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
-#define COVAH_UNIVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
-#define COVAH_PRIM_OPERATOR_CREATE(x, y) CTX_data_stage(x)->DefinePrim(SdfPath(COVAH_PATH_DEFAULTS::COVAH_OPERATORS).AppendPath(SdfPath(y)))
 
 
 WABI_NAMESPACE_END

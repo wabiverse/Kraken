@@ -25,7 +25,9 @@
  */
 
 #include "UNI_context.h"
+#include "UNI_region.h"
 #include "UNI_screen.h"
+#include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
 #include "WM_operators.h"
@@ -38,8 +40,6 @@
 #include <wabi/usd/usdUI/window.h>
 
 WABI_NAMESPACE_BEGIN
-
-typedef robin_hood::unordered_map<TfToken, wmOperatorType *, TfHash> RHashOp;
 
 struct CovahWindow : public UsdUIWindow, public CovahObject
 {
@@ -66,7 +66,7 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
 
   struct
   {
-    Workspace workspace;
+    WorkSpace workspace;
     cScreen screen;
   } prims;
 
@@ -78,6 +78,9 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
 
   /** Anchor system backend pointer. */
   void *anchorwin;
+
+  /** Storage for event system. */
+  struct wmEvent *eventstate;
 
   inline CovahWindow(const cContext &C,
                      const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
@@ -109,7 +112,7 @@ CovahWindow::CovahWindow(const cContext &C,
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
-    prims({.workspace = TfCreateRefPtr(new CovahWorkspace(C, wspace)),
+    prims({.workspace = TfCreateRefPtr(new CovahWorkSpace(C, wspace)),
            .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
 
 {}
@@ -141,8 +144,7 @@ struct CovahWindowManager : public CovahObject
   /** All windows this manager controls. */
   TfHashMap<SdfPath, wmWindow, SdfPath::Hash> windows;
 
-  /** All Operators. */
-  RHashOp *operators;
+  int op_undo_depth;
 };
 
 WABI_NAMESPACE_END

@@ -30,7 +30,9 @@
 
 #include "CKE_robinhood.h"
 
+#include "UNI_operator.h"
 #include "UNI_path_defaults.h"
+#include "UNI_wm_types.h"
 
 #include <wabi/base/tf/hash.h>
 #include <wabi/usd/usd/prim.h>
@@ -59,23 +61,21 @@ struct wmOperatorType
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;
 
-  /**
-   * The use of UsdAttributes in operator callbacks 
-   * directly ties stage data to their respective UI
-   * controls within the Covah Application. If this 
-   * is not necessary behavior for a given operator
-   * callback, simply issue a UNUSED(x) macro on the
-   * unused argument(s). */
+  eWmOperatorType flag;
 
-  int (*exec)(const cContext &C, UsdAttribute &op) ATTR_WARN_UNUSED_RESULT;
+  int (*exec)(const cContext &C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
 
-  int (*invoke)(const cContext &C, UsdAttribute &op, const TfNotice &notice) ATTR_WARN_UNUSED_RESULT;
+  int (*invoke)(const cContext &C, wmOperator *op, wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
   bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
 };
 
-void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *));
+typedef robin_hood::unordered_map<TfToken, wmOperatorType *, TfHash> RHashOp;
+
+void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(const cContext &C);
 void WM_operators_register(const cContext &C);
+
+wmOperatorType *WM_operatortype_find(const TfToken &idname);
 
 WABI_NAMESPACE_END

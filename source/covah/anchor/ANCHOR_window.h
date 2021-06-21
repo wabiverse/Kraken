@@ -110,6 +110,17 @@ class ANCHOR_ISystemWindow
   virtual float getNativePixelSize(void) = 0;
 
   /**
+   * Converts a point in screen coordinates to client rectangle coordinates
+   * @param inX: The x-coordinate in the client rectangle.
+   * @param inY: The y-coordinate in the client rectangle.
+   * @param outX: The x-coordinate on the screen.
+   * @param outY: The y-coordinate on the screen. */
+  virtual void clientToScreen(AnchorS32 inX,
+                              AnchorS32 inY,
+                              AnchorS32 &outX,
+                              AnchorS32 &outY) const = 0;
+
+  /**
    * Returns the recommended DPI for this window.
    * @return The recommended DPI for this window. */
   virtual AnchorU16 getDPIHint() = 0;

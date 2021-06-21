@@ -33,7 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahWorkspace : public UsdUIWorkspace, public CovahObject
+struct CovahWorkSpace : public UsdUIWorkspace, public CovahObject
 {
 
   SdfPath path;
@@ -41,12 +41,12 @@ struct CovahWorkspace : public UsdUIWorkspace, public CovahObject
   UsdAttribute name;
   UsdRelationship screen_rel;
 
-  inline CovahWorkspace(const cContext &C,
+  inline CovahWorkSpace(const cContext &C,
                         const SdfPath &stagepath,
                         const TfToken &title = TfToken("Workspace"));
 };
 
-CovahWorkspace::CovahWorkspace(const cContext &C, const SdfPath &stagepath, const TfToken &title)
+CovahWorkSpace::CovahWorkSpace(const cContext &C, const SdfPath &stagepath, const TfToken &title)
   : UsdUIWorkspace(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     name(CreateNameAttr(VtValue(title))),

@@ -1178,6 +1178,19 @@ void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
   }
 }
 
+void ANCHOR_WindowSDL::clientToScreen(AnchorS32 inX,
+                                      AnchorS32 inY,
+                                      AnchorS32 &outX,
+                                      AnchorS32 &outY) const
+{
+  /* XXXSDL_WEAK_ABS_COORDS */
+  int x_win, y_win;
+  SDL_GetWindowPosition(m_sdl_win, &x_win, &y_win);
+
+  outX = inX + x_win;
+  outY = inY + y_win;
+}
+
 void ANCHOR_WindowSDL::setTitle(const char *title)
 {
   SDL_SetWindowTitle(m_sdl_win, title);

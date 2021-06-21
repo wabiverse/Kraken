@@ -22,29 +22,14 @@
  * Purple Underground.
  */
 
-#pragma once
-
-#include "CKE_api.h"
-#include "CKE_main.h"
-#include "CKE_robinhood.h"
-
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/base/tf/token.h>
+#include "CKE_utils.h"
 
 WABI_NAMESPACE_BEGIN
 
-std::string covah_exe_path_init(void);
-std::string covah_system_tempdir_path(void);
-
-std::string covah_datafiles_path_init(Global KERNEL_GLOBALS);
-std::string covah_python_path_init(Global KERNEL_GLOBALS);
-std::string covah_icon_path_init(Global KERNEL_GLOBALS);
-std::string covah_styles_path_init(Global KERNEL_GLOBALS);
-std::string covah_startup_file_init(Global KERNEL_GLOBALS);
-
-typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
-
-void *CKE_rhash_lookup(RHash *rh, const TfToken &key);
+void *CKE_rhash_lookup(RHash *rh, const TfToken &key)
+{
+  void *ot = rh->at(key);
+  return ot ? ot : NULL;
+}
 
 WABI_NAMESPACE_END

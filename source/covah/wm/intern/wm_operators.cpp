@@ -23,6 +23,7 @@
  */
 
 #include "WM_operators.h"
+#include "WM_debug_codes.h"
 #include "WM_msgbus.h"
 #include "WM_tokens.h"
 #include "WM_window.h"
@@ -32,10 +33,35 @@
 #include "UNI_window.h"
 
 #include "CKE_context.h"
+#include "CKE_utils.h"
 
 WABI_NAMESPACE_BEGIN
 
-void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
+static RHashOp *global_ops_hash = NULL;
+
+wmOperatorType *WM_operatortype_find(const TfToken &idname)
+{
+  if (!idname.IsEmpty())
+  {
+    wmOperatorType *ot;
+
+    ot = (wmOperatorType *)CKE_rhash_lookup((RHash *)global_ops_hash, idname);
+    if (ot)
+    {
+      return ot;
+    }
+
+    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Unknown operator '%s', '%s'\n", CHARALL(idname));
+  }
+  else
+  {
+    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Operator has no id '%s', '%s'\n", idname);
+  }
+
+  return NULL;
+}
+
+void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 {
   /* ------ */
 
@@ -45,9 +71,9 @@ void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
   /* ------ */
 
   /** Hashed. */
-  wmWindowManager wm = CTX_wm_manager(C);
-  wm->operators->insert(typename RHashOp::value_type(
-    std::make_pair(ot->idname, ot)));
+  global_ops_hash->insert(
+    typename RHashOp::value_type(
+      std::make_pair(ot->idname, ot)));
 
   /* ------ */
 
@@ -65,12 +91,12 @@ void WM_operatortype_append(const cContext &C, void (*opfunc)(wmOperatorType *))
 void WM_operators_init(const cContext &C)
 {
   wmWindowManager wm = CTX_wm_manager(C);
-  wm->operators = new RHashOp();
+  global_ops_hash = new RHashOp();
 }
 
 void WM_operators_register(const cContext &C)
 {
-  WM_window_operators_register(C);
+  WM_window_operators_register();
 }
 
 WABI_NAMESPACE_END

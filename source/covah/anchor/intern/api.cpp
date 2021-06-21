@@ -3885,6 +3885,17 @@ float ANCHOR::GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle)
   return 1.0f;
 }
 
+void ANCHOR::ClientToScreen(ANCHOR_SystemWindowHandle windowhandle,
+                            AnchorS32 inX,
+                            AnchorS32 inY,
+                            AnchorS32 *outX,
+                            AnchorS32 *outY)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  window->clientToScreen(inX, inY, *outX, *outY);
+}
+
 void ANCHOR::GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height)
 {
   ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;

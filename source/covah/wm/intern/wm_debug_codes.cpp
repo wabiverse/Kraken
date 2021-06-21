@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
-  TF_DEBUG_ENVIRONMENT_SYMBOL(COVAH_DEBUG_MSGBUS, "Dump Covah MsgBus messages for debugging purposes");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(COVAH_DEBUG_MSGBUS, "Show Covah MsgBus messages for debugging purposes");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(COVAH_DEBUG_OPERATORS, "Show Covah Operator messages for debugging purposes");
 }
 
 

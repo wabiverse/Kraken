@@ -17,11 +17,14 @@
  */
 
 /**
- * @file
+ * @file\
  * Window Manager.
  * Making GUI Fly.
  */
 
+#include "UNI_area.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
 #include "UNI_window.h"
 
 #include "CKE_context.h"

@@ -49,3 +49,7 @@
 #define COVAH_DECLARE_STATIC_TOKEN(x) const TfToken x
 #define COVAH_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
 #define COVAH_OPERATOR_IDNAME(z) COVAH_OPERATOR_TOKENS->z
+
+#define COVAH_UNIVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
+#define COVAH_UNIVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
+#define COVAH_PRIM_OPERATOR_CREATE(x, y) CTX_data_stage(x)->DefinePrim(SdfPath(COVAH_PATH_DEFAULTS::COVAH_OPERATORS).AppendPath(SdfPath(y)))

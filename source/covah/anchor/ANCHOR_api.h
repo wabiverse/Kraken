@@ -387,7 +387,7 @@ enum eAnchorAxisFlag
   /**
    * Axis that cursor grab will wrap. */
   ANCHOR_GrabAxisNone = 0,
-  ANCHOR_AxisX = (1 << 0),
+  ANCHOR_GrabAxisX = (1 << 0),
   ANCHOR_GrabAxisY = (1 << 1),
 };
 
@@ -1059,6 +1059,13 @@ eAnchorStatus SetWindowOrder(ANCHOR_SystemWindowHandle windowhandle, eAnchorWind
 
 ANCHOR_API
 int IsDialogWindow(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+void ClientToScreen(ANCHOR_SystemWindowHandle windowhandle,
+                    AnchorS32 inX,
+                    AnchorS32 inY,
+                    AnchorS32 *outX,
+                    AnchorS32 *outY);
 
 /**
  * Access the Pixar Hydra Driver.

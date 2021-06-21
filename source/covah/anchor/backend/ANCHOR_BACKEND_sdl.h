@@ -163,6 +163,11 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
   void setTitle(const char *title);
   void setIcon(const char *icon);
 
+  void clientToScreen(AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 &outX,
+                      AnchorS32 &outY) const;
+
   eAnchorStatus setState(eAnchorWindowState state);
 
   eAnchorWindowState getState() const;

@@ -21,12 +21,15 @@ set(SRC
   UNI_area.h
   UNI_context.h
   UNI_object.h
+  UNI_operator.h
   UNI_path_defaults.h
   UNI_pixar_utils.h
+  UNI_region.h
   UNI_scene.h
   UNI_screen.h
   UNI_system.h
   UNI_userpref.h
+  UNI_wm_types.h
   UNI_window.h
   UNI_workspace.h
 )

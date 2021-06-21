@@ -44,8 +44,12 @@
 #include "WM_init_exit.h"
 
 /* UNIVERSE */
+#include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_pixar_utils.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
+#include "UNI_userpref.h"
 #include "UNI_window.h"
 
 /* PIXAR */

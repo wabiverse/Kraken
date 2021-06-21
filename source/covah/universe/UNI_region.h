@@ -25,7 +25,6 @@
  */
 
 #include "UNI_context.h"
-#include "UNI_region.h"
 #include "UNI_screen.h"
 
 #include "CKE_context.h"
@@ -34,7 +33,32 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahArea : public UsdUIArea, public CovahObject
+enum eRegionType
+{
+  RGN_TYPE_WINDOW = 0,
+  RGN_TYPE_HEADER = 1,
+  RGN_TYPE_CHANNELS = 2,
+  RGN_TYPE_TEMPORARY = 3,
+  RGN_TYPE_UI = 4,
+  RGN_TYPE_TOOLS = 5,
+  RGN_TYPE_TOOL_PROPS = 6,
+  RGN_TYPE_PREVIEW = 7,
+  RGN_TYPE_HUD = 8,
+  /* Region to navigate the main region from (RGN_TYPE_WINDOW). */
+  RGN_TYPE_NAV_BAR = 9,
+  /* A place for buttons to trigger execution of something that was set up in other regions. */
+  RGN_TYPE_EXECUTE = 10,
+  RGN_TYPE_FOOTER = 11,
+  RGN_TYPE_TOOL_HEADER = 12,
+};
+
+
+#define RGN_TYPE_IS_HEADER_ANY(regiontype) \
+  (((1 << (regiontype)) & \
+    ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
+
+
+struct CovahRegion : public UsdUIArea, public CovahObject
 {
   SdfPath path;
 
@@ -44,17 +68,20 @@ struct CovahArea : public UsdUIArea, public CovahObject
   UsdAttribute pos;
   UsdAttribute size;
 
-  inline CovahArea(const cContext &C, const cScreen &prim, const SdfPath &stagepath);
+  eRegionType regiontype;
+
+  inline CovahRegion(const cContext &C, const cScreen &prim, const SdfPath &stagepath);
 };
 
-CovahArea::CovahArea(const cContext &C, const cScreen &prim, const SdfPath &stagepath)
+CovahRegion::CovahRegion(const cContext &C, const cScreen &prim, const SdfPath &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),
     pos(CreatePosAttr()),
-    size(CreateSizeAttr())
+    size(CreateSizeAttr()),
+    regiontype(RGN_TYPE_WINDOW)
 {}
 
 WABI_NAMESPACE_END

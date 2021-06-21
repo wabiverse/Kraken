@@ -88,11 +88,14 @@ void UNI_set_defaults(const cContext &C)
   /* ----- */
 
   Stage stage = CTX_data_stage(C);
-  wmWindow win = TfCreateRefPtr(new CovahWindow(C));
+
+  wmWindowManager wm = TfCreateRefPtr(new CovahWindowManager);
+  CTX_wm_manager_set(C, wm);
 
   /* ----- */
 
   /** Default Window. */
+  wmWindow win = TfCreateRefPtr(new CovahWindow(C));
   win->title.Set(TfToken("Covah"));
   win->dpi.Set(1.0f);
   win->dpifac.Set(1.0f);
@@ -108,18 +111,20 @@ void UNI_set_defaults(const cContext &C)
   win->size.Set(GfVec2f(1920, 1080));
   win->type.Set(TfToken(UsdUITokens->normal));
   win->workspace_rel.AddTarget(win->prims.workspace->path);
+  wm->windows.insert(std::make_pair(win->path, win));
+  CTX_wm_window_set(C, win);
 
   /* ----- */
 
   /** Default User Preferences. */
   UserDef uprefs = TfCreateRefPtr(new CovahUserPrefs(C));
   uprefs->showsave.Set(bool(true));
-  CTX_data_uprefs_set(C, uprefs);
+  CTX_data_prefs_set(C, uprefs);
 
   /* ----- */
 
   /** Default Viewport. */
-  Area v3d = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("View3D")));
+  ScrArea v3d = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("View3D")));
   v3d->name.Set(TfToken("View3D"));
   v3d->spacetype.Set(UsdUITokens->spaceView3D);
   v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_HYDRA)));
@@ -129,7 +134,7 @@ void UNI_set_defaults(const cContext &C)
   /* ----- */
 
   /** Default Outliner. */
-  Area outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
+  ScrArea outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
   outliner->name.Set(TfToken("Outliner"));
   outliner->spacetype.Set(UsdUITokens->spaceOutliner);
   outliner->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
@@ -142,17 +147,14 @@ void UNI_set_defaults(const cContext &C)
   win->prims.screen->align.Set(UsdUITokens->verticalSplit);
   win->prims.screen->areas_rel.AddTarget(v3d->path);
   win->prims.screen->areas_rel.AddTarget(outliner->path);
+  CTX_wm_screen_set(C, win->prims.screen);
+
 
   /** Add this screen to our default 'Layout' WorkSpace. */
   win->prims.workspace->name.Set(TfToken("Layout"));
   win->prims.workspace->screen_rel.AddTarget(win->prims.screen->path);
 
   /* ----- */
-
-  wmWindowManager wm = TfCreateRefPtr(new CovahWindowManager);
-  wm->windows.insert(std::make_pair(win->path, win));
-  CTX_wm_manager_set(C, wm);
-  CTX_wm_window_set(C, win);
 }
 
 void UNI_author_default_scene(const cContext &C)

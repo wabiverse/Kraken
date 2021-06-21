@@ -26,10 +26,16 @@
 #include "CKE_main.h"
 #include "CKE_version.h"
 
+#include "UNI_area.h"
 #include "UNI_object.h"
+#include "UNI_region.h"
+#include "UNI_scene.h"
+#include "UNI_screen.h"
 #include "UNI_system.h"
 #include "UNI_userpref.h"
 #include "UNI_window.h"
+
+#include "WM_operators.h"
 
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
@@ -75,6 +81,26 @@ wmWindow CTX_wm_window(const cContext &C)
   return C->wm.window;
 }
 
+WorkSpace CTX_wm_workspace(const cContext &C)
+{
+  return C->wm.workspace;
+}
+
+cScreen CTX_wm_screen(const cContext &C)
+{
+  return C->wm.screen;
+}
+
+ScrArea CTX_wm_area(const cContext &C)
+{
+  return C->wm.area;
+}
+
+ARegion CTX_wm_region(const cContext &C)
+{
+  return C->wm.region;
+}
+
 Scene CTX_data_scene(const cContext &C)
 {
   return C->data.scene;
@@ -85,9 +111,9 @@ Stage CTX_data_stage(const cContext &C)
   return C->data.stage;
 }
 
-UserDef CTX_data_uprefs(const cContext &C)
+UserDef CTX_data_prefs(const cContext &C)
 {
-  return C->data.uprefs;
+  return C->data.prefs;
 }
 
 /**
@@ -101,11 +127,42 @@ void CTX_data_main_set(const cContext &C, const Main &cmain)
 void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm)
 {
   C->wm.manager = wm;
+  C->wm.window = NULL;
+  C->wm.screen = NULL;
+  C->wm.area = NULL;
+  C->wm.region = NULL;
 }
 
 void CTX_wm_window_set(const cContext &C, const wmWindow &win)
 {
   C->wm.window = win;
+  C->wm.workspace = win->prims.workspace;
+  C->wm.screen = win->prims.screen;
+  C->wm.area = NULL;
+  C->wm.region = NULL;
+}
+
+void CTX_wm_screen_set(const cContext &C, const cScreen &screen)
+{
+  C->wm.screen = screen;
+  C->wm.area = NULL;
+  C->wm.region = NULL;
+}
+
+void CTX_wm_area_set(const cContext &C, const ScrArea &area)
+{
+  C->wm.area = area;
+  C->wm.region = NULL;
+}
+
+void CTX_wm_region_set(const cContext &C, const ARegion &region)
+{
+  C->wm.region = region;
+}
+
+void CTX_wm_menu_set(const cContext &C, const ARegion &menu)
+{
+  C->wm.menu = menu;
 }
 
 void CTX_data_scene_set(const cContext &C, const Scene &cscene)
@@ -114,9 +171,33 @@ void CTX_data_scene_set(const cContext &C, const Scene &cscene)
   C->data.stage = cscene->stage;
 }
 
-void CTX_data_uprefs_set(const cContext &C, const UserDef &win)
+void CTX_data_prefs_set(const cContext &C, const UserDef &uprefs)
 {
-  C->data.uprefs = win;
+  C->data.prefs = uprefs;
+}
+
+/**
+ * Operator Polls. */
+
+void CTX_wm_operator_poll_msg_clear(const cContext &C)
+{
+  cContextPollMsgParams *params = &C->wm.operator_poll_msg_params;
+  if (params->free_fn != NULL)
+  {
+    params->free_fn(C, params->user_data);
+  }
+  params->get_fn = NULL;
+  params->free_fn = NULL;
+  params->user_data = NULL;
+
+  C->wm.operator_poll_msg = NULL;
+}
+
+void CTX_wm_operator_poll_msg_set(const cContext &C, const char *msg)
+{
+  CTX_wm_operator_poll_msg_clear(C);
+
+  C->wm.operator_poll_msg = msg;
 }
 
 WABI_NAMESPACE_END
