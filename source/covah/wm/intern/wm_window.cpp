@@ -23,6 +23,7 @@
  */
 
 #include "WM_window.h"
+#include "WM_debug_codes.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
@@ -101,6 +102,15 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       puts("<!> event has no window");
       return 1;
     }
+
+    if (!ANCHOR::ValidWindow(anchor_system, anchorwin))
+    {
+      puts("<!> event has invalid window");
+      return 1;
+    }
+
+    ANCHOR_UserPtr win_void_ptr = ANCHOR::GetWindowUserData(anchorwin);
+    const wmWindow &win = (wmWindow &)win_void_ptr;
   }
 
   return 1;
@@ -409,8 +419,8 @@ void wm_exit_schedule_delayed(const cContext &C)
 
   /**
    * TODO. */
+
   exit(COVAH_SUCCESS);
-  return;
 }
 
 
@@ -690,7 +700,6 @@ void WM_window_process_events(const cContext &C)
 
   if ((has_event == false))
   {
-    printf("Quick sleep: No Events on Stack\n");
     PIL_sleep_ms(5);
   }
 }
