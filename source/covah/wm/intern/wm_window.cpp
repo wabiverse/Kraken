@@ -53,7 +53,7 @@ WABI_NAMESPACE_BEGIN
 
 
 /* handle to anchor system. */
-static ANCHOR_SystemHandle anchor_system;
+static ANCHOR_SystemHandle anchor_system = NULL;
 
 /**
  * This is called by anchor, and this is where
@@ -61,26 +61,49 @@ static ANCHOR_SystemHandle anchor_system;
  * the event system. */
 static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 {
-  cContext C = TfCreateRefPtr((CovahContext *)C_void_ptr);
+  const cContext &C = (cContext &)C_void_ptr;
   wmWindowManager wm = CTX_wm_manager(C);
   eAnchorEventType type = ANCHOR::GetEventType(evt);
 
   if (type == ANCHOR_EventTypeQuitRequest)
   {
+    /* Find an active window to display quit dialog in. */
     ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
-    wmWindow win;
+
+    wmWindow win = TfNullPtr;
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
     {
-      win = TfCreateRefPtr((CovahWindow *)ANCHOR::GetWindowUserData(anchorwin));
+      ANCHOR_UserPtr win_void_ptr = ANCHOR::GetWindowUserData(anchorwin);
+      win = (wmWindow &)win_void_ptr;
+    }
+    else
+    {
+      win = wm->windows.begin()->second;
+    }
+
+    /* Display quit dialog or quit immediately. */
+    if (win)
+    {
+      wm_quit_with_optional_confirmation_prompt(C, win);
+    }
+    else
+    {
+      wm_exit_schedule_delayed(C);
     }
   }
   else
   {
     ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
     ANCHOR_EventDataPtr data = ANCHOR::GetEventData(evt);
+
+    if (!anchorwin)
+    {
+      puts("<!> event has no window");
+      return 1;
+    }
   }
 
-  return COVAH_SUCCESS;
+  return 1;
 }
 
 
@@ -111,7 +134,7 @@ static void wm_window_set_dpi(const wmWindow win)
    * Set prefs on
    * Pixar Stage. */
 
-  win->pixelsz.Set(pixelsize);
+  win->pixelsz.Set(float(pixelsize));
   win->dpi.Set(dpiadj);
   win->dpifac.Set(dpifac);
   win->widgetunit.Set(wunit += 2 * ((int)pixelsize - (int)dpifac));
@@ -147,14 +170,14 @@ static void wm_window_anchorwindow_add(wmWindowManager wm, wmWindow win, bool is
   /* ----- */
 
   ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateWindow(anchor_system,
-                                                             NULL,
-                                                             title.GetText(),
-                                                             icon.GetAssetPath().c_str(),
+                                                             (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
+                                                             CHARALL(title),
+                                                             CHARALL(icon.GetAssetPath()),
                                                              pos[0],
                                                              pos[1],
                                                              size[0],
                                                              size[1],
-                                                             ANCHOR_WindowStateNormal,
+                                                             ANCHOR_WindowStateFullScreen,
                                                              is_dialog,
                                                              ANCHOR_DrawingContextTypeVulkan,
                                                              0);
@@ -386,7 +409,7 @@ void wm_exit_schedule_delayed(const cContext &C)
 
   /**
    * TODO. */
-
+  exit(COVAH_SUCCESS);
   return;
 }
 

@@ -149,6 +149,18 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
     return m_sdl_win;
   }
 
+  ANCHOR_VulkanGPU_Surface *getVulkanSurface()
+  {
+    return m_vulkan_context;
+  }
+
+  ANCHOR_VulkanGPU_Surface *updateVulkanSurface(ANCHOR_VulkanGPU_Surface *data)
+  {
+    m_vulkan_context = data;
+  }
+
+  bool getValid() const;
+
  protected:
   /**
    * @param type: The type of rendering context create.

@@ -83,7 +83,7 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
                      const SdfPath &wspace = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES_LAYOUT),
                      const SdfPath &screen = SdfPath(COVAH_PATH_DEFAULTS::COVAH_SCREEN_LAYOUT));
 
-  inline CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath);
+  inline CovahWindow(const cContext &C, const wmWindow &prim, const SdfPath &stagepath);
 };
 
 
@@ -93,6 +93,7 @@ CovahWindow::CovahWindow(const cContext &C,
                          const SdfPath &screen)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
+    parent(NULL),
     title(CreateTitleAttr()),
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
@@ -108,15 +109,16 @@ CovahWindow::CovahWindow(const cContext &C,
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
-    anchorwin(NULL),
+    anchorwin(nullptr),
     eventstate(new wmEvent()),
     prims({.workspace = TfCreateRefPtr(new CovahWorkSpace(C, wspace)),
            .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
 {}
 
-CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath)
+CovahWindow::CovahWindow(const cContext &C, const wmWindow &prim, const SdfPath &stagepath)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
+    parent(prim),
     title(CreateTitleAttr()),
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
@@ -132,7 +134,7 @@ CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stage
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
-    anchorwin(NULL),
+    anchorwin(nullptr),
     eventstate(new wmEvent()),
     prims({.workspace = prim->prims.workspace,
            .screen = prim->prims.screen})

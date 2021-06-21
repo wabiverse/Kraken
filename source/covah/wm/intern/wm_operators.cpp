@@ -51,11 +51,11 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname)
       return ot;
     }
 
-    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Unknown operator '%s', '%s'\n", CHARALL(idname));
+    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Unknown operator '%s'\n", CHARALL(idname));
   }
   else
   {
-    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Operator has no id '%s', '%s'\n", idname);
+    TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("Operator has no id.\n");
   }
 
   return NULL;

@@ -73,6 +73,8 @@ void WM_window_anchorwindows_ensure(const wmWindowManager &wm);
 /** Cleanup. */
 void wm_exit_schedule_delayed(const cContext &C);
 
+void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win);
+
 void WM_window_operators_register();
 
 WABI_NAMESPACE_END

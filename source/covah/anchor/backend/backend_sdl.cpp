@@ -74,7 +74,7 @@ static VkDebugReportCallbackEXT g_DebugReport    = VK_NULL_HANDLE;
 static VkPipelineCache          g_PipelineCache  = VK_NULL_HANDLE;
 static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
-static ANCHOR_VulkanGPU_Surface g_MainWindowData;
+static ANCHOR_VulkanGPU_Surface  g_MainWindowData;
 static uint32_t                  g_MinImageCount    = 2;
 static bool                      g_SwapChainRebuild = false;
 
@@ -586,11 +586,17 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
     m_system(system),
     m_valid_setup(false),
     m_invalid_window(false),
-    m_sdl_custom_cursor(NULL)
+    m_sdl_win(nullptr),
+    m_sdl_custom_cursor(NULL),
+    m_vulkan_context(nullptr)
 {
   /* creating the window _must_ come after setting attributes */
-  m_sdl_win = SDL_CreateWindow(
-    title, left, top, width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
+  m_sdl_win = SDL_CreateWindow(title,
+                               left,
+                               top,
+                               width,
+                               height,
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
 
   /* now set up the rendering context. */
   if (setDrawingContextType(type) == ANCHOR_SUCCESS)
@@ -1091,7 +1097,7 @@ void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
      * Create Framebuffers. */
     int w, h;
     SDL_GetWindowSize(m_sdl_win, &w, &h);
-    m_vulkan_context = &g_MainWindowData;
+    m_vulkan_context = new ANCHOR_VulkanGPU_Surface();
     SetupVulkanWindow(m_vulkan_context, surface, w, h);
 
     /**
@@ -1202,7 +1208,8 @@ void ANCHOR_WindowSDL::setIcon(const char *icon)
 }
 
 ANCHOR_SystemSDL::ANCHOR_SystemSDL()
-  : ANCHOR_System()
+  : ANCHOR_System(),
+    m_sdl_window(nullptr)
 {
   /**
    * Setup SDL. */
@@ -1233,43 +1240,56 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
   AnchorU32 width,
   AnchorU32 height,
   eAnchorWindowState state,
-  eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-  int vkSettings = 0,
+  eAnchorDrawingContextType type,
+  int vkSettings,
   const bool exclusive,
   const bool /* is_dialog */,
   const ANCHOR_ISystemWindow *parentWindow)
 {
-  ANCHOR_WindowSDL *window = NULL;
+  m_sdl_window = new ANCHOR_WindowSDL(this,
+                                      title,
+                                      icon,
+                                      left,
+                                      top,
+                                      width,
+                                      height,
+                                      state,
+                                      type,
+                                      vkSettings,
+                                      exclusive,
+                                      parentWindow);
 
-  window = new ANCHOR_WindowSDL(
-    this, title, icon, left, top, width, height, state, type, vkSettings, exclusive, parentWindow);
-
-  if (window)
+  if (m_sdl_window)
   {
     if (ANCHOR_WindowStateFullScreen == state)
     {
-      SDL_Window *sdl_win = window->getSDLWindow();
+      SDL_Window *sdl_win = m_sdl_window->getSDLWindow();
       SDL_DisplayMode mode;
 
-      static_cast<ANCHOR_DisplayManagerSDL *>(m_displayManager)->getCurrentDisplayModeSDL(mode);
+      // static_cast<ANCHOR_DisplayManagerSDL *>(m_displayManager)->getCurrentDisplayModeSDL(mode);
 
       SDL_SetWindowDisplayMode(sdl_win, &mode);
       SDL_ShowWindow(sdl_win);
       SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
     }
 
-    if (window->getValid())
+    if (m_sdl_window->getValid())
     {
-      m_windowManager->addWindow(window);
-      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window));
+      // m_windowManager->addWindow(window);
+      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, m_sdl_window));
     }
     else
     {
-      delete window;
-      window = NULL;
+      delete m_sdl_window;
+      m_sdl_window = NULL;
     }
   }
-  return window;
+  return m_sdl_window;
+}
+
+bool ANCHOR_WindowSDL::getValid() const
+{
+  return ANCHOR_SystemWindow::getValid() && m_valid_setup;
 }
 
 eAnchorStatus ANCHOR_WindowSDL::setState(eAnchorWindowState state)
@@ -1360,34 +1380,20 @@ ANCHOR_WindowSDL *ANCHOR_SystemSDL::findAnchorWindow(SDL_Window *sdl_win)
   // We should always check the window manager's list of windows
   // and only process events on these windows.
 
-  const std::vector<ANCHOR_ISystemWindow *> &win_vec = m_windowManager->getWindows();
+  // const std::vector<ANCHOR_ISystemWindow *> &win_vec = m_windowManager->getWindows();
 
-  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_it = win_vec.begin();
-  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_end = win_vec.end();
+  // std::vector<ANCHOR_ISystemWindow *>::const_iterator win_it = win_vec.begin();
+  // std::vector<ANCHOR_ISystemWindow *>::const_iterator win_end = win_vec.end();
 
-  for (; win_it != win_end; ++win_it)
-  {
-    ANCHOR_WindowSDL *window = static_cast<ANCHOR_WindowSDL *>(*win_it);
-    if (window->getSDLWindow() == sdl_win)
-    {
-      return window;
-    }
-  }
-  return NULL;
-}
-
-/**
- * Events don't always have valid windows,
- * but ANCHOR needs a window _always_.
- * fallback to the Vulkan window. */
-static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
-{
-  SDL_Window *sdl_win = SDL_GetWindowFromID(id);
-  if (sdl_win == NULL)
-  {
-    sdl_win = SDL_GL_GetCurrentWindow();
-  }
-  return sdl_win;
+  // for (; win_it != win_end; ++win_it)
+  // {
+  // ANCHOR_WindowSDL *window = static_cast<ANCHOR_WindowSDL *>(*win_it);
+  // if (window->getSDLWindow() == sdl_win)
+  // {
+  // return window;
+  // }
+  // }
+  return m_sdl_window;
 }
 
 eAnchorStatus ANCHOR_SystemSDL::getModifierKeys(ANCHOR_ModifierKeys &keys) const
@@ -1547,78 +1553,50 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
   {
     case SDL_WINDOWEVENT: {
       SDL_WindowEvent &sdl_sub_evt = sdl_event->window;
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
 
       switch (sdl_sub_evt.event)
       {
         case SDL_WINDOWEVENT_EXPOSED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowUpdate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowUpdate, m_sdl_window);
           break;
         case SDL_WINDOWEVENT_RESIZED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
-          /**
-           * Resize swap chain? */
-          if (g_SwapChainRebuild)
-          {
-            int width, height;
-            SDL_GetWindowSize(window->getSDLWindow(), &width, &height);
-            if (width > 0 && height > 0)
-            {
-              ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
-              ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
-                                                      g_PhysicalDevice,
-                                                      g_Device,
-                                                      &g_MainWindowData,
-                                                      g_QueueFamily,
-                                                      g_Allocator,
-                                                      width,
-                                                      height,
-                                                      g_MinImageCount);
-              g_MainWindowData.FrameIndex = 0;
-              g_SwapChainRebuild = false;
-            }
-          }
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, m_sdl_window);
           break;
         case SDL_WINDOWEVENT_MOVED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowMove, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowMove, m_sdl_window);
           break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowActivate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowActivate, m_sdl_window);
           break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowDeactivate, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowDeactivate, m_sdl_window);
           break;
         case SDL_WINDOWEVENT_CLOSE:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowClose, window);
+          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowClose, m_sdl_window);
           break;
       }
 
-      ANCHOR_ImplVulkan_NewFrame();
-      ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(window->getSDLWindow());
-      ANCHOR::NewFrame();
       break;
     }
 
     case SDL_QUIT: {
-      ANCHOR_ISystemWindow *window = m_windowManager->getActiveWindow();
-      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeQuitRequest, window);
+      // ANCHOR_ISystemWindow *window = m_windowManager->getActiveWindow();
+      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeQuitRequest, m_sdl_window);
       break;
     }
 
     case SDL_MOUSEMOTION: {
       SDL_MouseMotionEvent &sdl_sub_evt = sdl_event->motion;
-      SDL_Window *sdl_win = SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID);
-      ANCHOR_WindowSDL *window = findAnchorWindow(sdl_win);
-      assert(window != NULL);
+      assert(m_sdl_window != NULL);
 
       int x_win, y_win;
-      SDL_GetWindowPosition(sdl_win, &x_win, &y_win);
+      SDL_GetWindowPosition(m_sdl_window->getSDLWindow(), &x_win, &y_win);
 
       AnchorS32 x_root = sdl_sub_evt.x + x_win;
       AnchorS32 y_root = sdl_sub_evt.y + y_win;
       {
         a_event = new ANCHOR_EventCursor(
-          ANCHOR::GetTime(), ANCHOR_EventTypeCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
+          ANCHOR::GetTime(), ANCHOR_EventTypeCursorMove, m_sdl_window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
       }
       break;
     }
@@ -1629,8 +1607,8 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeButtonDown :
                                                                    ANCHOR_EventTypeButtonUp;
 
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
-      assert(window != NULL);
+      // ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(m_sdl_window != NULL);
 
       /* process rest of normal mouse buttons */
       if (sdl_sub_evt.button == SDL_BUTTON_LEFT)
@@ -1647,14 +1625,14 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       else
         break;
 
-      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
+      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, m_sdl_window, abmask, ANCHOR_TABLET_DATA_NONE);
       break;
     }
     case SDL_MOUSEWHEEL: {
       SDL_MouseWheelEvent &sdl_sub_evt = sdl_event->wheel;
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
-      assert(window != NULL);
-      a_event = new ANCHOR_EventWheel(ANCHOR::GetTime(), window, sdl_sub_evt.y);
+      // ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(m_sdl_window != NULL);
+      a_event = new ANCHOR_EventWheel(ANCHOR::GetTime(), m_sdl_window, sdl_sub_evt.y);
       break;
     }
     case SDL_KEYDOWN:
@@ -1664,8 +1642,8 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeKeyDown :
                                                                    ANCHOR_EventTypeKeyUp;
 
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
-      assert(window != NULL);
+      // ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      assert(m_sdl_window != NULL);
 
       eAnchorKey akey = convertSDLKey(sdl_sub_evt.keysym.scancode);
       /**
@@ -1808,7 +1786,7 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
         }
       }
 
-      a_event = new ANCHOR_EventKey(ANCHOR::GetTime(), type, window, akey, sym, NULL, false);
+      a_event = new ANCHOR_EventKey(ANCHOR::GetTime(), type, m_sdl_window, akey, sym, NULL, false);
       break;
     }
   }
@@ -1833,6 +1811,33 @@ bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
     }
   } while (waitForEvent && !anyProcessed);
 
+  // if (g_SwapChainRebuild && anyProcessed)
+  // {
+  //   int width, height;
+  //   SDL_GetWindowSize(m_sdl_window->getSDLWindow(), &width, &height);
+  //   if (width > 0 && height > 0)
+  //   {
+  //     if (m_sdl_window->getVulkanSurface())
+  //     {
+  //       ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
+  //       ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
+  //                                               g_PhysicalDevice,
+  //                                               g_Device,
+  //                                               m_sdl_window->getVulkanSurface(),
+  //                                               g_QueueFamily,
+  //                                               g_Allocator,
+  //                                               width,
+  //                                               height,
+  //                                               g_MinImageCount);
+  //       m_sdl_window->getVulkanSurface()->FrameIndex = 0;
+  //       g_SwapChainRebuild = false;
+  //     }
+  //   }
+  // }
+
+  ANCHOR_ImplVulkan_NewFrame();
+  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(m_sdl_window->getSDLWindow());
+  ANCHOR::NewFrame();
   return anyProcessed;
 }
 

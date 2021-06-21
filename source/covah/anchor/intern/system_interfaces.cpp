@@ -46,13 +46,14 @@ eAnchorStatus ANCHOR_ISystem::createSystem()
 #elif defined(__APPLE__)
     m_system = new ANCHOR_SystemCocoa();
 #endif
-    success = m_system != NULL ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+    success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_ERROR;
   }
   else
   {
     success = ANCHOR_ERROR;
   }
-  if (success)
+
+  if (success == ANCHOR_SUCCESS)
   {
     success = m_system->init();
   }

@@ -27,9 +27,9 @@
 #include <algorithm>
 
 ANCHOR_WindowManager::ANCHOR_WindowManager()
-  : m_fullScreenWindow(0),
-    m_activeWindow(0),
-    m_activeWindowBeforeFullScreen(0)
+  : m_fullScreenWindow(nullptr),
+    m_activeWindow(nullptr),
+    m_activeWindowBeforeFullScreen(nullptr)
 {}
 
 ANCHOR_WindowManager::~ANCHOR_WindowManager()

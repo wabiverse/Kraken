@@ -90,7 +90,7 @@ eAnchorStatus ANCHOR_System::createFullScreenWindow(ANCHOR_SystemWindow **window
                                                 settings.xPixels,
                                                 settings.yPixels,
                                                 ANCHOR_WindowStateNormal,
-                                                ANCHOR_DrawingContextTypeOpenGL,
+                                                ANCHOR_DrawingContextTypeVulkan,
                                                 0,
                                                 true /* exclusive */);
   return (*window == NULL) ? ANCHOR_ERROR : ANCHOR_SUCCESS;
