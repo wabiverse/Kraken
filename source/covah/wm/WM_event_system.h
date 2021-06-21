@@ -24,11 +24,14 @@
 
 #pragma once
 
+#include <wabi/usd/usd/attribute.h>
 #include <wabi/wabi.h>
 
 #include "CKE_context.h"
 
 WABI_NAMESPACE_BEGIN
+
+int WM_operator_name_call(const cContext &C, const TfToken &optoken, short context, UsdAttributeVector *properties);
 
 void WM_event_do_refresh_wm(const cContext &C);
 

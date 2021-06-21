@@ -37,6 +37,9 @@ void WM_init(cContext C, int argc, const char **argv);
 COVAH_WM_API
 void WM_main(const cContext &C);
 
+COVAH_WM_API
+void WM_check(const cContext &C);
+
 enum eWmModes
 {
   COVAH_NORMAL_MODE = 0,

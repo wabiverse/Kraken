@@ -165,11 +165,10 @@ static void wm_window_anchorwindow_add(wmWindowManager wm, wmWindow win, bool is
 }
 
 
-static void wm_window_anchorwindow_ensure(wmWindowManager wm, wmWindow win, bool is_dialog)
+static void wm_window_anchorwindow_ensure(const wmWindowManager &wm, const wmWindow &win, bool is_dialog)
 {
-  if (win->anchorwin == NULL)
+  if (!win->anchorwin)
   {
-
     /* ----- */
 
     /**
@@ -219,7 +218,6 @@ static void wm_window_anchorwindow_ensure(wmWindowManager wm, wmWindow win, bool
   }
 }
 
-
 static void wm_get_screensize(int *r_width, int *r_height)
 {
   unsigned int uiwidth;
@@ -228,6 +226,15 @@ static void wm_get_screensize(int *r_width, int *r_height)
   ANCHOR::GetMainDisplayDimensions(anchor_system, &uiwidth, &uiheight);
   *r_width = uiwidth;
   *r_height = uiheight;
+}
+
+
+void WM_window_anchorwindows_ensure(const wmWindowManager &wm)
+{
+  TF_FOR_ALL (win, wm->windows)
+  {
+    wm_window_anchorwindow_ensure(wm, win->second, false);
+  }
 }
 
 
@@ -356,6 +363,7 @@ wmWindow WM_window_open(const cContext &C,
   {
     wm_window_anchorwindow_ensure(wm, win, dialog);
   }
+  WM_check(C);
 
   return win;
 }
@@ -509,9 +517,9 @@ void wm_window_close(const cContext &C, const wmWindowManager &wm, const wmWindo
 }
 
 
-wmWindow wm_window_copy(cContext C,
-                        wmWindowManager wm,
-                        wmWindow win_src,
+wmWindow wm_window_copy(const cContext &C,
+                        const wmWindowManager &wm,
+                        const wmWindow &win_src,
                         const bool duplicate_layout,
                         const bool child)
 {
@@ -560,6 +568,8 @@ wmWindow wm_window_copy_test(const cContext &C,
   wmWindowManager wm = CTX_wm_manager(C);
 
   wmWindow win_dst = wm_window_copy(C, wm, win_src, duplicate_layout, child);
+
+  WM_check(C);
 
   if (win_dst->anchorwin)
   {
@@ -664,7 +674,7 @@ void WM_window_process_events(const cContext &C)
 }
 
 
-void WM_window_swap_buffers(wmWindow win)
+void WM_window_swap_buffers(const wmWindow &win)
 {
   ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)win->anchorwin);
 }
@@ -765,7 +775,7 @@ static int wm_exit_covah_invoke(const cContext &C, wmOperator *UNUSED(op), wmEve
 static void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_close);
+  ot->idname = IDNAME(WM_OT_window_close);
   ot->description = "Close the current window";
 
   ot->exec = wm_window_close_exec;
@@ -776,7 +786,7 @@ static void WM_OT_window_close(wmOperatorType *ot)
 static void WM_OT_window_new(wmOperatorType *ot)
 {
   ot->name = "New Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new);
+  ot->idname = IDNAME(WM_OT_window_new);
   ot->description = "Create a new window";
 
   ot->exec = wm_window_new_exec;
@@ -787,7 +797,7 @@ static void WM_OT_window_new(wmOperatorType *ot)
 static void WM_OT_window_new_main(wmOperatorType *ot)
 {
   ot->name = "New Main Window";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_new_main);
+  ot->idname = IDNAME(WM_OT_window_new_main);
   ot->description = "Create a new main window with its own workspace and scene selection";
 
   ot->exec = wm_window_new_main_exec;
@@ -798,7 +808,7 @@ static void WM_OT_window_new_main(wmOperatorType *ot)
 static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Window Fullscreen";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_window_fullscreen_toggle);
+  ot->idname = IDNAME(WM_OT_window_fullscreen_toggle);
   ot->description = "Toggle the current window fullscreen";
 
   ot->exec = wm_window_fullscreen_toggle_exec;
@@ -809,7 +819,7 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 static void WM_OT_quit_covah(wmOperatorType *ot)
 {
   ot->name = "Quit Covah";
-  ot->idname = COVAH_OPERATOR_IDNAME(WM_OT_quit_covah);
+  ot->idname = IDNAME(WM_OT_quit_covah);
   ot->description = "Quit Covah";
 
   ot->invoke = wm_exit_covah_invoke;

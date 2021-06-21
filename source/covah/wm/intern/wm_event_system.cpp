@@ -66,7 +66,7 @@ bool WM_operator_poll(const cContext &C, wmOperatorType *ot)
 
 static wmOperator *wm_operator_create(const wmWindowManager &wm,
                                       wmOperatorType *ot,
-                                      UsdAttributeVector properties,
+                                      UsdAttributeVector *properties,
                                       ReportList *reports)
 {
   wmOperator *op = new wmOperator();
@@ -75,7 +75,7 @@ static wmOperator *wm_operator_create(const wmWindowManager &wm,
   op->idname = ot->idname;
 
   /* Initialize properties. */
-  if (properties.data())
+  if (properties && !properties->empty())
   {
     op->properties = properties;
   }
@@ -220,7 +220,7 @@ static bool isect_pt_v(const GfVec4i &rect, const int xy[2])
 
 void WM_operator_free(wmOperator *op)
 {
-  if (!op->properties.empty())
+  if (op->properties && !op->properties->empty())
   {
     // IDP_FreeProperty(op->properties);
   }
@@ -281,7 +281,7 @@ static void wm_event_handler_ui_cancel(const cContext &C)
 static int wm_operator_invoke(const cContext &C,
                               wmOperatorType *ot,
                               wmEvent *event,
-                              UsdAttributeVector properties,
+                              UsdAttributeVector *properties,
                               ReportList *reports,
                               const bool poll_only,
                               bool use_last_properties)
@@ -469,7 +469,7 @@ static int wm_operator_invoke(const cContext &C,
 
 static int wm_operator_call_internal(const cContext &C,
                                      wmOperatorType *ot,
-                                     UsdAttributeVector properties,
+                                     UsdAttributeVector *properties,
                                      ReportList *reports,
                                      const short context,
                                      const bool poll_only,
@@ -618,13 +618,13 @@ static int wm_operator_call_internal(const cContext &C,
 int WM_operator_name_call_ptr(const cContext &C,
                               wmOperatorType *ot,
                               short context,
-                              UsdAttributeVector properties)
+                              UsdAttributeVector *properties)
 {
   return wm_operator_call_internal(C, ot, properties, NULL, context, false, NULL);
 }
 
 
-int WM_operator_name_call(const cContext &C, const TfToken &optoken, short context, UsdAttributeVector properties)
+int WM_operator_name_call(const cContext &C, const TfToken &optoken, short context, UsdAttributeVector *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot)

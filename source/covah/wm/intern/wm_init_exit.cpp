@@ -24,8 +24,10 @@
 
 #include "WM_init_exit.h" /* Own include. */
 #include "WM_cursors.h"
+#include "WM_event_system.h"
 #include "WM_msgbus.h"
 #include "WM_operators.h"
+#include "WM_tokens.h"
 #include "WM_window.h"
 
 #include "ANCHOR_api.h"
@@ -52,6 +54,8 @@ void WM_init(cContext C, int argc, const char **argv)
 
   WM_operators_init(C);
   WM_operators_register(C);
+
+  WM_check(C);
 }
 
 

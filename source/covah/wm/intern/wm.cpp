@@ -52,4 +52,45 @@ void WM_main(const cContext &C)
   }
 }
 
+void WM_check(const cContext &C)
+{
+  Main cmain = CTX_data_main(C);
+  wmWindowManager wm = CTX_wm_manager(C);
+
+  /* WM context. */
+  if (wm == NULL)
+  {
+    wm = TfCreateRefPtr(new CovahWindowManager());
+    CTX_wm_manager_set(C, wm);
+  }
+
+  if (wm == NULL || wm->windows.empty())
+  {
+    return;
+  }
+
+  /* Run before loading the keyconfig. */
+  // if (wm->message_bus == NULL) {
+  //   wm->message_bus = WM_msgbus_create();
+  // }
+
+  // if (!G.background) {
+  /* Case: fileread. */
+  // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
+  //   WM_keyconfig_init(C);
+  //   WM_autosave_init(wm);
+  // }
+
+  /* Case: no open windows at all, for old file reads. */
+  WM_window_anchorwindows_ensure(wm);
+  // }
+
+  /* Case: fileread. */
+  /* Note: this runs in background mode to set the screen context cb. */
+  // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
+  //   ED_screens_init(bmain, wm);
+  //   wm->initialized |= WM_WINDOW_IS_INIT;
+  // }
+}
+
 WABI_NAMESPACE_END

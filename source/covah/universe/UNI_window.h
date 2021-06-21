@@ -113,7 +113,8 @@ CovahWindow::CovahWindow(const cContext &C,
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
     prims({.workspace = TfCreateRefPtr(new CovahWorkSpace(C, wspace)),
-           .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
+           .screen = TfCreateRefPtr(new CovahScreen(C, screen))}),
+    anchorwin(NULL)
 
 {}
 
@@ -135,7 +136,8 @@ CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stage
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
-    prims({.workspace = prim->prims.workspace, .screen = prim->prims.screen})
+    prims({.workspace = prim->prims.workspace, .screen = prim->prims.screen}),
+    anchorwin(NULL)
 
 {}
 

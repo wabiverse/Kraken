@@ -41,6 +41,7 @@ void WM_draw_update(const cContext &C)
 
   TF_FOR_ALL (win, wm->windows)
   {
+    CTX_wm_window_set(C, win->second);
     WM_window_swap_buffers(win->second);
   }
 }
