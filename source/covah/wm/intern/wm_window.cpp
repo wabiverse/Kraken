@@ -24,6 +24,7 @@
 
 #include "WM_window.h"
 #include "WM_debug_codes.h"
+#include "WM_event_system.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
@@ -55,6 +56,7 @@ WABI_NAMESPACE_BEGIN
 
 /* handle to anchor system. */
 static ANCHOR_SystemHandle anchor_system = NULL;
+
 
 /**
  * This is called by anchor, and this is where
@@ -111,6 +113,13 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
     ANCHOR_UserPtr win_void_ptr = ANCHOR::GetWindowUserData(anchorwin);
     const wmWindow &win = (wmWindow &)win_void_ptr;
+
+    switch (type)
+    {
+      case ANCHOR_EventTypeWindowDeactivate:
+        WM_event_add_anchorevent(wm, win, type, data);
+        break;
+    }
   }
 
   return 1;
@@ -446,6 +455,98 @@ static void wm_window_raise(const wmWindow &win)
     ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
   }
   ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_kWindowOrderTop);
+}
+
+
+static void wm_window_desktop_pos_get(const wmWindow &win,
+                                      const GfVec2f screen_pos,
+                                      GfVec2i *r_desk_pos)
+{
+  UniStageGetFlt(win, pixelsz, win_pixelsz);
+  UniStageGetVec2f(win, pos, win_pos);
+
+  /* To desktop space. */
+  VEC2_SET(r_desk_pos,
+           (GET_X(screen_pos) + (int)(win_pixelsz * GET_X(win_pos))),
+           (GET_Y(screen_pos) + (int)(win_pixelsz * GET_Y(win_pos))));
+}
+
+static void wm_window_screen_pos_get(const wmWindow &win,
+                                     const GfVec2i desktop_pos,
+                                     GfVec2i *r_scr_pos)
+{
+  UniStageGetFlt(win, pixelsz, win_pixelsz);
+  UniStageGetVec2f(win, pos, win_pos);
+
+  /* To window space. */
+  VEC2_SET(r_scr_pos,
+           (GET_X(desktop_pos) - (int)(win_pixelsz * GET_X(win_pos))),
+           (GET_Y(desktop_pos) - (int)(win_pixelsz * GET_Y(win_pos))));
+}
+
+
+bool WM_window_find_under_cursor(const wmWindowManager &wm,
+                                 const wmWindow &win_ignore,
+                                 const wmWindow &win,
+                                 const GfVec2i mval,
+                                 wmWindow r_win,
+                                 GfVec2i *r_mval)
+{
+  GfVec2i desk_pos;
+  wm_window_desktop_pos_get(win, mval, &desk_pos);
+
+  /* TODO: This should follow the order of the activated windows.
+   * The current solution is imperfect but usable in most cases. */
+  TF_FOR_ALL (win_iter, wm->windows)
+  {
+    if (win_iter->second == win_ignore)
+    {
+      continue;
+    }
+
+    UniStageGetToken(win_iter->second, state, win_state);
+
+    if (win_state == UsdUITokens->minimized)
+    {
+      continue;
+    }
+
+    GfVec2i scr_pos;
+    wm_window_screen_pos_get(win_iter->second, desk_pos, &scr_pos);
+
+    UniStageGetVec2f(win_iter->second, pos, win_pos);
+
+    if (GET_X(scr_pos) >= 0 && GET_Y(win_pos) >= 0 &&
+        GET_X(scr_pos) <= WM_window_pixels_x(win_iter->second) &&
+        scr_pos[1] <= WM_window_pixels_y(win_iter->second))
+    {
+      r_win = win_iter->second;
+
+      VEC2_SET(r_mval, GET_X(scr_pos), GET_Y(scr_pos));
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+int WM_window_pixels_x(const wmWindow &win)
+{
+  float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+
+  UniStageGetVec2f(win, size, win_size);
+
+  return (int)(f * GET_X(win_size));
+}
+
+int WM_window_pixels_y(const wmWindow &win)
+{
+  float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+
+  UniStageGetVec2f(win, size, win_size);
+
+  return (int)(f * GET_Y(win_size));
 }
 
 

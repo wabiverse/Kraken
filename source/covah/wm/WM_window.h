@@ -70,11 +70,22 @@ void WM_window_swap_buffers(const wmWindow &win);
 
 void WM_window_anchorwindows_ensure(const wmWindowManager &wm);
 
+/** Operators :: Register */
+void WM_window_operators_register();
+
+/** Utils. */
+int WM_window_pixels_x(const wmWindow &win);
+int WM_window_pixels_y(const wmWindow &win);
+bool WM_window_find_under_cursor(const wmWindowManager &wm,
+                                 const wmWindow &win_ignore,
+                                 const wmWindow &win,
+                                 const GfVec2i mval,
+                                 wmWindow r_win,
+                                 GfVec2i *r_mval);
+
+
 /** Cleanup. */
 void wm_exit_schedule_delayed(const cContext &C);
-
 void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win);
-
-void WM_window_operators_register();
 
 WABI_NAMESPACE_END

@@ -31,6 +31,8 @@
 
 WABI_NAMESPACE_BEGIN
 
+void WM_event_add_anchorevent(const wmWindowManager &wm, const wmWindow &win, int type, void *customdata);
+
 int WM_operator_name_call(const cContext &C, const TfToken &optoken, short context, UsdAttributeVector *properties);
 
 void WM_event_do_refresh_wm(const cContext &C);

@@ -26,6 +26,7 @@
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
 #include "WM_operators.h"
+#include "WM_window.h"
 
 #include "UNI_area.h"
 #include "UNI_operator.h"
@@ -41,6 +42,114 @@
 #include <wabi/base/tf/stringUtils.h>
 
 WABI_NAMESPACE_BEGIN
+
+
+wmEvent *wm_event_add_ex(const wmWindow &win,
+                         const wmEvent *event_to_add,
+                         const wmEvent *event_to_add_after)
+{
+  wmEvent *event = new wmEvent();
+
+  *event = *event_to_add;
+
+  if (event_to_add_after == NULL)
+  {
+    win->event_queue.push_back(event);
+  }
+  else
+  {
+    wmEventQueue::iterator it;
+    for (it = win->event_queue.begin(); it != win->event_queue.end(); ++it)
+    {
+      if ((*it) == event_to_add_after)
+      {
+        it++;
+        win->event_queue.insert(it, event);
+      }
+    }
+  }
+  return event;
+}
+
+
+wmEvent *wm_event_add(const wmWindow &win, const wmEvent *event_to_add)
+{
+  return wm_event_add_ex(win, event_to_add, NULL);
+}
+
+
+static wmEvent *wm_event_add_mousemove(const wmWindow &win, const wmEvent *event)
+{
+  wmEvent *event_last = win->event_queue.back();
+
+  if (event_last && event_last->type == MOUSEMOVE)
+  {
+    event_last->type = INBETWEEN_MOUSEMOVE;
+  }
+
+  wmEvent *event_new = wm_event_add(win, event);
+  if (event_last == NULL)
+  {
+    event_last = win->eventstate;
+  }
+
+  event_new->prev_mouse_pos = event_last->mouse_pos;
+  return event_new;
+}
+
+
+static const wmWindow &wm_event_cursor_other_windows(const wmWindowManager &wm, const wmWindow &win, wmEvent *event)
+{
+  GfVec2i mval = event->mouse_pos;
+
+  if (wm->windows.size() <= 1)
+  {
+    return TfNullPtr;
+  }
+
+  /* In order to use window size and mouse position (pixels), we have to use a WM function. */
+
+  /* check if outside, include top window bar... */
+  if (mval[0] < 0 || mval[1] < 0 || mval[0] > WM_window_pixels_x(win) ||
+      mval[1] > WM_window_pixels_y(win) + 30)
+  {
+    wmWindow win_other;
+    if (WM_window_find_under_cursor(wm, win, win, mval, win_other, &mval))
+    {
+      event->mouse_pos = mval;
+      return win_other;
+    }
+  }
+  return TfNullPtr;
+}
+
+
+void WM_event_add_anchorevent(const wmWindowManager &wm, const wmWindow &win, int type, void *customdata)
+{
+  wmEvent event, *event_state = win->eventstate;
+
+  event = *event_state;
+  event.is_repeat = false;
+
+  event.prevtype = event.type;
+  event.prevval = event.val;
+
+  switch (type)
+  {
+    case ANCHOR_EventTypeCursorMove: {
+      ANCHOR_EventCursorData *cd = (ANCHOR_EventCursorData *)customdata;
+      event.mouse_pos = GfVec2i(cd->x, cd->y);
+
+      event.type = MOUSEMOVE;
+      {
+        wmEvent *event_new = wm_event_add_mousemove(win, &event);
+        event_state->mouse_pos = event_new->mouse_pos;
+      }
+
+      const wmWindow &win_other = wm_event_cursor_other_windows(wm, win, &event);
+    }
+  }
+}
 
 
 bool WM_operator_poll(const cContext &C, wmOperatorType *ot)
@@ -103,17 +212,17 @@ static void wm_region_mouse_co(const cContext &C, wmEvent *event)
   ARegion region = CTX_wm_region(C);
   if (region)
   {
-    GfVec2i pos;
-    region->pos.Get(&pos);
+    UniStageGetVec2f(region, pos, region_pos);
+
     /* Compatibility convention. */
-    event->mval[0] = event->x - pos[0];
-    event->mval[1] = event->y - pos[1];
+    GET_X(event->mval) = GET_X(event->mouse_pos) - GET_X(region_pos);
+    GET_Y(event->mval) = GET_Y(event->mouse_pos) - GET_Y(region_pos);
   }
   else
   {
     /* These values are invalid (avoid odd behavior by relying on old mval values). */
-    event->mval[0] = -1;
-    event->mval[1] = -1;
+    GET_X(event->mval) = -1;
+    GET_Y(event->mval) = -1;
   }
 }
 
@@ -196,21 +305,21 @@ static void wm_operator_finished(const cContext &C, wmOperator *op, const bool r
 }
 
 
-static bool isect_pt_v(const GfVec4i &rect, const int xy[2])
+static bool isect_pt_v(const GfVec4i &rect, const GfVec2i &xy)
 {
-  if (xy[0] < rect[0])
+  if (GET_X(xy) < GET_X(rect))
   {
     return false;
   }
-  if (xy[0] > rect[2])
+  if (GET_X(xy) > GET_Z(rect))
   {
     return false;
   }
-  if (xy[1] < rect[1])
+  if (GET_Y(xy) < GET_Y(rect))
   {
     return false;
   }
-  if (xy[1] > rect[3])
+  if (GET_Y(xy) > GET_W(rect))
   {
     return false;
   }
@@ -430,21 +539,35 @@ static int wm_operator_invoke(const cContext &C,
           }
 
           if (region && region->regiontype == RGN_TYPE_WINDOW &&
-              isect_pt_v(GfVec4i(regionpos[0], regionpos[1], regionsize[0], regionsize[1]), &event->x))
+              isect_pt_v(GfVec4i(GET_X(regionpos),
+                                 GET_Y(regionpos),
+                                 GET_X(regionsize),
+                                 GET_Y(regionsize)),
+                         event->mouse_pos))
           {
-            winrect = new GfVec4i(regionpos[0], regionpos[1], regionsize[0], regionsize[1]);
+            winrect = new GfVec4i(GET_X(regionpos),
+                                  GET_Y(regionpos),
+                                  GET_X(regionsize),
+                                  GET_Y(regionsize));
           }
-          else if (area && isect_pt_v(GfVec4i(areapos[0], areapos[1], areasize[0], areasize[1]), &event->x))
+          else if (area && isect_pt_v(GfVec4i(GET_X(areapos),
+                                              GET_Y(areapos),
+                                              GET_X(areasize),
+                                              GET_Y(areasize)),
+                                      event->mouse_pos))
           {
-            winrect = new GfVec4i(areapos[0], areapos[1], areasize[0], areasize[1]);
+            winrect = new GfVec4i(GET_X(areapos),
+                                  GET_Y(areapos),
+                                  GET_X(areasize),
+                                  GET_Y(areasize));
           }
 
           if (winrect)
           {
-            bounds[0] = winrect->GetArray()[0];
-            bounds[1] = winrect->GetArray()[1];
-            bounds[2] = winrect->GetArray()[2];
-            bounds[3] = winrect->GetArray()[3];
+            GET_X(bounds) = GET_X(winrect->GetArray());
+            GET_Y(bounds) = GET_Y(winrect->GetArray());
+            GET_Z(bounds) = GET_Z(winrect->GetArray());
+            GET_W(bounds) = GET_W(winrect->GetArray());
           }
         }
 

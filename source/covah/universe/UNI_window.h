@@ -39,7 +39,11 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usdUI/window.h>
 
+#include <deque>
+
 WABI_NAMESPACE_BEGIN
+
+typedef std::deque<wmEvent *> wmEventQueue;
 
 struct CovahWindow : public UsdUIWindow, public CovahObject
 {
@@ -70,7 +74,8 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
   void *anchorwin;
 
   /** Storage for event system. */
-  struct wmEvent *eventstate;
+  wmEvent *eventstate;
+  wmEventQueue event_queue;
 
   struct
   {

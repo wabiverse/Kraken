@@ -26,6 +26,7 @@
 
 #include "WM_api.h"
 
+#include <wabi/base/gf/vec2f.h>
 #include <wabi/usd/usd/timeCode.h>
 
 WABI_NAMESPACE_BEGIN
@@ -358,7 +359,7 @@ struct wmEvent
   /** Press, release, scroll-value. */
   short val;
   /** Mouse pointer position, screen coord. */
-  int x, y;
+  GfVec2i mouse_pos;
   int mval[2];
   /**
    * From, anchor if utf8 is enabled for the platform,
@@ -390,7 +391,7 @@ struct wmEvent
    * Unlike other previous state variables, this is set on any mouse motion.
    * Use `prevclickx` & `prevclicky` for the value at time of pressing.
    */
-  int prevx, prevy;
+  GfVec2i prev_mouse_pos;
 
   /** Modifier states. */
   /** 'oskey' is apple or windows-key, value denotes order of pressed. */
