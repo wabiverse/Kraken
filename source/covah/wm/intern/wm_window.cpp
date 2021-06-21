@@ -552,7 +552,6 @@ wmWindow wm_window_copy(const cContext &C,
   win_dst->size.Set(GfVec2f(srcsize[2], srcsize[3]));
 
   win_dst->scene = win_src->scene;
-  STRNCPY(win_dst->view_layer_name, win_src->view_layer_name);
   win_dst->workspace_rel.AddTarget(workspace->path);
 
   return win_dst;

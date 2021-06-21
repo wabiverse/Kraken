@@ -43,7 +43,6 @@ WABI_NAMESPACE_BEGIN
 
 struct CovahWindow : public UsdUIWindow, public CovahObject
 {
-
   SdfPath path;
   wmWindow parent;
 
@@ -64,23 +63,20 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
 
   UsdRelationship workspace_rel;
 
-  struct
-  {
-    WorkSpace workspace;
-    cScreen screen;
-  } prims;
-
   /** Active scene for this window. */
   TfToken scene;
-
-  /** Active session layer display name. */
-  char view_layer_name[64];
 
   /** Anchor system backend pointer. */
   void *anchorwin;
 
   /** Storage for event system. */
   struct wmEvent *eventstate;
+
+  struct
+  {
+    WorkSpace workspace;
+    cScreen screen;
+  } prims;
 
   inline CovahWindow(const cContext &C,
                      const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
@@ -112,10 +108,10 @@ CovahWindow::CovahWindow(const cContext &C,
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
+    anchorwin(NULL),
+    eventstate(new wmEvent()),
     prims({.workspace = TfCreateRefPtr(new CovahWorkSpace(C, wspace)),
-           .screen = TfCreateRefPtr(new CovahScreen(C, screen))}),
-    anchorwin(NULL)
-
+           .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
 {}
 
 CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stagepath)
@@ -136,9 +132,10 @@ CovahWindow::CovahWindow(const cContext &C, wmWindow &prim, const SdfPath &stage
     size(CreateSizeAttr()),
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
-    prims({.workspace = prim->prims.workspace, .screen = prim->prims.screen}),
-    anchorwin(NULL)
-
+    anchorwin(NULL),
+    eventstate(new wmEvent()),
+    prims({.workspace = prim->prims.workspace,
+           .screen = prim->prims.screen})
 {}
 
 struct CovahWindowManager : public CovahObject

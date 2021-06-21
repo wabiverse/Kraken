@@ -324,7 +324,7 @@ struct wmTimer
   /** Various flags controlling timer options, see below. */
   eWmTimerFlags flags;
   /** Set by timer user, to allow custom values. */
-  void *customdata;
+  void *customdata = NULL;
 
   /** Total running time in seconds. */
   UsdTimeCode duration;
@@ -404,7 +404,7 @@ struct wmEvent
   short customdatafree;
   int pad2;
   /** Ascii, unicode, mouse-coords, angles, vectors, NDOF data, drag-drop info. */
-  void *customdata;
+  void *customdata = NULL;
 
   /**
    * True if the operating system inverted the delta x/y values and resulting
