@@ -1067,6 +1067,23 @@ void ClientToScreen(ANCHOR_SystemWindowHandle windowhandle,
                     AnchorS32 *outX,
                     AnchorS32 *outY);
 
+ANCHOR_API
+eAnchorStatus GetModifierKeyState(ANCHOR_SystemHandle systemhandle,
+                                  eAnchorModifierKeyMask mask,
+                                  int *isDown);
+
+ANCHOR_API
+void ScreenToClient(ANCHOR_SystemWindowHandle windowhandle,
+                    AnchorS32 inX,
+                    AnchorS32 inY,
+                    AnchorS32 *outX,
+                    AnchorS32 *outY);
+
+ANCHOR_API
+eAnchorStatus GetCursorPosition(ANCHOR_SystemHandle systemhandle,
+                                AnchorS32 *x,
+                                AnchorS32 *y);
+
 /**
  * Access the Pixar Hydra Driver.
  *

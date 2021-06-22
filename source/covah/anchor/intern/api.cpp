@@ -3856,6 +3856,40 @@ ANCHOR_EventDataPtr ANCHOR::GetEventData(ANCHOR_EventHandle eventhandle)
   return event->getData();
 }
 
+eAnchorStatus ANCHOR::GetModifierKeyState(ANCHOR_SystemHandle systemhandle,
+                                          eAnchorModifierKeyMask mask,
+                                          int *isDown)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+  eAnchorStatus result;
+  bool isdown = false;
+
+  result = system->getModifierKeyState(mask, isdown);
+  *isDown = (int)isdown;
+
+  return result;
+}
+
+void ANCHOR::ScreenToClient(ANCHOR_SystemWindowHandle windowhandle,
+                            AnchorS32 inX,
+                            AnchorS32 inY,
+                            AnchorS32 *outX,
+                            AnchorS32 *outY)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  window->screenToClient(inX, inY, *outX, *outY);
+}
+
+eAnchorStatus ANCHOR::GetCursorPosition(ANCHOR_SystemHandle systemhandle,
+                                        AnchorS32 *x,
+                                        AnchorS32 *y)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+  return system->getCursorPosition(*x, *y);
+}
+
+
 int ANCHOR::ValidWindow(ANCHOR_SystemHandle systemhandle, ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;

@@ -34,7 +34,7 @@
 WABI_NAMESPACE_BEGIN
 
 
-void CKE_covah_python_init(const cContext &C)
+void CKE_covah_python_init(cContext *C)
 {
   WPY_python_init(C);
 }

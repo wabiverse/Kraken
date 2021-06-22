@@ -45,10 +45,10 @@ WABI_NAMESPACE_BEGIN
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
-struct CovahWindow : public UsdUIWindow, public CovahObject
+struct wmWindow : public UsdUIWindow, public CovahObject
 {
   SdfPath path;
-  wmWindow parent;
+  wmWindow *parent;
 
   UsdAttribute title;
   UsdAttribute icon;
@@ -73,29 +73,34 @@ struct CovahWindow : public UsdUIWindow, public CovahObject
   /** Anchor system backend pointer. */
   void *anchorwin;
 
+  /** Set to one for an active window. */
+  bool active;
+
+  bool addmousemove;
+
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
 
   struct
   {
-    WorkSpace workspace;
-    cScreen screen;
+    WorkSpace *workspace;
+    cScreen *screen;
   } prims;
 
-  inline CovahWindow(const cContext &C,
-                     const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
-                     const SdfPath &wspace = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES_LAYOUT),
-                     const SdfPath &screen = SdfPath(COVAH_PATH_DEFAULTS::COVAH_SCREEN_LAYOUT));
+  inline wmWindow(cContext *C,
+                  const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
+                  const SdfPath &wspace = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES_LAYOUT),
+                  const SdfPath &screen = SdfPath(COVAH_PATH_DEFAULTS::COVAH_SCREEN_LAYOUT));
 
-  inline CovahWindow(const cContext &C, const wmWindow &prim, const SdfPath &stagepath);
+  inline wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath);
 };
 
 
-CovahWindow::CovahWindow(const cContext &C,
-                         const SdfPath &stagepath,
-                         const SdfPath &wspace,
-                         const SdfPath &screen)
+wmWindow::wmWindow(cContext *C,
+                   const SdfPath &stagepath,
+                   const SdfPath &wspace,
+                   const SdfPath &screen)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     parent(NULL),
@@ -115,12 +120,14 @@ CovahWindow::CovahWindow(const cContext &C,
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
+    active(true),
+    addmousemove(false),
     eventstate(new wmEvent()),
-    prims({.workspace = TfCreateRefPtr(new CovahWorkSpace(C, wspace)),
-           .screen = TfCreateRefPtr(new CovahScreen(C, screen))})
+    prims({.workspace = new WorkSpace(C, wspace),
+           .screen = new cScreen(C, screen)})
 {}
 
-CovahWindow::CovahWindow(const cContext &C, const wmWindow &prim, const SdfPath &stagepath)
+wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     parent(prim),
@@ -140,17 +147,55 @@ CovahWindow::CovahWindow(const cContext &C, const wmWindow &prim, const SdfPath 
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
+    active(true),
+    addmousemove(false),
     eventstate(new wmEvent()),
     prims({.workspace = prim->prims.workspace,
            .screen = prim->prims.screen})
 {}
 
-struct CovahWindowManager : public CovahObject
+struct wmNotifier
+{
+  wmWindow *window;
+
+  unsigned int category, data, subtype, action;
+
+  void *reference;
+
+  inline wmNotifier();
+};
+
+wmNotifier::wmNotifier()
+  : window(nullptr),
+    category(0),
+    data(0),
+    subtype(0),
+    action(0),
+    reference(nullptr)
+{}
+
+typedef std::vector<wmNotifier *> wmNotifierQueue;
+
+struct wmWindowManager : public CovahObject
 {
   /** All windows this manager controls. */
-  TfHashMap<SdfPath, wmWindow, SdfPath::Hash> windows;
+  TfHashMap<SdfPath, wmWindow *, SdfPath::Hash> windows;
+
+  wmWindow *windrawable, *winactive;
+
+  wmNotifierQueue notifier_queue;
 
   int op_undo_depth;
+
+  inline wmWindowManager();
 };
+
+wmWindowManager::wmWindowManager()
+  : windows(),
+    windrawable(nullptr),
+    winactive(nullptr),
+    notifier_queue(),
+    op_undo_depth(0)
+{}
 
 WABI_NAMESPACE_END

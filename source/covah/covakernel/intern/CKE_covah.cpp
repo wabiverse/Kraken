@@ -86,9 +86,9 @@ static std::string covah_get_version_decimal()
   return TfStringPrintf("%d.%02d", COVAH_VERSION / 100, COVAH_VERSION % 100);
 }
 
-Main CKE_main_new(void)
+Main *CKE_main_new(void)
 {
-  Main cmain = TfCreateRefPtr(new CovahMain());
+  Main *cmain = new Main();
   return cmain;
 }
 
@@ -111,7 +111,7 @@ void CKE_covah_globals_init()
   G.main->covah_version_decimal = covah_get_version_decimal();
 }
 
-void CKE_covah_main_init(const cContext &C, int argc, const char **argv)
+void CKE_covah_main_init(cContext *C, int argc, const char **argv)
 {
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||

@@ -29,7 +29,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_main(const cContext &C)
+void WM_main(cContext *C)
 {
   while (1)
   {
@@ -52,15 +52,15 @@ void WM_main(const cContext &C)
   }
 }
 
-void WM_check(const cContext &C)
+void WM_check(cContext *C)
 {
-  Main cmain = CTX_data_main(C);
-  wmWindowManager wm = CTX_wm_manager(C);
+  Main *cmain = CTX_data_main(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
 
   /* WM context. */
   if (wm == NULL)
   {
-    wm = TfCreateRefPtr(new CovahWindowManager());
+    wm = new wmWindowManager();
     CTX_wm_manager_set(C, wm);
   }
 

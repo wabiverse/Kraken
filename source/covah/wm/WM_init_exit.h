@@ -32,13 +32,13 @@ COVAH_WM_API
 void WM_init_default_styles();
 
 COVAH_WM_API
-void WM_init(cContext C, int argc, const char **argv);
+void WM_init(cContext *C, int argc, const char **argv);
 
 COVAH_WM_API
-void WM_main(const cContext &C);
+void WM_main(cContext *C);
 
 COVAH_WM_API
-void WM_check(const cContext &C);
+void WM_check(cContext *C);
 
 enum eWmModes
 {

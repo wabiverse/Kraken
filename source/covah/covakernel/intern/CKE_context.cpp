@@ -42,76 +42,107 @@
 
 WABI_NAMESPACE_BEGIN
 
+struct cContext : public CovahObject
+{
+  cContext() = default;
+
+  int thread;
+
+  /* windowmanager context */
+  struct
+  {
+    wmWindowManager *manager;
+    wmWindow *window;
+    WorkSpace *workspace;
+    cScreen *screen;
+    ScrArea *area;
+    ARegion *region;
+    ARegion *menu;
+
+    const char *operator_poll_msg;
+    cContextPollMsgParams operator_poll_msg_params;
+  } wm;
+
+  /* data context */
+  struct
+  {
+    Main *main;
+    Scene *scene;
+    Stage stage;
+    UserDef *prefs;
+  } data;
+};
+
 /**
  * Main CTX Creation. */
-cContext CTX_create(void)
+cContext *CTX_create(void)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_create");
 
-  return TfCreateRefPtr(new CovahContext());
+  return new cContext();
 }
 
 /**
  * Main CTX Deletion. */
-void CTX_free(const cContext &C)
+void CTX_free(cContext *C)
 {
   TfAutoMallocTag2 tag("cContext", "CTX_free");
 
   /**
    * CTX out - */
 
-  C.~TfRefPtr();
+  delete C;
 }
 
 /**
  * Getters. */
 
-Main CTX_data_main(const cContext &C)
+Main *CTX_data_main(cContext *C)
 {
   return C->data.main;
 }
 
-wmWindowManager CTX_wm_manager(const cContext &C)
+wmWindowManager *CTX_wm_manager(cContext *C)
 {
   return C->wm.manager;
 }
 
-wmWindow CTX_wm_window(const cContext &C)
+wmWindow *CTX_wm_window(cContext *C)
 {
   return C->wm.window;
 }
 
-WorkSpace CTX_wm_workspace(const cContext &C)
+WorkSpace *CTX_wm_workspace(cContext *C)
 {
   return C->wm.workspace;
 }
 
-cScreen CTX_wm_screen(const cContext &C)
+cScreen *CTX_wm_screen(cContext *C)
 {
   return C->wm.screen;
 }
 
-ScrArea CTX_wm_area(const cContext &C)
+ScrArea *CTX_wm_area(cContext *C)
 {
   return C->wm.area;
 }
 
-ARegion CTX_wm_region(const cContext &C)
+ARegion *CTX_wm_region(cContext *C)
 {
   return C->wm.region;
 }
 
-Scene CTX_data_scene(const cContext &C)
+Scene *CTX_data_scene(cContext *C)
 {
   return C->data.scene;
 }
 
-Stage CTX_data_stage(const cContext &C)
+Stage CTX_data_stage(cContext *C)
 {
   return C->data.stage;
 }
 
-UserDef CTX_data_prefs(const cContext &C)
+UserDef *CTX_data_prefs(cContext *C)
 {
   return C->data.prefs;
 }
@@ -119,12 +150,12 @@ UserDef CTX_data_prefs(const cContext &C)
 /**
  * Setters. */
 
-void CTX_data_main_set(const cContext &C, const Main &cmain)
+void CTX_data_main_set(cContext *C, Main *cmain)
 {
   C->data.main = cmain;
 }
 
-void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm)
+void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
 {
   C->wm.manager = wm;
   C->wm.window = NULL;
@@ -133,7 +164,7 @@ void CTX_wm_manager_set(const cContext &C, const wmWindowManager &wm)
   C->wm.region = NULL;
 }
 
-void CTX_wm_window_set(const cContext &C, const wmWindow &win)
+void CTX_wm_window_set(cContext *C, wmWindow *win)
 {
   C->wm.window = win;
   C->wm.workspace = win->prims.workspace;
@@ -142,36 +173,36 @@ void CTX_wm_window_set(const cContext &C, const wmWindow &win)
   C->wm.region = NULL;
 }
 
-void CTX_wm_screen_set(const cContext &C, const cScreen &screen)
+void CTX_wm_screen_set(cContext *C, cScreen *screen)
 {
   C->wm.screen = screen;
   C->wm.area = NULL;
   C->wm.region = NULL;
 }
 
-void CTX_wm_area_set(const cContext &C, const ScrArea &area)
+void CTX_wm_area_set(cContext *C, ScrArea *area)
 {
   C->wm.area = area;
   C->wm.region = NULL;
 }
 
-void CTX_wm_region_set(const cContext &C, const ARegion &region)
+void CTX_wm_region_set(cContext *C, ARegion *region)
 {
   C->wm.region = region;
 }
 
-void CTX_wm_menu_set(const cContext &C, const ARegion &menu)
+void CTX_wm_menu_set(cContext *C, ARegion *menu)
 {
   C->wm.menu = menu;
 }
 
-void CTX_data_scene_set(const cContext &C, const Scene &cscene)
+void CTX_data_scene_set(cContext *C, Scene *cscene)
 {
   C->data.scene = cscene;
   C->data.stage = cscene->stage;
 }
 
-void CTX_data_prefs_set(const cContext &C, const UserDef &uprefs)
+void CTX_data_prefs_set(cContext *C, UserDef *uprefs)
 {
   C->data.prefs = uprefs;
 }
@@ -179,7 +210,7 @@ void CTX_data_prefs_set(const cContext &C, const UserDef &uprefs)
 /**
  * Operator Polls. */
 
-void CTX_wm_operator_poll_msg_clear(const cContext &C)
+void CTX_wm_operator_poll_msg_clear(cContext *C)
 {
   cContextPollMsgParams *params = &C->wm.operator_poll_msg_params;
   if (params->free_fn != NULL)
@@ -193,7 +224,7 @@ void CTX_wm_operator_poll_msg_clear(const cContext &C)
   C->wm.operator_poll_msg = NULL;
 }
 
-void CTX_wm_operator_poll_msg_set(const cContext &C, const char *msg)
+void CTX_wm_operator_poll_msg_set(cContext *C, const char *msg)
 {
   CTX_wm_operator_poll_msg_clear(C);
 

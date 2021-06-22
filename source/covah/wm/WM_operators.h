@@ -63,18 +63,18 @@ struct wmOperatorType
 
   eWmOperatorType flag;
 
-  int (*exec)(const cContext &C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
+  int (*exec)(cContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
 
-  int (*invoke)(const cContext &C, wmOperator *op, wmEvent *event) ATTR_WARN_UNUSED_RESULT;
+  int (*invoke)(cContext *C, wmOperator *op, wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
-  bool (*poll)(const cContext &C) ATTR_WARN_UNUSED_RESULT;
+  bool (*poll)(cContext *C) ATTR_WARN_UNUSED_RESULT;
 };
 
 typedef robin_hood::unordered_map<TfToken, wmOperatorType *, TfHash> RHashOp;
 
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
-void WM_operators_init(const cContext &C);
-void WM_operators_register(const cContext &C);
+void WM_operators_init(cContext *C);
+void WM_operators_register(cContext *C);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 

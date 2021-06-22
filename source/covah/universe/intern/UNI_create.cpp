@@ -54,48 +54,48 @@
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_create_stage(const cContext &C)
+void UNI_create_stage(cContext *C)
 {
-  Main main = CTX_data_main(C);
+  Main *main = CTX_data_main(C);
 
   main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
 
-  CTX_data_scene_set(C, TfCreateRefPtr(new CovahScene(main->stage_id)));
+  CTX_data_scene_set(C, new Scene(main->stage_id));
 }
 
-void UNI_destroy(const cContext &C)
+void UNI_destroy(cContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->~UsdStage();
 }
 
-void UNI_open_stage(const cContext &C)
+void UNI_open_stage(cContext *C)
 {
-  Main main = CTX_data_main(C);
+  Main *main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
 
   stage->Open(main->stage_id);
 }
 
-void UNI_save_stage(const cContext &C)
+void UNI_save_stage(cContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->GetRootLayer()->Save();
 }
 
-void UNI_set_defaults(const cContext &C)
+void UNI_set_defaults(cContext *C)
 {
   /* ----- */
 
   Stage stage = CTX_data_stage(C);
 
-  wmWindowManager wm = TfCreateRefPtr(new CovahWindowManager);
+  wmWindowManager *wm = new wmWindowManager();
   CTX_wm_manager_set(C, wm);
 
   /* ----- */
 
   /** Default Window. */
-  wmWindow win = TfCreateRefPtr(new CovahWindow(C));
+  wmWindow *win = new wmWindow(C);
   win->title.Set(TfToken("Covah"));
   win->dpi.Set(1.0f);
   win->dpifac.Set(1.0f);
@@ -117,14 +117,14 @@ void UNI_set_defaults(const cContext &C)
   /* ----- */
 
   /** Default User Preferences. */
-  UserDef uprefs = TfCreateRefPtr(new CovahUserPrefs(C));
+  UserDef *uprefs = new UserDef(C);
   uprefs->showsave.Set(bool(true));
   CTX_data_prefs_set(C, uprefs);
 
   /* ----- */
 
   /** Default Viewport. */
-  ScrArea v3d = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("View3D")));
+  ScrArea *v3d = new ScrArea(C, win->prims.screen, SdfPath("View3D"));
   v3d->name.Set(TfToken("View3D"));
   v3d->spacetype.Set(UsdUITokens->spaceView3D);
   v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_HYDRA)));
@@ -134,7 +134,7 @@ void UNI_set_defaults(const cContext &C)
   /* ----- */
 
   /** Default Outliner. */
-  ScrArea outliner = TfCreateRefPtr(new CovahArea(C, win->prims.screen, SdfPath("Outliner")));
+  ScrArea *outliner = new ScrArea(C, win->prims.screen, SdfPath("Outliner"));
   outliner->name.Set(TfToken("Outliner"));
   outliner->spacetype.Set(UsdUITokens->spaceOutliner);
   outliner->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
@@ -157,7 +157,7 @@ void UNI_set_defaults(const cContext &C)
   /* ----- */
 }
 
-void UNI_author_default_scene(const cContext &C)
+void UNI_author_default_scene(cContext *C)
 {
   Stage stage = CTX_data_stage(C);
 

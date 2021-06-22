@@ -45,16 +45,16 @@ WABI_NAMESPACE_BEGIN
  * - Saving Stages. */
 
 COVAH_UNIVERSE_API
-void UNI_create_stage(const cContext &C);
+void UNI_create_stage(cContext *C);
 
 COVAH_UNIVERSE_API
-void UNI_destroy(const cContext &C);
+void UNI_destroy(cContext *C);
 
 COVAH_UNIVERSE_API
-void UNI_open_stage(const cContext &C);
+void UNI_open_stage(cContext *C);
 
 COVAH_UNIVERSE_API
-void UNI_save_stage(const cContext &C);
+void UNI_save_stage(cContext *C);
 
 /**
  * Pixar Stage Defaults
@@ -62,10 +62,10 @@ void UNI_save_stage(const cContext &C);
  * - Covah Scene defaults. */
 
 COVAH_UNIVERSE_API
-void UNI_set_defaults(const cContext &C);
+void UNI_set_defaults(cContext *C);
 
 COVAH_UNIVERSE_API
-void UNI_author_default_scene(const cContext &C);
+void UNI_author_default_scene(cContext *C);
 
 
 WABI_NAMESPACE_END

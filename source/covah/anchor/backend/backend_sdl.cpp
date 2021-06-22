@@ -1856,6 +1856,33 @@ bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
   return anyProcessed;
 }
 
+eAnchorStatus ANCHOR_SystemSDL::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
+{
+  int x_win, y_win;
+  SDL_Window *win = SDL_GetMouseFocus();
+  SDL_GetWindowPosition(win, &x_win, &y_win);
+
+  int xi, yi;
+  SDL_GetMouseState(&xi, &yi);
+  x = xi + x_win;
+  y = yi + x_win;
+
+  return ANCHOR_SUCCESS;
+}
+
+void ANCHOR_WindowSDL::screenToClient(AnchorS32 inX,
+                                      AnchorS32 inY,
+                                      AnchorS32 &outX,
+                                      AnchorS32 &outY) const
+{
+  int x_win, y_win;
+  SDL_GetWindowPosition(m_sdl_win, &x_win, &y_win);
+
+  outX = inX - x_win;
+  outY = inY - y_win;
+}
+
+
 /**
  * Vulkan :: Swap that Chain!
  *

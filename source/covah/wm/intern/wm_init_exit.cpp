@@ -47,7 +47,7 @@
 WABI_NAMESPACE_BEGIN
 
 
-void WM_init(cContext C, int argc, const char **argv)
+void WM_init(cContext *C, int argc, const char **argv)
 {
   WM_anchor_init(C);
   WM_init_cursor_data();

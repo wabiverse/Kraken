@@ -34,10 +34,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_draw_update(const cContext &C)
+void WM_draw_update(cContext *C)
 {
-  Main cmain = CTX_data_main(C);
-  wmWindowManager wm = CTX_wm_manager(C);
+  Main *cmain = CTX_data_main(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
 
   TF_FOR_ALL (win, wm->windows)
   {

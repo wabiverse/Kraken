@@ -31,6 +31,228 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* modifier */
+#define KM_SHIFT 1
+#define KM_CTRL 2
+#define KM_ALT 4
+#define KM_OSKEY 8
+
+#define KM_SHIFT2 16
+#define KM_CTRL2 32
+#define KM_ALT2 64
+#define KM_OSKEY2 128
+
+#define KM_MOD_FIRST 1
+#define KM_MOD_SECOND 2
+
+#define KM_TEXTINPUT -2
+
+#define KM_ANY -1
+#define KM_NOTHING 0
+#define KM_PRESS 1
+#define KM_RELEASE 2
+#define KM_CLICK 3
+#define KM_DBL_CLICK 4
+#define KM_CLICK_DRAG 5
+
+/* category */
+#define NOTE_CATEGORY 0xFF000000
+#define NC_WM (1 << 24)
+#define NC_WINDOW (2 << 24)
+#define NC_SCREEN (3 << 24)
+#define NC_SCENE (4 << 24)
+#define NC_OBJECT (5 << 24)
+#define NC_MATERIAL (6 << 24)
+#define NC_TEXTURE (7 << 24)
+#define NC_LAMP (8 << 24)
+#define NC_GROUP (9 << 24)
+#define NC_IMAGE (10 << 24)
+#define NC_BRUSH (11 << 24)
+#define NC_TEXT (12 << 24)
+#define NC_WORLD (13 << 24)
+#define NC_ANIMATION (14 << 24)
+/* When passing a space as reference data with this (e.g. `WM_event_add_notifier(..., space)`),
+ * the notifier will only be sent to this space. That avoids unnecessary updates for unrelated
+ * spaces. */
+#define NC_SPACE (15 << 24)
+#define NC_GEOM (16 << 24)
+#define NC_NODE (17 << 24)
+#define NC_ID (18 << 24)
+#define NC_PAINTCURVE (19 << 24)
+#define NC_MOVIECLIP (20 << 24)
+#define NC_MASK (21 << 24)
+#define NC_GPENCIL (22 << 24)
+#define NC_LINESTYLE (23 << 24)
+#define NC_CAMERA (24 << 24)
+#define NC_LIGHTPROBE (25 << 24)
+/* Changes to asset data in the current .blend. */
+#define NC_ASSET (26 << 24)
+
+/* data type, 256 entries is enough, it can overlap */
+#define NOTE_DATA 0x00FF0000
+
+/* NC_WM windowmanager */
+#define ND_FILEREAD (1 << 16)
+#define ND_FILESAVE (2 << 16)
+#define ND_DATACHANGED (3 << 16)
+#define ND_HISTORY (4 << 16)
+#define ND_JOB (5 << 16)
+#define ND_UNDO (6 << 16)
+#define ND_XR_DATA_CHANGED (7 << 16)
+#define ND_LIB_OVERRIDE_CHANGED (8 << 16)
+
+/* NC_SCREEN */
+#define ND_LAYOUTBROWSE (1 << 16)
+#define ND_LAYOUTDELETE (2 << 16)
+#define ND_ANIMPLAY (4 << 16)
+#define ND_GPENCIL (5 << 16)
+#define ND_EDITOR_CHANGED (6 << 16) /*sent to new editors after switching to them*/
+#define ND_LAYOUTSET (7 << 16)
+#define ND_SKETCH (8 << 16)
+#define ND_WORKSPACE_SET (9 << 16)
+#define ND_WORKSPACE_DELETE (10 << 16)
+
+/* NC_SCENE Scene */
+#define ND_SCENEBROWSE (1 << 16)
+#define ND_MARKERS (2 << 16)
+#define ND_FRAME (3 << 16)
+#define ND_RENDER_OPTIONS (4 << 16)
+#define ND_NODES (5 << 16)
+#define ND_SEQUENCER (6 << 16)
+/* Note: If an object was added, removed, merged/joined, ..., it is not enough to notify with
+ * this. This affects the layer so also send a layer change notifier (e.g. ND_LAYER_CONTENT)! */
+#define ND_OB_ACTIVE (7 << 16)
+/* See comment on ND_OB_ACTIVE. */
+#define ND_OB_SELECT (8 << 16)
+#define ND_OB_VISIBLE (9 << 16)
+#define ND_OB_RENDER (10 << 16)
+#define ND_MODE (11 << 16)
+#define ND_RENDER_RESULT (12 << 16)
+#define ND_COMPO_RESULT (13 << 16)
+#define ND_KEYINGSET (14 << 16)
+#define ND_TOOLSETTINGS (15 << 16)
+#define ND_LAYER (16 << 16)
+#define ND_FRAME_RANGE (17 << 16)
+#define ND_TRANSFORM_DONE (18 << 16)
+#define ND_WORLD (92 << 16)
+#define ND_LAYER_CONTENT (101 << 16)
+
+/* NC_OBJECT Object */
+#define ND_TRANSFORM (18 << 16)
+#define ND_OB_SHADING (19 << 16)
+#define ND_POSE (20 << 16)
+#define ND_BONE_ACTIVE (21 << 16)
+#define ND_BONE_SELECT (22 << 16)
+#define ND_DRAW (23 << 16)
+#define ND_MODIFIER (24 << 16)
+#define ND_KEYS (25 << 16)
+#define ND_CONSTRAINT (26 << 16)
+#define ND_PARTICLE (27 << 16)
+#define ND_POINTCACHE (28 << 16)
+#define ND_PARENT (29 << 16)
+#define ND_LOD (30 << 16)
+#define ND_DRAW_RENDER_VIEWPORT \
+  (31 << 16) /* for camera & sequencer viewport update, also /w NC_SCENE */
+#define ND_SHADERFX (32 << 16)
+/* For updating motion paths in 3dview. */
+#define ND_DRAW_ANIMVIZ (33 << 16)
+
+/* NC_MATERIAL Material */
+#define ND_SHADING (30 << 16)
+#define ND_SHADING_DRAW (31 << 16)
+#define ND_SHADING_LINKS (32 << 16)
+#define ND_SHADING_PREVIEW (33 << 16)
+
+/* NC_LAMP Light */
+#define ND_LIGHTING (40 << 16)
+#define ND_LIGHTING_DRAW (41 << 16)
+
+/* NC_WORLD World */
+#define ND_WORLD_DRAW (45 << 16)
+
+/* NC_TEXT Text */
+#define ND_CURSOR (50 << 16)
+#define ND_DISPLAY (51 << 16)
+
+/* NC_ANIMATION Animato */
+#define ND_KEYFRAME (70 << 16)
+#define ND_KEYFRAME_PROP (71 << 16)
+#define ND_ANIMCHAN (72 << 16)
+#define ND_NLA (73 << 16)
+#define ND_NLA_ACTCHANGE (74 << 16)
+#define ND_FCURVES_ORDER (75 << 16)
+#define ND_NLA_ORDER (76 << 16)
+
+/* NC_GPENCIL */
+#define ND_GPENCIL_EDITMODE (85 << 16)
+
+/* NC_GEOM Geometry */
+/* Mesh, Curve, MetaBall, Armature, .. */
+#define ND_SELECT (90 << 16)
+#define ND_DATA (91 << 16)
+#define ND_VERTEX_GROUP (92 << 16)
+
+/* NC_NODE Nodes */
+
+/* NC_SPACE */
+#define ND_SPACE_CONSOLE (1 << 16)     /* general redraw */
+#define ND_SPACE_INFO_REPORT (2 << 16) /* update for reports, could specify type */
+#define ND_SPACE_INFO (3 << 16)
+#define ND_SPACE_IMAGE (4 << 16)
+#define ND_SPACE_FILE_PARAMS (5 << 16)
+#define ND_SPACE_FILE_LIST (6 << 16)
+#define ND_SPACE_ASSET_PARAMS (7 << 16)
+#define ND_SPACE_NODE (8 << 16)
+#define ND_SPACE_OUTLINER (9 << 16)
+#define ND_SPACE_VIEW3D (10 << 16)
+#define ND_SPACE_PROPERTIES (11 << 16)
+#define ND_SPACE_TEXT (12 << 16)
+#define ND_SPACE_TIME (13 << 16)
+#define ND_SPACE_GRAPH (14 << 16)
+#define ND_SPACE_DOPESHEET (15 << 16)
+#define ND_SPACE_NLA (16 << 16)
+#define ND_SPACE_SEQUENCER (17 << 16)
+#define ND_SPACE_NODE_VIEW (18 << 16)
+#define ND_SPACE_CHANGED (19 << 16) /*sent to a new editor type after it's replaced an old one*/
+#define ND_SPACE_CLIP (20 << 16)
+#define ND_SPACE_FILE_PREVIEW (21 << 16)
+#define ND_SPACE_SPREADSHEET (22 << 16)
+
+/* subtype, 256 entries too */
+#define NOTE_SUBTYPE 0x0000FF00
+
+/* subtype scene mode */
+#define NS_MODE_OBJECT (1 << 8)
+
+#define NS_EDITMODE_MESH (2 << 8)
+#define NS_EDITMODE_CURVE (3 << 8)
+#define NS_EDITMODE_SURFACE (4 << 8)
+#define NS_EDITMODE_TEXT (5 << 8)
+#define NS_EDITMODE_MBALL (6 << 8)
+#define NS_EDITMODE_LATTICE (7 << 8)
+#define NS_EDITMODE_ARMATURE (8 << 8)
+#define NS_MODE_POSE (9 << 8)
+#define NS_MODE_PARTICLE (10 << 8)
+
+/* subtype 3d view editing */
+#define NS_VIEW3D_GPU (16 << 8)
+#define NS_VIEW3D_SHADING (17 << 8)
+
+/* subtype layer editing */
+#define NS_LAYER_COLLECTION (24 << 8)
+
+/* action classification */
+#define NOTE_ACTION (0x000000FF)
+#define NA_EDITED 1
+#define NA_EVALUATED 2
+#define NA_ADDED 3
+#define NA_REMOVED 4
+#define NA_RENAME 5
+#define NA_SELECTED 6
+#define NA_ACTIVATED 7
+#define NA_PAINTING 8
+#define NA_JOB_FINISHED 9
+
 /** Timer flags. */
 enum eWmTimerFlags
 {

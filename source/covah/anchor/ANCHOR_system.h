@@ -117,6 +117,13 @@ class ANCHOR_ISystem
   virtual eAnchorStatus endFullScreen(void) = 0;
 
   /**
+   * Returns the current location of the cursor (location in screen coordinates)
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
+  virtual eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const = 0;
+
+  /**
    * Returns current full screen mode status.
    * @return The current status. */
   virtual bool getFullScreen(void) = 0;

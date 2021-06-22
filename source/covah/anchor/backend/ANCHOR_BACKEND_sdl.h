@@ -88,6 +88,8 @@ class ANCHOR_SystemSDL : public ANCHOR_System
 
   void processEvent(SDL_Event *sdl_event);
 
+  eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
+
   /** The vector of windows that need to be updated. */
   // TODO std::vector<ANCHOR_WindowSDL *> m_dirty_windows;
   ANCHOR_WindowSDL *m_sdl_window;
@@ -171,6 +173,11 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
    * Swaps front and back buffers of a window.
    * @return A boolean success indicator. */
   eAnchorStatus swapBuffers();
+
+  void screenToClient(AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 &outX,
+                      AnchorS32 &outY) const;
 
   void setTitle(const char *title);
   void setIcon(const char *icon);

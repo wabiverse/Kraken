@@ -44,7 +44,51 @@
 WABI_NAMESPACE_BEGIN
 
 
-wmEvent *wm_event_add_ex(const wmWindow &win,
+static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *reference)
+{
+  for (auto const &note : wm->notifier_queue)
+  {
+    if ((note->category | note->data | note->subtype | note->action) == type &&
+        note->reference == reference)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference)
+{
+  if (!wm->notifier_queue.empty())
+  {
+    if (wm_test_duplicate_notifier(wm, type, reference))
+    {
+      return;
+    }
+  }
+
+  wmNotifier *note = new wmNotifier();
+  wm->notifier_queue.push_back(note);
+
+  note->window = win;
+
+  note->category = type & NOTE_CATEGORY;
+  note->data = type & NOTE_DATA;
+  note->subtype = type & NOTE_SUBTYPE;
+  note->action = type & NOTE_ACTION;
+
+  note->reference = reference;
+}
+
+void WM_event_add_notifier(cContext *C, uint type, void *reference)
+{
+  WM_event_add_notifier_ex(CTX_wm_manager(C), CTX_wm_window(C), type, reference);
+}
+
+
+wmEvent *wm_event_add_ex(wmWindow *win,
                          const wmEvent *event_to_add,
                          const wmEvent *event_to_add_after)
 {
@@ -72,13 +116,13 @@ wmEvent *wm_event_add_ex(const wmWindow &win,
 }
 
 
-wmEvent *wm_event_add(const wmWindow &win, const wmEvent *event_to_add)
+wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add)
 {
   return wm_event_add_ex(win, event_to_add, NULL);
 }
 
 
-static wmEvent *wm_event_add_mousemove(const wmWindow &win, const wmEvent *event)
+static wmEvent *wm_event_add_mousemove(wmWindow *win, wmEvent *event)
 {
   wmEvent *event_last = win->event_queue.back();
 
@@ -98,13 +142,13 @@ static wmEvent *wm_event_add_mousemove(const wmWindow &win, const wmEvent *event
 }
 
 
-static const wmWindow &wm_event_cursor_other_windows(const wmWindowManager &wm, const wmWindow &win, wmEvent *event)
+static wmWindow *wm_event_cursor_other_windows(wmWindowManager *wm, wmWindow *win, wmEvent *event)
 {
   GfVec2i mval = event->mouse_pos;
 
   if (wm->windows.size() <= 1)
   {
-    return TfNullPtr;
+    return nullptr;
   }
 
   /* In order to use window size and mouse position (pixels), we have to use a WM function. */
@@ -113,18 +157,24 @@ static const wmWindow &wm_event_cursor_other_windows(const wmWindowManager &wm, 
   if (mval[0] < 0 || mval[1] < 0 || mval[0] > WM_window_pixels_x(win) ||
       mval[1] > WM_window_pixels_y(win) + 30)
   {
-    wmWindow win_other;
-    if (WM_window_find_under_cursor(wm, win, win, mval, win_other, &mval))
+    wmWindow *win_other;
+    if (WM_window_find_under_cursor(wm, win, win, mval, &win_other, &mval))
     {
       event->mouse_pos = mval;
       return win_other;
     }
   }
-  return TfNullPtr;
+  return nullptr;
 }
 
 
-void WM_event_add_anchorevent(const wmWindowManager &wm, const wmWindow &win, int type, void *customdata)
+void WM_event_init_from_window(wmWindow *win, wmEvent *event)
+{
+  *event = *(win->eventstate);
+}
+
+
+void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata)
 {
   wmEvent event, *event_state = win->eventstate;
 
@@ -146,13 +196,13 @@ void WM_event_add_anchorevent(const wmWindowManager &wm, const wmWindow &win, in
         event_state->mouse_pos = event_new->mouse_pos;
       }
 
-      const wmWindow &win_other = wm_event_cursor_other_windows(wm, win, &event);
+      wmWindow *win_other = wm_event_cursor_other_windows(wm, win, &event);
     }
   }
 }
 
 
-bool WM_operator_poll(const cContext &C, wmOperatorType *ot)
+bool WM_operator_poll(cContext *C, wmOperatorType *ot)
 {
   // TF_FOR_ALL(macro, &ot->macro)
   // {
@@ -173,7 +223,7 @@ bool WM_operator_poll(const cContext &C, wmOperatorType *ot)
 }
 
 
-static wmOperator *wm_operator_create(const wmWindowManager &wm,
+static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
                                       UsdAttributeVector *properties,
                                       ReportList *reports)
@@ -207,9 +257,9 @@ static wmOperator *wm_operator_create(const wmWindowManager &wm,
 }
 
 
-static void wm_region_mouse_co(const cContext &C, wmEvent *event)
+static void wm_region_mouse_co(cContext *C, wmEvent *event)
 {
-  ARegion region = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   if (region)
   {
     UniStageGetVec2f(region, pos, region_pos);
@@ -227,9 +277,9 @@ static void wm_region_mouse_co(const cContext &C, wmEvent *event)
 }
 
 
-static void wm_operator_finished(const cContext &C, wmOperator *op, const bool repeat, const bool store)
+static void wm_operator_finished(cContext *C, wmOperator *op, const bool repeat, const bool store)
 {
-  wmWindowManager wm = CTX_wm_manager(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
   enum
   {
     NOP,
@@ -287,7 +337,7 @@ static void wm_operator_finished(const cContext &C, wmOperator *op, const bool r
   {
     if (hud_status == SET)
     {
-      ScrArea area = CTX_wm_area(C);
+      ScrArea *area = CTX_wm_area(C);
       if (area)
       {
         // ED_area_type_hud_ensure(C, area);
@@ -352,9 +402,9 @@ void WM_operator_free(wmOperator *op)
 }
 
 
-void wm_event_handler_ui_cancel_ex(const cContext &C,
-                                   const wmWindow &win,
-                                   const ARegion &region,
+void wm_event_handler_ui_cancel_ex(cContext *C,
+                                   wmWindow *win,
+                                   ARegion *region,
                                    bool reactivate_button)
 {
   if (!region)
@@ -379,15 +429,15 @@ void wm_event_handler_ui_cancel_ex(const cContext &C,
 }
 
 
-static void wm_event_handler_ui_cancel(const cContext &C)
+static void wm_event_handler_ui_cancel(cContext *C)
 {
-  wmWindow win = CTX_wm_window(C);
-  ARegion region = CTX_wm_region(C);
+  wmWindow *win = CTX_wm_window(C);
+  ARegion *region = CTX_wm_region(C);
   wm_event_handler_ui_cancel_ex(C, win, region, true);
 }
 
 
-static int wm_operator_invoke(const cContext &C,
+static int wm_operator_invoke(cContext *C,
                               wmOperatorType *ot,
                               wmEvent *event,
                               UsdAttributeVector *properties,
@@ -404,7 +454,7 @@ static int wm_operator_invoke(const cContext &C,
 
   if (WM_operator_poll(C, ot))
   {
-    wmWindowManager wm = CTX_wm_manager(C);
+    wmWindowManager *wm = CTX_wm_manager(C);
 
     /* If reports == NULL, they'll be initialized. */
     wmOperator *op = wm_operator_create(wm, ot, properties, reports);
@@ -489,7 +539,7 @@ static int wm_operator_invoke(const cContext &C,
         int bounds[4] = {-1, -1, -1, -1};
         int wrap = WM_CURSOR_WRAP_NONE;
 
-        UserDef uprefs = CTX_data_prefs(C);
+        UserDef *uprefs = CTX_data_prefs(C);
 
         if (event && (uprefs->uiflag & USER_CONTINUOUS_MOUSE))
         {
@@ -514,7 +564,7 @@ static int wm_operator_invoke(const cContext &C,
         {
           GfVec2i regionpos;
           GfVec2i regionsize;
-          ARegion region = CTX_wm_region(C);
+          ARegion *region = CTX_wm_region(C);
           if (region)
           {
             region->pos.Get(&regionpos);
@@ -523,7 +573,7 @@ static int wm_operator_invoke(const cContext &C,
 
           GfVec2i areapos;
           GfVec2i areasize;
-          ScrArea area = CTX_wm_area(C);
+          ScrArea *area = CTX_wm_area(C);
           if (area)
           {
             region->pos.Get(&areapos);
@@ -590,7 +640,7 @@ static int wm_operator_invoke(const cContext &C,
 }
 
 
-static int wm_operator_call_internal(const cContext &C,
+static int wm_operator_call_internal(cContext *C,
                                      wmOperatorType *ot,
                                      UsdAttributeVector *properties,
                                      ReportList *reports,
@@ -605,7 +655,7 @@ static int wm_operator_call_internal(const cContext &C,
   /* Dummy test. */
   if (ot)
   {
-    wmWindow window = CTX_wm_window(C);
+    wmWindow *window = CTX_wm_window(C);
 
     if (event)
     {
@@ -663,8 +713,8 @@ static int wm_operator_call_internal(const cContext &C,
         /* Forces operator to go to the region window/channels/preview, for header menus,
          * but we stay in the same region if we are already in one.
          */
-        ARegion region = CTX_wm_region(C);
-        ScrArea area = CTX_wm_area(C);
+        ARegion *region = CTX_wm_region(C);
+        ScrArea *area = CTX_wm_area(C);
         eRegionType type = RGN_TYPE_WINDOW;
 
         switch (context)
@@ -688,7 +738,7 @@ static int wm_operator_call_internal(const cContext &C,
 
         if (!(region && region->regiontype == type) && area)
         {
-          // ARegion region_other = (type == RGN_TYPE_WINDOW) ?
+          // ARegion *region_other = (type == RGN_TYPE_WINDOW) ?
           //                         CKE_area_find_region_active_win(area) :
           //                         CKE_area_find_region_type(area, type);
           // if (region_other)
@@ -707,7 +757,7 @@ static int wm_operator_call_internal(const cContext &C,
       case WM_OP_EXEC_AREA:
       case WM_OP_INVOKE_AREA: {
         /* Remove region from context. */
-        ARegion region = CTX_wm_region(C);
+        ARegion *region = CTX_wm_region(C);
 
         CTX_wm_region_set(C, NULL);
         retval = wm_operator_invoke(C, ot, event, properties, reports, poll_only, true);
@@ -718,8 +768,8 @@ static int wm_operator_call_internal(const cContext &C,
       case WM_OP_EXEC_SCREEN:
       case WM_OP_INVOKE_SCREEN: {
         /* Remove region + area from context. */
-        ARegion region = CTX_wm_region(C);
-        ScrArea area = CTX_wm_area(C);
+        ARegion *region = CTX_wm_region(C);
+        ScrArea *area = CTX_wm_area(C);
 
         CTX_wm_region_set(C, NULL);
         CTX_wm_area_set(C, NULL);
@@ -738,7 +788,7 @@ static int wm_operator_call_internal(const cContext &C,
   return 0;
 }
 
-int WM_operator_name_call_ptr(const cContext &C,
+int WM_operator_name_call_ptr(cContext *C,
                               wmOperatorType *ot,
                               short context,
                               UsdAttributeVector *properties)
@@ -747,7 +797,7 @@ int WM_operator_name_call_ptr(const cContext &C,
 }
 
 
-int WM_operator_name_call(const cContext &C, const TfToken &optoken, short context, UsdAttributeVector *properties)
+int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, UsdAttributeVector *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot)
@@ -759,7 +809,7 @@ int WM_operator_name_call(const cContext &C, const TfToken &optoken, short conte
 }
 
 
-void WM_event_do_refresh_wm(const cContext &C)
+void WM_event_do_refresh_wm(cContext *C)
 {}
 
 

@@ -112,7 +112,7 @@ enum eSceneLoadSet
   SCENE_LOAD_NONE
 };
 
-struct CovahScene : public CovahObject
+struct Scene : public CovahObject
 {
 
   /** This scenes active stage. */
@@ -124,12 +124,12 @@ struct CovahScene : public CovahObject
   /** Specifies the initial set of prims to load. */
   eSceneLoadSet loadSet;
 
-  inline CovahScene(const std::string &identifier,
-                    const TfToken &stageUpAxis = UsdGeomTokens->z,
-                    eSceneLoadSet loadingSet = SCENE_LOAD_ALL);
+  inline Scene(const std::string &identifier,
+               const TfToken &stageUpAxis = UsdGeomTokens->z,
+               eSceneLoadSet loadingSet = SCENE_LOAD_ALL);
 };
 
-CovahScene::CovahScene(const std::string &identifier, const TfToken &stageUpAxis, eSceneLoadSet loadingSet)
+Scene::Scene(const std::string &identifier, const TfToken &stageUpAxis, eSceneLoadSet loadingSet)
   : stage(UsdStage::CreateNew(identifier, UsdStage::InitialLoadSet(loadingSet))),
     upAxis(stageUpAxis),
     loadSet(loadingSet)

@@ -37,8 +37,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_cursor_grab_enable(const wmWindow &win, int wrap, bool hide, int bounds[4]);
+void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4]);
 
-void WM_cursor_position_to_anchor(const wmWindow &win, int *x, int *y);
+void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y);
+void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y);
 
 WABI_NAMESPACE_END

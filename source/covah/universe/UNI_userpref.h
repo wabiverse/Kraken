@@ -70,7 +70,7 @@ enum eUserprefUIFlag
   USER_HIDE_SYSTEM_BOOKMARKS = (1u << 31),
 };
 
-struct CovahUserPrefs : public UsdUIUserPref, public CovahObject
+struct UserDef : public UsdUIUserPref, public CovahObject
 {
 
   SdfPath path;
@@ -79,11 +79,11 @@ struct CovahUserPrefs : public UsdUIUserPref, public CovahObject
 
   int uiflag;
 
-  inline CovahUserPrefs(const cContext &C,
-                        const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_USERPREFS));
+  inline UserDef(cContext *C,
+                 const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_USERPREFS));
 };
 
-CovahUserPrefs::CovahUserPrefs(const cContext &C, const SdfPath &stagepath)
+UserDef::UserDef(cContext *C, const SdfPath &stagepath)
   : UsdUIUserPref(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     showsave(CreateShowSavePromptAttr())

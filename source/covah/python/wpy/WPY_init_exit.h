@@ -43,7 +43,7 @@ WABI_NAMESPACE_BEGIN
 
 
 COVAH_PYTHON_API
-void WPY_python_init(const cContext &C);
+void WPY_python_init(cContext *C);
 
 COVAH_PYTHON_API
 void WPY_python_exit(void);

@@ -35,21 +35,33 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_cursor_position_to_anchor(const wmWindow &win, int *x, int *y)
+void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y)
 {
   float fac = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
-  GfVec2f size;
-  win->size.Get(&size);
+  ANCHOR::ScreenToClient((ANCHOR_SystemWindowHandle)win->anchorwin, *x, *y, x, y);
+  *x *= fac;
+
+  UniStageGetVec2f(win, size, win_size);
+
+  *y = (GET_Y(win_size) - 1) - *y;
+  *y *= fac;
+}
+
+void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y)
+{
+  float fac = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+
+  UniStageGetVec2f(win, size, win_size);
 
   *x /= fac;
   *y /= fac;
-  *y = size[1] - *y - 1;
+  *y = GET_Y(win_size) - *y - 1;
 
   ANCHOR::ClientToScreen((ANCHOR_SystemWindowHandle)win->anchorwin, *x, *y, x, y);
 }
 
-void WM_cursor_grab_enable(const wmWindow &win, int wrap, bool hide, int bounds[4])
+void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4])
 {
   /* Only grab cursor when not running debug.
    * It helps not to get a stuck WM when hitting a break-point. */

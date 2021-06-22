@@ -36,21 +36,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahScreen : public UsdUIScreen, public CovahObject
+struct cScreen : public UsdUIScreen, public CovahObject
 {
   SdfPath path;
 
   UsdAttribute align;
   UsdRelationship areas_rel;
 
-  std::vector<ScrArea> areas;
+  std::vector<ScrArea *> areas;
 
-  ARegion active_region;
+  ARegion *active_region;
 
-  inline CovahScreen(const cContext &C, const SdfPath &stagepath);
+  inline cScreen(cContext *C, const SdfPath &stagepath);
 };
 
-CovahScreen::CovahScreen(const cContext &C, const SdfPath &stagepath)
+cScreen::cScreen(cContext *C, const SdfPath &stagepath)
   : UsdUIScreen(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     align(CreateAlignmentAttr()),

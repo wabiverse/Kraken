@@ -77,6 +77,12 @@
 #define AppendToken(__append) TfToken __append;
 #define UniStageGetToken(__typed, __param, __value) AppendToken(__value) __typed->__param.Get(&__value)
 
+#define AppendAssetPath(__append) SdfAssetPath __append;
+#define UniStageGetAsset(__typed, __param, __value) AppendAssetPath(__value) __typed->__param.Get(&__value)
+
+#define AppendVecPath(__append) SdfPathVector __append;
+#define UniStageGetTargets(__typed, __param, __value) AppendVecPath(__value) __typed->__param.GetTargets(&__value)
+
 #define AppendVec2f(__append) GfVec2f __append;
 #define UniStageGetVec2f(__typed, __param, __value) AppendVec2f(__value) __typed->__param.Get(&__value)
 

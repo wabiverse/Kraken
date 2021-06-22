@@ -41,6 +41,8 @@ WABI_NAMESPACE_USING
 
 int main(int argc, const char **argv)
 {
+  cContext *C;
+
 #ifdef _WIN32
   /* Hide Windows Terminal on Startup. */
   HWND hwnd = GetConsoleWindow();
@@ -51,7 +53,7 @@ int main(int argc, const char **argv)
   CREATOR_covah_env_init();
 
   /* Create Context C. */
-  cContext C = CTX_create();
+  C = CTX_create();
 
   CKE_covah_globals_init();
 

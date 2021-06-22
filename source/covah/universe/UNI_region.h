@@ -58,7 +58,7 @@ enum eRegionType
     ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
 
 
-struct CovahRegion : public UsdUIArea, public CovahObject
+struct ARegion : public UsdUIArea, public CovahObject
 {
   SdfPath path;
 
@@ -70,10 +70,10 @@ struct CovahRegion : public UsdUIArea, public CovahObject
 
   eRegionType regiontype;
 
-  inline CovahRegion(const cContext &C, const cScreen &prim, const SdfPath &stagepath);
+  inline ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath);
 };
 
-CovahRegion::CovahRegion(const cContext &C, const cScreen &prim, const SdfPath &stagepath)
+ARegion::ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),

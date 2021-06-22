@@ -34,7 +34,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct CovahArea : public UsdUIArea, public CovahObject
+struct ScrArea : public UsdUIArea, public CovahObject
 {
   SdfPath path;
 
@@ -44,10 +44,10 @@ struct CovahArea : public UsdUIArea, public CovahObject
   UsdAttribute pos;
   UsdAttribute size;
 
-  inline CovahArea(const cContext &C, const cScreen &prim, const SdfPath &stagepath);
+  inline ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath);
 };
 
-CovahArea::CovahArea(const cContext &C, const cScreen &prim, const SdfPath &stagepath)
+ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),

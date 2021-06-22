@@ -88,13 +88,13 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
   notice.Send(invoker);
 }
 
-void WM_operators_init(const cContext &C)
+void WM_operators_init(cContext *C)
 {
-  wmWindowManager wm = CTX_wm_manager(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
   global_ops_hash = new RHashOp();
 }
 
-void WM_operators_register(const cContext &C)
+void WM_operators_register(cContext *C)
 {
   WM_window_operators_register();
 }

@@ -42,7 +42,7 @@ struct wmGenericUserData
   bool use_free;
 };
 
-typedef void (*wmGenericCallbackFn)(const cContext &C, void *user_data);
+typedef void (*wmGenericCallbackFn)(cContext *C, void *user_data);
 
 struct wmGenericCallback
 {
@@ -51,41 +51,42 @@ struct wmGenericCallback
   wmGenericUserDataFreeFn free_user_data;
 };
 
-wmWindow WM_window_open(const cContext &C,
-                        const char *title,
-                        const char *icon,
-                        int x,
-                        int y,
-                        int sizex,
-                        int sizey,
-                        TfToken space_type,
-                        TfToken alignment,
-                        bool dialog,
-                        bool temp);
+wmWindow *WM_window_open(cContext *C,
+                         const char *title,
+                         const char *icon,
+                         int x,
+                         int y,
+                         int sizex,
+                         int sizey,
+                         TfToken space_type,
+                         TfToken alignment,
+                         bool dialog,
+                         bool temp);
+void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win);
 
-void WM_anchor_init(cContext C);
+void WM_anchor_init(cContext *C);
 void WM_anchor_exit(void);
-void WM_window_process_events(const cContext &C);
-void WM_window_swap_buffers(const wmWindow &win);
+void WM_window_process_events(cContext *C);
+void WM_window_swap_buffers(wmWindow *win);
 
-void WM_window_anchorwindows_ensure(const wmWindowManager &wm);
+void WM_window_anchorwindows_ensure(wmWindowManager *wm);
 
 /** Operators :: Register */
 void WM_window_operators_register();
 
 /** Utils. */
-int WM_window_pixels_x(const wmWindow &win);
-int WM_window_pixels_y(const wmWindow &win);
-bool WM_window_find_under_cursor(const wmWindowManager &wm,
-                                 const wmWindow &win_ignore,
-                                 const wmWindow &win,
+int WM_window_pixels_x(wmWindow *win);
+int WM_window_pixels_y(wmWindow *win);
+bool WM_window_find_under_cursor(wmWindowManager *wm,
+                                 wmWindow *win_ignore,
+                                 wmWindow *win,
                                  const GfVec2i mval,
-                                 wmWindow r_win,
+                                 wmWindow **r_win,
                                  GfVec2i *r_mval);
 
 
 /** Cleanup. */
-void wm_exit_schedule_delayed(const cContext &C);
-void wm_quit_with_optional_confirmation_prompt(const cContext &C, const wmWindow &win);
+void wm_exit_schedule_delayed(cContext *C);
+void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win);
 
 WABI_NAMESPACE_END
