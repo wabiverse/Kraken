@@ -61,12 +61,9 @@ static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *ref
 
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference)
 {
-  if (!wm->notifier_queue.empty())
+  if (wm_test_duplicate_notifier(wm, type, reference))
   {
-    if (wm_test_duplicate_notifier(wm, type, reference))
-    {
-      return;
-    }
+    return;
   }
 
   wmNotifier *note = new wmNotifier();

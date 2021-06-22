@@ -207,12 +207,12 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
     wmWindow *win = nullptr;
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
     {
-      ANCHOR_UserPtr win_void_ptr = ANCHOR::GetWindowUserData(anchorwin);
-      win = (wmWindow *)win_void_ptr;
+      win = wm->windows.begin()->second;
+      win->anchorwin = anchorwin;
     }
     else
     {
-      win = wm->winactive;
+      win = wm->windows.begin()->second;
     }
 
     /* Display quit dialog or quit immediately. */
@@ -617,12 +617,18 @@ static void wm_save_file_on_quit_dialog_callback(cContext *C, void *UNUSED(user_
   wm_exit_schedule_delayed(C);
 }
 
-
 static void wm_confirm_quit(cContext *C)
 {
-  wmGenericCallback *action = new wmGenericCallback;
-  action->exec = (wmGenericCallbackFn)wm_save_file_on_quit_dialog_callback;
-  wm_close_file_dialog(C, action);
+  /** Save User's Work. */
+  TF_DEBUG(COVAH_DEBUG_OPERATORS).Msg("WARNING: Saving without a confirmation Dialog. Overwriting existing changes.");
+
+  Stage stage = CTX_data_stage(C);
+  if (stage->GetRootLayer()->Save())
+  {
+    wmGenericCallback *action = new wmGenericCallback;
+    action->exec = (wmGenericCallbackFn)wm_save_file_on_quit_dialog_callback;
+    wm_close_file_dialog(C, action);
+  }
 }
 
 
@@ -740,12 +746,11 @@ void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win)
    * here (this function gets called outside of normal event handling loop). */
   CTX_wm_window_set(C, win);
 
-  bool showsave;
-  uprefs->showsave.Get(&showsave);
+  UniStageGetBool(uprefs, showsave, do_save);
 
-  if (showsave)
+  if (do_save)
   {
-    if (stage->GetSessionLayer()->IsDirty())
+    if (stage->GetRootLayer()->IsDirty())
     {
       wm_window_raise(win);
       wm_confirm_quit(C);
@@ -781,7 +786,7 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
     }
   }
 
-  if (win->parent == NULL && other_hash.IsEmpty())
+  if (win->parent == NULL)
   {
     wm_quit_with_optional_confirmation_prompt(C, win);
     return;

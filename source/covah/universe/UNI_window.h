@@ -174,7 +174,7 @@ wmNotifier::wmNotifier()
     reference(nullptr)
 {}
 
-typedef std::vector<wmNotifier *> wmNotifierQueue;
+typedef std::deque<wmNotifier *> wmNotifierQueue;
 
 struct wmWindowManager : public CovahObject
 {
