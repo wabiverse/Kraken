@@ -15,11 +15,13 @@ set(INC_SYS
 
 set(SRC
   intern/UNI_create.cpp
+  intern/UNI_default_tables.cpp
   intern/UNI_pixar_utils.cpp
 
   UNI_api.h
   UNI_area.h
   UNI_context.h
+  UNI_default_tables.h
   UNI_factory.h
   UNI_object.h
   UNI_operator.h

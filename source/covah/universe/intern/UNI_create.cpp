@@ -25,6 +25,7 @@
 #include "UNI_api.h"
 #include "UNI_area.h"
 #include "UNI_context.h"
+#include "UNI_default_tables.h"
 #include "UNI_factory.h"
 #include "UNI_scene.h"
 #include "UNI_screen.h"
@@ -88,88 +89,90 @@ void UNI_set_defaults(cContext *C)
 {
   /* ----- */
 
+  /** Pixar Stage Initiated. */
   Stage stage = CTX_data_stage(C);
 
+  /* ----- */
+
+  /** WindowManager Creation. */
   wmWindowManager *wm = new wmWindowManager();
+
+  /** CTX set WindowManager. */
   CTX_wm_manager_set(C, wm);
 
   /* ----- */
 
-  /** Default Window. */
+  /** Window Creation. */
   wmWindow *win = new wmWindow(C);
-  FormFactory(win->title, TfToken("Covah"));
-  FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
-  FormFactory(win->state, UsdUITokens->maximized);
-  FormFactory(win->cursor, UsdUITokens->default_);
-  FormFactory(win->alignment, UsdUITokens->alignAbsolute);
-  FormFactory(win->pos, GfVec2f(0.0, 0.0));
-  FormFactory(win->size, GfVec2f(1920, 1080));
-  FormFactory(win->type, UsdUITokens->normal);
-  FormFactory(win->workspace_rel, win->prims.workspace->path);
-  FormFactory(win->dpi, float(1.0));
-  FormFactory(win->dpifac, float(1.0));
-  FormFactory(win->widgetunit, float(20.0));
-  FormFactory(win->scale, float(1.0));
-  FormFactory(win->linewidth, float(1.0));
-  FormFactory(win->pixelsz, float(1.0));
-  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
+
+  /** CTX set Window. */
   CTX_wm_window_set(C, win);
 
+  /** Insert into WindowManager. */
+  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
+
+  /** Load the defaults. */
+  UNI_default_table_main_window(C);
+
   /* ----- */
 
-  /** Default User Preferences. */
+  /** User Preferences Creation. */
   UserDef *uprefs = new UserDef(C);
-  FormFactory(uprefs->showsave, bool(true));
+
+  /** CTX set User Preferences. */
   CTX_data_prefs_set(C, uprefs);
 
-  /* ----- */
-
-  /** Default Viewport. */
-  ScrArea *v3d = new ScrArea(C, win->prims.screen, SdfPath("View3D"));
-  FormFactory(v3d->name, TfToken("View3D"));
-  FormFactory(v3d->spacetype, UsdUITokens->spaceView3D);
-  FormFactory(v3d->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
-  FormFactory(v3d->pos, GfVec2f(0, 0));
-  FormFactory(v3d->size, GfVec2f(1800, 1080));
+  /** Load the defaults. */
+  UNI_default_table_user_prefs(C);
 
   /* ----- */
 
-  /** Default Outliner. */
-  ScrArea *outliner = new ScrArea(C, win->prims.screen, SdfPath("Outliner"));
-  FormFactory(outliner->name, TfToken("Outliner"));
-  FormFactory(outliner->spacetype, UsdUITokens->spaceOutliner);
-  FormFactory(outliner->icon, SdfAssetPath(CLI_icon(ICON_LUXO)));
-  FormFactory(outliner->pos, GfVec2f(1800, 0));
-  FormFactory(outliner->size, GfVec2f(120, 1080));
-
-  /* ----- */
-
-  /** Add UI Areas to Screen's Collection of Areas. */
-  FormFactory(win->prims.screen->align, UsdUITokens->verticalSplit);
-  FormFactory(win->prims.screen->areas_rel, SdfPath(v3d->path));
-  FormFactory(win->prims.screen->areas_rel, SdfPath(outliner->path));
+  /** CTX set cScreen. */
   CTX_wm_screen_set(C, win->prims.screen);
 
-
-  /** Add this screen to our default 'Layout' WorkSpace. */
-  FormFactory(win->prims.workspace->name, TfToken("Layout"));
-  FormFactory(win->prims.workspace->screen_rel, win->prims.screen->path);
+  /** CTX get cScreen. */
+  cScreen *screen = CTX_wm_screen(C);
 
   /* ----- */
-}
 
-void UNI_author_default_scene(cContext *C)
-{
-  Stage stage = CTX_data_stage(C);
+  /** View3D Creation. */
+  ScrArea *v3d = new ScrArea(C, screen, SdfPath("View3D"));
 
-  UsdGeomCube cube = UsdGeomCube::Define(stage, SdfPath("/Cube"));
+  /** Insert into cScreen. */
+  screen->areas.push_back(v3d);
 
-  UsdGeomXformOp location = cube.AddTranslateOp();
-  location.Set(VtValue(GfVec3d(0.0f, 0.0f, 0.0f)));
-  UsdGeomXformOp rotation = cube.AddRotateXYZOp();
-  rotation.Set(VtValue(GfVec3f(0.0f, 0.0f, 0.0f)));
-  UsdGeomXformOp scale = cube.AddScaleOp();
-  scale.Set(VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
+  /** CTX set View3D. */
+  CTX_wm_area_set(C, v3d);
+
+  /** Load the defaults. */
+  UNI_default_table_area_v3d(C);
+
+  /* ----- */
+
+  /** Outliner Creation. */
+  ScrArea *outliner = new ScrArea(C, screen, SdfPath("Outliner"));
+
+  /** Insert into cScreen. */
+  screen->areas.push_back(outliner);
+
+  /** CTX set Outliner. */
+  CTX_wm_area_set(C, outliner);
+
+  /** Load the defaults. */
+  UNI_default_table_area_outliner(C);
+
+  /* ----- */
+
+  /** Load the cScreen defaults. */
+  UNI_default_table_area_screen(C);
+
+  /** Load the WorkSpace defaults. */
+  UNI_default_table_area_workspace(C);
+
+  /* ----- */
+
+  /** Load the Default Scene. */
+  UNI_default_table_scene_data(C);
 }
 
 WABI_NAMESPACE_END

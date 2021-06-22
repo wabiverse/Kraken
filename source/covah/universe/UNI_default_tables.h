@@ -22,47 +22,21 @@
  * Set the Stage.
  */
 
-#pragma once
+/**
+ * file format defaults.  */
 
 #include "UNI_api.h"
-#include "UNI_area.h"
-#include "UNI_object.h"
-#include "UNI_region.h"
-#include "UNI_scene.h"
-#include "UNI_screen.h"
-#include "UNI_system.h"
-#include "UNI_window.h"
 
 #include "CKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * Pixar Stage IO
- * - Stage Creation.
- * - Stage Destruction
- * - Opening Stages.
- * - Saving Stages. */
-
-COVAH_UNIVERSE_API
-void UNI_create_stage(cContext *C);
-
-COVAH_UNIVERSE_API
-void UNI_destroy(cContext *C);
-
-COVAH_UNIVERSE_API
-void UNI_open_stage(cContext *C);
-
-COVAH_UNIVERSE_API
-void UNI_save_stage(cContext *C);
-
-/**
- * Pixar Stage Defaults
- * - Covah GUI defaults.
- * - Covah Scene defaults. */
-
-COVAH_UNIVERSE_API
-void UNI_set_defaults(cContext *C);
-
+void UNI_default_table_main_window(cContext *C);
+void UNI_default_table_user_prefs(cContext *C);
+void UNI_default_table_area_v3d(cContext *C);
+void UNI_default_table_area_outliner(cContext *C);
+void UNI_default_table_area_screen(cContext *C);
+void UNI_default_table_area_workspace(cContext *C);
+void UNI_default_table_scene_data(cContext *C);
 
 WABI_NAMESPACE_END

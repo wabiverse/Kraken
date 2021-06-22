@@ -31,6 +31,10 @@ WABI_NAMESPACE_BEGIN
 /**
  * The form factory. */
 
+#define PROP_IFACE(x) x
+#define TIMECODE_IFACE(x) x
+#define VALUE_IFACE(x) x
+
 class FormFactory
 {
  public:

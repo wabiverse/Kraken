@@ -349,7 +349,7 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   /**
    * This comes direct
    * from Pixar Stage. */
-  std::string();
+
   TfToken win_title = FormFactory(win->title);
   SdfAssetPath win_icon = FormFactory(win->icon);
   GfVec2f win_pos = FormFactory(win->pos);
@@ -448,10 +448,10 @@ static void wm_window_check_size(GfVec4i *rect)
   int width, height;
   wm_get_screensize(&width, &height);
 
-  int xmin = rect->GetArray()[0];
-  int ymin = rect->GetArray()[1];
-  int xmax = rect->GetArray()[2];
-  int ymax = rect->GetArray()[3];
+  int xmin = GET_X(rect->GetArray());
+  int ymin = GET_Y(rect->GetArray());
+  int xmax = GET_Z(rect->GetArray());
+  int ymax = GET_W(rect->GetArray());
 
   int sizex = (xmax - xmin);
   int sizey = (ymax - ymin);
@@ -545,8 +545,9 @@ wmWindow *WM_window_open(cContext *C,
 
   /* ----- */
 
-  win->pos.Set(GfVec2f(rect[0], rect[1]));
-  win->size.Set(GfVec2f(rect[2] - rect[0], rect[3] - rect[1]));
+  FormFactory(win->pos, GfVec2f(GET_X(rect), GET_Y(rect)));
+
+  FormFactory(win->size, GfVec2f(GET_Z(rect) - GET_X(rect), GET_W(rect) - GET_Y(rect)));
 
   if (!win->prims.workspace->GetPrim().IsValid())
   {
