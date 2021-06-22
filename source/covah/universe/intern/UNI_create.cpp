@@ -25,6 +25,7 @@
 #include "UNI_api.h"
 #include "UNI_area.h"
 #include "UNI_context.h"
+#include "UNI_factory.h"
 #include "UNI_scene.h"
 #include "UNI_screen.h"
 #include "UNI_userpref.h"
@@ -96,64 +97,63 @@ void UNI_set_defaults(cContext *C)
 
   /** Default Window. */
   wmWindow *win = new wmWindow(C);
-  UniStageSetToken(win, title, "Covah");
-  UniStageSetAsset(win, icon, CLI_icon(ICON_COVAH));
-  UniStageSetToken(win, state, UsdUITokens->maximized);
-  UniStageSetToken(win, cursor, UsdUITokens->default_);
-  UniStageSetToken(win, alignment, UsdUITokens->alignAbsolute);
-  UniStageSetVec2f(win, pos, (0.0, 0.0));
-  UniStageSetVec2f(win, size, (1920, 1080));
-  UniStageSetToken(win, type, UsdUITokens->normal);
-  UniStageSetTarget(win, workspace_rel, win->prims.workspace->path);
-  UniStageSetFlt(win, dpi, 1.0);
-  UniStageSetFlt(win, dpifac, 1.0);
-  UniStageSetFlt(win, widgetunit, 20.0);
-  UniStageSetFlt(win, scale, 1.0);
-  UniStageSetFlt(win, linewidth, 1.0);
-  UniStageSetFlt(win, pixelsz, 1.0);
-  wm->windows.insert(std::make_pair(win->path, win));
+  FormFactory(win->title, TfToken("Covah"));
+  FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
+  FormFactory(win->state, UsdUITokens->maximized);
+  FormFactory(win->cursor, UsdUITokens->default_);
+  FormFactory(win->alignment, UsdUITokens->alignAbsolute);
+  FormFactory(win->pos, GfVec2f(0.0, 0.0));
+  FormFactory(win->size, GfVec2f(1920, 1080));
+  FormFactory(win->type, UsdUITokens->normal);
+  FormFactory(win->workspace_rel, win->prims.workspace->path);
+  FormFactory(win->dpi, float(1.0));
+  FormFactory(win->dpifac, float(1.0));
+  FormFactory(win->widgetunit, float(20.0));
+  FormFactory(win->scale, float(1.0));
+  FormFactory(win->linewidth, float(1.0));
+  FormFactory(win->pixelsz, float(1.0));
+  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
   CTX_wm_window_set(C, win);
 
   /* ----- */
 
   /** Default User Preferences. */
   UserDef *uprefs = new UserDef(C);
-  UniStageSetBool(uprefs, showsave, true);
+  FormFactory(uprefs->showsave, bool(true));
   CTX_data_prefs_set(C, uprefs);
 
   /* ----- */
 
   /** Default Viewport. */
   ScrArea *v3d = new ScrArea(C, win->prims.screen, SdfPath("View3D"));
-  UniStageSetToken(v3d, name, "View3D");
-  UniStageSetToken(v3d, spacetype, UsdUITokens->spaceView3D);
-  UniStageSetAsset(v3d, icon, CLI_icon(ICON_HYDRA));
-  UniStageSetVec2f(v3d, pos, (0, 0));
-  UniStageSetVec2f(v3d, size, (1800, 1080));
+  FormFactory(v3d->name, TfToken("View3D"));
+  FormFactory(v3d->spacetype, UsdUITokens->spaceView3D);
+  FormFactory(v3d->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
+  FormFactory(v3d->pos, GfVec2f(0, 0));
+  FormFactory(v3d->size, GfVec2f(1800, 1080));
 
   /* ----- */
 
   /** Default Outliner. */
   ScrArea *outliner = new ScrArea(C, win->prims.screen, SdfPath("Outliner"));
-  UniStageSetToken(outliner, name, "Outliner");
-  UniStageSetToken(outliner, spacetype, UsdUITokens->spaceOutliner);
-  UniStageSetAsset(outliner, icon, CLI_icon(ICON_LUXO));
-  UniStageSetVec2f(outliner, pos, (1800, 0));
-  UniStageSetVec2f(outliner, size, (120, 1080));
+  FormFactory(outliner->name, TfToken("Outliner"));
+  FormFactory(outliner->spacetype, UsdUITokens->spaceOutliner);
+  FormFactory(outliner->icon, SdfAssetPath(CLI_icon(ICON_LUXO)));
+  FormFactory(outliner->pos, GfVec2f(1800, 0));
+  FormFactory(outliner->size, GfVec2f(120, 1080));
 
   /* ----- */
 
   /** Add UI Areas to Screen's Collection of Areas. */
-  win->prims.screen->align.Set(UsdUITokens->verticalSplit);
-  UniStageSetToken(win->prims.screen, align, UsdUITokens->verticalSplit);
-  UniStageSetTarget(win->prims.screen, areas_rel, v3d->path);
-  UniStageSetTarget(win->prims.screen, areas_rel, outliner->path);
+  FormFactory(win->prims.screen->align, UsdUITokens->verticalSplit);
+  FormFactory(win->prims.screen->areas_rel, SdfPath(v3d->path));
+  FormFactory(win->prims.screen->areas_rel, SdfPath(outliner->path));
   CTX_wm_screen_set(C, win->prims.screen);
 
 
   /** Add this screen to our default 'Layout' WorkSpace. */
-  UniStageSetToken(win->prims.workspace, name, "Layout");
-  UniStageSetTarget(win->prims.workspace, screen_rel, win->prims.screen->path);
+  FormFactory(win->prims.workspace->name, TfToken("Layout"));
+  FormFactory(win->prims.workspace->screen_rel, win->prims.screen->path);
 
   /* ----- */
 }

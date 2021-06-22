@@ -27,6 +27,7 @@
 #include "WM_cursors_api.h"
 
 #include "UNI_area.h"
+#include "UNI_factory.h"
 #include "UNI_region.h"
 #include "UNI_screen.h"
 #include "UNI_window.h"
@@ -42,7 +43,7 @@ void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y)
   ANCHOR::ScreenToClient((ANCHOR_SystemWindowHandle)win->anchorwin, *x, *y, x, y);
   *x *= fac;
 
-  UniStageGetVec2f(win, size, win_size);
+  GfVec2f win_size = FormFactory(win->size);
 
   *y = (GET_Y(win_size) - 1) - *y;
   *y *= fac;
@@ -52,7 +53,7 @@ void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y)
 {
   float fac = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
-  UniStageGetVec2f(win, size, win_size);
+  GfVec2f win_size = FormFactory(win->size);
 
   *x /= fac;
   *y /= fac;

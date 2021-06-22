@@ -32,6 +32,7 @@
 
 #include "UNI_area.h"
 #include "UNI_context.h"
+#include "UNI_factory.h"
 #include "UNI_object.h"
 #include "UNI_operator.h"
 #include "UNI_userpref.h"
@@ -123,20 +124,17 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
 
 static void wm_window_set_dpi(wmWindow *win)
 {
-  float uscale;
-  win->scale.Get(&uscale);
-
-  float ulinewidth;
-  win->linewidth.Get(&ulinewidth);
+  float win_scale = FormFactory(win->scale);
+  float win_linewidth = FormFactory(win->linewidth);
 
   float auto_dpi = ANCHOR::GetDPIHint((ANCHOR_SystemWindowHandle)win->anchorwin);
 
   auto_dpi = max_ff(auto_dpi, 96.0f);
   auto_dpi *= ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
-  int dpi = auto_dpi * uscale * (72.0 / 96.0f);
+  int dpi = auto_dpi * win_scale * (72.0 / 96.0f);
 
   int pixelsize = max_ii(1, (int)(dpi / 64));
-  pixelsize = max_ii(1, pixelsize + ulinewidth);
+  pixelsize = max_ii(1, pixelsize + win_linewidth);
 
   float dpiadj = dpi / pixelsize;
   float dpifac = (pixelsize * (float)(dpiadj)) / 72.0f;
@@ -147,11 +145,10 @@ static void wm_window_set_dpi(wmWindow *win)
   /**
    * Set prefs on
    * Pixar Stage. */
-
-  win->pixelsz.Set(float(pixelsize));
-  win->dpi.Set(dpiadj);
-  win->dpifac.Set(dpifac);
-  win->widgetunit.Set(wunit += 2 * ((int)pixelsize - (int)dpifac));
+  FormFactory(win->pixelsz, float(pixelsize));
+  FormFactory(win->dpi, float(dpiadj));
+  FormFactory(win->dpifac, float(dpifac));
+  FormFactory(win->widgetunit, float(wunit += 2 * ((int)pixelsize - (int)dpifac)));
 
   /* ----- */
 
@@ -352,29 +349,22 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   /**
    * This comes direct
    * from Pixar Stage. */
-
-  TfToken title;
-  win->title.Get(&title);
-
-  SdfAssetPath icon;
-  win->icon.Get(&icon);
-
-  GfVec2f pos;
-  win->pos.Get(&pos);
-
-  GfVec2f size;
-  win->size.Get(&size);
+  std::string();
+  TfToken win_title = FormFactory(win->title);
+  SdfAssetPath win_icon = FormFactory(win->icon);
+  GfVec2f win_pos = FormFactory(win->pos);
+  GfVec2f win_size = FormFactory(win->size);
 
   /* ----- */
 
   ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateWindow(anchor_system,
                                                              (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
-                                                             CHARALL(title),
-                                                             CHARALL(icon.GetAssetPath()),
-                                                             pos[0],
-                                                             pos[1],
-                                                             size[0],
-                                                             size[1],
+                                                             CHARALL(win_title),
+                                                             CHARALL(win_icon.GetAssetPath()),
+                                                             GET_X(win_pos),
+                                                             GET_Y(win_pos),
+                                                             GET_X(win_size),
+                                                             GET_Y(win_size),
                                                              ANCHOR_WindowStateFullScreen,
                                                              is_dialog,
                                                              ANCHOR_DrawingContextTypeVulkan,
@@ -396,41 +386,34 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
      * This comes direct
      * from Pixar Stage. */
 
-    GfVec2f pos;
-    win->pos.Get(&pos);
-
-    GfVec2f size;
-    win->size.Get(&size);
-
-    TfToken title;
-    win->title.Get(&title);
-
-    SdfAssetPath icon;
-    win->icon.Get(&icon);
-
-    TfToken cursor;
-    win->cursor.Get(&cursor);
+    TfToken win_title = FormFactory(win->title);
+    SdfAssetPath win_icon = FormFactory(win->icon);
+    TfToken win_cursor = FormFactory(win->cursor);
+    GfVec2f win_pos = FormFactory(win->pos);
+    GfVec2f win_size = FormFactory(win->size);
 
     /* ----- */
 
-    if ((size[0] == 0))
+    if ((GET_X(win_size) == 0))
     {
-      win->pos.Set(GfVec2f(0, 0));
-      win->size.Set(GfVec2f(1920, 1080));
+      FormFactory(win->pos, GfVec2f(0.0, 0.0));
+      FormFactory(win->size, GfVec2f(1920, 1080));
+      FormFactory(win->state, UsdUITokens->maximized);
+      FormFactory(win->alignment, UsdUITokens->alignAbsolute);
 
-      if (cursor.IsEmpty())
+      if (win_cursor.IsEmpty())
       {
-        win->cursor.Set(UsdUITokens->default_);
+        FormFactory(win->cursor, UsdUITokens->default_);
       }
 
-      if (title.IsEmpty())
+      if (win_title.IsEmpty())
       {
-        win->title.Set("Covah");
+        FormFactory(win->title, TfToken("Covah"));
       }
 
-      if (icon.GetAssetPath().empty())
+      if (win_icon.GetAssetPath().empty())
       {
-        win->icon.Set(CLI_icon(ICON_COVAH));
+        FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
       }
     }
 
@@ -452,9 +435,9 @@ static void wm_get_screensize(int *r_width, int *r_height)
 
 void WM_window_anchorwindows_ensure(wmWindowManager *wm)
 {
-  TF_FOR_ALL (win, wm->windows)
+  UNIVERSE_FOR_ALL(win, wm->windows)
   {
-    wm_window_anchorwindow_ensure(wm, win->second, false);
+    wm_window_anchorwindow_ensure(wm, VALUE(win), false);
   }
 }
 
@@ -515,11 +498,8 @@ wmWindow *WM_window_open(cContext *C,
   Scene *scene = CTX_data_scene(C);
   GfVec4i rect;
 
-  GfVec2f pos;
-  win_prev->pos.Get(&pos);
-
-  GfVec2f size;
-  win_prev->pos.Get(&size);
+  GfVec2f pos = FormFactory(win_prev->pos);
+  GfVec2f size = FormFactory(win_prev->size);
 
   const float native_pixel_size = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win_prev->anchorwin);
   /* convert to native OS window coordinates */
@@ -647,8 +627,8 @@ static void wm_window_desktop_pos_get(wmWindow *win,
                                       const GfVec2f screen_pos,
                                       GfVec2i *r_desk_pos)
 {
-  UniStageGetFlt(win, pixelsz, win_pixelsz);
-  UniStageGetVec2f(win, pos, win_pos);
+  float win_pixelsz = FormFactory(win->pixelsz);
+  GfVec2f win_pos = FormFactory(win->pos);
 
   /* To desktop space. */
   VEC2_SET(r_desk_pos,
@@ -660,8 +640,8 @@ static void wm_window_screen_pos_get(wmWindow *win,
                                      const GfVec2i desktop_pos,
                                      GfVec2i *r_scr_pos)
 {
-  UniStageGetFlt(win, pixelsz, win_pixelsz);
-  UniStageGetVec2f(win, pos, win_pos);
+  float win_pixelsz = FormFactory(win->pixelsz);
+  GfVec2f win_pos = FormFactory(win->pos);
 
   /* To window space. */
   VEC2_SET(r_scr_pos,
@@ -682,14 +662,14 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
 
   /* TODO: This should follow the order of the activated windows.
    * The current solution is imperfect but usable in most cases. */
-  TF_FOR_ALL (win_iter, wm->windows)
+  UNIVERSE_FOR_ALL(win_iter, wm->windows)
   {
-    if (win_iter->second == win_ignore)
+    if (VALUE(win_iter) == win_ignore)
     {
       continue;
     }
 
-    UniStageGetToken(win_iter->second, state, win_state);
+    TfToken win_state = FormFactory(win->state);
 
     if (win_state == UsdUITokens->minimized)
     {
@@ -697,15 +677,15 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
     }
 
     GfVec2i scr_pos;
-    wm_window_screen_pos_get(win_iter->second, desk_pos, &scr_pos);
+    wm_window_screen_pos_get(VALUE(win_iter), desk_pos, &scr_pos);
 
-    UniStageGetVec2f(win_iter->second, pos, win_pos);
+    GfVec2f win_pos = FormFactory(win->pos);
 
     if (GET_X(scr_pos) >= 0 && GET_Y(win_pos) >= 0 &&
-        GET_X(scr_pos) <= WM_window_pixels_x(win_iter->second) &&
-        scr_pos[1] <= WM_window_pixels_y(win_iter->second))
+        GET_X(scr_pos) <= WM_window_pixels_x(VALUE(win_iter)) &&
+        GET_Y(scr_pos) <= WM_window_pixels_y(VALUE(win_iter)))
     {
-      *r_win = win_iter->second;
+      *r_win = VALUE(win_iter);
 
       VEC2_SET(r_mval, GET_X(scr_pos), GET_Y(scr_pos));
       return true;
@@ -720,7 +700,7 @@ int WM_window_pixels_x(wmWindow *win)
 {
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
-  UniStageGetVec2f(win, size, win_size);
+  GfVec2f win_size = FormFactory(win->size);
 
   return (int)(f * GET_X(win_size));
 }
@@ -729,7 +709,7 @@ int WM_window_pixels_y(wmWindow *win)
 {
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
-  UniStageGetVec2f(win, size, win_size);
+  GfVec2f win_size = FormFactory(win->size);
 
   return (int)(f * GET_Y(win_size));
 }
@@ -746,9 +726,9 @@ void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win)
    * here (this function gets called outside of normal event handling loop). */
   CTX_wm_window_set(C, win);
 
-  UniStageGetBool(uprefs, showsave, do_save);
+  bool show_save = FormFactory(uprefs->showsave);
 
-  if (do_save)
+  if (show_save)
   {
     if (stage->GetRootLayer()->IsDirty())
     {
@@ -777,11 +757,11 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
   SdfPath other_hash;
 
   /* First check if there is another main window remaining. */
-  TF_FOR_ALL (win_other, wm->windows)
+  UNIVERSE_FOR_ALL(win_other, wm->windows)
   {
-    if (win_other->second != win && win_other->second->parent == NULL)
+    if (VALUE(win_other) != win && VALUE(win_other)->parent == NULL)
     {
-      other_hash = win_other->first;
+      other_hash = HASH(win_other);
       break;
     }
   }
@@ -793,11 +773,11 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
   }
 
   /* Close child windows */
-  TF_FOR_ALL (iter_win, wm->windows)
+  UNIVERSE_FOR_ALL(iter_win, wm->windows)
   {
-    if (iter_win->second->parent == win)
+    if (VALUE(iter_win)->parent == win)
     {
-      wm_window_close(C, wm, iter_win->second);
+      wm_window_close(C, wm, VALUE(iter_win));
     }
   }
 
@@ -809,17 +789,17 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
   {
     SdfPathVector areas;
     win->prims.screen->areas_rel.GetTargets(&areas);
-    TF_FOR_ALL (area, areas)
+    UNIVERSE_FOR_ALL(area, areas)
     {
-      UsdPrim areaprim = stage->GetPrimAtPath(area->GetPrimPath());
+      UsdPrim areaprim = stage->GetPrimAtPath(area.GetPrimPath());
       areaprim.Unload();
     }
 
     SdfPathVector screens;
     win->prims.workspace->screen_rel.GetTargets(&screens);
-    TF_FOR_ALL (screen, screens)
+    UNIVERSE_FOR_ALL(screen, screens)
     {
-      UsdPrim screenprim = stage->GetPrimAtPath(screen->GetPrimPath());
+      UsdPrim screenprim = stage->GetPrimAtPath(screen.GetPrimPath());
       screenprim.Unload();
     }
   }
@@ -859,8 +839,8 @@ wmWindow *wm_window_copy(cContext *C,
 
   WorkSpace *workspace = win_src->prims.workspace;
 
-  UniStageGetVec2f(win_src, pos, win_srcpos);
-  UniStageGetVec2f(win_src, size, win_srcsize);
+  GfVec2f win_srcpos = FormFactory(win_src->pos);
+  GfVec2f win_srcsize = FormFactory(win_src->size);
 
   win_dst->pos.Set(GfVec2f(GET_X(win_srcpos) + 10, GET_Y(win_srcpos)));
   win_dst->size.Set(GfVec2f(GET_X(win_srcsize), GET_Y(win_srcsize)));
@@ -908,15 +888,15 @@ static int wm_window_new_exec(cContext *C, wmOperator *UNUSED(op))
   Stage stage = CTX_data_stage(C);
   wmWindow *win_src = CTX_wm_window(C);
 
-  UniStageGetVec2f(win_src, size, win_size);
-  UniStageGetToken(win_src, alignment, win_align);
-  UniStageGetTargets(win_src->prims.screen, areas_rel, win_areas);
-  UniStageGetAsset(win_src, icon, win_icon);
+  GfVec2f win_size = FormFactory(win_src->size);
+  TfToken win_align = FormFactory(win_src->alignment);
+  SdfPathVector win_areas = FormFactory(win_src->prims.screen->areas_rel);
+  SdfAssetPath win_icon = FormFactory(win_src->icon);
 
   TfToken spacetype;
-  TF_FOR_ALL (sdf_area, win_areas)
+  UNIVERSE_FOR_ALL(sdf_area, win_areas)
   {
-    auto area = ScrArea::Get(stage, sdf_area->GetPrimPath());
+    auto area = ScrArea::Get(stage, sdf_area.GetPrimPath());
     UsdAttribute type = area.GetSpacetypeAttr();
 
     TfToken possibletype;
@@ -1062,10 +1042,9 @@ static int wm_exit_covah_invoke(cContext *C, wmOperator *UNUSED(op), wmEvent *UN
 {
   UserDef *uprefs = CTX_data_prefs(C);
 
-  bool showsave;
-  uprefs->showsave.Get(&showsave);
+  bool prompt_save = FormFactory(uprefs->showsave);
 
-  if (showsave)
+  if (prompt_save)
   {
     wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
   }

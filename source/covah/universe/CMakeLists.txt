@@ -20,6 +20,7 @@ set(SRC
   UNI_api.h
   UNI_area.h
   UNI_context.h
+  UNI_factory.h
   UNI_object.h
   UNI_operator.h
   UNI_path_defaults.h

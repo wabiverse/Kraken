@@ -29,6 +29,7 @@
 #include "WM_window.h"
 
 #include "UNI_area.h"
+#include "UNI_factory.h"
 #include "UNI_operator.h"
 #include "UNI_region.h"
 #include "UNI_screen.h"
@@ -259,7 +260,7 @@ static void wm_region_mouse_co(cContext *C, wmEvent *event)
   ARegion *region = CTX_wm_region(C);
   if (region)
   {
-    UniStageGetVec2f(region, pos, region_pos);
+    GfVec2f region_pos = FormFactory(region->pos);
 
     /* Compatibility convention. */
     GET_X(event->mval) = GET_X(event->mouse_pos) - GET_X(region_pos);
