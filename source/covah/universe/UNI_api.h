@@ -92,7 +92,30 @@
 #define AppendVec3i(__append) GfVec3i __append;
 #define UniStageGetVec3i(__typed, __param, __value) AppendVec3i(__value) __typed->__param.Get(&__value)
 
+#define AppendVec3d(__append) GfVec3d __append;
+#define UniStageGetVec3d(__typed, __param, __value) AppendVec3d(__value) __typed->__param.Get(&__value)
+
 #define AppendVec3f(__append) GfVec3f __append;
 #define UniStageGetVec3f(__typed, __param, __value) AppendVec3f(__value) __typed->__param.Get(&__value)
+
+#define AppendVec4i(__append) GfVec4i __append;
+#define UniStageGetVec4i(__typed, __param, __value) AppendVec4i(__value) __typed->__param.Get(&__value)
+
+#define AppendVec4f(__append) GfVec4f __append;
+#define UniStageGetVec4f(__typed, __param, __value) AppendVec4f(__value) __typed->__param.Get(&__value)
+
+#define UniStageSetBool(__typed, __param, __value) __typed->__param.Set(bool(__value))
+#define UniStageSetInt(__typed, __param, __value) __typed->__param.Set(int(__value))
+#define UniStageSetFlt(__typed, __param, __value) __typed->__param.Set(float(__value))
+#define UniStageSetToken(__typed, __param, __value) __typed->__param.Set(TfToken(__value))
+#define UniStageSetAsset(__typed, __param, __value) __typed->__param.Set(SdfAssetPath(__value))
+#define UniStageSetTarget(__typed, __param, __value) __typed->__param.AddTarget(SdfPath(__value))
+#define UniStageSetVec2f(__typed, __param, __value) __typed->__param.Set(GfVec2f(__value))
+#define UniStageSetVec2i(__typed, __param, __value) __typed->__param.Set(GfVec2i(__value))
+#define UniStageSetVec3i(__typed, __param, __value) __typed->__param.Set(GfVec3i(__value))
+#define UniStageSetVec3d(__typed, __param, __value) __typed->__param.Set(GfVec3d(__value))
+#define UniStageSetVec3f(__typed, __param, __value) __typed->__param.Set(GfVec3f(__value))
+#define UniStageSetVec4i(__typed, __param, __value) __typed->__param.Set(GfVec4i(__value))
+#define UniStageSetVec4f(__typed, __param, __value) __typed->__param.Set(GfVec4f(__value))
 
 /** clang-format on */

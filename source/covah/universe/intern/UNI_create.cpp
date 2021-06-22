@@ -96,21 +96,21 @@ void UNI_set_defaults(cContext *C)
 
   /** Default Window. */
   wmWindow *win = new wmWindow(C);
-  win->title.Set(TfToken("Covah"));
-  win->dpi.Set(1.0f);
-  win->dpifac.Set(1.0f);
-  win->widgetunit.Set(20.0f);
-  win->scale.Set(1.0f);
-  win->linewidth.Set(1.0f);
-  win->pixelsz.Set(1.0f);
-  win->icon.Set(SdfAssetPath(CLI_icon(ICON_COVAH)));
-  win->state.Set(UsdUITokens->maximized);
-  win->cursor.Set(UsdUITokens->default_);
-  win->alignment.Set(UsdUITokens->alignAbsolute);
-  win->pos.Set(GfVec2f(0.0f, 0.0f));
-  win->size.Set(GfVec2f(1920, 1080));
-  win->type.Set(TfToken(UsdUITokens->normal));
-  win->workspace_rel.AddTarget(win->prims.workspace->path);
+  UniStageSetToken(win, title, "Covah");
+  UniStageSetAsset(win, icon, CLI_icon(ICON_COVAH));
+  UniStageSetToken(win, state, UsdUITokens->maximized);
+  UniStageSetToken(win, cursor, UsdUITokens->default_);
+  UniStageSetToken(win, alignment, UsdUITokens->alignAbsolute);
+  UniStageSetVec2f(win, pos, (0.0, 0.0));
+  UniStageSetVec2f(win, size, (1920, 1080));
+  UniStageSetToken(win, type, UsdUITokens->normal);
+  UniStageSetTarget(win, workspace_rel, win->prims.workspace->path);
+  UniStageSetFlt(win, dpi, 1.0);
+  UniStageSetFlt(win, dpifac, 1.0);
+  UniStageSetFlt(win, widgetunit, 20.0);
+  UniStageSetFlt(win, scale, 1.0);
+  UniStageSetFlt(win, linewidth, 1.0);
+  UniStageSetFlt(win, pixelsz, 1.0);
   wm->windows.insert(std::make_pair(win->path, win));
   CTX_wm_window_set(C, win);
 
@@ -118,41 +118,42 @@ void UNI_set_defaults(cContext *C)
 
   /** Default User Preferences. */
   UserDef *uprefs = new UserDef(C);
-  uprefs->showsave.Set(bool(true));
+  UniStageSetBool(uprefs, showsave, true);
   CTX_data_prefs_set(C, uprefs);
 
   /* ----- */
 
   /** Default Viewport. */
   ScrArea *v3d = new ScrArea(C, win->prims.screen, SdfPath("View3D"));
-  v3d->name.Set(TfToken("View3D"));
-  v3d->spacetype.Set(UsdUITokens->spaceView3D);
-  v3d->icon.Set(SdfAssetPath(CLI_icon(ICON_HYDRA)));
-  v3d->pos.Set(GfVec2f(0, 0));
-  v3d->size.Set(GfVec2f(1800, 1080));
+  UniStageSetToken(v3d, name, "View3D");
+  UniStageSetToken(v3d, spacetype, UsdUITokens->spaceView3D);
+  UniStageSetAsset(v3d, icon, CLI_icon(ICON_HYDRA));
+  UniStageSetVec2f(v3d, pos, (0, 0));
+  UniStageSetVec2f(v3d, size, (1800, 1080));
 
   /* ----- */
 
   /** Default Outliner. */
   ScrArea *outliner = new ScrArea(C, win->prims.screen, SdfPath("Outliner"));
-  outliner->name.Set(TfToken("Outliner"));
-  outliner->spacetype.Set(UsdUITokens->spaceOutliner);
-  outliner->icon.Set(SdfAssetPath(CLI_icon(ICON_LUXO)));
-  outliner->pos.Set(GfVec2f(1800, 0));
-  outliner->size.Set(GfVec2f(120, 1080));
+  UniStageSetToken(outliner, name, "Outliner");
+  UniStageSetToken(outliner, spacetype, UsdUITokens->spaceOutliner);
+  UniStageSetAsset(outliner, icon, CLI_icon(ICON_LUXO));
+  UniStageSetVec2f(outliner, pos, (1800, 0));
+  UniStageSetVec2f(outliner, size, (120, 1080));
 
   /* ----- */
 
   /** Add UI Areas to Screen's Collection of Areas. */
   win->prims.screen->align.Set(UsdUITokens->verticalSplit);
-  win->prims.screen->areas_rel.AddTarget(v3d->path);
-  win->prims.screen->areas_rel.AddTarget(outliner->path);
+  UniStageSetToken(win->prims.screen, align, UsdUITokens->verticalSplit);
+  UniStageSetTarget(win->prims.screen, areas_rel, v3d->path);
+  UniStageSetTarget(win->prims.screen, areas_rel, outliner->path);
   CTX_wm_screen_set(C, win->prims.screen);
 
 
   /** Add this screen to our default 'Layout' WorkSpace. */
-  win->prims.workspace->name.Set(TfToken("Layout"));
-  win->prims.workspace->screen_rel.AddTarget(win->prims.screen->path);
+  UniStageSetToken(win->prims.workspace, name, "Layout");
+  UniStageSetTarget(win->prims.workspace, screen_rel, win->prims.screen->path);
 
   /* ----- */
 }
