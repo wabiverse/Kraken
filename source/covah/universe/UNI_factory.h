@@ -96,10 +96,10 @@ inline void New(SdfPath id, UsdAttributeVector pgroup, PointerUNI *r_ptr)
 }  // namespace PTR
 namespace STR
 {
-inline void Set(PointerUNI *ptr, const std::string &prop, const std::string &value)
+inline void Set(PointerUNI *ptr, const std::string &name, const std::string &value)
 {
   UniverseProperty strprop;
-  strprop.name = TfToken(prop);
+  strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->String;
   strprop.variability = SdfVariabilityUniform;
   strprop.custom = false;
@@ -107,16 +107,16 @@ inline void Set(PointerUNI *ptr, const std::string &prop, const std::string &val
   UsdAttribute attr = ptr->CreateAttribute(strprop.name,
                                            strprop.type,
                                            strprop.variability);
-  attr.Set(&value);
+  attr.Set(std::string(value));
   ptr->type.push_back(attr);
 }
 }  // namespace STR
 namespace BOOL
 {
-inline void Set(PointerUNI *ptr, const std::string &prop, const bool &value)
+inline void Set(PointerUNI *ptr, const std::string &name, const bool &value)
 {
   UniverseProperty strprop;
-  strprop.name = TfToken(prop);
+  strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->Bool;
   strprop.variability = SdfVariabilityUniform;
   strprop.custom = false;
@@ -124,7 +124,7 @@ inline void Set(PointerUNI *ptr, const std::string &prop, const bool &value)
   UsdAttribute attr = ptr->CreateAttribute(strprop.name,
                                            strprop.type,
                                            strprop.variability);
-  attr.Set(&value);
+  attr.Set(bool(value));
   ptr->type.push_back(attr);
 }
 }  // namespace BOOL

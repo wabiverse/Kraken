@@ -75,7 +75,7 @@ struct ARegion : public UsdUIArea, public UniverseObject
 
 ARegion::ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
-    path(GetPath()),
+    path(UsdUIArea::GetPath()),
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),

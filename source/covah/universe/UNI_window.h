@@ -133,7 +133,7 @@ wmWindow::wmWindow(cContext *C,
 
 wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE_CHILD(C)),
-    path(GetPath()),
+    path(UsdUIWindow::GetPath()),
     parent(prim),
     title(CreateTitleAttr()),
     icon(CreateIconAttr()),
@@ -194,11 +194,14 @@ struct wmWindowManager : public UniverseObject
 
   int op_undo_depth;
 
+  /** Active dragged items. */
+  std::vector<void *> drags;
+
   inline wmWindowManager();
 };
 
 wmWindowManager::wmWindowManager()
-  : path(COVAH_PATH_DEFAULTS::COVAH_WINDOW_MANAGER),
+  : path(COVAH_PATH_DEFAULTS::COVAH_WM),
     windows(),
     windrawable(nullptr),
     winactive(nullptr),

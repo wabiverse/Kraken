@@ -22,6 +22,7 @@ set(SRC
   intern/wm_cursors.cpp
   intern/wm_debug_codes.cpp
   intern/wm_draw.cpp
+  intern/wm_dragdrop.cpp
   intern/wm_event_system.cpp
   intern/wm_init_exit.cpp
   intern/wm_msgbus.cpp
@@ -36,6 +37,7 @@ set(SRC
   WM_cursors.h # for C
   WM_debug_codes.h
   WM_draw.h
+  WM_dragdrop.h
   WM_event_system.h
   WM_init_exit.h
   WM_inline_tools.h
@@ -48,6 +50,7 @@ set(SRC
 set(LIB
   covahverse
   covah_anchor
+  covah_editor_spacefile
   covah_editor_spaceview3d
   covah_editor_code
   covah_lib

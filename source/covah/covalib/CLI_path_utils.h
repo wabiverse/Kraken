@@ -16,45 +16,27 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
- * Universe.
- * Set the Stage.
+ * COVAH Library.
+ * Gadget Vault.
  */
 
-#include "UNI_context.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
+#pragma once
 
-#include "CKE_context.h"
+#include "CLI_api.h"
+#include "CLI_assert.h"
+#include "CLI_string_utils.h"
 
-#include <wabi/usd/usdUI/area.h>
+#include <cstring>
+#include <string>
 
 WABI_NAMESPACE_BEGIN
 
-struct ScrArea : public UsdUIArea, public UniverseObject
-{
-  SdfPath path;
+bool CLI_path_extension_check(const char *str, const char *ext);
+bool CLI_path_extension_check_n(const char *str, ...);
+bool CLI_path_extension_check_array(const std::string &str, const char **ext_array);
 
-  UsdAttribute name;
-  UsdAttribute spacetype;
-  UsdAttribute icon;
-  UsdAttribute pos;
-  UsdAttribute size;
-
-  inline ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath);
-};
-
-ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
-    path(UsdUIArea::GetPath()),
-    name(CreateNameAttr()),
-    spacetype(CreateSpacetypeAttr()),
-    icon(CreateIconAttr()),
-    pos(CreatePosAttr()),
-    size(CreateSizeAttr())
-{}
+bool CLI_has_pixar_extension(const std::string &str);
 
 WABI_NAMESPACE_END

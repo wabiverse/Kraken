@@ -28,7 +28,10 @@
 #include <wabi/wabi.h>
 
 #include "CKE_context.h"
+
 #include "UNI_object.h"
+
+#include "WM_operators.h"
 
 WABI_NAMESPACE_BEGIN
 

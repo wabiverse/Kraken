@@ -72,3 +72,6 @@
 #define HASH(x) x.first
 #define VALUE(y) y.second
 #define UNIVERSE_FOR_ALL(iter, c) for (const auto &iter : c)
+#define UNIVERSE_MUTABLE_FOR_ALL(iter, c) for (auto &iter : c)
+
+#define FILE_MAX 1024

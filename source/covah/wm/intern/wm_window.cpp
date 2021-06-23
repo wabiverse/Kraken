@@ -25,6 +25,7 @@
 #include "WM_window.h"
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
+#include "WM_dragdrop.h"
 #include "WM_event_system.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
@@ -50,6 +51,8 @@
 #include "CLI_math_inline.h"
 #include "CLI_string_utils.h"
 #include "CLI_time.h"
+
+#include "ED_fileselect.h"
 
 #include <wabi/base/gf/vec2f.h>
 
@@ -361,6 +364,58 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         }
         break;
       }
+      case ANCHOR_EventTypeDraggingDropDone: {
+        Anchor_EventDragnDropData *ddd = (Anchor_EventDragnDropData *)ANCHOR::GetEventData(evt);
+
+        /* entering window, update mouse pos */
+        wm_window_update_eventstate(win);
+
+        wmEvent event;
+        WM_event_init_from_window(win, &event); /* copy last state, like mouse coords */
+
+        /* activate region */
+        event.type = MOUSEMOVE;
+        event.prev_mouse_pos = event.mouse_pos;
+        event.is_repeat = false;
+
+        /* No context change! C->wm->windrawable is drawable, or for area queues. */
+        wm->winactive = win;
+
+        win->active = 1;
+
+        wm_event_add(win, &event);
+
+        /* make covah drop event with custom data pointing to wm drags */
+        event.type = EVT_DROP;
+        event.val = KM_RELEASE;
+        event.custom = EVT_DATA_DRAGDROP;
+        event.customdata = wm->drags.data();
+        event.customdatafree = 1;
+
+        wm_event_add(win, &event);
+
+        /* printf("Drop detected\n"); */
+
+        /* add drag data to wm for paths: */
+
+        if (ddd->dataType == ANCHOR_DragnDropTypeFilenames)
+        {
+          ANCHOR_StringArray *stra = (ANCHOR_StringArray *)ddd->data;
+
+          for (int a = 0; a < stra->count; a++)
+          {
+            printf("drop file %s\n", stra->strings[a]);
+            /* try to get icon type from extension */
+            int icon = ED_file_extension_icon((char *)stra->strings[a]);
+
+            WM_event_start_drag(C, icon, WM_DRAG_PATH, stra->strings[a], 0.0, WM_DRAG_NOP);
+            /* void poin should point to string, it makes a copy */
+            break; /* only one drop element supported now */
+          }
+        }
+
+        break;
+      }
       default: {
         // WM_event_add_anchorevent(wm, win, type, data);
         break;
@@ -579,7 +634,7 @@ wmWindow *WM_window_open(cContext *C,
 
   FormFactory(win->size, GfVec2f(GET_Z(rect) - GET_X(rect), GET_W(rect) - GET_Y(rect)));
 
-  if (!win->prims.workspace->GetPrim().IsValid())
+  if (!win->prims.workspace->IsValid())
   {
     win->prims.workspace = win_prev->prims.workspace;
   }

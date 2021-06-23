@@ -16,45 +16,20 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
- * Universe.
- * Set the Stage.
+ * Editors.
+ * Tools for Artists.
  */
 
-#include "UNI_context.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
+#pragma once
 
-#include "CKE_context.h"
+#include "ED_defines.h"
 
-#include <wabi/usd/usdUI/area.h>
+#include <string>
 
 WABI_NAMESPACE_BEGIN
 
-struct ScrArea : public UsdUIArea, public UniverseObject
-{
-  SdfPath path;
-
-  UsdAttribute name;
-  UsdAttribute spacetype;
-  UsdAttribute icon;
-  UsdAttribute pos;
-  UsdAttribute size;
-
-  inline ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath);
-};
-
-ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
-    path(UsdUIArea::GetPath()),
-    name(CreateNameAttr()),
-    spacetype(CreateSpacetypeAttr()),
-    icon(CreateIconAttr()),
-    pos(CreatePosAttr()),
-    size(CreateSizeAttr())
-{}
+int ED_file_extension_icon(const std::string &path);
 
 WABI_NAMESPACE_END

@@ -102,6 +102,85 @@ char *CLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t
   return dst;
 }
 
+int CLI_strcasecmp(const char *s1, const char *s2)
+{
+  int i;
+  char c1, c2;
+
+  for (i = 0;; i++)
+  {
+    c1 = tolower(s1[i]);
+    c2 = tolower(s2[i]);
+
+    if (c1 < c2)
+    {
+      return -1;
+    }
+    if (c1 > c2)
+    {
+      return 1;
+    }
+    if (c1 == 0)
+    {
+      break;
+    }
+  }
+
+  return 0;
+}
+
+int CLI_strncasecmp(const char *s1, const char *s2, size_t len)
+{
+  size_t i;
+  char c1, c2;
+
+  for (i = 0; i < len; i++)
+  {
+    c1 = tolower(s1[i]);
+    c2 = tolower(s2[i]);
+
+    if (c1 < c2)
+    {
+      return -1;
+    }
+    if (c1 > c2)
+    {
+      return 1;
+    }
+    if (c1 == 0)
+    {
+      break;
+    }
+  }
+
+  return 0;
+}
+
+char *CLI_strcasestr(const char *s, const char *find)
+{
+  char c, sc;
+  size_t len;
+
+  if ((c = *find++) != 0)
+  {
+    c = tolower(c);
+    len = strlen(find);
+    do
+    {
+      do
+      {
+        if ((sc = *s++) == 0)
+        {
+          return NULL;
+        }
+        sc = tolower(sc);
+      } while (sc != c);
+    } while (CLI_strncasecmp(s, find, len) != 0);
+    s--;
+  }
+  return ((char *)s);
+}
+
 /* array copied from glib's gutf8.c, */
 /* Note: last two values (0xfe and 0xff) are forbidden in utf-8,
  * so they are considered 1 byte length too. */

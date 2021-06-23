@@ -568,6 +568,17 @@ enum eAnchorWindowOrder
   ANCHOR_kWindowOrderBottom,
 };
 
+enum eAnchorDragnDropTypes
+{
+  ANCHOR_DragnDropTypeUnknown = 0,
+  /*Array of strings representing file names (full path) */
+  ANCHOR_DragnDropTypeFilenames,
+  /* Unformatted text UTF-8 string */
+  ANCHOR_DragnDropTypeString,
+  /*Bitmap image data */
+  ANCHOR_DragnDropTypeBitmap
+};
+
 /**
  * ----- ANCHOR CLASSES ----- */
 
@@ -787,6 +798,12 @@ ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
 
+struct ANCHOR_StringArray
+{
+  int count;
+  AnchorU8 **strings;
+};
+
 struct ANCHOR_TabletData
 {
   /**
@@ -836,6 +853,18 @@ struct ANCHOR_EventTrackpadData
   AnchorS32 deltaY;
   /** The delta is inverted from the device due to system preferences. */
   char isDirectionInverted;
+};
+
+struct Anchor_EventDragnDropData
+{
+  /** The x-coordinate of the cursor position. */
+  AnchorS32 x;
+  /** The y-coordinate of the cursor position. */
+  AnchorS32 y;
+  /** The dropped item type */
+  eAnchorDragnDropTypes dataType;
+  /** The "dropped content" */
+  ANCHOR_EventDataPtr data;
 };
 
 struct ANCHOR_EventCursorData

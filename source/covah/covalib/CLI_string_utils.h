@@ -35,6 +35,15 @@
 /* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
 
 COVAH_LIB_API
+int CLI_strcasecmp(const char *s1, const char *s2);
+
+COVAH_LIB_API
+char *CLI_strcasestr(const char *s, const char *find);
+
+COVAH_LIB_API
+int CLI_strncasecmp(const char *s1, const char *s2, size_t len);
+
+COVAH_LIB_API
 size_t CLI_split_name_num(char *left, int *nr, const char *name, const char delim);
 
 COVAH_LIB_API

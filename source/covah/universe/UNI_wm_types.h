@@ -27,6 +27,7 @@
 #include "WM_api.h"
 
 #include <wabi/base/gf/vec2f.h>
+#include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/timeCode.h>
 
 WABI_NAMESPACE_BEGIN
@@ -301,6 +302,13 @@ enum eWmOperatorFlag
   OP_IS_REPEAT_LAST = (1 << 1),
   OP_IS_MODAL_GRAB_CURSOR = (1 << 2),
   OP_IS_MODAL_CURSOR_REGION = (1 << 3),
+};
+
+enum eWmCustomEventType
+{
+  EVT_DATA_TIMER = 2,
+  EVT_DATA_DRAGDROP = 3,
+  EVT_DATA_NDOF_MOTION = 4,
 };
 
 enum eWmEventType
@@ -635,6 +643,55 @@ struct wmEvent
    * For absolute scroll direction, the delta must be negated again.
    */
   char is_direction_inverted;
+};
+
+#define WM_DRAG_ID 0
+#define WM_DRAG_ASSET 1
+#define WM_DRAG_RNA 2
+#define WM_DRAG_PATH 3
+#define WM_DRAG_NAME 4
+#define WM_DRAG_VALUE 5
+#define WM_DRAG_COLOR 6
+#define WM_DRAG_DATASTACK 7
+
+enum eWmDragFlags
+{
+  WM_DRAG_NOP = 0,
+  WM_DRAG_FREE_DATA = 1,
+};
+
+struct wmDragID
+{
+  SdfPath id;
+  SdfPath from_parent;
+};
+
+struct wmDragAsset
+{
+  char name[64]; /* MAX_NAME */
+  /* Always freed. */
+  const char *path;
+  int id_type;
+  int import_type; /* eFileAssetImportType */
+};
+
+struct wmDrag
+{
+  int icon;
+  /** See 'WM_DRAG_' defines above. */
+  int type;
+  void *poin;
+  char path[1024]; /* FILE_MAX */
+  double value;
+
+  float scale;
+  int sx, sy;
+
+  /** If set, draws operator name. */
+  char opname[200];
+  unsigned int flags;
+
+  std::vector<wmDragID *> ids;
 };
 
 WABI_NAMESPACE_END
