@@ -70,7 +70,7 @@ enum eUserprefUIFlag
   USER_HIDE_SYSTEM_BOOKMARKS = (1u << 31),
 };
 
-struct UserDef : public UsdUIUserPref, public CovahObject
+struct UserDef : public UsdUIUserPref, public UniverseObject
 {
 
   SdfPath path;

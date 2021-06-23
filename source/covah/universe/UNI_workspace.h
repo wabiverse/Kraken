@@ -33,7 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct WorkSpace : public UsdUIWorkspace, public CovahObject
+struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 {
 
   SdfPath path;

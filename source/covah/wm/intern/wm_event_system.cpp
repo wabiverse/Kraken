@@ -60,6 +60,29 @@ static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *ref
 }
 
 
+void WM_main_add_notifier(cContext *C, unsigned int type, void *reference)
+{
+  Main *cmain = CTX_data_main(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
+
+  if (!wm || wm_test_duplicate_notifier(wm, type, reference))
+  {
+    return;
+  }
+
+  wmNotifier *note = new wmNotifier();
+
+  wm->notifier_queue.push_back(note);
+
+  note->category = type & NOTE_CATEGORY;
+  note->data = type & NOTE_DATA;
+  note->subtype = type & NOTE_SUBTYPE;
+  note->action = type & NOTE_ACTION;
+
+  note->reference = reference;
+}
+
+
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference)
 {
   if (wm_test_duplicate_notifier(wm, type, reference))
@@ -223,7 +246,7 @@ bool WM_operator_poll(cContext *C, wmOperatorType *ot)
 
 static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
-                                      UsdAttributeVector *properties,
+                                      PointerUNI *properties,
                                       ReportList *reports)
 {
   wmOperator *op = new wmOperator();
@@ -232,7 +255,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
   op->idname = ot->idname;
 
   /* Initialize properties. */
-  if (properties && !properties->empty())
+  if (properties && !properties->type.empty())
   {
     op->properties = properties;
   }
@@ -377,7 +400,7 @@ static bool isect_pt_v(const GfVec4i &rect, const GfVec2i &xy)
 
 void WM_operator_free(wmOperator *op)
 {
-  if (op->properties && !op->properties->empty())
+  if (op && !op->properties->type.empty())
   {
     // IDP_FreeProperty(op->properties);
   }
@@ -438,7 +461,7 @@ static void wm_event_handler_ui_cancel(cContext *C)
 static int wm_operator_invoke(cContext *C,
                               wmOperatorType *ot,
                               wmEvent *event,
-                              UsdAttributeVector *properties,
+                              PointerUNI *properties,
                               ReportList *reports,
                               const bool poll_only,
                               bool use_last_properties)
@@ -640,7 +663,7 @@ static int wm_operator_invoke(cContext *C,
 
 static int wm_operator_call_internal(cContext *C,
                                      wmOperatorType *ot,
-                                     UsdAttributeVector *properties,
+                                     PointerUNI *properties,
                                      ReportList *reports,
                                      const short context,
                                      const bool poll_only,
@@ -789,13 +812,13 @@ static int wm_operator_call_internal(cContext *C,
 int WM_operator_name_call_ptr(cContext *C,
                               wmOperatorType *ot,
                               short context,
-                              UsdAttributeVector *properties)
+                              PointerUNI *properties)
 {
   return wm_operator_call_internal(C, ot, properties, NULL, context, false, NULL);
 }
 
 
-int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, UsdAttributeVector *properties)
+int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, PointerUNI *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot)

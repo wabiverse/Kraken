@@ -52,6 +52,9 @@ struct COVAH_PATH_DEFAULTS
   /** Covah :: UserDef Root. */
   const inline static TfToken COVAH_USERPREFS = TfToken("/Covah/UserDef");
 
+  /** Covah :: WindowManager Root. */
+  const inline static TfToken COVAH_WM = TfToken("/Covah/WindowManager");
+
   /** Covah :: MainWindow Root. */
   const inline static TfToken COVAH_WINDOW = TfToken("/Covah/MainWindow");
 

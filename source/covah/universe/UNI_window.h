@@ -45,7 +45,7 @@ WABI_NAMESPACE_BEGIN
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
-struct wmWindow : public UsdUIWindow, public CovahObject
+struct wmWindow : public UsdUIWindow, public UniverseObject
 {
   SdfPath path;
   wmWindow *parent;
@@ -81,6 +81,9 @@ struct wmWindow : public UsdUIWindow, public CovahObject
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
+
+  /** Runtime Window State. */
+  char windowstate;
 
   struct
   {
@@ -123,6 +126,7 @@ wmWindow::wmWindow(cContext *C,
     active(true),
     addmousemove(false),
     eventstate(new wmEvent()),
+    windowstate(0),
     prims({.workspace = new WorkSpace(C, wspace),
            .screen = new cScreen(C, screen)})
 {}
@@ -150,6 +154,7 @@ wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
     active(true),
     addmousemove(false),
     eventstate(new wmEvent()),
+    windowstate(0),
     prims({.workspace = prim->prims.workspace,
            .screen = prim->prims.screen})
 {}
@@ -176,8 +181,10 @@ wmNotifier::wmNotifier()
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
-struct wmWindowManager : public CovahObject
+struct wmWindowManager : public UniverseObject
 {
+  SdfPath path;
+
   /** All windows this manager controls. */
   TfHashMap<SdfPath, wmWindow *, SdfPath::Hash> windows;
 
@@ -191,7 +198,8 @@ struct wmWindowManager : public CovahObject
 };
 
 wmWindowManager::wmWindowManager()
-  : windows(),
+  : path(COVAH_PATH_DEFAULTS::COVAH_WINDOW_MANAGER),
+    windows(),
     windrawable(nullptr),
     winactive(nullptr),
     notifier_queue(),

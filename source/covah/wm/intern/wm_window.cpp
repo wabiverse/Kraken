@@ -167,15 +167,15 @@ void wm_window_clear_drawable(wmWindowManager *wm)
 
 void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
 {
-  // if (win != wm->windrawable && win->anchorwin)
-  // {
-  //   wm_window_clear_drawable(wm);
+  if (win != wm->windrawable && win->anchorwin)
+  {
+    wm_window_clear_drawable(wm);
 
-  //   wm_window_set_drawable(wm, win, true);
+    wm_window_set_drawable(wm, win, true);
 
-  //   /* this can change per window */
-  //   wm_window_set_dpi(win);
-  // }
+    /* this can change per window */
+    wm_window_set_dpi(win);
+  }
 }
 
 
@@ -316,9 +316,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         event.type = MOUSEMOVE;
         event.prev_mouse_pos = event.mouse_pos;
         event.is_repeat = false;
-
         wm_event_add(win, &event);
-
         break;
       }
       case ANCHOR_EventTypeWindowClose: {
@@ -328,7 +326,39 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeWindowUpdate: {
         wm_window_make_drawable(wm, win);
         WM_event_add_notifier(C, NC_WINDOW, NULL);
+        break;
+      }
+      case ANCHOR_EventTypeWindowSize:
+      case ANCHOR_EventTypeWindowMove: {
+        eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
+        win->windowstate = state;
+        wm_window_set_dpi(win);
+        break;
+      }
+      case ANCHOR_EventTypeWindowDPIHintChanged: {
+        wm_window_set_dpi(win);
 
+        WM_main_add_notifier(C, NC_WINDOW, NULL);             /* full redraw */
+        WM_main_add_notifier(C, NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
+        break;
+      }
+      case ANCHOR_EventTypeOpenMainFile: {
+        const char *path = (const char *)ANCHOR::GetEventData(evt);
+
+        if (path)
+        {
+          wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_open_mainfile));
+          CTX_wm_window_set(C, win);
+
+          PointerUNI props_ptr;
+          WM_operator_properties_create_ptr(&props_ptr, ot);
+          CreationFactory::STR::Set(&props_ptr, "filepath", path);
+          CreationFactory::BOOL::Set(&props_ptr, "display_file_selector", false);
+          WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
+          WM_operator_properties_free(&props_ptr);
+
+          CTX_wm_window_set(C, NULL);
+        }
         break;
       }
       default: {

@@ -34,7 +34,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct ScrArea : public UsdUIArea, public CovahObject
+struct ScrArea : public UsdUIArea, public UniverseObject
 {
   SdfPath path;
 

@@ -58,7 +58,7 @@ enum eRegionType
     ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
 
 
-struct ARegion : public UsdUIArea, public CovahObject
+struct ARegion : public UsdUIArea, public UniverseObject
 {
   SdfPath path;
 

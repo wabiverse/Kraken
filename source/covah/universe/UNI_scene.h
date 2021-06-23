@@ -112,7 +112,7 @@ enum eSceneLoadSet
   SCENE_LOAD_NONE
 };
 
-struct Scene : public CovahObject
+struct Scene : public UniverseObject
 {
 
   /** This scenes active stage. */

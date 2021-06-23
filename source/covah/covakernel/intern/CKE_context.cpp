@@ -42,7 +42,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct cContext : public CovahObject
+struct cContext : public UniverseObject
 {
   cContext() = default;
 

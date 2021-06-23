@@ -36,7 +36,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct cScreen : public UsdUIScreen, public CovahObject
+struct cScreen : public UsdUIScreen, public UniverseObject
 {
   SdfPath path;
 

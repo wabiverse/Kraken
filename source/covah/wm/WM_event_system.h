@@ -28,6 +28,7 @@
 #include <wabi/wabi.h>
 
 #include "CKE_context.h"
+#include "UNI_object.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -35,12 +36,18 @@ struct wmEvent;
 
 void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata);
 wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add);
+void WM_main_add_notifier(cContext *C, unsigned int type, void *reference);
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference);
 void WM_event_add_notifier(cContext *C, uint type, void *reference);
 
+int WM_operator_name_call_ptr(cContext *C,
+                              wmOperatorType *ot,
+                              short context,
+                              PointerUNI *properties);
+
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
-int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, UsdAttributeVector *properties);
+int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, PointerUNI *properties);
 
 void WM_event_do_refresh_wm(cContext *C);
 

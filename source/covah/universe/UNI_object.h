@@ -32,20 +32,38 @@
 #include <wabi/base/tf/token.h>
 #include <wabi/base/tf/weakBase.h>
 
+#include <wabi/usd/usd/prim.h>
+
 WABI_NAMESPACE_BEGIN
 
-struct CovahObject : public TfRefBase, public TfWeakBase
+struct UniverseObject : public UsdPrim, public TfRefBase, public TfWeakBase
 {
+  SdfPath path;
+
+  UsdAttributeVector type;
+
   TfNotice notice = TfNotice();
 
-  virtual ~CovahObject()
+  virtual ~UniverseObject()
   {}
 
-  inline CovahObject();
+  inline UniverseObject();
 };
 
-CovahObject::CovahObject()
+UniverseObject::UniverseObject()
   : notice(TfNotice())
 {}
+
+struct UniverseProperty
+{
+  TfToken name;
+  SdfValueTypeName type;
+  SdfVariability variability;
+  bool custom;
+};
+
+typedef std::vector<UniverseProperty> UniversePropertyVec;
+
+typedef UniverseObject PointerUNI;
 
 WABI_NAMESPACE_END

@@ -30,11 +30,13 @@
 
 #include "CKE_robinhood.h"
 
+#include "UNI_object.h"
 #include "UNI_operator.h"
 #include "UNI_path_defaults.h"
 #include "UNI_wm_types.h"
 
 #include <wabi/base/tf/hash.h>
+#include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/prim.h>
 
 WABI_NAMESPACE_BEGIN
@@ -61,6 +63,9 @@ struct wmOperatorType
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;
 
+  /** Properties on this operator. */
+  UsdAttributeVector uprops;
+
   eWmOperatorType flag;
 
   int (*exec)(cContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
@@ -75,6 +80,9 @@ typedef robin_hood::unordered_map<TfToken, wmOperatorType *, TfHash> RHashOp;
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(cContext *C);
 void WM_operators_register(cContext *C);
+
+void WM_operator_properties_create_ptr(PointerUNI *ptr, wmOperatorType *ot);
+void WM_operator_properties_free(PointerUNI *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 

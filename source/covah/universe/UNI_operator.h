@@ -25,6 +25,7 @@
  */
 
 #include "UNI_context.h"
+#include "UNI_object.h"
 
 #include <wabi/usd/usd/attribute.h>
 
@@ -36,7 +37,7 @@ struct wmOperator
   /** Used to retrieve type pointer. */
   TfToken idname;
   /** Saved, user-settable properties. */
-  UsdAttributeVector *properties;
+  PointerUNI *properties;
 
   /* runtime */
   /** Operator type definition from idname. */

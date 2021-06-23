@@ -23,6 +23,7 @@
  */
 
 #include "UNI_api.h"
+#include "UNI_object.h"
 
 #include <wabi/usd/usd/attribute.h>
 
@@ -75,6 +76,59 @@ class FormFactory
   UsdRelationship m_relate;
   UsdTimeCode m_time;
 };
+
+/** 
+ * Creates Properties at runtime. 
+ * 
+ * - @param id Path to Owning Stage Object.
+ * - @param pgroup group of properties.
+ * - @param r_ptr A new Universe Object. */
+namespace CreationFactory
+{
+namespace PTR
+{
+inline void New(SdfPath id, UsdAttributeVector pgroup, PointerUNI *r_ptr)
+{
+  r_ptr = new UniverseObject();
+  r_ptr->path = id;
+  r_ptr->type = pgroup;
+}
+}  // namespace PTR
+namespace STR
+{
+inline void Set(PointerUNI *ptr, const std::string &prop, const std::string &value)
+{
+  UniverseProperty strprop;
+  strprop.name = TfToken(prop);
+  strprop.type = SdfValueTypeNames->String;
+  strprop.variability = SdfVariabilityUniform;
+  strprop.custom = false;
+
+  UsdAttribute attr = ptr->CreateAttribute(strprop.name,
+                                           strprop.type,
+                                           strprop.variability);
+  attr.Set(&value);
+  ptr->type.push_back(attr);
+}
+}  // namespace STR
+namespace BOOL
+{
+inline void Set(PointerUNI *ptr, const std::string &prop, const bool &value)
+{
+  UniverseProperty strprop;
+  strprop.name = TfToken(prop);
+  strprop.type = SdfValueTypeNames->Bool;
+  strprop.variability = SdfVariabilityUniform;
+  strprop.custom = false;
+
+  UsdAttribute attr = ptr->CreateAttribute(strprop.name,
+                                           strprop.type,
+                                           strprop.variability);
+  attr.Set(&value);
+  ptr->type.push_back(attr);
+}
+}  // namespace BOOL
+}  // namespace CreationFactory
 
 template<>
 inline FormFactory::operator bool()

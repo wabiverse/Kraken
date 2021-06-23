@@ -28,6 +28,7 @@
 #include "WM_tokens.h"
 #include "WM_window.h"
 
+#include "UNI_factory.h"
 #include "UNI_screen.h"
 #include "UNI_userpref.h"
 #include "UNI_window.h"
@@ -86,6 +87,21 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 
   /** Operator says Hello. */
   notice.Send(invoker);
+}
+
+void WM_operator_properties_free(PointerUNI *ptr)
+{
+  // IDProperty *properties = ptr->data;
+
+  // if (properties) {
+  //   IDP_FreeProperty(properties);
+  //   ptr->data = NULL; /* just in case */
+  // }
+}
+
+void WM_operator_properties_create_ptr(PointerUNI *prop_ptr, wmOperatorType *ot)
+{
+  CreationFactory::PTR::New(SdfPath(COVAH_PATH_DEFAULTS::COVAH_WM), ot->uprops, prop_ptr);
 }
 
 void WM_operators_init(cContext *C)
