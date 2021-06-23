@@ -83,11 +83,6 @@ static UsdAttribute _CreateDpiAttr(UsdUIWindow & self, object defaultVal, bool w
   return self.CreateDpiAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
 }
 
-static UsdAttribute _CreateDpifacAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDpifacAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
 static UsdAttribute _CreateScaleAttr(UsdUIWindow & self, object defaultVal, bool writeSparsely)
 {
   return self.CreateScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
@@ -179,9 +174,6 @@ void wrapUsdUIWindow()
     .def("GetDpiAttr", &This::GetDpiAttr)
     .def("CreateDpiAttr", &_CreateDpiAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-    .def("GetDpifacAttr", &This::GetDpifacAttr)
-    .def("CreateDpifacAttr", &_CreateDpifacAttr,
-        (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("GetScaleAttr", &This::GetScaleAttr)
     .def("CreateScaleAttr", &_CreateScaleAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -231,6 +223,8 @@ void wrapUsdUIWindow()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
 
 
 

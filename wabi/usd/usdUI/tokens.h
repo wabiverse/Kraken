@@ -488,6 +488,12 @@ struct UsdUITokensType {
   const TfToken uiScreenCollectionAreasIncludeRoot;
 
   /**
+   * @brief "ui:userpref:dpifac"
+   *
+   * UsdUIUserPref */
+  const TfToken uiUserprefDpifac;
+
+  /**
    * @brief "ui:userpref:showSavePrompt"
    *
    * UsdUIUserPref */
@@ -510,12 +516,6 @@ struct UsdUITokensType {
    *
    * UsdUIWindow */
   const TfToken uiWindowDpi;
-
-  /**
-   * @brief "ui:window:dpifac"
-   *
-   * UsdUIWindow */
-  const TfToken uiWindowDpifac;
 
   /**
    * @brief "ui:window:icon"

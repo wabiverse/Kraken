@@ -190,22 +190,6 @@ UsdAttribute UsdUIWindow::CreateDpiAttr(VtValue const &defaultValue, bool writeS
     writeSparsely);
 }
 
-UsdAttribute UsdUIWindow::GetDpifacAttr() const
-{
-  return GetPrim().GetAttribute(UsdUITokens->uiWindowDpifac);
-}
-
-UsdAttribute UsdUIWindow::CreateDpifacAttr(VtValue const &defaultValue, bool writeSparsely) const
-{
-  return UsdSchemaBase::_CreateAttr(
-    UsdUITokens->uiWindowDpifac,
-    SdfValueTypeNames->Float,
-    /* custom = */ false,
-    SdfVariabilityUniform,
-    defaultValue,
-    writeSparsely);
-}
-
 UsdAttribute UsdUIWindow::GetScaleAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiWindowScale);
@@ -368,7 +352,6 @@ const TfTokenVector& UsdUIWindow::GetSchemaAttributeNames(bool includeInherited)
     UsdUITokens->uiWindowType,
     UsdUITokens->uiWindowState,
     UsdUITokens->uiWindowDpi,
-    UsdUITokens->uiWindowDpifac,
     UsdUITokens->uiWindowScale,
     UsdUITokens->uiWindowPixelsz,
     UsdUITokens->uiWindowWidgetunit,

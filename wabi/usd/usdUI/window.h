@@ -367,42 +367,6 @@ class UsdUIWindow : public UsdTyped {
  public:
   /**
    * ---------------------------------------------------------------------
-   * DPIFAC
-   * ---------------------------------------------------------------------
-   * 
-   * The user interface dpi multiplier
-   * to scale UI elements based on the
-   * DPI.
-   * 
-   *
-   *
-   * | ||
-   * | -- | -- |
-   *
-   * | Declaration | `uniform float ui:window:dpifac = 1` |
-   *
-   * | C++ Type | float |
-   *
-   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
-   *
-   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
-   */
-  USDUI_API
-  UsdAttribute GetDpifacAttr() const;
-
-  /**
-   * See GetDpifacAttr(), and also @ref
-   * Usd_Create_Or_Get_Property for when to use Get vs Create.
-   * If specified, author @p defaultValue as the attribute's
-   * default, sparsely (when it makes sense to do so) if @p
-   * writeSparsely is @c true, the default for @p writeSparsely
-   * is @c false. */
-  USDUI_API
-  UsdAttribute CreateDpifacAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
-
- public:
-  /**
-   * ---------------------------------------------------------------------
    * SCALE
    * ---------------------------------------------------------------------
    * 

@@ -188,9 +188,10 @@ class UsdUIUserPref : public UsdTyped {
    * SHOWSAVEPROMPT
    * ---------------------------------------------------------------------
    * 
-   * When quitting the application, it is usually helpful
-   * to be prompted whether or not to save your work. This
-   * setting controls whether or not this prompt is enabled.
+   * When quitting the application, it is usually helpful to be
+   * prompted whether or not you have unsaved changes giving you
+   * one last chance to save your work. Modifying this setting
+   * controls whether or not this prompt is enabled.
    * 
    *
    *
@@ -217,6 +218,42 @@ class UsdUIUserPref : public UsdTyped {
    * is @c false. */
   USDUI_API
   UsdAttribute CreateShowSavePromptAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+
+ public:
+  /**
+   * ---------------------------------------------------------------------
+   * DPIFAC
+   * ---------------------------------------------------------------------
+   * 
+   * The user interface dpi multiplier
+   * to scale UI elements based on the
+   * DPI.
+   * 
+   *
+   *
+   * | ||
+   * | -- | -- |
+   *
+   * | Declaration | `uniform float ui:userpref:dpifac = 1` |
+   *
+   * | C++ Type | float |
+   *
+   * | @ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float |
+   *
+   * | @ref SdfVariability "Variability" | SdfVariabilityUniform |
+   */
+  USDUI_API
+  UsdAttribute GetDpifacAttr() const;
+
+  /**
+   * See GetDpifacAttr(), and also @ref
+   * Usd_Create_Or_Get_Property for when to use Get vs Create.
+   * If specified, author @p defaultValue as the attribute's
+   * default, sparsely (when it makes sense to do so) if @p
+   * writeSparsely is @c true, the default for @p writeSparsely
+   * is @c false. */
+  USDUI_API
+  UsdAttribute CreateDpifacAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
 
  public:
   /**

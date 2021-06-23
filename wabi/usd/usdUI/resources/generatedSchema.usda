@@ -13,11 +13,19 @@ class UserPref "UserPref" (
     """
 )
 {
+    uniform float ui:userpref:dpifac = 1 (
+        doc = """
+        The user interface dpi multiplier
+        to scale UI elements based on the
+        DPI.
+        """
+    )
     uniform bool ui:userpref:showSavePrompt = 1 (
         doc = """
-        When quitting the application, it is usually helpful
-        to be prompted whether or not to save your work. This
-        setting controls whether or not this prompt is enabled.
+        When quitting the application, it is usually helpful to be
+        prompted whether or not you have unsaved changes giving you
+        one last chance to save your work. Modifying this setting
+        controls whether or not this prompt is enabled.
         """
     )
 }
@@ -46,13 +54,6 @@ class Window "Window" (
         doc = """
         The current window DPI value
         for better interface drawing.
-        """
-    )
-    uniform float ui:window:dpifac = 1 (
-        doc = """
-        The user interface dpi multiplier
-        to scale UI elements based on the
-        DPI.
         """
     )
     uniform asset ui:window:icon (

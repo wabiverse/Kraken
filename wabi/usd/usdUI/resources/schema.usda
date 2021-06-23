@@ -46,6 +46,16 @@ class UserPref "UserPref" (
             string apiName = "showSavePrompt"
         }        
     )
+    uniform float ui:userpref:dpifac = 1 (
+        doc = """
+        The user interface dpi multiplier
+        to scale UI elements based on the
+        DPI.
+        """
+        customData = {
+            string apiName = "dpifac"
+        }          
+    )
 }
 
 class Window "Window" (
@@ -103,16 +113,6 @@ class Window "Window" (
         customData = {
             string apiName = "dpi"
         }
-    )
-    uniform float ui:window:dpifac = 1 (
-        doc = """
-        The user interface dpi multiplier
-        to scale UI elements based on the
-        DPI.
-        """
-        customData = {
-            string apiName = "dpifac"
-        }          
     )
     uniform float ui:window:scale = 1 (
         doc = """

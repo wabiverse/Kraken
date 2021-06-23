@@ -63,6 +63,11 @@ static UsdAttribute _CreateShowSavePromptAttr(UsdUIUserPref & self, object defau
   return self.CreateShowSavePromptAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
 }
 
+static UsdAttribute _CreateDpifacAttr(UsdUIUserPref & self, object defaultVal, bool writeSparsely)
+{
+  return self.CreateDpifacAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+}
+
 static std::string _Repr(const UsdUIUserPref & self)
 {
   std::string primRepr = TfPyRepr(self.GetPrim());
@@ -102,6 +107,9 @@ void wrapUsdUIUserPref()
     .def("GetShowSavePromptAttr", &This::GetShowSavePromptAttr)
     .def("CreateShowSavePromptAttr", &_CreateShowSavePromptAttr,
         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("GetDpifacAttr", &This::GetDpifacAttr)
+    .def("CreateDpifacAttr", &_CreateDpifacAttr,
+        (arg("defaultValue") = object(), arg("writeSparsely") = false))
     .def("__repr__", ::_Repr)
   ;
 
@@ -125,6 +133,8 @@ void wrapUsdUIUserPref()
    *   'namespace {', '}'.
    * ======================================================================
    * --(BEGIN CUSTOM CODE)-- */
+
+
 
 
 namespace {

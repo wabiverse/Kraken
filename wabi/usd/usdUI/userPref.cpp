@@ -126,6 +126,22 @@ UsdAttribute UsdUIUserPref::CreateShowSavePromptAttr(VtValue const &defaultValue
     writeSparsely);
 }
 
+UsdAttribute UsdUIUserPref::GetDpifacAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiUserprefDpifac);
+}
+
+UsdAttribute UsdUIUserPref::CreateDpifacAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(
+    UsdUITokens->uiUserprefDpifac,
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityUniform,
+    defaultValue,
+    writeSparsely);
+}
+
 namespace {
 static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector& left,
                            const TfTokenVector& right)
@@ -143,6 +159,7 @@ const TfTokenVector& UsdUIUserPref::GetSchemaAttributeNames(bool includeInherite
 {
   static TfTokenVector localNames = {
     UsdUITokens->uiUserprefShowSavePrompt,
+    UsdUITokens->uiUserprefDpifac,
   };
   static TfTokenVector allNames =
     _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true), localNames);

@@ -141,11 +141,11 @@ void wrapUsdUITokens()
       _AddToken(cls, "uiScreenAlignment", UsdUITokens->uiScreenAlignment);
       _AddToken(cls, "uiScreenAreas", UsdUITokens->uiScreenAreas);
       _AddToken(cls, "uiScreenCollectionAreasIncludeRoot", UsdUITokens->uiScreenCollectionAreasIncludeRoot);
+      _AddToken(cls, "uiUserprefDpifac", UsdUITokens->uiUserprefDpifac);
       _AddToken(cls, "uiUserprefShowSavePrompt", UsdUITokens->uiUserprefShowSavePrompt);
       _AddToken(cls, "uiWindowAlignment", UsdUITokens->uiWindowAlignment);
       _AddToken(cls, "uiWindowCursor", UsdUITokens->uiWindowCursor);
       _AddToken(cls, "uiWindowDpi", UsdUITokens->uiWindowDpi);
-      _AddToken(cls, "uiWindowDpifac", UsdUITokens->uiWindowDpifac);
       _AddToken(cls, "uiWindowIcon", UsdUITokens->uiWindowIcon);
       _AddToken(cls, "uiWindowLinewidth", UsdUITokens->uiWindowLinewidth);
       _AddToken(cls, "uiWindowPixelsz", UsdUITokens->uiWindowPixelsz);
