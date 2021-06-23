@@ -91,6 +91,8 @@ struct wmWindow : public UsdUIWindow, public UniverseObject
     cScreen *screen;
   } prims;
 
+  WorkSpaceInstanceHook *workspace_hook;
+
   inline wmWindow(cContext *C,
                   const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
                   const SdfPath &wspace = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES_LAYOUT),
@@ -127,6 +129,7 @@ wmWindow::wmWindow(cContext *C,
     addmousemove(false),
     eventstate(new wmEvent()),
     windowstate(0),
+    workspace_hook(nullptr),
     prims({.workspace = new WorkSpace(C, wspace),
            .screen = new cScreen(C, screen)})
 {}
@@ -155,6 +158,7 @@ wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
     addmousemove(false),
     eventstate(new wmEvent()),
     windowstate(0),
+    workspace_hook(nullptr),
     prims({.workspace = prim->prims.workspace,
            .screen = prim->prims.screen})
 {}

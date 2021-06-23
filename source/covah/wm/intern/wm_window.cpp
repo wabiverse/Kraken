@@ -46,6 +46,7 @@
 
 #include "CKE_context.h"
 #include "CKE_main.h"
+#include "CKE_workspace.h"
 
 #include "CLI_icons.h"
 #include "CLI_math_inline.h"
@@ -179,6 +180,19 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
     /* this can change per window */
     wm_window_set_dpi(win);
   }
+}
+
+
+WorkSpace *WM_window_get_active_workspace(const wmWindow *win)
+{
+  return CKE_workspace_active_get(win->workspace_hook);
+}
+
+
+cScreen *WM_window_get_active_screen(const wmWindow *win)
+{
+  const WorkSpace *workspace = WM_window_get_active_workspace(win);
+  return (ARCH_LIKELY(workspace != NULL) ? CKE_workspace_active_screen_get(win->workspace_hook) : NULL);
 }
 
 
@@ -412,6 +426,28 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
             /* void poin should point to string, it makes a copy */
             break; /* only one drop element supported now */
           }
+        }
+
+        break;
+      }
+      case ANCHOR_EventTypeNativeResolutionChange: {
+        float pixelsize = FormFactory(win->pixelsz);
+        float prev_pixelsize = pixelsize;
+        wm_window_set_dpi(win);
+
+        if (pixelsize != prev_pixelsize)
+        {
+          // CKE_icon_changed(WM_window_get_active_screen(win)->id.icon_id);
+
+          /* Close all popups since they are positioned with the pixel
+           * size baked in and it's difficult to correct them. */
+          CTX_wm_window_set(C, win);
+          // UI_popup_handlers_remove_all(C, &win->modalhandlers);
+          CTX_wm_window_set(C, NULL);
+
+          wm_window_make_drawable(wm, win);
+          WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+          WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
         }
 
         break;

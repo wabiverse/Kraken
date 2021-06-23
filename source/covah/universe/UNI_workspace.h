@@ -26,12 +26,41 @@
 
 #include "UNI_context.h"
 #include "UNI_object.h"
+#include "UNI_screen.h"
+#include "UNI_window.h"
 
 #include "CKE_context.h"
 
 #include <wabi/usd/usdUI/workspace.h>
 
 WABI_NAMESPACE_BEGIN
+
+struct WorkSpaceLayout
+{
+  cScreen *screen;
+  TfToken name;
+};
+
+typedef std::vector<WorkSpaceLayout *> WorkSpaceLayoutVector;
+
+struct WorkSpaceInstanceHook
+{
+  WorkSpace *active;
+  WorkSpaceLayout *act_layout;
+
+  WorkSpace *temp_workspace_store;
+  WorkSpaceLayout *temp_layout_store;
+};
+
+struct WorkSpaceDataRelation
+{
+  WorkSpaceInstanceHook *parent;
+  WorkSpaceLayout *value;
+
+  SdfPath parentid;
+};
+
+typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
 struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 {
@@ -40,6 +69,10 @@ struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 
   UsdAttribute name;
   UsdRelationship screen_rel;
+
+  WorkSpaceLayoutVector layouts;
+
+  WorkSpaceDataRelationVector hook_layout_relations;
 
   inline WorkSpace(cContext *C,
                    const SdfPath &stagepath,

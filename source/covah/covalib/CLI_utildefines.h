@@ -78,6 +78,8 @@
 #  define ATTR_NONNULL(...)
 #endif
 
+#define FIND_TOKEN(i) (TfToken::Find(i))
+
 #define STRINGALL(x) TfStringify(x)
 #define CHARALL(x) TfStringify(x).c_str()
 

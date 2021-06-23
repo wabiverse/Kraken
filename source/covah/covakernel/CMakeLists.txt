@@ -17,15 +17,19 @@ set(SRC
   intern/CKE_covah.cpp
   intern/CKE_diagnostics.cpp
   intern/CKE_hash.cpp
+  intern/CKE_icons.cpp
   intern/CKE_plugins.cpp
   intern/CKE_python.cpp
   intern/CKE_utils.cpp
+  intern/CKE_workspace.cpp
 
   CKE_api.h
   CKE_context.h
+  CKE_icons.h
   CKE_main.h
   CKE_robinhood.h
   CKE_space.h
+  CKE_workspace.h
   CKE_utils.h
   CKE_version.h
 )
