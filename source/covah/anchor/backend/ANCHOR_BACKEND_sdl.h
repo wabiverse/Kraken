@@ -58,6 +58,8 @@ class ANCHOR_SystemSDL : public ANCHOR_System
 
   void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
 
+  void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
+
   static bool ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context);
   static bool ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window);
   static bool ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window);
@@ -145,6 +147,8 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
 
   ~ANCHOR_WindowSDL();
 
+  std::string getTitle() const;
+
   /* SDL specific */
   SDL_Window *getSDLWindow()
   {
@@ -162,6 +166,8 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
   }
 
   bool getValid() const;
+
+  void getClientBounds(ANCHOR_Rect &bounds) const;
 
  protected:
   /**
@@ -186,6 +192,8 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
                       AnchorS32 inY,
                       AnchorS32 &outX,
                       AnchorS32 &outY) const;
+
+  eAnchorStatus setClientSize(AnchorU32 width, AnchorU32 height);
 
   eAnchorStatus setState(eAnchorWindowState state);
 

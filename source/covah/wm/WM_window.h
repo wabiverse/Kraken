@@ -31,6 +31,8 @@
 
 #include "CKE_context.h"
 
+#include <wabi/base/gf/rect2i.h>
+
 WABI_NAMESPACE_BEGIN
 
 typedef void (*wmGenericUserDataFreeFn)(void *data);
@@ -51,6 +53,7 @@ struct wmGenericCallback
   wmGenericUserDataFreeFn free_user_data;
 };
 
+wmWindow *wm_window_new(cContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog);
 wmWindow *WM_window_open(cContext *C,
                          const char *title,
                          const char *icon,
@@ -69,21 +72,22 @@ void WM_anchor_exit(void);
 void WM_window_process_events(cContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
-void WM_window_anchorwindows_ensure(wmWindowManager *wm);
+void WM_window_anchorwindows_ensure(cContext *C, wmWindowManager *wm);
 
 /** Operators :: Register */
 void WM_window_operators_register();
 
 /** Utils. */
-int WM_window_pixels_x(wmWindow *win);
-int WM_window_pixels_y(wmWindow *win);
+int WM_window_pixels_x(const wmWindow *win);
+int WM_window_pixels_y(const wmWindow *win);
 bool WM_window_find_under_cursor(wmWindowManager *wm,
                                  wmWindow *win_ignore,
                                  wmWindow *win,
                                  const GfVec2i mval,
                                  wmWindow **r_win,
                                  GfVec2i *r_mval);
-
+void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
+WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 
 /** Cleanup. */
 void wm_exit_schedule_delayed(cContext *C);

@@ -27,16 +27,51 @@
 #include "UNI_context.h"
 #include "UNI_region.h"
 #include "UNI_screen.h"
+#include "UNI_space_types.h"
 
 #include "CKE_context.h"
+#include "CKE_screen.h"
 
 #include <wabi/usd/usdUI/area.h>
 
 WABI_NAMESPACE_BEGIN
 
+
+enum GlobalAreaAlign
+{
+  GLOBAL_AREA_ALIGN_TOP = 0,
+  GLOBAL_AREA_ALIGN_BOTTOM = 1,
+};
+
+enum GlobalAreaFlag
+{
+  GLOBAL_AREA_IS_HIDDEN = (1 << 0),
+};
+
+struct ScrGlobalAreaData
+{
+  short cur_fixed_height;
+  short size_min, size_max;
+  GlobalAreaAlign align;
+  GlobalAreaFlag flag;
+
+  ScrGlobalAreaData()
+    : cur_fixed_height(VALUE_ZERO),
+      size_min(VALUE_ZERO),
+      size_max(VALUE_ZERO),
+      align(GLOBAL_AREA_ALIGN_TOP),
+      flag(GLOBAL_AREA_IS_HIDDEN)
+  {}
+};
+
+
 struct ScrArea : public UsdUIArea, public UniverseObject
 {
   SdfPath path;
+
+  ScrVert *v1, *v2, *v3, *v4;
+
+  std::vector<SpaceLink *> spacedata;
 
   UsdAttribute name;
   UsdAttribute spacetype;
@@ -44,17 +79,28 @@ struct ScrArea : public UsdUIArea, public UniverseObject
   UsdAttribute pos;
   UsdAttribute size;
 
+  struct SpaceType *type;
+  ScrGlobalAreaData *global;
+
+  std::vector<ARegion *> regions;
+
   inline ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath);
 };
 
 ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(COVAH_UNIVERSE_CREATE_CHILD(C)),
     path(UsdUIArea::GetPath()),
+    v1(POINTER_ZERO),
+    v2(POINTER_ZERO),
+    v3(POINTER_ZERO),
+    v4(POINTER_ZERO),
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),
     pos(CreatePosAttr()),
-    size(CreateSizeAttr())
+    size(CreateSizeAttr()),
+    type(POINTER_ZERO),
+    global(POINTER_ZERO)
 {}
 
 WABI_NAMESPACE_END

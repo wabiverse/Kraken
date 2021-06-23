@@ -46,6 +46,7 @@
 
 #include "CKE_context.h"
 #include "CKE_main.h"
+#include "CKE_screen.h"
 #include "CKE_workspace.h"
 
 #include "CLI_icons.h"
@@ -54,6 +55,7 @@
 #include "CLI_time.h"
 
 #include "ED_fileselect.h"
+#include "ED_screen.h"
 
 #include <wabi/base/gf/vec2f.h>
 
@@ -126,8 +128,10 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
 }
 
 
-static void wm_window_set_dpi(wmWindow *win)
+static void wm_window_set_dpi(cContext *C, wmWindow *win)
 {
+  UserDef *prefs = CTX_data_prefs(C);
+
   float win_scale = FormFactory(win->scale);
   float win_linewidth = FormFactory(win->linewidth);
 
@@ -146,12 +150,12 @@ static void wm_window_set_dpi(wmWindow *win)
 
   /* ----- */
 
-  /**
-   * Set prefs on
-   * Pixar Stage. */
+  /** Change it globally as well. */
+  UI_DPI_FAC = dpifac;
+  FormFactory(prefs->dpifac, float(dpifac));
+
   FormFactory(win->pixelsz, float(pixelsize));
   FormFactory(win->dpi, float(dpiadj));
-  FormFactory(win->dpifac, float(dpifac));
   FormFactory(win->widgetunit, float(wunit += 2 * ((int)pixelsize - (int)dpifac)));
 
   /* ----- */
@@ -169,7 +173,7 @@ void wm_window_clear_drawable(wmWindowManager *wm)
   }
 }
 
-void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
+void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win)
 {
   if (win != wm->windrawable && win->anchorwin)
   {
@@ -178,8 +182,21 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
     wm_window_set_drawable(wm, win, true);
 
     /* this can change per window */
-    wm_window_set_dpi(win);
+    wm_window_set_dpi(C, win);
   }
+}
+
+
+WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win)
+{
+  const WorkSpace *workspace = WM_window_get_active_workspace(win);
+  return (ARCH_LIKELY(workspace != NULL) ? CKE_workspace_active_layout_get(win->workspace_hook) : NULL);
+}
+
+
+void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceLayout *layout)
+{
+  CKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
 }
 
 
@@ -326,7 +343,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         win->addmousemove = true; /* enables highlighted buttons */
 
-        wm_window_make_drawable(wm, win);
+        wm_window_make_drawable(C, wm, win);
 
         wmEvent event;
         WM_event_init_from_window(win, &event);
@@ -341,7 +358,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       }
       case ANCHOR_EventTypeWindowUpdate: {
-        wm_window_make_drawable(wm, win);
+        wm_window_make_drawable(C, wm, win);
         WM_event_add_notifier(C, NC_WINDOW, NULL);
         break;
       }
@@ -349,11 +366,11 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeWindowMove: {
         eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
         win->windowstate = state;
-        wm_window_set_dpi(win);
+        wm_window_set_dpi(C, win);
         break;
       }
       case ANCHOR_EventTypeWindowDPIHintChanged: {
-        wm_window_set_dpi(win);
+        wm_window_set_dpi(C, win);
 
         WM_main_add_notifier(C, NC_WINDOW, NULL);             /* full redraw */
         WM_main_add_notifier(C, NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
@@ -433,7 +450,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeNativeResolutionChange: {
         float pixelsize = FormFactory(win->pixelsz);
         float prev_pixelsize = pixelsize;
-        wm_window_set_dpi(win);
+        wm_window_set_dpi(C, win);
 
         if (pixelsize != prev_pixelsize)
         {
@@ -445,7 +462,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
           // UI_popup_handlers_remove_all(C, &win->modalhandlers);
           CTX_wm_window_set(C, NULL);
 
-          wm_window_make_drawable(wm, win);
+          wm_window_make_drawable(C, wm, win);
           WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
           WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
         }
@@ -497,7 +514,7 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 }
 
 
-static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bool is_dialog)
+static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWindow *win, bool is_dialog)
 {
   if (!win->anchorwin)
   {
@@ -539,7 +556,7 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
     }
 
     wm_window_anchorwindow_add(wm, win, is_dialog);
-    wm_window_set_dpi(win);
+    wm_window_set_dpi(C, win);
   }
 }
 
@@ -554,11 +571,57 @@ static void wm_get_screensize(int *r_width, int *r_height)
 }
 
 
-void WM_window_anchorwindows_ensure(wmWindowManager *wm)
+void WM_window_rect_calc(const wmWindow *win, GfRect2i *r_rect)
+{
+  r_rect->SetMinX(0);
+  r_rect->SetMinY(0);
+  r_rect->SetMaxX(WM_window_pixels_x(win));
+  r_rect->SetMaxY(WM_window_pixels_y(win));
+}
+
+
+void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
+{
+  GfRect2i window_rect, screen_rect;
+
+  WM_window_rect_calc(win, &window_rect);
+  screen_rect = window_rect;
+
+  /* Subtract global areas from screen rectangle. */
+  UNIVERSE_FOR_ALL(global_area, win->global_areas.areas)
+  {
+    int height = ED_area_global_size_y(global_area) - 1;
+
+    if (global_area->global->flag & GLOBAL_AREA_IS_HIDDEN)
+    {
+      continue;
+    }
+
+    switch (global_area->global->align)
+    {
+      case GLOBAL_AREA_ALIGN_TOP:
+        screen_rect.SetMaxY(screen_rect.GetMaxY() - height);
+        break;
+      case GLOBAL_AREA_ALIGN_BOTTOM:
+        screen_rect.SetMinY(screen_rect.GetMinY() - height);
+        break;
+      default:
+        CLI_assert_unreachable();
+        break;
+    }
+  }
+
+  CLI_assert(screen_rect.IsValid());
+
+  *r_rect = screen_rect;
+}
+
+
+void WM_window_anchorwindows_ensure(cContext *C, wmWindowManager *wm)
 {
   UNIVERSE_FOR_ALL(win, wm->windows)
   {
-    wm_window_anchorwindow_ensure(wm, VALUE(win), false);
+    wm_window_anchorwindow_ensure(C, wm, VALUE(win), false);
   }
 }
 
@@ -592,6 +655,57 @@ static void wm_window_check_size(GfVec4i *rect)
   }
 
   rect->Set(xmin, ymin, xmax, ymax);
+}
+
+
+/* size of all screens (desktop), useful since the mouse is bound by this */
+void wm_get_desktopsize(int *r_width, int *r_height)
+{
+  unsigned int uiwidth;
+  unsigned int uiheight;
+
+  ANCHOR::GetAllDisplayDimensions(anchor_system, &uiwidth, &uiheight);
+  *r_width = uiwidth;
+  *r_height = uiheight;
+}
+
+void wm_window_set_size(wmWindow *win, int width, int height)
+{
+  ANCHOR::SetClientSize((ANCHOR_SystemWindowHandle)win->anchorwin, width, height);
+}
+
+
+static bool wm_window_update_size_position(wmWindow *win)
+{
+  ANCHOR_RectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+  int l, t, r, b;
+  ANCHOR::GetRectangle(client_rect, &l, &t, &r, &b);
+
+  ANCHOR::DisposeRectangle(client_rect);
+
+  GfVec2f size = FormFactory(win->size);
+  GfVec2f pos = FormFactory(win->pos);
+
+  int scr_w, scr_h;
+  wm_get_desktopsize(&scr_w, &scr_h);
+  int sizex = r - l;
+  int sizey = b - t;
+  int posx = l;
+  int posy = scr_h - t - GET_Y(size);
+
+  if (GET_X(size) != sizex || GET_Y(size) != sizey || GET_X(pos) != posx || GET_Y(pos) != posy)
+  {
+    FormFactory(win->size, GfVec2f(sizex, sizey));
+    FormFactory(win->pos, GfVec2f(posx, posy));
+    return true;
+  }
+  return false;
+}
+
+bool WM_window_is_temp_screen(const wmWindow *win)
+{
+  const cScreen *screen = WM_window_get_active_screen(win);
+  return (screen && screen->temp != 0);
 }
 
 
@@ -654,39 +768,85 @@ wmWindow *WM_window_open(cContext *C,
 
   /* ----- */
 
-  /**
-   * Create Window. */
-  wmWindow *win = new wmWindow(C, win_prev, SdfPath("Child"));
-  wm->windows.insert(std::make_pair(win->path, win));
-
-  /**
-   * Dialogs may have a child window as parent.
-   * Otherwise, a child must not be a parent too. */
-  win->parent = (!dialog && win_prev && win_prev->parent) ? win_prev->parent : win_prev;
+  /* Reuse temporary windows when they share the same title. */
+  wmWindow *win = POINTER_ZERO;
+  if (temp)
+  {
+    UNIVERSE_FOR_ALL(win_iter, wm->windows)
+    {
+      if (WM_window_is_temp_screen(VALUE(win_iter)))
+      {
+        char *wintitle = ANCHOR::GetTitle((ANCHOR_SystemWindowHandle)VALUE(win_iter)->anchorwin);
+        if (STREQ(title, wintitle))
+        {
+          win = VALUE(win_iter);
+        }
+        free(wintitle);
+      }
+    }
+  }
 
   /* ----- */
 
-  FormFactory(win->pos, GfVec2f(GET_X(rect), GET_Y(rect)));
+  /**
+   * Create Window. */
+  if (win == POINTER_ZERO)
+  {
+    win = wm_window_new(C, wm, win_prev, dialog);
+    FormFactory(win->pos, GfVec2f(GET_X(rect), GET_Y(rect)));
+  }
+
+  /* ----- */
+
+  cScreen *screen = WM_window_get_active_screen(win);
 
   FormFactory(win->size, GfVec2f(GET_Z(rect) - GET_X(rect), GET_W(rect) - GET_Y(rect)));
 
-  if (!win->prims.workspace->IsValid())
+  if (WM_window_get_active_workspace(win) == POINTER_ZERO)
   {
-    win->prims.workspace = win_prev->prims.workspace;
+    WorkSpace *workspace = WM_window_get_active_workspace(win_prev);
+    CKE_workspace_active_set(win->workspace_hook, workspace);
   }
 
-  if (!win->prims.screen->areas_rel.HasAuthoredTargets())
+  if (screen == POINTER_ZERO)
   {
     /* add new screen layout */
+    WorkSpace *workspace = WM_window_get_active_workspace(win);
+    WorkSpaceLayout *layout = ED_workspace_layout_add(C, workspace, win, "temp");
+
+    screen = CKE_workspace_layout_screen_get(layout);
+    WM_window_set_active_layout(win, workspace, layout);
   }
 
+  screen->temp = temp;
+
   CTX_wm_window_set(C, win);
-  const bool new_window = (win->anchorwin == NULL);
+  const bool new_window = (win->anchorwin == POINTER_ZERO);
   if (new_window)
   {
-    wm_window_anchorwindow_ensure(wm, win, dialog);
+    wm_window_anchorwindow_ensure(C, wm, win, dialog);
   }
   WM_check(C);
+
+  /* ensure it shows the right spacetype editor */
+  if (space_type != UsdUITokens->spaceEmpty)
+  {
+    ScrArea *area = screen->areas.at(0);
+    CTX_wm_area_set(C, area);
+    ED_area_newspace(C, area, space_type, false);
+  }
+
+  ED_screen_change(C, screen);
+
+  if (!new_window)
+  {
+    /**
+     * Set size in ANCHOR window and then update size and position from
+     * ANCHOR, in case they where changed by ANCHOR to fit the monitor. */
+    GfVec2f new_size = FormFactory(win->size);
+    wm_window_set_size(win, GET_X(new_size), GET_Y(new_size));
+    wm_window_update_size_position(win);
+  }
 
   return win;
 }
@@ -818,7 +978,7 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
 }
 
 
-int WM_window_pixels_x(wmWindow *win)
+int WM_window_pixels_x(const wmWindow *win)
 {
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
@@ -827,7 +987,7 @@ int WM_window_pixels_x(wmWindow *win)
   return (int)(f * GET_X(win_size));
 }
 
-int WM_window_pixels_y(wmWindow *win)
+int WM_window_pixels_y(const wmWindow *win)
 {
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
@@ -903,27 +1063,21 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
     }
   }
 
+  cScreen *screen = WM_window_get_active_screen(win);
+  WorkSpace *workspace = WM_window_get_active_workspace(win);
+  WorkSpaceLayout *layout = CKE_workspace_active_layout_get(win->workspace_hook);
+
   /** Remove Window From HashMap */
   wm->windows.erase(win->path);
 
-  /** Remove All Areas from Screens. */
-  if (win->prims.screen)
-  {
-    SdfPathVector areas;
-    win->prims.screen->areas_rel.GetTargets(&areas);
-    UNIVERSE_FOR_ALL(area, areas)
-    {
-      UsdPrim areaprim = stage->GetPrimAtPath(area.GetPrimPath());
-      areaprim.Unload();
-    }
+  CTX_wm_window_set(C, win); /* needed by handlers */
+  // WM_event_remove_handlers(C, &win->handlers);
+  // WM_event_remove_handlers(C, &win->modalhandlers);
 
-    SdfPathVector screens;
-    win->prims.workspace->screen_rel.GetTargets(&screens);
-    UNIVERSE_FOR_ALL(screen, screens)
-    {
-      UsdPrim screenprim = stage->GetPrimAtPath(screen.GetPrimPath());
-      screenprim.Unload();
-    }
+  /** Remove All Screens. */
+  if (screen)
+  {
+    // ED_screen_exit(C, win, screen);
   }
 
   /** Null out C. */
@@ -936,6 +1090,44 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
 }
 
 
+static SdfPath make_winpath(int id)
+{
+  return SdfPath(STRINGALL(COVAH_PATH_DEFAULTS::COVAH_WINDOW) + STRINGALL(id));
+}
+
+
+static int find_free_winid(wmWindowManager *wm)
+{
+  int id = 1;
+
+  UNIVERSE_FOR_ALL(win, wm->windows)
+  {
+    if (id <= VALUE(win)->winid)
+    {
+      id = VALUE(win)->winid + 1;
+    }
+  }
+  return id;
+}
+
+
+wmWindow *wm_window_new(cContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog)
+{
+  int id = find_free_winid(wm);
+  wmWindow *win = new wmWindow(C, make_winpath(id));
+  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
+  win->winid = id;
+
+  const Main *cmain = CTX_data_main(C);
+
+  /* Dialogs may have a child window as parent. Otherwise, a child must not be a parent too. */
+  win->parent = (!dialog && parent && parent->parent) ? parent->parent : parent;
+  win->workspace_hook = CKE_workspace_instance_hook_create(cmain, win->winid);
+
+  return win;
+}
+
+
 wmWindow *wm_window_copy(cContext *C,
                          wmWindowManager *wm,
                          wmWindow *win_src,
@@ -944,22 +1136,9 @@ wmWindow *wm_window_copy(cContext *C,
 {
   const bool is_dialog = ANCHOR::IsDialogWindow((ANCHOR_SystemWindowHandle)win_src->anchorwin);
   wmWindow *win_parent = (child) ? win_src : win_src->parent;
-
-  /* ----- */
-
-  /**
-   * Create Window. */
-  wmWindow *win_dst = new wmWindow(C, win_parent, SdfPath("Child"));
-  wm->windows.insert(std::make_pair(win_dst->path, win_dst));
-
-  /**
-   * Dialogs may have a child window as parent.
-   * Otherwise, a child must not be a parent too. */
-  win_dst->parent = (!is_dialog && win_parent && win_parent->parent) ? win_parent->parent : win_parent;
-
-  /* ----- */
-
-  WorkSpace *workspace = win_src->prims.workspace;
+  wmWindow *win_dst = wm_window_new(C, wm, win_parent, is_dialog);
+  WorkSpace *workspace = WM_window_get_active_workspace(win_src);
+  WorkSpaceLayout *layout_old = WM_window_get_active_layout(win_src);
 
   GfVec2f win_srcpos = FormFactory(win_src->pos);
   GfVec2f win_srcsize = FormFactory(win_src->size);
@@ -968,7 +1147,11 @@ wmWindow *wm_window_copy(cContext *C,
   win_dst->size.Set(GfVec2f(GET_X(win_srcsize), GET_Y(win_srcsize)));
 
   win_dst->scene = win_src->scene;
-  win_dst->workspace_rel.AddTarget(workspace->path);
+  CKE_workspace_active_set(win_dst->workspace_hook, workspace);
+
+  /** 
+   * TODO: Duplicate layouts */
+  WorkSpaceLayout *layout_new = layout_old;
 
   return win_dst;
 }
@@ -1007,35 +1190,23 @@ static int wm_window_close_exec(cContext *C, wmOperator *UNUSED(op))
 
 static int wm_window_new_exec(cContext *C, wmOperator *UNUSED(op))
 {
-  Stage stage = CTX_data_stage(C);
   wmWindow *win_src = CTX_wm_window(C);
+  ScrArea *area = CKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TYPE_ANY, 0);
 
-  GfVec2f win_size = FormFactory(win_src->size);
-  TfToken win_align = FormFactory(win_src->alignment);
-  SdfPathVector win_areas = FormFactory(win_src->prims.screen->areas_rel);
-  SdfAssetPath win_icon = FormFactory(win_src->icon);
+  SdfAssetPath icon = FormFactory(win_src->icon);
+  GfVec2f size = FormFactory(win_src->size);
 
-  TfToken spacetype;
-  UNIVERSE_FOR_ALL(sdf_area, win_areas)
-  {
-    auto area = ScrArea::Get(stage, sdf_area.GetPrimPath());
-    UsdAttribute type = area.GetSpacetypeAttr();
-
-    TfToken possibletype;
-    type.Get(&possibletype);
-
-    spacetype = wm_verify_spacetype(possibletype);
-  }
+  TfToken spacetype = FormFactory(area->spacetype);
 
   bool ok = (WM_window_open(C,
                             IFACE_("Covah"),
-                            CHARALL(win_icon.GetAssetPath()),
+                            CHARALL(icon.GetAssetPath()),
                             0,
                             0,
-                            GET_X(win_size) * 0.95f,
-                            GET_Y(win_size) * 0.9f,
+                            GET_X(size) * 0.95f,
+                            GET_Y(size) * 0.9f,
                             spacetype,
-                            win_align,
+                            UsdUITokens->alignParent,
                             false,
                             false) != NULL);
 
@@ -1132,26 +1303,18 @@ static bool wm_operator_winactive(cContext *C)
 static bool wm_operator_winactive_normal(cContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
+  cScreen *screen;
 
   if (win == NULL)
   {
     return 0;
   }
-
-  if (!(win->prims.screen))
-  {
-    return 0;
-  }
-
-  // TfToken alignment;
-  // win->prims.screen->align.Get(&alignment);
-  // if (!(alignment == UsdUITokens->none)) {
+  // if (!((screen = WM_window_get_active_screen(win)) && (screen->state == SCREENNORMAL))) {
   //   return 0;
   // }
 
   return 1;
 }
-
 
 static int wm_exit_covah_exec(cContext *C, wmOperator *UNUSED(op))
 {

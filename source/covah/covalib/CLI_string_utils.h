@@ -73,6 +73,9 @@ size_t CLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__res
 typedef bool (*UniquenameCheckCallback)(void *arg, const char *name);
 
 COVAH_LIB_API
+bool CLI_uniquename(std::vector<void *> list, void *vlink, const char *defname, char delim, int name_offset, size_t name_len);
+
+COVAH_LIB_API
 bool CLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        void *arg,
                        const char *defname,

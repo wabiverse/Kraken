@@ -24,7 +24,9 @@
 
 #include "CKE_context.h"
 #include "CKE_main.h"
+#include "CKE_screen.h"
 #include "CKE_version.h"
+#include "CKE_workspace.h"
 
 #include "UNI_area.h"
 #include "UNI_object.h"
@@ -167,8 +169,8 @@ void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
 void CTX_wm_window_set(cContext *C, wmWindow *win)
 {
   C->wm.window = win;
-  C->wm.workspace = win->prims.workspace;
-  C->wm.screen = win->prims.screen;
+  C->wm.workspace = (win) ? CKE_workspace_active_get(win->workspace_hook) : nullptr;
+  C->wm.screen = (win) ? CKE_workspace_active_screen_get(win->workspace_hook) : nullptr;
   C->wm.area = NULL;
   C->wm.region = NULL;
 }

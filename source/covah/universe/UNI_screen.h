@@ -32,9 +32,54 @@
 #include "CKE_robinhood.h"
 #include "CKE_utils.h"
 
+#include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
 
 WABI_NAMESPACE_BEGIN
+
+#define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->verts)
+
+enum eScreenRedrawsFlag
+{
+  TIME_REGION = (1 << 0),
+  TIME_ALL_3D_WIN = (1 << 1),
+  TIME_ALL_ANIM_WIN = (1 << 2),
+  TIME_ALL_BUTS_WIN = (1 << 3),
+  TIME_SEQ = (1 << 4),
+  TIME_ALL_IMAGE_WIN = (1 << 5),
+  TIME_NODES = (1 << 6),
+  TIME_CLIPS = (1 << 7),
+
+  TIME_FOLLOW = (1 << 15),
+};
+
+struct ScrVert
+{
+  GfVec2h vec;
+  /* first one used internally, second one for tools */
+  short flag, editflag;
+
+  ScrVert()
+    : vec(VALUE_ZERO),
+      flag(VALUE_ZERO),
+      editflag(VALUE_ZERO)
+  {}
+};
+
+struct ScrEdge
+{
+  ScrVert *v1, *v2;
+  /** 1 when at edge of screen. */
+  short border;
+  short flag;
+
+  ScrEdge()
+    : v1(POINTER_ZERO),
+      v2(POINTER_ZERO),
+      border(VALUE_ZERO),
+      flag(VALUE_ZERO)
+  {}
+};
 
 struct cScreen : public UsdUIScreen, public UniverseObject
 {
@@ -43,9 +88,19 @@ struct cScreen : public UsdUIScreen, public UniverseObject
   UsdAttribute align;
   UsdRelationship areas_rel;
 
+  std::vector<ScrVert *> verts;
+  std::vector<ScrEdge *> edges;
   std::vector<ScrArea *> areas;
 
   ARegion *active_region;
+
+  /** Runtime */
+  short redraws_flag;
+
+  char temp;
+  int winid;
+  char do_refresh;
+
 
   inline cScreen(cContext *C, const SdfPath &stagepath);
 };
@@ -55,7 +110,36 @@ cScreen::cScreen(cContext *C, const SdfPath &stagepath)
     path(stagepath),
     align(CreateAlignmentAttr()),
     areas_rel(CreateAreasRel()),
-    areas()
+    verts(EMPTY),
+    areas(EMPTY),
+    active_region(POINTER_ZERO),
+    redraws_flag(VALUE_ZERO),
+    temp(VALUE_ZERO),
+    winid(VALUE_ZERO),
+    do_refresh(VALUE_ZERO)
 {}
+
+
+struct wmRegionMessageSubscribeParams
+{
+  const struct cContext *context;
+  struct wmMsgBus *message_bus;
+  struct WorkSpace *workspace;
+  struct Scene *scene;
+  struct cScreen *screen;
+  struct ScrArea *area;
+  struct ARegion *region;
+
+  wmRegionMessageSubscribeParams()
+    : context(POINTER_ZERO),
+      message_bus(POINTER_ZERO),
+      workspace(POINTER_ZERO),
+      scene(POINTER_ZERO),
+      screen(POINTER_ZERO),
+      area(POINTER_ZERO),
+      region(POINTER_ZERO)
+  {}
+};
+
 
 WABI_NAMESPACE_END

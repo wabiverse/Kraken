@@ -22,9 +22,25 @@
  * Purple Underground.
  */
 
+#include "UNI_area.h"
+#include "UNI_context.h"
+#include "UNI_factory.h"
+#include "UNI_object.h"
+#include "UNI_operator.h"
+#include "UNI_pixar_utils.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
+#include "UNI_space_types.h"
+#include "UNI_userpref.h"
+#include "UNI_window.h"
+#include "UNI_wm_types.h"
+#include "UNI_workspace.h"
+
+#include "CKE_screen.h"
 #include "CKE_workspace.h"
 
-#include "UNI_factory.h"
+#include "CLI_assert.h"
+#include "CLI_string_utils.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -44,7 +60,7 @@ static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
 
 static void workspace_relation_add(WorkSpaceDataRelationVector relation_list,
                                    WorkSpaceInstanceHook *parent,
-                                   const SdfPath &parentid,
+                                   const int parentid,
                                    WorkSpaceLayout *layout)
 {
   WorkSpaceDataRelation *relation = new WorkSpaceDataRelation();
@@ -56,16 +72,31 @@ static void workspace_relation_add(WorkSpaceDataRelationVector relation_list,
 }
 
 
+static WorkSpaceLayout *workspace_relation_get_data_matching_parent(const WorkSpaceDataRelationVector relation_list,
+                                                                    const WorkSpaceInstanceHook *parent)
+{
+  UNIVERSE_FOR_ALL(relation, relation_list)
+  {
+    if (relation->parent == parent)
+    {
+      return relation->value;
+    }
+  }
+
+  return nullptr;
+}
+
+
 static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relation_list,
                                               WorkSpaceInstanceHook *parent,
-                                              const SdfPath &parentid,
+                                              const int parentid,
                                               WorkSpaceLayout *layout)
 {
-  auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation &r) -> bool {
-    if (r.parentid == parentid)
+  auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation *r) -> bool {
+    if (r->parentid == parentid)
     {
-      r.parent = parent;
-      r.value = layout;
+      r->parent = parent;
+      r->value = layout;
       return true;
     }
 
@@ -85,6 +116,65 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
     /* no matching relation found, add new one */
     workspace_relation_add(relation_list, parent, parentid, layout);
   }
+}
+
+
+static bool workspaces_is_screen_used(const Main *cmain, cScreen *screen)
+{
+  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  {
+    if (workspace_layout_find_exec(workspace, screen))
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static void workspace_layout_name_set(WorkSpace *workspace,
+                                      WorkSpaceLayout *layout,
+                                      const char *new_name)
+{
+  TfToken new_token(new_name);
+  layout->name.Swap(new_token);
+
+  std::vector<void *> void_vec;
+  UNIVERSE_FOR_ALL(alayout, workspace->layouts)
+  {
+    void_vec.push_back(alayout);
+  }
+
+  CLI_uniquename(void_vec,
+                 layout,
+                 "Layout",
+                 '.',
+                 offsetof(WorkSpaceLayout, name),
+                 sizeof(CHARALL(layout->name)));
+}
+
+
+WorkSpaceLayout *CKE_workspace_layout_add(Main *cmain,
+                                          WorkSpace *workspace,
+                                          cScreen *screen,
+                                          const char *name)
+{
+  WorkSpaceLayout *layout = new WorkSpaceLayout();
+
+  CLI_assert(!workspaces_is_screen_used(cmain, screen));
+  layout->screen = screen;
+  layout->screen->winid = find_free_screenid(cmain);
+  layout->screen->path = make_screenpath(layout->screen->winid, name);
+  workspace_layout_name_set(workspace, layout, name);
+  workspace->layouts.push_back(layout);
+
+  return layout;
+}
+
+
+WorkSpaceLayout *CKE_workspace_active_layout_get(const WorkSpaceInstanceHook *hook)
+{
+  return hook->act_layout;
 }
 
 
@@ -115,7 +205,7 @@ cScreen *CKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook)
 
 
 void CKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
-                                     const SdfPath &winid,
+                                     const int winid,
                                      WorkSpace *workspace,
                                      WorkSpaceLayout *layout)
 {
@@ -125,7 +215,7 @@ void CKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
 
 
 void CKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
-                                     const SdfPath &winid,
+                                     const int winid,
                                      WorkSpace *workspace,
                                      cScreen *screen)
 {
@@ -135,9 +225,44 @@ void CKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
 }
 
 
+WorkSpaceInstanceHook *CKE_workspace_instance_hook_create(const Main *cmain, const int winid)
+{
+  WorkSpaceInstanceHook *hook = new WorkSpaceInstanceHook();
+
+  /* set an active screen-layout for each possible window/workspace combination */
+  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  {
+    UNIVERSE_FOR_ALL(layout, workspace->layouts)
+    {
+      CKE_workspace_active_layout_set(hook, winid, workspace, layout);
+    }
+  }
+
+  return hook;
+}
+
+
 WorkSpace *CKE_workspace_active_get(WorkSpaceInstanceHook *hook)
 {
   return hook->active;
+}
+
+void CKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
+{
+  hook->active = workspace;
+  if (workspace)
+  {
+    WorkSpaceLayout *layout = workspace_relation_get_data_matching_parent(workspace->hook_layout_relations, hook);
+    if (layout)
+    {
+      hook->act_layout = layout;
+    }
+  }
+}
+
+cScreen *CKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
+{
+  return layout->screen;
 }
 
 WABI_NAMESPACE_END

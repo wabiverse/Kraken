@@ -28,6 +28,7 @@
 #include "UNI_screen.h"
 
 #include "CKE_context.h"
+#include "CKE_screen.h"
 
 #include <wabi/usd/usdUI/area.h>
 
@@ -50,12 +51,31 @@ enum eRegionType
   RGN_TYPE_EXECUTE = 10,
   RGN_TYPE_FOOTER = 11,
   RGN_TYPE_TOOL_HEADER = 12,
-};
 
+#define RGN_TYPE_LEN (RGN_TYPE_TOOL_HEADER + 1)
+};
 
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
   (((1 << (regiontype)) & \
     ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
+
+
+#define RGN_ALIGN_ENUM_FROM_MASK(align) ((align) & ((1 << 4) - 1))
+#define RGN_ALIGN_FLAG_FROM_MASK(align) ((align) & ~((1 << 4) - 1))
+
+enum
+{
+  RGN_FLAG_HIDDEN = (1 << 0),
+  RGN_FLAG_TOO_SMALL = (1 << 1),
+  RGN_FLAG_DYNAMIC_SIZE = (1 << 2),
+  RGN_FLAG_TEMP_REGIONDATA = (1 << 3),
+  RGN_FLAG_PREFSIZE_OR_HIDDEN = (1 << 4),
+  RGN_FLAG_SIZE_CLAMP_X = (1 << 5),
+  RGN_FLAG_SIZE_CLAMP_Y = (1 << 6),
+  RGN_FLAG_HIDDEN_BY_USER = (1 << 7),
+  RGN_FLAG_SEARCH_FILTER_ACTIVE = (1 << 8),
+  RGN_FLAG_SEARCH_FILTER_UPDATE = (1 << 9),
+};
 
 
 struct ARegion : public UsdUIArea, public UniverseObject
@@ -69,6 +89,10 @@ struct ARegion : public UsdUIArea, public UniverseObject
   UsdAttribute size;
 
   eRegionType regiontype;
+  short flag;
+  short alignment;
+
+  struct ARegionType *type;
 
   inline ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath);
 };
@@ -81,7 +105,9 @@ ARegion::ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath)
     icon(CreateIconAttr()),
     pos(CreatePosAttr()),
     size(CreateSizeAttr()),
-    regiontype(RGN_TYPE_WINDOW)
+    regiontype(RGN_TYPE_WINDOW),
+    flag(VALUE_ZERO),
+    alignment(VALUE_ZERO)
 {}
 
 WABI_NAMESPACE_END

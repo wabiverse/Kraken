@@ -33,20 +33,36 @@
 
 WABI_NAMESPACE_BEGIN
 
-WorkSpace *CKE_workspace_active_get(WorkSpaceInstanceHook *hook);
+/* clang-format off */
+#define GETTER_ATTRS ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT
+#define SETTER_ATTRS ATTR_NONNULL(1)
+/* clang-format on */
+
 
 void CKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
-                                     const SdfPath &winid,
+                                     const int winid,
                                      WorkSpace *workspace,
                                      cScreen *screen);
 
 void CKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
-                                     const SdfPath &winid,
+                                     const int winid,
                                      WorkSpace *workspace,
                                      WorkSpaceLayout *layout);
 
 cScreen *CKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook);
+cScreen *CKE_workspace_layout_screen_get(const WorkSpaceLayout *layout) GETTER_ATTRS;
 
+WorkSpaceLayout *CKE_workspace_layout_add(Main *cmain,
+                                          WorkSpace *workspace,
+                                          cScreen *screen,
+                                          const char *name) ATTR_NONNULL();
+WorkSpaceLayout *CKE_workspace_active_layout_get(const WorkSpaceInstanceHook *hook);
 WorkSpaceLayout *CKE_workspace_layout_find(const WorkSpace *workspace, const cScreen *screen);
+
+void CKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace);
+
+WorkSpace *CKE_workspace_active_get(WorkSpaceInstanceHook *hook);
+WorkSpaceInstanceHook *CKE_workspace_instance_hook_create(const Main *cmain, const int winid);
+
 
 WABI_NAMESPACE_END

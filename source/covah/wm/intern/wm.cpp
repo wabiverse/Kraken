@@ -82,13 +82,13 @@ void WM_check(cContext *C)
   // }
 
   /* Case: no open windows at all, for old file reads. */
-  WM_window_anchorwindows_ensure(wm);
+  WM_window_anchorwindows_ensure(C, wm);
   // }
 
   /* Case: fileread. */
   /* Note: this runs in background mode to set the screen context cb. */
   // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
-  //   ED_screens_init(bmain, wm);
+  //   ED_screens_init(cmain, wm);
   //   wm->initialized |= WM_WINDOW_IS_INIT;
   // }
 }

@@ -35,6 +35,7 @@
 
 #include "CKE_context.h"
 #include "CKE_main.h"
+#include "CKE_screen.h"
 
 #include "CLI_icons.h"
 
@@ -103,7 +104,7 @@ void UNI_set_defaults(cContext *C)
   /* ----- */
 
   /** Window Creation. */
-  wmWindow *win = new wmWindow(C);
+  wmWindow *win = new wmWindow(C, SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW));
 
   /** CTX set Window. */
   CTX_wm_window_set(C, win);
@@ -126,9 +127,6 @@ void UNI_set_defaults(cContext *C)
   UNI_default_table_user_prefs(C);
 
   /* ----- */
-
-  /** CTX set cScreen. */
-  CTX_wm_screen_set(C, win->prims.screen);
 
   /** CTX get cScreen. */
   cScreen *screen = CTX_wm_screen(C);

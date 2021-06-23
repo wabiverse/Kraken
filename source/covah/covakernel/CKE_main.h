@@ -48,6 +48,9 @@ struct Main : public UniverseObject
   std::filesystem::path stage_id;
 
   std::string covah_version_decimal;
+
+  std::vector<struct WorkSpace *> workspaces;
+  std::vector<struct cScreen *> screens;
 };
 
 struct Global
@@ -103,6 +106,10 @@ void CKE_covah_enable_debug_codes(void);
 /* Setup in CKE_covah. */
 COVAH_KERNEL_API
 extern Global G;
+
+COVAH_KERNEL_API
+/* Setup in CKE_covah. */
+extern float UI_DPI_FAC;
 
 WABI_NAMESPACE_END
 

@@ -333,6 +333,7 @@ if(UNIX)
       covah_universe
       covah_wm
       covah_editor_code
+      covah_editor_screen
       covah_editor_spacefile
       covah_editor_spaceview3d
       # ---------------------------------
@@ -350,6 +351,7 @@ else()
       covah_universe
       covah_wm
       covah_editor_code
+      covah_editor_screen
       covah_editor_spacefile
       covah_editor_spaceview3d
       # ---------------------------------

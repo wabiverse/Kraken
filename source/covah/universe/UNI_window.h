@@ -24,6 +24,7 @@
  * Set the Stage.
  */
 
+#include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_region.h"
 #include "UNI_screen.h"
@@ -45,6 +46,22 @@ WABI_NAMESPACE_BEGIN
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
+struct ScrAreaMap
+{
+  /** ScrVert. */
+  std::vector<struct ScrVert *> verts;
+  /** ScrEdge. */
+  std::vector<struct ScrEdge *> edges;
+  /** ScrArea. */
+  std::vector<struct ScrArea *> areas;
+
+  ScrAreaMap()
+    : verts(EMPTY),
+      edges(EMPTY),
+      areas(EMPTY)
+  {}
+};
+
 struct wmWindow : public UsdUIWindow, public UniverseObject
 {
   SdfPath path;
@@ -54,7 +71,6 @@ struct wmWindow : public UsdUIWindow, public UniverseObject
   UsdAttribute icon;
   UsdAttribute state;
   UsdAttribute dpi;
-  UsdAttribute dpifac;
   UsdAttribute widgetunit;
   UsdAttribute scale;
   UsdAttribute linewidth;
@@ -84,28 +100,19 @@ struct wmWindow : public UsdUIWindow, public UniverseObject
 
   /** Runtime Window State. */
   char windowstate;
-
-  struct
-  {
-    WorkSpace *workspace;
-    cScreen *screen;
-  } prims;
+  int winid;
 
   WorkSpaceInstanceHook *workspace_hook;
 
-  inline wmWindow(cContext *C,
-                  const SdfPath &stagepath = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW),
-                  const SdfPath &wspace = SdfPath(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES_LAYOUT),
-                  const SdfPath &screen = SdfPath(COVAH_PATH_DEFAULTS::COVAH_SCREEN_LAYOUT));
+  ScrAreaMap global_areas;
+
+  inline wmWindow(cContext *C, const SdfPath &stagepath);
 
   inline wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath);
 };
 
 
-wmWindow::wmWindow(cContext *C,
-                   const SdfPath &stagepath,
-                   const SdfPath &wspace,
-                   const SdfPath &screen)
+wmWindow::wmWindow(cContext *C, const SdfPath &stagepath)
   : UsdUIWindow(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
     parent(NULL),
@@ -113,7 +120,6 @@ wmWindow::wmWindow(cContext *C,
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
     dpi(CreateDpiAttr()),
-    dpifac(CreateDpifacAttr()),
     widgetunit(CreateWidgetunitAttr()),
     scale(CreateScaleAttr()),
     linewidth(CreateLinewidthAttr()),
@@ -129,9 +135,8 @@ wmWindow::wmWindow(cContext *C,
     addmousemove(false),
     eventstate(new wmEvent()),
     windowstate(0),
-    workspace_hook(nullptr),
-    prims({.workspace = new WorkSpace(C, wspace),
-           .screen = new cScreen(C, screen)})
+    winid(0),
+    workspace_hook(nullptr)
 {}
 
 wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
@@ -142,7 +147,6 @@ wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
     icon(CreateIconAttr()),
     state(CreateStateAttr()),
     dpi(CreateDpiAttr()),
-    dpifac(CreateDpifacAttr()),
     widgetunit(CreateWidgetunitAttr()),
     scale(CreateScaleAttr()),
     linewidth(CreateLinewidthAttr()),
@@ -158,9 +162,8 @@ wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
     addmousemove(false),
     eventstate(new wmEvent()),
     windowstate(0),
-    workspace_hook(nullptr),
-    prims({.workspace = prim->prims.workspace,
-           .screen = prim->prims.screen})
+    winid(0),
+    workspace_hook(nullptr)
 {}
 
 struct wmNotifier
@@ -182,6 +185,21 @@ wmNotifier::wmNotifier()
     action(0),
     reference(nullptr)
 {}
+
+struct wmSpaceTypeListenerParams
+{
+  struct wmWindow *window;
+  struct ScrArea *area;
+  struct wmNotifier *notifier;
+  const struct Scene *scene;
+
+  wmSpaceTypeListenerParams()
+    : window(POINTER_ZERO),
+      area(POINTER_ZERO),
+      notifier(POINTER_ZERO),
+      scene(POINTER_ZERO)
+  {}
+};
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 

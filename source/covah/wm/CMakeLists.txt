@@ -51,6 +51,7 @@ set(LIB
   covahverse
   covah_anchor
   covah_editor_spacefile
+  covah_editor_screen
   covah_editor_spaceview3d
   covah_editor_code
   covah_lib

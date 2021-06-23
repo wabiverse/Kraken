@@ -90,6 +90,18 @@ void CTX_data_prefs_set(cContext *C, UserDef *uprefs);
 void CTX_wm_operator_poll_msg_clear(cContext *C);
 void CTX_wm_operator_poll_msg_set(cContext *C, const char *msg);
 
+struct cContextDataResult
+{
+  PointerUNI ptr;
+  std::vector<UniverseObject *> list;
+  const char **dir;
+  short type; /* 0: normal, 1: seq */
+};
+
+typedef int (*cContextDataCallback)(const cContext *C,
+                                    const char *member,
+                                    cContextDataResult *result);
+
 struct cContextPollMsgParams
 {
   char *(*get_fn)(cContext *C, void *user_data);

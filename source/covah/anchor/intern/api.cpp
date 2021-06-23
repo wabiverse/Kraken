@@ -352,6 +352,7 @@ CODE
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "ANCHOR_Rect.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_event.h"
 #include "ANCHOR_event_consumer.h"
@@ -3963,6 +3964,71 @@ int ANCHOR::IsDialogWindow(ANCHOR_SystemWindowHandle windowhandle)
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
 
   return (int)window->isDialog();
+}
+
+char *ANCHOR::GetTitle(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+  std::string title = window->getTitle();
+
+  char *ctitle = (char *)malloc(title.size() + 1);
+
+  if (ctitle == NULL)
+  {
+    return NULL;
+  }
+
+  strcpy(ctitle, title.c_str());
+
+  return ctitle;
+}
+
+eAnchorStatus ANCHOR::SetClientSize(ANCHOR_SystemWindowHandle windowhandle,
+                                    AnchorU32 width,
+                                    AnchorU32 height)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  return window->setClientSize(width, height);
+}
+
+ANCHOR_RectangleHandle ANCHOR::GetClientBounds(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+  ANCHOR_Rect *rectangle = NULL;
+
+  rectangle = new ANCHOR_Rect();
+  window->getClientBounds(*rectangle);
+
+  return (ANCHOR_RectangleHandle)rectangle;
+}
+
+void ANCHOR::GetRectangle(ANCHOR_RectangleHandle rectanglehandle,
+                          AnchorS32 *l,
+                          AnchorS32 *t,
+                          AnchorS32 *r,
+                          AnchorS32 *b)
+{
+  ANCHOR_Rect *rect = (ANCHOR_Rect *)rectanglehandle;
+
+  *l = rect->m_l;
+  *t = rect->m_t;
+  *r = rect->m_r;
+  *b = rect->m_b;
+}
+
+void ANCHOR::DisposeRectangle(ANCHOR_RectangleHandle rectanglehandle)
+{
+  delete (ANCHOR_Rect *)rectanglehandle;
+}
+
+void ANCHOR::GetAllDisplayDimensions(ANCHOR_SystemHandle systemhandle,
+                                     AnchorU32 *width,
+                                     AnchorU32 *height)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  system->getAllDisplayDimensions(*width, *height);
 }
 
 void ANCHOR::SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,

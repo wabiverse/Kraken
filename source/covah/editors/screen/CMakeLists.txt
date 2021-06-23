@@ -17,10 +17,13 @@ set(INC_SYS
 )
 
 set(SRC  
-  FILE_list.cpp
+  SCREEN_area.cpp
+  SCREEN_edit.cpp
+  SCREEN_geometry.cpp
+  SCREEN_workspace_layout_edit.cpp
 
   ../include/ED_defines.h
-  ../include/ED_fileselect.h
+  ../include/ED_screen.h
 )
 
 set(LIB
@@ -33,4 +36,4 @@ set(LIB
   ${OPENGL_LIBRARIES}
 )
 
-covah_add_lib(covah_editor_spacefile "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+covah_add_lib(covah_editor_screen "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

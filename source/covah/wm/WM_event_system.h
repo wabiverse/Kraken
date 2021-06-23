@@ -42,6 +42,7 @@ wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add);
 void WM_main_add_notifier(cContext *C, unsigned int type, void *reference);
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference);
 void WM_event_add_notifier(cContext *C, uint type, void *reference);
+void WM_event_add_mousemove(wmWindow *win);
 
 int WM_operator_name_call_ptr(cContext *C,
                               wmOperatorType *ot,

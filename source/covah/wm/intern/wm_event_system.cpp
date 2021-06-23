@@ -137,6 +137,12 @@ wmEvent *wm_event_add_ex(wmWindow *win,
 }
 
 
+void WM_event_add_mousemove(wmWindow *win)
+{
+  win->addmousemove = 1;
+}
+
+
 wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add)
 {
   return wm_event_add_ex(win, event_to_add, NULL);

@@ -30,9 +30,24 @@
 #  include <cstdlib>
 #endif /*__GNUC__ */
 
+/* UNIVERSE */
+#include "UNI_area.h"
+#include "UNI_context.h"
+#include "UNI_object.h"
+#include "UNI_operator.h"
+#include "UNI_pixar_utils.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
+#include "UNI_space_types.h"
+#include "UNI_userpref.h"
+#include "UNI_window.h"
+#include "UNI_wm_types.h"
+#include "UNI_workspace.h"
+
 /* KERNEL */
 #include "CKE_context.h"
 #include "CKE_main.h"
+#include "CKE_screen.h"
 #include "CKE_utils.h"
 #include "CKE_version.h"
 
@@ -42,15 +57,6 @@
 
 /* WINDOW MANAGER */
 #include "WM_init_exit.h"
-
-/* UNIVERSE */
-#include "UNI_area.h"
-#include "UNI_context.h"
-#include "UNI_pixar_utils.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
 
 /* PIXAR */
 #include <wabi/base/arch/hints.h>
@@ -68,6 +74,9 @@
 WABI_NAMESPACE_BEGIN
 
 Global G;
+
+/** User Prefs modifies this value globally. */
+float UI_DPI_FAC = float(1.0f);
 
 static void covah_version_init()
 {

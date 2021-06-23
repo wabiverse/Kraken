@@ -25,6 +25,7 @@
  */
 
 #include "UNI_api.h"
+#include "UNI_region.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -55,6 +56,28 @@ enum eFileSelectFileTypes
   FILE_TYPE_ASSET = (1 << 28),
   /** An FS directory (i.e. S_ISDIR on its path is true). */
   FILE_TYPE_DIR = (1 << 30),
+};
+
+#define SPACE_TYPE_ANY -1
+
+enum eSpaceLinkFlag
+{
+  SPACE_FLAG_TYPE_TEMPORARY = (1 << 0),
+  SPACE_FLAG_TYPE_WAS_ACTIVE = (1 << 1),
+};
+
+struct SpaceLink
+{
+  /** Storage of regions for inactive spaces. */
+  std::vector<ARegion *> regions;
+  char spacetype;
+  char link_flag;
+
+  SpaceLink()
+    : regions(EMPTY),
+      spacetype(VALUE_ZERO),
+      link_flag(VALUE_ZERO)
+  {}
 };
 
 WABI_NAMESPACE_END

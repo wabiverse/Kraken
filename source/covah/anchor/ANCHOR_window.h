@@ -110,6 +110,12 @@ class ANCHOR_ISystemWindow
   virtual float getNativePixelSize(void) = 0;
 
   /**
+   * Resizes client rectangle.
+   * @param width: The new width of the client area of the window.
+   * @param height: The new height of the client area of the window. */
+  virtual eAnchorStatus setClientSize(AnchorU32 width, AnchorU32 height) = 0;
+
+  /**
    * Converts a point in screen coordinates to client rectangle coordinates
    * @param inX: The x-coordinate on the screen.
    * @param inY: The y-coordinate on the screen.
@@ -132,9 +138,20 @@ class ANCHOR_ISystemWindow
                               AnchorS32 &outY) const = 0;
 
   /**
+   * Returns the client rectangle dimensions.
+   * The left and top members of the rectangle are always zero.
+   * @param bounds: The bounding rectangle of the client area of the window. */
+  virtual void getClientBounds(ANCHOR_Rect &bounds) const = 0;
+
+  /**
    * Returns the recommended DPI for this window.
    * @return The recommended DPI for this window. */
   virtual AnchorU16 getDPIHint() = 0;
+
+  /**
+   * Returns the title displayed in the title bar.
+   * @param title: The title displayed in the title bar. */
+  virtual std::string getTitle() const = 0;
 };
 
 class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow

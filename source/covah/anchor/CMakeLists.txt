@@ -32,6 +32,7 @@ set(SRC
   intern/event_manager.cpp
   intern/freetype
   intern/modifier_keys.cpp
+  intern/anchor_rect.cpp
   intern/system_paths.cpp
   intern/system.cpp
   intern/tables.cpp
@@ -53,6 +54,7 @@ set(SRC
   ANCHOR_internal.h
   ANCHOR_modifier_keys.h
   ANCHOR_rectpack.h
+  ANCHOR_Rect.h
   ANCHOR_system_paths.h
   ANCHOR_system.h
   ANCHOR_textedit.h

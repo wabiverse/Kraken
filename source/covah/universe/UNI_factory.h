@@ -26,6 +26,7 @@
 #include "UNI_object.h"
 
 #include <wabi/usd/usd/attribute.h>
+#include <wabi/usd/usd/relationship.h>
 
 WABI_NAMESPACE_BEGIN
 

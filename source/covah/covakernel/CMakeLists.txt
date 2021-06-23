@@ -20,6 +20,7 @@ set(SRC
   intern/CKE_icons.cpp
   intern/CKE_plugins.cpp
   intern/CKE_python.cpp
+  intern/CKE_screen.cpp
   intern/CKE_utils.cpp
   intern/CKE_workspace.cpp
 
@@ -28,6 +29,7 @@ set(SRC
   CKE_icons.h
   CKE_main.h
   CKE_robinhood.h
+  CKE_screen.h
   CKE_space.h
   CKE_workspace.h
   CKE_utils.h

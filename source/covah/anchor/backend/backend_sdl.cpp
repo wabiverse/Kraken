@@ -25,6 +25,7 @@
 #include "ANCHOR_BACKEND_sdl.h"
 #include "ANCHOR_BACKEND_vulkan.h"
 
+#include "ANCHOR_Rect.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_buttons.h"
 #include "ANCHOR_debug_codes.h"
@@ -1197,6 +1198,24 @@ void ANCHOR_WindowSDL::clientToScreen(AnchorS32 inX,
   outY = inY + y_win;
 }
 
+eAnchorStatus ANCHOR_WindowSDL::setClientSize(AnchorU32 width, AnchorU32 height)
+{
+  SDL_SetWindowSize(m_sdl_win, width, height);
+  return ANCHOR_SUCCESS;
+}
+
+void ANCHOR_WindowSDL::getClientBounds(ANCHOR_Rect &bounds) const
+{
+  int x, y, w, h;
+  SDL_GetWindowSize(m_sdl_win, &w, &h);
+  SDL_GetWindowPosition(m_sdl_win, &x, &y);
+
+  bounds.m_l = x;
+  bounds.m_r = x + w;
+  bounds.m_t = y;
+  bounds.m_b = y + h;
+}
+
 void ANCHOR_WindowSDL::setTitle(const char *title)
 {
   SDL_SetWindowTitle(m_sdl_win, title);
@@ -1228,6 +1247,14 @@ void ANCHOR_SystemSDL::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &hei
 {
   SDL_DisplayMode mode;
   SDL_GetCurrentDisplayMode(0, &mode);
+  width = mode.w;
+  height = mode.h;
+}
+
+void ANCHOR_SystemSDL::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+{
+  SDL_DisplayMode mode;
+  SDL_GetDesktopDisplayMode(0, &mode); /* note, always 0 display */
   width = mode.w;
   height = mode.h;
 }
@@ -1869,6 +1896,13 @@ eAnchorStatus ANCHOR_SystemSDL::getCursorPosition(AnchorS32 &x, AnchorS32 &y) co
 
   return ANCHOR_SUCCESS;
 }
+
+
+std::string ANCHOR_WindowSDL::getTitle() const
+{
+  return SDL_GetWindowTitle(m_sdl_win);
+}
+
 
 void ANCHOR_WindowSDL::screenToClient(AnchorS32 inX,
                                       AnchorS32 inY,

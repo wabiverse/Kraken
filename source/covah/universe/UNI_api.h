@@ -66,7 +66,10 @@
 
 #define VEC2_SET(vx2, vx1x, vx2y) vx2->Set(vx1x, vx2y)
 #define VEC3_SET(vx3, vx1x, vx2y, vx3z) vx3->Set(vx1x, vx2y, vx3z)
-#define VEC4_SET(vx4, vx1x, vx2y, vx3z, vx4z) vx4->Set(vx1x, vx2y, vx3z, vx4z)
+#define VEC4_SET(vx4, vx1x, vx2y, vx3z, vx4w) vx4->Set(vx1x, vx2y, vx3z, vx4w)
+#define SET_VEC2(vx2, vx1x, vx2y) vx2.Set(vx1x, vx2y)
+#define SET_VEC3(vx3, vx1x, vx2y, vx3z) vx3.Set(vx1x, vx2y, vx3z)
+#define SET_VEC4(vx4, vx1x, vx2y, vx3z, vx4w) vx4.Set(vx1x, vx2y, vx3z, vx4w)
 
 #define UNIVERSE_INSERT_WINDOW(m, h, v) m->windows.insert(std::make_pair(h, v))
 #define HASH(x) x.first
@@ -75,3 +78,5 @@
 #define UNIVERSE_MUTABLE_FOR_ALL(iter, c) for (auto &iter : c)
 
 #define FILE_MAX 1024
+
+#define TIMECODE_DEFAULT UsdTimeCode::Default()

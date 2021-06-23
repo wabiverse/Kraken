@@ -71,6 +71,11 @@ class ANCHOR_ISystem
   virtual void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;
 
   /**
+   * Returns the combine dimensions of all monitors.
+   * @return The dimension of the workspace. */
+  virtual void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;
+
+  /**
    * Create a new window.
    * The new window is added to the list of windows managed.
    * Never explicitly delete the window, use disposeWindow() instead.

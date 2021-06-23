@@ -579,6 +579,13 @@ enum eAnchorDragnDropTypes
   ANCHOR_DragnDropTypeBitmap
 };
 
+enum eAnchorVisibility
+{
+  ANCHOR_NotVisible = 0,
+  ANCHOR_PartiallyVisible,
+  ANCHOR_FullyVisible
+};
+
 /**
  * ----- ANCHOR CLASSES ----- */
 
@@ -603,6 +610,7 @@ class ANCHOR_Event;         /** <- Anchor Events.          */
 class ANCHOR_EventConsumer; /** <- Anchor Event Consumers. */
 class ANCHOR_System;        /** <- Anchor System Backends. */
 class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
+class ANCHOR_Rect;          /** <- Anchor 2D Rect Type.    */
 
 /**
  * Anchor System :: Event Types */
@@ -797,6 +805,7 @@ ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
 ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
+ANCHOR_DECLARE_HANDLE(ANCHOR_RectangleHandle);
 
 struct ANCHOR_StringArray
 {
@@ -1132,6 +1141,32 @@ eAnchorStatus GetCursorPosition(ANCHOR_SystemHandle systemhandle,
  *  → All within @em Real-Time. */
 ANCHOR_API
 wabi::HdDriver &GetPixarDriver();
+
+ANCHOR_API
+char *GetTitle(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+eAnchorStatus SetClientSize(ANCHOR_SystemWindowHandle windowhandle,
+                            AnchorU32 width,
+                            AnchorU32 height);
+
+ANCHOR_API
+ANCHOR_RectangleHandle GetClientBounds(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+void GetRectangle(ANCHOR_RectangleHandle rectanglehandle,
+                  AnchorS32 *l,
+                  AnchorS32 *t,
+                  AnchorS32 *r,
+                  AnchorS32 *b);
+
+ANCHOR_API
+void DisposeRectangle(ANCHOR_RectangleHandle rectanglehandle);
+
+ANCHOR_API
+void GetAllDisplayDimensions(ANCHOR_SystemHandle systemhandle,
+                             AnchorU32 *width,
+                             AnchorU32 *height);
 
 /**
  * Access the Hydra Engine.
@@ -6327,12 +6362,6 @@ enum ImDrawCornerFlags_
 
 #  ifdef _MSC_VER
 #    pragma warning(pop)
-#  endif
-
-// Include ANCHOR_user.h at the end of ANCHOR_api.h (convenient for user to only explicitly include
-// vanilla ANCHOR_api.h)
-#  ifdef ANCHOR_INCLUDE_ANCHOR_USER_H
-#    include "ANCHOR_user.h"
 #  endif
 
 #endif  // #ifndef ANCHOR_DISABLE

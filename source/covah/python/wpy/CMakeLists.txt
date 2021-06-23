@@ -5,6 +5,7 @@ set(INC
   ../../covakernel
   ../../covalib
   ../../universe
+  ../../wm
 )
 
 set(WPY_INSTALL_PATH "release/scripts/modules/wpy")

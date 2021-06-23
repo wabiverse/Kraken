@@ -54,7 +54,6 @@ void UNI_default_table_main_window(cContext *C)
 
   FormFactory(PROP_IFACE(win->title),         VALUE_IFACE(TfToken("Covah")));
   FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_HYDRA))));
-  FormFactory(PROP_IFACE(win->workspace_rel), VALUE_IFACE(SdfPath(win->prims.workspace->path)));
   FormFactory(PROP_IFACE(win->state),         VALUE_IFACE(UsdUITokens->maximized));
   FormFactory(PROP_IFACE(win->cursor),        VALUE_IFACE(UsdUITokens->default_));
   FormFactory(PROP_IFACE(win->alignment),     VALUE_IFACE(UsdUITokens->alignAbsolute));
@@ -62,7 +61,6 @@ void UNI_default_table_main_window(cContext *C)
   FormFactory(PROP_IFACE(win->pos),           VALUE_IFACE(GfVec2f(0.0, 0.0)));
   FormFactory(PROP_IFACE(win->size),          VALUE_IFACE(GfVec2f(1920, 1080)));
   FormFactory(PROP_IFACE(win->dpi),           VALUE_IFACE(float(1.0)));
-  FormFactory(PROP_IFACE(win->dpifac),        VALUE_IFACE(float(1.0)));
   FormFactory(PROP_IFACE(win->widgetunit),    VALUE_IFACE(float(20.0)));
   FormFactory(PROP_IFACE(win->scale),         VALUE_IFACE(float(1.0)));
   FormFactory(PROP_IFACE(win->linewidth),     VALUE_IFACE(float(1.0)));
@@ -75,6 +73,7 @@ void UNI_default_table_user_prefs(cContext *C)
   UserDef *prefs = CTX_data_prefs(C);
 
   FormFactory(PROP_IFACE(prefs->showsave), VALUE_IFACE(bool(true)));
+  FormFactory(PROP_IFACE(prefs->dpifac),   VALUE_IFACE(float(1.0)));
 }
 
 

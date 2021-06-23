@@ -39,6 +39,11 @@ struct WorkSpaceLayout
 {
   cScreen *screen;
   TfToken name;
+
+  WorkSpaceLayout()
+    : screen(POINTER_ZERO),
+      name(EMPTY)
+  {}
 };
 
 typedef std::vector<WorkSpaceLayout *> WorkSpaceLayoutVector;
@@ -50,6 +55,13 @@ struct WorkSpaceInstanceHook
 
   WorkSpace *temp_workspace_store;
   WorkSpaceLayout *temp_layout_store;
+
+  WorkSpaceInstanceHook()
+    : active(POINTER_ZERO),
+      act_layout(POINTER_ZERO),
+      temp_workspace_store(POINTER_ZERO),
+      temp_layout_store(POINTER_ZERO)
+  {}
 };
 
 struct WorkSpaceDataRelation
@@ -57,14 +69,19 @@ struct WorkSpaceDataRelation
   WorkSpaceInstanceHook *parent;
   WorkSpaceLayout *value;
 
-  SdfPath parentid;
+  int parentid;
+
+  WorkSpaceDataRelation()
+    : parent(POINTER_ZERO),
+      value(POINTER_ZERO),
+      parentid(VALUE_ZERO)
+  {}
 };
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
 struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 {
-
   SdfPath path;
 
   UsdAttribute name;
@@ -74,16 +91,16 @@ struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 
   WorkSpaceDataRelationVector hook_layout_relations;
 
-  inline WorkSpace(cContext *C,
-                   const SdfPath &stagepath,
-                   const TfToken &title = TfToken("Workspace"));
+  inline WorkSpace(cContext *C, const SdfPath &stagepath);
 };
 
-WorkSpace::WorkSpace(cContext *C, const SdfPath &stagepath, const TfToken &title)
+WorkSpace::WorkSpace(cContext *C, const SdfPath &stagepath)
   : UsdUIWorkspace(COVAH_UNIVERSE_CREATE(C)),
-    path(stagepath),
-    name(CreateNameAttr(VtValue(title))),
-    screen_rel(CreateScreenRel())
+    path(UsdUIWorkspace::GetPath()),
+    name(CreateNameAttr()),
+    screen_rel(CreateScreenRel()),
+    layouts(EMPTY),
+    hook_layout_relations(EMPTY)
 {}
 
 WABI_NAMESPACE_END

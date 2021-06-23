@@ -622,6 +622,79 @@ size_t CLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__res
 
 /* Unique name utils. */
 
+static bool uniquename_find_dupe(std::vector<void *> list, void *vlink, const char *name, int name_offset)
+{
+  for (auto link : list)
+  {
+    if (link != vlink)
+    {
+      if (STREQ(POINTER_OFFSET((const char *)link, name_offset), name))
+      {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+static bool uniquename_unique_check(void *arg, const char *name)
+{
+  struct Data
+  {
+    std::vector<void *> lb;
+    void *vlink;
+    int name_offset;
+
+    Data()
+      : lb(EMPTY),
+        vlink(POINTER_ZERO),
+        name_offset(VALUE_ZERO)
+    {}
+  };
+
+  Data *data = (Data *)arg;
+
+  return uniquename_find_dupe(data->lb, data->vlink, name, data->name_offset);
+}
+
+bool CLI_uniquename(std::vector<void *> list, void *vlink, const char *defname, char delim, int name_offset, size_t name_len)
+{
+  struct Data
+  {
+    std::vector<void *> lb;
+    void *vlink;
+    int name_offset;
+
+    Data()
+      : lb(EMPTY),
+        vlink(POINTER_ZERO),
+        name_offset(VALUE_ZERO)
+    {}
+  };
+
+  Data data;
+
+  data.lb = list;
+  data.vlink = vlink;
+  data.name_offset = name_offset;
+
+  CLI_assert(name_len > 1);
+
+  /* See if we are given an empty string */
+  if (vlink == POINTER_ZERO || defname == POINTER_ZERO)
+  {
+    return false;
+  }
+
+  return CLI_uniquename_cb(uniquename_unique_check,
+                           &data,
+                           defname,
+                           delim,
+                           (char *)POINTER_OFFSET(vlink, name_offset),
+                           name_len);
+}
+
 /**
  * Ensures name is unique (according to criteria specified by caller in unique_check callback),
  * incrementing its numeric suffix as necessary. Returns true if name had to be adjusted.

@@ -76,6 +76,7 @@ struct UserDef : public UsdUIUserPref, public UniverseObject
   SdfPath path;
 
   UsdAttribute showsave;
+  UsdAttribute dpifac;
 
   int uiflag;
 
@@ -86,7 +87,9 @@ struct UserDef : public UsdUIUserPref, public UniverseObject
 UserDef::UserDef(cContext *C, const SdfPath &stagepath)
   : UsdUIUserPref(COVAH_UNIVERSE_CREATE(C)),
     path(stagepath),
-    showsave(CreateShowSavePromptAttr())
+    showsave(CreateShowSavePromptAttr()),
+    dpifac(CreateDpifacAttr()),
+    uiflag(VALUE_ZERO)
 {}
 
 WABI_NAMESPACE_END

@@ -87,3 +87,16 @@
 #define STRCAT(a, b) TfStringCatPaths(a, b)
 
 #define CHARSTR(a) a.c_str()
+
+#if defined(__GNUC__) || defined(__clang__)
+#  define POINTER_OFFSET(v, ofs) ((typeof(v))((char *)(v) + (ofs)))
+#else
+#  define POINTER_OFFSET(v, ofs) ((void *)((char *)(v) + (ofs)))
+#endif
+
+/* clang-format off */
+#define VALUE_ZERO 0
+#define ARRAY_ZERO {0}
+#define POINTER_ZERO nullptr
+#define EMPTY
+/* clang-format on */

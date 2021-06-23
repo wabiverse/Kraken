@@ -26,6 +26,8 @@
 
 #include "WM_api.h"
 
+#include "CKE_context.h"
+
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/timeCode.h>
@@ -254,12 +256,14 @@ WABI_NAMESPACE_BEGIN
 #define NA_PAINTING 8
 #define NA_JOB_FINISHED 9
 
+
 /** Timer flags. */
 enum eWmTimerFlags
 {
   /** Do not attempt to free customdata pointer even if non-NULL. */
   WM_TIMER_NO_FREE_CUSTOM_DATA = 1 << 0,
 };
+
 
 enum eReportListFlags
 {
@@ -269,6 +273,7 @@ enum eReportListFlags
   RPT_OP_HOLD = (1 << 3),
 };
 
+
 enum eWmCursorWrapType
 {
   WM_CURSOR_WRAP_NONE = 0,
@@ -276,6 +281,7 @@ enum eWmCursorWrapType
   WM_CURSOR_WRAP_Y,
   WM_CURSOR_WRAP_XY,
 };
+
 
 enum eWmOperatorContext
 {
@@ -295,6 +301,7 @@ enum eWmOperatorContext
   WM_OP_EXEC_SCREEN,
 };
 
+
 enum eWmOperatorFlag
 {
   OP_IS_INVOKE = (1 << 0),
@@ -304,12 +311,14 @@ enum eWmOperatorFlag
   OP_IS_MODAL_CURSOR_REGION = (1 << 3),
 };
 
+
 enum eWmCustomEventType
 {
   EVT_DATA_TIMER = 2,
   EVT_DATA_DRAGDROP = 3,
   EVT_DATA_NDOF_MOTION = 4,
 };
+
 
 enum eWmEventType
 {
@@ -527,6 +536,7 @@ enum eWmEventType
   EVT_GIZMO_UPDATE = 0x5025, /* 20517 */
 };
 
+
 enum eWmOperatorType
 {
   OPTYPE_REGISTER = (1 << 0),
@@ -546,6 +556,7 @@ enum eWmOperatorType
   OPTYPE_UNDO_GROUPED = (1 << 10),
 };
 
+
 struct wmTimer
 {
   /** Set by timer user. */
@@ -555,7 +566,7 @@ struct wmTimer
   /** Various flags controlling timer options, see below. */
   eWmTimerFlags flags;
   /** Set by timer user, to allow custom values. */
-  void *customdata = NULL;
+  void *customdata;
 
   /** Total running time in seconds. */
   UsdTimeCode duration;
@@ -570,7 +581,21 @@ struct wmTimer
   UsdTimeCode stime;
   /** Internal, put timers to sleep when needed. */
   bool sleep;
+
+  wmTimer()
+    : timestep(TIMECODE_DEFAULT),
+      event_type(VALUE_ZERO),
+      flags(WM_TIMER_NO_FREE_CUSTOM_DATA),
+      customdata(POINTER_ZERO),
+      duration(TIMECODE_DEFAULT),
+      delta(TIMECODE_DEFAULT),
+      ltime(TIMECODE_DEFAULT),
+      ntime(TIMECODE_DEFAULT),
+      stime(TIMECODE_DEFAULT),
+      sleep(VALUE_ZERO)
+  {}
 };
+
 
 struct ReportList
 {
@@ -580,7 +605,15 @@ struct ReportList
   int storelevel;
   int flag;
   wmTimer *reporttimer;
+
+  ReportList()
+    : printlevel(VALUE_ZERO),
+      storelevel(VALUE_ZERO),
+      flag(VALUE_ZERO),
+      reporttimer(POINTER_ZERO)
+  {}
 };
+
 
 struct wmEvent
 {
@@ -633,9 +666,8 @@ struct wmEvent
   /** Custom data type, stylus, 6dof, see wm_event_types.h */
   short custom;
   short customdatafree;
-  int pad2;
   /** Ascii, unicode, mouse-coords, angles, vectors, NDOF data, drag-drop info. */
-  void *customdata = NULL;
+  void *customdata;
 
   /**
    * True if the operating system inverted the delta x/y values and resulting
@@ -643,7 +675,55 @@ struct wmEvent
    * For absolute scroll direction, the delta must be negated again.
    */
   char is_direction_inverted;
+
+  wmEvent()
+    : type(EVENT_NONE),
+      val(VALUE_ZERO),
+      mouse_pos(VALUE_ZERO),
+      mval(ARRAY_ZERO),
+      utf8_buf(ARRAY_ZERO),
+      ascii(VALUE_ZERO),
+      is_repeat(VALUE_ZERO),
+      prevtype(VALUE_ZERO),
+      prevclicktime(VALUE_ZERO),
+      prevclickx(VALUE_ZERO),
+      prevclicky(VALUE_ZERO),
+      prev_mouse_pos(VALUE_ZERO),
+      shift(VALUE_ZERO),
+      ctrl(VALUE_ZERO),
+      alt(VALUE_ZERO),
+      oskey(VALUE_ZERO),
+      keymodifier(VALUE_ZERO),
+      custom(VALUE_ZERO),
+      customdatafree(VALUE_ZERO),
+      customdata(POINTER_ZERO),
+      is_direction_inverted(VALUE_ZERO)
+  {}
 };
+
+enum
+{
+  WM_MSG_TYPE_RNA = 0,
+  WM_MSG_TYPE_STATIC = 1,
+};
+#define WM_MSG_TYPE_NUM 2
+
+
+struct wmMsgBus
+{
+  RHash *messages_gset[WM_MSG_TYPE_NUM];
+  /** Messages in order of being added. */
+  std::vector<RHash *> messages;
+  /** Avoid checking messages when no tags exist. */
+  uint messages_tag_count;
+
+  wmMsgBus()
+    : messages_gset(ARRAY_ZERO),
+      messages(EMPTY),
+      messages_tag_count(VALUE_ZERO)
+  {}
+};
+
 
 #define WM_DRAG_ID 0
 #define WM_DRAG_ASSET 1
@@ -654,17 +734,25 @@ struct wmEvent
 #define WM_DRAG_COLOR 6
 #define WM_DRAG_DATASTACK 7
 
+
 enum eWmDragFlags
 {
   WM_DRAG_NOP = 0,
   WM_DRAG_FREE_DATA = 1,
 };
 
+
 struct wmDragID
 {
   SdfPath id;
   SdfPath from_parent;
+
+  wmDragID()
+    : id(EMPTY),
+      from_parent(EMPTY)
+  {}
 };
+
 
 struct wmDragAsset
 {
@@ -673,7 +761,15 @@ struct wmDragAsset
   const char *path;
   int id_type;
   int import_type; /* eFileAssetImportType */
+
+  wmDragAsset()
+    : name(ARRAY_ZERO),
+      path(POINTER_ZERO),
+      id_type(VALUE_ZERO),
+      import_type(VALUE_ZERO)
+  {}
 };
+
 
 struct wmDrag
 {
@@ -692,6 +788,142 @@ struct wmDrag
   unsigned int flags;
 
   std::vector<wmDragID *> ids;
+
+  wmDrag()
+    : icon(VALUE_ZERO),
+      type(VALUE_ZERO),
+      poin(POINTER_ZERO),
+      path(ARRAY_ZERO),
+      value(VALUE_ZERO),
+      scale(VALUE_ZERO),
+      sx(VALUE_ZERO),
+      sy(VALUE_ZERO),
+      opname(ARRAY_ZERO),
+      flags(VALUE_ZERO)
+  {}
 };
+
+
+struct wmKeyMapItem
+{
+  /* operator */
+  /** Used to retrieve operator type pointer. */
+  TfToken idname;
+  UsdAttributeVector properties;
+
+  /* modal */
+  /** Runtime temporary storage for loading. */
+  char propvalue_str[64];
+  /** If used, the item is from modal map. */
+  short propvalue;
+
+  /* event */
+  /** Event code itself. */
+  short type;
+  /** KM_ANY, KM_PRESS, KM_NOTHING etc. */
+  short val;
+  /** Oskey is apple or windowskey, value denotes order of pressed. */
+  short shift, ctrl, alt, oskey;
+  /** Raw-key modifier. */
+  short keymodifier;
+
+  /* flag: inactive, expanded */
+  short flag;
+
+  /* runtime */
+  /** Keymap editor. */
+  short maptype;
+  short id;
+  PointerUNI *ptr;
+
+  wmKeyMapItem()
+    : idname(EMPTY),
+      properties(EMPTY),
+      propvalue_str(ARRAY_ZERO),
+      propvalue(VALUE_ZERO),
+      type(VALUE_ZERO),
+      val(VALUE_ZERO),
+      shift(VALUE_ZERO),
+      ctrl(VALUE_ZERO),
+      alt(VALUE_ZERO),
+      oskey(VALUE_ZERO),
+      keymodifier(VALUE_ZERO),
+      flag(VALUE_ZERO),
+      maptype(VALUE_ZERO),
+      id(VALUE_ZERO),
+      ptr(POINTER_ZERO)
+  {}
+};
+
+
+struct wmKeyMapDiffItem
+{
+  wmKeyMapItem *remove_item;
+  wmKeyMapItem *add_item;
+
+  wmKeyMapDiffItem()
+    : remove_item(POINTER_ZERO),
+      add_item(POINTER_ZERO)
+  {}
+};
+
+
+struct wmKeyMap
+{
+  std::vector<wmKeyMapItem *> items;
+  std::vector<wmKeyMapDiffItem *> diff_items;
+
+  /** Global editor keymaps, or for more per space/region. */
+  char idname[64];
+
+  short spaceid;
+  short regionid;
+  char owner_id[64];
+
+  /** General flags. */
+  short flag;
+  /** Last kmi id. */
+  short kmi_id;
+
+  /* runtime */
+  /** Verify if enabled in the current context, use #WM_keymap_poll instead of direct calls. */
+  bool (*poll)(cContext *);
+  bool (*poll_modal_item)(const struct wmOperator *op, int value);
+
+  const void *modal_items;
+
+  wmKeyMap()
+    : items(EMPTY),
+      diff_items(EMPTY),
+      idname(ARRAY_ZERO),
+      spaceid(VALUE_ZERO),
+      regionid(VALUE_ZERO),
+      owner_id(ARRAY_ZERO),
+      flag(VALUE_ZERO),
+      kmi_id(VALUE_ZERO),
+      modal_items(POINTER_ZERO)
+  {}
+};
+
+
+struct wmKeyConfig
+{
+  /** Unique name. */
+  TfToken idname;
+  TfToken basename;
+
+  std::vector<wmKeyMap *> keymaps;
+  int actkeymap;
+  short flag;
+
+  wmKeyConfig()
+    : idname(EMPTY),
+      basename(EMPTY),
+      keymaps(EMPTY),
+      actkeymap(VALUE_ZERO),
+      flag(VALUE_ZERO)
+  {}
+};
+
 
 WABI_NAMESPACE_END
