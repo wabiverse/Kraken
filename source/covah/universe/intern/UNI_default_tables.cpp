@@ -53,7 +53,7 @@ void UNI_default_table_main_window(cContext *C)
   wmWindow *win = CTX_wm_window(C);
 
   FormFactory(PROP_IFACE(win->title),         VALUE_IFACE(TfToken("Covah")));
-  FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_HYDRA))));
+  FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_COVAH))));
   FormFactory(PROP_IFACE(win->state),         VALUE_IFACE(UsdUITokens->maximized));
   FormFactory(PROP_IFACE(win->cursor),        VALUE_IFACE(UsdUITokens->default_));
   FormFactory(PROP_IFACE(win->alignment),     VALUE_IFACE(UsdUITokens->alignAbsolute));

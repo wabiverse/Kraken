@@ -30,6 +30,8 @@
 
 #include <tbb/atomic.h>
 
+#include "UNI_window.h"
+
 #include "WM_api.h"
 #include "WM_operators.h"
 
@@ -60,10 +62,13 @@ typedef MsgBusCallbackPtr MsgBus;
 
 struct MsgBusCallback : public TfWeakBase
 {
-  /** Runs & Invokes all the Ops. */
-  MsgBusCallback(wmOperatorType *ot);
+  /** Covah WM Notifications. */
+  MsgBusCallback(wmNotifier *note);
+  void wmCOMM(const TfNotice &notice,
+              MsgBus const &sender);
 
-  /** Covah Operators COMM. */
+  /** Covah Operators. */
+  MsgBusCallback(wmOperatorType *ot);
   void OperatorCOMM(const TfNotice &notice,
                     MsgBus const &sender);
 
@@ -72,6 +77,8 @@ struct MsgBusCallback : public TfWeakBase
 
   /** Notify @ Subscribe MsgBus. */
   TfNotice notice;
+
+  wmNotifier *note;
 
   struct
   {

@@ -168,23 +168,16 @@ wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
 
 struct wmNotifier
 {
+  wmNotifier();
+
   wmWindow *window;
-
   unsigned int category, data, subtype, action;
-
   void *reference;
 
-  inline wmNotifier();
-};
+  TfNotice notice;
 
-wmNotifier::wmNotifier()
-  : window(nullptr),
-    category(0),
-    data(0),
-    subtype(0),
-    action(0),
-    reference(nullptr)
-{}
+  void Push();
+};
 
 struct wmSpaceTypeListenerParams
 {

@@ -122,7 +122,7 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
 
   wm->windrawable = win;
   // if (activate) {
-  //   ANCHOR::ActivateWindowDrawingContext(win->anchorwin);
+  // ANCHOR::ActivateWindowDrawingContext(win->anchorwin);
   // }
   // GPU_context_active_set(win->gpuctx);
 }
@@ -243,7 +243,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
     }
     else
     {
-      win = wm->windows.begin()->second;
+      win = wm->winactive;
     }
 
     /* Display quit dialog or quit immediately. */
@@ -273,7 +273,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       return 1;
     }
 
-    wmWindow *win = wm->windows.begin()->second;
+    wmWindow *win = CTX_wm_window(C);
     win->anchorwin = anchorwin;
 
     switch (type)
@@ -412,7 +412,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         /* No context change! C->wm->windrawable is drawable, or for area queues. */
         wm->winactive = win;
 
-        win->active = 1;
+        win->active = true;
 
         wm_event_add(win, &event);
 
@@ -551,7 +551,7 @@ static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWi
 
       if (win_icon.GetAssetPath().empty())
       {
-        FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_HYDRA)));
+        FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_COVAH)));
       }
     }
 
@@ -1309,9 +1309,10 @@ static bool wm_operator_winactive_normal(cContext *C)
   {
     return 0;
   }
-  // if (!((screen = WM_window_get_active_screen(win)) && (screen->state == SCREENNORMAL))) {
-  //   return 0;
-  // }
+  if (!((screen = WM_window_get_active_screen(win))))
+  {
+    return 0;
+  }
 
   return 1;
 }

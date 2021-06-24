@@ -41,6 +41,8 @@
 #include "CKE_workspace.h"
 
 #include "WM_draw.h"
+#include "WM_event_system.h"
+#include "WM_tokens.h"
 #include "WM_window.h"
 
 #include "ED_screen.h"
@@ -91,17 +93,19 @@ void wm_add_default(Main *cmain, cContext *C)
   UserDef *uprefs = new UserDef(C);
 
   CTX_wm_window_set(C, win);
+
   CTX_data_prefs_set(C, uprefs);
 
   UNI_default_table_main_window(C);
   UNI_default_table_user_prefs(C);
   UNI_default_table_scene_data(C);
 
-  WM_check(C);
+  UNI_save_stage(C);
 
   wm->winactive = win;
   wm->file_saved = true;
-  wm_window_make_drawable(C, wm, win);
+
+  WM_window_anchorwindows_ensure(C, wm);
 }
 
 

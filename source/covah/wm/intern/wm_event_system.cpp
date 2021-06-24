@@ -80,6 +80,8 @@ void WM_main_add_notifier(cContext *C, unsigned int type, void *reference)
   note->action = type & NOTE_ACTION;
 
   note->reference = reference;
+
+  note->Push();
 }
 
 
@@ -101,6 +103,8 @@ void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, voi
   note->action = type & NOTE_ACTION;
 
   note->reference = reference;
+
+  note->Push();
 }
 
 void WM_event_add_notifier(cContext *C, uint type, void *reference)
