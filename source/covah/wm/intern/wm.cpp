@@ -22,10 +22,28 @@
  * Making GUI Fly.
  */
 
+#include "UNI_area.h"
+#include "UNI_context.h"
+#include "UNI_default_tables.h"
+#include "UNI_factory.h"
+#include "UNI_object.h"
+#include "UNI_operator.h"
+#include "UNI_pixar_utils.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
+#include "UNI_space_types.h"
+#include "UNI_userpref.h"
+#include "UNI_window.h"
+#include "UNI_wm_types.h"
+#include "UNI_workspace.h"
+
 #include "CKE_context.h"
+#include "CKE_workspace.h"
 
 #include "WM_draw.h"
 #include "WM_window.h"
+
+#include "ED_screen.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -51,6 +69,41 @@ void WM_main(cContext *C)
     WM_draw_update(C);
   }
 }
+
+
+void wm_add_default(Main *cmain, cContext *C)
+{
+  wmWindowManager *wm = new wmWindowManager();
+  CTX_wm_manager_set(C, wm);
+
+  WorkSpace *ws = ED_workspace_add(C, "Layout");
+  cmain->workspaces.push_back(ws);
+
+  wmWindow *win = wm_window_new(C, wm, NULL, false);
+  cScreen *screen = ED_workspace_layout_add(C, ws, win, "Layout")->screen;
+
+  WorkSpace *workspace;
+  WorkSpaceLayout *layout = CKE_workspace_layout_find_global(cmain, screen, &workspace);
+  CKE_workspace_active_set(win->workspace_hook, workspace);
+  CKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
+  screen->winid = win->winid;
+
+  UserDef *uprefs = new UserDef(C);
+
+  CTX_wm_window_set(C, win);
+  CTX_data_prefs_set(C, uprefs);
+
+  UNI_default_table_main_window(C);
+  UNI_default_table_user_prefs(C);
+  UNI_default_table_scene_data(C);
+
+  WM_check(C);
+
+  wm->winactive = win;
+  wm->file_saved = true;
+  wm_window_make_drawable(C, wm, win);
+}
+
 
 void WM_check(cContext *C)
 {

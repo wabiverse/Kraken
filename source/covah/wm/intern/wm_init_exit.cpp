@@ -55,7 +55,8 @@ void WM_init(cContext *C, int argc, const char **argv)
   WM_operators_init(C);
   WM_operators_register(C);
 
-  WM_check(C);
+  Main *cmain = CTX_data_main(C);
+  wm_add_default(cmain, C);
 }
 
 

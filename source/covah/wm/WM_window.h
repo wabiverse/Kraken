@@ -66,6 +66,7 @@ wmWindow *WM_window_open(cContext *C,
                          bool dialog,
                          bool temp);
 void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win);
+void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win);
 
 void WM_anchor_init(cContext *C);
 void WM_anchor_exit(void);

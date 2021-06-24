@@ -37,6 +37,8 @@
 
 WABI_NAMESPACE_BEGIN
 
+WorkSpace *ED_workspace_add(cContext *C, const char *name);
+
 void ED_area_exit(cContext *C, ScrArea *area);
 bool ED_screen_change(cContext *C, cScreen *screen);
 bool ED_area_is_global(const ScrArea *area);

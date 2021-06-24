@@ -38,6 +38,7 @@ WABI_NAMESPACE_BEGIN
 #define SETTER_ATTRS ATTR_NONNULL(1)
 /* clang-format on */
 
+WorkSpace *CKE_workspace_add(cContext *C, const char *name);
 
 void CKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
                                      const int winid,
@@ -58,6 +59,10 @@ WorkSpaceLayout *CKE_workspace_layout_add(Main *cmain,
                                           const char *name) ATTR_NONNULL();
 WorkSpaceLayout *CKE_workspace_active_layout_get(const WorkSpaceInstanceHook *hook);
 WorkSpaceLayout *CKE_workspace_layout_find(const WorkSpace *workspace, const cScreen *screen);
+
+WorkSpaceLayout *CKE_workspace_layout_find_global(const Main *cmain,
+                                                  const cScreen *screen,
+                                                  WorkSpace **r_workspace);
 
 void CKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace);
 

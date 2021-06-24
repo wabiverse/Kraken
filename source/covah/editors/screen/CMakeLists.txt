@@ -20,6 +20,7 @@ set(SRC
   SCREEN_area.cpp
   SCREEN_edit.cpp
   SCREEN_geometry.cpp
+  SCREEN_workspace_edit.cpp
   SCREEN_workspace_layout_edit.cpp
 
   ../include/ED_defines.h

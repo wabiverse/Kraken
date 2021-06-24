@@ -95,82 +95,42 @@ void UNI_set_defaults(cContext *C)
 
   /* ----- */
 
-  /** WindowManager Creation. */
-  wmWindowManager *wm = new wmWindowManager();
-
-  /** CTX set WindowManager. */
-  CTX_wm_manager_set(C, wm);
-
-  /* ----- */
-
-  /** Window Creation. */
-  wmWindow *win = new wmWindow(C, SdfPath(COVAH_PATH_DEFAULTS::COVAH_WINDOW));
-
-  /** CTX set Window. */
-  CTX_wm_window_set(C, win);
-
-  /** Insert into WindowManager. */
-  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
-
-  /** Load the defaults. */
-  UNI_default_table_main_window(C);
-
-  /* ----- */
-
-  /** User Preferences Creation. */
-  UserDef *uprefs = new UserDef(C);
-
-  /** CTX set User Preferences. */
-  CTX_data_prefs_set(C, uprefs);
-
-  /** Load the defaults. */
-  UNI_default_table_user_prefs(C);
-
-  /* ----- */
-
-  /** CTX get cScreen. */
-  cScreen *screen = CTX_wm_screen(C);
-
-  /* ----- */
-
-  /** View3D Creation. */
-  ScrArea *v3d = new ScrArea(C, screen, SdfPath("View3D"));
-
   /** Insert into cScreen. */
-  screen->areas.push_back(v3d);
+  // ScrArea *v3d = new ScrArea(C, screen, SdfPath("View3D"));
+  // screen->areas.push_back(v3d);
 
   /** CTX set View3D. */
-  CTX_wm_area_set(C, v3d);
+  // CTX_wm_area_set(C, v3d);
 
   /** Load the defaults. */
-  UNI_default_table_area_v3d(C);
+  // UNI_default_table_area_v3d(C);
 
   /* ----- */
 
   /** Outliner Creation. */
-  ScrArea *outliner = new ScrArea(C, screen, SdfPath("Outliner"));
+  // ScrArea *outliner = new ScrArea(C, screen, SdfPath("Outliner"));
 
   /** Insert into cScreen. */
-  screen->areas.push_back(outliner);
+  // screen->areas.push_back(outliner);
 
   /** CTX set Outliner. */
-  CTX_wm_area_set(C, outliner);
+  // CTX_wm_area_set(C, outliner);
 
   /** Load the defaults. */
-  UNI_default_table_area_outliner(C);
+  // UNI_default_table_area_outliner(C);
 
   /* ----- */
 
   /** Load the cScreen defaults. */
-  UNI_default_table_area_screen(C);
+  // UNI_default_table_area_screen(C);
 
   /** Load the WorkSpace defaults. */
-  UNI_default_table_area_workspace(C);
+  // UNI_default_table_area_workspace(C);
 
   /* ----- */
 
   /** Load the Default Scene. */
-  UNI_default_table_scene_data(C);
+  // UNI_default_table_scene_data(C);
 }
 
 WABI_NAMESPACE_END

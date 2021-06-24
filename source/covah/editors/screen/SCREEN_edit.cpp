@@ -151,7 +151,7 @@ static ScrArea *screen_addarea_ex(cContext *C,
                                   ScrVert *bottom_right,
                                   const TfToken &spacetype)
 {
-  ScrArea *area = new ScrArea(C, screen, screen->path.AppendPath(SdfPath("Area")));
+  ScrArea *area = new ScrArea(C, screen, SdfPath("Area"));
 
   area->v1 = bottom_left;
   area->v2 = top_left;

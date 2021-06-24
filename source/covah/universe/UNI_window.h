@@ -219,16 +219,20 @@ struct wmWindowManager : public UniverseObject
   /** Active dragged items. */
   std::vector<void *> drags;
 
+  bool file_saved;
+
   inline wmWindowManager();
 };
 
 wmWindowManager::wmWindowManager()
   : path(COVAH_PATH_DEFAULTS::COVAH_WM),
-    windows(),
-    windrawable(nullptr),
-    winactive(nullptr),
-    notifier_queue(),
-    op_undo_depth(0)
+    windows(EMPTY),
+    windrawable(POINTER_ZERO),
+    winactive(POINTER_ZERO),
+    notifier_queue(EMPTY),
+    op_undo_depth(0),
+    drags(EMPTY),
+    file_saved(VALUE_ZERO)
 {}
 
 WABI_NAMESPACE_END

@@ -160,32 +160,32 @@ void CTX_data_main_set(cContext *C, Main *cmain)
 void CTX_wm_manager_set(cContext *C, wmWindowManager *wm)
 {
   C->wm.manager = wm;
-  C->wm.window = NULL;
-  C->wm.screen = NULL;
-  C->wm.area = NULL;
-  C->wm.region = NULL;
+  C->wm.window = POINTER_ZERO;
+  C->wm.screen = POINTER_ZERO;
+  C->wm.area = POINTER_ZERO;
+  C->wm.region = POINTER_ZERO;
 }
 
 void CTX_wm_window_set(cContext *C, wmWindow *win)
 {
   C->wm.window = win;
-  C->wm.workspace = (win) ? CKE_workspace_active_get(win->workspace_hook) : nullptr;
-  C->wm.screen = (win) ? CKE_workspace_active_screen_get(win->workspace_hook) : nullptr;
-  C->wm.area = NULL;
-  C->wm.region = NULL;
+  C->wm.workspace = (win) ? CKE_workspace_active_get(win->workspace_hook) : POINTER_ZERO;
+  C->wm.screen = (win) ? CKE_workspace_active_screen_get(win->workspace_hook) : POINTER_ZERO;
+  C->wm.area = POINTER_ZERO;
+  C->wm.region = POINTER_ZERO;
 }
 
 void CTX_wm_screen_set(cContext *C, cScreen *screen)
 {
   C->wm.screen = screen;
-  C->wm.area = NULL;
-  C->wm.region = NULL;
+  C->wm.area = POINTER_ZERO;
+  C->wm.region = POINTER_ZERO;
 }
 
 void CTX_wm_area_set(cContext *C, ScrArea *area)
 {
   C->wm.area = area;
-  C->wm.region = NULL;
+  C->wm.region = POINTER_ZERO;
 }
 
 void CTX_wm_region_set(cContext *C, ARegion *region)

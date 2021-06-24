@@ -153,6 +153,40 @@ static void workspace_layout_name_set(WorkSpace *workspace,
                  sizeof(CHARALL(layout->name)));
 }
 
+WorkSpace *CKE_workspace_add(cContext *C, const char *name)
+{
+  SdfPath path(STRINGALL(COVAH_PATH_DEFAULTS::COVAH_WORKSPACES));
+  WorkSpace *new_workspace = new WorkSpace(C, path.AppendPath(SdfPath(name)));
+  return new_workspace;
+}
+
+WorkSpaceLayout *CKE_workspace_layout_find_global(const Main *cmain,
+                                                  const cScreen *screen,
+                                                  WorkSpace **r_workspace)
+{
+  WorkSpaceLayout *layout;
+
+  if (r_workspace)
+  {
+    *r_workspace = NULL;
+  }
+
+  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  {
+    if ((layout = workspace_layout_find_exec(workspace, screen)))
+    {
+      if (r_workspace)
+      {
+        *r_workspace = workspace;
+      }
+
+      return layout;
+    }
+  }
+
+  return NULL;
+}
+
 
 WorkSpaceLayout *CKE_workspace_layout_add(Main *cmain,
                                           WorkSpace *workspace,

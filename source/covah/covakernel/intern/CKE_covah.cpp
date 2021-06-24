@@ -141,8 +141,8 @@ void CKE_covah_main_init(cContext *C, int argc, const char **argv)
   {
     /**
      * Create default Pixar stage. */
-    UNI_set_defaults(C);
-    UNI_save_stage(C);
+    // UNI_set_defaults(C);
+    // UNI_save_stage(C);
   }
   else
   {

@@ -16,48 +16,43 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Editors.
+ * Tools for Artists.
  */
 
-#include "WM_api.h"
+#include "UNI_area.h"
+#include "UNI_context.h"
+#include "UNI_object.h"
+#include "UNI_operator.h"
+#include "UNI_pixar_utils.h"
+#include "UNI_region.h"
+#include "UNI_screen.h"
+#include "UNI_space_types.h"
+#include "UNI_userpref.h"
+#include "UNI_window.h"
+#include "UNI_wm_types.h"
+#include "UNI_workspace.h"
+
+#include "CKE_context.h"
+#include "CKE_main.h"
+#include "CKE_screen.h"
+#include "CKE_workspace.h"
+
+#include "CLI_assert.h"
+#include "CLI_math_inline.h"
+
+#include "WM_window.h"
+
+#include "ED_defines.h"
+#include "ED_screen.h"
 
 WABI_NAMESPACE_BEGIN
 
-COVAH_WM_API
-void WM_init_default_styles();
-
-COVAH_WM_API
-void WM_init(cContext *C, int argc, const char **argv);
-
-COVAH_WM_API
-void WM_main(cContext *C);
-
-COVAH_WM_API
-void wm_add_default(struct Main *cmain, cContext *C);
-
-COVAH_WM_API
-void WM_check(cContext *C);
-
-enum eWmModes
+WorkSpace *ED_workspace_add(cContext *C, const char *name)
 {
-  COVAH_NORMAL_MODE = 0,
-  COVAH_DEBUG_MODE
-};
-
-enum eWmKernelPaths
-{
-  EXE_PATH = 0,
-  DATAFILES_PATH,
-  STYLES_PATH,
-  ICONS_PATH,
-  PROJECT_FILE,
-
-  VERSION_DECIMAL
-};
+  return CKE_workspace_add(C, name);
+}
 
 WABI_NAMESPACE_END
