@@ -21,7 +21,7 @@ if "%BUILD_SHOW_HASHES%" == "1" (
 )
 
 if "%SHOW_HELP%" == "1" (
-  call "%COVAH_DIR%\build_files\scripts\windows\show_wabi_help.bat"
+  call "%COVAH_DIR%\build_files\scripts\windows\show_help.cmd"
   goto EOF
 )
 
