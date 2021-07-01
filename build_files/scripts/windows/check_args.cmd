@@ -16,23 +16,14 @@ if NOT "%1" == "" (
 		shift /1
 	) else if "%1" == "with_tests" (
 		set TESTS_CMAKE_ARGS=%TESTS_CMAKE_ARGS%
-	) else if "%1" == "with_opengl_tests" (
-		set TESTS_CMAKE_ARGS=%TESTS_CMAKE_ARGS%
-	) else if "%1" == "full" (
-		set TARGET=Full
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% ^
-		    -C"%COVAH_DIR%\build_files\cmake\config\covah_full.cmake"
 	) else if "%1" == "lite" (
 		set TARGET=Lite
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_lite.cmake"
-	) else if "%1" == "arnold" (
-		set TARGET=Arnold
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\arnold_standalone.cmake"
 	) else if "%1" == "headless" (
 		set TARGET=Headless
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_headless.cmake"
-	) else if "%1" == "wabi" (
-		set TARGET=Pxr
+	) else if "%1" == "wabipy" (
+		set TARGET=Wabi
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\wabi_module.cmake"
 	) else if "%1" == "clang" (
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS%
@@ -77,8 +68,6 @@ if NOT "%1" == "" (
 	) else if "%1" == "showhash" (
 		SET BUILD_SHOW_HASHES=1
 	REM Non-Build Commands
-	) else if "%1" == "arnold" (
-		SET UPDATE_ARNOLD_PYTHON=1
 	) else if "%1" == "update" (
 		SET BUILD_UPDATE=1
 		set BUILD_UPDATE_ARGS=
@@ -114,7 +103,7 @@ if NOT "%1" == "" (
 		goto EOF
   ) else (
         echo Command "%1" unknown, aborting...
-        echo use --help for build options.
+        echo use help for build options.
         goto ERR
     )
     shift /1
