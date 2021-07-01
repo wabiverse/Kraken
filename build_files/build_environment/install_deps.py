@@ -314,6 +314,27 @@ def CopyDirectory(context, srcDir, destDir):
                        .format(srcDir=srcDir, destDir=instDestDir))
     shutil.copytree(srcDir, instDestDir)
 
+def CleanInstall(context, dependency):
+    dependencypath = Path(context.libInstDir) / dependency
+    if dependencypath.exists() and dependencypath.is_dir():
+        shutil.rmtree(dependencypath)
+    os.mkdir(dependencypath)
+
+    binpath = Path(dependencypath) / 'bin'
+    if binpath.exists() and binpath.is_dir():
+        shutil.rmtree(binpath)
+    os.mkdir(binpath)
+
+    libpath = Path(dependencypath) / 'lib'
+    if libpath.exists() and libpath.is_dir():
+        shutil.rmtree(libpath)
+    os.mkdir(libpath)
+
+    incpath = Path(dependencypath) / 'include'
+    if incpath.exists() and incpath.is_dir():
+        shutil.rmtree(incpath)
+    os.mkdir(incpath)
+
 def FormatMultiProcs(numJobs, generator):
     tag = "-j"
     if generator:
@@ -651,25 +672,7 @@ def InstallZlib(context, force, buildArgs):
         RunCMake(context, force, buildArgs)
 
         if Windows():
-            zlibpath = Path(context.libInstDir) / 'zlib'
-            if zlibpath.exists() and zlibpath.is_dir():
-                shutil.rmtree(zlibpath)
-            os.mkdir(zlibpath)
-
-            binpath = Path(zlibpath) / 'bin'
-            if binpath.exists() and binpath.is_dir():
-                shutil.rmtree(binpath)
-            os.mkdir(binpath)
-
-            libpath = Path(zlibpath) / 'lib'
-            if libpath.exists() and libpath.is_dir():
-                shutil.rmtree(libpath)
-            os.mkdir(libpath)
-
-            incpath = Path(zlibpath) / 'include'
-            if incpath.exists() and incpath.is_dir():
-                shutil.rmtree(incpath)
-            os.mkdir(incpath)
+            CleanInstall(context, "zlib")
 
             shutil.copyfile(context.libInstDir + "/bin/zlib.dll", context.libInstDir + "/zlib/bin/zlib.dll")
             shutil.copyfile(context.libInstDir + "/lib/zlib.lib", context.libInstDir + "/zlib/lib/zlib.lib")
@@ -1167,15 +1170,17 @@ TIFF = Dependency("TIFF", InstallTIFF, "include/tiff.h")
 # PNG
 
 if Windows():
+    verify_png="png/include/png.h"
     PNG_URL = "https://github.com/glennrp/libpng/archive/refs/tags/v1.6.35.zip"
 else:
+    verify_png="include/png.h"
     PNG_URL = "https://github.com/glennrp/libpng/archive/refs/tags/v1.6.35.tar.gz"
 
 def InstallPNG(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(PNG_URL, context, force)):
 
         if Windows():
-            buildArgs = ['-DZLIB_LIBRARY="{libInst}"'.format(libInst=context.libInstDir + "/zlib/lib/zlib.lib")]
+            buildArgs = ['-DZLIB_ROOT="{zlibRoot}"'.format(zlibRoot=context.libInstDir + "/zlib")]
             buildArgs.append('-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"))
 
         RunCMake(context, force, buildArgs)
@@ -1192,15 +1197,17 @@ def InstallPNG(context, force, buildArgs):
             InstallDependency("/include/png.h",           "/png/include/png.h")
             InstallDependency("/include/libpng16",        "/png/include/libpng16")
 
-PNG = Dependency("PNG", InstallPNG, "include/png.h")
+PNG = Dependency("PNG", InstallPNG, verify_png)
 
 ############################################################
 # IlmBase/OpenEXR
 
 if Windows():
+    verify_openexr = "openexr/include/OpenEXR/ImfVersion.h"
     OPENEXR_URL = "https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v3.0.1.zip"
     IMATH_URL   = "https://github.com/AcademySoftwareFoundation/Imath/archive/refs/tags/v3.0.1.zip"
 else:
+    verify_openexr = "include/OpenEXR/ImfVersion.h"
     OPENEXR_URL = "https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v3.0.1.tar.gz"
     IMATH_URL = "https://github.com/AcademySoftwareFoundation/Imath/archive/refs/tags/v3.0.1.tar.gz"
 
@@ -1242,10 +1249,15 @@ def InstallOpenEXR(context, force, buildArgs):
         InstallDependency("/include/Imath",           "/openexr/include/Imath")
         InstallDependency("/include/OpenEXR",         "/openexr/include/OpenEXR")
 
-OPENEXR = Dependency("OpenEXR", InstallOpenEXR, "include/OpenEXR/ImfVersion.h")
+OPENEXR = Dependency("OpenEXR", InstallOpenEXR, verify_openexr)
 
 ############################################################
 # Ptex
+
+if Windows():
+    verify_ptex = "ptex/include/PtexVersion.h"
+else:
+    verify_ptex = "include/PtexVersion.h"
 
 PTEX_URL = "https://github.com/wdas/ptex/archive/refs/tags/v2.4.0.zip"
 
@@ -1296,7 +1308,7 @@ def InstallPtex_LinuxOrMacOS(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(PTEX_URL, context, force)):
         RunCMake(context, force, buildArgs)
 
-PTEX = Dependency("Ptex", InstallPtex, "include/PtexVersion.h")
+PTEX = Dependency("Ptex", InstallPtex, verify_ptex)
 
 ############################################################
 # BLOSC (Compression used by OpenVDB)
@@ -1304,6 +1316,11 @@ PTEX = Dependency("Ptex", InstallPtex, "include/PtexVersion.h")
 # Using latest blosc since neither the version OpenVDB recommends
 # (1.5) nor the version we test against (1.6.1) compile on Mac OS X
 # Sierra (10.12) or Mojave (10.14).
+if Windows():
+    verify_blosc = "blosc/include/blosc.h"
+else:
+    verify_blosc = "include/blosc.h"
+
 BLOSC_URL = "https://github.com/Blosc/c-blosc/archive/refs/tags/v1.21.0.zip"
 
 def InstallBLOSC(context, force, buildArgs):
@@ -1316,7 +1333,7 @@ def InstallBLOSC(context, force, buildArgs):
             InstallDependency("/include/blosc.h",        "/blosc/include/blosc.h")
             InstallDependency("/include/blosc-export.h", "/blosc/include/blosc-export.h")
 
-BLOSC = Dependency("Blosc", InstallBLOSC, "include/blosc.h")
+BLOSC = Dependency("Blosc", InstallBLOSC, verify_blosc)
 
 ############################################################
 # OpenVDB
@@ -1376,6 +1393,11 @@ OPENVDB = Dependency("OpenVDB", InstallOpenVDB, check_ovdb)
 
 ############################################################
 # OpenImageIO
+
+if Windows():
+    verify_oiio = "OpenImageIO/include/OpenImageIO/oiioversion.h"
+else:
+    verify_oiio = "include/OpenImageIO/oiioversion.h"
 
 OIIO_URL = "https://github.com/OpenImageIO/oiio/archive/Release-2.2.12.0.zip"
 
@@ -1453,7 +1475,7 @@ def InstallOpenImageIO(context, force, buildArgs):
             InstallDependency("/lib/OpenImageIO_Util.lib", "/OpenImageIO/lib/OpenImageIO_Util.lib")
             InstallDependency("/include/OpenImageIO",      "/OpenImageIO/include/OpenImageIO")
 
-OPENIMAGEIO = Dependency("OpenImageIO", InstallOpenImageIO, "include/OpenImageIO/oiioversion.h")
+OPENIMAGEIO = Dependency("OpenImageIO", InstallOpenImageIO, verify_oiio)
 
 ############################################################
 # OpenColorIO
@@ -1513,8 +1535,10 @@ OPENCOLORIO = Dependency("OpenColorIO", InstallOpenColorIO, test_ocio)
 # OpenSubdiv
 
 if Windows():
+    verify_osubdv = "opensubdiv/include/opensubdiv/version.h"
     OPENSUBDIV_URL = "https://github.com/PixarAnimationStudios/OpenSubdiv/archive/refs/tags/v3_4_4.zip"
 else:
+    verify_osubdv = "include/opensubdiv/version.h"
     OPENSUBDIV_URL = "https://github.com/PixarAnimationStudios/OpenSubdiv/archive/refs/tags/v3_4_4.tar.gz"
 
 def InstallOpenSubdiv(context, force, buildArgs):
@@ -1569,7 +1593,7 @@ def InstallOpenSubdiv(context, force, buildArgs):
             context.cmakeGenerator = oldGenerator
             context.numJobs = oldNumJobs
 
-OPENSUBDIV = Dependency("OpenSubdiv", InstallOpenSubdiv, "include/opensubdiv/version.h")
+OPENSUBDIV = Dependency("OpenSubdiv", InstallOpenSubdiv, verify_osubdv)
 
 ############################################################
 # OSL
@@ -1634,14 +1658,19 @@ def InstallOSL(context, force, buildArgs):
             InstallDependency("/build_env/source/OpenShadingLanguage-1.11.13.0/pugixml/include/pugixml.hpp",    "/include/pugixml.hpp")
             InstallDependency("/build_env/source/OpenShadingLanguage-1.11.13.0/pugixml/lib/libpugixml.a",       "/lib/libpugixml.a")
         else:
+            # OSL needs LLVM, so let's grab that too, the precompiled version from Blender should work fine.
+            # Also seems to be the only version of LLVM that I can find anywhere that will actually allow OSL
+            # to compile on MSVC. The 'official' installation from LLVM does not supply any of the CMake configs. 
+            # It's missing 90% of the includes, missing 90% of the libraries, blahhh. Just using Blender's
+            # For now...
+            llvmpath = Path(context.buildDir) / "llvm"
+            if not llvmpath.exists():
+                llvm = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/llvm/", stdout=subprocess.PIPE, shell=True)
+            copy_tree(context.buildDir + "/llvm", context.libInstDir + "/llvm")
             windArgs = [
-                '-DBoost_FOUND={boost_found}'.format(boost_found="TRUE"),
                 '-DBoost_ROOT={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost"),
-                '-DBoost_DIR={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost"),
-                '-DBoost_LIB_DIR={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost/lib"),
-                '-DBoost_INCLUDE_DIRS={boost_include}'.format(boost_include=context.libInstDir + "/boost/include/boost-1_76"),
-                '-DBoost_LIBRARIES={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost/lib/boost_atomic-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_chrono-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_date_time-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_filesystem-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_iostreams-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_numpy39-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_python39-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_program_options-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_regex-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_system-vc142-mt-x64-1_76.lib;" + context.libInstDir + "/boost/lib/boost_thread-vc142-mt-x64-1_76.lib"),
-                '-DOIIO_LIBRARY_PATH={oiio_library_path}'.format(oiio_library_path=context.libInstDir + "/lib"),
+                '-DBOOST_ROOT={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost"),
+                '-DOIIO_LIBRARY_PATH={oiio_library_path}'.format(oiio_library_path=context.libInstDir + "/OpenImageIO"),
                 '-Dpugixml_ROOT={pugixml_root_path}'.format(pugixml_root_path=context.libInstDir + "/pugixml"),
                 '-DLLVM_DIRECTORY={llvm_dir_path}'.format(llvm_dir_path=context.libInstDir + "/llvm"),
                 '-DLLVM_LIB_DIR={llvm_library_path}'.format(llvm_library_path=context.libInstDir + "/llvm/lib"),
@@ -1752,8 +1781,7 @@ def InstallAlembic(context, force, buildArgs):
 
         if Windows():
             cmakeOptions += [
-                '-DZLIB_LIBRARY="{libInst}"'.format(libInst=context.libInstDir + "/zlib/lib/zlib.lib"),
-                '-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"),
+                '-DZLIB_ROOT="{zlibRoot}"'.format(zlibRoot=context.libInstDir + "/zlib"),
                 '-DUSE_HDF5=ON',
                 '-DHDF5_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + "/hdf5"),
                 '-DILMBASE_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + "/openexr"),
@@ -1815,6 +1843,11 @@ DRACO = Dependency("Draco", InstallDraco, "include/draco/compression/decode.h")
 ############################################################
 # MaterialX
 
+if Windows():
+    verify_mtlx = "MaterialX/include/MaterialXCore/Library.h"
+else:
+    verify_mtlx = "include/MaterialXCore/Library.h"
+
 MATERIALX_URL = "https://github.com/materialx/MaterialX/releases/download/v1.38.0/MaterialX-1.38.0.zip"
 
 def InstallMaterialX(context, force, buildArgs):
@@ -1838,19 +1871,32 @@ def InstallMaterialX(context, force, buildArgs):
         RunCMake(context, force, cmakeOptions)
 
         if Windows():
-            for lib in glob.glob(context.libInstDir + '/lib/MaterialX*.lib'):
-                materialx_lib = ntpath.basename(lib)
-                InstallDependency('/lib/' + materialx_lib, "/MaterialX/lib/" + materialx_lib)
+            CleanInstall(context, "MaterialX")
+            copy_tree(context.libInstDir + "/include/MaterialXCore",       context.libInstDir + "/MaterialX/include/MaterialXCore")
+            copy_tree(context.libInstDir + "/include/MaterialXFormat",     context.libInstDir + "/MaterialX/include/MaterialXFormat")
+            copy_tree(context.libInstDir + "/include/MaterialXGenGlsl",    context.libInstDir + "/MaterialX/include/MaterialXGenGlsl")
+            copy_tree(context.libInstDir + "/include/MaterialXGenMdl",     context.libInstDir + "/MaterialX/include/MaterialXGenMdl")
+            copy_tree(context.libInstDir + "/include/MaterialXGenOsl",     context.libInstDir + "/MaterialX/include/MaterialXGenOsl")
+            copy_tree(context.libInstDir + "/include/MaterialXGenShader",  context.libInstDir + "/MaterialX/include/MaterialXGenShader")
+            copy_tree(context.libInstDir + "/include/MaterialXRender",     context.libInstDir + "/MaterialX/include/MaterialXRender")
+            copy_tree(context.libInstDir + "/include/MaterialXRenderGlsl", context.libInstDir + "/MaterialX/include/MaterialXRenderGlsl")
+            copy_tree(context.libInstDir + "/include/MaterialXRenderHw",   context.libInstDir + "/MaterialX/include/MaterialXRenderHw")
+            copy_tree(context.libInstDir + "/include/MaterialXRenderOsl",  context.libInstDir + "/MaterialX/include/MaterialXRenderOsl")
+            copy_tree(context.libInstDir + "/libraries",                   context.libInstDir + "/MaterialX/libraries")
+            copy_tree(context.libInstDir + "/mdl",                         context.libInstDir + "/MaterialX/mdl")
+            copy_tree(context.libInstDir + "/resources",                   context.libInstDir + "/MaterialX/resources")
+            InstallDependency("/lib/MaterialXCore.lib",       "/MaterialX/lib/MaterialXCore.lib")
+            InstallDependency("/lib/MaterialXFormat.lib",     "/MaterialX/lib/MaterialXFormat.lib")
+            InstallDependency("/lib/MaterialXGenGlsl.lib",    "/MaterialX/lib/MaterialXGenGlsl.lib")
+            InstallDependency("/lib/MaterialXGenMdl.lib",     "/MaterialX/lib/MaterialXGenMdl.lib")
+            InstallDependency("/lib/MaterialXGenOsl.lib",     "/MaterialX/lib/MaterialXGenOsl.lib")
+            InstallDependency("/lib/MaterialXGenShader.lib",  "/MaterialX/lib/MaterialXGenShader.lib")
+            InstallDependency("/lib/MaterialXRender.lib",     "/MaterialX/lib/MaterialXRender.lib")
+            InstallDependency("/lib/MaterialXRenderGlsl.lib", "/MaterialX/lib/MaterialXRenderGlsl.lib")
+            InstallDependency("/lib/MaterialXRenderHw.lib",   "/MaterialX/lib/MaterialXRenderHw.lib")
+            InstallDependency("/lib/MaterialXRenderOsl.lib",  "/MaterialX/lib/MaterialXRenderOsl.lib")
 
-            for include in glob.glob(context.libInstDir + '/include/MaterialX*'):
-                materialx_include = ntpath.basename(include)
-                InstallDependency('/include/' + materialx_include, "/MaterialX/include/" + materialx_include)
-
-            InstallDependency('/libraries', "/MaterialX/libraries/")
-            InstallDependency('/mdl',       "/MaterialX/mdl/")
-            InstallDependency('/resources', "/MaterialX/resources/")
-
-MATERIALX = Dependency("MaterialX", InstallMaterialX, "include/MaterialXCore/Library.h")
+MATERIALX = Dependency("MaterialX", InstallMaterialX, verify_mtlx)
 
 ############################################################
 # Embree
