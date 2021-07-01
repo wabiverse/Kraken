@@ -1,5 +1,5 @@
 if EXIST %PYTHON% (
-    set PYTHON=%COVAH_DIR%\..\lib\win64_vc15\python\39\bin\python.exe
+    set PYTHON=%COVAH_DIR%\..\lib\win64_%BUILD_VS_LIBDIRPOST%\python\39\bin\python.exe
     goto detect_python_done
 )
 

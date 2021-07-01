@@ -39,7 +39,19 @@ set(build_shared_libs "${BUILD_SHARED_LIBS}")
 # Set directory path to precompiled libraries
 
 if(WIN32)
-  set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc15)
+  if(MSVC_VERSION GREATER_EQUAL 1930)
+    # MSVC 2022+
+    set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc17)
+  elseif(MSVC_VERSION GREATER_EQUAL 1920)
+    # MSVC 2019+
+    set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc16)
+  else()
+    # MSVC XXXX < 2019
+    # A friendly reminder that this is
+    # not officially supported. Time to
+    # update compilers my friend.
+    set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc15)
+  endif()
   set(LIB_OBJ_EXT "lib")
 elseif(UNIX)
   set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/linux_centos7_x86_64)

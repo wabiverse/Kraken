@@ -77,9 +77,9 @@ INSTALL_DIR = ""
 SOURCE_DIR = ""
 BUILD_DIR = ""
 if Windows():
-    INSTALL_DIR = "../../../lib/win64_vc15"
-    SOURCE_DIR = "../../../lib/win64_vc15/build_env/source"
-    BUILD_DIR = "../../../lib/win64_vc15/build_env/build"
+    INSTALL_DIR = "../../../lib/win64_vcUNKNOWN"
+    SOURCE_DIR = "../../../lib/win64_vcUNKNOWN/build_env/source"
+    BUILD_DIR = "../../../lib/win64_vcUNKNOWN/build_env/build"
 elif Linux():
     INSTALL_DIR = "../../../lib/linux_centos7_x86_64"
     SOURCE_DIR = "../../../lib/linux_centos7_x86_64/build_env/source"
@@ -141,14 +141,23 @@ def IsVisualStudioVersionOrGreater(desiredVersion):
 
 def IsVisualStudio2022OrGreater():
     VISUAL_STUDIO_2022_VERSION = (17, 0)
+    INSTALL_DIR = "../../../lib/win64_vc17"
+    SOURCE_DIR = "../../../lib/win64_vc17/build_env/source"
+    BUILD_DIR = "../../../lib/win64_vc17/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2022_VERSION)
 
 def IsVisualStudio2019OrGreater():
     VISUAL_STUDIO_2019_VERSION = (16, 0)
+    INSTALL_DIR = "../../../lib/win64_vc16"
+    SOURCE_DIR = "../../../lib/win64_vc16/build_env/source"
+    BUILD_DIR = "../../../lib/win64_vc16/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2019_VERSION)
 
 def IsVisualStudio2017OrGreater():
     VISUAL_STUDIO_2017_VERSION = (15, 0)
+    INSTALL_DIR = "../../../lib/win64_vc15"
+    SOURCE_DIR = "../../../lib/win64_vc15/build_env/source"
+    BUILD_DIR = "../../../lib/win64_vc15/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2017_VERSION)
 
 def GetPythonInfo():
@@ -204,7 +213,7 @@ def GetPythonInfo():
     if Windows():
         python_version_no_dot=39
         python_version=3.9
-        python_dir     = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../lib/win64_vc15/python/{py_ver}".format(py_ver=python_version_no_dot))
+        python_dir     = os.path.join(os.path.dirname(os.path.realpath(__file__)), "{installed_libs_dir}/python/{py_ver}".format(installed_libs_dir=INSTALL_DIR, py_ver=python_version_no_dot))
         python_include = os.path.join(python_dir, "include")
         python_lib     = os.path.join(python_dir, "libs")
         python_exe     = os.path.join(python_dir, "bin", "python.exe")
