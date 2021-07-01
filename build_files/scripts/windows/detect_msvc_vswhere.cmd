@@ -13,12 +13,24 @@ if not exist "%vs_where%" (
 	goto FAIL
 )
 
-if NOT "%verbose%" == "" (
-		echo "%vs_where%" -latest %VSWHERE_ARGS% -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
-	)
+if NOT "%VS2022_NOT_OFFICIALLY_RELEASED%" == "" (
+	@REM Workaround while MSVC 2022 is still under
+	@REM Developer Preview and not publicly available
+	if NOT "%verbose%" == "" (
+			echo "%vs_where%" -prerelease %VSWHERE_ARGS% -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+		)
 
-for /f "usebackq tokens=1* delims=: " %%i in (`"%vs_where%" -latest -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) %VSWHERE_ARGS% -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64`) do (
-	if /i "%%i"=="installationPath" set VS_InstallDir=%%j
+	for /f "usebackq tokens=1* delims=: " %%i in (`"%vs_where%" -prerelease -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) %VSWHERE_ARGS% -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64`) do (
+		if /i "%%i"=="installationPath" set VS_InstallDir=%%j
+	)	
+) else (
+	if NOT "%verbose%" == "" (
+			echo "%vs_where%" -latest %VSWHERE_ARGS% -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+		)
+
+	for /f "usebackq tokens=1* delims=: " %%i in (`"%vs_where%" -latest -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) %VSWHERE_ARGS% -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64`) do (
+		if /i "%%i"=="installationPath" set VS_InstallDir=%%j
+	)
 )
 
 if NOT "%verbose%" == "" (
