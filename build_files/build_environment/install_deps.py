@@ -761,42 +761,93 @@ ARNOLD = Dependency("arnold", InstallArnold, "include/ai_version.h")
 ############################################################
 # Cycles Render
 
-CYCLES_URL = "https://storage.googleapis.com/dependency_links/Cycles-1.10-COVAH.tar.gz"
+if Linux():
+    verify_cycles = "include/bvh/bvh.h"
+    OPENIMAGE_DENOISE_URL = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.1/oidn-1.4.1.src.tar.gz"
+else:
+    verify_cycles = "Cycles/include/bvh/bvh.h"
+    OPENIMAGE_DENOISE_URL = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.1/oidn-1.4.1.src.zip"
+
+CYCLES_URL = "https://storage.googleapis.com/dependency_links/Cycles-1.10-COVAH.zip"
 
 def InstallCycles(context, force, buildArgs):
-    # OPENIMAGEDENOISE
-    with CurrentWorkingDirectory(DownloadURL("https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.0/oidn-1.4.0.src.tar.gz", context, force)):
+    # -------------------------------------------------------------------------------- OPENIMAGEDENOISE -----
+    with CurrentWorkingDirectory(DownloadURL(OPENIMAGE_DENOISE_URL, context, force)):
+        if Windows():
+            # OpenImageDenoise isn't able to find tbb so we set it here
+            buildArgs.append('-DTBB_ROOT={tbb}'.format(tbb=context.libInstDir + "/tbb"))
+            # OpenImageDenoise also needs ISPC (high-performance SIMD on the CPU & GPU) to be installed.
+            buildArgs.append('-DISPC_EXECUTABLE={ispc}'.format(ispc=context.libInstDir + "/ispc/bin/ispc.exe"))
         RunCMake(context, force, buildArgs)        
 
+    # ----------------------------------------------------------------------------------------- OPENJPEG -----
+    with CurrentWorkingDirectory(DownloadURL("https://github.com/uclouvain/openjpeg/archive/refs/tags/v2.4.0.tar.gz", context, force)):
+        RunCMake(context, force, buildArgs)
+
     # CYCLES RENDERER
-    with CurrentWorkingDirectory(context.buildDir + "/../source/Cycles-1.10-COVAH"):
+    with CurrentWorkingDirectory(DownloadURL(CYCLES_URL, context, force)):
         
         if Linux():
             buildArgs.append("-DUSE_OPENGL=ON")
             buildArgs.append("-DOPENEXR_HALF_LIBRARY={}".format(context.libInstDir + "/lib64/libImath.so"))
             buildArgs.append("-DOPENEXR_ILMIMF_LIBRARY={}".format(context.libInstDir + "/lib64/libImath.so"))
+        elif Windows():
+            buildArgs.append("-DUSE_OPENGL=ON")
+            buildArgs.append('-DBOOST_ROOT={boost}'.format(boost=context.libInstDir + "/boost"))
+            buildArgs.append('-DTBB_ROOT={tbb}'.format(tbb=context.libInstDir + "/tbb"))
+            buildArgs.append('-DOPENVDB_ROOT={vdb}'.format(vdb=context.libInstDir + "/openvdb"))
+            buildArgs.append('-DLLVM_ROOT={llvm}'.format(llvm=context.libInstDir + "/llvm"))
+            buildArgs.append('-DGLEW_ROOT={glew}'.format(glew=context.libInstDir + "/glew"))
+            buildArgs.append('-DGLEW_LIBRARY={glew}'.format(glew=context.libInstDir + "/glew/lib/Release/x64/glew32.lib"))
+            buildArgs.append('-DGLEW_INCLUDE_DIR={glew}'.format(glew=context.libInstDir + "/glew/include/GL"))
+            buildArgs.append('-DOPENCOLORIO_ROOT={color}'.format(color=context.libInstDir + "/opencolorio"))
+            buildArgs.append('-DOPENCOLORIO_LIBRARIES={color}'.format(color=context.libInstDir + "/opencolorio/lib/OpenColorIO_2_0.lib"))
+            buildArgs.append('-Dpugixml_ROOT={pugixml_root_path}'.format(pugixml_root_path=context.libInstDir + "/pugixml"))
+            buildArgs.append('-DPUGIXML_LIBRARY={pug}'.format(pug=context.libInstDir + "/pugixml/lib/pugixml.lib"))
+            buildArgs.append('-DPUGIXML_INCLUDE_DIR={pug}'.format(pug=context.libInstDir + "/pugixml/include"))
+            buildArgs.append("-DOPENEXR_HALF_LIBRARY={}".format(context.libInstDir + "/openexr/lib/Imath-3_0.lib"))
+            buildArgs.append("-DOPENEXR_ILMIMF_LIBRARY={}".format(context.libInstDir + "/openexr/lib/Imath-3_0.lib"))
 
         RunCMake(context, force, buildArgs)
 
-        copy_tree(context.buildDir + "/Cycles-1.10-COVAH/bin", context.libInstDir + "/bin")
-        copy_tree(context.buildDir + "/Cycles-1.10-COVAH/lib", context.libInstDir + "/lib")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/app",                 context.libInstDir + "/include/app")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/blender",             context.libInstDir + "/include/blender")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/bvh",                 context.libInstDir + "/include/bvh")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/device",              context.libInstDir + "/include/device")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/graph",               context.libInstDir + "/include/graph")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/kernel",              context.libInstDir + "/include/kernel")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/render",              context.libInstDir + "/include/render")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/subd",                context.libInstDir + "/include/subd")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/util",                context.libInstDir + "/include/util")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/atomic",      context.libInstDir + "/include/atomic")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/clew",        context.libInstDir + "/include/clew")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/cuew",        context.libInstDir + "/include/cuew")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/libc_compat", context.libInstDir + "/include/libc_compat")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/numaapi",     context.libInstDir + "/include/numaapi")
-        CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/sky",         context.libInstDir + "/include/sky")
+        if Linux():
+            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/bin", context.libInstDir + "/bin")
+            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/lib", context.libInstDir + "/lib")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/app",                 context.libInstDir + "/include/app")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/blender",             context.libInstDir + "/include/blender")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/bvh",                 context.libInstDir + "/include/bvh")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/device",              context.libInstDir + "/include/device")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/graph",               context.libInstDir + "/include/graph")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/kernel",              context.libInstDir + "/include/kernel")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/render",              context.libInstDir + "/include/render")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/subd",                context.libInstDir + "/include/subd")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/util",                context.libInstDir + "/include/util")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/atomic",      context.libInstDir + "/include/atomic")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/clew",        context.libInstDir + "/include/clew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/cuew",        context.libInstDir + "/include/cuew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/libc_compat", context.libInstDir + "/include/libc_compat")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/numaapi",     context.libInstDir + "/include/numaapi")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/sky",         context.libInstDir + "/include/sky")
+        elif Windows():
+            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/bin", context.libInstDir + "/Cycles/bin")
+            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/lib", context.libInstDir + "/Cycles/lib")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/app",                 context.libInstDir + "/Cycles/include/app")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/blender",             context.libInstDir + "/Cycles/include/blender")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/bvh",                 context.libInstDir + "/Cycles/include/bvh")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/device",              context.libInstDir + "/Cycles/include/device")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/graph",               context.libInstDir + "/Cycles/include/graph")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/kernel",              context.libInstDir + "/Cycles/include/kernel")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/render",              context.libInstDir + "/Cycles/include/render")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/subd",                context.libInstDir + "/Cycles/include/subd")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/util",                context.libInstDir + "/Cycles/include/util")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/atomic",      context.libInstDir + "/Cycles/include/atomic")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/clew",        context.libInstDir + "/Cycles/include/clew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/cuew",        context.libInstDir + "/Cycles/include/cuew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/libc_compat", context.libInstDir + "/Cycles/include/libc_compat")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/numaapi",     context.libInstDir + "/Cycles/include/numaapi")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/sky",         context.libInstDir + "/Cycles/include/sky")
 
-CYCLES = Dependency("cycles", InstallCycles, "include/bvh/bvh.h")
+CYCLES = Dependency("cycles", InstallCycles, verify_cycles)
 
 ############################################################
 # Mitsuba Render
@@ -1599,8 +1650,10 @@ OPENSUBDIV = Dependency("OpenSubdiv", InstallOpenSubdiv, verify_osubdv)
 # OSL
 
 if Windows():
+    verify_osl = "osl/include/OSL/oslversion.h"
     OSL_URL = "https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v1.11.13.0.zip"
 else:
+    verify_osl = "include/OSL/oslversion.h"
     OSL_URL = "https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v1.11.13.0.tar.gz"
 
 def InstallOSL(context, force, buildArgs):
@@ -1663,15 +1716,22 @@ def InstallOSL(context, force, buildArgs):
             # to compile on MSVC. The 'official' installation from LLVM does not supply any of the CMake configs. 
             # It's missing 90% of the includes, missing 90% of the libraries, blahhh. Just using Blender's
             # For now...
-            llvmpath = Path(context.buildDir) / "llvm"
+            llvmpath = Path(context.srcDir) / "OpenShadingLanguage-1.11.13.0/llvm"
             if not llvmpath.exists():
+                # LLVM (🡱)
                 llvm = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/llvm/", stdout=subprocess.PIPE, shell=True)
-            copy_tree(context.buildDir + "/llvm", context.libInstDir + "/llvm")
+                copy_tree(context.srcDir + "/OpenShadingLanguage-1.11.13.0/llvm", context.libInstDir + "/llvm")
+                # And PugiXML
+                pugixml = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/pugixml/", stdout=subprocess.PIPE, shell=True)
+                copy_tree(context.srcDir + "/OpenShadingLanguage-1.11.13.0/pugixml", context.libInstDir + "/pugixml")
+                # And PyBind11
+                pybind11 = subprocess.call("{} -B -m pip install pybind11".format(context.libInstDir + "/python/39/bin/python.exe"), stdout=subprocess.PIPE, shell=True)
             windArgs = [
                 '-DBoost_ROOT={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost"),
                 '-DBOOST_ROOT={boost_root_path}'.format(boost_root_path=context.libInstDir + "/boost"),
                 '-DOIIO_LIBRARY_PATH={oiio_library_path}'.format(oiio_library_path=context.libInstDir + "/OpenImageIO"),
                 '-Dpugixml_ROOT={pugixml_root_path}'.format(pugixml_root_path=context.libInstDir + "/pugixml"),
+                '-Dpybind11_ROOT={pybind11_root_path}'.format(pybind11_root_path=context.libInstDir + "/python/39/lib/site-packages/pybind11"),
                 '-DLLVM_DIRECTORY={llvm_dir_path}'.format(llvm_dir_path=context.libInstDir + "/llvm"),
                 '-DLLVM_LIB_DIR={llvm_library_path}'.format(llvm_library_path=context.libInstDir + "/llvm/lib"),
                 '-DLLVM_ROOT={llvm_root_path}'.format(llvm_root_path=context.libInstDir + "/llvm"),
@@ -1691,7 +1751,6 @@ def InstallOSL(context, force, buildArgs):
         if Windows():
             InstallDependency("/bin/oslc.exe",        "/osl/bin/oslc.exe")
             InstallDependency("/bin/oslinfo.exe",     "/osl/bin/oslinfo.exe")
-            InstallDependency("/bin/osltoy.exe",      "/osl/bin/osltoy.exe")
             InstallDependency("/bin/oslcomp.dll",     "/osl/bin/oslcomp.dll")
             InstallDependency("/bin/oslexec.dll",     "/osl/bin/oslexec.dll")
             InstallDependency("/bin/oslnoise.dll",    "/osl/bin/oslnoise.dll")
@@ -1705,7 +1764,7 @@ def InstallOSL(context, force, buildArgs):
             InstallDependency("/share/doc/OSL",       "/osl/share/doc/OSL")
             InstallDependency("/share/OSL",           "/osl/share/OSL")
 
-OSL = Dependency("OSL", InstallOSL, "include/OSL/oslversion.h")
+OSL = Dependency("OSL", InstallOSL, verify_osl)
 
 ############################################################
 # PyOpenGL
