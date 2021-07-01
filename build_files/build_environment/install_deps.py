@@ -995,7 +995,7 @@ BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
 # Intel TBB
 
 if Windows():
-    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_win.zip"
+    TBB_URL = "https://storage.googleapis.com/dependency_links/tbb2019_OSS.zip"
 else:
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
 
@@ -1015,10 +1015,10 @@ def InstallTBB_Windows(context, force, buildArgs):
         #                  "not built from source on this platform."
         #                  .format(buildArgs))
 
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/lib/intel64/vc14", context.libInstDir + "/tbb/lib")
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/bin/intel64/vc14", context.libInstDir + "/tbb/bin")
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/include/serial", context.libInstDir + "/tbb/include/serial")
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/include/tbb", context.libInstDir + "/tbb/include/tbb")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/lib/intel64/vc14", context.libInstDir + "/tbb/lib")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/bin/intel64/vc14", context.libInstDir + "/tbb/bin")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/include/serial", context.libInstDir + "/tbb/include/serial")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/include/tbb", context.libInstDir + "/tbb/include/tbb")
 
 def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force)):
