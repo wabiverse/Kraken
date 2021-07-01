@@ -5,7 +5,6 @@ from distutils.dir_util import copy_tree
 
 from pathlib import Path
 
-import distro
 import argparse
 import textwrap
 import codecs
@@ -81,6 +80,7 @@ if Windows():
     SOURCE_DIR = "../../../lib/win64_vcUNKNOWN/build_env/source"
     BUILD_DIR = "../../../lib/win64_vcUNKNOWN/build_env/build"
 elif Linux():
+    import distro
     INSTALL_DIR = "../../../lib/linux_centos7_x86_64"
     SOURCE_DIR = "../../../lib/linux_centos7_x86_64/build_env/source"
     BUILD_DIR = "../../../lib/linux_centos7_x86_64/build_env/build"

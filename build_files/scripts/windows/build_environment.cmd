@@ -6,6 +6,13 @@ if EXIST %PYTHON% (
     cd "%BUILD_VS_LIBDIR%\python"
     call svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/python/39/
     set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+    @REM Install required pip dependencies for our
+    @REM dependency installation script. Really,
+    @REM just rarfile since github .zip's like to
+    @REM secretly disguse themselves as .rar's.
+    @REM ¯\_(ツ)_/¯ Upgrade pip while we're at it.
+    %PYTHON% -B -m pip install --upgrade pip
+    %PYTHON% -B -m pip install rarfile
     goto detect_python_done
 )
 
