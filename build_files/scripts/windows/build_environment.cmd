@@ -19,6 +19,13 @@ if EXIST %PYTHON% (
 :detect_python_done
 set INSTALL_DEPS_PY=%COVAH_DIR%\build_files\build_environment\install_deps.py
 
+if NOT "%VS2022_NOT_OFFICIALLY_RELEASED%" == "" (
+    echo MSVC 2022 is not officially released.
+    echo Until then, you will need to compile
+    echo The Master Branch of Cmake for MSVC
+    echo 2022 support.
+)
+
 if NOT "%BUILD_ENVIRONMENT_ARGS%" == "" (
     @REM Preserve arguments to auto-dependency
     @REM builder if user passes their own Args in...
@@ -27,7 +34,7 @@ if NOT "%BUILD_ENVIRONMENT_ARGS%" == "" (
 ) else (
     @REM Otherwise, go ahead and grab some popcorn.
     @REM This is going to take a minute...
-    %PYTHON% -B %INSTALL_DEPS_PY% --build-all
+    %PYTHON% -B %INSTALL_DEPS_PY% --build all
     goto EOF
 )
 
