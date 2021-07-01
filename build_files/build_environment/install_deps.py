@@ -72,20 +72,15 @@ def Linux():
 def MacOS():
     return platform.system() == "Darwin"
 
-INSTALL_DIR = ""
-SOURCE_DIR = ""
-BUILD_DIR = ""
-if Windows():
-    INSTALL_DIR = "../../../lib/win64_vcUNKNOWN"
-    SOURCE_DIR = "../../../lib/win64_vcUNKNOWN/build_env/source"
-    BUILD_DIR = "../../../lib/win64_vcUNKNOWN/build_env/build"
-elif Linux():
+global INSTALL_DIR
+global SOURCE_DIR
+global BUILD_DIR
+
+if Linux():
     import distro
     INSTALL_DIR = "../../../lib/linux_centos7_x86_64"
     SOURCE_DIR = "../../../lib/linux_centos7_x86_64/build_env/source"
     BUILD_DIR = "../../../lib/linux_centos7_x86_64/build_env/build"
-
-
 
 def Python3():
     return sys.version_info.major == 3
@@ -223,7 +218,7 @@ def GetPythonInfo():
     if Windows():
         python_version_no_dot=39
         python_version=3.9
-        python_dir     = os.path.join(os.path.dirname(os.path.realpath(__file__)), "{installed_libs_dir}/python/{py_ver}".format(installed_libs_dir=INSTALL_DIR, py_ver=python_version_no_dot))
+        python_dir     = "{installed_libs_dir}/python/{py_ver}".format(installed_libs_dir=context.libInstDir, py_ver=python_version_no_dot)
         python_include = os.path.join(python_dir, "include")
         python_lib     = os.path.join(python_dir, "libs")
         python_exe     = os.path.join(python_dir, "bin", "python.exe")
@@ -647,16 +642,21 @@ def AnyPythonDependencies(deps):
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.2.11.zip"
 
 def InstallZlib(context, force, buildArgs):
-    context.libInstDir = INSTALL_DIR + "/zlib1.2.11"
     with CurrentWorkingDirectory(DownloadURL(ZLIB_URL, context, force)):
         RunCMake(context, force, buildArgs)
 
         if Windows():
-            InstallDependency("/bin/zlib.dll",       "/zlib/bin/zlib.dll")
-            InstallDependency("/lib/zlib.lib",       "/zlib/lib/zlib.lib")
-            InstallDependency("/lib/zlibstatic.lib", "/zlib/lib/zlibstatic.lib")
-            InstallDependency("/include/zlib.h",     "/zlib/include/zlib.h")
-            InstallDependency("/include/zconf.h",    "/zlib/include/zconf.h")
+            try:
+                os.mkdir(context.libInstDir + "/zlib/bin")
+            except:
+                pass
+            try:
+                os.mkdir(context.libInstDir + "/zlib/lib")
+            except:
+                pass
+            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlib.dll", context.libInstDir + "/zlib/bin/zlib.dll")
+            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlib.lib", context.libInstDir + "/zlib/lib/zlib.lib")
+            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlibstatic.lib", context.libInstDir + "/zlib/lib/zlibstatic.lib")
 
 ZLIB = Dependency("zlib", InstallZlib, "include/zlib.h")
 
@@ -818,11 +818,14 @@ PRORENDER = Dependency("prorender", InstallProRender, "include/RadeonProRender.h
 # Pixar Renderman
 
 if Linux():
+    rman_verify = "/opt/pixar/RenderManProServer-23.5/include/prmanapi.h"
     RENDERMAN_URL = "https://storage.googleapis.com/dependency_links/rman23.5.tar.gz"
 elif MacOS():
+    rman_verify = "include/prmanapi.h"
     RENDERMAN_URL = ""
 else:
-    RENDERMAN_URL = ""
+    rman_verify = "include/prmanapi.h"
+    RENDERMAN_URL = "https://storage.googleapis.com/dependency_links/RenderMan-24.0.0win.zip"
 
 def InstallRenderman(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(RENDERMAN_URL, context, force)):
@@ -841,7 +844,7 @@ def InstallRenderman(context, force, buildArgs):
                 os.symlink(my_ssl, prman_ssl)
             subprocess.call("sudo " + prmanSrc + "/pixar/RenderMan-Installer-ncr-23.5/bin/RenderManInstaller", stdout=subprocess.DEVNULL, shell=True)
 
-RENDERMAN = Dependency("prman", InstallRenderman, "/opt/pixar/RenderManProServer-23.5/include/prmanapi.h")
+RENDERMAN = Dependency("prman", InstallRenderman, rman_verify)
 
 ############################################################
 # boost
@@ -857,10 +860,7 @@ elif Windows():
     # subdirectory, which we have to account for here. In theory, specifying
     # "layout=system" would make the Windows install match Linux/MacOS, but that
     # causes problems for other dependencies that look for boost.
-    #
-    # boost 1.70 is required for Visual Studio 2019. For simplicity, we use
-    # this version for all older Visual Studio versions as well.
-    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.zip"
+    BOOST_URL = "https://storage.googleapis.com/dependency_links/boost_1_76_0.zip"
     BOOST_VERSION_FILE = "include/boost-1_76/boost/version.hpp"
 
 def InstallBoost_Helper(context, force, buildArgs):
@@ -872,7 +872,7 @@ def InstallBoost_Helper(context, force, buildArgs):
     # For some examples, see: https://svn.boost.org/trac10/ticket/11677
     dontExtract = ["*/doc/*", "*/libs/*/doc/*"]
 
-    with CurrentWorkingDirectory(DownloadURL(BOOST_URL, context, force, dontExtract)):
+    with CurrentWorkingDirectory("C:/Users/tyler/dev/lib/win64_vc17/build_env/source/boost_1_76_0/boost_1_76_0"):
         bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
 
         if Windows():
@@ -951,6 +951,8 @@ def InstallBoost_Helper(context, force, buildArgs):
         if Windows():
             # toolset parameter for Visual Studio documented here:
             # https://github.com/boostorg/build/blob/develop/src/tools/msvc.jam
+            if context.cmakeToolset == "v143":
+                boost_build_options.append("toolset=msvc-14.3")
             if context.cmakeToolset == "v142":
                 boost_build_options.append("toolset=msvc-14.2")
             elif context.cmakeToolset == "v141":
@@ -958,11 +960,11 @@ def InstallBoost_Helper(context, force, buildArgs):
             elif context.cmakeToolset == "v140":
                 boost_build_options.append("toolset=msvc-14.0")
             elif IsVisualStudio2022OrGreater():
-                boost_build_options.append("toolset=msvc-17.0")
+                boost_build_options.append("toolset=msvc-14.3")
             elif IsVisualStudio2019OrGreater():
                 boost_build_options.append("toolset=msvc-14.2")
             else:
-                boost_build_options.append("toolset=msvc-14.2")
+                boost_build_options.append("toolset=msvc-14.3")
 
         if MacOS():
             # Must specify toolset=clang to ensure install_name for boost
