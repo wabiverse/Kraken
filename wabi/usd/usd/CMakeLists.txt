@@ -196,9 +196,17 @@ else()
 endif()
 
 if(WITH_PIXAR_TOOLKIT)
-  install(
-    FILES
-      python/usdGenSchema.py
-    DESTINATION
-      /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+  if(UNIX)
+    install(
+        FILES
+        python/usdGenSchema.py
+        DESTINATION
+        /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+  elseif(WIN32)
+    install(
+        FILES
+        python/usdGenSchema.py
+        DESTINATION
+        ${TARGETDIR_VER}/toolkit) 
+  endif()
 endif()

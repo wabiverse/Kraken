@@ -45,7 +45,13 @@ set(MTLX_FILES
 
 foreach(mtlx ${MTLX_FILES})
     get_filename_component(dir ${mtlx} DIRECTORY)
-    install(
-        FILES ${mtlx}
-        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/materials/${dir})
+    if(UNIX)
+        install(
+            FILES ${mtlx}
+            DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/materials/${dir})
+    elseif(WIN32)
+        install(
+            FILES ${mtlx}
+            DESTINATION ${TARGETDIR_VER}/materials/${dir})        
+    endif()
 endforeach()

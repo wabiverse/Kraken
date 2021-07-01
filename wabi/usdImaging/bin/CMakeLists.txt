@@ -2,9 +2,17 @@
 # add_subdirectory(testusdview)
 
 if(WITH_PIXAR_USDVIEW)
-  install(
-    FILES
-      usdview.py
-    DESTINATION
-      /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+  if(UNIX)
+    install(
+      FILES
+        usdview.py
+      DESTINATION
+        /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+  elseif(WIN32)
+    install(
+      FILES
+        usdview.py
+      DESTINATION
+        ${TARGETDIR_VER}/toolkit)
+  endif()
 endif()

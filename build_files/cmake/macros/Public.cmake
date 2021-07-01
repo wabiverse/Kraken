@@ -99,7 +99,11 @@ function(wabi_python_bin BIN_NAME)
     endif()
 
     # Destination file.
-    set(outfile /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
+    if(UNIX)
+        set(outfile /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
+    elseif(WIN32)
+        set(outfile ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
+    endif()
 
     # /wabipythonsubst will be replaced with the full path to the configured
     # python executable. This doesn't use the CMake ${...} or @...@ syntax
@@ -381,7 +385,11 @@ function(wabi_setup_python)
     string(REPLACE ";" ", " pyModulesStr "${converted}")
 
     # Install a wabi __init__.py with an appropriate __all__
-    _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
+    if(UNIX)
+        _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
+    elseif(WIN32)
+        _get_install_dir("${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
+    endif()
 
     if(WIN32)
         install(
@@ -821,6 +829,14 @@ function(wabi_setup_plugins)
     # top-level plugin area
     _get_resources_dir_name(resourcesDir)
 
+    if(UNIX)
+        set(PIXAR_USD_CORE_DIR "/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse")
+        set(PIXAR_USD_PLUGINS_DIR "/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse")
+    elseif(WIN32)
+        set(PIXAR_USD_CORE_DIR "${TARGETDIR_VER}/datafiles/covahverse")
+        set(PIXAR_USD_PLUGINS_DIR "${TARGETDIR_VER}/datafiles/plugin/covahverse")
+    endif()
+
     # Add extra plugInfo.json include paths to the top-level plugInfo.json,
     # relative to that top-level file.
     set(extraIncludes "")
@@ -828,7 +844,7 @@ function(wabi_setup_plugins)
     foreach(dirName ${WABI_EXTRA_PLUGINS})
         file(RELATIVE_PATH
             relDirName
-            "/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse"
+            ${PIXAR_USD_CORE_DIR}
             "${CMAKE_INSTALL_PREFIX}/${dirName}"
         )
         set(extraIncludes "${extraIncludes},\n        \"${relDirName}/\"")
@@ -839,7 +855,7 @@ function(wabi_setup_plugins)
          "${plugInfoContents}")
     install(
         FILES "${CMAKE_CURRENT_BINARY_DIR}/plugins_plugInfo.json"
-        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse
+        DESTINATION ${PIXAR_USD_CORE_DIR}
         RENAME "plugInfo.json"
     )
 
@@ -848,7 +864,7 @@ function(wabi_setup_plugins)
          "${plugInfoContents}")
     install(
         FILES "${CMAKE_CURRENT_BINARY_DIR}/covahverse_plugInfo.json"
-        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse
+        DESTINATION ${PIXAR_USD_PLUGINS_DIR}
         RENAME "plugInfo.json"
     )
 endfunction() # wabi_setup_plugins
@@ -875,6 +891,13 @@ function(wabi_add_extra_plugins PLUGIN_AREAS)
 endfunction() # wabi_setup_third_plugins
 
 function(wabi_covahverse_prologue)
+
+    if(UNIX)
+        set(INCLUDE_WABI "/usr/local/share/covah/${TARGETDIR_VER}/include/wabi")
+    elseif(WIN32)
+        set(INCLUDE_WABI "${TARGETDIR_VER}/include/wabi")
+    endif()
+
     # Generate a namespace declaration header, wabi.h, at the top level of
     # wabi at configuration time.
     configure_file(${CMAKE_SOURCE_DIR}/build_files/cmake/config/wabi.h.in
@@ -882,7 +905,7 @@ function(wabi_covahverse_prologue)
     )
     install(
         FILES ${CMAKE_BINARY_DIR}/include/wabi/wabi.h
-        DESTINATION  "/usr/local/share/covah/${TARGETDIR_VER}/include/wabi"
+        DESTINATION ${INCLUDE_WABI}
     )
 
     # Create a monolithic shared library target if we should import one

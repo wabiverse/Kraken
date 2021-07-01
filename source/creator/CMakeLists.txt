@@ -380,17 +380,17 @@ if(WIN32)
       # EMBREE
       ${LIBDIR}/embree/bin/embree3.dll
       # BOOST
-      ${LIBDIR}/boost/lib/boost_atomic-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_chrono-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_date_time-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_iostreams-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_numpy39-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_program_options-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_regex-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_system-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_thread-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_python39-vc142-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_filesystem-vc142-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_atomic-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_chrono-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_date_time-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_iostreams-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_numpy39-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_program_options-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_regex-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_system-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_thread-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_python39-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_filesystem-vc143-mt-x64-1_76.dll
       # OSL
       ${LIBDIR}/osl/bin/oslcomp.dll
       ${LIBDIR}/osl/bin/oslexec.dll
@@ -888,7 +888,7 @@ endif()
 
 ############################################################ BOOST ##########
 
-# set(BOOST_POSTFIX "vc142-mt-x64-1_70.dll")
+# set(BOOST_POSTFIX "vc143-mt-x64-1_70.dll")
 # install(
 #   FILES
 #     ${BOOST_LIBPATH}/boost_atomic-${BOOST_POSTFIX}
@@ -905,7 +905,7 @@ endif()
 #   CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
 # )
 
-# set(BOOST_DEBUG_POSTFIX "vc142-mt-gd-x64-1_70.dll")
+# set(BOOST_DEBUG_POSTFIX "vc143-mt-gd-x64-1_70.dll")
 # install(
 #   FILES
 #     ${BOOST_DEBUG_LIBPATH}/boost_atomic-${BOOST_DEBUG_POSTFIX}

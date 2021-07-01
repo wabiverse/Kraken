@@ -639,26 +639,45 @@ def AnyPythonDependencies(deps):
 ############################################################
 # zlib
 
-ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.2.11.zip"
+if Linux() or MacOS():
+    zlib_verify = "include/zlib.h"
+elif Windows():
+    zlib_verify = "zlib/include/zlib.h"
+
+ZLIB_URL = "https://zlib.net/zlib1211.zip"
 
 def InstallZlib(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(ZLIB_URL, context, force)):
         RunCMake(context, force, buildArgs)
 
         if Windows():
-            try:
-                os.mkdir(context.libInstDir + "/zlib/bin")
-            except:
-                pass
-            try:
-                os.mkdir(context.libInstDir + "/zlib/lib")
-            except:
-                pass
-            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlib.dll", context.libInstDir + "/zlib/bin/zlib.dll")
-            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlib.lib", context.libInstDir + "/zlib/lib/zlib.lib")
-            shutil.copyfile(context.buildDir + "/zlib-1.2.11/Release/zlibstatic.lib", context.libInstDir + "/zlib/lib/zlibstatic.lib")
+            zlibpath = Path(context.libInstDir) / 'zlib'
+            if zlibpath.exists() and zlibpath.is_dir():
+                shutil.rmtree(zlibpath)
+            os.mkdir(zlibpath)
 
-ZLIB = Dependency("zlib", InstallZlib, "include/zlib.h")
+            binpath = Path(zlibpath) / 'bin'
+            if binpath.exists() and binpath.is_dir():
+                shutil.rmtree(binpath)
+            os.mkdir(binpath)
+
+            libpath = Path(zlibpath) / 'lib'
+            if libpath.exists() and libpath.is_dir():
+                shutil.rmtree(libpath)
+            os.mkdir(libpath)
+
+            incpath = Path(zlibpath) / 'include'
+            if incpath.exists() and incpath.is_dir():
+                shutil.rmtree(incpath)
+            os.mkdir(incpath)
+
+            shutil.copyfile(context.libInstDir + "/bin/zlib.dll", context.libInstDir + "/zlib/bin/zlib.dll")
+            shutil.copyfile(context.libInstDir + "/lib/zlib.lib", context.libInstDir + "/zlib/lib/zlib.lib")
+            shutil.copyfile(context.libInstDir + "/lib/zlibstatic.lib", context.libInstDir + "/zlib/lib/zlibstatic.lib")
+            shutil.copyfile(context.libInstDir + "/include/zconf.h", context.libInstDir + "/zlib/include/zconf.h")
+            shutil.copyfile(context.libInstDir + "/include/zlib.h", context.libInstDir + "/zlib/include/zlib.h")
+
+ZLIB = Dependency("zlib", InstallZlib, zlib_verify)
 
 ############################################################
 # Vulkan
@@ -997,8 +1016,10 @@ BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
 # Intel TBB
 
 if Windows():
+    tbb_verify = "tbb/include/tbb/tbb.h"
     TBB_URL = "https://storage.googleapis.com/dependency_links/tbb2019_OSS.zip"
 else:
+    tbb_verify = "include/tbb/tbb.h"
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
 
 def InstallTBB(context, force, buildArgs):
@@ -1045,7 +1066,7 @@ def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
         copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
         copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
 
-TBB = Dependency("TBB", InstallTBB, "include/tbb/tbb.h")
+TBB = Dependency("TBB", InstallTBB, tbb_verify)
 
 ############################################################
 # JPEG
@@ -1152,6 +1173,11 @@ else:
 
 def InstallPNG(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(PNG_URL, context, force)):
+
+        if Windows():
+            buildArgs = ['-DZLIB_LIBRARY="{libInst}"'.format(libInst=context.libInstDir + "/zlib/lib/zlib.lib")]
+            buildArgs.append('-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"))
+
         RunCMake(context, force, buildArgs)
 
         if Windows():
@@ -1221,9 +1247,14 @@ OPENEXR = Dependency("OpenEXR", InstallOpenEXR, "include/OpenEXR/ImfVersion.h")
 ############################################################
 # Ptex
 
-PTEX_URL = "https://github.com/wdas/ptex/archive/v2.3.2.zip"
+PTEX_URL = "https://github.com/wdas/ptex/archive/refs/tags/v2.4.0.zip"
 
 def InstallPtex(context, force, buildArgs):
+
+    buildArgs = [
+        '-DPTEX_VER="v2.4.0"',
+    ]
+
     if Windows():
         InstallPtex_Windows(context, force, buildArgs)
     else:
@@ -1240,20 +1271,14 @@ def InstallPtex_Windows(context, force, buildArgs):
         # In addition src\tests\CMakeLists.txt adds -DPTEX_STATIC to the
         # compiler but links tests against the dynamic library, causing the
         # links to fail. We patch the file to not add the -DPTEX_STATIC
-        PatchFile('src\\ptex\\CMakeLists.txt',
-                  [("set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
-                    "set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
-        PatchFile('src\\tests\\CMakeLists.txt',
-                  [("add_definitions(-DPTEX_STATIC)",
-                    "# add_definitions(-DPTEX_STATIC)")])
+        # PatchFile('src\\ptex\\CMakeLists.txt',
+        #           [("set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
+        #             "set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
+        # PatchFile('src\\tests\\CMakeLists.txt',
+        #           [("add_definitions(-DPTEX_STATIC)",
+        #             "# add_definitions(-DPTEX_STATIC)")])
 
-        # Patch Ptex::String to export symbol for operator<<
-        # This is required for newer versions of OIIO, which make use of the
-        # this operator on Windows platform specifically.
-        PatchFile('src\\ptex\\Ptexture.h',
-                  [("std::ostream& operator << (std::ostream& stream, const Ptex::String& str);",
-                    "PTEXAPI std::ostream& operator << (std::ostream& stream, const Ptex::String& str);")])
-
+        buildArgs.append("-DZLIB_ROOT={}".format(context.libInstDir + "/zlib"))
 
         RunCMake(context, force, buildArgs)
 
@@ -1269,11 +1294,6 @@ def InstallPtex_Windows(context, force, buildArgs):
 
 def InstallPtex_LinuxOrMacOS(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(PTEX_URL, context, force)):
-        extraArgs = [
-            '-DPTEX_VER="v2.3.2"',
-        ]
-        buildArgs += extraArgs
-
         RunCMake(context, force, buildArgs)
 
 PTEX = Dependency("Ptex", InstallPtex, "include/PtexVersion.h")
@@ -1306,6 +1326,11 @@ BLOSC = Dependency("Blosc", InstallBLOSC, "include/blosc.h")
 # not require additional dependencies such as GLFW. Note that version
 # 6.1.0 does require CMake 3.3 though.
 
+if Windows():
+    check_ovdb="openvdb/include/openvdb/openvdb.h"
+else:
+    check_ovdb="include/openvdb/openvdb.h"
+
 OPENVDB_URL = "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v8.1.0.tar.gz"
 
 def InstallOpenVDB(context, force, buildArgs):
@@ -1322,11 +1347,10 @@ def InstallOpenVDB(context, force, buildArgs):
         extraArgs.append('-DBoost_NO_SYSTEM_PATHS=True')
 
         if Windows():
+            extraArgs.append('-DBOOST_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir) + '/boost')
             extraArgs.append('-DBLOSC_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + '/blosc'))
             extraArgs.append('-DTBB_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + '/tbb'))
             extraArgs.append('-DTBB_DIR={libInstDir}'.format(libInstDir=context.libInstDir + '/tbb'))
-            extraArgs.append('-DBOOST_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + '/boost'))
-            extraArgs.append('-DBOOST_INCLUDE_DIR="{libInstDir}"'.format(libInstDir=context.libInstDir + '/boost/include/boost-1_76'))
             extraArgs.append('-DILMBASE_ROOT={libInstDir}'.format(libInstDir=context.libInstDir + '/openexr'))
             extraArgs.append('-DZLIB_ROOT={libInstDir}'.format(libInstDir=context.libInstDir + '/zlib'))
         else:
@@ -1348,7 +1372,7 @@ def InstallOpenVDB(context, force, buildArgs):
             InstallDependency("/lib/openvdb.lib", "/openvdb/lib/openvdb.lib")
             InstallDependency("/include/openvdb", "/openvdb/include/openvdb")
 
-OPENVDB = Dependency("OpenVDB", InstallOpenVDB, "include/openvdb/openvdb.h")
+OPENVDB = Dependency("OpenVDB", InstallOpenVDB, check_ovdb)
 
 ############################################################
 # OpenImageIO
@@ -1382,6 +1406,10 @@ def InstallOpenImageIO(context, force, buildArgs):
         # Make sure to use boost installed by the build script and not any
         # system installed boost
         if Windows():
+            buildArgs.append('-DBoost_ROOT="{boostRoot}"'.format(boostRoot=context.libInstDir + "/boost"))
+            buildArgs.append('-DBOOST_ROOT="{boostRoot}"'.format(boostRoot=context.libInstDir + "/boost"))
+            buildArgs.append('-DOpenColorIO_ROOT={}'.format(context.libInstDir + "/opencolorio"))
+            buildArgs.append('-DZLIB_ROOT="{zlibRoot}"'.format(zlibRoot=context.libInstDir + "/zlib"))
             extraArgs.append('-DOPENEXR_HOME="{libInstDir}"'.format(libInstDir=context.libInstDir + '/openexr'))
             extraArgs.append('-DJPEGTurbo_ROOT=' + context.libInstDir + '/jpeg')
             extraArgs.append('-DBoost_ROOT=' + context.libInstDir + "/boost")
@@ -1433,8 +1461,10 @@ OPENIMAGEIO = Dependency("OpenImageIO", InstallOpenImageIO, "include/OpenImageIO
 # Use v1.1.0 on MacOS and Windows since v1.0.9 doesn't build properly on
 # those platforms.
 if Linux():
+    test_ocio = "include/OpenColorIO/OpenColorABI.h"
     OCIO_URL = "https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v2.0.0.tar.gz"
 else:
+    test_ocio = "opencolorio/include/OpenColorIO/OpenColorABI.h"
     OCIO_URL = "https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v2.0.0.zip"
 
 def InstallOpenColorIO(context, force, buildArgs):
@@ -1477,8 +1507,7 @@ def InstallOpenColorIO(context, force, buildArgs):
             InstallDependency("/lib/OpenColorIO_2_0.lib", "/opencolorio/lib/OpenColorIO_2_0.lib")
             InstallDependency("/include/OpenColorIO",     "/opencolorio/include/OpenColorIO")
 
-OPENCOLORIO = Dependency("OpenColorIO", InstallOpenColorIO,
-                         "include/OpenColorIO/OpenColorABI.h")
+OPENCOLORIO = Dependency("OpenColorIO", InstallOpenColorIO, test_ocio)
 
 ############################################################
 # OpenSubdiv
@@ -1723,6 +1752,8 @@ def InstallAlembic(context, force, buildArgs):
 
         if Windows():
             cmakeOptions += [
+                '-DZLIB_LIBRARY="{libInst}"'.format(libInst=context.libInstDir + "/zlib/lib/zlib.lib"),
+                '-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"),
                 '-DUSE_HDF5=ON',
                 '-DHDF5_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + "/hdf5"),
                 '-DILMBASE_ROOT="{libInstDir}"'.format(libInstDir=context.libInstDir + "/openexr"),

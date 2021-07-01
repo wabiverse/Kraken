@@ -122,7 +122,7 @@ function(_install_python LIBRARY_NAME)
 
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
-    else()
+    elseif(UNIX)
         set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
     _get_python_module_name(${LIBRARY_NAME} LIBRARY_INSTALLNAME)
@@ -301,7 +301,7 @@ function(_install_pyside_ui_files LIBRARY_NAME)
 
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
-    else()
+    elseif(UNIX)
         set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
     _get_python_module_name(${LIBRARY_NAME} LIBRARY_INSTALLNAME)
@@ -960,7 +960,7 @@ function(_wabi_python_module NAME)
     # or similar.
     if(WIN32)
         set(libInstallPrefix "${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
-    else()
+    elseif(UNIX)
         set(libInstallPrefix "/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     endif()
 
@@ -1189,7 +1189,11 @@ function(_wabi_library NAME)
         _get_install_dir("plugin" pluginInstallPrefix)
         if(NOT WABI_INSTALL_SUBDIR)
             # XXX -- Why this difference?
-            _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse" pluginInstallPrefix)
+            if(UNIX)
+                _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse" pluginInstallPrefix)
+            elseif(WIN32)
+                _get_install_dir("${TARGETDIR_VER}/datafiles/plugin/covahverse" pluginInstallPrefix)
+            endif()
         endif()
         if(NOT isObject)
             # A plugin embedded in the monolithic library is found in
@@ -1200,7 +1204,7 @@ function(_wabi_library NAME)
     else()
         if(WIN32)
             _get_install_dir("${TARGETDIR_VER}/datafiles/covahverse" pluginInstallPrefix)
-        else()
+        elseif(UNIX)
             _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse" pluginInstallPrefix)
         endif()
     endif()
@@ -1272,41 +1276,33 @@ function(_wabi_library NAME)
             PUBLIC_HEADER "${args_PUBLIC_HEADERS}"
     )
 
-    set(pythonEnabled "WABI_PYTHON_ENABLED=1")
+    set(WITH_PYTHON ON)
     if(TARGET shared_libs)
-        set(pythonModulesEnabled "WABI_PYTHON_MODULES_ENABLED=1")
+        set(WITH_PYTHON_MODULES ON)
     endif()
+
     if (WIN32)
-        target_compile_definitions(${NAME}
-            PUBLIC
-                ${pythonEnabled}
-                ${apiPublic}
-            PRIVATE
-                MFB_PACKAGE_NAME=${WABI_PACKAGE}
-                MFB_ALT_PACKAGE_NAME=${WABI_PACKAGE}
-                MFB_PACKAGE_MODULE=${pythonModuleName}
-                WABI_BUILD_LOCATION=/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse
-                WABI_PLUGIN_BUILD_LOCATION=/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse
-                ${wabiInstallLocation}
-                ${pythonModulesEnabled}
-                ${apiPrivate}
-        )
-    else()
-        target_compile_definitions(${NAME}
-        PUBLIC
-            ${pythonEnabled}
-            ${apiPublic}
-        PRIVATE
-            MFB_PACKAGE_NAME=${WABI_PACKAGE}
-            MFB_ALT_PACKAGE_NAME=${WABI_PACKAGE}
-            MFB_PACKAGE_MODULE=${pythonModuleName}
-            WABI_BUILD_LOCATION=/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse
-            WABI_PLUGIN_BUILD_LOCATION=/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse
-            ${wabiInstallLocation}
-            ${pythonModulesEnabled}
-            ${apiPrivate}
-        )
+        set(PIXAR_USD_CORE_DIR ${TARGETDIR_VER}/datafiles/covahverse)
+        set(PIXAR_USD_PLUGINS_DIR ${TARGETDIR_VER}/datafiles/plugin/covahverse)
+    elseif(UNIX)
+        set(PIXAR_USD_CORE_DIR /usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse)
+        set(PIXAR_USD_PLUGINS_DIR /usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse)
     endif()
+
+    target_compile_definitions(${NAME}
+    PUBLIC
+        WITH_PYTHON=${WITH_PYTHON}
+        ${apiPublic}
+    PRIVATE
+        MFB_PACKAGE_NAME=${WABI_PACKAGE}
+        MFB_ALT_PACKAGE_NAME=${WABI_PACKAGE}
+        MFB_PACKAGE_MODULE=${pythonModuleName}
+        WABI_BUILD_LOCATION=${PIXAR_USD_CORE_DIR}
+        WABI_PLUGIN_BUILD_LOCATION=${PIXAR_USD_PLUGINS_DIR}
+        ${wabiInstallLocation}
+        WITH_PYTHON_MODULES=${WITH_PYTHON_MODULES}
+        ${apiPrivate}
+    )
     # Copy headers to the build directory and include from there and from
     # external packages.
     _copy_headers(${NAME}

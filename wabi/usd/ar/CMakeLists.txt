@@ -4,10 +4,18 @@ set(WABI_PACKAGE ar)
 configure_file(
     resources/ar.h.in
     ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h)
-install(
-    FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
-    DESTINATION "/usr/local/share/covah/${TARGETDIR_VER}/include/wabi/usd/ar"
-)
+
+if(UNIX)
+    install(
+        FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
+        DESTINATION "/usr/local/share/covah/${TARGETDIR_VER}/include/wabi/usd/ar"
+    )
+elseif(WIN32)
+    install(
+        FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
+        DESTINATION "${TARGETDIR_VER}/include/wabi/usd/ar"
+    )   
+endif()
 
 set(versionedHeaders "")
 set(versionedCPPFiles "")

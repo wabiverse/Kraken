@@ -35,5 +35,10 @@ wabi_plugin(rmanOslParser
 # relative to libHdPrmanLoader. We may be able to remove this if we made
 # it so this library wasn't embedded in the monolithic library.
 get_filename_component(RMANTREE_PATH "${RENDERMAN_INCLUDE_DIR}/.." ABSOLUTE)
-get_filename_component(RMANSHADER_PATH "/usr/local/share/covah/1.50/datafiles/plugin/covahverse/resources/shaders" ABSOLUTE)
+
+if(UNIX)
+    get_filename_component(RMANSHADER_PATH "/usr/local/share/covah/1.50/datafiles/plugin/covahverse/resources/shaders" ABSOLUTE)
+elseif(WIN32)
+    get_filename_component(RMANSHADER_PATH "${TARGETDIR_VER}/datafiles/plugin/covahverse/resources/shaders" ABSOLUTE)
+endif()
 
