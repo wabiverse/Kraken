@@ -57,6 +57,8 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zc:rvalueCast /Zc:strictStrings")
 # causing release builds to fail. Disable the option for this and later
 # versions.
 #
+# TODO: Test this on Visual Studio 2022 and Beyond.
+#
 # For more details, see:
 # https://developercommunity.visualstudio.com/content/problem/914943/zcinline-removes-extern-symbols-inside-anonymous-n.html
 if (MSVC_VERSION GREATER_EQUAL 1920)

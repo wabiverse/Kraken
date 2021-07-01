@@ -139,6 +139,10 @@ def IsVisualStudioVersionOrGreater(desiredVersion):
         return version >= desiredVersion
     return False
 
+def IsVisualStudio2022OrGreater():
+    VISUAL_STUDIO_2022_VERSION = (17, 0)
+    return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2022_VERSION)
+
 def IsVisualStudio2019OrGreater():
     VISUAL_STUDIO_2019_VERSION = (16, 0)
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2019_VERSION)
@@ -146,10 +150,6 @@ def IsVisualStudio2019OrGreater():
 def IsVisualStudio2017OrGreater():
     VISUAL_STUDIO_2017_VERSION = (15, 0)
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2017_VERSION)
-
-def IsVisualStudio2015OrGreater():
-    VISUAL_STUDIO_2015_VERSION = (14, 0)
-    return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2015_VERSION)
 
 def GetPythonInfo():
     """Returns a tuple containing the path to the Python executable, shared
@@ -202,10 +202,12 @@ def GetPythonInfo():
         raise RuntimeError("Platform not supported")
 
     if Windows():
+        python_version_no_dot=39
+        python_version=3.9
         python_dir     = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../lib/win64_vc15/python/{py_ver}".format(py_ver=python_version_no_dot))
         python_include = os.path.join(python_dir, "include")
         python_lib     = os.path.join(python_dir, "libs")
-        python_exe     = os.path.join(python_dir, "bin", _GetPythonEXEFilename())
+        python_exe     = os.path.join(python_dir, "bin", "python.exe")
 
         python_info = {"python_include": python_include.replace('\\', '/'),
                     "python_lib": python_lib.replace('\\', '/'),
@@ -328,17 +330,17 @@ def RunCMake(context, force, extraArgs = None):
     # building a 64-bit project. (Surely there is a better way to do this?)
     # TODO: figure out exactly what "vcvarsall.bat x64" sets to force x64
     if generator is None and Windows():
-        if IsVisualStudio2019OrGreater():
+        if IsVisualStudio2022OrGreater():
+            generator = "Visual Studio 17 2022"
+        elif IsVisualStudio2019OrGreater():
             generator = "Visual Studio 16 2019"
-        elif IsVisualStudio2017OrGreater():
-            generator = "Visual Studio 15 2017 Win64"
         else:
-            generator = "Visual Studio 14 2015 Win64"
+            generator = "Visual Studio 15 2017 Win64"
 
     if generator is not None:
         generator = '-G "{gen}"'.format(gen=generator)
 
-    if IsVisualStudio2019OrGreater():
+    if IsVisualStudio2022OrGreater() or IsVisualStudio2019OrGreater():
         generator = generator + " -A x64"
 
     toolset = context.cmakeToolset
@@ -936,10 +938,10 @@ def InstallBoost_Helper(context, force, buildArgs):
                 boost_build_options.append("toolset=msvc-14.1")
             elif context.cmakeToolset == "v140":
                 boost_build_options.append("toolset=msvc-14.0")
+            elif IsVisualStudio2022OrGreater():
+                boost_build_options.append("toolset=msvc-17.0")
             elif IsVisualStudio2019OrGreater():
                 boost_build_options.append("toolset=msvc-14.2")
-            elif IsVisualStudio2017OrGreater():
-                boost_build_options.append("toolset=msvc-14.1")
             else:
                 boost_build_options.append("toolset=msvc-14.2")
 
@@ -994,9 +996,10 @@ def InstallTBB_Windows(context, force, buildArgs):
         #                  "not built from source on this platform."
         #                  .format(buildArgs))
 
-        CopyFiles(context,     "lib\\intel64\\vc14\\*.*", "lib")
-        CopyDirectory(context, "include\\oneapi", "include\\oneapi")
-        CopyDirectory(context, "include\\tbb",    "include\\tbb")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/lib/intel64/vc14", context.libInstDir + "/tbb/lib")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/bin/intel64/vc14", context.libInstDir + "/tbb/bin")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/include/serial", context.libInstDir + "/tbb/include/serial")
+        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_win/tbb2019_20191006oss/include/tbb", context.libInstDir + "/tbb/include/tbb")
 
 def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force)):
@@ -1669,9 +1672,9 @@ PYSIDE = PythonDependency("PySide", GetPySideInstructions,
 # HDF5
 
 if Windows():
-    HDF5_URL = "https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-1_13_0-rc5.zip"
+    HDF5_URL = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.zip"
 else:
-    HDF5_URL = "https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-1_13_0-rc5.tar.gz"
+    HDF5_URL = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz"
 
 def InstallHDF5(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(HDF5_URL, context, force)):
@@ -1679,28 +1682,6 @@ def InstallHDF5(context, force, buildArgs):
                  ['-DBUILD_TESTING=OFF',
                   '-DHDF5_BUILD_TOOLS=OFF',
                   '-DHDF5_BUILD_EXAMPLES=OFF'] + buildArgs)
-
-    if Windows():
-        InstallDependency("/bin/mirror_server.exe",      "/hdf5/bin/mirror_server.exe")
-        InstallDependency("/bin/mirror_server_stop.exe", "/hdf5/bin/mirror_server_stop.exe")
-        InstallDependency("/bin/hdf5.dll",               "/hdf5/bin/hdf5.dll")
-        InstallDependency("/bin/hdf5_cpp.dll",           "/hdf5/bin/hdf5_cpp.dll")
-        InstallDependency("/bin/hdf5_hl.dll",            "/hdf5/bin/hdf5_hl.dll")
-        InstallDependency("/bin/hdf5_hl_cpp.dll",        "/hdf5/bin/hdf5_hl_cpp.dll")
-        InstallDependency("/lib/hdf5.lib",               "/hdf5/lib/hdf5.lib")
-        InstallDependency("/lib/hdf5_cpp.lib",           "/hdf5/lib/hdf5_cpp.lib")
-        InstallDependency("/lib/hdf5_hl.lib",            "/hdf5/lib/hdf5_hl.lib")
-        InstallDependency("/lib/hdf5_hl_cpp.lib",        "/hdf5/lib/hdf5_hl_cpp.lib")
-        InstallDependency("/lib/libhdf5.lib",            "/hdf5/lib/libhdf5.lib")
-        InstallDependency("/lib/libhdf5_cpp.lib",        "/hdf5/lib/libhdf5_cpp.lib")
-        InstallDependency("/lib/libhdf5_hl.lib",         "/hdf5/lib/libhdf5_hl.lib")
-        InstallDependency("/lib/libhdf5_hl_cpp.lib",     "/hdf5/lib/libhdf5_hl_cpp.lib")
-        InstallDependency("/lib/libhdf5.settings",       "/hdf5/lib/libhdf5.settings")
-        for include in glob.glob(context.libInstDir + '/include/H5*.h'):
-            hdf5_include = ntpath.basename(include)
-            InstallDependency('/include/' + hdf5_include, "/hdf5/include/" + hdf5_include)
-        InstallDependency('/include/hdf5.h',    "/hdf5/include/hdf5.h")
-        InstallDependency('/include/hdf5_hl.h', "/hdf5/include/hdf5_hl.h")
 
 HDF5 = Dependency("HDF5", InstallHDF5, "include/hdf5.h")
 
@@ -1839,13 +1820,6 @@ def InstallEmbree(context, force, buildArgs):
             extraArgs.append('-DTBB_ROOT={libInstDir}'.format(libInstDir=context.libInstDir + "/tbb"))
         else:
             extraArgs.append('-DTBB_ROOT={libInstDir}'.format(libInstDir=context.libInstDir))
-
-        # By default Embree fails to build on Visual Studio 2015 due
-        # to an internal compiler issue that is worked around via the
-        # following flag. For more details see:
-        # https://github.com/embree/embree/issues/157
-        if IsVisualStudio2015OrGreater() and not IsVisualStudio2017OrGreater():
-            extraArgs.append('-DCMAKE_CXX_FLAGS=/d2SSAOptimizer-')
 
         extraArgs += buildArgs
 
@@ -2112,7 +2086,7 @@ if context.buildSDL:
     requiredDependencies += [SDL]
 
 if context.buildAll:
-    requiredDependencies += [ZLIB, MITSUBA, ARNOLD, TBB, BOOST, HDF5, JPEG, TIFF, PNG, PTEX, BLOSC, OPENEXR, ALEMBIC, DRACO, EMBREE, OPENVDB, OPENCOLORIO, OPENIMAGEIO, OPENSUBDIV, MATERIALX, DRACO, OSL, CYCLES, PRORENDER, SDL]
+    requiredDependencies += [ZLIB, TBB, BOOST, HDF5, JPEG, TIFF, PNG, PTEX, BLOSC, OPENEXR, ALEMBIC, DRACO, EMBREE, OPENVDB, OPENCOLORIO, OPENIMAGEIO, OPENSUBDIV, MATERIALX, DRACO, OSL, CYCLES, PRORENDER, SDL]
 
 if context.cleanAll:
     if os.path.isdir(context.libInstDir):

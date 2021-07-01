@@ -10,7 +10,7 @@ call "%COVAH_DIR%\build_files\scripts\windows\check_args.cmd" %*
 if errorlevel 1 goto EOF
 
 set PYTHONPATH=C:\Users\tyler\.conda\envs\pixar\Lib\site-packages
-call conda activate covah
+call conda activate pixar
 
 call "%COVAH_DIR%\build_files\scripts\windows\find_dependencies.cmd"
 if errorlevel 1 goto EOF

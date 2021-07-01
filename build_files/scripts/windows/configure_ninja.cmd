@@ -37,14 +37,14 @@ set LLVM_DIR=
 :DetectionComplete	
 	set CC=%LLVM_DIR%\bin\clang-cl
 	set CXX=%LLVM_DIR%\bin\clang-cl
-	if "%BUILD_VS_YEAR%" == "2019" (
-		rem build and tested against 2019 16.2
-		set CFLAGS=-m64 -fmsc-version=1922
-		set CXXFLAGS=-m64 -fmsc-version=1922
+	if "%BUILD_VS_YEAR%" == "2022" (
+		rem build and tested against 2022 17.0
+		set CFLAGS=-m64 -fmsc-version=1930
+		set CXXFLAGS=-m64 -fmsc-version=1930
 	) else (
-		rem build and tested against 2017 15.7
-		set CFLAGS=-m64 -fmsc-version=1914
-		set CXXFLAGS=-m64 -fmsc-version=1914
+		rem build and tested against 2019 16.10 and 16.11
+		set CFLAGS=-m64 -fmsc-version=1929
+		set CXXFLAGS=-m64 -fmsc-version=1929
 	)
 	if "%WITH_ASAN%"=="1" (
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -DWITH_COMPILER_ASAN=On
