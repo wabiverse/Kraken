@@ -141,9 +141,6 @@ def IsVisualStudioVersionOrGreater(desiredVersion):
 
 def IsVisualStudio2022OrGreater():
     VISUAL_STUDIO_2022_VERSION = (17, 0)
-    INSTALL_DIR = "../../../lib/win64_vc17"
-    SOURCE_DIR = "../../../lib/win64_vc17/build_env/source"
-    BUILD_DIR = "../../../lib/win64_vc17/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2022_VERSION)
 
 def IsVisualStudio2019OrGreater():
@@ -159,6 +156,25 @@ def IsVisualStudio2017OrGreater():
     SOURCE_DIR = "../../../lib/win64_vc15/build_env/source"
     BUILD_DIR = "../../../lib/win64_vc15/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2017_VERSION)
+
+def GetVisualStudioDirectories():
+    if IsVisualStudio2022OrGreater():
+        INSTALL_DIR = "../../../lib/win64_vc17"
+        SOURCE_DIR = "../../../lib/win64_vc17/build_env/source"
+        BUILD_DIR = "../../../lib/win64_vc17/build_env/build"
+    elif IsVisualStudio2019OrGreater():
+        INSTALL_DIR = "../../../lib/win64_vc16"
+        SOURCE_DIR = "../../../lib/win64_vc16/build_env/source"
+        BUILD_DIR = "../../../lib/win64_vc16/build_env/build"
+    elif IsVisualStudio2017OrGreater():
+        INSTALL_DIR = "../../../lib/win64_vc15"
+        SOURCE_DIR = "../../../lib/win64_vc15/build_env/source"
+        BUILD_DIR = "../../../lib/win64_vc15/build_env/build"
+    else:
+        INSTALL_DIR = "../../../lib/win64_vcUNKNOWN"
+        SOURCE_DIR = "../../../lib/win64_vcUNKNOWN/build_env/source"
+        BUILD_DIR = "../../../lib/win64_vcUNKNOWN/build_env/build"
+    return (INSTALL_DIR, SOURCE_DIR, BUILD_DIR)
 
 def GetPythonInfo():
     """Returns a tuple containing the path to the Python executable, shared
@@ -1912,6 +1928,11 @@ args = parser.parse_args()
 
 class InstallContext:
     def __init__(self, args):
+
+        if Windows():
+            INSTALL_DIR = GetVisualStudioDirectories()[0]
+            SOURCE_DIR = GetVisualStudioDirectories()[1]
+            BUILD_DIR = GetVisualStudioDirectories()[2]
 
         # Directory where dependencies will be installed
         self.libInstDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), INSTALL_DIR)).replace('\\', '/')

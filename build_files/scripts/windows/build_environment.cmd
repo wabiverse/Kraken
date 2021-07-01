@@ -20,10 +20,12 @@ if EXIST %PYTHON% (
 set INSTALL_DEPS_PY=%COVAH_DIR%\build_files\build_environment\install_deps.py
 
 if NOT "%VS2022_NOT_OFFICIALLY_RELEASED%" == "" (
+    echo.
     echo MSVC 2022 is not officially released.
     echo Until then, you will need to compile
     echo The Master Branch of Cmake for MSVC
     echo 2022 support.
+    echo.
 )
 
 if NOT "%BUILD_ENVIRONMENT_ARGS%" == "" (
