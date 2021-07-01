@@ -9,7 +9,7 @@ if EXIST %PYTHON% (
     @REM Install required pip dependencies for our
     @REM dependency installation script. Really,
     @REM just rarfile since github .zip's like to
-    @REM secretly disguse themselves as .rar's.
+    @REM secretly disguise themselves as .rar's.
     @REM ¯\_(ツ)_/¯ Upgrade pip while we're at it.
     %PYTHON% -B -m pip install --upgrade pip
     %PYTHON% -B -m pip install rarfile
@@ -19,7 +19,16 @@ if EXIST %PYTHON% (
 :detect_python_done
 set INSTALL_DEPS_PY=%COVAH_DIR%\build_files\build_environment\install_deps.py
 
-REM Use -B to avoid writing __pycache__ in lib directory and causing update conflicts.
-%PYTHON% -B %INSTALL_DEPS_PY% %BUILD_ENVIRONMENT_ARGS%
+if NOT "%BUILD_ENVIRONMENT_ARGS%" == "" (
+    @REM Preserve arguments to auto-dependency
+    @REM builder if user passes their own Args in...
+    %PYTHON% -B %INSTALL_DEPS_PY% %BUILD_ENVIRONMENT_ARGS%
+    goto EOF
+) else (
+    @REM Otherwise, go ahead and grab some popcorn.
+    @REM This is going to take a minute...
+    %PYTHON% -B %INSTALL_DEPS_PY% --build-all
+    goto EOF
+)
 
 :EOF

@@ -95,7 +95,7 @@ if NOT "%1" == "" (
 		goto EOF
 	) else if "%1" == "deps" (
 		set BUILD_ENVIRONMENT=1
-		set BUILD_ENVIRONMENT_ARGS=%2 %3 %4 %5 %6 %7 %8 %9
+		set BUILD_ENVIRONMENT_ARGS=%2
 		goto EOF
 	) else if "%1" == "auto_cmake" (
 		set AUTOGENERATE_CMAKE=1
