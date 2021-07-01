@@ -145,16 +145,10 @@ def IsVisualStudio2022OrGreater():
 
 def IsVisualStudio2019OrGreater():
     VISUAL_STUDIO_2019_VERSION = (16, 0)
-    INSTALL_DIR = "../../../lib/win64_vc16"
-    SOURCE_DIR = "../../../lib/win64_vc16/build_env/source"
-    BUILD_DIR = "../../../lib/win64_vc16/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2019_VERSION)
 
 def IsVisualStudio2017OrGreater():
     VISUAL_STUDIO_2017_VERSION = (15, 0)
-    INSTALL_DIR = "../../../lib/win64_vc15"
-    SOURCE_DIR = "../../../lib/win64_vc15/build_env/source"
-    BUILD_DIR = "../../../lib/win64_vc15/build_env/build"
     return IsVisualStudioVersionOrGreater(VISUAL_STUDIO_2017_VERSION)
 
 def GetVisualStudioDirectories():
