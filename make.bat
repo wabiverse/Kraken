@@ -58,6 +58,7 @@ if "%BUILD_VS_YEAR%" == "" (
 )
 
 if "%BUILD_ENVIRONMENT%" == "1" (
+	call "%COVAH_DIR%\build_files\scripts\windows\check_libraries.cmd"
 	call "%COVAH_DIR%\build_files\scripts\windows\build_environment.cmd"
 	goto EOF
 )
