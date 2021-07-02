@@ -205,7 +205,7 @@ class HdInstanceRegistry
   template<typename T>
   static bool _IsUnique(std::shared_ptr<T> const &value)
   {
-    return value.unique();
+    return value.use_count() == 1;
   }
 
   typename InstanceType::Dictionary _dictionary;

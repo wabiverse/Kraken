@@ -53,4 +53,6 @@ wabi_library(usdApollo
   RESOURCE_FILES
     resources/plugInfo.json
     resources/shaders/drawMode.glslfx
+
+  DISABLE_PRECOMPILED_HEADERS
 )

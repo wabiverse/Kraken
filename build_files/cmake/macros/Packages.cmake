@@ -197,16 +197,9 @@ endif()
 if(WITH_VULKAN)
 
   find_package(Vulkan REQUIRED)
+
   list(APPEND VULKAN_LIBS
     Vulkan::Vulkan
-    glslang
-    OGLCompiler
-    OSDependent
-    MachineIndependent
-    GenericCodeGen
-    SPIRV SPIRV-Tools
-    SPIRV-Tools-opt
-    SPIRV-Tools-shared
   )
 
   # Find the OS specific libs we need
@@ -253,6 +246,7 @@ endif()
 # Find BOOST
 
 if(WIN32)
+  set(LIB_OBJ_EXT "lib")
   set(BOOST_VERSION_SCORE "1_76")
   set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_76")
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
@@ -263,18 +257,18 @@ if(WIN32)
   find_package(Boost REQUIRED)
   set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
 
-  set(Boost_INCLUDE_DIRS           ${BOOST_ROOT}/include/boost-${BOOST_VERSION_SCORE})
-  set(Boost_ATOMIC_LIBRARY         ${BOOST_ROOT}/lib/boost_atomic-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_CHRONO_LIBRARY         ${BOOST_ROOT}/lib/boost_chrono-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_DATETIME_LIBRARY       ${BOOST_ROOT}/lib/boost_date_time-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_FILESYSTEM_LIBRARY     ${BOOST_ROOT}/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_IOSTREAMS_LIBRARY      ${BOOST_ROOT}/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_NUMPY_LIBRARY          ${BOOST_ROOT}/lib/boost_numpy${python_version_nodot}-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_PYTHON_LIBRARY         ${BOOST_ROOT}/lib/boost_python${python_version_nodot}-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_PROGRAMOPTIONS_LIBRARY ${BOOST_ROOT}/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_REGEX_LIBRARY          ${BOOST_ROOT}/lib/boost_regex-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_SYSTEM_LIBRARY         ${BOOST_ROOT}/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
-  set(Boost_THREAD_LIBRARY         ${BOOST_ROOT}/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.${LIB_OBJ_EXT})
+  set(Boost_INCLUDE_DIRS           ${LIBDIR}/boost/include/boost-${BOOST_VERSION_SCORE})
+  set(Boost_ATOMIC_LIBRARY         ${LIBDIR}/boost/lib/boost_atomic-vc143-mt-x64-1_76.lib)
+  set(Boost_CHRONO_LIBRARY         ${LIBDIR}/boost/lib/boost_chrono-vc143-mt-x64-1_76.lib)
+  set(Boost_DATETIME_LIBRARY       ${LIBDIR}/boost/lib/boost_date_time-vc143-mt-x64-1_76.lib)
+  set(Boost_FILESYSTEM_LIBRARY     ${LIBDIR}/boost/lib/boost_filesystem-vc143-mt-x64-1_76.lib)
+  set(Boost_IOSTREAMS_LIBRARY      ${LIBDIR}/boost/lib/boost_iostreams-vc143-mt-x64-1_76.lib)
+  set(Boost_NUMPY_LIBRARY          ${LIBDIR}/boost/lib/boost_numpy${python_version_nodot}-vc143-mt-x64-1_76.lib)
+  set(Boost_PYTHON_LIBRARY         ${LIBDIR}/boost/lib/boost_python${python_version_nodot}-vc143-mt-x64-1_76.lib)
+  set(Boost_PROGRAMOPTIONS_LIBRARY ${LIBDIR}/boost/lib/boost_program_options-vc143-mt-x64-1_76.lib)
+  set(Boost_REGEX_LIBRARY          ${LIBDIR}/boost/lib/boost_regex-vc143-mt-x64-1_76.lib)
+  set(Boost_SYSTEM_LIBRARY         ${LIBDIR}/boost/lib/boost_system-vc143-mt-x64-1_76.lib)
+  set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-vc143-mt-x64-1_76.lib)
 
 elseif(UNIX)
   set(BOOST_ROOT "${LIBDIR}")
@@ -304,14 +298,18 @@ endif()
 list(APPEND BOOST_LIBRARIES
   ${Boost_ATOMIC_LIBRARY}
   ${Boost_DATETIME_LIBRARY}
+  ${Boost_CHRONO_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_IOSTREAMS_LIBRARY}
   ${Boost_PYTHON_LIBRARY}
+  ${Boost_NUMPY_LIBRARY}
   ${Boost_PROGRAMOPTIONS_LIBRARY}
   ${Boost_REGEX_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_THREAD_LIBRARY}
 )
+
+message(${BOOST_LIBRARIES})
 
 # Disable superfluous Boost Warnings
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
@@ -357,8 +355,6 @@ if(WIN32)
   add_definitions(${TBB_DEFINITIONS})
   list(APPEND TBB_LIBRARIES
     "${LIBDIR}/tbb/lib/tbb.lib"
-    "${LIBDIR}/tbb/lib/tbb12.lib"
-    "${LIBDIR}/tbb/lib/tbbbind_2_0.lib"
     "${LIBDIR}/tbb/lib/tbbmalloc.lib"
     "${LIBDIR}/tbb/lib/tbbmalloc_proxy.lib"
   )
@@ -379,14 +375,12 @@ else()
 endif()
 
 if(WIN32)
-  set(WABI_MALLOC_LIBRARY ${LIBDIR}/jemalloc/jemalloc-vc142-static.lib)
+  list(APPEND WABI_MALLOC_LIBRARY
+    ${LIBDIR}/mimalloc/lib/mimalloc-2.0/mimalloc.lib
+    ${LIBDIR}/mimalloc/lib/mimalloc-2.0/mimalloc-static.lib)
 else()
   find_package(Jemalloc REQUIRED)
   set(WABI_MALLOC_LIBRARY ${JEMALLOC_LIBRARY})
-endif()
-
-if(NOT EXISTS ${WABI_MALLOC_LIBRARY})
-  message(STATUS "Using default system allocator because WABI_MALLOC_LIBRARY is unspecified")
 endif()
 
 if(WABI_VALIDATE_GENERATED_CODE)
@@ -463,9 +457,9 @@ if(WITH_RENDERMAN)
   if(NOT EXISTS $ENV{RMANTREE})
     # Attempt to find RenderMan installation.
     if(UNIX)
-      set(RENDERMAN_LOCATION "/opt/pixar/RenderManProServer-23.5")
+      set(RENDERMAN_LOCATION "/opt/pixar/RenderManProServer-24.0")
     elseif(WIN32)
-      set(RENDERMAN_LOCATION "C:/Program Files/RenderManProServer-23.5")
+      set(RENDERMAN_LOCATION "C:/Program Files/Pixar/RenderManProServer-24.0")
     endif()
   endif()
   find_package(Renderman REQUIRED)
@@ -490,6 +484,10 @@ if(WITH_CYCLES)
   endif()
   find_package(Cycles REQUIRED)
   find_package(OpenImageDenoise REQUIRED)
+endif()
+
+if(WIN32)
+  set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/include)
 endif()
 
 if(WITH_PRORENDER)

@@ -167,7 +167,7 @@ VkfDeviceCaps::VkfDeviceCaps()
     deviceID(0),
     deviceType(VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_CPU),
     deviceName(""),
-    pipelineCacheUUID({0}),
+    pipelineCacheUUID{0},
     limits(),
     sparseProperties()
 {}

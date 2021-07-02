@@ -35,4 +35,6 @@ wabi_library(vkf
 
   PUBLIC_HEADERS
     api.h
+    
+  DISABLE_PRECOMPILED_HEADERS
 )

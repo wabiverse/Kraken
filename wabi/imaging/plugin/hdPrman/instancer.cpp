@@ -35,7 +35,7 @@
 #include "wabi/base/gf/vec4f.h"
 #include "wabi/base/tf/staticTokens.h"
 
-#include "RtParamList.h"
+#include "RiTypesHelper.h"
 
 WABI_NAMESPACE_BEGIN
 

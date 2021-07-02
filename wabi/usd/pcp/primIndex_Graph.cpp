@@ -311,7 +311,7 @@ void PcpPrimIndex_Graph::Finalize()
   // this point because we wouldn't be able to fix up the _nodeSitePaths
   // member in those other graphs. That data is aligned with the node pool,
   // but is *not* shared.
-  TF_VERIFY(_data.unique());
+  TF_VERIFY(_data.use_count() == 1);
 
   // We want to store the nodes in the node pool in strong-to-weak order.
   // In particular, this allows strength-order iteration over the nodes in
@@ -633,7 +633,7 @@ PcpNodeRef PcpPrimIndex_Graph::_InsertChildInStrengthOrder(size_t parentNodeIdx,
 
 void PcpPrimIndex_Graph::_DetachSharedNodePool()
 {
-  if (!_data.unique())
+  if (!_data.use_count() == 1)
   {
     TRACE_FUNCTION();
     _data.reset(new _SharedData(*_data));

@@ -25,6 +25,7 @@ wabi_plugin(hdCycles
         usdLux
         pxOsd
         cameraUtil
+        ${EMBREE_LIBRARY}
         ${TBB_LIBRARIES}
         ${OCIO_LIBRARIES}
         ${OIIO_LIBRARIES}
@@ -33,14 +34,19 @@ wabi_plugin(hdCycles
         ${OSL_QUERY_LIBRARY}
         ${OPENIMAGEDENOISE_LIBRARIES}
         ${CYCLES_LIBRARIES}
+        ${OPENEXR_LIBRARIES}
+        ${OPENVDB_LIBRARY}
  
     INCLUDE_DIRS
         Mikktspace
+        ${OPENEXR_INCLUDE_DIR}
+        ${EMBREE_INCLUDE_DIR}
         ${TBB_INCLUDE_DIRS}
         ${OCIO_INCLUDE_DIRS}
         ${OIIO_INCLUDE_DIRS}
         ${OSL_INCLUDE_DIR}
         ${OPENIMAGEDENOISE_INCLUDE_DIRS}
+        ${OPENVDB_INCLUDE_DIR}
         ${CYCLES_INCLUDE_DIRS}
 
     CPPFILES
@@ -79,4 +85,6 @@ wabi_plugin(hdCycles
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )

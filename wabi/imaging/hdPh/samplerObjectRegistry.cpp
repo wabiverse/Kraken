@@ -132,7 +132,7 @@ void HdPh_SamplerObjectRegistry::GarbageCollect()
 
   for (size_t i = 0; i < last; i++)
   {
-    if (_samplerObjects[i].unique())
+    if (_samplerObjects[i].use_count() == 1)
     {
       while (true)
       {
@@ -141,7 +141,7 @@ void HdPh_SamplerObjectRegistry::GarbageCollect()
         {
           break;
         }
-        if (!_samplerObjects[last].unique())
+        if (!_samplerObjects[last].use_count() == 1)
         {
           _samplerObjects[i] = _samplerObjects[last];
           break;

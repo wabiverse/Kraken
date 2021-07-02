@@ -491,7 +491,7 @@ void HdPhResourceRegistry::GarbageCollectDispatchBuffers()
   _dispatchBufferRegistry.erase(
     std::remove_if(_dispatchBufferRegistry.begin(),
                    _dispatchBufferRegistry.end(),
-                   std::bind(&HdPhDispatchBufferSharedPtr::unique, std::placeholders::_1)),
+                   std::bind(&HdPhDispatchBufferSharedPtr::use_count, std::placeholders::_1)),
     _dispatchBufferRegistry.end());
 }
 
@@ -502,7 +502,7 @@ void HdPhResourceRegistry::GarbageCollectBufferResources()
   _bufferResourceRegistry.erase(
     std::remove_if(_bufferResourceRegistry.begin(),
                    _bufferResourceRegistry.end(),
-                   std::bind(&HdPhBufferResourceSharedPtr::unique, std::placeholders::_1)),
+                   std::bind(&HdPhBufferResourceSharedPtr::use_count, std::placeholders::_1)),
     _bufferResourceRegistry.end());
 }
 

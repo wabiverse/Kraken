@@ -16,4 +16,6 @@ wabi_plugin(rmanDiscovery
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )

@@ -30,8 +30,8 @@ if (WITH_MATERIALX)
     list(APPEND optionalPublicClasses matfiltMaterialX)
 
     if (WITH_OSL)
-        list(APPEND optionalLibs ${OSL_COMP_LIBRARY})
-        list(APPEND optionalIncludeDirs ${OSL_INCLUDE_DIR})
+        list(APPEND optionalLibs ${OSL_COMP_LIBRARY} ${OPENEXR_LIBRARIES} ${OIIO_LIBRARIES})
+        list(APPEND optionalIncludeDirs ${OSL_INCLUDE_DIR} ${OPENEXR_INCLUDE_DIR} ${OIIO_INCLUDE_DIRS})
     endif()
 endif()
 

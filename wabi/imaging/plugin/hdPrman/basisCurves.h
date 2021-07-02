@@ -33,20 +33,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_BasisCurves final : public HdPrman_Gprim<HdBasisCurves>
-{
- public:
-  typedef HdPrman_Gprim<HdBasisCurves> BASE;
-  HF_MALLOC_TAG_NEW("new HdPrman_BasisCurves");
-  HdPrman_BasisCurves(SdfPath const &id);
-  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
-
- protected:
-  virtual RtParamList _ConvertGeometry(HdPrman_Context *context,
-                                       HdSceneDelegate *sceneDelegate,
-                                       const SdfPath &id,
-                                       RtUString *primType,
-                                       std::vector<HdGeomSubset> *geomSubsets) override;
+class HdPrman_BasisCurves final : public HdPrman_Gprim<HdBasisCurves> {
+public:
+    typedef HdPrman_Gprim<HdBasisCurves> BASE;
+    HF_MALLOC_TAG_NEW("new HdPrman_BasisCurves");
+    HdPrman_BasisCurves(SdfPath const& id);
+    virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+protected:
+    virtual RtPrimVarList
+    _ConvertGeometry(HdPrman_Context *context,
+                      HdSceneDelegate *sceneDelegate,
+                      const SdfPath &id,
+                      RtUString *primType,
+                      std::vector<HdGeomSubset> *geomSubsets) override;
 };
 
 WABI_NAMESPACE_END

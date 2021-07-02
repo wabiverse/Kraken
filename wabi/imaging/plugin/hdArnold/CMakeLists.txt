@@ -58,6 +58,8 @@ wabi_plugin(hdArnold
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )
 
 add_definitions(-DUSD_HAS_UPDATED_COMPOSITOR)

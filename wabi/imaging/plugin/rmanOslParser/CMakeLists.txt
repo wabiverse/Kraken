@@ -25,6 +25,8 @@ wabi_plugin(rmanOslParser
 
     RESOURCE_FILES
         resources/plugInfo.json
+    
+    DISABLE_PRECOMPILED_HEADERS
 )
 
 # Need to set RMANTREE and RMAN_SHADERPATH environment variable when running

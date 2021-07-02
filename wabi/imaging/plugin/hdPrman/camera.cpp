@@ -29,7 +29,7 @@
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 
-#include "RtParamList.h"
+#include "RiTypesHelper.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -35,48 +35,60 @@
 #include "Riley.h"
 #include "RixPredefinedStrings.hpp"
 #include "RixShadingUtils.h"
-#include "RtParamList.h"
+#include "RiTypesHelper.h"
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Points::HdPrman_Points(SdfPath const &id)
-  : BASE(id)
-{}
-
-HdDirtyBits HdPrman_Points::GetInitialDirtyBitsMask() const
+HdPrman_Points::HdPrman_Points(SdfPath const& id)
+    : BASE(id)
 {
-  // The initial dirty bits control what data is available on the first
-  // run through _PopulateRtPoints(), so it should list every data item
-  // that _PopluateRtPoints requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
-
-  return (HdDirtyBits)mask;
 }
 
-RtParamList HdPrman_Points::_ConvertGeometry(HdPrman_Context *context,
-                                             HdSceneDelegate *sceneDelegate,
-                                             const SdfPath &id,
-                                             RtUString *primType,
-                                             std::vector<HdGeomSubset> *geomSubsets)
+HdDirtyBits
+HdPrman_Points::GetInitialDirtyBitsMask() const
 {
-  VtValue pointsVal = sceneDelegate->Get(id, HdTokens->points);
-  VtVec3fArray points = pointsVal.Get<VtVec3fArray>();
+    // The initial dirty bits control what data is available on the first
+    // run through _PopulateRtPoints(), so it should list every data item
+    // that _PopluateRtPoints requests.
+    int mask = HdChangeTracker::Clean
+        | HdChangeTracker::DirtyPoints
+        | HdChangeTracker::DirtyTransform
+        | HdChangeTracker::DirtyVisibility
+        | HdChangeTracker::DirtyPrimvar
+        | HdChangeTracker::DirtyNormals
+        | HdChangeTracker::DirtyWidths
+        | HdChangeTracker::DirtyMaterialId
+        | HdChangeTracker::DirtyInstancer
+        ;
 
-  RtParamList primvars(1,             /* uniform */
-                       points.size(), /* vertex */
-                       points.size(), /* varying */
-                       points.size() /* facevarying */);
+    return (HdDirtyBits)mask;
+}
 
-  RtPoint3 const *pointsData = (RtPoint3 const *)(&points[0]);
-  primvars.SetPointDetail(RixStr.k_P, pointsData, RtDetailType::k_vertex);
+RtPrimVarList
+HdPrman_Points::_ConvertGeometry(HdPrman_Context *context,
+                                  HdSceneDelegate *sceneDelegate,
+                                  const SdfPath &id,
+                                  RtUString *primType,
+                                  std::vector<HdGeomSubset> *geomSubsets)
+{
+    VtValue pointsVal = sceneDelegate->Get(id, HdTokens->points);
+    VtVec3fArray points = pointsVal.Get<VtVec3fArray>();
 
-  *primType = RixStr.k_Ri_Points;
+    RtPrimVarList primvars(
+         1, /* uniform */
+         points.size(), /* vertex */
+         points.size(), /* varying */
+         points.size()  /* facevarying */);
 
-  HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, 1, points.size(), points.size(), points.size());
-  return primvars;
+    RtPoint3 const *pointsData = (RtPoint3 const*)(&points[0]);
+    primvars.SetPointDetail(RixStr.k_P, pointsData,
+                            RtDetailType::k_vertex);
+
+    *primType = RixStr.k_Ri_Points;
+
+    HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, 1,
+                            points.size(), points.size(), points.size());
+    return primvars;
 }
 
 WABI_NAMESPACE_END

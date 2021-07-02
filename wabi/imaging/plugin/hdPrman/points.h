@@ -35,20 +35,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_Points final : public HdPrman_Gprim<HdPoints>
-{
- public:
-  typedef HdPrman_Gprim<HdPoints> BASE;
-  HF_MALLOC_TAG_NEW("new HdPrman_Points");
-  HdPrman_Points(SdfPath const &id);
-  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
-
- protected:
-  virtual RtParamList _ConvertGeometry(HdPrman_Context *context,
-                                       HdSceneDelegate *sceneDelegate,
-                                       const SdfPath &id,
-                                       RtUString *primType,
-                                       std::vector<HdGeomSubset> *geomSubsets) override;
+class HdPrman_Points final : public HdPrman_Gprim<HdPoints> {
+public:
+    typedef HdPrman_Gprim<HdPoints> BASE;
+    HF_MALLOC_TAG_NEW("new HdPrman_Points");
+    HdPrman_Points(SdfPath const& id);
+    virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+protected:
+    virtual RtPrimVarList
+    _ConvertGeometry(HdPrman_Context *context,
+                      HdSceneDelegate *sceneDelegate,
+                      const SdfPath &id,
+                      RtUString *primType,
+                      std::vector<HdGeomSubset> *geomSubsets) override;
 };
 
 WABI_NAMESPACE_END

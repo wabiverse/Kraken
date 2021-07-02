@@ -22,7 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/plugin/hdPrman/coordSys.h"
-#include "RtParamList.h"
+#include "RiTypesHelper.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/imaging/hf/diagnostic.h"
@@ -34,77 +34,88 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrmanCoordSys::HdPrmanCoordSys(SdfPath const &id)
-  : HdCoordSys(id),
-    _coordSysId(riley::CoordinateSystemId::k_InvalidId)
+HdPrmanCoordSys::HdPrmanCoordSys(SdfPath const& id)
+    : HdCoordSys(id)
+    , _coordSysId(riley::CoordinateSystemId::InvalidId())
 {
-  /* NOTHING */
+    /* NOTHING */
 }
 
 HdPrmanCoordSys::~HdPrmanCoordSys()
-{}
-
-void HdPrmanCoordSys::Finalize(HdRenderParam *renderParam)
 {
-  HdPrman_Context *context = static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
-  _ResetCoordSys(context);
 }
 
-void HdPrmanCoordSys::_ResetCoordSys(HdPrman_Context *context)
+void
+HdPrmanCoordSys::Finalize(HdRenderParam *renderParam)
 {
-  riley::Riley *riley = context->riley;
-  if (_coordSysId != riley::CoordinateSystemId::k_InvalidId)
-  {
-    riley->DeleteCoordinateSystem(_coordSysId);
-    _coordSysId = riley::CoordinateSystemId::k_InvalidId;
-  }
-}
-
-/* virtual */
-void HdPrmanCoordSys::Sync(HdSceneDelegate *sceneDelegate,
-                           HdRenderParam *renderParam,
-                           HdDirtyBits *dirtyBits)
-{
-  HdPrman_Context *context = static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
-
-  SdfPath id = GetId();
-
-  riley::Riley *riley = context->riley;
-
-  if (*dirtyBits)
-  {
+    HdPrman_Context *context =
+        static_cast<HdPrman_RenderParam*>(renderParam)->AcquireContext();
     _ResetCoordSys(context);
+}
 
-    // Sample transform
-    HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> xf;
-    sceneDelegate->SampleTransform(id, &xf);
-    TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt_values(xf.count);
-    for (size_t i = 0; i < xf.count; ++i)
-    {
-      xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(xf.values[i]);
+void
+HdPrmanCoordSys::_ResetCoordSys(HdPrman_Context *context)
+{
+    riley::Riley *riley = context->riley;
+    if (_coordSysId != riley::CoordinateSystemId::InvalidId()) {
+        riley->DeleteCoordinateSystem(_coordSysId);
+        _coordSysId = riley::CoordinateSystemId::InvalidId();
     }
-    const riley::Transform xform = {unsigned(xf.count), xf_rt_values.data(), xf.times.data()};
-
-    RtParamList attrs;
-    // The coordSys name is the final component of the id,
-    // after stripping namespaces.
-    attrs.SetString(RixStr.k_name, RtUString(SdfPath::StripNamespace(id.GetName()).c_str()));
-
-    _coordSysId = riley->CreateCoordinateSystem(xform, attrs);
-  }
-
-  *dirtyBits = HdChangeTracker::Clean;
 }
 
 /* virtual */
-HdDirtyBits HdPrmanCoordSys::GetInitialDirtyBitsMask() const
+void
+HdPrmanCoordSys::Sync(HdSceneDelegate *sceneDelegate,
+                      HdRenderParam   *renderParam,
+                      HdDirtyBits     *dirtyBits)
 {
-  return HdChangeTracker::AllDirty;
+    HdPrman_Context *context =
+        static_cast<HdPrman_RenderParam*>(renderParam)->AcquireContext();
+
+    SdfPath id = GetId();
+
+    riley::Riley *riley = context->riley;
+
+    if (*dirtyBits) {
+        // Sample transform
+        HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> xf;
+        sceneDelegate->SampleTransform(id, &xf);
+        TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES>
+            xf_rt_values(xf.count);
+        for (size_t i=0; i < xf.count; ++i) {
+            xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(xf.values[i]);
+        }
+        const riley::Transform xform = {
+            unsigned(xf.count), xf_rt_values.data(), xf.times.data()};
+
+        RtParamList attrs;
+        // The coordSys name is the final component of the id,
+        // after stripping namespaces.
+        attrs.SetString(RixStr.k_name,
+            RtUString(SdfPath::StripNamespace(id.GetName()).c_str()));
+        if (_coordSysId != riley::CoordinateSystemId::InvalidId()) {
+            riley->ModifyCoordinateSystem(_coordSysId, &xform, &attrs);
+        } else {
+            _coordSysId =
+                riley->CreateCoordinateSystem(riley::UserId::DefaultId(),
+                                              xform, attrs);
+        }
+    }
+
+    *dirtyBits = HdChangeTracker::Clean;
 }
 
-bool HdPrmanCoordSys::IsValid() const
+/* virtual */
+HdDirtyBits
+HdPrmanCoordSys::GetInitialDirtyBitsMask() const
 {
-  return _coordSysId != riley::CoordinateSystemId::k_InvalidId;
+    return HdChangeTracker::AllDirty;
+}
+
+bool
+HdPrmanCoordSys::IsValid() const
+{
+    return _coordSysId != riley::CoordinateSystemId::InvalidId();
 }
 
 WABI_NAMESPACE_END

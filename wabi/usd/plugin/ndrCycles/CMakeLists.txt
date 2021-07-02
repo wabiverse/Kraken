@@ -19,7 +19,7 @@ wabi_plugin(ndrCycles
         ${CYCLES_LIBRARIES}
 
     INCLUDE_DIRS
-        ${EMBREE_INCLUDE_DIRS}
+        ${EMBREE_INCLUDE_DIR}
         ${CYCLES_INCLUDE_DIRS}
 
     PRIVATE_CLASSES
@@ -31,5 +31,7 @@ wabi_plugin(ndrCycles
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )
     

@@ -24,6 +24,7 @@
 
 #include "RixInterfaces.h"
 #include "RtxPlugin.h"
+#include "ri.h"
 #include "wabi/base/gf/gamma.h"
 #include "wabi/imaging/hio/image.h"
 #include "wabi/imaging/hio/types.h"
