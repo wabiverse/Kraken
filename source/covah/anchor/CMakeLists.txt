@@ -30,7 +30,7 @@ set(SRC
   intern/draw.cpp
   intern/event_consumer.cpp
   intern/event_manager.cpp
-  intern/freetype
+  intern/freetype.cpp
   intern/modifier_keys.cpp
   intern/anchor_rect.cpp
   intern/system_paths.cpp

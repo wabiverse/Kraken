@@ -30,7 +30,7 @@ wabi_plugin(${WABI_PACKAGE}
         resourceRegistry
 
     CPPFILES
-        rendererPlugin
+        rendererPlugin.cpp
 
     PRIVATE_HEADERS
         renderParam.h

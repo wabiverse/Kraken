@@ -39,7 +39,7 @@ set(build_shared_libs "${BUILD_SHARED_LIBS}")
 # Set directory path to precompiled libraries
 
 if(WIN32)
-  if(MSVC_VERSION GREATER_EQUAL 1930)
+  if(MSVC_VERSION GREATER_EQUAL 1929)
     # MSVC 2022+
     set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc17)
   elseif(MSVC_VERSION GREATER_EQUAL 1920)
@@ -111,20 +111,23 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
 #
 
 if(WIN32)
-  set(OPENEXR_LOCATION    ${LIBDIR}/openexr)
-  set(OCIO_LOCATION       ${LIBDIR}/opencolorio)
-  set(OIIO_LOCATION       ${LIBDIR}/OpenImageIO)
-  set(ZLIB_INCLUDE_DIR    ${LIBDIR}/zlib/include)
-  set(ZLIB_LIBRARY        ${LIBDIR}/zlib/lib/libz_st.lib)
-  set(OPENSUBDIV_ROOT_DIR ${LIBDIR}/opensubdiv)
-  set(PTEX_LOCATION       ${LIBDIR}/ptex)
-  set(OPENVDB_LOCATION    ${LIBDIR}/openvdb)
-  set(ALEMBIC_DIR         ${LIBDIR}/alembic)
-  set(OSL_LOCATION        ${LIBDIR}/osl)
-  set(EMBREE_LOCATION     ${LIBDIR}/embree)
-  set(MATERIALX_ROOT      ${LIBDIR}/MaterialX)
-  set(MATERIALX_DATA_ROOT ${LIBDIR}/MaterialX/libraries)
-  set(TBB_ROOT_DIR        ${LIBDIR}/tbb)
+  set(FREETYPE_DIR          ${LIBDIR}/freetype)
+  set(OPENEXR_LOCATION      ${LIBDIR}/openexr)
+  set(OCIO_LOCATION         ${LIBDIR}/opencolorio)
+  set(OIIO_LOCATION         ${LIBDIR}/OpenImageIO)
+  set(ZLIB_INCLUDE_DIR      ${LIBDIR}/zlib/include)
+  set(ZLIB_LIBRARY          ${LIBDIR}/zlib/lib/libz_st.lib)
+  set(OPENSUBDIV_ROOT_DIR   ${LIBDIR}/opensubdiv)
+  set(OpenImageDenoise_ROOT ${LIBDIR}/oidn)
+  set(PTEX_LOCATION         ${LIBDIR}/ptex)
+  set(HDF5_ROOT             ${LIBDIR}/hdf5)
+  set(OPENVDB_LOCATION      ${LIBDIR}/openvdb)
+  set(ALEMBIC_DIR           ${LIBDIR}/alembic)
+  set(OSL_LOCATION          ${LIBDIR}/osl)
+  set(EMBREE_LOCATION       ${LIBDIR}/embree)
+  set(MATERIALX_ROOT        ${LIBDIR}/MaterialX)
+  set(MATERIALX_DATA_ROOT   ${LIBDIR}/MaterialX/libraries)
+  set(TBB_ROOT_DIR          ${LIBDIR}/tbb)
 
   set(OPENEXR_INCLUDE_DIR "${LIBDIR}/openexr/include")
   set(IMATH_INCLUDE_DIR "${LIBDIR}/openexr/include/Imath")
@@ -168,7 +171,12 @@ endif()
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Freetype
 
-find_package(Freetype REQUIRED)
+if(UNIX)
+  find_package(Freetype REQUIRED)
+elseif(WIN32)
+  set(FREETYPE_INCLUDE_DIRS ${FREETYPE_DIR}/include/freetype2)
+  set(FREETYPE_LIBRARY ${FREETYPE_DIR}/lib/freetype2ST.lib)
+endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Configure GFX APIs
@@ -242,25 +250,16 @@ if(UNIX)
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
-# REST - For Licensing
-
-if(WIN32)
-  set(REST_INCLUDE_DIR ${LIBDIR}/rest/include)
-  set(REST_LIBRARIES
-    ${LIBDIR}/rest/lib/cpprest_2_10.lib
-  )
-endif()
-
-#-------------------------------------------------------------------------------------------------------------------------------------------
 # Find BOOST
 
 if(WIN32)
   set(BOOST_VERSION_SCORE "1_76")
-  set(BOOST_LIBRARY_SUFFIX "vc142-mt-x64-1_76")
+  set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_76")
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
   # set(Boost_USE_MULTITHREADED ON) # suffix -mt
   # set(Boost_USE_STATIC_LIBS ON) # suffix -s
   set(BOOST_ROOT "${LIBDIR}/boost")
+  set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_76")
   find_package(Boost REQUIRED)
   set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
 
@@ -474,20 +473,32 @@ endif()
 
 if(WITH_ARNOLD)
   add_definitions(-DWITH_ARNOLD)
-  set(ARNOLD_HOME ${LIBDIR})
+  if(UNIX)
+    set(ARNOLD_HOME ${LIBDIR})
+  elseif(WIN32)
+    set(ARNOLD_HOME ${LIBDIR}/arnold)
+  endif()
   find_package(Arnold REQUIRED)
 endif()
 
 if(WITH_CYCLES)
   add_definitions(-DWITH_CYCLES)
-  set(CYCLES_HOME ${LIBDIR})
+  if(UNIX)
+    set(CYCLES_HOME ${LIBDIR})
+  elseif(WIN32)
+    set(CYCLES_HOME ${LIBDIR}/Cycles)
+  endif()
   find_package(Cycles REQUIRED)
   find_package(OpenImageDenoise REQUIRED)
 endif()
 
 if(WITH_PRORENDER)
   add_definitions(-DWITH_PRORENDER)
-  set(PRORENDER_HOME ${LIBDIR})
+  if(UNIX)
+    set(PRORENDER_HOME ${LIBDIR})
+  elseif(WIN32)
+    set(PRORENDER_HOME ${LIBDIR}/prorender)
+  endif()
   find_package(ProRender REQUIRED)
 endif()
 
