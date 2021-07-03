@@ -147,6 +147,10 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zi")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /MP")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Gm-")
 
+# Ensure error C3859 does not occur. Failing to create enough virtual memory
+# for PCH. This raises the default 75 to 1000
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zm1000")
+
 # Ignore LNK4221.  This happens when making an archive with a object file
 # with no symbols in it.  We do this a lot because of a pattern of having
 # a C++ source file for many header-only facilities, e.g. tf/bitUtils.cpp.
