@@ -87,15 +87,19 @@
 #  define WABI_INTERNAL_NS KRAKENverse
 #  define WABI_NS_GLOBAL ::WABI_NS
 
-namespace WABI_INTERNAL_NS {
+namespace WABI_INTERNAL_NS
+{
 }
 
 // The root level namespace for all source in the USD distribution.
-namespace WABI_NS {
+namespace WABI_NS
+{
 using namespace WABI_INTERNAL_NS;
 }
 
-#  define WABI_NAMESPACE_BEGIN namespace WABI_INTERNAL_NS {
+#  define WABI_NAMESPACE_BEGIN \
+    namespace WABI_INTERNAL_NS \
+    {
 #  define WABI_NAMESPACE_END }
 #  define WABI_NAMESPACE_USING using namespace WABI_NS;
 
