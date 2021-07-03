@@ -57,202 +57,197 @@ class HdPrmanRenderDelegate;
 // Context for HdPrman to communicate with an instance of PRMan.
 struct HdPrman_Context
 {
-    HDPRMAN_API
-    HdPrman_Context();
+  HDPRMAN_API
+  HdPrman_Context();
 
-    virtual ~HdPrman_Context();
+  virtual ~HdPrman_Context();
 
-    // Convert any Hydra primvars that should be Riley instance attributes.
-    HDPRMAN_API
-    RtParamList
-    ConvertAttributes(HdSceneDelegate *sceneDelegate, SdfPath const& id);
+  // Convert any Hydra primvars that should be Riley instance attributes.
+  HDPRMAN_API
+  RtParamList
+  ConvertAttributes(HdSceneDelegate *sceneDelegate, SdfPath const &id);
 
-    // A vector of Riley coordinate system id's.
-    typedef std::vector<riley::CoordinateSystemId> RileyCoordSysIdVec;
-    // A ref-counting ptr to a vector of coordinate systems.
-    typedef std::shared_ptr<RileyCoordSysIdVec> RileyCoordSysIdVecRefPtr;
+  // A vector of Riley coordinate system id's.
+  typedef std::vector<riley::CoordinateSystemId> RileyCoordSysIdVec;
+  // A ref-counting ptr to a vector of coordinate systems.
+  typedef std::shared_ptr<RileyCoordSysIdVec> RileyCoordSysIdVecRefPtr;
 
-    /// Convert any coordinate system bindings for the given rprim id
-    /// into a Riley equivalent form.  Retain the result internally
-    /// in a cache, so that we may re-use the result with other
-    /// rprims with the same set of bindings.
-    HDPRMAN_API
-    RileyCoordSysIdVecRefPtr ConvertAndRetainCoordSysBindings(
-        HdSceneDelegate *sceneDelegate,
-        SdfPath const& id);
+  /// Convert any coordinate system bindings for the given rprim id
+  /// into a Riley equivalent form.  Retain the result internally
+  /// in a cache, so that we may re-use the result with other
+  /// rprims with the same set of bindings.
+  HDPRMAN_API
+  RileyCoordSysIdVecRefPtr ConvertAndRetainCoordSysBindings(
+    HdSceneDelegate *sceneDelegate,
+    SdfPath const &id);
 
-    /// Convert a list of categories returned by Hydra to
-    /// equivalent Prman grouping attributes.
-    HDPRMAN_API
-    void ConvertCategoriesToAttributes(
-        SdfPath const& id,
-        VtArray<TfToken> const& categories,
-        RtParamList& attrs);
+  /// Convert a list of categories returned by Hydra to
+  /// equivalent Prman grouping attributes.
+  HDPRMAN_API
+  void ConvertCategoriesToAttributes(
+    SdfPath const &id,
+    VtArray<TfToken> const &categories,
+    RtParamList &attrs);
 
-    /// Release any coordinate system bindings cached for the given
-    /// rprim id.
-    HDPRMAN_API
-    void ReleaseCoordSysBindings(SdfPath const& id);
+  /// Release any coordinate system bindings cached for the given
+  /// rprim id.
+  HDPRMAN_API
+  void ReleaseCoordSysBindings(SdfPath const &id);
 
-    HDPRMAN_API
-    void IncrementLightLinkCount(TfToken const& name);
+  HDPRMAN_API
+  void IncrementLightLinkCount(TfToken const &name);
 
-    HDPRMAN_API
-    void DecrementLightLinkCount(TfToken const& name);
+  HDPRMAN_API
+  void DecrementLightLinkCount(TfToken const &name);
 
-    HDPRMAN_API
-    bool IsLightLinkUsed(TfToken const& name);
+  HDPRMAN_API
+  bool IsLightLinkUsed(TfToken const &name);
 
-    HDPRMAN_API
-    void IncrementLightFilterCount(TfToken const& name);
+  HDPRMAN_API
+  void IncrementLightFilterCount(TfToken const &name);
 
-    HDPRMAN_API
-    void DecrementLightFilterCount(TfToken const& name);
+  HDPRMAN_API
+  void DecrementLightFilterCount(TfToken const &name);
 
-    HDPRMAN_API
-    bool IsLightFilterUsed(TfToken const& name);
+  HDPRMAN_API
+  bool IsLightFilterUsed(TfToken const &name);
 
-    HDPRMAN_API
-    void SetOptionsFromRenderSettings(HdPrmanRenderDelegate *renderDelegate, 
-                                      RtParamList& options);
+  HDPRMAN_API
+  void SetOptionsFromRenderSettings(HdPrmanRenderDelegate *renderDelegate,
+                                    RtParamList &options);
 
-    // Set integrator params from the HdRenderSettingsMap
-    HDPRMAN_API
-    void SetIntegratorParamsFromRenderSettings(
-                        HdPrmanRenderDelegate *renderDelegate,
-                        std::string& integratorName,
-                        RtParamList& params);
+  // Set integrator params from the HdRenderSettingsMap
+  HDPRMAN_API
+  void SetIntegratorParamsFromRenderSettings(
+    HdPrmanRenderDelegate *renderDelegate,
+    std::string &integratorName,
+    RtParamList &params);
 
-    // Set integrator params from the camera.
-    // This invokes any callbacks registered with
-    // RegisterIntegratorCallbackForCamera().
-    HDPRMAN_API
-    void SetIntegratorParamsFromCamera(
-                        HdPrmanRenderDelegate *renderDelegate,
-                        HdPrmanCamera *camera,
-                        std::string const& integratorName,
-                        RtParamList& params);
+  // Set integrator params from the camera.
+  // This invokes any callbacks registered with
+  // RegisterIntegratorCallbackForCamera().
+  HDPRMAN_API
+  void SetIntegratorParamsFromCamera(
+    HdPrmanRenderDelegate *renderDelegate,
+    HdPrmanCamera *camera,
+    std::string const &integratorName,
+    RtParamList &params);
 
-    // Callback to convert any camera settings that should become
-    // parameters on the integrator.
-    using IntegratorCameraCallback = void (*)
-        (HdPrmanRenderDelegate *renderDelegate,
-         HdPrmanCamera *camera,
-         std::string const& integratorName,
-         RtParamList &integratorParams);
+  // Callback to convert any camera settings that should become
+  // parameters on the integrator.
+  using IntegratorCameraCallback = void (*)(HdPrmanRenderDelegate *renderDelegate,
+                                            HdPrmanCamera *camera,
+                                            std::string const &integratorName,
+                                            RtParamList &integratorParams);
 
-    // Register a callback to process integrator settings
-    HDPRMAN_API
-    static void 
-    RegisterIntegratorCallbackForCamera(
-        IntegratorCameraCallback const& callback);
+  // Register a callback to process integrator settings
+  HDPRMAN_API
+  static void
+  RegisterIntegratorCallbackForCamera(
+    IntegratorCameraCallback const &callback);
 
-    HDPRMAN_API
-    bool IsShutterInstantaneous() const;
+  HDPRMAN_API
+  bool IsShutterInstantaneous() const;
 
-    HDPRMAN_API
-    void SetInstantaneousShutter(bool instantaneousShutter);
+  HDPRMAN_API
+  void SetInstantaneousShutter(bool instantaneousShutter);
 
-    // Get RIX vs XPU
-    bool IsXpu() const { return _xpu; }
+  // Get RIX vs XPU
+  bool IsXpu() const
+  {
+    return _xpu;
+  }
 
-    // Top-level entrypoint to PRMan.
-    // Singleton used to access RixInterfaces.
-    RixContext *rix;
+  // Top-level entrypoint to PRMan.
+  // Singleton used to access RixInterfaces.
+  RixContext *rix;
 
-    // RixInterface for PRManBegin/End.
-    RixRiCtl *ri;
+  // RixInterface for PRManBegin/End.
+  RixRiCtl *ri;
 
-    // RixInterface for Riley.
-    RixRileyManager *mgr;
+  // RixInterface for Riley.
+  RixRileyManager *mgr;
 
-    // Riley instance.
-    riley::Riley *riley;
+  // Riley instance.
+  riley::Riley *riley;
 
-    // Xcpt Handler
-    HdPrman_Xcpt xcpt;
+  // Xcpt Handler
+  HdPrman_Xcpt xcpt;
 
-    // A fallback material to use for any geometry that
-    // does not have a bound material.
-    riley::MaterialId fallbackMaterial;
+  // A fallback material to use for any geometry that
+  // does not have a bound material.
+  riley::MaterialId fallbackMaterial;
 
-    // Fallback material for volumes that don't have materials.
-    riley::MaterialId fallbackVolumeMaterial;
+  // Fallback material for volumes that don't have materials.
+  riley::MaterialId fallbackVolumeMaterial;
 
-protected:
-    void _InitializePrman();
+ protected:
+  void _InitializePrman();
 
-private:
-    // Refcounts for each category mentioned by a light link.
-    // This is used to convey information from lights back to the
-    // geometry -- in Renderman, geometry must subscribe
-    // to the linked lights.
-    std::unordered_map<TfToken, size_t, TfToken::HashFunctor> _lightLinkRefs;
+ private:
+  // Refcounts for each category mentioned by a light link.
+  // This is used to convey information from lights back to the
+  // geometry -- in Renderman, geometry must subscribe
+  // to the linked lights.
+  std::unordered_map<TfToken, size_t, TfToken::HashFunctor> _lightLinkRefs;
 
-    // Mutex protecting lightLinkRefs.
-    std::mutex _lightLinkMutex;
+  // Mutex protecting lightLinkRefs.
+  std::mutex _lightLinkMutex;
 
-    std::unordered_map<TfToken, size_t, TfToken::HashFunctor> _lightFilterRefs;
+  std::unordered_map<TfToken, size_t, TfToken::HashFunctor> _lightFilterRefs;
 
-    // Mutex protecting lightFilterRefs.
-    std::mutex _lightFilterMutex;
+  // Mutex protecting lightFilterRefs.
+  std::mutex _lightFilterMutex;
 
-    // Map from Hydra coordinate system vector pointer to Riley equivalent.
-    typedef std::unordered_map<
-        HdIdVectorSharedPtr, RileyCoordSysIdVecRefPtr>
-        _HdToRileyCoordSysMap;
-    // Map from Hydra id to cached, converted coordinate systems.
-    typedef std::unordered_map<
-        SdfPath, HdIdVectorSharedPtr, SdfPath::Hash>
-        _GeomToHdCoordSysMap;
+  // Map from Hydra coordinate system vector pointer to Riley equivalent.
+  typedef std::unordered_map<
+    HdIdVectorSharedPtr,
+    RileyCoordSysIdVecRefPtr>
+    _HdToRileyCoordSysMap;
+  // Map from Hydra id to cached, converted coordinate systems.
+  typedef std::unordered_map<
+    SdfPath,
+    HdIdVectorSharedPtr,
+    SdfPath::Hash>
+    _GeomToHdCoordSysMap;
 
-    // Coordinate system conversion cache.
-    _GeomToHdCoordSysMap _geomToHdCoordSysMap;
-    _HdToRileyCoordSysMap _hdToRileyCoordSysMap;
-    std::mutex _coordSysMutex;
+  // Coordinate system conversion cache.
+  _GeomToHdCoordSysMap _geomToHdCoordSysMap;
+  _HdToRileyCoordSysMap _hdToRileyCoordSysMap;
+  std::mutex _coordSysMutex;
 
-    // A quick way to disable motion blur, making shutter close same as open
-    bool _instantaneousShutter;
+  // A quick way to disable motion blur, making shutter close same as open
+  bool _instantaneousShutter;
 
-    // RIX or XPU
-    bool _xpu;
+  // RIX or XPU
+  bool _xpu;
 };
 
 // Helper to convert matrix types, handling double->float conversion.
 inline RtMatrix4x4
 HdPrman_GfMatrixToRtMatrix(const GfMatrix4d &m)
 {
-    const double *d = m.GetArray();
-    return RtMatrix4x4(
-        d[0], d[1], d[2], d[3],
-        d[4], d[5], d[6], d[7],
-        d[8], d[9], d[10], d[11],
-        d[12], d[13], d[14], d[15]);
+  const double *d = m.GetArray();
+  return RtMatrix4x4(
+    d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], d[11], d[12], d[13], d[14], d[15]);
 }
 
 // Helper to convert matrix types, handling float->double conversion.
 inline GfMatrix4d
 HdPrman_RtMatrixToGfMatrix(const RtMatrix4x4 &m)
 {
-    return GfMatrix4d(
-        m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3],
-        m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3],
-        m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3],
-        m.m[3][0], m.m[3][1], m.m[3][2], m.m[3][3]);
+  return GfMatrix4d(
+    m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3], m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3], m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3], m.m[3][0], m.m[3][1], m.m[3][2], m.m[3][3]);
 }
 
 // Convert any Hydra primvars that should be Riley primvars.
-void
-HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate, SdfPath const& id,
-                        RtPrimVarList& primvars, int numUniform, int numVertex,
-                        int numVarying, int numFaceVarying);
+void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate, SdfPath const &id, RtPrimVarList &primvars, int numUniform, int numVertex, int numVarying, int numFaceVarying);
 
 // Resolve Hd material ID to the corresponding Riley material & displacement
-bool
-HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
-                        SdfPath const& hdMaterialId,
-                        riley::MaterialId *materialId,
-                        riley::DisplacementId *dispId);
+bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
+                             SdfPath const &hdMaterialId,
+                             riley::MaterialId *materialId,
+                             riley::DisplacementId *dispId);
 
 
 /// Update the supplied list of options using searchpaths
@@ -264,8 +259,7 @@ HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
 /// - RMAN_PROCEDURALPATH
 ///
 HDPRMAN_API
-void 
-HdPrman_UpdateSearchPathsFromEnvironment(RtParamList& options);
+void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options);
 
 WABI_NAMESPACE_END
 

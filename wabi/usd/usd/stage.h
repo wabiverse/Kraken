@@ -1570,7 +1570,7 @@ class UsdStage : public TfRefBase, public TfWeakBase
 
   // Helper for Open() overloads -- searches and publishes to bound caches.
   template<class... Args>
-  static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &...args);
+  static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &... args);
 
   // Releases resources used by this stage.
   void _Close();

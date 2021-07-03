@@ -252,7 +252,7 @@ class TraceCollector : public TfWeakBase
   /// the form TraceKey, Value.
   /// \sa EndScope \sa Scope \sa StoreData
   template<typename Category, typename... Args>
-  void BeginScope(const TraceKey &key, Args &&...args)
+  void BeginScope(const TraceKey &key, Args &&... args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -269,7 +269,7 @@ class TraceCollector : public TfWeakBase
   /// be an even number of parameters in the form TraceKey, Value.
   /// \sa EndScope \sa Scope \sa StoreData
   template<typename... Args>
-  void BeginScope(const TraceKey &key, Args &&...args)
+  void BeginScope(const TraceKey &key, Args &&... args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -311,7 +311,7 @@ class TraceCollector : public TfWeakBase
   /// enabled.
   /// \sa StoreData
   template<typename Category, typename... Args>
-  void ScopeArgs(Args &&...args)
+  void ScopeArgs(Args &&... args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -329,7 +329,7 @@ class TraceCollector : public TfWeakBase
   /// store multiple data items than to use multiple calls to \c StoreData.
   /// \sa StoreData
   template<typename... Args>
-  void ScopeArgs(Args &&...args)
+  void ScopeArgs(Args &&... args)
   {
     static_assert(sizeof...(Args) % 2 == 0, "Data arguments must come in pairs");
 
@@ -507,7 +507,7 @@ class TraceCollector : public TfWeakBase
                      TraceCategoryId cat,
                      K &&key,
                      const T &value,
-                     Args &&...args)
+                     Args &&... args)
   {
     _StoreData(threadData, std::forward<K>(key), cat, value);
     _StoreDataRec(threadData, cat, std::forward<Args>(args)...);
@@ -573,7 +573,7 @@ class TraceCollector : public TfWeakBase
     }
 
     template<typename... Args>
-    void EmplaceEvent(Args &&...args)
+    void EmplaceEvent(Args &&... args)
     {
       AtomicRef lock(_writing);
       _events.load(std::memory_order_acquire)->EmplaceBack(std::forward<Args>(args)...);

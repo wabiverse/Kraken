@@ -70,9 +70,9 @@ union HdBufferArrayUsageHint
 {
   struct _Bits
   {
-    uint32_t immutable   : 1;
+    uint32_t immutable : 1;
     uint32_t sizeVarying : 1;
-    uint32_t pad         : 30;
+    uint32_t pad : 30;
   } bits;
   uint32_t value;
 

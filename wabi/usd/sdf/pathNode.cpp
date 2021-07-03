@@ -69,7 +69,7 @@ struct Sdf_PathNodePrivateAccess
   }
 
   template<class T, class Pool, class... Args>
-  static inline typename Pool::Handle New(Sdf_PathNode const *parent, Args const &...args)
+  static inline typename Pool::Handle New(Sdf_PathNode const *parent, Args const &... args)
   {
     typename Pool::Handle h = Pool::Allocate();
     char *p = h.GetPtr();
@@ -180,7 +180,7 @@ using _PropVoidTable = _PropTable<void>;
 template<class PathNode, class Table, class... Args>
 inline typename Table::NodeHandle _FindOrCreate(Table &table,
                                                 const Sdf_PathNode *parent,
-                                                const Args &...args)
+                                                const Args &... args)
 {
   typename Table::Type::accessor accessor;
   if (table.map.insert(accessor, _MakeParentAnd(parent, args...)) ||
@@ -201,7 +201,7 @@ template<class Table, class... Args>
 inline void _Remove(const Sdf_PathNode *pathNode,
                     Table &table,
                     const Sdf_PathNodeConstRefPtr &parent,
-                    const Args &...args)
+                    const Args &... args)
 {
   // If there's an entry for this key that has pathNode, erase it.  Even if
   // there's an entry present it may not be pathNode, since another node may

@@ -11190,7 +11190,7 @@ class json_ref
   {}
 
   template<class... Args, enable_if_t<std::is_constructible<value_type, Args...>::value, int> = 0>
-  json_ref(Args &&...args)
+  json_ref(Args &&... args)
     : owned_value(std::forward<Args>(args)...),
       value_ref(&owned_value),
       is_rvalue(true)
@@ -15841,7 +15841,7 @@ class basic_json
  private:
   /// helper for exception-safe object creation
   template<typename T, typename... Args>
-  JSON_HEDLEY_RETURNS_NON_NULL static T *create(Args &&...args)
+  JSON_HEDLEY_RETURNS_NON_NULL static T *create(Args &&... args)
   {
     AllocatorType<T> alloc;
     using AllocatorTraits = std::allocator_traits<AllocatorType<T>>;
@@ -20027,7 +20027,7 @@ class basic_json
   @since version 2.0.8, returns reference since 3.7.0
   */
   template<class... Args>
-  reference emplace_back(Args &&...args)
+  reference emplace_back(Args &&... args)
   {
     // emplace_back only works for null objects or arrays
     if (JSON_HEDLEY_UNLIKELY(not(is_null() or is_array())))
@@ -20080,7 +20080,7 @@ class basic_json
   @since version 2.0.8
   */
   template<class... Args>
-  std::pair<iterator, bool> emplace(Args &&...args)
+  std::pair<iterator, bool> emplace(Args &&... args)
   {
     // emplace only works for null objects or arrays
     if (JSON_HEDLEY_UNLIKELY(not(is_null() or is_object())))
@@ -20110,7 +20110,7 @@ class basic_json
   /// @note: This uses std::distance to support GCC 4.8,
   ///        see https://github.com/nlohmann/json/pull/1257
   template<typename... Args>
-  iterator insert_iterator(const_iterator pos, Args &&...args)
+  iterator insert_iterator(const_iterator pos, Args &&... args)
   {
     iterator result(this);
     assert(m_value.array != nullptr);

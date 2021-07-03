@@ -53,7 +53,7 @@ struct ANCHOR_Buttons
    * Sets the state of all buttons to up. */
   void clear();
 
-  AnchorU8 m_ButtonLeft   : 1;
+  AnchorU8 m_ButtonLeft : 1;
   AnchorU8 m_ButtonMiddle : 1;
-  AnchorU8 m_ButtonRight  : 1;
+  AnchorU8 m_ButtonRight : 1;
 };

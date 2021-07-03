@@ -356,7 +356,7 @@ class _BindFunctor
 };
 
 template<HdTextureType textureType, class Functor, typename... Args>
-void _CastAndCompute(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Args &&...args)
+void _CastAndCompute(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Args &&... args)
 {
   // e.g. HdPhUvTextureObject
   using TextureObject = HdPhTypedTextureObject<textureType>;
@@ -389,7 +389,7 @@ void _CastAndCompute(HdPhShaderCode::NamedTextureHandle const &namedTextureHandl
 }
 
 template<class Functor, typename... Args>
-void _Dispatch(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Args &&...args)
+void _Dispatch(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Args &&... args)
 {
   switch (namedTextureHandle.type)
   {
@@ -409,7 +409,7 @@ void _Dispatch(HdPhShaderCode::NamedTextureHandle const &namedTextureHandle, Arg
 }
 
 template<class Functor, typename... Args>
-void _Dispatch(HdPhShaderCode::NamedTextureHandleVector const &textures, Args &&...args)
+void _Dispatch(HdPhShaderCode::NamedTextureHandleVector const &textures, Args &&... args)
 {
   for (const HdPhShaderCode::NamedTextureHandle &texture : textures)
   {

@@ -4366,8 +4366,7 @@ static stbi_uc *load_jpeg_image(stbi__jpeg *z, int *out_x, int *out_y, int *comp
   }
 
   // determine actual number of components to generate
-  n = req_comp ? req_comp : z->s->img_n >= 3 ? 3 :
-                                               1;
+  n = req_comp ? req_comp : z->s->img_n >= 3 ? 3 : 1;
 
   is_rgb = z->s->img_n == 3 && (z->rgb == 3 || (z->app14_color_transform == 0 && !z->jfif));
 
@@ -6889,7 +6888,7 @@ static void *stbi__bmp_load(stbi__context *s, int *x, int *y, int *comp, int req
   if (flip_vertically)
   {
     stbi_uc t;
-    for (j = 0; j < (int)s->img_y >> 1; ++j)
+    for (j = 0; j<(int)s->img_y>> 1; ++j)
     {
       stbi_uc *p1 = out + j * s->img_x * target;
       stbi_uc *p2 = out + (s->img_y - 1 - j) * s->img_x * target;

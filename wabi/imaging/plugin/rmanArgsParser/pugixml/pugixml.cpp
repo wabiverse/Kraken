@@ -5515,10 +5515,8 @@ PUGI__FN PUGI__UNSIGNED_OVERFLOW U string_to_integer(const char_t *value, U minv
 
     PUGI__STATIC_ASSERT(sizeof(U) == 8 || sizeof(U) == 4 || sizeof(U) == 2);
 
-    const size_t max_digits10 = sizeof(U) == 8 ? 20 : sizeof(U) == 4 ? 10 :
-                                                                       5;
-    const char_t max_lead = sizeof(U) == 8 ? '1' : sizeof(U) == 4 ? '4' :
-                                                                    '6';
+    const size_t max_digits10 = sizeof(U) == 8 ? 20 : sizeof(U) == 4 ? 10 : 5;
+    const char_t max_lead = sizeof(U) == 8 ? '1' : sizeof(U) == 4 ? '4' : '6';
     const size_t high_bit = sizeof(U) * 8 - 1;
 
     overflow = digits >= max_digits10 &&

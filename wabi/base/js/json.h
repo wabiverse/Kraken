@@ -212,7 +212,7 @@ class JsWriter
   /// key arguments must be convertable to strings, value argruments must be
   /// either a writable type, or a callablable type taking a JsWriter&.
   template<class... T>
-  void WriteObject(T &&...f)
+  void WriteObject(T &&... f)
   {
     static_assert(sizeof...(T) % 2 == 0, "Arguments must come in key value pairs");
     BeginObject();
@@ -243,7 +243,7 @@ class JsWriter
   }
 
   template<class Key0, class T0, class... T>
-  void _WriteObjectFields(Key0 &&key0, T0 &&f0, T &&...f)
+  void _WriteObjectFields(Key0 &&key0, T0 &&f0, T &&... f)
   {
     _WriteObjectFields(std::forward<Key0>(key0), std::forward<T0>(f0));
     _WriteObjectFields(std::forward<T>(f)...);

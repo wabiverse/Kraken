@@ -237,8 +237,8 @@ struct Arch_ConstructorEntry
 {
   typedef void (*Type)(void);
   Type function;
-  unsigned int version  : 24;  // USD version
-  unsigned int priority : 8;   // Priority of function
+  unsigned int version : 24;  // USD version
+  unsigned int priority : 8;  // Priority of function
 };
 
 // Emit a Arch_ConstructorEntry in the __Data,wabictor section.
@@ -276,8 +276,8 @@ __declspec(align(16)) struct Arch_ConstructorEntry
 {
   typedef void(__cdecl *Type)(void);
   Type function;
-  unsigned int version  : 24;  // USD version
-  unsigned int priority : 8;   // Priority of function
+  unsigned int version : 24;  // USD version
+  unsigned int priority : 8;  // Priority of function
 };
 
 // Declare the special sections.

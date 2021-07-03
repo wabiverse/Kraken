@@ -67,11 +67,11 @@ struct ANCHOR_ModifierKeys
 
   /**
    * Bitfields that store the appropriate key state. */
-  AnchorU8 m_LeftShift    : 1;
-  AnchorU8 m_RightShift   : 1;
-  AnchorU8 m_LeftAlt      : 1;
-  AnchorU8 m_RightAlt     : 1;
-  AnchorU8 m_LeftControl  : 1;
+  AnchorU8 m_LeftShift : 1;
+  AnchorU8 m_RightShift : 1;
+  AnchorU8 m_LeftAlt : 1;
+  AnchorU8 m_RightAlt : 1;
+  AnchorU8 m_LeftControl : 1;
   AnchorU8 m_RightControl : 1;
-  AnchorU8 m_OS           : 1;
+  AnchorU8 m_OS : 1;
 };

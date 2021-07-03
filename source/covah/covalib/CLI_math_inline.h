@@ -54,7 +54,7 @@ extern "C" {
 #include <math.h>
 
 #ifdef _WIN32
-# include <uchar.h>
+#  include <uchar.h>
 #endif
 
 #if defined(__GNUC__)

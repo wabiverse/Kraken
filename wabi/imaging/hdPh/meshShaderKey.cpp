@@ -240,7 +240,7 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
 
   GS[gsIndex++] = ((geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly) ?
                      _tokens->edgeOnlyGS :
-                   (geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf) ?
+                     (geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf) ?
                      _tokens->edgeOnSurfGS :
                      _tokens->edgeNoneGS);
 

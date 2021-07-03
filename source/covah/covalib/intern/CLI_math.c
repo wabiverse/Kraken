@@ -641,8 +641,7 @@ MINLINE int compare_ff_relative(float a, float b, const float max_diff, const in
   ua.f = a;
   ub.f = b;
 
-  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 :
-                                                                           0;
+  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 : 0;
 }
 
 MINLINE float signf(float f)
@@ -777,8 +776,8 @@ MINLINE unsigned char unit_float_to_uchar_clamp(float val)
 MINLINE unsigned short unit_float_to_ushort_clamp(float val)
 {
   return (unsigned short)((val >= 1.0f - 0.5f / 65535) ? 65535 :
-                          (val <= 0.0f)                ? 0 :
-                                                         (val * 65535.0f + 0.5f));
+                                                         (val <= 0.0f) ? 0 :
+                                                                         (val * 65535.0f + 0.5f));
 }
 #define unit_float_to_ushort_clamp(val) ((CHECK_TYPE_INLINE(val, float)), unit_float_to_ushort_clamp(val))
 

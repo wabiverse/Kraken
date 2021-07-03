@@ -154,7 +154,8 @@ inline void _WriteBucket(void *buffer,
   const auto toStep = width * componentCount;
   const auto fromStep = bucketWidth * bucketComponentCount;
 
-  const auto copyOp = [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type {
+  const auto copyOp = [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type
+  {
     return _ConvertType<typename HdFormatType<TO>::type, typename HdFormatType<FROM>::type>(in);
   };
   const auto dataWidth = xe - xo;

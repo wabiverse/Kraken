@@ -37,37 +37,37 @@ struct HdPrman_Context;
 ///
 /// A representation for lights.
 ///
-class HdPrmanLight final : public HdLight 
+class HdPrmanLight final : public HdLight
 {
-public:
-    HdPrmanLight(SdfPath const& id, TfToken const& lightType);
-    virtual ~HdPrmanLight();
+ public:
+  HdPrmanLight(SdfPath const &id, TfToken const &lightType);
+  virtual ~HdPrmanLight();
 
-    /// Synchronizes state from the delegate to this object.
-    void Sync(HdSceneDelegate *sceneDelegate,
-                      HdRenderParam   *renderParam,
-                      HdDirtyBits     *dirtyBits) override;
+  /// Synchronizes state from the delegate to this object.
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
-    /// Returns the minimal set of dirty bits to place in the
-    /// change tracker for use in the first sync of this prim.
-    /// Typically this would be all dirty bits.
-    HdDirtyBits GetInitialDirtyBitsMask() const override;
+  /// Returns the minimal set of dirty bits to place in the
+  /// change tracker for use in the first sync of this prim.
+  /// Typically this would be all dirty bits.
+  HdDirtyBits GetInitialDirtyBitsMask() const override;
 
-    /// Return true if this light is valid.
-    bool IsValid() const;
+  /// Return true if this light is valid.
+  bool IsValid() const;
 
-    void Finalize(HdRenderParam *renderParam) override;
+  void Finalize(HdRenderParam *renderParam) override;
 
-private:
-    void _ResetLight(HdPrman_Context *context);
+ private:
+  void _ResetLight(HdPrman_Context *context);
 
-    const TfToken _hdLightType;
-    riley::LightShaderId _shaderId;
-    riley::LightInstanceId _instanceId;
+  const TfToken _hdLightType;
+  riley::LightShaderId _shaderId;
+  riley::LightInstanceId _instanceId;
 
-    TfToken _lightLink;
-    SdfPathVector _lightFilterPaths;
-    std::vector<TfToken> _lightFilterLinks;
+  TfToken _lightLink;
+  SdfPathVector _lightFilterPaths;
+  std::vector<TfToken> _lightFilterLinks;
 };
 
 

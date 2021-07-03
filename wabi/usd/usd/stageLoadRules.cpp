@@ -324,10 +324,10 @@ std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::iterator UsdStageLoadR
 std::ostream &operator<<(std::ostream &os, std::pair<SdfPath, UsdStageLoadRules::Rule> const &p)
 {
   return os << "(<" << p.first << ">, "
-            << (p.second == UsdStageLoadRules::AllRule  ? "AllRule" :
-                p.second == UsdStageLoadRules::OnlyRule ? "OnlyRule" :
-                p.second == UsdStageLoadRules::NoneRule ? "NoneRule" :
-                                                          "<invalid value>")
+            << (p.second == UsdStageLoadRules::AllRule ? "AllRule" :
+                                                         p.second == UsdStageLoadRules::OnlyRule ? "OnlyRule" :
+                                                                                                   p.second == UsdStageLoadRules::NoneRule ? "NoneRule" :
+                                                                                                                                             "<invalid value>")
             << ")";
 }
 

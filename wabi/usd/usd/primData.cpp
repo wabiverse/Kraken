@@ -221,9 +221,9 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
     Usd_IsDead(p) ? "expired " : (p->_flags[Usd_PrimActiveFlag] ? "" : "inactive "),
     p->GetTypeName().IsEmpty() ? "" : TfStringPrintf("'%s' ", p->GetTypeName().GetText()).c_str(),
     // XXX: Add applied schemas to this descriptor
-    isInstance      ? "instance " :
-    isInstanceProxy ? "instance proxy " :
-                      "",
+    isInstance ? "instance " :
+                 isInstanceProxy ? "instance proxy " :
+                                   "",
     isInPrototype ? "in prototype " : "",
     isInstanceProxy ? proxyPrimPath.GetText() : p->_path.GetText(),
     (isInstanceProxy || isInstance) ?

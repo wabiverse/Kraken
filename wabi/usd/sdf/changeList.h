@@ -161,42 +161,42 @@ class SdfChangeList
       }
 
       // SdfLayer
-      bool didChangeIdentifier   : 1;
+      bool didChangeIdentifier : 1;
       bool didChangeResolvedPath : 1;
-      bool didReplaceContent     : 1;
-      bool didReloadContent      : 1;
+      bool didReplaceContent : 1;
+      bool didReloadContent : 1;
 
       // SdfLayer, SdfPrimSpec, SdfRelationshipTarget.
-      bool didReorderChildren   : 1;
+      bool didReorderChildren : 1;
       bool didReorderProperties : 1;
 
       // SdfPrimSpec, SdfPropertySpec
       bool didRename : 1;
 
       // SdfPrimSpec
-      bool didChangePrimVariantSets  : 1;
+      bool didChangePrimVariantSets : 1;
       bool didChangePrimInheritPaths : 1;
-      bool didChangePrimSpecializes  : 1;
-      bool didChangePrimReferences   : 1;
+      bool didChangePrimSpecializes : 1;
+      bool didChangePrimReferences : 1;
 
       // SdfPropertySpec
       bool didChangeAttributeTimeSamples : 1;
-      bool didChangeAttributeConnection  : 1;
-      bool didChangeRelationshipTargets  : 1;
-      bool didAddTarget                  : 1;
-      bool didRemoveTarget               : 1;
+      bool didChangeAttributeConnection : 1;
+      bool didChangeRelationshipTargets : 1;
+      bool didAddTarget : 1;
+      bool didRemoveTarget : 1;
 
       // SdfPrimSpec add/remove
-      bool didAddInertPrim       : 1;
-      bool didAddNonInertPrim    : 1;
-      bool didRemoveInertPrim    : 1;
+      bool didAddInertPrim : 1;
+      bool didAddNonInertPrim : 1;
+      bool didRemoveInertPrim : 1;
       bool didRemoveNonInertPrim : 1;
 
       // Property add/remove
-      bool didAddPropertyWithOnlyRequiredFields    : 1;
-      bool didAddProperty                          : 1;
+      bool didAddPropertyWithOnlyRequiredFields : 1;
+      bool didAddProperty : 1;
       bool didRemovePropertyWithOnlyRequiredFields : 1;
-      bool didRemoveProperty                       : 1;
+      bool didRemoveProperty : 1;
     };
 
     _Flags flags;

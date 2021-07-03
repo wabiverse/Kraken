@@ -886,13 +886,11 @@ int main(int argc, char const *argv[])
   // Set defaults for arraySizeLimit and timeSamplesSizeLimit.
   if (arraySizeLimit == -2 /* unset */)
   {
-    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
-                                                                                       0;
+    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
   }
   if (timeSamplesSizeLimit == -2 /* unset */)
   {
-    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
-                                                                                             0;
+    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
   }
 
   ReportParams params;

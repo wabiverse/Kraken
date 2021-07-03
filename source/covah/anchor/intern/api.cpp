@@ -6371,9 +6371,9 @@ static bool ANCHOR::UpdateWindowManualResize(ANCHOR_Window *window,
 
     // Only lower-left grip is visible before hovering/activating
     if (resize_grip_n == 0 || held || hovered)
-      resize_grip_col[resize_grip_n] = GetColorU32(held    ? ANCHOR_Col_ResizeGripActive :
-                                                   hovered ? ANCHOR_Col_ResizeGripHovered :
-                                                             ANCHOR_Col_ResizeGrip);
+      resize_grip_col[resize_grip_n] = GetColorU32(held ? ANCHOR_Col_ResizeGripActive :
+                                                          hovered ? ANCHOR_Col_ResizeGripHovered :
+                                                                    ANCHOR_Col_ResizeGrip);
   }
   for (int border_n = 0; border_n < resize_border_count; border_n++)
   {
@@ -7142,7 +7142,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, ANCHOR_WindowFlags flags)
     // Lock window rounding for the frame (so that altering them doesn't cause inconsistencies)
     // Large values tend to lead to variety of artifacts and are not recommended.
     window->WindowRounding = (flags & ANCHOR_WindowFlags_ChildWindow) ? style.ChildRounding :
-                             ((flags & ANCHOR_WindowFlags_Popup) && !(flags & ANCHOR_WindowFlags_Modal)) ?
+                                                                        ((flags & ANCHOR_WindowFlags_Popup) && !(flags & ANCHOR_WindowFlags_Modal)) ?
                                                                         style.PopupRounding :
                                                                         style.WindowRounding;
 
@@ -9976,12 +9976,12 @@ GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const GfVec2f &ref_pos,
         continue;
 
       GfVec2f pos;
-      pos[0] = (dir == ANCHOR_Dir_Left)  ? r_avoid.Min[0] - size[0] :
-               (dir == ANCHOR_Dir_Right) ? r_avoid.Max[0] :
-                                           base_pos_clamped[0];
-      pos[1] = (dir == ANCHOR_Dir_Up)   ? r_avoid.Min[1] - size[1] :
-               (dir == ANCHOR_Dir_Down) ? r_avoid.Max[1] :
-                                          base_pos_clamped[1];
+      pos[0] = (dir == ANCHOR_Dir_Left) ? r_avoid.Min[0] - size[0] :
+                                          (dir == ANCHOR_Dir_Right) ? r_avoid.Max[0] :
+                                                                      base_pos_clamped[0];
+      pos[1] = (dir == ANCHOR_Dir_Up) ? r_avoid.Min[1] - size[1] :
+                                        (dir == ANCHOR_Dir_Down) ? r_avoid.Max[1] :
+                                                                   base_pos_clamped[1];
 
       // Clamp top-left corner of popup
       pos[0] = AnchorMax(pos[0], r_outer.Min[0]);
@@ -12649,13 +12649,13 @@ static void ImeSetInputScreenPosFn_DefaultImpl(int x, int y)
     if (HIMC himc = ::ImmGetContext(hwnd))
     {
       COMPOSITIONFORM cf;
-      #ifndef _WIN32
+#    ifndef _WIN32
       cf.ptCurrentPos[0] = x;
       cf.ptCurrentPos[1] = y;
-      #else
+#    else
       cf.ptCurrentPos.x = x;
       cf.ptCurrentPos.y = y;
-      #endif
+#    endif
       cf.dwStyle = CFS_FORCE_POSITION;
       ::ImmSetCompositionWindow(himc, &cf);
       ::ImmReleaseContext(hwnd, himc);

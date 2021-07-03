@@ -225,7 +225,7 @@ class Tf_MallocTagStringMatchTable
     _MatchString(const std::string &);
 
     std::string str;    // String to match.
-    bool allow    : 1;  // New result if str matches.
+    bool allow : 1;     // New result if str matches.
     bool wildcard : 1;  // str has a suffix wildcard.
   };
   std::vector<_MatchString> _matchStrings;

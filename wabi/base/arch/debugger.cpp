@@ -140,7 +140,7 @@ static void Arch_DebuggerInit()
     "movq %%rsi, %[rsi];\n"
     "movq %%rdx, %[rdx];\n"
     "movq %%rcx, %[rcx];\n"
-    : [rdi] "=m"(rdi), [rsi] "=m"(rsi), [rdx] "=m"(rdx), [rcx] "=m"(rcx)
+    : [ rdi ] "=m"(rdi), [ rsi ] "=m"(rsi), [ rdx ] "=m"(rdx), [ rcx ] "=m"(rcx)
     :  // input
     :  // clobbered
   );
@@ -157,7 +157,7 @@ static void Arch_DebuggerInit()
     "movq %[rdx], %%rdx;\n"
     "movq %[rcx], %%rcx;\n"
     :  // output
-    : [rdi] "m"(rdi), [rsi] "m"(rsi), [rdx] "m"(rdx), [rcx] "m"(rcx)
+    : [ rdi ] "m"(rdi), [ rsi ] "m"(rsi), [ rdx ] "m"(rdx), [ rcx ] "m"(rcx)
     :  // clobbered
   );
 #  endif

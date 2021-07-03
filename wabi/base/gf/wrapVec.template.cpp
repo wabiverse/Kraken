@@ -44,7 +44,7 @@
 #include "wabi/base/tf/wrapTypeHelpers.h"
 
 {
-  % if IS_FLOATING_POINT (SCL) - %
+  % if IS_FLOATING_POINT(SCL) - %
 }
 // Include headers for other vec types to support wrapping conversions and
 // operators.
@@ -217,7 +217,7 @@ static size_t __hash__({
 }
 
 {
-  % if IS_FLOATING_POINT (SCL) %
+  % if IS_FLOATING_POINT(SCL) %
 }
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(VecGetNormalized_overloads, GetNormalized, 0, 1);
@@ -577,7 +577,7 @@ void wrapVec{{SUFFIX}}()
   def("Dot", (Scalar(*)(const Vec &, const Vec &))GfDot);
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   def("CompDiv", (Vec(*)(const Vec &v1, const Vec &v2))GfCompDiv);
   def("CompMult", (Vec(*)(const Vec &v1, const Vec &v2))GfCompMult);
@@ -608,7 +608,7 @@ void wrapVec{{SUFFIX}}()
     .def_pickle(PickleSuite())
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   // Conversion from other vec types.
   {% for S in SCALARS if S != SCL %
@@ -631,7 +631,7 @@ void wrapVec{{SUFFIX}}()
     .def_readonly("dimension", _dimension)
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   // Comparison to other vec types.
   {% for S in SCALARS if S != SCL and ALLOW_IMPLICIT_CONVERSION(S, SCL) %
@@ -678,7 +678,7 @@ void wrapVec{{SUFFIX}}()
     .def("GetDot", (Scalar(*)(const Vec &, const Vec &))GfDot)
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   .def("GetComplement", &Vec::GetComplement)
     .def("GetLength", &Vec::GetLength)

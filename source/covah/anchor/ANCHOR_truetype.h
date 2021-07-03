@@ -3307,8 +3307,7 @@ static void *stbtt__hheap_alloc(stbtt__hheap *hh, size_t size, void *userdata)
   {
     if (hh->num_remaining_in_head_chunk == 0)
     {
-      int count = (size < 32 ? 2000 : size < 128 ? 800 :
-                                                   100);
+      int count = (size < 32 ? 2000 : size < 128 ? 800 : 100);
       stbtt__hheap_chunk *c = (stbtt__hheap_chunk *)STBTT_malloc(sizeof(stbtt__hheap_chunk) + size * count,
                                                                  userdata);
       if (c == NULL)

@@ -1168,7 +1168,7 @@ inline bool _SetFromValueOrArray(AtNode *node,
                                  const AtString &paramName,
                                  const VtValue &value,
                                  void (*f0)(AtNode *, const AtString, T0),
-                                 void (*...fs)(AtNode *, const AtString, T))
+                                 void (*... fs)(AtNode *, const AtString, T))
 {
   return _SetFromValueOrArray<T0>(node, paramName, value, std::forward<decltype(f0)>(f0)) ||
          _SetFromValueOrArray<T...>(node, paramName, value, std::forward<decltype(fs)>(fs)...);

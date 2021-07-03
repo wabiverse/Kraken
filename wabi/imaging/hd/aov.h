@@ -185,8 +185,8 @@ struct HdParsedAovToken
 
   TfToken name;
   bool isPrimvar : 1;
-  bool isLpe     : 1;
-  bool isShader  : 1;
+  bool isLpe : 1;
+  bool isShader : 1;
 };
 typedef std::vector<HdParsedAovToken> HdParsedAovTokenVector;
 

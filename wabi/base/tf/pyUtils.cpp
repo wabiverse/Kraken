@@ -203,8 +203,7 @@ int64_t TfPyNormalizeIndex(int64_t index, uint64_t size, bool throwError)
     TfPyThrowIndexError("Index out of range.");
   }
 
-  return index < 0 ? 0 : static_cast<uint64_t>(index) >= size ? size - 1 :
-                                                                index;
+  return index < 0 ? 0 : static_cast<uint64_t>(index) >= size ? size - 1 : index;
 }
 
 TF_API void Tf_PyWrapOnceImpl(boost::python::type_info const &type,

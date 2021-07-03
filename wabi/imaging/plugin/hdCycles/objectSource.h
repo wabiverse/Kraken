@@ -54,7 +54,7 @@ class HdCyclesObjectSource : public HdBufferSource
 
   /// Create new source, private attributes are going to be ignored and nullptr is returned
   template<typename T, typename... Args>
-  HdBbAttributeSource *CreateAttributeSource(const TfToken &name, Args &&...args)
+  HdBbAttributeSource *CreateAttributeSource(const TfToken &name, Args &&... args)
   {
     const std::string &name_str = name.GetString();
     if (name_str.find("__", 0) == 0)

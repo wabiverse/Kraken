@@ -350,20 +350,20 @@ inline T reinterpret_cast_no_cast_align_warning(void const *ptr) noexcept
 template<typename E, typename... Args>
 [[noreturn]] ROBIN_HOOD(NOINLINE)
 #if ROBIN_HOOD(HAS_EXCEPTIONS)
-  void doThrow(Args &&...args)
+  void doThrow(Args &&... args)
 {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
   throw E(std::forward<Args>(args)...);
 }
 #else
-  void doThrow(Args &&...ROBIN_HOOD_UNUSED(args) /*unused*/)
+  void doThrow(Args &&... ROBIN_HOOD_UNUSED(args) /*unused*/)
 {
   abort();
 }
 #endif
 
 template<typename E, typename T, typename... Args>
-T *assertNotNull(T *t, Args &&...args)
+T *assertNotNull(T *t, Args &&... args)
 {
   if (ROBIN_HOOD_UNLIKELY(nullptr == t))
   {
@@ -637,34 +637,37 @@ struct pair
   using second_type = T2;
 
   template<typename U1 = T1, typename U2 = T2, typename = typename std::enable_if<std::is_default_constructible<U1>::value && std::is_default_constructible<U2>::value>::type>
-  constexpr pair() noexcept(noexcept(U1()) &&noexcept(U2()))
+  constexpr pair() noexcept(noexcept(U1()) && noexcept(U2()))
     : first(),
       second()
   {}
 
   // pair constructors are explicit so we don't accidentally call this ctor when we don't have to.
   explicit constexpr pair(std::pair<T1, T2> const &o) noexcept(
-    noexcept(T1(std::declval<T1 const &>())) &&noexcept(T2(std::declval<T2 const &>())))
+    noexcept(T1(std::declval<T1 const &>())) && noexcept(T2(std::declval<T2 const &>())))
     : first(o.first),
       second(o.second)
   {}
 
   // pair constructors are explicit so we don't accidentally call this ctor when we don't have to.
   explicit constexpr pair(std::pair<T1, T2> &&o) noexcept(noexcept(
-    T1(std::move(std::declval<T1 &&>()))) &&noexcept(T2(std::move(std::declval<T2 &&>()))))
+                                                            T1(std::move(std::declval<T1 &&>()))) &&
+                                                          noexcept(T2(std::move(std::declval<T2 &&>()))))
     : first(std::move(o.first)),
       second(std::move(o.second))
   {}
 
   constexpr pair(T1 &&a, T2 &&b) noexcept(noexcept(
-    T1(std::move(std::declval<T1 &&>()))) &&noexcept(T2(std::move(std::declval<T2 &&>()))))
+                                            T1(std::move(std::declval<T1 &&>()))) &&
+                                          noexcept(T2(std::move(std::declval<T2 &&>()))))
     : first(std::move(a)),
       second(std::move(b))
   {}
 
   template<typename U1, typename U2>
   constexpr pair(U1 &&a, U2 &&b) noexcept(noexcept(T1(std::forward<U1>(
-    std::declval<U1 &&>()))) &&noexcept(T2(std::forward<U2>(std::declval<U2 &&>()))))
+                                            std::declval<U1 &&>()))) &&
+                                          noexcept(T2(std::forward<U2>(std::declval<U2 &&>()))))
     : first(std::forward<U1>(a)),
       second(std::forward<U2>(b))
   {}
@@ -688,9 +691,10 @@ struct pair
   pair(std::tuple<U1...> &a, std::tuple<U2...> &b, ROBIN_HOOD_STD::index_sequence<I1...> /*unused*/, ROBIN_HOOD_STD::index_sequence<I2...> /*unused*/) noexcept(
     noexcept(T1(std::forward<U1>(std::get<I1>(
       std::declval<std::tuple<
-        U1...> &>()))...)) &&noexcept(T2(std::
-                                           forward<U2>(std::get<I2>(
-                                             std::declval<std::tuple<U2...> &>()))...)))
+        U1...> &>()))...)) &&
+    noexcept(T2(std::
+                  forward<U2>(std::get<I2>(
+                    std::declval<std::tuple<U2...> &>()))...)))
     : first(std::forward<U1>(std::get<I1>(a))...),
       second(std::forward<U2>(std::get<I2>(b))...)
   {
@@ -731,8 +735,9 @@ inline constexpr bool operator!=(pair<A, B> const &x, pair<A, B> const &y)
 }
 template<typename A, typename B>
 inline constexpr bool operator<(pair<A, B> const &x, pair<A, B> const &y) noexcept(noexcept(
-  std::declval<A const &>() < std::declval<A const &>()) &&noexcept(std::declval<B const &>() <
-                                                                    std::declval<B const &>()))
+                                                                                     std::declval<A const &>() < std::declval<A const &>()) &&
+                                                                                   noexcept(std::declval<B const &>() <
+                                                                                            std::declval<B const &>()))
 {
   return x.first < y.first || (!(y.first < x.first) && x.second < y.second);
 }
@@ -1064,7 +1069,7 @@ class Table
   {
    public:
     template<typename... Args>
-    explicit DataNode(M &ROBIN_HOOD_UNUSED(map) /*unused*/, Args &&...args) noexcept(
+    explicit DataNode(M &ROBIN_HOOD_UNUSED(map) /*unused*/, Args &&... args) noexcept(
       noexcept(value_type(std::forward<Args>(args)...)))
       : mData(std::forward<Args>(args)...)
     {}
@@ -1156,7 +1161,7 @@ class Table
   {
    public:
     template<typename... Args>
-    explicit DataNode(M &map, Args &&...args)
+    explicit DataNode(M &map, Args &&... args)
       : mData(map.allocate())
     {
       ::new (static_cast<void *>(mData)) value_type(std::forward<Args>(args)...);
@@ -1686,7 +1691,7 @@ class Table
   using iterator = Iter<false>;
   using const_iterator = Iter<true>;
 
-  Table() noexcept(noexcept(Hash()) &&noexcept(KeyEqual()))
+  Table() noexcept(noexcept(Hash()) && noexcept(KeyEqual()))
     : WHash(),
       WKeyEqual()
   {
@@ -1701,7 +1706,7 @@ class Table
   explicit Table(
     size_t ROBIN_HOOD_UNUSED(bucket_count) /*unused*/,
     const Hash &h = Hash{},
-    const KeyEqual &equal = KeyEqual{}) noexcept(noexcept(Hash(h)) &&noexcept(KeyEqual(equal)))
+    const KeyEqual &equal = KeyEqual{}) noexcept(noexcept(Hash(h)) && noexcept(KeyEqual(equal)))
     : WHash(h),
       WKeyEqual(equal)
   {
@@ -2017,7 +2022,7 @@ class Table
   }
 
   template<typename... Args>
-  std::pair<iterator, bool> emplace(Args &&...args)
+  std::pair<iterator, bool> emplace(Args &&... args)
   {
     ROBIN_HOOD_TRACE(this)
     Node n{*this, std::forward<Args>(args)...};
@@ -2047,26 +2052,26 @@ class Table
   }
 
   template<typename... Args>
-  std::pair<iterator, bool> try_emplace(const key_type &key, Args &&...args)
+  std::pair<iterator, bool> try_emplace(const key_type &key, Args &&... args)
   {
     return try_emplace_impl(key, std::forward<Args>(args)...);
   }
 
   template<typename... Args>
-  std::pair<iterator, bool> try_emplace(key_type &&key, Args &&...args)
+  std::pair<iterator, bool> try_emplace(key_type &&key, Args &&... args)
   {
     return try_emplace_impl(std::move(key), std::forward<Args>(args)...);
   }
 
   template<typename... Args>
-  std::pair<iterator, bool> try_emplace(const_iterator hint, const key_type &key, Args &&...args)
+  std::pair<iterator, bool> try_emplace(const_iterator hint, const key_type &key, Args &&... args)
   {
     (void)hint;
     return try_emplace_impl(key, std::forward<Args>(args)...);
   }
 
   template<typename... Args>
-  std::pair<iterator, bool> try_emplace(const_iterator hint, key_type &&key, Args &&...args)
+  std::pair<iterator, bool> try_emplace(const_iterator hint, key_type &&key, Args &&... args)
   {
     (void)hint;
     return try_emplace_impl(std::move(key), std::forward<Args>(args)...);
@@ -2546,7 +2551,7 @@ class Table
   }
 
   template<typename OtherKey, typename... Args>
-  std::pair<iterator, bool> try_emplace_impl(OtherKey &&key, Args &&...args)
+  std::pair<iterator, bool> try_emplace_impl(OtherKey &&key, Args &&... args)
   {
     ROBIN_HOOD_TRACE(this)
     auto idxAndState = insertKeyPrepareEmptySpot(key);

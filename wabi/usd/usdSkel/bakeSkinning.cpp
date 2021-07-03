@@ -264,10 +264,10 @@ struct _Task
   }
 
  private:
-  bool _active                 : 1;
-  bool _required               : 1;
-  bool _mightBeTimeVarying     : 1;
-  bool _isFirstSample          : 1;
+  bool _active : 1;
+  bool _required : 1;
+  bool _mightBeTimeVarying : 1;
+  bool _isFirstSample : 1;
   bool _hasSampleAtCurrentTime : 1;
 };
 

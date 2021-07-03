@@ -172,8 +172,7 @@ Index of this file:
 // the demo.
 #  define IM_MIN(A, B) (((A) < (B)) ? (A) : (B))
 #  define IM_MAX(A, B) (((A) >= (B)) ? (A) : (B))
-#  define IM_CLAMP(V, MN, MX) ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : \
-                                                                (V))
+#  define IM_CLAMP(V, MN, MX) ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
 
 // Enforce cdecl calling convention for functions called by the standard library, in case
 // compilation settings changed the default to e.g. __vectorcall
@@ -3589,9 +3588,7 @@ static void ShowDemoWindowLayout()
         ANCHOR::PushID(n + line * 1000);
         char num_buf[16];
         sprintf(num_buf, "%d", n);
-        const char *label = (!(n % 15)) ? "FizzBuzz" : (!(n % 3)) ? "Fizz" :
-                                                     (!(n % 5))   ? "Buzz" :
-                                                                    num_buf;
+        const char *label = (!(n % 15)) ? "FizzBuzz" : (!(n % 3)) ? "Fizz" : (!(n % 5)) ? "Buzz" : num_buf;
         float hue = n * 0.05f;
         ANCHOR::PushStyleColor(ANCHOR_Col_Button, AnchorColor::HSV(hue, 0.6f, 0.6f).Value);
         ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, AnchorColor::HSV(hue, 0.7f, 0.7f).Value);
@@ -6168,8 +6165,7 @@ static void ShowDemoWindowTables()
         MyItem &item = items[n];
         item.ID = n;
         item.Name = template_items_names[template_n];
-        item.Quantity = (template_n == 3) ? 10 : (template_n == 4) ? 20 :
-                                                                     0;  // Assign default quantities
+        item.Quantity = (template_n == 3) ? 10 : (template_n == 4) ? 20 : 0;  // Assign default quantities
       }
     }
 

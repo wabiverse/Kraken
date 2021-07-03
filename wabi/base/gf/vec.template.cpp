@@ -86,7 +86,7 @@ bool
 { % endfor % }
 
 {
-  % if IS_FLOATING_POINT (SCL) and DIM == 3 %
+  % if IS_FLOATING_POINT(SCL) and DIM == 3 %
 }
 
 bool

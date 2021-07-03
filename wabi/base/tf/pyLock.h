@@ -154,7 +154,7 @@ class TfPyLock
 
   PyGILState_STATE _gilState;
   PyThreadState *_savedState;
-  bool _acquired        : 1;
+  bool _acquired : 1;
   bool _allowingThreads : 1;
 };
 

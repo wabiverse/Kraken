@@ -783,7 +783,7 @@ HdPhGLSLProgramSharedPtr HdPh_CodeGen::Compile(HdPhResourceRegistry *const regis
     }
     default:  // points, basis curves
               // do nothing. no additional code needs to be generated.
-      ;
+              ;
   }
 
   // generate drawing coord and accessors

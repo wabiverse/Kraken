@@ -1084,9 +1084,9 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
   for (size_t i = 0; i < numCornersToCheck; ++i)
   {
     GfVec2d pickPoint = (i == 0) ? GfVec2d(-1.0, -1.0) :
-                        (i == 1) ? GfVec2d(-1.0, 1.0) :
-                        (i == 2) ? GfVec2d(1.0, 1.0) :
-                                   GfVec2d(1.0, -1.0);
+                                   (i == 1) ? GfVec2d(-1.0, 1.0) :
+                                              (i == 2) ? GfVec2d(1.0, 1.0) :
+                                                         GfVec2d(1.0, -1.0);
     GfRay pickRay = ComputePickRay(pickPoint);
     double distance;
     if (pickRay.Intersect(p0, p1, p2, &distance, NULL, NULL))

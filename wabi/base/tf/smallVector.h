@@ -533,7 +533,7 @@ class TfSmallVector : public TfSmallVectorBase
   /// Emplace an entry at the back of the vector.
   ///
   template<typename... Args>
-  void emplace_back(Args &&...args)
+  void emplace_back(Args &&... args)
   {
     if (size() == capacity())
     {

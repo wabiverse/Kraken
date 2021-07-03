@@ -75,7 +75,7 @@ class HgiMetalShaderGenerator final : public HgiShaderGenerator
   HgiMetalShaderSectionUniquePtrVector *GetShaderSections();
 
   template<typename SectionType, typename... T>
-  SectionType *CreateShaderSection(T &&...t);
+  SectionType *CreateShaderSection(T &&... t);
 
  protected:
   HGIMETAL_API

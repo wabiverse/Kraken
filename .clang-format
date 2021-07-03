@@ -167,7 +167,7 @@ MaxEmptyLinesToKeep: 2
 
 # Setup consecutive alignment 
 #AlignConsecutiveAssignments: true
-AlignConsecutiveBitFields: true
+#AlignConsecutiveBitFields: true
 
 #ConstructorInitializerAllOnOneLineOrOnePerLine: true
 BreakConstructorInitializersBeforeComma: false

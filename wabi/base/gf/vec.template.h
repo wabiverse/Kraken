@@ -50,7 +50,7 @@
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/wabi.h"
 {
-  % if IS_FLOATING_POINT (SCL) - %
+  % if IS_FLOATING_POINT(SCL) - %
 }
 #include "wabi/base/gf/math.h"
 {
@@ -65,7 +65,7 @@
 
 #include <cstddef>
 {
-  % if IS_FLOATING_POINT (SCL) - %
+  % if IS_FLOATING_POINT(SCL) - %
 }
 #include <cmath>
 {
@@ -137,14 +137,14 @@ class
   constexpr explicit {{VEC}}(Scl const *p)
     : _data{{{LIST("p[%(i)s]")}}} {}
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   {% for S in SCALARS if S != SCL %
   }
 
   /// {{ "Implicitly convert" if ALLOW_IMPLICIT_CONVERSION(S, SCL) else "Construct" }} from {{
   /// VECNAME(DIM, S) }}.
-  {{ '' if ALLOW_IMPLICIT_CONVERSION (S, SCL) else 'explicit '}} {{VEC}}(class {
+  {{ '' if ALLOW_IMPLICIT_CONVERSION(S, SCL) else 'explicit '}} {{VEC}}(class {
     {
       VECNAME(DIM, S)
     }
@@ -418,7 +418,7 @@ class
   }
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   /// Division by scalar.
   // TODO should divide by the scalar type.
@@ -532,7 +532,7 @@ class
   }
 
   {
-    % if IS_FLOATING_POINT (SCL) %
+    % if IS_FLOATING_POINT(SCL) %
   }
   /// Length
   {
@@ -647,7 +647,7 @@ GF_API std::ostream &operator<<(std::ostream &, {
 } const &);
 
 {
-  % if IS_FLOATING_POINT (SCL) %
+  % if IS_FLOATING_POINT(SCL) %
 }
 
 WABI_NAMESPACE_END
@@ -743,7 +743,7 @@ GfDot(
 }
 
 {
-  % if IS_FLOATING_POINT (SCL) %
+  % if IS_FLOATING_POINT(SCL) %
 }
 
 /// Returns the geometric length of \c v.

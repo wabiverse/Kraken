@@ -31,9 +31,9 @@ VERSION HISTORY
 #define SPIRV_REFLECT_H
 
 #ifdef __linux__
-# include <spirv/unified1/spirv.h>
+#  include <spirv/unified1/spirv.h>
 #elif _WIN32
-# include <spirv_cross/spirv.h>
+#  include <spirv_cross/spirv.h>
 #endif
 
 #include <stdint.h>

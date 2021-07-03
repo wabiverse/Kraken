@@ -338,9 +338,9 @@ bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
   TF_VERIFY(!_cpuVertexBuffer);
   _cpuVertexBuffer = VERTEX_BUFFER::Create(
     HdGetComponentCount(_source->GetTupleType().type),
-    _interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX  ? subdivision->GetNumVertices() :
-    _interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING ? subdivision->GetNumVarying() :
-                                                               subdivision->GetMaxNumFaceVarying());
+    _interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX ? subdivision->GetNumVertices() :
+                                                              _interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING ? subdivision->GetNumVarying() :
+                                                                                                                         subdivision->GetMaxNumFaceVarying());
 
   subdivision->RefineCPU(_source, _cpuVertexBuffer, _interpolation, _fvarChannel);
 

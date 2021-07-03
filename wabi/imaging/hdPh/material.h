@@ -109,10 +109,10 @@ class HdPhMaterial final : public HdMaterial
 
   HdPhSurfaceShaderSharedPtr _surfaceShader;
 
-  bool _isInitialized             : 1;
-  bool _hasPtex                   : 1;
+  bool _isInitialized : 1;
+  bool _hasPtex : 1;
   bool _hasLimitSurfaceEvaluation : 1;
-  bool _hasDisplacement           : 1;
+  bool _hasDisplacement : 1;
 
   TfToken _materialTag;
   size_t _textureHash;

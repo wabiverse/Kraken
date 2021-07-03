@@ -323,7 +323,7 @@ class signal_accumulator
   ///
   /// @param args   Arguments to propagate to the slots of the
   ///               underlying when triggering the signal.
-  result_type operator()(A const &...args) const
+  result_type operator()(A const &... args) const
   {
     return _signal.trigger_with_accumulator(_init, _func, args...);
   }
@@ -449,7 +449,7 @@ class signal_type<P, R(A...)>
   ///
   /// @param args   Arguments that will be propagated to the
   ///               connected slots when they are called.
-  void operator()(A const &...args) const
+  void operator()(A const &... args) const
   {
     for (auto const &slot : copy_slots())
     {
@@ -510,7 +510,7 @@ class signal_type<P, R(A...)>
   ///               must be either copyable or moveable.
   /// @param args   The arguments to propagate to the slots.
   template<class C>
-  C aggregate(A const &...args) const
+  C aggregate(A const &... args) const
   {
     static_assert(std::is_same<R, void>::value == false,
                   "Unable to aggregate slot return values with 'void' as return type.");
@@ -608,7 +608,7 @@ class signal_type<P, R(A...)>
   typename signal_accumulator<signal_type, T, F, A...>::result_type trigger_with_accumulator(
     T value,
     F &func,
-    A const &...args) const
+    A const &... args) const
   {
     for (auto const &slot : copy_slots())
     {

@@ -143,9 +143,7 @@ struct Vt_ShapeData
 {
   unsigned int GetRank() const
   {
-    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 :
-                                 otherDims[2] == 0   ? 3 :
-                                                       4;
+    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 : otherDims[2] == 0 ? 3 : 4;
   }
   bool operator==(Vt_ShapeData const &other) const
   {

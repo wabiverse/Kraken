@@ -120,7 +120,7 @@ static SdfStringListOp _GetClipSets(const UsdClipsAPI &self)
 }
 
 template<class... Args>
-static VtArray<SdfAssetPath> _GetClipAssetPaths(const UsdClipsAPI &self, const Args &...args)
+static VtArray<SdfAssetPath> _GetClipAssetPaths(const UsdClipsAPI &self, const Args &... args)
 {
   VtArray<SdfAssetPath> result;
   self.GetClipAssetPaths(&result, args...);
@@ -128,7 +128,7 @@ static VtArray<SdfAssetPath> _GetClipAssetPaths(const UsdClipsAPI &self, const A
 }
 
 template<class... Args>
-static void _SetClipAssetPaths(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
+static void _SetClipAssetPaths(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &... args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->AssetArray);
   if (!v.IsHolding<VtArray<SdfAssetPath>>())
@@ -141,7 +141,7 @@ static void _SetClipAssetPaths(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Ar
 }
 
 template<class... Args>
-static std::string _GetClipPrimPath(const UsdClipsAPI &self, const Args &...args)
+static std::string _GetClipPrimPath(const UsdClipsAPI &self, const Args &... args)
 {
   std::string result;
   self.GetClipPrimPath(&result, args...);
@@ -149,7 +149,7 @@ static std::string _GetClipPrimPath(const UsdClipsAPI &self, const Args &...args
 }
 
 template<class... Args>
-static TfPyObjWrapper _GetClipActive(const UsdClipsAPI &self, const Args &...args)
+static TfPyObjWrapper _GetClipActive(const UsdClipsAPI &self, const Args &... args)
 {
   VtVec2dArray result;
   self.GetClipActive(&result, args...);
@@ -157,7 +157,7 @@ static TfPyObjWrapper _GetClipActive(const UsdClipsAPI &self, const Args &...arg
 }
 
 template<class... Args>
-static void _SetClipActive(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
+static void _SetClipActive(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &... args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Double2Array);
   if (!v.IsHolding<VtVec2dArray>())
@@ -170,7 +170,7 @@ static void _SetClipActive(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &
 }
 
 template<class... Args>
-static TfPyObjWrapper _GetClipTimes(const UsdClipsAPI &self, const Args &...args)
+static TfPyObjWrapper _GetClipTimes(const UsdClipsAPI &self, const Args &... args)
 {
   VtVec2dArray result;
   self.GetClipTimes(&result, args...);
@@ -178,7 +178,7 @@ static TfPyObjWrapper _GetClipTimes(const UsdClipsAPI &self, const Args &...args
 }
 
 template<class... Args>
-static void _SetClipTimes(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
+static void _SetClipTimes(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &... args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Double2Array);
   if (!v.IsHolding<VtVec2dArray>())
@@ -191,7 +191,7 @@ static void _SetClipTimes(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &.
 }
 
 template<class... Args>
-static SdfAssetPath _GetClipManifestAssetPath(const UsdClipsAPI &self, const Args &...args)
+static SdfAssetPath _GetClipManifestAssetPath(const UsdClipsAPI &self, const Args &... args)
 {
   SdfAssetPath manifestAssetPath;
   self.GetClipManifestAssetPath(&manifestAssetPath, args...);
@@ -199,7 +199,7 @@ static SdfAssetPath _GetClipManifestAssetPath(const UsdClipsAPI &self, const Arg
 }
 
 template<class... Args>
-static bool _GetInterpolateMissingClipValues(const UsdClipsAPI &self, const Args &...args)
+static bool _GetInterpolateMissingClipValues(const UsdClipsAPI &self, const Args &... args)
 {
   bool interpolate = false;
   self.GetInterpolateMissingClipValues(&interpolate, args...);
@@ -207,7 +207,7 @@ static bool _GetInterpolateMissingClipValues(const UsdClipsAPI &self, const Args
 }
 
 template<class... Args>
-static void _SetClipTemplateAssetPath(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &...args)
+static void _SetClipTemplateAssetPath(UsdClipsAPI &self, TfPyObjWrapper pyVal, const Args &... args)
 {
   VtValue v = UsdPythonToSdfType(pyVal, SdfValueTypeNames->String);
   if (!v.IsHolding<std::string>())
@@ -220,7 +220,7 @@ static void _SetClipTemplateAssetPath(UsdClipsAPI &self, TfPyObjWrapper pyVal, c
 }
 
 template<class... Args>
-static std::string _GetClipTemplateAssetPath(const UsdClipsAPI &self, const Args &...args)
+static std::string _GetClipTemplateAssetPath(const UsdClipsAPI &self, const Args &... args)
 {
   std::string clipTemplateAssetPath;
   self.GetClipTemplateAssetPath(&clipTemplateAssetPath, args...);
@@ -228,7 +228,7 @@ static std::string _GetClipTemplateAssetPath(const UsdClipsAPI &self, const Args
 }
 
 template<class... Args>
-static double _GetClipTemplateStride(const UsdClipsAPI &self, const Args &...args)
+static double _GetClipTemplateStride(const UsdClipsAPI &self, const Args &... args)
 {
   double clipTemplateStride;
   self.GetClipTemplateStride(&clipTemplateStride, args...);
@@ -236,7 +236,7 @@ static double _GetClipTemplateStride(const UsdClipsAPI &self, const Args &...arg
 }
 
 template<class... Args>
-static double _GetClipTemplateActiveOffset(const UsdClipsAPI &self, const Args &...args)
+static double _GetClipTemplateActiveOffset(const UsdClipsAPI &self, const Args &... args)
 {
   double clipTemplateActiveOffset;
   self.GetClipTemplateActiveOffset(&clipTemplateActiveOffset, args...);
@@ -244,7 +244,7 @@ static double _GetClipTemplateActiveOffset(const UsdClipsAPI &self, const Args &
 }
 
 template<class... Args>
-static double _GetClipTemplateStartTime(const UsdClipsAPI &self, const Args &...args)
+static double _GetClipTemplateStartTime(const UsdClipsAPI &self, const Args &... args)
 {
   double clipTemplateStartTime;
   self.GetClipTemplateStartTime(&clipTemplateStartTime, args...);
@@ -252,7 +252,7 @@ static double _GetClipTemplateStartTime(const UsdClipsAPI &self, const Args &...
 }
 
 template<class... Args>
-static double _GetClipTemplateEndTime(const UsdClipsAPI &self, const Args &...args)
+static double _GetClipTemplateEndTime(const UsdClipsAPI &self, const Args &... args)
 {
   double clipTemplateEndTime;
   self.GetClipTemplateEndTime(&clipTemplateEndTime, args...);

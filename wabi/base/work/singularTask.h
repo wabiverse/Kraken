@@ -75,7 +75,7 @@ class WorkSingularTask
 #else  // doxygen
 
   template<class Callable, class... Args>
-  WorkSingularTask(WorkDispatcher &d, Callable &&c, Args &&...args)
+  WorkSingularTask(WorkDispatcher &d, Callable &&c, Args &&... args)
     : _waker(_MakeWaker(d, std::bind(std::forward<Callable>(c), std::forward<Args>(args)...))),
       _count(0)
   {}

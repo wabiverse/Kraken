@@ -38,54 +38,59 @@ struct HdPrman_Context;
 ///
 /// A representation for materials (including displacement) in prman.
 ///
-class HdPrmanMaterial final : public HdMaterial 
+class HdPrmanMaterial final : public HdMaterial
 {
-public:
-    HdPrmanMaterial(SdfPath const& id);
-    virtual ~HdPrmanMaterial();
+ public:
+  HdPrmanMaterial(SdfPath const &id);
+  virtual ~HdPrmanMaterial();
 
-    /// Synchronizes state from the delegate to this object.
-    virtual void Sync(HdSceneDelegate *sceneDelegate,
-                      HdRenderParam   *renderParam,
-                      HdDirtyBits     *dirtyBits) override;
+  /// Synchronizes state from the delegate to this object.
+  virtual void Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits) override;
 
-    /// Returns the minimal set of dirty bits to place in the
-    /// change tracker for use in the first sync of this prim.
-    /// Typically this would be all dirty bits.
-    virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+  /// Returns the minimal set of dirty bits to place in the
+  /// change tracker for use in the first sync of this prim.
+  /// Typically this would be all dirty bits.
+  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
-    riley::MaterialId GetMaterialId() const { return _materialId; }
-    riley::DisplacementId GetDisplacementId() const { return _displacementId; }
+  riley::MaterialId GetMaterialId() const
+  {
+    return _materialId;
+  }
+  riley::DisplacementId GetDisplacementId() const
+  {
+    return _displacementId;
+  }
 
-    /// Return true if this material is valid.
-    bool IsValid() const;
+  /// Return true if this material is valid.
+  bool IsValid() const;
 
-    virtual void Finalize(HdRenderParam *renderParam) override;
+  virtual void Finalize(HdRenderParam *renderParam) override;
 
-    /// Return the static list of tokens supported.
-    static TfTokenVector const& GetShaderSourceTypes();
+  /// Return the static list of tokens supported.
+  static TfTokenVector const &GetShaderSourceTypes();
 
-    /// Get material filtering chain.
-    static MatfiltFilterChain GetFilterChain();
+  /// Get material filtering chain.
+  static MatfiltFilterChain GetFilterChain();
 
-    /// Set material filtering chain.
-    static void SetFilterChain(MatfiltFilterChain const& chain);
+  /// Set material filtering chain.
+  static void SetFilterChain(MatfiltFilterChain const &chain);
 
-private:
-    void _ResetMaterial(HdPrman_Context *context);
+ private:
+  void _ResetMaterial(HdPrman_Context *context);
 
-    riley::MaterialId _materialId;
-    riley::DisplacementId _displacementId;
+  riley::MaterialId _materialId;
+  riley::DisplacementId _displacementId;
 };
 
 /// Helper function for converting an HdMaterialNetwork into Riley shading
 /// nodes. Lights and light filters, in addition to materials, need to be able
 /// to perform this conversion.
-bool
-HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(
-    HdMaterialNetwork2 const& network,
-    SdfPath const& nodePath,
-    std::vector<riley::ShadingNode> *result);
+bool HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(
+  HdMaterialNetwork2 const &network,
+  SdfPath const &nodePath,
+  std::vector<riley::ShadingNode> *result);
 
 WABI_NAMESPACE_END
 

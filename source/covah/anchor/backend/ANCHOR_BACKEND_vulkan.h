@@ -56,8 +56,8 @@ ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_Init(ANCHOR_ImplVulkan_InitInfo *info,
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_Shutdown();
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_NewFrame();
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
-                                                      VkCommandBuffer command_buffer,
-                                                      VkPipeline pipeline = VK_NULL_HANDLE);
+                                                         VkCommandBuffer command_buffer,
+                                                         VkPipeline pipeline = VK_NULL_HANDLE);
 ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer);
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_DestroyFontUploadObjects();
 
@@ -70,26 +70,26 @@ ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_SetMinImageCount(uint32_t min_image_co
  * Optional: load Vulkan functions with a custom function loader
  * This is only useful with ANCHOR_IMPL_VULKAN_NO_PROTOTYPES / VK_NO_PROTOTYPES */
 ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_LoadFunctions(PFN_vkVoidFunction (*loader_func)(const char *fn_name,
-                                                                                       void *data),
-                                                     void *data = NULL);
+                                                                                          void *data),
+                                                        void *data = NULL);
 
 struct ANCHOR_VulkanGPU_Frame;
 struct ANCHOR_VulkanGPU_Surface;
 
 // Helpers
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkanH_CreateOrResizeWindow(VkInstance instance,
-                                                             VkPhysicalDevice physical_device,
-                                                             VkDevice device,
-                                                             ANCHOR_VulkanGPU_Surface *wnd,
-                                                             uint32_t queue_family,
-                                                             const VkAllocationCallbacks *allocator,
-                                                             int w,
-                                                             int h,
-                                                             uint32_t min_image_count);
+                                                                VkPhysicalDevice physical_device,
+                                                                VkDevice device,
+                                                                ANCHOR_VulkanGPU_Surface *wnd,
+                                                                uint32_t queue_family,
+                                                                const VkAllocationCallbacks *allocator,
+                                                                int w,
+                                                                int h,
+                                                                uint32_t min_image_count);
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkanH_DestroyWindow(VkInstance instance,
-                                                      VkDevice device,
-                                                      ANCHOR_VulkanGPU_Surface *wnd,
-                                                      const VkAllocationCallbacks *allocator);
+                                                         VkDevice device,
+                                                         ANCHOR_VulkanGPU_Surface *wnd,
+                                                         const VkAllocationCallbacks *allocator);
 ANCHOR_BACKEND_API VkSurfaceFormatKHR
 ANCHOR_ImplVulkanH_SelectSurfaceFormat(VkPhysicalDevice physical_device,
                                        VkSurfaceKHR surface,
@@ -97,9 +97,9 @@ ANCHOR_ImplVulkanH_SelectSurfaceFormat(VkPhysicalDevice physical_device,
                                        int request_formats_count,
                                        VkColorSpaceKHR request_color_space);
 ANCHOR_BACKEND_API VkPresentModeKHR ANCHOR_ImplVulkanH_SelectPresentMode(VkPhysicalDevice physical_device,
-                                                                      VkSurfaceKHR surface,
-                                                                      const VkPresentModeKHR *request_modes,
-                                                                      int request_modes_count);
+                                                                         VkSurfaceKHR surface,
+                                                                         const VkPresentModeKHR *request_modes,
+                                                                         int request_modes_count);
 ANCHOR_BACKEND_API int ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(VkPresentModeKHR present_mode);
 
 // Helper structure to hold the data needed by one rendering frame

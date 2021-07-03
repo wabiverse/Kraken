@@ -36,93 +36,99 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPrman_Field final : public HdField {
-public:
-    HdPrman_Field(TfToken const& typeId, SdfPath const& id);
-    virtual void Sync(HdSceneDelegate *sceneDelegate,
-                      HdRenderParam *renderParam,
-                      HdDirtyBits *dirtyBits) override;
-    virtual void Finalize(HdRenderParam *renderParam) override;
-    virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
-private:
-    TfToken const _typeId;
+class HdPrman_Field final : public HdField
+{
+ public:
+  HdPrman_Field(TfToken const &typeId, SdfPath const &id);
+  virtual void Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits) override;
+  virtual void Finalize(HdRenderParam *renderParam) override;
+  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+
+ private:
+  TfToken const _typeId;
 };
 
-class HdPrman_Volume final : public HdPrman_Gprim<HdVolume> {
-public:
-    typedef HdPrman_Gprim<HdVolume> BASE;
-public:
-    HF_MALLOC_TAG_NEW("new HdPrman_Volume");
-    HdPrman_Volume(SdfPath const& id);
-    virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
+{
+ public:
+  typedef HdPrman_Gprim<HdVolume> BASE;
 
-    /// The types of volumes that can be emitted to Prman are extensible, since
-    /// volumes are emitted via blobbydsos, which themselves are plugins to
-    /// Prman. So we allow the registration of handlers for volumes of different
-    /// types. The volumes are identified by the prim type of their fields.
-    /// Currently Hydra knows of two such types:
-    ///
-    ///    UsdVolImagingTokens->openvdbAsset
-    ///    UsdVolImagingTokens->field3dAsset
-    ///
-    /// Note, since a Volume prim can have multiple fields associated with it,
-    /// we require that all associated fields are of the same type. The code
-    /// rejects a volume if that is not the case and issues a warning.
-    ///
-    /// The emitter functions that can be registered are responsible to fill in
-    /// the RtParamList list with the k_Ri_type (name of the blobbydso) and any
-    /// parameters to this plugin (k_blobbydso_stringargs). The function is also
-    /// responsible for declaring the primvar for each field.
-    using HdPrman_VolumeTypeEmitter =
-                        void (*)(HdSceneDelegate *sceneDelegate,
-                                 SdfPath const& id,
-                                 HdVolumeFieldDescriptorVector const& fields,
-                                 RtPrimVarList* primvars);
+ public:
+  HF_MALLOC_TAG_NEW("new HdPrman_Volume");
+  HdPrman_Volume(SdfPath const &id);
+  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
-    /// Registers a new volume emitter. Returns true if the handler was
-    /// registered as the new handler. When \p overrideExisting is false, then
-    /// a new handler for a previously registered emitter will not be accepted.
-    static bool AddVolumeTypeEmitter(TfToken const& fieldPrimType,
-                                     HdPrman_VolumeTypeEmitter emitterFunc,
-                                     bool overrideExisting = false);
+  /// The types of volumes that can be emitted to Prman are extensible, since
+  /// volumes are emitted via blobbydsos, which themselves are plugins to
+  /// Prman. So we allow the registration of handlers for volumes of different
+  /// types. The volumes are identified by the prim type of their fields.
+  /// Currently Hydra knows of two such types:
+  ///
+  ///    UsdVolImagingTokens->openvdbAsset
+  ///    UsdVolImagingTokens->field3dAsset
+  ///
+  /// Note, since a Volume prim can have multiple fields associated with it,
+  /// we require that all associated fields are of the same type. The code
+  /// rejects a volume if that is not the case and issues a warning.
+  ///
+  /// The emitter functions that can be registered are responsible to fill in
+  /// the RtParamList list with the k_Ri_type (name of the blobbydso) and any
+  /// parameters to this plugin (k_blobbydso_stringargs). The function is also
+  /// responsible for declaring the primvar for each field.
+  using HdPrman_VolumeTypeEmitter =
+    void (*)(HdSceneDelegate *sceneDelegate,
+             SdfPath const &id,
+             HdVolumeFieldDescriptorVector const &fields,
+             RtPrimVarList *primvars);
 
-    /// Specialized subset of primvar types for volume fields
-    enum FieldType {
-        FloatType = 0,
-        IntType,
-        Float2Type,
-        Int2Type,
-        Float3Type,
-        Int3Type,
-        ColorType,
-        PointType,
-        NormalType,
-        VectorType,
-        Float4Type,
-        MatrixType,
-        StringType
-    };
+  /// Registers a new volume emitter. Returns true if the handler was
+  /// registered as the new handler. When \p overrideExisting is false, then
+  /// a new handler for a previously registered emitter will not be accepted.
+  static bool AddVolumeTypeEmitter(TfToken const &fieldPrimType,
+                                   HdPrman_VolumeTypeEmitter emitterFunc,
+                                   bool overrideExisting = false);
 
-    /// Helper method for emitter functions to declare a primvar for a field
-    static void DeclareFieldPrimvar(RtPrimVarList* primvars,
-                                    RtUString const& fieldName,
-                                    FieldType type);
+  /// Specialized subset of primvar types for volume fields
+  enum FieldType
+  {
+    FloatType = 0,
+    IntType,
+    Float2Type,
+    Int2Type,
+    Float3Type,
+    Int3Type,
+    ColorType,
+    PointType,
+    NormalType,
+    VectorType,
+    Float4Type,
+    MatrixType,
+    StringType
+  };
 
-protected:
-    virtual RtPrimVarList
-    _ConvertGeometry(HdPrman_Context *context,
-                      HdSceneDelegate *sceneDelegate,
-                      const SdfPath &id,
-                      RtUString *primType,
-                      std::vector<HdGeomSubset> *geomSubsets) override;
+  /// Helper method for emitter functions to declare a primvar for a field
+  static void DeclareFieldPrimvar(RtPrimVarList *primvars,
+                                  RtUString const &fieldName,
+                                  FieldType type);
 
-    virtual riley::MaterialId
-    _GetFallbackMaterial(HdPrman_Context *context) override {
-        return context->fallbackVolumeMaterial;
-    }
+ protected:
+  virtual RtPrimVarList
+  _ConvertGeometry(HdPrman_Context *context,
+                   HdSceneDelegate *sceneDelegate,
+                   const SdfPath &id,
+                   RtUString *primType,
+                   std::vector<HdGeomSubset> *geomSubsets) override;
 
-    using _VolumeEmitterMap = std::map<TfToken, HdPrman_VolumeTypeEmitter>;
-    static _VolumeEmitterMap& _GetVolumeEmitterMap();
+  virtual riley::MaterialId
+  _GetFallbackMaterial(HdPrman_Context *context) override
+  {
+    return context->fallbackVolumeMaterial;
+  }
+
+  using _VolumeEmitterMap = std::map<TfToken, HdPrman_VolumeTypeEmitter>;
+  static _VolumeEmitterMap &_GetVolumeEmitterMap();
 };
 
 WABI_NAMESPACE_END

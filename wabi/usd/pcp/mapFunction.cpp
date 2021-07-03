@@ -310,8 +310,8 @@ static SdfPath _Map(const SdfPath &path,
 
   SdfPath result;
   const SdfPath &target = bestIndex == -1 ? SdfPath::AbsoluteRootPath() :
-                          invert          ? pairs[bestIndex].first :
-                                            pairs[bestIndex].second;
+                                            invert ? pairs[bestIndex].first :
+                                                     pairs[bestIndex].second;
   if (bestIndex != -1)
   {
     const SdfPath &source = invert ? pairs[bestIndex].second : pairs[bestIndex].first;

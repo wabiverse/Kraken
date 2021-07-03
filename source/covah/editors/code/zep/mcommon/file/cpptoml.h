@@ -579,7 +579,7 @@ class base : public std::enable_shared_from_this<base>
   std::shared_ptr<const value<T>> as() const;
 
   template<class Visitor, class... Args>
-  void accept(Visitor &&visitor, Args &&...args) const;
+  void accept(Visitor &&visitor, Args &&... args) const;
 
 #if defined(CPPTOML_NO_RTTI)
   base_type type() const
@@ -3159,7 +3159,7 @@ template<class T, class... Ts>
 struct value_accept<T, Ts...>
 {
   template<class Visitor, class... Args>
-  static void accept(const base &b, Visitor &&visitor, Args &&...args)
+  static void accept(const base &b, Visitor &&visitor, Args &&... args)
   {
     if (auto v = b.as<T>())
     {
@@ -3177,7 +3177,7 @@ struct value_accept<T, Ts...>
  * class.
  */
 template<class Visitor, class... Args>
-void base::accept(Visitor &&visitor, Args &&...args) const
+void base::accept(Visitor &&visitor, Args &&... args) const
 {
   if (is_value())
   {

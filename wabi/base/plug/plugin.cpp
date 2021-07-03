@@ -85,10 +85,10 @@ constexpr char const *PlugPlugin::_GetPluginTypeDisplayName(_Type type)
 {
   return type == LibraryType ? "shared library" :
 #ifdef WITH_PYTHON
-         type == PythonType ? "python module" :
+                               type == PythonType ? "python module" :
 #endif  // WITH_PYTHON
-         type == ResourceType ? "resource" :
-                                "<invalid enum value>";
+                                                    type == ResourceType ? "resource" :
+                                                                           "<invalid enum value>";
 }
 
 template<class PluginMap>

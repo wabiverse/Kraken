@@ -19,7 +19,7 @@ class Registrar
   };
 
   template<typename T, typename... Args>
-  void Register(Args &&...args)
+  void Register(Args &&... args)
   {
     items[typeid(T)] = std::make_shared<T>(std::forward<Args>(args)...);
   }

@@ -25,11 +25,6 @@ if "%SHOW_HELP%" == "1" (
   goto EOF
 )
 
-if "%FORMAT%" == "1" (
-	call "%COVAH_DIR%\build_files\scripts\windows\format.cmd"
-	goto EOF
-)
-
 if "%DOCS%" == "1" (
 	call "%COVAH_DIR%\build_files\scripts\windows\build_docs.cmd"
 	goto EOF
@@ -55,6 +50,12 @@ if "%BUILD_VS_YEAR%" == "" (
 		echo Visual Studio %BUILD_VS_YEAR% not found ^(try with the 'verbose' switch for more information^)
 		goto EOF
 	)
+)
+
+if "%FORMAT%" == "1" (
+	call "%COVAH_DIR%\build_files\scripts\windows\check_libraries.cmd"
+	call "%COVAH_DIR%\build_files\scripts\windows\format.cmd"
+	goto EOF
 )
 
 if "%BUILD_ENVIRONMENT%" == "1" (

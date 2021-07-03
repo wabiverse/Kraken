@@ -1022,9 +1022,9 @@ static unsigned int stbiw__zhash(unsigned char *data)
 #    define stbiw__zlib_huff4(n) stbiw__zlib_huffa(0xc0 + (n)-280, 8)
 #    define stbiw__zlib_huff(n) \
       ((n) <= 143 ? stbiw__zlib_huff1(n) : \
-       (n) <= 255 ? stbiw__zlib_huff2(n) : \
-       (n) <= 279 ? stbiw__zlib_huff3(n) : \
-                    stbiw__zlib_huff4(n))
+                    (n) <= 255 ? stbiw__zlib_huff2(n) : \
+                                 (n) <= 279 ? stbiw__zlib_huff3(n) : \
+                                              stbiw__zlib_huff4(n))
 #    define stbiw__zlib_huffb(n) ((n) <= 143 ? stbiw__zlib_huff1(n) : stbiw__zlib_huff2(n))
 
 #    define stbiw__ZHASH 16384
@@ -1755,18 +1755,15 @@ static int stbi_write_jpg_core(stbi__write_context *s,
   }
 
   quality = quality ? quality : 90;
-  quality = quality < 1 ? 1 : quality > 100 ? 100 :
-                                              quality;
+  quality = quality < 1 ? 1 : quality > 100 ? 100 : quality;
   quality = quality < 50 ? 5000 / quality : 200 - quality * 2;
 
   for (i = 0; i < 64; ++i)
   {
     int uvti, yti = (YQT[i] * quality + 50) / 100;
-    YTable[stbiw__jpg_ZigZag[i]] = (unsigned char)(yti < 1 ? 1 : yti > 255 ? 255 :
-                                                                             yti);
+    YTable[stbiw__jpg_ZigZag[i]] = (unsigned char)(yti < 1 ? 1 : yti > 255 ? 255 : yti);
     uvti = (UVQT[i] * quality + 50) / 100;
-    UVTable[stbiw__jpg_ZigZag[i]] = (unsigned char)(uvti < 1 ? 1 : uvti > 255 ? 255 :
-                                                                                uvti);
+    UVTable[stbiw__jpg_ZigZag[i]] = (unsigned char)(uvti < 1 ? 1 : uvti > 255 ? 255 : uvti);
   }
 
   for (row = 0, k = 0; row < 8; ++row)

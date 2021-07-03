@@ -598,8 +598,7 @@ static inline T AnchorMax(T lhs, T rhs)
 template<typename T>
 static inline T ImClamp(T v, T mn, T mx)
 {
-  return (v < mn) ? mn : (v > mx) ? mx :
-                                    v;
+  return (v < mn) ? mn : (v > mx) ? mx : v;
 }
 template<typename T>
 static inline T ImLerp(T a, T b, float t)
@@ -643,11 +642,11 @@ static inline wabi::GfVec2f AnchorMax(const wabi::GfVec2f &lhs, const wabi::GfVe
 static inline wabi::GfVec2f ImClamp(const wabi::GfVec2f &v, const wabi::GfVec2f &mn, wabi::GfVec2f mx)
 {
   return wabi::GfVec2f((v[0] < mn[0]) ? mn[0] :
-                       (v[0] > mx[0]) ? mx[0] :
-                                        v[0],
+                                        (v[0] > mx[0]) ? mx[0] :
+                                                         v[0],
                        (v[1] < mn[1]) ? mn[1] :
-                       (v[1] > mx[1]) ? mx[1] :
-                                        v[1]);
+                                        (v[1] > mx[1]) ? mx[1] :
+                                                         v[1]);
 }
 static inline wabi::GfVec2f ImLerp(const wabi::GfVec2f &a, const wabi::GfVec2f &b, float t)
 {
@@ -664,8 +663,7 @@ static inline wabi::GfVec4f ImLerp(const wabi::GfVec4f &a, const wabi::GfVec4f &
 }
 static inline float ImSaturate(float f)
 {
-  return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f :
-                                          f;
+  return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f;
 }
 static inline float ImLengthSqr(const wabi::GfVec2f &lhs)
 {
@@ -2961,7 +2959,7 @@ struct ANCHOR_API ANCHOR_Window
                                                  // submitted so we can measure their size
   AnchorS8 HiddenFramesForRenderOnly;            // Hide the window until frame N at Render() time only
   AnchorS8 DisableInputsFrames;                  // Disable window interactions for N frames
-  ANCHOR_Cond SetWindowPosAllowFlags  : 8;       // store acceptable condition flags for SetNextWindowPos() use.
+  ANCHOR_Cond SetWindowPosAllowFlags : 8;        // store acceptable condition flags for SetNextWindowPos() use.
   ANCHOR_Cond SetWindowSizeAllowFlags : 8;       // store acceptable condition flags for
                                                  // SetNextWindowSize() use.
   ANCHOR_Cond SetWindowCollapsedAllowFlags : 8;  // store acceptable condition flags for
@@ -3289,9 +3287,9 @@ struct ANCHOR_TableColumn
   AnchorS8 NavLayerCurrent;               // ANCHORNavLayer in 1 byte
   AnchorU8 AutoFitQueue;                  // Queue of 8 values for the next 8 frames to request auto-fit
   AnchorU8 CannotSkipItemsQueue;          // Queue of 8 values for the next 8 frames to disable Clipped/SkipItem
-  AnchorU8 SortDirection            : 2;  // ANCHOR_SortDirection_Ascending or ANCHOR_SortDirection_Descending
+  AnchorU8 SortDirection : 2;             // ANCHOR_SortDirection_Ascending or ANCHOR_SortDirection_Descending
   AnchorU8 SortDirectionsAvailCount : 2;  // Number of available sort directions (0 to 3)
-  AnchorU8 SortDirectionsAvailMask  : 4;  // Mask of available sort directions (1-bit each)
+  AnchorU8 SortDirectionsAvailMask : 4;   // Mask of available sort directions (1-bit each)
   AnchorU8 SortDirectionsAvailList;       // Ordered of available sort directions (2-bits each)
 
   ANCHOR_TableColumn()
@@ -3355,7 +3353,7 @@ struct ANCHOR_Table
   float RowMinHeight;  // Height submitted to TableNextRow()
   float RowTextBaseline;
   float RowIndentOffsetX;
-  ANCHOR_TableRowFlags RowFlags     : 16;  // Current row flags, see ANCHOR_TableRowFlags_
+  ANCHOR_TableRowFlags RowFlags : 16;  // Current row flags, see ANCHOR_TableRowFlags_
   ANCHOR_TableRowFlags LastRowFlags : 16;
   int RowBgColorCounter;    // Counter for alternating background colors (can be fast-forwarded by
                             // e.g clipper), not same as CurrentRow because header rows typically
@@ -3517,8 +3515,8 @@ struct ANCHOR_TableColumnSettings
   ANCHOR_TableColumnIdx DisplayOrder;
   ANCHOR_TableColumnIdx SortOrder;
   AnchorU8 SortDirection : 2;
-  AnchorU8 IsEnabled     : 1;  // "Visible" in ini file
-  AnchorU8 IsStretch     : 1;
+  AnchorU8 IsEnabled : 1;  // "Visible" in ini file
+  AnchorU8 IsStretch : 1;
 
   ANCHOR_TableColumnSettings()
   {

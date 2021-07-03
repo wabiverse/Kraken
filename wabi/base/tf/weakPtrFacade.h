@@ -190,7 +190,7 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
     return !(*this < p);
   }
 
-  using UnspecifiedBoolType = DataType *(TfWeakPtrFacade::*)(void) const;
+  using UnspecifiedBoolType = DataType *(TfWeakPtrFacade::*)(void)const;
 
   operator UnspecifiedBoolType() const
   {

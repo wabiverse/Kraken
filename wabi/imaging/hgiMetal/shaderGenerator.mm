@@ -36,7 +36,7 @@
 WABI_NAMESPACE_BEGIN
 
 template<typename SectionType, typename... T>
-SectionType *HgiMetalShaderGenerator::CreateShaderSection(T &&...t)
+SectionType *HgiMetalShaderGenerator::CreateShaderSection(T &&... t)
 {
   std::unique_ptr<SectionType> p = std::make_unique<SectionType>(std::forward<T>(t)...);
   SectionType *const result = p.get();

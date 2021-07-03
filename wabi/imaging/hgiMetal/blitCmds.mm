@@ -292,7 +292,7 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 
     ARCH_PRAGMA_PUSH
     ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND
-    [resource didModifyRange:range];
+      [resource didModifyRange:range];
     ARCH_PRAGMA_POP
   }
 }

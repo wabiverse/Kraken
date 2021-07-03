@@ -43,18 +43,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-/// Print message to standard error and abort program.
-///
-/// \param msg The reason for the failure.
-/// \param funcName The name of the function that \c Arch_Error was called from.
-/// \param lineNo The line number of the file that \c Arch_Error was called from.
-/// \param fileName The name of the file that \c Arch_Error was called from.
-///
-/// \private
-[[noreturn]] ARCH_API void Arch_Error(const char *msg,
-                                      const char *funcName,
-                                      size_t lineNo,
-                                      const char *fileName);
+  /// Print message to standard error and abort program.
+  ///
+  /// \param msg The reason for the failure.
+  /// \param funcName The name of the function that \c Arch_Error was called from.
+  /// \param lineNo The line number of the file that \c Arch_Error was called from.
+  /// \param fileName The name of the file that \c Arch_Error was called from.
+  ///
+  /// \private
+  [[noreturn]] ARCH_API void
+  Arch_Error(const char *msg,
+             const char *funcName,
+             size_t lineNo,
+             const char *fileName);
 
 /// Print warning message to standard error, but continue execution.
 ///

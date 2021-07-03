@@ -574,7 +574,7 @@ bool ANCHOR::BeginTableEx(const char *name,
   // - PadOuter+PadInner  | Pad ..Content.. Pad | Pad ..Content.. Pad |
   const bool pad_outer_x = (flags & ANCHOR_TableFlags_NoPadOuterX) ?
                              false :
-                           (flags & ANCHOR_TableFlags_PadOuterX) ?
+                             (flags & ANCHOR_TableFlags_PadOuterX) ?
                              true :
                              (flags & ANCHOR_TableFlags_BordersOuterV) != 0;
   const bool pad_inner_x = (flags & ANCHOR_TableFlags_NoPadInnerX) ? false : true;
@@ -2960,8 +2960,8 @@ void ANCHOR::TableDrawBorders(ANCHOR_Table *table)
       {
         draw_y2 = draw_y2_body;
         col = is_resized ? GetColorU32(ANCHOR_Col_SeparatorActive) :
-              is_hovered ? GetColorU32(ANCHOR_Col_SeparatorHovered) :
-                           table->BorderColorStrong;
+                           is_hovered ? GetColorU32(ANCHOR_Col_SeparatorHovered) :
+                                        table->BorderColorStrong;
       }
       else
       {
@@ -3213,8 +3213,8 @@ void ANCHOR::TableSortSpecsBuild(ANCHOR_Table *table)
   ANCHOR_TableTempData *temp_data = table->TempData;
   temp_data->SortSpecsMulti.resize(table->SortSpecsCount <= 1 ? 0 : table->SortSpecsCount);
   ANCHOR_TableColumnSortSpecs *sort_specs = (table->SortSpecsCount == 0) ? NULL :
-                                            (table->SortSpecsCount == 1) ? &temp_data->SortSpecsSingle :
-                                                                           temp_data->SortSpecsMulti.Data;
+                                                                           (table->SortSpecsCount == 1) ? &temp_data->SortSpecsSingle :
+                                                                                                          temp_data->SortSpecsMulti.Data;
   if (sort_specs != NULL)
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
@@ -3382,9 +3382,9 @@ void ANCHOR::TableHeader(const char *label)
     SetItemAllowOverlap();
   if (held || hovered || selected)
   {
-    const AnchorU32 col = GetColorU32(held    ? ANCHOR_Col_HeaderActive :
-                                      hovered ? ANCHOR_Col_HeaderHovered :
-                                                ANCHOR_Col_Header);
+    const AnchorU32 col = GetColorU32(held ? ANCHOR_Col_HeaderActive :
+                                             hovered ? ANCHOR_Col_HeaderHovered :
+                                                       ANCHOR_Col_Header);
     // RenderFrame(bb.Min, bb.Max, col, false, 0.0f);
     TableSetBgColor(ANCHOR_TableBgTarget_CellBg, col, table->CurrentColumn);
     RenderNavHighlight(bb, id, ANCHOR_NavHighlightFlags_TypeThin | ANCHOR_NavHighlightFlags_NoRounding);
@@ -4192,9 +4192,9 @@ void ANCHOR::DebugNodeTable(ANCHOR_Table *table)
                    column->ContentMaxXHeadersUsed - column->WorkMinX,
                    column->ContentMaxXHeadersIdeal - column->WorkMinX,
                    column->SortOrder,
-                   (column->SortDirection == ANCHOR_SortDirection_Ascending)  ? " (Asc)" :
-                   (column->SortDirection == ANCHOR_SortDirection_Descending) ? " (Des)" :
-                                                                                "",
+                   (column->SortDirection == ANCHOR_SortDirection_Ascending) ? " (Asc)" :
+                                                                               (column->SortDirection == ANCHOR_SortDirection_Descending) ? " (Des)" :
+                                                                                                                                            "",
                    column->UserID,
                    column->Flags,
                    (column->Flags & ANCHOR_TableColumnFlags_WidthStretch) ? "WidthStretch " : "",
@@ -4234,9 +4234,9 @@ void ANCHOR::DebugNodeTableSettings(ANCHOR_TableSettings *settings)
                n,
                column_settings->DisplayOrder,
                column_settings->SortOrder,
-               (sort_dir == ANCHOR_SortDirection_Ascending)  ? "Asc" :
-               (sort_dir == ANCHOR_SortDirection_Descending) ? "Des" :
-                                                               "---",
+               (sort_dir == ANCHOR_SortDirection_Ascending) ? "Asc" :
+                                                              (sort_dir == ANCHOR_SortDirection_Descending) ? "Des" :
+                                                                                                              "---",
                column_settings->IsEnabled,
                column_settings->IsStretch ? "Weight" : "Width ",
                column_settings->WidthOrWeight,
@@ -4669,9 +4669,9 @@ void ANCHOR::EndColumns()
       }
 
       // Draw column
-      const AnchorU32 col = GetColorU32(held    ? ANCHOR_Col_SeparatorActive :
-                                        hovered ? ANCHOR_Col_SeparatorHovered :
-                                                  ANCHOR_Col_Separator);
+      const AnchorU32 col = GetColorU32(held ? ANCHOR_Col_SeparatorActive :
+                                               hovered ? ANCHOR_Col_SeparatorHovered :
+                                                         ANCHOR_Col_Separator);
       const float xi = IM_FLOOR(x);
       window->DrawList->AddLine(GfVec2f(xi, y1 + 1.0f), GfVec2f(xi, y2), col);
     }

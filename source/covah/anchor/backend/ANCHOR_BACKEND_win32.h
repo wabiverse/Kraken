@@ -28,14 +28,14 @@
 
 #ifdef _WIN32
 
-ANCHOR_BACKEND_API bool     ANCHOR_ImplWin32_Init(void* hwnd);
-ANCHOR_BACKEND_API void     ANCHOR_ImplWin32_Shutdown();
-ANCHOR_BACKEND_API void     ANCHOR_ImplWin32_NewFrame();
+ANCHOR_BACKEND_API bool ANCHOR_ImplWin32_Init(void *hwnd);
+ANCHOR_BACKEND_API void ANCHOR_ImplWin32_Shutdown();
+ANCHOR_BACKEND_API void ANCHOR_ImplWin32_NewFrame();
 
 // Win32 message handler.
-#if 0
+#  if 0
 extern ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
+#  endif
 
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.
@@ -43,14 +43,14 @@ extern ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hWnd, UIN
 // - In theory we could call simple functions from Windows SDK such as SetProcessDPIAware(), SetProcessDpiAwareness(), etc.
 //   but most of the functions provided by Microsoft require Windows 8.1/10+ SDK at compile time and Windows 8/10+ at runtime,
 //   neither we want to require the user to have. So we dynamically select and load those functions to avoid dependencies.
-ANCHOR_BACKEND_API void     ANCHOR_ImplWin32_EnableDpiAwareness();
-ANCHOR_BACKEND_API float    ANCHOR_ImplWin32_GetDpiScaleForHwnd(void* hwnd);       // HWND hwnd
-ANCHOR_BACKEND_API float    ANCHOR_ImplWin32_GetDpiScaleForMonitor(void* monitor); // HMONITOR monitor
+ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableDpiAwareness();
+ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForHwnd(void *hwnd);        // HWND hwnd
+ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor);  // HMONITOR monitor
 
 // Transparency related helpers (optional) [experimental]
 // - Use to enable alpha compositing transparency with the desktop.
 // - Use together with e.g. clearing your framebuffer with zero-alpha.
-ANCHOR_BACKEND_API void     ANCHOR_ImplWin32_EnableAlphaCompositing(void* hwnd);   // HWND hwnd
+ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd);  // HWND hwnd
 
 #elif
 

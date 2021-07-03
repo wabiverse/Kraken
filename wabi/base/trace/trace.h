@@ -211,7 +211,7 @@ class TraceScopeAuto
   /// Constructor that also records scope arguments.
   ///
   template<typename... Args>
-  TraceScopeAuto(const TraceStaticKeyData &key, Args &&...args)
+  TraceScopeAuto(const TraceStaticKeyData &key, Args &&... args)
     : TraceScopeAuto(key)
   {
     if (ARCH_UNLIKELY(_key))

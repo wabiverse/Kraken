@@ -32,63 +32,52 @@
 #include "wabi/imaging/plugin/hdPrman/renderPass.h"
 #include "wabi/imaging/plugin/hdPrman/rixStrings.h"
 
+#include "RiTypesHelper.h"
 #include "Riley.h"
 #include "RixPredefinedStrings.hpp"
 #include "RixShadingUtils.h"
-#include "RiTypesHelper.h"
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Points::HdPrman_Points(SdfPath const& id)
-    : BASE(id)
+HdPrman_Points::HdPrman_Points(SdfPath const &id)
+  : BASE(id)
 {
 }
 
 HdDirtyBits
 HdPrman_Points::GetInitialDirtyBitsMask() const
 {
-    // The initial dirty bits control what data is available on the first
-    // run through _PopulateRtPoints(), so it should list every data item
-    // that _PopluateRtPoints requests.
-    int mask = HdChangeTracker::Clean
-        | HdChangeTracker::DirtyPoints
-        | HdChangeTracker::DirtyTransform
-        | HdChangeTracker::DirtyVisibility
-        | HdChangeTracker::DirtyPrimvar
-        | HdChangeTracker::DirtyNormals
-        | HdChangeTracker::DirtyWidths
-        | HdChangeTracker::DirtyMaterialId
-        | HdChangeTracker::DirtyInstancer
-        ;
+  // The initial dirty bits control what data is available on the first
+  // run through _PopulateRtPoints(), so it should list every data item
+  // that _PopluateRtPoints requests.
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
 
-    return (HdDirtyBits)mask;
+  return (HdDirtyBits)mask;
 }
 
 RtPrimVarList
 HdPrman_Points::_ConvertGeometry(HdPrman_Context *context,
-                                  HdSceneDelegate *sceneDelegate,
-                                  const SdfPath &id,
-                                  RtUString *primType,
-                                  std::vector<HdGeomSubset> *geomSubsets)
+                                 HdSceneDelegate *sceneDelegate,
+                                 const SdfPath &id,
+                                 RtUString *primType,
+                                 std::vector<HdGeomSubset> *geomSubsets)
 {
-    VtValue pointsVal = sceneDelegate->Get(id, HdTokens->points);
-    VtVec3fArray points = pointsVal.Get<VtVec3fArray>();
+  VtValue pointsVal = sceneDelegate->Get(id, HdTokens->points);
+  VtVec3fArray points = pointsVal.Get<VtVec3fArray>();
 
-    RtPrimVarList primvars(
-         1, /* uniform */
-         points.size(), /* vertex */
-         points.size(), /* varying */
-         points.size()  /* facevarying */);
+  RtPrimVarList primvars(
+    1,             /* uniform */
+    points.size(), /* vertex */
+    points.size(), /* varying */
+    points.size() /* facevarying */);
 
-    RtPoint3 const *pointsData = (RtPoint3 const*)(&points[0]);
-    primvars.SetPointDetail(RixStr.k_P, pointsData,
-                            RtDetailType::k_vertex);
+  RtPoint3 const *pointsData = (RtPoint3 const *)(&points[0]);
+  primvars.SetPointDetail(RixStr.k_P, pointsData, RtDetailType::k_vertex);
 
-    *primType = RixStr.k_Ri_Points;
+  *primType = RixStr.k_Ri_Points;
 
-    HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, 1,
-                            points.size(), points.size(), points.size());
-    return primvars;
+  HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, 1, points.size(), points.size(), points.size());
+  return primvars;
 }
 
 WABI_NAMESPACE_END

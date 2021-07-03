@@ -36,8 +36,8 @@
 #include "wabi/imaging/plugin/hdPrman/rixStrings.h"
 #include "wabi/usd/sdf/types.h"
 
-#include "RixShadingUtils.h"
 #include "Riley.h"
+#include "RixShadingUtils.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -47,19 +47,19 @@ class SdfPath;
 class TfToken;
 
 bool HdPrmanLightFilterPopulateNodesFromLightParams(
-    std::vector<riley::ShadingNode> *filterNodes,
-    SdfPath &filterPath,
-    HdSceneDelegate *sceneDelegate);
+  std::vector<riley::ShadingNode> *filterNodes,
+  SdfPath &filterPath,
+  HdSceneDelegate *sceneDelegate);
 
 void HdPrmanLightFilterGenerateCoordSysAndLinks(
-    riley::ShadingNode *filter,
-    SdfPath &filterPath,
-    std::vector<riley::CoordinateSystemId> *coordsysIds,
-    std::vector<TfToken> *filterLinks,
-    HdSceneDelegate *sceneDelegate,
-    HdPrman_Context *context,
-    riley::Riley *riley,
-    const riley::ShadingNode &lightNode);
+  riley::ShadingNode *filter,
+  SdfPath &filterPath,
+  std::vector<riley::CoordinateSystemId> *coordsysIds,
+  std::vector<TfToken> *filterLinks,
+  HdSceneDelegate *sceneDelegate,
+  HdPrman_Context *context,
+  riley::Riley *riley,
+  const riley::ShadingNode &lightNode);
 
 WABI_NAMESPACE_END
 

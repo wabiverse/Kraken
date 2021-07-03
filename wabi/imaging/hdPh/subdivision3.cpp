@@ -403,9 +403,9 @@ void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
   }
 
   OpenSubdiv::Far::StencilTable const *stencilTable =
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX)  ? _vertexStencils :
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
-                                                                _faceVaryingStencils[fvarChannel];
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
+                                                               (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
+                                                                                                                           _faceVaryingStencils[fvarChannel];
 
   if (!TF_VERIFY(stencilTable))
     return;
@@ -476,9 +476,9 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range,
   }
 
   OpenSubdiv::Far::StencilTable const *stencilTable =
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX)  ? _vertexStencils :
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
-                                                                _faceVaryingStencils[fvarChannel];
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
+                                                               (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
+                                                                                                                           _faceVaryingStencils[fvarChannel];
 
   if (!TF_VERIFY(stencilTable))
   {
@@ -514,8 +514,8 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range,
 
   HdPh_OsdGpuStencilTable const *gpuStencilTable = (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ?
                                                      _GetGpuVertexStencilTable() :
-                                                   (interpolation ==
-                                                    HdPh_MeshTopology::INTERPOLATE_VARYING) ?
+                                                     (interpolation ==
+                                                      HdPh_MeshTopology::INTERPOLATE_VARYING) ?
                                                      _GetGpuVaryingStencilTable() :
                                                      _GetGpuFaceVaryingStencilTable(fvarChannel);
 

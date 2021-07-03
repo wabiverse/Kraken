@@ -307,9 +307,9 @@ class Sdf_PathNode
 
   const short _elementCount;
   const unsigned char _nodeType;
-  const bool _isAbsolute                   : 1;
+  const bool _isAbsolute : 1;
   const bool _containsPrimVariantSelection : 1;
-  const bool _containsTargetPath           : 1;
+  const bool _containsTargetPath : 1;
 
   // This is racy -- we ensure that the token creation code carefully
   // synchronizes so that if we read 'true' from this flag, it guarantees that

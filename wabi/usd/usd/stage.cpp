@@ -962,7 +962,7 @@ class Usd_StageOpenRequest : public UsdStageCacheRequest
 
 /* static */
 template<class... Args>
-UsdStageRefPtr UsdStage::_OpenImpl(InitialLoadSet load, Args const &...args)
+UsdStageRefPtr UsdStage::_OpenImpl(InitialLoadSet load, Args const &... args)
 {
   // Try to find a matching stage in read-only caches.
   for (const UsdStageCache *cache : UsdStageCacheContext::_GetReadableCaches())
@@ -3655,13 +3655,13 @@ bool UsdStage::_RemoveProperty(const SdfPath &path)
 }
 
 template<class... Values>
-static void _AddToChangedPaths(SdfPathVector *paths, const SdfPath &p, const Values &...data)
+static void _AddToChangedPaths(SdfPathVector *paths, const SdfPath &p, const Values &... data)
 {
   paths->push_back(p);
 }
 
 template<class ChangedPaths, class... Values>
-static void _AddToChangedPaths(ChangedPaths *paths, const SdfPath &p, const Values &...data)
+static void _AddToChangedPaths(ChangedPaths *paths, const SdfPath &p, const Values &... data)
 {
   (*paths)[p].emplace_back(data...);
 }
@@ -3689,7 +3689,7 @@ static void _AddAffectedStagePaths(const SdfLayerHandle &layer,
                                    const SdfPath &path,
                                    const PcpCache &cache,
                                    ChangedPaths *changedPaths,
-                                   const ExtraData &...extraData)
+                                   const ExtraData &... extraData)
 {
   // We include virtual dependencies so that we can process
   // changes like adding missing defaultPrim metadata.

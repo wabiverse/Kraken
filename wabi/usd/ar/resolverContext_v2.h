@@ -154,7 +154,7 @@ class ArResolverContext
   /// will be ignored.
   template<class... Objects,
            typename std::enable_if<Ar_AllValidForContext<Objects...>::value>::type * = nullptr>
-  ArResolverContext(const Objects &...objs)
+  ArResolverContext(const Objects &... objs)
   {
     _AddObjects(objs...);
   }
@@ -230,7 +230,7 @@ class ArResolverContext
   }
 
   template<class Object, class... Other>
-  void _AddObjects(const Object &obj, const Other &...other)
+  void _AddObjects(const Object &obj, const Other &... other)
   {
     _Add(obj);
     _AddObjects(other...);

@@ -1,4 +1,4 @@
-if EXIST %COVAH_DIR%\..\lib\win64_%BUILD_VS_LIBDIRPOST%\llvm\bin\clang-format.exe (
+if EXIST %BUILD_VS_LIBDIR%\llvm\bin\clang-format.exe (
     set CF_PATH=..\lib\win64_%BUILD_VS_LIBDIRPOST%\llvm\bin
     goto detect_done
 )
@@ -9,16 +9,7 @@ exit /b 1
 :detect_done
 echo found clang-format in %CF_PATH%
 
-if EXIST %PYTHON% (
-    set PYTHON=%COVAH_DIR%\..\lib\win64_%BUILD_VS_LIBDIRPOST%\python\39\bin\python.exe
-    goto detect_python_done
-)
-
-echo python not found in lib folder
-exit /b 1
-
-:detect_python_done
-echo found python (%PYTHON%)
+set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
 
 set FORMAT_PATHS=%COVAH_DIR%\source\tools\utils_maintenance\clang_format_paths.py
 

@@ -535,7 +535,7 @@ class VtArray : public Vt_ArrayBase
   /// \sa push_back(ElementType const&)
   /// \sa push_back(ElementType&&)
   template<typename... Args>
-  void emplace_back(Args &&...args)
+  void emplace_back(Args &&... args)
   {
     // If this is a non-pxr array with rank > 1, disallow push_back.
     if (ARCH_UNLIKELY(_shapeData.otherDims[0]))
