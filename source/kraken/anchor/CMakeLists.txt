@@ -99,6 +99,13 @@ set(LIB
   ${FREETYPE_LIBRARY}
 )
 
+if(WIN32)
+  list(APPEND LIB
+    shcore
+    shlwapi
+  )
+endif()
+
 add_definitions(-DANCHOR_ENABLE_FREETYPE)
 
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

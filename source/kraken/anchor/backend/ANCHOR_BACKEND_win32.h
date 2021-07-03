@@ -27,6 +27,7 @@
 #include "ANCHOR_BACKEND_vulkan.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_system.h"
+#include "ANCHOR_modifier_keys.h"
 
 #ifdef _WIN32
 
@@ -43,10 +44,6 @@ extern ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hWnd, UIN
 
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.
-// - Your own app may already do this via a manifest or explicit calls. This is mostly useful for our examples/ apps.
-// - In theory we could call simple functions from Windows SDK such as SetProcessDPIAware(), SetProcessDpiAwareness(), etc.
-//   but most of the functions provided by Microsoft require Windows 8.1/10+ SDK at compile time and Windows 8/10+ at runtime,
-//   neither we want to require the user to have. So we dynamically select and load those functions to avoid dependencies.
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableDpiAwareness();
 ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForHwnd(void *hwnd);        // HWND hwnd
 ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor);  // HMONITOR monitor
@@ -73,6 +70,10 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 
   void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
 
+  /**
+   * Check current key layout for AltGr. */
+  inline void handleKeyboardChange(void);
+
  private:
   eAnchorStatus init();
 
@@ -98,17 +99,64 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   ANCHOR_WindowWin32 *m_win32_window;
 
  protected:
-  bool m_hasPerformanceCounter;
+  /**
+   * Toggles console
+   * @param action:
+   * - 0 - Hides
+   * - 1 - Shows
+   * - 2 - Toggles
+   * - 3 - Hides if it runs not from  command line
+   * - * - Does nothing
+   * @return current status (1 -visible, 0 - hidden) */
+  int toggleConsole(int action);
 
+  /** The current state of the modifier keys. */
+  ANCHOR_ModifierKeys m_modifierKeys;
+  /** The virtual-key code (VKey) of the last press event. Used to detect repeat events. */
+  unsigned short m_keycode_last_repeat_key;
+  /** State variable set at initialization. */
+  bool m_hasPerformanceCounter;
   /** High frequency timer variable. */
   __int64 m_freq;
-
   /** High frequency timer variable. */
   __int64 m_start;
-
   /** Low frequency timer variable. */
   __int64 m_lfstart;
+  /** AltGr on current keyboard layout. */
+  bool m_hasAltGr;
+  /** Language identifier. */
+  WORD m_langId;
+  /** Stores keyboard layout. */
+  HKL m_keylayout;
+
+  /** Console status. */
+  int m_consoleStatus;
+
+  /** Wheel delta accumulator. */
+  int m_wheelDeltaAccum;
 };
+
+
+inline void ANCHOR_SystemWin32::handleKeyboardChange(void)
+{
+  m_keylayout = GetKeyboardLayout(0);  // get keylayout for current thread
+  int i;
+  SHORT s;
+
+  // save the language identifier.
+  m_langId = LOWORD(m_keylayout);
+
+  for (m_hasAltGr = false, i = 32; i < 256; ++i) {
+    s = VkKeyScanEx((char)i, m_keylayout);
+    // s == -1 means no key that translates passed char code
+    // high byte contains shift state. bit 2 ctrl pressed, bit 4 alt pressed
+    // if both are pressed, we have AltGr keycombo on keylayout
+    if (s != -1 && (s & 0x600) == 0x600) {
+      m_hasAltGr = true;
+      break;
+    }
+  }
+}
 
 
 /**

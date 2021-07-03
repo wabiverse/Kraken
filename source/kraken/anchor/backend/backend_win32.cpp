@@ -26,6 +26,20 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_window.h"
 
+#include <wabi/base/tf/diagnostic.h>
+
+#ifndef _WIN32_IE
+#  define _WIN32_IE 0x0501 /* shipped before XP, so doesn't impose additional requirements */
+#endif
+
+#include <commctrl.h>
+#include <psapi.h>
+#include <shellapi.h>
+#include <shellscalingapi.h>
+#include <shlobj.h>
+#include <tlhelp32.h>
+#include <windowsx.h>
+
 #ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
 #endif
@@ -779,14 +793,102 @@ eAnchorStatus ANCHOR_DisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 disp
 
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Key code values not found in winuser.h */
+#ifndef VK_MINUS
+#  define VK_MINUS 0xBD
+#endif  // VK_MINUS
+#ifndef VK_SEMICOLON
+#  define VK_SEMICOLON 0xBA
+#endif  // VK_SEMICOLON
+#ifndef VK_PERIOD
+#  define VK_PERIOD 0xBE
+#endif  // VK_PERIOD
+#ifndef VK_COMMA
+#  define VK_COMMA 0xBC
+#endif  // VK_COMMA
+#ifndef VK_QUOTE
+#  define VK_QUOTE 0xDE
+#endif  // VK_QUOTE
+#ifndef VK_BACK_QUOTE
+#  define VK_BACK_QUOTE 0xC0
+#endif  // VK_BACK_QUOTE
+#ifndef VK_SLASH
+#  define VK_SLASH 0xBF
+#endif  // VK_SLASH
+#ifndef VK_BACK_SLASH
+#  define VK_BACK_SLASH 0xDC
+#endif  // VK_BACK_SLASH
+#ifndef VK_EQUALS
+#  define VK_EQUALS 0xBB
+#endif  // VK_EQUALS
+#ifndef VK_OPEN_BRACKET
+#  define VK_OPEN_BRACKET 0xDB
+#endif  // VK_OPEN_BRACKET
+#ifndef VK_CLOSE_BRACKET
+#  define VK_CLOSE_BRACKET 0xDD
+#endif  // VK_CLOSE_BRACKET
+#ifndef VK_GR_LESS
+#  define VK_GR_LESS 0xE2
+#endif  // VK_GR_LESS
+
+/**
+ * Workaround for some laptop touchpads, some of which seems to
+ * have driver issues which makes it so window function receives
+ * the message, but PeekMessage doesn't pick those messages for
+ * some reason.
+ *
+ * We send a dummy WM_USER message to force PeekMessage to receive
+ * something, making it so kraken's window manager sees the new
+ * messages coming in. */
+#define BROKEN_PEEK_TOUCHPAD
+
+static void initRawInput()
+{
+#define DEVICE_COUNT 1
+
+  RAWINPUTDEVICE devices[DEVICE_COUNT];
+  memset(devices, 0, DEVICE_COUNT * sizeof(RAWINPUTDEVICE));
+
+  // Initiates WM_INPUT messages from keyboard
+  // That way ANCHOR can retrieve true keys
+  devices[0].usUsagePage = 0x01;
+  devices[0].usUsage = 0x06; /* http://msdn.microsoft.com/en-us/windows/hardware/gg487473.aspx */
+
+  RegisterRawInputDevices(devices, DEVICE_COUNT, sizeof(RAWINPUTDEVICE));
+
+#undef DEVICE_COUNT
+}
+
 ANCHOR_SystemWin32::ANCHOR_SystemWin32()
-  : ANCHOR_System(),
-    m_win32_window(nullptr),
+  : m_win32_window(nullptr),
     m_hasPerformanceCounter(false),
     m_freq(0),
     m_start(0),
     m_lfstart(0)
-{}
+{
+  m_displayManager = new ANCHOR_DisplayManagerWin32();
+  ANCHOR_ASSERT(m_displayManager);
+  m_displayManager->initialize();
+
+  m_consoleStatus = 1;
+
+  /**
+   * Tell Windows we are per monitor DPI aware. This
+   * disables the default blurry scaling and enables
+   * WM_DPICHANGED to allow us to draw at proper DPI. */
+  SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+
+  /**
+   * Check if current keyboard layout uses AltGr and save keylayout ID for
+   * specialized handling if keys like VK_OEM_*. I.e. french keylayout
+   * generates VK_OEM_8 for their exclamation key (key left of right shift). */
+  this->handleKeyboardChange();
+
+  /**
+   * Require COM for ANCHOR_DropTargetWin32. */
+  OleInitialize(0);
+}
 
 ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
 {}
