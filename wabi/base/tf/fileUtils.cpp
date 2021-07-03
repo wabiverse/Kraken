@@ -163,7 +163,7 @@ bool TfIsDir(string const &path, bool resolveSymlinks)
   ArchStatType st;
   if (Tf_Stat(path, resolveSymlinks, &st))
   {
-    return S_ISDIR(st.st_mode);
+    return ARCH_S_ISDIR(st.st_mode);
   }
   return false;
 #endif
@@ -412,7 +412,7 @@ bool TfReadDir(const string &dirPath,
       if (fstatat(dirfd(dir), entry->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
         continue;
 
-      if (S_ISDIR(st.st_mode))
+      if (ARCH_S_ISDIR(st.st_mode))
       {
         entryIsDir = true;
       }
@@ -515,7 +515,7 @@ static bool Tf_WalkDirsRec(const string &dirpath,
                   /* resolveSymlinks */ true,
                   &st))
       {
-        if (S_ISDIR(st.st_mode))
+        if (ARCH_S_ISDIR(st.st_mode))
         {
           Tf_FileId fileId(st);
           if (linkTargets->find(fileId) != linkTargets->end())

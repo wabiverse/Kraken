@@ -71,8 +71,8 @@ WABI_NAMESPACE_BEGIN
 #    include <sys/param.h> /* for MAXPATHLEN */
 #  endif
 #else
-// XXX -- Should probably have ARCH_ macro for this.
-#  define S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
+
+#  define ARCH_S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
 
 // See https://msdn.microsoft.com/en-us/library/1w06ktdy.aspx
 // XXX -- Should probably have Arch enum for these.
