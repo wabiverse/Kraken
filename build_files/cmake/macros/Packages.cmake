@@ -213,7 +213,21 @@ if(WITH_VULKAN)
     find_package(X11 REQUIRED)
     list(APPEND VULKAN_LIBS ${X11_LIBRARIES})
   elseif(WIN32)
-    # No extra libs required
+    file(TO_CMAKE_PATH "$ENV{VULKAN_SDK}" VULKAN_DIR_PATH)
+    list(APPEND VULKAN_LIBS
+      ${VULKAN_DIR_PATH}/Lib/glslang.lib
+      ${VULKAN_DIR_PATH}/Lib/OGLCompiler.lib
+      ${VULKAN_DIR_PATH}/Lib/GenericCodeGen.lib
+      ${VULKAN_DIR_PATH}/Lib/MachineIndependent.lib
+      ${VULKAN_DIR_PATH}/Lib/OSDependent.lib
+      ${VULKAN_DIR_PATH}/Lib/shaderc.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-link.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-opt.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-reduce.lib
+      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-shared.lib
+    )
   endif()
 
   add_definitions(-DWITH_VULKAN)
@@ -308,8 +322,6 @@ list(APPEND BOOST_LIBRARIES
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_THREAD_LIBRARY}
 )
-
-message(${BOOST_LIBRARIES})
 
 # Disable superfluous Boost Warnings
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)

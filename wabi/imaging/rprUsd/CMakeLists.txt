@@ -77,7 +77,7 @@ add_subdirectory(materialNodes/mtlxFiles)
 # GroupSources(rprUsd)
 
 if(WITH_VULKAN)
-    target_link_libraries(rprUsd ${Vulkan_LIBRARIES})
+    target_link_libraries(rprUsd ${VULKAN_LIBRARIES})
     target_include_directories(rprUsd PRIVATE ${Vulkan_INCLUDE_DIRS})
     target_compile_definitions(rprUsd PUBLIC HDRPR_ENABLE_VULKAN_INTEROP_SUPPORT)
 endif()

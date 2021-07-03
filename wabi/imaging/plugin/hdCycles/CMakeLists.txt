@@ -36,6 +36,7 @@ wabi_plugin(hdCycles
         ${CYCLES_LIBRARIES}
         ${OPENEXR_LIBRARIES}
         ${OPENVDB_LIBRARY}
+        ${Boost_FILESYSTEM_LIBRARY}
  
     INCLUDE_DIRS
         Mikktspace
@@ -48,6 +49,7 @@ wabi_plugin(hdCycles
         ${OPENIMAGEDENOISE_INCLUDE_DIRS}
         ${OPENVDB_INCLUDE_DIR}
         ${CYCLES_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
 
     CPPFILES
         Mikktspace/mikktspace.c

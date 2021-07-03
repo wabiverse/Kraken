@@ -1056,7 +1056,7 @@ function(wabi_covahverse_epilogue)
             )
         endforeach()
         target_link_libraries(covahverse
-            PUBLIC
+                PUBLIC ${BOOST_LIBRARIES}
                 ${WABI_MALLOC_LIBRARY}
                 ${WABI_THREAD_LIBS}
         )
