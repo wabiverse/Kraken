@@ -24,9 +24,9 @@
  * Bare Metal.
  */
 
+#include "ANCHOR_BACKEND_vulkan.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_system.h"
-#include "ANCHOR_BACKEND_vulkan.h"
 
 #ifdef _WIN32
 
@@ -55,6 +55,7 @@ ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor); 
 // - Use to enable alpha compositing transparency with the desktop.
 // - Use together with e.g. clearing your framebuffer with zero-alpha.
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd);  // HWND hwnd
+
 
 class ANCHOR_SystemWin32 : public ANCHOR_System
 {
@@ -95,7 +96,70 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   /** The vector of windows that need to be updated. */
   // TODO std::vector<ANCHOR_WindowWin32 *> m_dirty_windows;
   ANCHOR_WindowWin32 *m_win32_window;
+
+ protected:
+  bool m_hasPerformanceCounter;
+
+  /** High frequency timer variable. */
+  __int64 m_freq;
+
+  /** High frequency timer variable. */
+  __int64 m_start;
+
+  /** Low frequency timer variable. */
+  __int64 m_lfstart;
 };
+
+
+/**
+ * Manages system displays  (WIN32 implementation). */
+class ANCHOR_DisplayManagerWin32 : public ANCHOR_DisplayManager
+{
+ public:
+  /**
+   * Constructor.*/
+  ANCHOR_DisplayManagerWin32(void);
+
+  /**
+   * Returns the number of display devices on this system.
+   * @param numDisplays: The number of displays on this system.
+   * @return Indication of success. */
+  eAnchorStatus getNumDisplays(AnchorU8 &numDisplays) const;
+
+  /**
+   * Returns the number of display settings for this display device.
+   * @param display: The index of the display to query with 0 <= display < getNumDisplays().
+   * @param numSetting: The number of settings of the display device with this index.
+   * @return Indication of success. */
+  eAnchorStatus getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const;
+
+  /**
+   * Returns the current setting for this display device.
+   * @param display: The index of the display to query with 0 <= display < getNumDisplays().
+   * @param index: The setting index to be returned.
+   * @param setting: The setting of the display device with this index.
+   * @return Indication of success. */
+  eAnchorStatus getDisplaySetting(AnchorU8 display,
+                                  AnchorS32 index,
+                                  ANCHOR_DisplaySetting &setting) const;
+
+  /**
+   * Returns the current setting for this display device.
+   * @param display: The index of the display to query with 0 <= display < getNumDisplays().
+   * @param setting: The current setting of the display device with this index.
+   * @return Indication of success. */
+  eAnchorStatus getCurrentDisplaySetting(AnchorU8 display,
+                                         ANCHOR_DisplaySetting &setting) const;
+
+  /**
+   * Changes the current setting for this display device.
+   * @param display: The index of the display to query with 0 <= display < getNumDisplays().
+   * @param setting: The current setting of the display device with this index.
+   * @return Indication of success. */
+  eAnchorStatus setCurrentDisplaySetting(AnchorU8 display,
+                                         const ANCHOR_DisplaySetting &setting);
+};
+
 
 
 class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
@@ -109,24 +173,24 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
  public:
   ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
-                   const char *title,
-                   const char *icon,
-                   AnchorS32 left,
-                   AnchorS32 top,
-                   AnchorU32 width,
-                   AnchorU32 height,
-                   eAnchorWindowState state,
-                   eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-                   const bool stereoVisual = false,
-                   const bool exclusive = false,
-                   const ANCHOR_ISystemWindow *parentWindow = NULL);
+                     const char *title,
+                     const char *icon,
+                     AnchorS32 left,
+                     AnchorS32 top,
+                     AnchorU32 width,
+                     AnchorU32 height,
+                     eAnchorWindowState state,
+                     eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+                     const bool stereoVisual = false,
+                     const bool exclusive = false,
+                     const ANCHOR_ISystemWindow *parentWindow = NULL);
 
   ~ANCHOR_WindowWin32();
 
   std::string getTitle() const;
 
   /* Windows specific */
-//   HWND *getHWND();
+  //   HWND *getHWND();
 
   ANCHOR_VulkanGPU_Surface *getVulkanSurface()
   {
@@ -142,7 +206,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   void getClientBounds(ANCHOR_Rect &bounds) const;
 
- protected:
   /**
    * @param type: The type of rendering context create.
    * @return Indication of success. */

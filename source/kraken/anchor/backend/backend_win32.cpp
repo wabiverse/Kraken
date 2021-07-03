@@ -661,11 +661,131 @@ void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd)
   }
 }
 
+// --------------------------------------------------------------------------------------------------------
+
+ANCHOR_DisplayManagerWin32::ANCHOR_DisplayManagerWin32(void)
+{}
+
+eAnchorStatus ANCHOR_DisplayManagerWin32::getNumDisplays(AnchorU8 &numDisplays) const
+{
+  numDisplays = ::GetSystemMetrics(SM_CMONITORS);
+  return numDisplays > 0 ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+}
+
+static BOOL get_dd(DWORD d, DISPLAY_DEVICE *dd)
+{
+  dd->cb = sizeof(DISPLAY_DEVICE);
+  return ::EnumDisplayDevices(NULL, d, dd, 0);
+}
+
+/*
+ * When you call EnumDisplaySettings with iModeNum set to zero, the operating system
+ * initializes and caches information about the display device. When you call
+ * EnumDisplaySettings with iModeNum set to a non-zero value, the function returns
+ * the information that was cached the last time the function was called with iModeNum
+ * set to zero. */
+eAnchorStatus ANCHOR_DisplayManagerWin32::getNumDisplaySettings(AnchorU8 display,
+                                                                AnchorS32 &numSettings) const
+{
+  DISPLAY_DEVICE display_device;
+  if (!get_dd(display, &display_device))
+    return ANCHOR_ERROR;
+
+  numSettings = 0;
+  DEVMODE dm;
+  while (::EnumDisplaySettings(display_device.DeviceName, numSettings, &dm))
+  {
+    numSettings++;
+  }
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerWin32::getDisplaySetting(AnchorU8 display,
+                                                            AnchorS32 index,
+                                                            ANCHOR_DisplaySetting &setting) const
+{
+  DISPLAY_DEVICE display_device;
+  if (!get_dd(display, &display_device))
+    return ANCHOR_ERROR;
+
+  eAnchorStatus success;
+  DEVMODE dm;
+  if (::EnumDisplaySettings(display_device.DeviceName, index, &dm))
+  {
+    setting.xPixels = dm.dmPelsWidth;
+    setting.yPixels = dm.dmPelsHeight;
+    setting.bpp = dm.dmBitsPerPel;
+
+    /**
+     * When you call the EnumDisplaySettings function, the dmDisplayFrequency member
+     * may return with the value 0 or 1. These values represent the display hardware's
+     * default refresh rate. This default rate is typically set by switches on a display
+     * card or computer motherboard, or by a configuration program that does not use
+     * Win32 display functions such as ChangeDisplaySettings. */
+
+    /**
+     * First, we tried to explicitly set the frequency to 60 if EnumDisplaySettings
+     * returned 0 or 1 but this doesn't work since later on an exact match will
+     * be searched. And this will never happen if we change it to 60. Now we rely
+     * on the default h/w setting. */
+    setting.frequency = dm.dmDisplayFrequency;
+    success = ANCHOR_SUCCESS;
+  }
+  else
+  {
+    success = ANCHOR_ERROR;
+  }
+  return success;
+}
+
+eAnchorStatus ANCHOR_DisplayManagerWin32::getCurrentDisplaySetting(AnchorU8 display,
+                                                                   ANCHOR_DisplaySetting &setting) const
+{
+  return getDisplaySetting(display, ENUM_CURRENT_SETTINGS, setting);
+}
+
+eAnchorStatus ANCHOR_DisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 display,
+                                                                   const ANCHOR_DisplaySetting &setting)
+{
+  DISPLAY_DEVICE display_device;
+  if (!get_dd(display, &display_device))
+    return ANCHOR_ERROR;
+
+  ANCHOR_DisplaySetting match;
+  findMatch(display, setting, match);
+  DEVMODE dm;
+  int i = 0;
+  while (::EnumDisplaySettings(display_device.DeviceName, i++, &dm))
+  {
+    if ((dm.dmBitsPerPel == match.bpp) && (dm.dmPelsWidth == match.xPixels) &&
+        (dm.dmPelsHeight == match.yPixels) && (dm.dmDisplayFrequency == match.frequency))
+    {
+      break;
+    }
+  }
+
+  /**
+   * dm.dmBitsPerPel = match.bpp;
+   * dm.dmPelsWidth = match.xPixels;
+   * dm.dmPelsHeight = match.yPixels;
+   * dm.dmDisplayFrequency = match.frequency;
+   * dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
+   * dm.dmSize = sizeof(DEVMODE);
+   * dm.dmDriverExtra = 0; */
+
+  LONG status = ::ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
+  return status == DISP_CHANGE_SUCCESSFUL ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+}
+
 //---------------------------------------------------------------------------------------------------------
 
 ANCHOR_SystemWin32::ANCHOR_SystemWin32()
   : ANCHOR_System(),
-    m_win32_window(nullptr)
+    m_win32_window(nullptr),
+    m_hasPerformanceCounter(false),
+    m_freq(0),
+    m_start(0),
+    m_lfstart(0)
 {}
 
 ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
