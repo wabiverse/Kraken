@@ -13,7 +13,7 @@ Kraken
 
 *A pixel-crushing, render-ripping, GPU incinerating machine.*
 
-Home of the Kraken project -- redefining animation composition, collaborative
+Home of the Kraken -- redefining animation composition, collaborative
 workflows, simulation engines, skeletal rigging systems, and look development
 from storyboard to final render. Built on the underlying software architecture
 provided by Pixar, and extended to meet the ever-growing needs of both artists
