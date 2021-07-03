@@ -60,7 +60,7 @@ endif()
 
 # ! Important
 # Convert the relative path to an absolute path.
-string(REPLACE "covah/../" "" LIBDIR "${LIBPATH}")
+string(REPLACE "kraken/../" "" LIBDIR "${LIBPATH}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
 
@@ -185,7 +185,7 @@ endif()
 if(WITH_OPENGL)
   add_definitions(-DWITH_OPENGL)
   find_package(OpenGL REQUIRED)
-  covah_include_dirs_sys("${OPENGL_INCLUDE_DIR}")
+  kraken_include_dirs_sys("${OPENGL_INCLUDE_DIR}")
 endif()
 
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Metal xxxxx
@@ -238,7 +238,7 @@ if(WITH_VULKAN)
     ${VULKAN_LIBS}
   )
 
-  covah_include_dirs_sys("${VULKAN_INCLUDE_DIRS}")
+  kraken_include_dirs_sys("${VULKAN_INCLUDE_DIRS}")
 
 else()
   message(FATAL_ERROR "Vulkan Installation not valid")

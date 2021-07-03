@@ -65,7 +65,7 @@ void CREATOR_setup_args(int argc, const char **argv)
   /* clang-format off */
   options.add_options()
     ("open", CREATOR_ARGS::value<std::string>(&load_stage),
-    "Launch Covah given a (usda|usd|usdc|usdz) file")
+    "Launch Kraken given a (usda|usd|usdc|usdz) file")
 
     ("convert", CREATOR_ARGS::value<std::string>(&convert_stage),
     "Converts a file given a path to a new file format extension (usda|usd|usdc|usdz)")
@@ -74,10 +74,10 @@ void CREATOR_setup_args(int argc, const char **argv)
     "Resets factory default settings and preferences on startup")
 
     ("server", CREATOR_ARGS::bool_switch(&wabi::G.server),
-    "Puts COVAH in a headless client-serving server mode")
+    "Puts KRAKEN in a headless client-serving server mode")
 
     ("diagnostics", CREATOR_ARGS::bool_switch(&run_diagnostics),
-    "Run system diagnostics to debug the Covah System")
+    "Run system diagnostics to debug the Kraken System")
 
     ("help", "Shows this help message")
   ;
@@ -105,7 +105,7 @@ int CREATOR_parse_args(int argc, const char **argv)
 {
   if (run_diagnostics)
   {
-    wabi::CKE_covah_enable_debug_codes();
+    wabi::CKE_kraken_enable_debug_codes();
   }
 
   if (load_stage.length() > 2)

@@ -26,10 +26,10 @@
 
 
 /**
- *  -----  The Covah Creator. ----- */
+ *  -----  The Kraken Creator. ----- */
 
 
-void CREATOR_covah_env_init();
+void CREATOR_kraken_env_init();
 
 /**
  *  -----  Creator's Args. ----- */

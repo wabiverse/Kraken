@@ -1,4 +1,4 @@
-?package(covah-snapshot):needs="X11" section="Applications/Graphics"\
-  longtitle="Covah digital content creation"\
-  icon="/usr/share/icons/hicolor/scalable/apps/covah.svg"\
-  title="covah" command="/usr/bin/covah"
+?package(kraken-snapshot):needs="X11" section="Applications/Graphics"\
+  longtitle="Kraken digital content creation"\
+  icon="/usr/share/icons/hicolor/scalable/apps/kraken.svg"\
+  title="kraken" command="/usr/bin/kraken"

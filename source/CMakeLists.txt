@@ -1,3 +1,3 @@
 
 
-add_subdirectory(covah)
+add_subdirectory(kraken)

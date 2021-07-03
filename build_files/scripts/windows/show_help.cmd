@@ -1,13 +1,13 @@
 echo.
 echo Convenience targets
-echo - release ^(identical to the official covah.org builds^)
+echo - release ^(identical to the official kraken.org builds^)
 echo - headless
 echo - wabipy ^(Wabi Python, All things 3D, wrapped in a single Python Module^)
 echo.
 echo Utilities ^(not associated with building^)
 echo - clean ^(Target must be set^)
 echo - update ^(Update GIT source^)
-echo - deps ^(Build and install all required dependencies to build Covah ^(and many other things^) from scratch^)
+echo - deps ^(Build and install all required dependencies to build Kraken ^(and many other things^) from scratch^)
 echo - nobuild ^(only generate project files^)
 echo - showhash ^(Show git hashes of source tree^)
 echo - test ^(Run automated tests with ctest^)

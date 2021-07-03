@@ -26,7 +26,7 @@ def author():
   return wpy.wg_info["author"]
 
 def version():
-  return str(wpy.wg_info["covah"])
+  return str(wpy.wg_info["kraken"])
 
 def description():
   return wpy.wg_info["description"]

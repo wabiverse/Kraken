@@ -8,7 +8,7 @@ echo.
 exit /b 1
 
 :proceed
-set AUTOGENERATE_CMAKE_SCRIPT=%COVAH_DIR%\build_files\utils\cmake_generator.py
+set AUTOGENERATE_CMAKE_SCRIPT=%KRAKEN_DIR%\build_files\utils\cmake_generator.py
 
 echo.
 echo %AUTOGENERATE_CMAKE_SCRIPT%

@@ -25,7 +25,7 @@ endobj
          <xmpMM:InstanceID>uuid:3230aa30-254a-4045-b316-e01c58f3ed0c</xmpMM:InstanceID>
          <xmpMM:OriginalDocumentID>xmp.did:852b47d3-0d63-314e-9f15-6f701eb7a439</xmpMM:OriginalDocumentID>
          <xmpMM:RenditionClass>proof:pdf</xmpMM:RenditionClass>
-         <xmpMM:Manifest>COVAH
+         <xmpMM:Manifest>KRAKEN
             <rdf:Seq>
                <rdf:li rdf:parseType="Resource">
                   <stMfs:linkForm>EmbedByReference</stMfs:linkForm>
@@ -35,7 +35,7 @@ endobj
                      <stRef:instanceID>0</stRef:instanceID>
                   </stMfs:reference>
                </rdf:li>
-            </rdf:Seq>COVAH
+            </rdf:Seq>KRAKEN
          </xmpMM:Manifest>
          <xmpMM:Ingredients>
             <rdf:Bag>

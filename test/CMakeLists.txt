@@ -3,7 +3,7 @@ cmake_policy(SET CMP0005 NEW)
 cmake_policy(SET CMP0010 NEW)
 cmake_policy(SET CMP0014 NEW)
 
-project(COVAHMultiTest)
+project(KRAKENMultiTest)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../..//build_files/cmake/Modules")
 
@@ -16,7 +16,7 @@ set(_CMAKE_CURRENT_SOURCE_DIR_INIT "${CMAKE_CURRENT_SOURCE_DIR}")
 # include(../../../build_files/cmake/macros.cmake)
 
 # stub macro, does nothing
-macro(covah_add_lib
+macro(kraken_add_lib
   name
   sources
   includes
@@ -85,7 +85,7 @@ string(APPEND CMAKE_CXX_FLAGS " ${PLATFORM_CFLAGS}")
 # Executables
 
 # Plugs
-add_executable(plugs_test ${CMAKE_SOURCE_DIR}/source/covah/test/plugs/plugs_test.cpp)
+add_executable(plugs_test ${CMAKE_SOURCE_DIR}/source/kraken/test/plugs/plugs_test.cpp)
 
 target_link_libraries(plugs_test
   ${OPENGL_gl_LIBRARY}

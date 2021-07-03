@@ -63,9 +63,9 @@ def git_update_skip(args, check_remote_exists=True):
     return ""
 
 
-# Update covah repository.
+# Update kraken repository.
 def cova_update(args):
-    print_stage("Updating Covah Git Repository")
+    print_stage("Updating Kraken Git Repository")
     call([args.git_command, "pull", "--rebase"])
 
 
@@ -81,6 +81,6 @@ if __name__ == "__main__":
     if not args.no_cova:
         cova_skip_msg = git_update_skip(args)
         if cova_skip_msg:
-            cova_skip_msg = "Covah repository skipped: " + cova_skip_msg + "\n"
+            cova_skip_msg = "Kraken repository skipped: " + cova_skip_msg + "\n"
         else:
             cova_update(args)

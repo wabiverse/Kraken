@@ -7,7 +7,7 @@ if errorlevel 1 (
 		set HAS_ERROR=1
 	)
 echo %TIME% >>buildtime.txt
-cd %COVAH_DIR%
+cd %KRAKEN_DIR%
 
 if "%HAS_ERROR%" == "1" (
 		echo Error during build

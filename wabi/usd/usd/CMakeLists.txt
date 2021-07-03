@@ -201,7 +201,7 @@ if(WITH_PIXAR_TOOLKIT)
         FILES
         python/usdGenSchema.py
         DESTINATION
-        /usr/local/share/covah/${TARGETDIR_VER}/bin/toolkit)
+        /usr/local/share/kraken/${TARGETDIR_VER}/bin/toolkit)
   elseif(WIN32)
     install(
         FILES

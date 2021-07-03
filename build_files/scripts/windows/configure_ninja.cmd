@@ -78,7 +78,7 @@ if "%NOBUILD%"=="1" set MUST_CONFIGURE=1
 if "%MUST_CONFIGURE%"=="1" (
 	cmake ^
 		%BUILD_CMAKE_ARGS% ^
-		-H%COVAH_DIR% ^
+		-H%KRAKEN_DIR% ^
 		-B%BUILD_DIR% 
 
 	if %ERRORLEVEL% NEQ 0 (

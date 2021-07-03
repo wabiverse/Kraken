@@ -1,7 +1,7 @@
 if EXIST C:\Program Files\doxygen\bin\doxygen.exe (
     set CF_PATH=C:\Program Files\doxygen\bin
     set PATH=%CF_PATH%;%PATH%
-    set BUILD_DOC_DIR=%COVAH_DIR%doc\doxygen
+    set BUILD_DOC_DIR=%KRAKEN_DIR%doc\doxygen
     cd %BUILD_DOC_DIR%
     goto detect_done
 )
@@ -132,7 +132,7 @@ if "%DOCS_ARGS%" == "update" (
 
 if "%DOCS_ARGS%" == "html" (
 	echo.
-	echo BUILDING COVAH DOCUMENTATION WITH DOXYGEN AND SPHINX
+	echo BUILDING KRAKEN DOCUMENTATION WITH DOXYGEN AND SPHINX
   doxygen
 	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILD_DOC_DIR%\html
 	if errorlevel 1 exit /b 1

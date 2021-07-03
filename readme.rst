@@ -4,16 +4,16 @@
    See 'release/text/readme.html' for the end user read-me.
 
 
-Covah
-=====
+Kraken
+======
 
-.. image:: https://readthedocs.com/projects/wabi-covah/badge/?version=latest&token=91aa5d2aff1a5927fc39792cbe74688b740a88aae8750c20712733201b278bd0
-   :target: https://wabi-covah.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
+.. image:: https://readthedocs.com/projects/wabi-kraken/badge/?version=latest&token=91aa5d2aff1a5927fc39792cbe74688b740a88aae8750c20712733201b278bd0
+   :target: https://wabi-kraken.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
    :alt: Documentation Status
 
 *A pixel-crushing, render-ripping, GPU incinerating machine.*
 
-Home of the Covah project -- redefining animation composition, collaborative
+Home of the Kraken project -- redefining animation composition, collaborative
 workflows, simulation engines, skeletal rigging systems, and look development
 from storyboard to final render. Built on the underlying software architecture
 provided by Pixar, and extended to meet the ever-growing needs of both artists
@@ -21,7 +21,7 @@ and production pipelines. It is with this strong core foundation, that we may
 begin to solve the most challenging issues the world of modern graphics demands,
 and push the framework for composition & design into the future.
 
-.. figure:: https://www.dropbox.com/s/j7ziqfmwttlpgug/rect19342.png?raw=1
+.. figure:: https://www.dropbox.com/s/1ca6x2wgi82ba6w/kraken.png?raw=1
    :scale: 50 %
    :align: center
 
@@ -41,7 +41,7 @@ The one and only -- **Universal** file format. The first of it's kind,
 that addresses the need to robustly and scalably interchange and augment
 arbitrary 3D scenes that may be composed from many elemental assets.
 
-.. figure:: https://www.dropbox.com/s/w0ul2nvda4dckg4/covah-fileformat.png?raw=1
+.. figure:: https://www.dropbox.com/s/w0ul2nvda4dckg4/kraken-fileformat.png?raw=1
    :scale: 50 %
    :align: center
 

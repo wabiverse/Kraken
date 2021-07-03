@@ -1,7 +1,7 @@
 if "%NOBUILD%"=="1" goto EOF
 echo %TIME% > %BUILD_DIR%\buildtime.txt
 msbuild ^
-	%BUILD_DIR%\COVAH.sln ^
+	%BUILD_DIR%\KRAKEN.sln ^
 	/target:build ^
 	/property:Configuration=%BUILD_TYPE% ^
 	/maxcpucount:2 ^

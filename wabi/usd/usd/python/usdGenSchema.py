@@ -1210,7 +1210,7 @@ def GenerateRegistry(codeGenPath, filePath, classes, validate, env):
         flatStage.RemovePrim(p)
         
     # Set layer's comment to indicate that the file is generated.
-    flatLayer.comment = 'Generated for use with Covah. '\
+    flatLayer.comment = 'Generated for use with Kraken. '\
                         ' Copyright (C) 2021 Wabi Animation Studios.'
 
     # Add the list of all applied and multiple-apply API schemas.

@@ -56,7 +56,7 @@ import sys
 import tempfile
 
 def _parseArgs():
-    parser = argparse.ArgumentParser(description='COVAHVERSE test wrapper')
+    parser = argparse.ArgumentParser(description='KRAKENVERSE test wrapper')
     parser.add_argument('--stdout-redirect', type=str,
             help='File to redirect stdout to')
     parser.add_argument('--stderr-redirect', type=str,

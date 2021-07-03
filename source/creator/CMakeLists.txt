@@ -1,27 +1,27 @@
 setup_libdirs()
 
-covah_include_dirs(
+kraken_include_dirs(
   ../../.
-  ../covah/anchor
-  ../covah/editors/include
-  ../covah/covalib
-  ../covah/covakernel
-  ../covah/wm
-  ../covah/universe
+  ../kraken/anchor
+  ../kraken/editors/include
+  ../kraken/covalib
+  ../kraken/covakernel
+  ../kraken/wm
+  ../kraken/universe
 )
 
 set(LIB
-  covah_wm
-  covah_kernel
-  covah_universe
+  kraken_wm
+  kraken_kernel
+  kraken_universe
 )
 
 list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
 list(INSERT LIB 0 ${TBB_LIBRARIES})
 
-covah_include_dirs(${TBB_INCLUDE_DIRS})
-covah_include_dirs(${Boost_INCLUDE_DIRS})
-covah_include_dirs(${PYTHON_INCLUDE_DIR})
+kraken_include_dirs(${TBB_INCLUDE_DIRS})
+kraken_include_dirs(${Boost_INCLUDE_DIRS})
+kraken_include_dirs(${PYTHON_INCLUDE_DIR})
 
 if(WITH_TBB)
   if(NOT APPLE)
@@ -31,7 +31,7 @@ if(WITH_TBB)
 endif()
 
 list(APPEND LIB
-  covah_kernel
+  kraken_kernel
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}
   ${OPENCOLORIO_LIBRARIES}
@@ -39,7 +39,7 @@ list(APPEND LIB
 )
 
 if(WITH_PYTHON)
-  covah_include_dirs(../covah/python)
+  kraken_include_dirs(../kraken/python)
   add_definitions(-DWITH_PYTHON)
 
   if(WITH_PYTHON_SECURITY)
@@ -63,11 +63,11 @@ set(SRC
 # MSVC 2010 gives linking errors with the manifest
 if(WIN32 AND NOT UNIX)
 
-  string(SUBSTRING ${COVAH_VERSION} 0 1 wver1)
-  string(SUBSTRING ${COVAH_VERSION} 2 1 wver2)
-  string(SUBSTRING ${COVAH_VERSION} 3 1 wver3)
+  string(SUBSTRING ${KRAKEN_VERSION} 0 1 wver1)
+  string(SUBSTRING ${KRAKEN_VERSION} 2 1 wver2)
+  string(SUBSTRING ${KRAKEN_VERSION} 3 1 wver3)
   add_definitions(
-    -DWIN_VER_RC_STR="${COVAH_VERSION}"
+    -DWIN_VER_RC_STR="${KRAKEN_VERSION}"
     -DWIN_VER_RC_1=${wver1}
     -DWIN_VER_RC_2=${wver2}
     -DWIN_VER_RC_3=${wver3}
@@ -76,8 +76,8 @@ if(WIN32 AND NOT UNIX)
 
 
   list(APPEND SRC
-    ${CMAKE_SOURCE_DIR}/release/windows/icons/wincovah.rc
-    ${CMAKE_BINARY_DIR}/covah.exe.manifest
+    ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
+    ${CMAKE_BINARY_DIR}/kraken.exe.manifest
   )
 endif()
 
@@ -174,7 +174,7 @@ if(WITH_BUILDINFO)
   unset(buildinfo_h_real)
   unset(buildinfo_h_fake)
 
-  # add deps below, after adding covah
+  # add deps below, after adding kraken
   # -------------- done with header values.
 
   list(APPEND SRC
@@ -186,9 +186,9 @@ if(WITH_BUILDINFO)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 
-add_cc_flags_custom_test(covah)
+add_cc_flags_custom_test(kraken)
 
-# message(STATUS "Configuring covah")
+# message(STATUS "Configuring kraken")
 if(WITH_PYTHON_MODULE)
   add_definitions(-DWITH_PYTHON_MODULE)
 
@@ -196,9 +196,9 @@ if(WITH_PYTHON_MODULE)
   #
   # note that 'SHARED' works on Linux and Windows,
   # but not OSX which _must_ be 'MODULE'
-  add_library(covah MODULE ${SRC})
+  add_library(kraken MODULE ${SRC})
   set_target_properties(
-    covah
+    kraken
     PROPERTIES
       PREFIX ""
       OUTPUT_NAME wpy
@@ -207,43 +207,43 @@ if(WITH_PYTHON_MODULE)
   )
 
   if(APPLE)
-    set_target_properties(covah PROPERTIES MACOSX_BUNDLE TRUE)
+    set_target_properties(kraken PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 
   if(WIN32)
     # python modules use this
     set_target_properties(
-      covah
+      kraken
       PROPERTIES
       SUFFIX ".pyd"
     )
   endif()
 
 else()
-  add_executable(covah ${EXETYPE} ${SRC})
+  add_executable(kraken ${EXETYPE} ${SRC})
 endif()
 
 if(WITH_BUILDINFO)
   # explicitly say that the executable depends on the buildinfo
-  add_dependencies(covah buildinfo)
+  add_dependencies(kraken buildinfo)
 endif()
 
 # Link with Pixar API
 # We must collect all the Pokemon, not just
 # some of the Pokemon, so we link whole archive
 if(WIN32)
-  set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:covahverse")
-  set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:covahverse")
-  set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:covahverse")
-  set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:covahverse")
-  target_link_libraries(covah covahverse)
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:krakenverse")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:krakenverse")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:krakenverse")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:krakenverse")
+  target_link_libraries(kraken krakenverse)
 elseif(APPLE)
-  target_link_libraries(covah -Wl,-force_load covahverse)
+  target_link_libraries(kraken -Wl,-force_load krakenverse)
 elseif(UNIX)
-  target_link_libraries(covah "-Wl,--whole-archive $<TARGET_FILE:covahverse> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+  target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:krakenverse> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
 endif()
 
-set(COVAH_TEXT_FILES
+set(KRAKEN_TEXT_FILES
   ${CMAKE_SOURCE_DIR}/release/text/copyright.txt
   # generate this file
   # ${CMAKE_SOURCE_DIR}/release/text/readme.html
@@ -256,36 +256,36 @@ set(COVAH_TEXT_FILES
 if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_VER ${COVAH_VERSION})
+      set(TARGETDIR_VER ${KRAKEN_VERSION})
     else()
-      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/${COVAH_VERSION})
+      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/${KRAKEN_VERSION})
     endif()
   else()
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_VER ${COVAH_VERSION})
+      set(TARGETDIR_VER ${KRAKEN_VERSION})
     else()
-      set(TARGETDIR_VER share/covah/${COVAH_VERSION})
+      set(TARGETDIR_VER share/kraken/${KRAKEN_VERSION})
     endif()
   endif()
 
 elseif(WIN32)
-  set(TARGETDIR_VER ${COVAH_VERSION})
+  set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 elseif(APPLE)
   if(WITH_PYTHON_MODULE)
-    set(TARGETDIR_VER ${COVAH_VERSION})
+    set(TARGETDIR_VER ${KRAKEN_VERSION})
   else()
-    set(TARGETDIR_VER COVAH.app/Contents/Resources/${COVAH_VERSION})
+    set(TARGETDIR_VER KRAKEN.app/Contents/Resources/${KRAKEN_VERSION})
   endif()
   # Skip relinking on cpack / install
-  set_target_properties(covah PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+  set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
 endif()
 
 
 if(UNIX)
-  set_target_properties(covah PROPERTIES BUILD_WITH_INSTALL_RPATH true)
-  set_target_properties(covah PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${COVAH_VERSION}/lib")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${COVAH_VERSION}/lib")
+  set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+  set_target_properties(kraken PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 endif()
 
@@ -325,17 +325,17 @@ endif()
 if(UNIX)
   install(
     TARGETS
-      covahverse # <- Pixar monolithic
-      # ------------- COVAH RUNTIME -----
-      covah_kernel
-      covah_lib
-      covah_python
-      covah_universe
-      covah_wm
-      covah_editor_code
-      covah_editor_screen
-      covah_editor_spacefile
-      covah_editor_spaceview3d
+      krakenverse # <- Pixar monolithic
+      # ------------- KRAKEN RUNTIME -----
+      kraken_kernel
+      kraken_lib
+      kraken_python
+      kraken_universe
+      kraken_wm
+      kraken_editor_code
+      kraken_editor_screen
+      kraken_editor_spacefile
+      kraken_editor_spaceview3d
       # ---------------------------------
     DESTINATION
       "/usr/local/${TARGETDIR_VER}/lib/."
@@ -343,17 +343,17 @@ if(UNIX)
 else()
   install(
     TARGETS
-      covahverse # <- Pixar monolithic
-      # ------------- COVAH RUNTIME -----
-      covah_kernel
-      covah_lib
-      covah_python
-      covah_universe
-      covah_wm
-      covah_editor_code
-      covah_editor_screen
-      covah_editor_spacefile
-      covah_editor_spaceview3d
+      krakenverse # <- Pixar monolithic
+      # ------------- KRAKEN RUNTIME -----
+      kraken_kernel
+      kraken_lib
+      kraken_python
+      kraken_universe
+      kraken_wm
+      kraken_editor_code
+      kraken_editor_screen
+      kraken_editor_spacefile
+      kraken_editor_spaceview3d
       # ---------------------------------
     DESTINATION
       "."
@@ -436,11 +436,11 @@ install(
 )
 
 if(WITH_PYTHON)
-  # install(CODE "message(\"copying covah scripts...\")")
+  # install(CODE "message(\"copying kraken scripts...\")")
 
   # exclude addons_contrib if release
-  if("${COVAH_VERSION_CYCLE}" STREQUAL "release" OR
-     "${COVAH_VERSION_CYCLE}" STREQUAL "rc")
+  if("${KRAKEN_VERSION_CYCLE}" STREQUAL "release" OR
+     "${KRAKEN_VERSION_CYCLE}" STREQUAL "rc")
     set(ADDON_EXCLUDE_CONDITIONAL "addons_contrib/*")
   else()
     set(ADDON_EXCLUDE_CONDITIONAL "_addons_contrib/*")  # dummy, wont do anything
@@ -487,7 +487,7 @@ endif()
 if("${CMAKE_GENERATOR}" MATCHES ".*Makefiles.*")
   # message after building.
   add_custom_command(
-    TARGET covah POST_BUILD MAIN_DEPENDENCY covah
+    TARGET kraken POST_BUILD MAIN_DEPENDENCY kraken
     COMMAND ${CMAKE_COMMAND} -E
             echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
   )
@@ -502,11 +502,11 @@ if(UNIX AND NOT APPLE)
   if(NOT WITH_PYTHON_MODULE)
     if(WITH_DOC_MANPAGE)
       add_custom_target(
-        covah_man_page ALL
-        COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/covah.1.py
-                ${EXECUTABLE_OUTPUT_PATH}/covah
-                ${CMAKE_CURRENT_BINARY_DIR}/covah.1)
-      add_dependencies(covah_man_page covah)
+        kraken_man_page ALL
+        COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/kraken.1.py
+                ${EXECUTABLE_OUTPUT_PATH}/kraken
+                ${CMAKE_CURRENT_BINARY_DIR}/kraken.1)
+      add_dependencies(kraken_man_page kraken)
     endif()
   endif()
 
@@ -514,75 +514,75 @@ if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
       install(
-        TARGETS covah
+        TARGETS kraken
         DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
       )
     else()
       install(
-        TARGETS covah
+        TARGETS kraken
         LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES}
       )
     endif()
     # none of the other files are needed currently
   elseif(WITH_INSTALL_PORTABLE)
     install(
-      TARGETS covah
+      TARGETS kraken
       DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
     )
 
     if(WITH_DOC_MANPAGE)
       install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/covah.1
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.1
         DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
       )
     endif()
     install(
       FILES
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/covah.desktop
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/covah.svg
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/covah-symbolic.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/kraken.desktop
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/kraken.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/kraken-symbolic.svg
       DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
     )
 
     install(
       PROGRAMS
-      ${CMAKE_SOURCE_DIR}/release/bin/covah-thumbnailer.py
+      ${CMAKE_SOURCE_DIR}/release/bin/kraken-thumbnailer.py
       DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
     )
 
-    set(COVAH_TEXT_FILES_DESTINATION "/usr/local/${TARGETDIR_VER}/bin/.")
+    set(KRAKEN_TEXT_FILES_DESTINATION "/usr/local/${TARGETDIR_VER}/bin/.")
   else()
-    # main covah binary
+    # main kraken binary
     install(
-      TARGETS covah
+      TARGETS kraken
       DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
     )
     if(WITH_DOC_MANPAGE)
-      # manpage only with 'covah' binary
+      # manpage only with 'kraken' binary
       install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/covah.1
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.1
         DESTINATION share/man/man1
       )
     endif()
 
     # misc files
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/covah.desktop
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/kraken.desktop
       DESTINATION share/applications
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/covah.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/kraken.svg
       DESTINATION share/icons/hicolor/scalable/apps
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/covah-symbolic.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/kraken-symbolic.svg
       DESTINATION share/icons/hicolor/symbolic/apps
     )
     install(
-      PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/covah-thumbnailer.py
+      PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/kraken-thumbnailer.py
       DESTINATION "/usr/local/${TARGETDIR_VER}/bin/."
     )
-    set(COVAH_TEXT_FILES_DESTINATION share/doc/covah)
+    set(KRAKEN_TEXT_FILES_DESTINATION share/doc/kraken)
   endif()
 
   if(WITH_PYTHON)
@@ -658,7 +658,7 @@ if(UNIX AND NOT APPLE)
           PATTERN "oldnumeric" EXCLUDE            # ./oldnumeric
           PATTERN "doc" EXCLUDE                   # ./doc
           PATTERN "tests" EXCLUDE                 # ./tests
-          PATTERN "f2py" EXCLUDE                  # ./f2py - fortran/python interface code, not for covah.
+          PATTERN "f2py" EXCLUDE                  # ./f2py - fortran/python interface code, not for kraken.
           PATTERN "include" EXCLUDE               # include dirs all over, we wont use NumPy/CAPI
           PATTERN "*.h" EXCLUDE                   # some includes are not in include dirs
           PATTERN "*.a" EXCLUDE                   # ./core/lib/libnpymath.a - for linking, we dont need.
@@ -713,16 +713,16 @@ if(UNIX AND NOT APPLE)
 
 elseif(WIN32)
 
-  set(COVAH_TEXT_FILES_DESTINATION ".")
+  set(KRAKEN_TEXT_FILES_DESTINATION ".")
 
   if(WITH_WINDOWS_PDB)
     if(WITH_WINDOWS_STRIPPED_PDB)
       # Icky hack for older cmake from https://stackoverflow.com/a/21198501
       # $<CONFIG> will work in newer cmake but the version currently (3.12)
       # on the buildbot does not support this endavour.
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/covah_public.pdb DESTINATION . RENAME covah.pdb)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/kraken_public.pdb DESTINATION . RENAME kraken.pdb)
     else()
-      install(FILES $<TARGET_PDB_FILE:covah> DESTINATION . RENAME covah.pdb)
+      install(FILES $<TARGET_PDB_FILE:kraken> DESTINATION . RENAME kraken.pdb)
     endif()
   endif()
 
@@ -784,7 +784,7 @@ elseif(WIN32)
 
       install(
         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/lib
-        DESTINATION ${COVAH_VERSION}/python/
+        DESTINATION ${KRAKEN_VERSION}/python/
         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
         PATTERN ".svn" EXCLUDE
         PATTERN "*_d.*" EXCLUDE                  # * debug libraries *
@@ -795,7 +795,7 @@ elseif(WIN32)
 
        install(
         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/lib
-        DESTINATION ${COVAH_VERSION}/python/
+        DESTINATION ${KRAKEN_VERSION}/python/
         CONFIGURATIONS Debug
         PATTERN ".svn" EXCLUDE
         PATTERN "__pycache__" EXCLUDE           # * any cache *
@@ -806,7 +806,7 @@ elseif(WIN32)
 
       install(
         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/DLLs
-        DESTINATION ${COVAH_VERSION}/python
+        DESTINATION ${KRAKEN_VERSION}/python
         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
         PATTERN "*.pdb" EXCLUDE
         PATTERN "*_d.*" EXCLUDE
@@ -814,20 +814,20 @@ elseif(WIN32)
 
       install(
         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/DLLs
-        DESTINATION ${COVAH_VERSION}/python
+        DESTINATION ${KRAKEN_VERSION}/python
         CONFIGURATIONS Debug
       )
 
       install(
         FILES ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}.dll
               ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python.exe
-        DESTINATION ${COVAH_VERSION}/python/bin
+        DESTINATION ${KRAKEN_VERSION}/python/bin
         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
       )
       install(
         FILES ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
               ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python_d.exe
-        DESTINATION ${COVAH_VERSION}/python/bin
+        DESTINATION ${KRAKEN_VERSION}/python/bin
         CONFIGURATIONS Debug
       )
 
@@ -927,7 +927,7 @@ endif()
 # install(
 #   DIRECTORY
 #     # ${LIBDIR}/usd-static/lib/python/
-#     ${CMAKE_SOURCE_DIR}/source/covah/draw/engines/ember/python/
+#     ${CMAKE_SOURCE_DIR}/source/kraken/draw/engines/ember/python/
 #   DESTINATION
 #     ${TARGETDIR_VER}/python/lib/site-packages
 # )
@@ -985,7 +985,7 @@ install(
 elseif(APPLE)
   if(NOT WITH_PYTHON_MODULE)
     # Uppercase name for app bundle
-    set_target_properties(covah PROPERTIES OUTPUT_NAME COVAH)
+    set_target_properties(kraken PROPERTIES OUTPUT_NAME KRAKEN)
   endif()
 
   # handy install macro to exclude files, we use \$ escape for the "to"
@@ -1015,17 +1015,17 @@ elseif(APPLE)
     )
   endmacro()
 
-  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/COVAH.app)
+  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/KRAKEN.app)
 
   # setup Info.plist
   execute_process(COMMAND date "+%Y-%m-%d"
-                  OUTPUT_VARIABLE COVAH_DATE
+                  OUTPUT_VARIABLE KRAKEN_DATE
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  set_target_properties(covah PROPERTIES
+  set_target_properties(kraken PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${OSX_APP_SOURCEDIR}/Contents/Info.plist
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${COVAH_VERSION}.${COVAH_VERSION_PATCH}"
-    MACOSX_BUNDLE_LONG_VERSION_STRING "${COVAH_VERSION}.${COVAH_VERSION_PATCH} ${COVAH_DATE}")
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${KRAKEN_VERSION}.${KRAKEN_VERSION_PATCH}"
+    MACOSX_BUNDLE_LONG_VERSION_STRING "${KRAKEN_VERSION}.${KRAKEN_VERSION_PATCH} ${KRAKEN_DATE}")
 
   # Gather the date in finder-style
   execute_process(COMMAND date "+%m/%d/%Y/%H:%M"
@@ -1035,34 +1035,34 @@ elseif(APPLE)
   # Give the bundle actual creation/modification date
   #
   # Note that the directory might not yet exist, which happens when CMake is first run.
-  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/COVAH.app)
-    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/COVAH.app)
+  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
+    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
   endif()
   execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-                  ${EXECUTABLE_OUTPUT_PATH}/COVAH.app)
+                  ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
 
   install(
-    TARGETS covah
+    TARGETS kraken
     DESTINATION "."
   )
 
   # install release and app files
-  set(COVAH_TEXT_FILES_DESTINATION COVAH.app/Contents/Resources/text)
+  set(KRAKEN_TEXT_FILES_DESTINATION KRAKEN.app/Contents/Resources/text)
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION COVAH.app/Contents
+    DESTINATION KRAKEN.app/Contents
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    COVAH.app/Contents/
+    KRAKEN.app/Contents/
   )
 
   if(WITH_LLVM AND NOT LLVM_STATIC)
     install(
       FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-      DESTINATION COVAH.app/Contents/MacOS
+      DESTINATION KRAKEN.app/Contents/MacOS
     )
   endif()
 
@@ -1103,39 +1103,39 @@ if(UNIX AND WITH_ARNOLD)
   )
 endif()
 
-if(DEFINED COVAH_TEXT_FILES_DESTINATION)
+if(DEFINED KRAKEN_TEXT_FILES_DESTINATION)
 
   install(
     CODE
     "
     file(READ \"${CMAKE_SOURCE_DIR}/release/text/readme.html\" DATA_SRC)
-    string(REGEX REPLACE \"COVAH_VERSION\" \"${COVAH_VERSION}\" DATA_DST \"\${DATA_SRC}\")
+    string(REGEX REPLACE \"KRAKEN_VERSION\" \"${KRAKEN_VERSION}\" DATA_DST \"\${DATA_SRC}\")
     file(WRITE \"${CMAKE_BINARY_DIR}/release/text/readme.html\" \"\${DATA_DST}\")
     unset(DATA_SRC)
     unset(DATA_DST)
     "
   )
-  list(APPEND COVAH_TEXT_FILES
+  list(APPEND KRAKEN_TEXT_FILES
     ${CMAKE_BINARY_DIR}/release/text/readme.html
   )
 
   install(
-    FILES ${COVAH_TEXT_FILES}
-    DESTINATION "${COVAH_TEXT_FILES_DESTINATION}"
+    FILES ${KRAKEN_TEXT_FILES}
+    DESTINATION "${KRAKEN_TEXT_FILES_DESTINATION}"
   )
 
   install(
     DIRECTORY
     ${CMAKE_SOURCE_DIR}/release/license
-    DESTINATION "${COVAH_TEXT_FILES_DESTINATION}"
+    DESTINATION "${KRAKEN_TEXT_FILES_DESTINATION}"
 )
 endif()
 
 # install more files specified elsewhere
 delayed_do_install(${TARGETDIR_VER})
 
-unset(COVAH_TEXT_FILES)
-unset(COVAH_TEXT_FILES_DESTINATION)
+unset(KRAKEN_TEXT_FILES)
+unset(KRAKEN_TEXT_FILES_DESTINATION)
 
 
 # -----------------------------------------------------------------------------
@@ -1205,7 +1205,7 @@ endif()
 
 # install(
 #   DIRECTORY
-#     ${CMAKE_SOURCE_DIR}/source/covah/draw/engines/overlay/shaders/
+#     ${CMAKE_SOURCE_DIR}/source/kraken/draw/engines/overlay/shaders/
 #   DESTINATION ${TARGETDIR_VER}/datafiles/shaders
 # )
 
@@ -1231,32 +1231,32 @@ endif()
 
 # install(
 #   DIRECTORY
-#     ${CMAKE_SOURCE_DIR}/source/covah/draw/engines/ember/resources/
+#     ${CMAKE_SOURCE_DIR}/source/kraken/draw/engines/ember/resources/
 #   DESTINATION ${TARGETDIR_VER}/datafiles/usd/usdEmber/resources
 # )
 
 # -----------------------------------------------------------------------------
 # Setup link libs
 
-target_link_libraries(covah ${LIB})
+target_link_libraries(kraken ${LIB})
 unset(LIB)
 
-setup_platform_linker_flags(covah)
-setup_platform_linker_libs(covah)
+setup_platform_linker_flags(kraken)
+setup_platform_linker_libs(kraken)
 
 if(APPLE)
-  set_target_properties(covah PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
+  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
 elseif(UNIX)
-  set_target_properties(covah PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/covah.map)
+  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
 endif()
 
 # vcpkg substitutes our libs with theirs, which will cause issues when you
 # you run these builds on other systems due to missing dlls. So we opt out
 # the use of vcpkg
 if(WIN32)
-  set_target_properties(covah PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
-  set_target_properties(covah PROPERTIES
-    PDB_NAME "covah_private"
+  set_target_properties(kraken PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
+  set_target_properties(kraken PROPERTIES
+    PDB_NAME "kraken_private"
     PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
     if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
       # This is slightly messy, but single target generators like ninja will not have the
@@ -1264,9 +1264,9 @@ if(WIN32)
       # CMAKE_BUILD_TYPE. This can be simplified by target_link_options and the $<CONFIG>
       # generator expression in newer cmake (2.13+) but until that time this fill have suffice.
       if(CMAKE_BUILD_TYPE)
-        set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/covah_public.pdb")
+        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/kraken_public.pdb")
       else()
-        set_property(TARGET covah APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/covah_public.pdb")
+        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/kraken_public.pdb")
       endif()
   endif()
 endif()
@@ -1276,14 +1276,14 @@ endif()
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
-    TARGETS covah
-    COMPONENT COVAH
+    TARGETS kraken
+    COMPONENT KRAKEN
     DESTINATION "."
   )
   set_target_properties(
-    covah
+    kraken
     PROPERTIES
-      VS_USER_PROPS "covah.Cpp.user.props"
+      VS_USER_PROPS "kraken.Cpp.user.props"
   )
 endif()
 

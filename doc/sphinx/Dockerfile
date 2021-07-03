@@ -32,25 +32,25 @@ RUN pip3 install https://storage.googleapis.com/dependency_links/Exhale-1.3.0.ta
 RUN pip3 install sphinxcontrib-napoleon
 
 # -------------------------------------------------------------------------------------------------------------------------------
-# Clone latest COVAH, here in the cloud, we refer to it as the chaos engine.
+# Clone latest KRAKEN, here in the cloud, we refer to it as the chaos engine.
 
 RUN if [[ -d "chaos_engine/" ]]; then rm -r chaos_engine/; fi
 RUN mkdir chaos_engine/
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
-RUN git clone https://github.com/Wabi-Studios/COVAH.git chaos_engine/
+RUN git clone https://github.com/Wabi-Studios/KRAKEN.git chaos_engine/
 
 # -------------------------------------------------------------------------------------------------------------------------------
-# Grab the covah version from the covah version file (only place where version is ever hardcoded).
+# Grab the kraken version from the kraken version file (only place where version is ever hardcoded).
 
-RUN COVAH_VERSION_XXX="$(grep 'COVAH_VERSION' chaos_engine/source/covah/covakernel/CKE_version.h | cut -d\  -f2)"
-RUN COVAH_VERSION_PATCH="$(grep 'COVAH_VERSION_PATCH' chaos_engine/source/covah/covakernel/CKE_version.h | cut -d\  -f2)"
-RUN COVAH_VERSION_MAJOR="$((COVAH_VERSION_XXX / 100))"
-RUN COVAH_VERSION_MINOR="$((COVAH_VERSION_XXX % 100))"
-RUN COVAH_VERSION="$COVAH_VERSION_MAJOR.$COVAH_VERSION_MINOR.$COVAH_VERSION_PATCH"
-RUN COVAH_VERSION_DECIMAL="$COVAH_VERSION_MAJOR.$COVAH_VERSION_MINOR"
+RUN KRAKEN_VERSION_XXX="$(grep 'KRAKEN_VERSION' chaos_engine/source/kraken/covakernel/CKE_version.h | cut -d\  -f2)"
+RUN KRAKEN_VERSION_PATCH="$(grep 'KRAKEN_VERSION_PATCH' chaos_engine/source/kraken/covakernel/CKE_version.h | cut -d\  -f2)"
+RUN KRAKEN_VERSION_MAJOR="$((KRAKEN_VERSION_XXX / 100))"
+RUN KRAKEN_VERSION_MINOR="$((KRAKEN_VERSION_XXX % 100))"
+RUN KRAKEN_VERSION="$KRAKEN_VERSION_MAJOR.$KRAKEN_VERSION_MINOR.$KRAKEN_VERSION_PATCH"
+RUN KRAKEN_VERSION_DECIMAL="$KRAKEN_VERSION_MAJOR.$KRAKEN_VERSION_MINOR"
 
 # -------------------------------------------------------------------------------------------------------------------------------
-# Build the docs ::: This takes a long time - there is alot of source code to go through COVAH + USD
+# Build the docs ::: This takes a long time - there is alot of source code to go through KRAKEN + USD
 #                    and breathe <-> exhale work in unison to build beautiful documentation in fully
 #                    automated fashion. The alternative would be to create each of these .rst files
 #                    by hand, and the manual effort to do that would require a full time job in and
@@ -78,5 +78,5 @@ RUN echo " | | | |     | __ -|-   -|                "
 RUN echo " |_____|__|__|_____|_____|                "
 RUN echo "     Animation Studios                    "
 RUN echo "                                          "
-RUN echo "  Chaos Engine ::: v$COVAH_VERSION_DECIMAL"
+RUN echo "  Chaos Engine ::: v$KRAKEN_VERSION_DECIMAL"
 RUN echo "                                          "

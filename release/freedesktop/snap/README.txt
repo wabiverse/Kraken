@@ -3,7 +3,7 @@ Snap Package Instructions
 =========================
 
 This folder contains the scripts for creating and uploading the snap on:
-https://snapcraft.io/covah
+https://snapcraft.io/kraken
 
 
 Setup

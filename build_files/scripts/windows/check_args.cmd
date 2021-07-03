@@ -1,4 +1,4 @@
-set BUILD_DIR=%COVAH_DIR%..\build_COVAH
+set BUILD_DIR=%KRAKEN_DIR%..\build_KRAKEN
 set BUILD_TYPE=Release
 :argv_loop
 if NOT "%1" == "" (
@@ -12,31 +12,31 @@ if NOT "%1" == "" (
 		set CMAKE_BUILD_TYPE_INIT=Debug
 	REM Build Configurations
 	) else if "%1" == "builddir" (
-		set BUILD_DIR_OVERRRIDE=%COVAH_DIR%..\%2
+		set BUILD_DIR_OVERRRIDE=%KRAKEN_DIR%..\%2
 		shift /1
 	) else if "%1" == "with_tests" (
 		set TESTS_CMAKE_ARGS=%TESTS_CMAKE_ARGS%
 	) else if "%1" == "lite" (
 		set TARGET=Lite
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_lite.cmake"
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%KRAKEN_DIR%\build_files\cmake\config\kraken_lite.cmake"
 	) else if "%1" == "headless" (
 		set TARGET=Headless
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_headless.cmake"
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%KRAKEN_DIR%\build_files\cmake\config\kraken_headless.cmake"
 	) else if "%1" == "wabipy" (
 		set TARGET=Wabi
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\wabi_module.cmake"
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%KRAKEN_DIR%\build_files\cmake\config\wabi_module.cmake"
 	) else if "%1" == "clang" (
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS%
 		set WITH_CLANG=1
  	) else if "%1" == "release" (
 		set TARGET=Release
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_release.cmake"
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%KRAKEN_DIR%\build_files\cmake\config\kraken_release.cmake"
 	) else if "%1" == "developer" (
-		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%COVAH_DIR%\build_files\cmake\config\covah_developer.cmake"
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -C"%KRAKEN_DIR%\build_files\cmake\config\kraken_developer.cmake"
 	) else if "%1" == "asan" (
 		set WITH_ASAN=1
 	) else if "%1" == "x86" (
-		echo Error: 32 bit builds of COVAH are no longer supported.
+		echo Error: 32 bit builds of KRAKEN are no longer supported.
 		goto ERR
 	) else if "%1" == "x64" (
 		set BUILD_ARCH=x64

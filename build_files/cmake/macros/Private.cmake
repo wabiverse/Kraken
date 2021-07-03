@@ -123,7 +123,7 @@ function(_install_python LIBRARY_NAME)
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     elseif(UNIX)
-        set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
+        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
     _get_python_module_name(${LIBRARY_NAME} LIBRARY_INSTALLNAME)
 
@@ -198,7 +198,7 @@ endfunction() #_install_python
 function(_install_resource_files NAME pluginInstallPrefix pluginToLibraryPath)
     # Resource files install into a structure that looks like:
     # lib/
-    #     covahverse/
+    #     krakenverse/
     #         ${NAME}/
     #             resources/
     #                 resourceFileA
@@ -302,7 +302,7 @@ function(_install_pyside_ui_files LIBRARY_NAME)
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     elseif(UNIX)
-        set(libPythonPrefix ./share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
+        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
     _get_python_module_name(${LIBRARY_NAME} LIBRARY_INSTALLNAME)
 
@@ -809,12 +809,12 @@ function(_wabi_target_link_libraries NAME)
     else()
         # If we use any internal libraries then just link against the
         # monolithic library.
-        if(WITH_COVAH_MONOLITHIC)
+        if(WITH_KRAKEN_MONOLITHIC)
             if(internal)
-                if(TARGET covahverse)
-                    set(internal covahverse)
+                if(TARGET krakenverse)
+                    set(internal krakenverse)
                 else()
-                    set(internal covahverse_static)
+                    set(internal krakenverse_static)
                 endif()
             endif()
         elseif(NOT BUILD_SHARED_LIBS)
@@ -884,7 +884,7 @@ endfunction()
 
 # Add a python module for the target named NAME.  It implicitly links
 # against the library named NAME (or the monolithic library if
-# WITH_COVAH_MONOLITHIC is enabled).
+# WITH_KRAKEN_MONOLITHIC is enabled).
 function(_wabi_python_module NAME)
     set(oneValueArgs
         PRECOMPILED_HEADERS
@@ -961,7 +961,7 @@ function(_wabi_python_module NAME)
     if(WIN32)
         set(libInstallPrefix "${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     elseif(UNIX)
-        set(libInstallPrefix "/usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
+        set(libInstallPrefix "/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     endif()
 
     # Python modules need to be able to access their corresponding
@@ -1190,9 +1190,9 @@ function(_wabi_library NAME)
         if(NOT WABI_INSTALL_SUBDIR)
             # XXX -- Why this difference?
             if(UNIX)
-                _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse" pluginInstallPrefix)
+                _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/krakenverse" pluginInstallPrefix)
             elseif(WIN32)
-                _get_install_dir("${TARGETDIR_VER}/datafiles/plugin/covahverse" pluginInstallPrefix)
+                _get_install_dir("${TARGETDIR_VER}/datafiles/plugin/krakenverse" pluginInstallPrefix)
             endif()
         endif()
         if(NOT isObject)
@@ -1203,9 +1203,9 @@ function(_wabi_library NAME)
         endif()
     else()
         if(WIN32)
-            _get_install_dir("${TARGETDIR_VER}/datafiles/covahverse" pluginInstallPrefix)
+            _get_install_dir("${TARGETDIR_VER}/datafiles/krakenverse" pluginInstallPrefix)
         elseif(UNIX)
-            _get_install_dir("/usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse" pluginInstallPrefix)
+            _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/krakenverse" pluginInstallPrefix)
         endif()
     endif()
     if(args_SUBDIR)
@@ -1282,11 +1282,11 @@ function(_wabi_library NAME)
     endif()
 
     if (WIN32)
-        set(PIXAR_USD_CORE_DIR ${TARGETDIR_VER}/datafiles/covahverse)
-        set(PIXAR_USD_PLUGINS_DIR ${TARGETDIR_VER}/datafiles/plugin/covahverse)
+        set(PIXAR_USD_CORE_DIR ${TARGETDIR_VER}/datafiles/krakenverse)
+        set(PIXAR_USD_PLUGINS_DIR ${TARGETDIR_VER}/datafiles/plugin/krakenverse)
     elseif(UNIX)
-        set(PIXAR_USD_CORE_DIR /usr/local/share/covah/${TARGETDIR_VER}/datafiles/covahverse)
-        set(PIXAR_USD_PLUGINS_DIR /usr/local/share/covah/${TARGETDIR_VER}/datafiles/plugin/covahverse)
+        set(PIXAR_USD_CORE_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/krakenverse)
+        set(PIXAR_USD_PLUGINS_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/krakenverse)
     endif()
 
     target_compile_definitions(${NAME}

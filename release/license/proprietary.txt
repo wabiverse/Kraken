@@ -4,7 +4,7 @@ End-User License Agreement ("Agreement")
 Last updated: December 12, 2020
 
 Please read this End-User License Agreement carefully before clicking the "I
-Agree" button, downloading or using COVAH.
+Agree" button, downloading or using KRAKEN.
 
 Interpretation and Definitions  
 ==============================
@@ -26,7 +26,7 @@ For the purposes of this End-User License Agreement:
     Application.
 
   * Application means the software program provided by the Company downloaded
-    by You through an Application Store's account to a Device, named COVAH
+    by You through an Application Store's account to a Device, named KRAKEN
 
   * Application Store means the digital distribution service operated and
     developed by Apple Inc. (Apple App Store) or Google Inc. (Google Play
@@ -246,8 +246,8 @@ Privacy Policy
 ==============
 
 The Company collects, stores, maintains, and shares information about You in
-accordance with Our Privacy Policy: [www.covah.xyz/privacy-
-policy](www.covah.xyz/privacy-policy)
+accordance with Our Privacy Policy: [www.kraken.xyz/privacy-
+policy](www.kraken.xyz/privacy-policy)
 
 By accepting this Agreement, You acknowledge that You hereby agree and consent
 to the terms and conditions of Our Privacy Policy.
@@ -424,5 +424,5 @@ Contact Us
 
 If you have any questions about this Agreement, You can contact Us:
 
-  * By email: company@covah.xyz
+  * By email: company@kraken.xyz
 

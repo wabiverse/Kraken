@@ -17,7 +17,7 @@ if EXIST %PYTHON% (
 )
 
 :detect_python_done
-set INSTALL_DEPS_PY=%COVAH_DIR%\build_files\build_environment\install_deps.py
+set INSTALL_DEPS_PY=%KRAKEN_DIR%\build_files\build_environment\install_deps.py
 
 if NOT "%VS2022_NOT_OFFICIALLY_RELEASED%" == "" (
     echo.

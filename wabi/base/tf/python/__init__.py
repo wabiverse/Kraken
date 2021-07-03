@@ -62,7 +62,7 @@ else:
     # for this. In the meantime. This will work. If you move the python installation be sure
     # to also update this path.
     currentFile = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
-    # Relative path to covah installation, where libai.so is installed to covah/X.XX/bin
+    # Relative path to kraken installation, where libai.so is installed to kraken/X.XX/bin
     aiSO = os.path.abspath(os.path.join(currentFile, "../../../../../../bin/libai.so"))
     ctypes.CDLL(aiSO, mode=os.RTLD_GLOBAL)
     class WindowsImportWrapper(object):

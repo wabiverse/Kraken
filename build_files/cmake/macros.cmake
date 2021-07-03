@@ -129,7 +129,7 @@ endfunction()
 
 # Nicer makefiles with -I/1/foo/ instead of -I/1/2/3/../../foo/
 # use it instead of include_directories()
-function(covah_include_dirs
+function(kraken_include_dirs
   includes
   )
 
@@ -145,7 +145,7 @@ function(covah_include_dirs
   include_directories(${_ALL_INCS})
 endfunction()
 
-function(covah_include_dirs_sys
+function(kraken_include_dirs_sys
   includes
   )
 
@@ -164,7 +164,7 @@ endfunction()
 # This enables auto-complete suggestions for user header files on Xcode.
 # Build process is not affected since the include paths are the same
 # as in HEADER_SEARCH_PATHS.
-function(covah_user_header_search_paths
+function(kraken_user_header_search_paths
   name
   includes
   )
@@ -180,7 +180,7 @@ function(covah_user_header_search_paths
   endif()
 endfunction()
 
-function(covah_source_group
+function(kraken_source_group
   name
   sources
   )
@@ -253,7 +253,7 @@ endmacro()
 
 
 # only MSVC uses SOURCE_GROUP
-function(covah_add_lib__impl
+function(kraken_add_lib__impl
   name
   sources
   includes
@@ -262,21 +262,21 @@ function(covah_add_lib__impl
   )
 
 
-  covah_include_dirs("${includes}")
-  covah_include_dirs_sys("${includes_sys}")
+  kraken_include_dirs("${includes}")
+  kraken_include_dirs_sys("${includes_sys}")
   
   # Build Anchor statically.
-  if(${name} STREQUAL "covah_anchor")
+  if(${name} STREQUAL "kraken_anchor")
     add_library(${name} STATIC ${sources})
   else()
     add_library(${name} SHARED ${sources})
   endif()
 
-  add_dependencies(${name} covahverse)
+  add_dependencies(${name} krakenverse)
 
   # if(UNIX)
   #   set_target_properties(${name} PROPERTIES BUILD_WITH_INSTALL_RPATH true)
-  #   set_target_properties(${name} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${COVAH_VERSION}/lib")
+  #   set_target_properties(${name} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
   # endif()
 
 
@@ -337,8 +337,8 @@ function(covah_add_lib__impl
 
   # works fine without having the includes
   # listed is helpful for IDE's (QtCreator/MSVC)
-  covah_source_group("${name}" "${sources}")
-  covah_user_header_search_paths("${name}" "${includes}")
+  kraken_source_group("${name}" "${sources}")
+  kraken_user_header_search_paths("${name}" "${includes}")
 
   list_assert_duplicates("${sources}")
   list_assert_duplicates("${includes}")
@@ -348,7 +348,7 @@ function(covah_add_lib__impl
 endfunction()
 
 
-function(covah_add_lib_nolist
+function(kraken_add_lib_nolist
   name
   sources
   includes
@@ -358,10 +358,10 @@ function(covah_add_lib_nolist
 
   add_cc_flags_custom_test(${name} PARENT_SCOPE)
 
-  covah_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
+  kraken_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
 endfunction()
 
-function(covah_add_lib
+function(kraken_add_lib
   name
   sources
   includes
@@ -371,14 +371,14 @@ function(covah_add_lib
 
   add_cc_flags_custom_test(${name} PARENT_SCOPE)
 
-  covah_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
+  kraken_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
 
-  set_property(GLOBAL APPEND PROPERTY COVAH_LINK_LIBS ${name})
+  set_property(GLOBAL APPEND PROPERTY KRAKEN_LINK_LIBS ${name})
 endfunction()
 
-# Add tests for a Blender library, to be called in tandem with covah_add_lib().
-# The tests will be part of the covah_test executable (see tests/gtests/runner).
-function(covah_add_test_lib
+# Add tests for a Blender library, to be called in tandem with kraken_add_lib().
+# The tests will be part of the kraken_test executable (see tests/gtests/runner).
+function(kraken_add_test_lib
   name
   sources
   includes
@@ -391,9 +391,9 @@ function(covah_add_test_lib
   # Otherwise external projects will produce warnings that we cannot fix.
   remove_strict_flags()
 
-  covah_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
+  kraken_add_lib__impl(${name} "${sources}" "${includes}" "${includes_sys}" "${library_deps}")
 
-  set_property(GLOBAL APPEND PROPERTY COVAH_TEST_LIBS ${name})
+  set_property(GLOBAL APPEND PROPERTY KRAKEN_TEST_LIBS ${name})
 endfunction()
 
 # Ninja only: assign 'heavy pool' to some targets that are especially RAM-consuming to build.
@@ -735,53 +735,53 @@ function(ADD_CHECK_CXX_COMPILER_FLAG
   endif()
 endfunction()
 
-function(get_covah_version)
+function(get_kraken_version)
   # extracts header vars and defines them in the parent scope:
   #
-  # - COVAH_VERSION (major.minor)
-  # - COVAH_VERSION_MAJOR
-  # - COVAH_VERSION_MINOR
-  # - COVAH_VERSION_PATCH
-  # - COVAH_VERSION_CYCLE (alpha, beta, rc, release)
+  # - KRAKEN_VERSION (major.minor)
+  # - KRAKEN_VERSION_MAJOR
+  # - KRAKEN_VERSION_MINOR
+  # - KRAKEN_VERSION_PATCH
+  # - KRAKEN_VERSION_CYCLE (alpha, beta, rc, release)
 
   # So cmake depends on CKE_version.h, beware of inf-loops!
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/covah/covakernel/CKE_version.h
-                 ${CMAKE_BINARY_DIR}/source/covah/covakernel/CKE_version.h.done)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/covakernel/CKE_version.h
+                 ${CMAKE_BINARY_DIR}/source/kraken/covakernel/CKE_version.h.done)
 
-  file(STRINGS ${CMAKE_SOURCE_DIR}/source/covah/covakernel/CKE_version.h _contents REGEX "^#define[ \t]+COVAH_.*$")
+  file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/covakernel/CKE_version.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
 
-  string(REGEX REPLACE ".*#define[ \t]+COVAH_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
-  string(REGEX REPLACE ".*#define[ \t]+COVAH_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")
-  string(REGEX REPLACE ".*#define[ \t]+COVAH_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1" _out_version_cycle "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1" _out_version_cycle "${_contents}")
 
   if(NOT ${_out_version} MATCHES "[0-9]+")
-    message(FATAL_ERROR "Version parsing failed for COVAH_VERSION")
+    message(FATAL_ERROR "Version parsing failed for KRAKEN_VERSION")
   endif()
 
   if(NOT ${_out_version_patch} MATCHES "[0-9]+")
-    message(FATAL_ERROR "Version parsing failed for COVAH_VERSION_PATCH")
+    message(FATAL_ERROR "Version parsing failed for KRAKEN_VERSION_PATCH")
   endif()
 
   if(NOT ${_out_version_cycle} MATCHES "[a-z]+")
-    message(FATAL_ERROR "Version parsing failed for COVAH_VERSION_CYCLE")
+    message(FATAL_ERROR "Version parsing failed for KRAKEN_VERSION_CYCLE")
   endif()
 
   math(EXPR _out_version_major "${_out_version} / 100")
   math(EXPR _out_version_minor "${_out_version} % 100")
 
   # output vars
-  set(COVAH_VERSION "${_out_version_major}.${_out_version_minor}" PARENT_SCOPE)
-  set(COVAH_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
-  set(COVAH_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
-  set(COVAH_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
-  set(COVAH_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
+  set(KRAKEN_VERSION "${_out_version_major}.${_out_version_minor}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
 
 endfunction()
 
 
 # hacks to override initial project settings
-# these macros must be called directly before/after project(COVAH)
-macro(covah_project_hack_pre)
+# these macros must be called directly before/after project(KRAKEN)
+macro(kraken_project_hack_pre)
   # ------------------
   # GCC -O3 HACK START
   # needed because O3 can cause problems but
@@ -799,7 +799,7 @@ macro(covah_project_hack_pre)
 endmacro()
 
 
-macro(covah_project_hack_post)
+macro(kraken_project_hack_post)
   # ----------------
   # GCC -O3 HACK END
   if(_reset_standard_cflags_rel)
@@ -946,7 +946,7 @@ function(data_to_c_simple_icons
   add_custom_command(
     OUTPUT  ${_file_from} ${_file_to}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_file_to_path}
-    # COMMAND python3 ${CMAKE_SOURCE_DIR}/source/covah/datatoc/datatoc_icon.py ${_path_from_abs} ${_file_from}
+    # COMMAND python3 ${CMAKE_SOURCE_DIR}/source/kraken/datatoc/datatoc_icon.py ${_path_from_abs} ${_file_from}
     COMMAND "$<TARGET_FILE:datatoc_icon>" ${_path_from_abs} ${_file_from}
     COMMAND "$<TARGET_FILE:datatoc>" ${_file_from} ${_file_to}
     DEPENDS
@@ -954,7 +954,7 @@ function(data_to_c_simple_icons
       datatoc_icon
       datatoc
       # could be an arg but for now we only create icons depending on UI_icons.h
-      ${CMAKE_SOURCE_DIR}/source/covah/editors/include/UI_icons.h
+      ${CMAKE_SOURCE_DIR}/source/kraken/editors/include/UI_icons.h
     )
 
   set_source_files_properties(${_file_from} ${_file_to} PROPERTIES GENERATED TRUE)
@@ -1086,7 +1086,7 @@ function(print_all_vars)
   endforeach()
 endfunction()
 
-macro(covah_precompile_headers target cpp header)
+macro(kraken_precompile_headers target cpp header)
   if(MSVC)
     # get the name for the pch output file
     get_filename_component(pchbase ${cpp} NAME_WE)

@@ -40,6 +40,6 @@
  * Setup our environment according
  * to our installation. */
 
-void CREATOR_covah_env_init()
+void CREATOR_kraken_env_init()
 {
 }

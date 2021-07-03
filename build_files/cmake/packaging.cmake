@@ -1,13 +1,13 @@
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
-set(PROJECT_DESCRIPTION  "Covah is the 3D creation software suite.")
+set(PROJECT_DESCRIPTION  "Kraken is the 3D creation software suite.")
 set(PROJECT_COPYRIGHT    "Copyright (C) 2018-${CURRENT_YEAR} Wabi")
-set(PROJECT_CONTACT      "dev@covah.xyz")
+set(PROJECT_CONTACT      "dev@kraken.xyz")
 set(PROJECT_VENDOR       "Wabi Animation")
 
-set(MAJOR_VERSION ${COVAH_VERSION_MAJOR})
-set(MINOR_VERSION ${COVAH_VERSION_MINOR})
-set(PATCH_VERSION ${COVAH_VERSION_PATCH})
+set(MAJOR_VERSION ${KRAKEN_VERSION_MAJOR})
+set(MINOR_VERSION ${KRAKEN_VERSION_MINOR})
+set(PATCH_VERSION ${KRAKEN_VERSION_PATCH})
 
 set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
 set(CPACK_PACKAGE_DESCRIPTION ${PROJECT_DESCRIPTION})
@@ -66,7 +66,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(CPACK_PACKAGE_RELOCATABLE "false")
     set(CPACK_RPM_PACKAGE_LICENSE "GPLv2+ and Apache 2.0")
     set(CPACK_RPM_PACKAGE_GROUP "Amusements/Multimedia")
-    set(CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_SOURCE_DIR}/build_files/package_spec/rpm/covah.spec.in")
+    set(CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_SOURCE_DIR}/build_files/package_spec/rpm/kraken.spec.in")
   endif()
 endif()
 
@@ -79,19 +79,19 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "wabi/COVAH ${MAJOR_VERSION}.${MINOR_VERSION}")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "wabi/COVAH ${MAJOR_VERSION}.${MINOR_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "wabi/KRAKEN ${MAJOR_VERSION}.${MINOR_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "wabi/KRAKEN ${MAJOR_VERSION}.${MINOR_VERSION}")
 
-  set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/wincovah.ico)
+  set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
 
   set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/release/license/proprietary.txt)
-  set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/wincovah.ico)
+  set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.ico)
 
-  set(COVAH_NAMESPACE_GUID "507F933F-5898-404A-9A05-18282FD491A6")
+  set(KRAKEN_NAMESPACE_GUID "507F933F-5898-404A-9A05-18282FD491A6")
 
   string(UUID CPACK_WIX_UPGRADE_GUID
-    NAMESPACE ${COVAH_NAMESPACE_GUID}
+    NAMESPACE ${KRAKEN_NAMESPACE_GUID}
     NAME ${CPACK_PACKAGE_INSTALL_DIRECTORY}
     TYPE SHA1 UPPER
   )
@@ -103,8 +103,8 @@ if(WIN32)
   set(CPACK_WIX_LIGHT_EXTRA_FLAGS -dcl:medium)
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "covah" "covah")
-set(CPACK_CREATE_DESKTOP_LINKS "covah" "covah")
+set(CPACK_PACKAGE_EXECUTABLES "kraken" "kraken")
+set(CPACK_CREATE_DESKTOP_LINKS "kraken" "kraken")
 
 include(CPack)
 
@@ -126,14 +126,14 @@ endmacro()
 
 if(APPLE)
   add_package_archive(
-    "${PROJECT_NAME}-${COVAH_VERSION}-${BUILD_REV}-OSX-${CMAKE_OSX_ARCHITECTURES}"
+    "${PROJECT_NAME}-${KRAKEN_VERSION}-${BUILD_REV}-OSX-${CMAKE_OSX_ARCHITECTURES}"
     "zip")
 elseif(UNIX)
   # platform name could be tweaked, to include glibc, and ensure processor is correct (i386 vs i686)
   string(TOLOWER ${CMAKE_SYSTEM_NAME} PACKAGE_SYSTEM_NAME)
 
   add_package_archive(
-    "${PROJECT_NAME}-${COVAH_VERSION}-${BUILD_REV}-${PACKAGE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
+    "${PROJECT_NAME}-${KRAKEN_VERSION}-${BUILD_REV}-${PACKAGE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
     "tar.xz")
 endif()
 

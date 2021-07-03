@@ -1,5 +1,5 @@
 # First generate the manifest for tests since it will not need the dependency on the CRT.
-configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/covah.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/tests.exe.manifest @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/tests.exe.manifest @ONLY)
 
 if(WITH_WINDOWS_BUNDLE_CRT)
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
@@ -14,8 +14,8 @@ if(WITH_WINDOWS_BUNDLE_CRT)
 
   include(InstallRequiredSystemLibraries)
 
-  # Install the CRT to the covah.crt Sub folder.
-  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./covah.crt COMPONENT Libraries)
+  # Install the CRT to the kraken.crt Sub folder.
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.crt COMPONENT Libraries)
 
   # Generating the manifest is a relativly expensive operation since
   # it is collecting an sha1 hash for every file required. so only do
@@ -32,11 +32,11 @@ if(WITH_WINDOWS_BUNDLE_CRT)
       file(SHA1 "${lib}" sha1_file)
       set(CRTLIBS "${CRTLIBS}    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
     endforeach()
-    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/covah.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/covah.crt.manifest @ONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest @ONLY)
     file(TOUCH ${manifest_trigger_file})
   endif()
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/covah.crt.manifest DESTINATION ./covah.crt)
-  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"covah.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest DESTINATION ./kraken.crt)
+  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"kraken.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
-configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/covah.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/covah.exe.manifest @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/kraken.exe.manifest @ONLY)

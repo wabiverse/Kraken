@@ -50,15 +50,15 @@ int main(int argc, const char **argv)
 #endif
 
   /* Environment variables. */
-  CREATOR_covah_env_init();
+  CREATOR_kraken_env_init();
 
   /* Create Context C. */
   C = CTX_create();
 
-  CKE_covah_globals_init();
+  CKE_kraken_globals_init();
 
   /* Init plugins. */
-  CKE_covah_plugins_init();
+  CKE_kraken_plugins_init();
 
   /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
@@ -68,11 +68,11 @@ int main(int argc, const char **argv)
   }
 
   /* Determining Stage Configuration and Loadup. */
-  CKE_covah_main_init(C, argc, (const char **)argv);
+  CKE_kraken_main_init(C, argc, (const char **)argv);
 
   /* Runtime. */
   WM_init(C, argc, (const char **)argv);
   WM_main(C);
 
-  return COVAH_SUCCESS;
+  return KRAKEN_SUCCESS;
 }

@@ -156,4 +156,4 @@ set(LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /STACK:2097152 /NODEFAULTLIB:libcmt.l
 
 # When Visual Studio IDE runs the project for testing
 # it needs to know which project to execute.
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT covah)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT kraken)

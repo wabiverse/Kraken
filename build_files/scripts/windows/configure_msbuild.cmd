@@ -38,25 +38,25 @@ if NOT EXIST %BUILD_DIR%\nul (
 if "%MUST_CLEAN%"=="1" (
 	echo Cleaning %BUILD_DIR%
 	msbuild ^
-		%BUILD_DIR%\COVAH.sln ^
+		%BUILD_DIR%\KRAKEN.sln ^
 		/target:clean ^
 		/property:Configuration=%BUILD_TYPE% ^
 		/verbosity:minimal ^
 		/p:platform=%MSBUILD_PLATFORM%
 )
 
-if NOT EXIST %BUILD_DIR%\COVAH.sln set MUST_CONFIGURE=1
+if NOT EXIST %BUILD_DIR%\KRAKEN.sln set MUST_CONFIGURE=1
 if "%NOBUILD%"=="1" set MUST_CONFIGURE=1
 
 if "%MUST_CONFIGURE%"=="1" (
 
 	if NOT "%verbose%" == "" (
-		echo "%CMAKE% %BUILD_CMAKE_ARGS% -H%COVAH_DIR% -B%BUILD_DIR%"
+		echo "%CMAKE% %BUILD_CMAKE_ARGS% -H%KRAKEN_DIR% -B%BUILD_DIR%"
 	)
 
 	cmake ^
 		%BUILD_CMAKE_ARGS% ^
-		-H%COVAH_DIR% ^
+		-H%KRAKEN_DIR% ^
 		-B%BUILD_DIR% 
 	
 	if errorlevel 1 (

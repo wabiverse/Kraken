@@ -4,14 +4,14 @@
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   if(NOT DEFINED WITH_IN_SOURCE_BUILD)
     message(FATAL_ERROR
-      "CMake generation for covah is not allowed within the source directory!"
+      "CMake generation for kraken is not allowed within the source directory!"
       "\n Remove \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" and try again from another folder, e.g.:"
       "\n "
       "\n rm CMakeCache.txt"
       "\n cd .."
       "\n mkdir cmake-make"
       "\n cd cmake-make"
-      "\n cmake ../covah"
+      "\n cmake ../kraken"
       "\n "
       "\n Alternately define WITH_IN_SOURCE_BUILD to force this option (not recommended!)"
     )
@@ -61,7 +61,7 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 # So library linking is more sane
 cmake_policy(SET CMP0003 NEW)
 
-# So BUILDINFO and COVAHPATH strings are automatically quoted
+# So BUILDINFO and KRAKENPATH strings are automatically quoted
 cmake_policy(SET CMP0005 NEW)
 
 # So syntax problems are errors
@@ -88,11 +88,11 @@ include(macros)
 #-----------------------------------------------------------------------------
 # Initialize project.
 
-covah_project_hack_pre()
+kraken_project_hack_pre()
 
-project(COVAH)
+project(KRAKEN)
 
-covah_project_hack_post()
+kraken_project_hack_post()
 
 enable_testing()
 
@@ -128,9 +128,9 @@ endif()
 # and we need to ensure we are able to check Release v. Debug modes
 # to link and install with the proper Release v. Debug libraries.
 if(CMAKE_BINARY_DIR MATCHES ".*Release")
-  option(COVAH_RELEASE_MODE "Covah build type detection" ON)
+  option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
 elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
-  option(COVAH_RELEASE_MODE "Covah build type detection" OFF)
+  option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
 endif()
 
 if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
@@ -140,9 +140,9 @@ if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
   add_definitions(-DOSL_DEBUG=1)
 endif()
 
-get_covah_version()
+get_kraken_version()
 
-set(TARGETDIR_VER ${COVAH_VERSION})
+set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 #-----------------------------------------------------------------------------
 # Build as shared for plugin support and user extensibility.
@@ -152,10 +152,10 @@ option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
 #-----------------------------------------------------------------------------
 # Build Options
 
-option(WITH_COVAH                    "Build the COVAH executable, The Digital Content Creation Platform of the 21st Century"      ON)
-option(WITH_COVAH_MONOLITHIC         "Build all Pixar API libraries as one big monolithic library, the covahverse"                ON)
+option(WITH_KRAKEN                    "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"      ON)
+option(WITH_KRAKEN_MONOLITHIC         "Build all Pixar API libraries as one big monolithic library, the krakenverse"                ON)
 option(WITH_LICENSING                "Save my investments god damnit"                                                             ON)
-option(WITH_TESTS                    "Build covah test executables"                                                               ON)
+option(WITH_TESTS                    "Build kraken test executables"                                                               ON)
 option(WITH_USD                      "Enable Universal Scene Description (USD) Support"                                           ON)
 option(WITH_PIXAR_AR_BETA            "Enable developmental preview of Pixar Asset Resolution v2.0"                                ON)
 option(WITH_PIXAR_USDVIEW            "Build the Pixar UsdView Python Application"                                                 ON)
@@ -173,7 +173,7 @@ option(WITH_EMBREE                   "Enable RenderMan, Pixar's Render Engine"  
 option(WITH_ALEMBIC                  "Enable Alembic Support"                                                                     ON)
 option(WITH_ALEMBIC_HDF5             "Enable HDF5 in Alembic for high performance data management and storage"                    ON)
 option(WITH_DRACO                    "Enable Draco Support"                                                                       ON)
-option(WITH_MATERIALX                "Enable MaterialX support for COVAH through the usdMatx plugin"                              ON)
+option(WITH_MATERIALX                "Enable MaterialX support for KRAKEN through the usdMatx plugin"                              ON)
 option(WITH_OSL                      "Build with full OSL support for MaterialX, and others."                                     ON)
 option(WITH_OPENIMAGEIO              "Enable OpenImageIO Support (http://www.openimageio.org)"                                    ON)
 option(WITH_PTEX                     "Enable Walt Disney Animation Studios Ptex support (https://ptex.us/)"                       ON)
@@ -184,7 +184,7 @@ option(WITH_OPENVDB                  "Enable features relying on OpenVDB"       
 option(WITH_OPENVDB_BLOSC            "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support"  ON)
 option(WITH_NANOVDB                  "Enable usage of NanoVDB data structure for accelerated rendering on the GPU"               OFF)
 option(WITH_PYTHON                   "Enable Embedded Python API  (only disable for development)"                                 ON)
-option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with COVAH"                                 ON)
+option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with KRAKEN"                                 ON)
 option(WITH_PYTHON_INSTALL_NUMPY     "Install numpy alongside python installation"                                                ON)
 option(WITH_PYTHON_INSTALL_REQUESTS  "Install requests alongside python installation"                                             ON)
 option(WITH_PYTHON_SECURITY          "Disables execution of scripts referenced within usd files by default"                       ON)
@@ -247,11 +247,11 @@ add_definitions(${_WABI_CXX_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------------
-# Covah Universe. The Universe - Descripted.
+# Kraken Universe. The Universe - Descripted.
 
 include(Public)
 
-wabi_covahverse_prologue()
+wabi_krakenverse_prologue()
 
 add_subdirectory(wabi)
 
@@ -259,10 +259,10 @@ if(WABI_BUILD_DOCUMENTATION)
   wabi_build_documentation()
 endif()
 
-wabi_covahverse_epilogue()
+wabi_krakenverse_epilogue()
 
 #-----------------------------------------------------------------------------
-# COVAH. The Digital Content Creation Platform of the 21st Century.
+# KRAKEN. The Digital Content Creation Platform of the 21st Century.
 
 add_subdirectory(source)
 
@@ -272,7 +272,7 @@ add_subdirectory(source)
 # add_subdirectory(tests)
 
 #-----------------------------------------------------------------------------
-# Covah Application ::
+# Kraken Application ::
 #
 # For the -- wow this looks like the
 # blender build & overall directory
@@ -312,10 +312,10 @@ if(FIRST_RUN)
   message(" |_____|__|__|_____|_____|                                ")
   message("     Animation Studios                                    ")
   message("                                                          ")
-  message("  COVAH ::: v${COVAH_VERSION_MAJOR}.${COVAH_VERSION_MINOR}")
+  message("  KRAKEN ::: v${KRAKEN_VERSION_MAJOR}.${KRAKEN_VERSION_MINOR}")
   message("                                                          ")
 
-  set(_config_msg "\nCOVAH Configuration\n=====================")
+  set(_config_msg "\nKRAKEN Configuration\n=====================")
 
   function(info_cfg_option
     _setting

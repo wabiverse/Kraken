@@ -8,7 +8,7 @@ configure_file(
 if(UNIX)
     install(
         FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
-        DESTINATION "/usr/local/share/covah/${TARGETDIR_VER}/include/wabi/usd/ar"
+        DESTINATION "/usr/local/share/kraken/${TARGETDIR_VER}/include/wabi/usd/ar"
     )
 elseif(WIN32)
     install(

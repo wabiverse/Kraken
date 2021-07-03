@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+    <id>xyz.wabi.KRAKEN</id>
+    <launchable type="desktop-id">kraken.desktop</launchable>
+    <name>KRAKEN</name>
+    <summary>Free and open source 3D creation suite</summary>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>Proprietary</project_license>
+    <description>
+        <p>
+            KRAKEN is the future of 3D graphics for film, animation, and the
+            future of interactive digital experiences. It supports a Hydra
+            Powered Viewport capable of rendering any engine from Arnold,
+            to Renderman, a real-time, physically based render engine called
+            PHOENIX and many more production tools are coming soon.
+        </p>
+
+        <p>
+            Currently in development is a wide range of procedural tools such as
+            a modeler, rigger, animation framework, simulation engine, render farm
+            integrator, interprocess framework, and more. Built upon the Pixar
+            Production pipeline, and ready to blow a hole in your GPU. We're just
+            as excited as you are to kick this off to brand-new heights.
+        </p>
+
+        <p>
+            KRAKEN is in it's very early development stages. Join the development
+            fund and help us evolve KRAKEN over the next several years. Together
+            we can build the future of animation, and build the tools the way we
+            want to use them. Development is moving rapidly and we are consistantly
+            supporting new tools as they are made available. Drop us a line and
+            we'll be happy to implement all sorts of community driven ideas.
+        </p>
+
+        <p>
+            Let's fly.
+        </p>
+    </description>
+    <url type="homepage">https://www.kraken.xyz</url>
+    <url type="help">https://www.kraken.xyz/support/</url>
+    <url type="bugtracker">https://developer.kraken.xyz</url>
+    <url type="donation">https://www.kraken.xyz/development-fund/</url>
+    <screenshots>
+        <screenshot type="default">
+            <image>#</image>
+        </screenshot>
+        <screenshot>
+            <image>#</image>
+        </screenshot>
+        <screenshot>
+            <image>#</image>
+        </screenshot>
+        <screenshot>
+            <image>#</image>
+        </screenshot>
+    </screenshots>
+    <releases>
+        <release version="1.00" date="2020-12-18">
+            <description>
+                <p>New features:</p>
+                <ul>
+                    <li>Arnold Render Engine</li>
+                    <li>Renderman Render Engine</li>
+                    <li>Interactive Viewport</li>
+                    <li>Message Bus</li>
+                    <li>Server Spool</li>
+                </ul>
+                <p>Enhancements:</p>
+                <ul>
+                    <li>Extremely Interactive Feedback</li>
+                    <li>Hotkey Fixups</li>
+                    <li>Begin Modeler Project</li>
+                </ul>
+            </description>
+        </release>
+  </releases>
+</component>

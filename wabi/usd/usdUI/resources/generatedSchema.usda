@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    "Generated for use with Covah.  Copyright (C) 2021 Wabi Animation Studios."
+    "Generated for use with Kraken.  Copyright (C) 2021 Wabi Animation Studios."
 )
 
 class UserPref "UserPref" (

@@ -768,7 +768,7 @@ else:
     verify_cycles = "Cycles/include/bvh/bvh.h"
     OPENIMAGE_DENOISE_URL = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.1/oidn-1.4.1.src.zip"
 
-CYCLES_URL = "https://storage.googleapis.com/dependency_links/Cycles-1.10-COVAH.zip"
+CYCLES_URL = "https://storage.googleapis.com/dependency_links/Cycles-1.10-KRAKEN.zip"
 
 def InstallCycles(context, force, buildArgs):
     # -------------------------------------------------------------------------------- OPENIMAGEDENOISE -----
@@ -811,41 +811,41 @@ def InstallCycles(context, force, buildArgs):
         RunCMake(context, force, buildArgs)
 
         if Linux():
-            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/bin", context.libInstDir + "/bin")
-            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/lib", context.libInstDir + "/lib")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/app",                 context.libInstDir + "/include/app")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/blender",             context.libInstDir + "/include/blender")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/bvh",                 context.libInstDir + "/include/bvh")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/device",              context.libInstDir + "/include/device")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/graph",               context.libInstDir + "/include/graph")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/kernel",              context.libInstDir + "/include/kernel")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/render",              context.libInstDir + "/include/render")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/subd",                context.libInstDir + "/include/subd")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/util",                context.libInstDir + "/include/util")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/atomic",      context.libInstDir + "/include/atomic")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/clew",        context.libInstDir + "/include/clew")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/cuew",        context.libInstDir + "/include/cuew")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/libc_compat", context.libInstDir + "/include/libc_compat")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/numaapi",     context.libInstDir + "/include/numaapi")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/sky",         context.libInstDir + "/include/sky")
+            copy_tree(context.buildDir + "/Cycles-1.10-KRAKEN/bin", context.libInstDir + "/bin")
+            copy_tree(context.buildDir + "/Cycles-1.10-KRAKEN/lib", context.libInstDir + "/lib")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/app",                 context.libInstDir + "/include/app")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/blender",             context.libInstDir + "/include/blender")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/bvh",                 context.libInstDir + "/include/bvh")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/device",              context.libInstDir + "/include/device")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/graph",               context.libInstDir + "/include/graph")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/kernel",              context.libInstDir + "/include/kernel")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/render",              context.libInstDir + "/include/render")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/subd",                context.libInstDir + "/include/subd")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/util",                context.libInstDir + "/include/util")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/atomic",      context.libInstDir + "/include/atomic")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/clew",        context.libInstDir + "/include/clew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/cuew",        context.libInstDir + "/include/cuew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/libc_compat", context.libInstDir + "/include/libc_compat")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/numaapi",     context.libInstDir + "/include/numaapi")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/sky",         context.libInstDir + "/include/sky")
         elif Windows():
-            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/bin", context.libInstDir + "/Cycles/bin")
-            copy_tree(context.buildDir + "/Cycles-1.10-COVAH/lib", context.libInstDir + "/Cycles/lib")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/app",                 context.libInstDir + "/Cycles/include/app")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/blender",             context.libInstDir + "/Cycles/include/blender")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/bvh",                 context.libInstDir + "/Cycles/include/bvh")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/device",              context.libInstDir + "/Cycles/include/device")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/graph",               context.libInstDir + "/Cycles/include/graph")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/kernel",              context.libInstDir + "/Cycles/include/kernel")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/render",              context.libInstDir + "/Cycles/include/render")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/subd",                context.libInstDir + "/Cycles/include/subd")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/src/util",                context.libInstDir + "/Cycles/include/util")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/atomic",      context.libInstDir + "/Cycles/include/atomic")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/clew",        context.libInstDir + "/Cycles/include/clew")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/cuew",        context.libInstDir + "/Cycles/include/cuew")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/libc_compat", context.libInstDir + "/Cycles/include/libc_compat")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/numaapi",     context.libInstDir + "/Cycles/include/numaapi")
-            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-COVAH/third_party/sky",         context.libInstDir + "/Cycles/include/sky")
+            copy_tree(context.buildDir + "/Cycles-1.10-KRAKEN/bin", context.libInstDir + "/Cycles/bin")
+            copy_tree(context.buildDir + "/Cycles-1.10-KRAKEN/lib", context.libInstDir + "/Cycles/lib")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/app",                 context.libInstDir + "/Cycles/include/app")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/blender",             context.libInstDir + "/Cycles/include/blender")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/bvh",                 context.libInstDir + "/Cycles/include/bvh")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/device",              context.libInstDir + "/Cycles/include/device")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/graph",               context.libInstDir + "/Cycles/include/graph")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/kernel",              context.libInstDir + "/Cycles/include/kernel")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/render",              context.libInstDir + "/Cycles/include/render")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/subd",                context.libInstDir + "/Cycles/include/subd")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/src/util",                context.libInstDir + "/Cycles/include/util")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/atomic",      context.libInstDir + "/Cycles/include/atomic")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/clew",        context.libInstDir + "/Cycles/include/clew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/cuew",        context.libInstDir + "/Cycles/include/cuew")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/libc_compat", context.libInstDir + "/Cycles/include/libc_compat")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/numaapi",     context.libInstDir + "/Cycles/include/numaapi")
+            CopyFilesHeaders(context.srcDir + "/Cycles-1.10-KRAKEN/third_party/sky",         context.libInstDir + "/Cycles/include/sky")
 
 CYCLES = Dependency("cycles", InstallCycles, verify_cycles)
 
@@ -2025,7 +2025,7 @@ SDL = Dependency("sdl", InstallSDL, "include/SDL2/SDL.h")
 print("\n\n")
 
 programDescription = """\
-*** COVAH -- ENVIRONMENT BUILDER ***
+*** KRAKEN -- ENVIRONMENT BUILDER ***
 
 Builds and installs 3rd-party dependencies to a specified location.
 
@@ -2041,8 +2041,8 @@ can download and build as needed:
 parser = argparse.ArgumentParser(description=programDescription, formatter_class=argparse.RawDescriptionHelpFormatter, usage=argparse.SUPPRESS, epilog=textwrap.dedent('''\
                                                                                                                                                 ::
                                                                                                                                                 ::
-                                                                                                                                                :: COVAH. 2021.'''), add_help=False)
-parser._optionals.title = "COVAH DEPENDENCIES | COMMAND LINE OPTIONS"
+                                                                                                                                                :: KRAKEN. 2021.'''), add_help=False)
+parser._optionals.title = "KRAKEN DEPENDENCIES | COMMAND LINE OPTIONS"
 
 group_build = parser.add_mutually_exclusive_group()
 group_build.add_argument("--build",      type=str, action="append", dest="force_build", default=[], help="Download and build the specified library")
@@ -2362,9 +2362,9 @@ if JPEG in requiredDependencies:
 # Summarize
 summaryMsg = """\
 BUILD SUMMARY:
-  COVAH Dependency Libraries    {libInstDir}
-  COVAH Dependency Source       {srcDir}
-  COVAH Dependency Build        {buildDir}
+  KRAKEN Dependency Libraries    {libInstDir}
+  KRAKEN Dependency Source       {srcDir}
+  KRAKEN Dependency Build        {buildDir}
   CMake generator               {cmakeGenerator}
   CMake toolset                 {cmakeToolset}
   Downloader                    {downloader}
@@ -2495,4 +2495,4 @@ if Windows():
     ])
 
 Print("""
-Success! Now build COVAH, simply use the './make' command:""")
+Success! Now build KRAKEN, simply use the './make' command:""")

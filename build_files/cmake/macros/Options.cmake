@@ -94,7 +94,7 @@ set(WABI_LIB_PREFIX ${CMAKE_SHARED_LIBRARY_PREFIX}
     "Prefix for build library name"
 )
 
-set(WABI_MONOLITHIC_IMPORT "" CACHE STRING   "Path to cmake file that imports a covahverse target")
+set(WABI_MONOLITHIC_IMPORT "" CACHE STRING   "Path to cmake file that imports a krakenverse target")
 set(WABI_EXTRA_PLUGINS     "" CACHE INTERNAL "Aggregation of extra plugin directories containing a plugInfo.json.")
 
 # Resolve options that depend on one another so that subsequent .cmake scripts

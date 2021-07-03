@@ -27,7 +27,7 @@ if(EXISTS ${SOURCE_DIR}/.git)
                     OUTPUT_VARIABLE MY_WC_HASH
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    execute_process(COMMAND git branch --list main covah-v* --contains ${MY_WC_HASH}
+    execute_process(COMMAND git branch --list main kraken-v* --contains ${MY_WC_HASH}
                     WORKING_DIRECTORY ${SOURCE_DIR}
                     OUTPUT_VARIABLE _git_contains_check
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -101,7 +101,7 @@ if(EXISTS ${SOURCE_DIR}/.git)
       endif()
     endif()
 
-    if(MY_WC_BRANCH MATCHES "^covah-v")
+    if(MY_WC_BRANCH MATCHES "^kraken-v")
       set(MY_WC_BRANCH "main")
     endif()
 

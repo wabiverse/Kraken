@@ -15,5 +15,5 @@ if [ -n "$XDG_RUNTIME_DIR" ]; then
     fi
 fi
 
-# Run COVAH
-$SNAP/covah "$@"
+# Run KRAKEN
+$SNAP/kraken "$@"

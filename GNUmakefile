@@ -3,12 +3,12 @@
 # This Makefile does an out-of-source CMake build in ../build_`OS`_`CPU`
 # eg:
 #   ../build_linux_i386
-# This is for users who like to configure & build covah with a single command.
+# This is for users who like to configure & build kraken with a single command.
 
 define HELP_TEXT
 
 Convenience Targets
-   Provided for building COVAH, (multiple at once can be used).
+   Provided for building KRAKEN, (multiple at once can be used).
 
    * debug:         Build a debug binary.
    * release:       Complete build with all options enabled.
@@ -35,12 +35,12 @@ Testing Targets
 Utilities
 
    * install:
-     Installs Covah along with Pixar USD (Useful for updating python scripts).	 	 
+     Installs Kraken along with Pixar USD (Useful for updating python scripts).	 	 
 
    * icons:
      Updates PNG icons from SVG files.
 
-     Optionally pass in variables: 'COVAH_BIN', 'INKSCAPE_BIN'
+     Optionally pass in variables: 'KRAKEN_BIN', 'INKSCAPE_BIN'
      otherwise default paths are used.
 
      Example
@@ -55,7 +55,7 @@ Utilities
    * format
      Format source code using clang (uses PATHS if passed in). For example::
 
-        make format PATHS="source/covah/wm source/covah/covakernel"
+        make format PATHS="source/kraken/wm source/kraken/covakernel"
 
 Environment Variables
 
@@ -65,7 +65,7 @@ Environment Variables
    * NPROCS:               Number of processes to use building (auto-detect when omitted).
 
 Documentation Targets
-   Not associated with building COVAH.
+   Not associated with building KRAKEN.
 
    * doc_all:     Generate sphinx C/C++ docs.
    * doc_man:     Generate manpage.
@@ -89,25 +89,25 @@ CPU:=$(shell uname -m)
 
 
 # Source and Build DIR's
-COVAH_DIR:=$(shell pwd -P)
+KRAKEN_DIR:=$(shell pwd -P)
 BUILD_TYPE:=Release
 
 # CMake arguments, assigned to local variable to make it mutable.
 CMAKE_CONFIG_ARGS := $(BUILD_CMAKE_ARGS)
 
 ifndef BUILD_DIR
-	BUILD_DIR:=$(shell dirname "$(COVAH_DIR)")/build_$(OS_NCASE)
+	BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/build_$(OS_NCASE)
 endif
 
 # Dependencies DIR's
-DEPS_INSTALL_SCRIPT:=$(COVAH_DIR)/build_files/build_environment/install_deps.py
+DEPS_INSTALL_SCRIPT:=$(KRAKEN_DIR)/build_files/build_environment/install_deps.py
 
 ifndef DEPS_BUILD_DIR
-    DEPS_BUILD_DIR:=$(shell dirname "$(COVAH_DIR)")/lib/linux_centos7_x86_64/build_env/build
+    DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7_x86_64/build_env/build
 endif
 
 ifndef DEPS_INSTALL_DIR
-	DEPS_INSTALL_DIR:=$(shell dirname "$(COVAH_DIR)")/lib/linux_centos7
+	DEPS_INSTALL_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7
 
 	ifneq ($(OS_NCASE),darwin)
 		# Add processor type to directory name
@@ -117,8 +117,8 @@ endif
 
 # Prefer the python we ship.
 ifndef PYTHON
-	ifneq (, $(wildcard /usr/local/share/covah/1.50/python/bin/python3.9))
-		PYTHON:=/usr/local/share/covah/1.50/python/bin/python3.9
+	ifneq (, $(wildcard /usr/local/share/kraken/1.50/python/bin/python3.9))
+		PYTHON:=/usr/local/share/kraken/1.50/python/bin/python3.9
 	else
 		PYTHON:=python3.9
 	endif
@@ -145,11 +145,11 @@ ifneq "$(findstring debug, $(MAKECMDGOALS))" ""
 endif
 ifneq "$(findstring release, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_release
-	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/wabi_release.cmake" $(CMAKE_CONFIG_ARGS)
+	CMAKE_CONFIG_ARGS:=-C"$(KRAKEN_DIR)/build_files/cmake/config/wabi_release.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 
 ifneq "$(findstring developer, $(MAKECMDGOALS))" ""
-	CMAKE_CONFIG_ARGS:=-C"$(COVAH_DIR)/build_files/cmake/config/covah_developer.cmake" $(CMAKE_CONFIG_ARGS)
+	CMAKE_CONFIG_ARGS:=-C"$(KRAKEN_DIR)/build_files/cmake/config/kraken_developer.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 
 # -----------------------------------------------------------------------------
@@ -174,14 +174,14 @@ else
 endif
 
 # -----------------------------------------------------------------------------
-# COVAH binary path
+# KRAKEN binary path
 
-# Allow passing in own COVAH_BIN so developers who don't
+# Allow passing in own KRAKEN_BIN so developers who don't
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
-	COVAH_BIN?="$(BUILD_DIR)/bin/COVAH.app/Contents/MacOS/COVAH"
+	KRAKEN_BIN?="$(BUILD_DIR)/bin/KRAKEN.app/Contents/MacOS/KRAKEN"
 else
-	COVAH_BIN?="$(BUILD_DIR)/bin/covah"
+	KRAKEN_BIN?="$(BUILD_DIR)/bin/kraken"
 endif
 
 
@@ -209,7 +209,7 @@ endif
 # Macro for configuring cmake
 
 CMAKE_CONFIG = cmake $(CMAKE_CONFIG_ARGS) \
-                     -H"$(COVAH_DIR)" \
+                     -H"$(KRAKEN_DIR)" \
                      -B"$(BUILD_DIR)" \
                      -DCMAKE_BUILD_TYPE_INIT:STRING=$(BUILD_TYPE)
 
@@ -226,10 +226,10 @@ endif
 
 
 # -----------------------------------------------------------------------------
-# Build COVAH
+# Build KRAKEN
 all: .FORCE
 	@echo
-	@echo Configuring COVAH in \"$(BUILD_DIR)\" ...
+	@echo Configuring KRAKEN in \"$(BUILD_DIR)\" ...
 
 #	# if test ! -f $(BUILD_DIR)/CMakeCache.txt ; then \
 #	# 	$(CMAKE_CONFIG); \
@@ -239,11 +239,11 @@ all: .FORCE
 	@$(CMAKE_CONFIG)
 
 	@echo
-	@echo Building Covah and Pixar USD...
+	@echo Building Kraken and Pixar USD...
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Covah successfully built, run from: /usr/local/share/covah/1.50/bin/covah
+	@echo Kraken successfully built, run from: /usr/local/share/kraken/1.50/bin/kraken
 	@echo
 
 debug: all
@@ -255,18 +255,18 @@ ninja: all
 # Run Install (So you don't have to rebuild everytime, python scripts, etc)
 install: .FORCE
 	@echo
-	@echo Installing Covah and Pixar USD...
+	@echo Installing Kraken and Pixar USD...
 
 	@echo
 	cd "$(BUILD_DIR)" ; ninja install
 	@echo
-	@echo Covah and Pixar USD successfully installed,
-	@echo Run Covah from: /usr/local/share/covah/1.50/bin/covah
+	@echo Kraken and Pixar USD successfully installed,
+	@echo Run Kraken from: /usr/local/share/kraken/1.50/bin/kraken
 	@echo Run Python or test Pixar UsdView from: $(PYTHON).
 	@echo
 
 # -----------------------------------------------------------------------------
-# Build all required dependencies to build Covah and Pixar USD
+# Build all required dependencies to build Kraken and Pixar USD
 
 # 
 # Build dependencies
@@ -327,10 +327,10 @@ source_archive: .FORCE
 
 INKSCAPE_BIN?="inkscape"
 icons: .FORCE
-	COVAH_BIN=$(COVAH_BIN) INKSCAPE_BIN=$(INKSCAPE_BIN) \
-		"$(COVAH_DIR)/release/datafiles/covah_icons_update.py"
-	COVAH_BIN=$(COVAH_BIN) INKSCAPE_BIN=$(INKSCAPE_BIN) \
-		"$(COVAH_DIR)/release/datafiles/prvicons_update.py"
+	KRAKEN_BIN=$(KRAKEN_BIN) INKSCAPE_BIN=$(INKSCAPE_BIN) \
+		"$(KRAKEN_DIR)/release/datafiles/kraken_icons_update.py"
+	KRAKEN_BIN=$(KRAKEN_BIN) INKSCAPE_BIN=$(INKSCAPE_BIN) \
+		"$(KRAKEN_DIR)/release/datafiles/prvicons_update.py"
 
 update: .FORCE
 	$(PYTHON) ./build_files/utils/make_update.py
@@ -345,10 +345,10 @@ format: .FORCE
 
 doc_all: .FORCE
 	cd doc/sphinx; make html
-	@echo "docs written into: '$(COVAH_DIR)/doc/_build'"
+	@echo "docs written into: '$(KRAKEN_DIR)/doc/_build'"
 
 doc_man: .FORCE
-	$(PYTHON) doc/manpage/covah.1.py $(COVAH_BIN) covah.1
+	$(PYTHON) doc/manpage/kraken.1.py $(KRAKEN_BIN) kraken.1
 
 clean: .FORCE
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" clean

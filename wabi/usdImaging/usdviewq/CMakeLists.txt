@@ -86,12 +86,12 @@ wabi_library(usdviewq
 if(UNIX)
     install(DIRECTORY
         resources/icons
-        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
     )
 
     install(DIRECTORY
         resources/fonts
-        DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
     )
 elseif(WIN32)
     install(DIRECTORY

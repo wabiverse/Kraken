@@ -48,7 +48,7 @@ foreach(mtlx ${MTLX_FILES})
     if(UNIX)
         install(
             FILES ${mtlx}
-            DESTINATION /usr/local/share/covah/${TARGETDIR_VER}/materials/${dir})
+            DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/materials/${dir})
     elseif(WIN32)
         install(
             FILES ${mtlx}

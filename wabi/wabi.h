@@ -35,7 +35,7 @@
 /**
  * @file wabi/wabi.h
  *
- * Pixar's Universal Scene Description | Built for COVAH
+ * Pixar's Universal Scene Description | Built for KRAKEN
  * .              +   .                .   . .     .  .
  *                   .                    .       .     *
  *  .       *                        . . . .  .   .  + .
@@ -54,7 +54,7 @@
  *.      .  .  .  *   .  *  . +..  .            *
  * .      .   . .   .   .   . .  +   .    .            +
  * A custom build, carefully tailored to the needs of the
- * COVAH software project, where it is used as a foundational
+ * KRAKEN software project, where it is used as a foundational
  * component framework in the context of a Digital Content
  * Creation Platform. Changes were made to better establish
  * Universal Scene Description for expanded use as the central
@@ -84,7 +84,7 @@
 #if WABI_USE_NAMESPACES
 
 #  define WABI_NS wabi
-#  define WABI_INTERNAL_NS COVAHverse
+#  define WABI_INTERNAL_NS KRAKENverse
 #  define WABI_NS_GLOBAL ::WABI_NS
 
 namespace WABI_INTERNAL_NS {

@@ -20,7 +20,7 @@ sys.path.insert(1, '../../../release/scripts/modules')
 
 import wpy
 
-print("\nCOVAH VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(wpy.__version__, wpy.__author__))
+print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(wpy.__version__, wpy.__author__))
 
 version = wpy.__version__.replace('(', '').replace(')', '').replace(', ', '.')
 release = version
@@ -41,7 +41,7 @@ display_version = True;
 
 # -- Project information -----------------------------------------------------
 
-project = 'COVAH'
+project = 'KRAKEN'
 copyright = '2021, Wabi'
 author = 'Furby™'
 
@@ -51,11 +51,11 @@ release = 'latest'
 html_context = {
   'display_github': True,
   'github_user': 'furby-tm',
-  'github_repo': 'COVAH',
+  'github_repo': 'KRAKEN',
   'github_version': 'main',
   'theme_navigation_depth': 4,
   'conf_py_path': '/doc/doxygen/source/',
-  'covah_version': version,
+  'kraken_version': version,
 }
 
 
@@ -69,12 +69,12 @@ extensions = [
   'exhale',
 ]
 
-breathe_projects = {"covah": "../_build/xml"}
+breathe_projects = {"kraken": "../_build/xml"}
 
-breathe_default_project = "covah"
+breathe_default_project = "kraken"
 
 
-COVAH_SOURCE_DIRECTORY = os.path.abspath("../../../covah/source").replace('\\', '/')
+KRAKEN_SOURCE_DIRECTORY = os.path.abspath("../../../kraken/source").replace('\\', '/')
 WABI_SOURCE_DIRECTORY = os.path.abspath("../../../wabi").replace('\\', '/')
 
 # Temporarily disable documentation build for code,
@@ -86,8 +86,8 @@ exhale_args = {
     # Main extension setup.                                                    #
     ############################################################################
     "containmentFolder":     "./api",
-    "rootFileName":          "covah_api_root.rst",
-    "rootFileTitle":         "COVAH Developer Reference",
+    "rootFileName":          "kraken_api_root.rst",
+    "rootFileTitle":         "KRAKEN Developer Reference",
     "doxygenStripFromPath":  "..",
     ############################################################################
     # Suggested optional arguments.                                            #
@@ -97,7 +97,7 @@ exhale_args = {
     "exhaleDoxygenStdin": textwrap.dedent(f'''
                           GENERATE_XML            = YES
                           XML_PROGRAMLISTING      = YES
-                          INPUT                   = {COVAH_SOURCE_DIRECTORY}
+                          INPUT                   = {KRAKEN_SOURCE_DIRECTORY}
                           EXTRACT_LOCAL_CLASSES   = NO
                           HIDE_UNDOC_CLASSES      = YES
                           HIDE_SCOPE_NAMES        = YES
@@ -121,7 +121,7 @@ exhale_args = {
                           EXTERNAL_GROUPS         = NO
                           EXTERNAL_PAGES          = NO
                           INCLUDE_PATH            = {WABI_SOURCE_DIRECTORY + "/../"}
-                          INCLUDE_PATH           += {COVAH_SOURCE_DIRECTORY}
+                          INCLUDE_PATH           += {KRAKEN_SOURCE_DIRECTORY}
                           PREDEFINED              = DOXYGEN_SHOULD_SKIP_THIS
                           PREDEFINED             += doxygen
                           PREDFINED              += "TF_DECLARE_PUBLIC_TOKENS(name, x, y)=class name"
@@ -134,10 +134,10 @@ exhale_args = {
                           PREDEFINED             += "GARCH_API"
                           PREDEFINED             += "HGIGL_API"
                           PREDEFINED             += "HGIVULKAN_API"
-                          PREDEFINED             += "COVAH_SLOTS"
-                          PREDEFINED             += "COVAH_SIGNALS"
+                          PREDEFINED             += "KRAKEN_SLOTS"
+                          PREDEFINED             += "KRAKEN_SIGNALS"
                           PREDEFINED             += "CODE_EDITOR_API"
-                          PREDEFINED             += "COVAH_NODE_API"
+                          PREDEFINED             += "KRAKEN_NODE_API"
                           PREDEFINED             += "HGIMETAL_API"
                           PREDEFINED             += "HIO_API"
                           PREDEFINED             += "PXOSD_API"
@@ -156,13 +156,13 @@ exhale_args = {
                           PREDEFINED             += "USDUTILS_API"
                           PREDEFINED             += "USDVOL_API"
                           PREDEFINED             += "USDIMAGING_API"
-                          PREDEFINED             += "COVAH_IO_API"
-                          PREDEFINED             += "COVAH_PYTHON_API"
-                          PREDEFINED             += "COVAH_UNIVERSE_API"
-                          PREDEFINED             += "COVAH_WM_API"
-                          PREDEFINED             += "COVAH_KERNEL_API"
-                          PREDEFINED             += "COVAH_LIB_API"
-                          PREDEFINED             += "COVAH_SPACE_API"
+                          PREDEFINED             += "KRAKEN_IO_API"
+                          PREDEFINED             += "KRAKEN_PYTHON_API"
+                          PREDEFINED             += "KRAKEN_UNIVERSE_API"
+                          PREDEFINED             += "KRAKEN_WM_API"
+                          PREDEFINED             += "KRAKEN_KERNEL_API"
+                          PREDEFINED             += "KRAKEN_LIB_API"
+                          PREDEFINED             += "KRAKEN_SPACE_API"
                           PREDEFINED             += "DRAW_GEOM_API"
                           PREDEFINED             += "ENGINE_ETCHER_API"
                           PREDEFINED             += "DRAW_GEOM_API"
@@ -238,7 +238,7 @@ exhale_args = {
                           EXCLUDE_PATTERNS       += */tf/ostreamMethods.h
                           EXCLUDE_PATTERNS       += */usd/crateDataTypes.h
                           EXCLUDE_PATTERNS       += */nodes/NOD_tokens.h
-                          EXCLUDE_PATTERNS       += */covahfile/miniz.h
+                          EXCLUDE_PATTERNS       += */krakenfile/miniz.h
                       '''),
     ############################################################################
     # HTML Theme specific configurations.                                      #
@@ -246,12 +246,12 @@ exhale_args = {
     # Fix broken Sphinx RTD Theme 'Edit on GitHub' links
     # Search for 'Edit on GitHub' on the FAQ:
     #     http://exhale.readthedocs.io/en/latest/faq.html
-    "pageLevelConfigMeta": ":github_url: https://github.com/Wabi-Studios/COVAH",
+    "pageLevelConfigMeta": ":github_url: https://github.com/Wabi-Studios/KRAKEN",
     ############################################################################
     # Main library page layout configuration.                                  #
     ############################################################################
     "afterTitleDescription": textwrap.dedent(u'''
-        Developer reference and home of the COVAH project -- redefining animation
+        Developer reference and home of the KRAKEN project -- redefining animation
         composition, collaborative workflows, simulation engines, skeletal rigging
         systems, and look development from storyboard to final render. Built on
         the underlying software architecture provided by Pixar, and extended to
@@ -262,7 +262,7 @@ exhale_args = {
 
         .. note::
           This is the developer reference as it pertains to the C++ codebase of
-          COVAH. It is subject to change frequently, as different iterations are
+          KRAKEN. It is subject to change frequently, as different iterations are
           necessary to find the correct approach. Currently, there is an additional
           Python API available -- the Pixar USD module, wabi, which needs further
           testing to assess it's capabilities for use in a suitable scripting and
@@ -309,7 +309,7 @@ exclude_patterns = ['../_build',
                     'tf/ostreamMethods.h',
                     'usd/crateDataTypes.h',
                     'nodes/NOD_tokens.h',
-                    'covahfile/miniz.h']
+                    'krakenfile/miniz.h']
 
 
 # -- Options for HTML output -------------------------------------------------
