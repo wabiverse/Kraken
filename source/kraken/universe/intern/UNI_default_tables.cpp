@@ -30,9 +30,9 @@
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 
-#include "CLI_icons.h"
+#include "KLI_icons.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usdGeom/cube.h>
@@ -53,7 +53,7 @@ void UNI_default_table_main_window(cContext *C)
   wmWindow *win = CTX_wm_window(C);
 
   FormFactory(PROP_IFACE(win->title),         VALUE_IFACE(TfToken("Kraken")));
-  FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_KRAKEN))));
+  FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_KRAKEN))));
   FormFactory(PROP_IFACE(win->state),         VALUE_IFACE(UsdUITokens->maximized));
   FormFactory(PROP_IFACE(win->cursor),        VALUE_IFACE(UsdUITokens->default_));
   FormFactory(PROP_IFACE(win->alignment),     VALUE_IFACE(UsdUITokens->alignAbsolute));
@@ -83,7 +83,7 @@ void UNI_default_table_area_v3d(cContext *C)
 
   FormFactory(PROP_IFACE(v3d->name),      VALUE_IFACE(TfToken("View3D")));
   FormFactory(PROP_IFACE(v3d->spacetype), VALUE_IFACE(UsdUITokens->spaceView3D));
-  FormFactory(PROP_IFACE(v3d->icon),      VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_HYDRA))));
+  FormFactory(PROP_IFACE(v3d->icon),      VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_HYDRA))));
   FormFactory(PROP_IFACE(v3d->pos),       VALUE_IFACE(GfVec2f(0, 0)));
   FormFactory(PROP_IFACE(v3d->size),      VALUE_IFACE(GfVec2f(1800, 1080)));  
 }
@@ -95,7 +95,7 @@ void UNI_default_table_area_outliner(cContext *C)
 
   FormFactory(PROP_IFACE(outliner->name),      VALUE_IFACE(TfToken("Outliner")));
   FormFactory(PROP_IFACE(outliner->spacetype), VALUE_IFACE(UsdUITokens->spaceOutliner));
-  FormFactory(PROP_IFACE(outliner->icon),      VALUE_IFACE(SdfAssetPath(CLI_icon(ICON_LUXO))));
+  FormFactory(PROP_IFACE(outliner->icon),      VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_LUXO))));
   FormFactory(PROP_IFACE(outliner->pos),       VALUE_IFACE(GfVec2f(1800, 0)));
   FormFactory(PROP_IFACE(outliner->size),      VALUE_IFACE(GfVec2f(120, 1080)));
 }

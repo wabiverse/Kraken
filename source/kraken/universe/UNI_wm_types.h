@@ -26,7 +26,7 @@
 
 #include "WM_api.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/usd/sdf/path.h>
@@ -626,7 +626,7 @@ struct wmEvent
   int mval[2];
   /**
    * From, anchor if utf8 is enabled for the platform,
-   * #CLI_str_utf8_size() must _always_ be valid, check
+   * #KLI_str_utf8_size() must _always_ be valid, check
    * when assigning s we don't need to check on every access after.
    */
   char utf8_buf[6];

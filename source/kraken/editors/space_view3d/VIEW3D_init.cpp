@@ -28,7 +28,7 @@
 
 #include "ED_view3d.h"
 
-#include "CKE_main.h"
+#include "KKE_main.h"
 
 WABI_NAMESPACE_BEGIN
 

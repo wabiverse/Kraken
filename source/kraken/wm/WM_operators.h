@@ -28,7 +28,7 @@
 
 #include "WM_init_exit.h"
 
-#include "CKE_robinhood.h"
+#include "KKE_robinhood.h"
 
 #include "UNI_object.h"
 #include "UNI_operator.h"

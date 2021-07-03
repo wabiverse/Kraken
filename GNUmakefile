@@ -55,7 +55,7 @@ Utilities
    * format
      Format source code using clang (uses PATHS if passed in). For example::
 
-        make format PATHS="source/kraken/wm source/kraken/covakernel"
+        make format PATHS="source/kraken/wm source/kraken/krakernel"
 
 Environment Variables
 

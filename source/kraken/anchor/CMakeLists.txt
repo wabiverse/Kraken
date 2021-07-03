@@ -3,8 +3,8 @@ set(INC
   ./backend
   ./intern
   ../../../.
-  ../covakernel
-  ../covalib
+  ../krakernel
+  ../kraklib
 )
 
 # ------------------------------------ SHARED BACKENDS -----

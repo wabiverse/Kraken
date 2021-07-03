@@ -26,9 +26,9 @@
 
 #include <wabi/usd/usd/common.h>
 
-#include "CLI_utildefines.h"
+#include "KLI_utildefines.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #if defined(WABI_STATIC)
 #  define KRAKEN_WM_API

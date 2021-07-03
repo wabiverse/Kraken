@@ -27,9 +27,9 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/wabi.h>
 
-#include "CLI_string_utils.h"
+#include "KLI_string_utils.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include "UNI_window.h"
 #include "UNI_wm_types.h"
@@ -51,7 +51,7 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
     }
     if (drag_id->id.GetName() != id.GetName())
     {
-      CLI_assert(!"All dragged IDs must have the same type");
+      KLI_assert(!"All dragged IDs must have the same type");
       return;
     }
   }
@@ -78,7 +78,7 @@ wmDrag *WM_event_start_drag(cContext *C, int icon, int type, void *poin, double 
   switch (type)
   {
     case WM_DRAG_PATH:
-      CLI_strncpy(drag->path, (const char *)poin, FILE_MAX);
+      KLI_strncpy(drag->path, (const char *)poin, FILE_MAX);
       /* As the path is being copied, free it immediately as `drag` wont "own" the data. */
       if (flags & WM_DRAG_FREE_DATA)
       {

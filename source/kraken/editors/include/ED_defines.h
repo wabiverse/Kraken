@@ -49,9 +49,9 @@
 #include <wabi/usd/usd/timeCode.h>
 #include <wabi/usd/usdGeom/basisCurves.h>
 
-/* covalib */
-#include "CLI_icons.h"
-#include "CLI_utildefines.h"
+/* kraklib */
+#include "KLI_icons.h"
+#include "KLI_utildefines.h"
 
 #define RGN_MARGINS 0, 0, 0, 0
 #define RGN_SPACING 0

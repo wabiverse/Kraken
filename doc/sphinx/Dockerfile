@@ -42,8 +42,8 @@ RUN git clone https://github.com/Wabi-Studios/KRAKEN.git chaos_engine/
 # -------------------------------------------------------------------------------------------------------------------------------
 # Grab the kraken version from the kraken version file (only place where version is ever hardcoded).
 
-RUN KRAKEN_VERSION_XXX="$(grep 'KRAKEN_VERSION' chaos_engine/source/kraken/covakernel/CKE_version.h | cut -d\  -f2)"
-RUN KRAKEN_VERSION_PATCH="$(grep 'KRAKEN_VERSION_PATCH' chaos_engine/source/kraken/covakernel/CKE_version.h | cut -d\  -f2)"
+RUN KRAKEN_VERSION_XXX="$(grep 'KRAKEN_VERSION' chaos_engine/source/kraken/krakernel/CKE_version.h | cut -d\  -f2)"
+RUN KRAKEN_VERSION_PATCH="$(grep 'KRAKEN_VERSION_PATCH' chaos_engine/source/kraken/krakernel/CKE_version.h | cut -d\  -f2)"
 RUN KRAKEN_VERSION_MAJOR="$((KRAKEN_VERSION_XXX / 100))"
 RUN KRAKEN_VERSION_MINOR="$((KRAKEN_VERSION_XXX % 100))"
 RUN KRAKEN_VERSION="$KRAKEN_VERSION_MAJOR.$KRAKEN_VERSION_MINOR.$KRAKEN_VERSION_PATCH"

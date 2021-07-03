@@ -29,8 +29,8 @@
 #include "UNI_screen.h"
 #include "UNI_space_types.h"
 
-#include "CKE_context.h"
-#include "CKE_screen.h"
+#include "KKE_context.h"
+#include "KKE_screen.h"
 
 #include <wabi/usd/usdUI/area.h>
 

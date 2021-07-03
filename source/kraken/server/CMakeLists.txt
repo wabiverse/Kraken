@@ -3,7 +3,7 @@ set(INC
   ../editors/include
   ../wm
   ../io
-  ../covakernel
+  ../krakernel
   ../universe
 )
 

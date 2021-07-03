@@ -36,13 +36,13 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
-#include "CLI_assert.h"
-#include "CLI_math_inline.h"
+#include "KLI_assert.h"
+#include "KLI_math_inline.h"
 
 #include "WM_event_system.h"
 #include "WM_window.h"
@@ -118,7 +118,7 @@ void ED_area_newspace(cContext *C, ScrArea *area, const TfToken &type, const boo
       // area->type->exit = area_exit;
     }
 
-    SpaceType *st = CKE_spacetype_from_id(type.Hash());
+    SpaceType *st = KKE_spacetype_from_id(type.Hash());
 
     FormFactory(area->spacetype, type);
     area->type = st;
@@ -215,7 +215,7 @@ bool ED_area_is_global(const ScrArea *area)
 
 int ED_area_global_size_y(const ScrArea *area)
 {
-  CLI_assert(ED_area_is_global(area));
+  KLI_assert(ED_area_is_global(area));
   return round_fl_to_int(area->global->cur_fixed_height * UI_DPI_FAC);
 }
 

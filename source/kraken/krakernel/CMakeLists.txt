@@ -5,7 +5,7 @@ set(INC
   ../anchor/intern
   ../anchor/backend
   ../editors/include
-  ../covalib
+  ../kraklib
   ../wm
   ../universe
   ../gatekeeper
@@ -13,27 +13,27 @@ set(INC
 )
 
 set(SRC
-  intern/CKE_context.cpp
-  intern/CKE_kraken.cpp
-  intern/CKE_diagnostics.cpp
-  intern/CKE_hash.cpp
-  intern/CKE_icons.cpp
-  intern/CKE_plugins.cpp
-  intern/CKE_python.cpp
-  intern/CKE_screen.cpp
-  intern/CKE_utils.cpp
-  intern/CKE_workspace.cpp
+  intern/KKE_context.cpp
+  intern/KKE_kraken.cpp
+  intern/KKE_diagnostics.cpp
+  intern/KKE_hash.cpp
+  intern/KKE_icons.cpp
+  intern/KKE_plugins.cpp
+  intern/KKE_python.cpp
+  intern/KKE_screen.cpp
+  intern/KKE_utils.cpp
+  intern/KKE_workspace.cpp
 
-  CKE_api.h
-  CKE_context.h
-  CKE_icons.h
-  CKE_main.h
-  CKE_robinhood.h
-  CKE_screen.h
-  CKE_space.h
-  CKE_workspace.h
-  CKE_utils.h
-  CKE_version.h
+  KKE_api.h
+  KKE_context.h
+  KKE_icons.h
+  KKE_main.h
+  KKE_robinhood.h
+  KKE_screen.h
+  KKE_space.h
+  KKE_workspace.h
+  KKE_utils.h
+  KKE_version.h
 )
 
 set(INC_SYS

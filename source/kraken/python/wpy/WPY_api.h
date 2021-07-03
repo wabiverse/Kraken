@@ -25,7 +25,7 @@
 #ifndef KRAKEN_PYTHON_API_H
 #define KRAKEN_PYTHON_API_H
 
-#include "CLI_utildefines.h"
+#include "KLI_utildefines.h"
 
 #if defined(WABI_STATIC)
 #  define KRAKEN_PYTHON_API

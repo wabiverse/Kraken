@@ -37,10 +37,10 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
 #include "WM_window.h"
 
@@ -69,7 +69,7 @@ static cScreen *screen_fullscreen_find_associated_normal_screen(const Main *cmai
 
 static bool screen_is_used_by_other_window(const wmWindow *win, const cScreen *screen)
 {
-  return CKE_screen_is_used(screen) && (screen->winid != win->winid);
+  return KKE_screen_is_used(screen) && (screen->winid != win->winid);
 }
 
 
@@ -80,17 +80,17 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *cmain,
                                                                  wmWindow *win)
 {
   WorkSpaceLayout *layout_temp = layout_new;
-  cScreen *screen_temp = CKE_workspace_layout_screen_get(layout_new);
+  cScreen *screen_temp = KKE_workspace_layout_screen_get(layout_new);
 
   screen_temp = screen_fullscreen_find_associated_normal_screen(cmain, screen_temp);
-  layout_temp = CKE_workspace_layout_find(workspace, screen_temp);
+  layout_temp = KKE_workspace_layout_find(workspace, screen_temp);
 
   // if (screen_is_used_by_other_window(win, screen_temp))
   // {
   //   /* Screen is already used, try to find a free one. */
-  //   layout_temp = CKE_workspace_layout_iter_circular(
+  //   layout_temp = KKE_workspace_layout_iter_circular(
   //     workspace, layout_new, workspace_change_find_new_layout_cb, NULL, false);
-  //   screen_temp = layout_temp ? CKE_workspace_layout_screen_get(layout_temp) : NULL;
+  //   screen_temp = layout_temp ? KKE_workspace_layout_screen_get(layout_temp) : NULL;
 
   //   if (!layout_temp || screen_is_used_by_other_window(win, screen_temp))
   //   {
@@ -116,7 +116,7 @@ WorkSpaceLayout *ED_workspace_layout_add(cContext *C,
 
   Main *cmain = CTX_data_main(C);
 
-  return CKE_workspace_layout_add(cmain, workspace, screen, name);
+  return KKE_workspace_layout_add(cmain, workspace, screen, name);
 }
 
 WABI_NAMESPACE_END

@@ -27,7 +27,7 @@
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/wabi.h>
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include "UNI_object.h"
 

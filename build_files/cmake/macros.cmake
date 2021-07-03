@@ -745,10 +745,10 @@ function(get_kraken_version)
   # - KRAKEN_VERSION_CYCLE (alpha, beta, rc, release)
 
   # So cmake depends on CKE_version.h, beware of inf-loops!
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/covakernel/CKE_version.h
-                 ${CMAKE_BINARY_DIR}/source/kraken/covakernel/CKE_version.h.done)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/krakernel/CKE_version.h
+                 ${CMAKE_BINARY_DIR}/source/kraken/krakernel/CKE_version.h.done)
 
-  file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/covakernel/CKE_version.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
+  file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/krakernel/CKE_version.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
 
   string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
   string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")

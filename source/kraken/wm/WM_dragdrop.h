@@ -26,7 +26,7 @@
 
 #include "UNI_wm_types.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 

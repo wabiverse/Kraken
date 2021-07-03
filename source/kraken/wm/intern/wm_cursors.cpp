@@ -22,7 +22,7 @@
  * Making GUI Fly.
  */
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include "WM_cursors_api.h"
 

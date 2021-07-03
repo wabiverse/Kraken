@@ -4,8 +4,8 @@ kraken_include_dirs(
   ../../.
   ../kraken/anchor
   ../kraken/editors/include
-  ../kraken/covalib
-  ../kraken/covakernel
+  ../kraken/kraklib
+  ../kraken/krakernel
   ../kraken/wm
   ../kraken/universe
 )

@@ -24,8 +24,8 @@
 
 #include "ED_fileselect.h"
 
-#include "CLI_icons.h"
-#include "CLI_path_utils.h"
+#include "KLI_icons.h"
+#include "KLI_path_utils.h"
 
 #include "UNI_space_types.h"
 
@@ -51,7 +51,7 @@ static bool file_is_pixar_backup(const char *str)
     }
 
     /* allow .usd1 .usd2 .usd32 */
-    locusd = CLI_strcasestr(str + a - usd, ".usd");
+    locusd = KLI_strcasestr(str + a - usd, ".usd");
     if (locusd)
     {
       return true;
@@ -73,17 +73,17 @@ static bool file_is_pixar_backup(const char *str)
     }
 
     /* allow .usda1 .usda2 .usdc3 .usdz32 */
-    locusdx = CLI_strcasestr(str + a - usdx, ".usda");
+    locusdx = KLI_strcasestr(str + a - usdx, ".usda");
     if (locusdx)
     {
       return true;
     }
-    locusdx = CLI_strcasestr(str + a - usdx, ".usdc");
+    locusdx = KLI_strcasestr(str + a - usdx, ".usdc");
     if (locusdx)
     {
       return true;
     }
-    locusdx = CLI_strcasestr(str + a - usdx, ".usdz");
+    locusdx = KLI_strcasestr(str + a - usdx, ".usdz");
     if (locusdx)
     {
       return true;
@@ -96,7 +96,7 @@ static bool file_is_pixar_backup(const char *str)
 int ED_path_extension_type(const std::string &path)
 {
 
-  if (CLI_has_pixar_extension(path))
+  if (KLI_has_pixar_extension(path))
   {
     return FILE_TYPE_PIXAR;
   }
@@ -108,19 +108,19 @@ int ED_path_extension_type(const std::string &path)
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".app"))
+  if (KLI_path_extension_check(CHARALL(path), ".app"))
   {
     return FILE_TYPE_APPLICATIONBUNDLE;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".py"))
+  if (KLI_path_extension_check(CHARALL(path), ".py"))
   {
     return FILE_TYPE_PYSCRIPT;
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path),
+  if (KLI_path_extension_check_n(CHARALL(path),
                                  ".txt",
                                  ".glsl",
                                  ".osl",
@@ -136,55 +136,55 @@ int ED_path_extension_type(const std::string &path)
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path), ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL))
+  if (KLI_path_extension_check_n(CHARALL(path), ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL))
   {
     return FILE_TYPE_FTFONT;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".btx"))
+  if (KLI_path_extension_check(CHARALL(path), ".btx"))
   {
     return FILE_TYPE_BTX;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".dae"))
+  if (KLI_path_extension_check(CHARALL(path), ".dae"))
   {
     return FILE_TYPE_COLLADA;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".abc"))
+  if (KLI_path_extension_check(CHARALL(path), ".abc"))
   {
     return FILE_TYPE_ALEMBIC;
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path), ".blend", NULL))
+  if (KLI_path_extension_check_n(CHARALL(path), ".blend", NULL))
   {
     return FILE_TYPE_BLENDER;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".vdb"))
+  if (KLI_path_extension_check(CHARALL(path), ".vdb"))
   {
     return FILE_TYPE_VOLUME;
   }
 
 
-  if (CLI_path_extension_check(CHARALL(path), ".zip"))
+  if (KLI_path_extension_check(CHARALL(path), ".zip"))
   {
     return FILE_TYPE_ARCHIVE;
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path), ".obj", ".3ds", ".fbx", ".glb", ".gltf", ".svg", NULL))
+  if (KLI_path_extension_check_n(CHARALL(path), ".obj", ".3ds", ".fbx", ".glb", ".gltf", ".svg", NULL))
   {
     return FILE_TYPE_OBJECT_IO;
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path),
+  if (KLI_path_extension_check_n(CHARALL(path),
                                  ".png",
                                  ".tga",
                                  ".bmp",
@@ -212,7 +212,7 @@ int ED_path_extension_type(const std::string &path)
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path),
+  if (KLI_path_extension_check_n(CHARALL(path),
                                  ".avi",
                                  ".flc",
                                  ".mov",
@@ -247,7 +247,7 @@ int ED_path_extension_type(const std::string &path)
   }
 
 
-  if (CLI_path_extension_check_n(CHARALL(path),
+  if (KLI_path_extension_check_n(CHARALL(path),
                                  ".wav",
                                  ".ogg",
                                  ".oga",

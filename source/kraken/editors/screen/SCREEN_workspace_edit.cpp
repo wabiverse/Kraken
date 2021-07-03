@@ -35,13 +35,13 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
-#include "CLI_assert.h"
-#include "CLI_math_inline.h"
+#include "KLI_assert.h"
+#include "KLI_math_inline.h"
 
 #include "WM_window.h"
 
@@ -52,7 +52,7 @@ WABI_NAMESPACE_BEGIN
 
 WorkSpace *ED_workspace_add(cContext *C, const char *name)
 {
-  return CKE_workspace_add(C, name);
+  return KKE_workspace_add(C, name);
 }
 
 WABI_NAMESPACE_END

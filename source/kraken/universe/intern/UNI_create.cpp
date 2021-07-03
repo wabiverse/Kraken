@@ -33,11 +33,11 @@
 #include "UNI_window.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
 
-#include "CLI_icons.h"
+#include "KLI_icons.h"
 
 #include <wabi/wabi.h>
 

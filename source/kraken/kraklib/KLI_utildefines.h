@@ -37,8 +37,8 @@
 /* base */
 #include <wabi/base/arch/export.h>
 
-/* covalib */
-#include "CLI_compiler_attrs.h"
+/* kraklib */
+#include "KLI_compiler_attrs.h"
 
 /**
  *  Macro to convert a value to string in the pre-processor: */
@@ -46,7 +46,7 @@
 #define STRINGIFY_APPEND(a, b) "" a #b
 #define STRINGIFY(x) STRINGIFY_APPEND("", x)
 
-#define CLI_assert(a) ((void)0)
+#define KLI_assert(a) ((void)0)
 
 /**
  * UNUSED macro, for function argument */

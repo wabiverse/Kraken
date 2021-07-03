@@ -26,7 +26,7 @@
 
 #include "UNI_path_defaults.h"
 
-#include "CLI_utildefines.h"
+#include "KLI_utildefines.h"
 
 #include <wabi/usd/usd/attribute.h>
 

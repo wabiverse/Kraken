@@ -27,7 +27,7 @@
 #include "UNI_screen.h"
 #include "UNI_window.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include "WM_draw.h"
 #include "WM_window.h"

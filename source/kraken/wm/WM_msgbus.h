@@ -35,8 +35,8 @@
 #include "WM_api.h"
 #include "WM_operators.h"
 
-#include "CKE_context.h"
-#include "CKE_robinhood.h"
+#include "KKE_context.h"
+#include "KKE_robinhood.h"
 
 /**
  *  -----  The Kraken WindowManager. ----- */

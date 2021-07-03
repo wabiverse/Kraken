@@ -41,11 +41,11 @@
 #include "WM_operators.h"
 #include "WM_window.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_utils.h"
-#include "CKE_version.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_utils.h"
+#include "KKE_version.h"
 
 #include <mutex>
 #include <string>

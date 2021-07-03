@@ -3,8 +3,8 @@ set(INC
   ../../../.
   ../anchor
   ../editors/include
-  ../covakernel
-  ../covalib
+  ../krakernel
+  ../kraklib
   ../universe
 )
 

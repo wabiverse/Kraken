@@ -24,8 +24,8 @@
 
 #include "WPY_init_exit.h" /* Own Include. */
 
-#include "CKE_context.h"
-#include "CKE_screen.h"
+#include "KKE_context.h"
+#include "KKE_screen.h"
 
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/arch/vsnprintf.h>

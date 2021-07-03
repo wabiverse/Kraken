@@ -33,8 +33,8 @@
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 
-#include "CKE_context.h"
-#include "CKE_utils.h"
+#include "KKE_context.h"
+#include "KKE_utils.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -46,7 +46,7 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname)
   {
     wmOperatorType *ot;
 
-    ot = (wmOperatorType *)CKE_rhash_lookup((RHash *)global_ops_hash, idname);
+    ot = (wmOperatorType *)KKE_rhash_lookup((RHash *)global_ops_hash, idname);
     if (ot)
     {
       return ot;

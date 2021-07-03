@@ -29,7 +29,7 @@
 #include "WM_msgbus.h"
 #include "WM_operators.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include <wabi/base/gf/rect2i.h>
 

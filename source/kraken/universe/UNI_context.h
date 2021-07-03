@@ -33,7 +33,7 @@
 #include "UNI_system.h"
 #include "UNI_window.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -36,9 +36,9 @@
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
-#include "CLI_assert.h"
+#include "KLI_assert.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
@@ -380,7 +380,7 @@ static void wm_operator_finished(cContext *C, wmOperator *op, const bool repeat,
     }
     else
     {
-      CLI_assert_unreachable();
+      KLI_assert_unreachable();
     }
   }
 }
@@ -417,7 +417,7 @@ void WM_operator_free(wmOperator *op)
 
   if (op->reports && (op->reports->flag & RPT_FREE))
   {
-    // CKE_reports_clear(op->reports);
+    // KKE_reports_clear(op->reports);
     delete op->reports;
   }
 
@@ -448,7 +448,7 @@ void wm_event_handler_ui_cancel_ex(cContext *C,
   //   if (handler_base->type == WM_HANDLER_TYPE_UI)
   //   {
   //     wmEventHandlerUI *handler = (wmEventHandlerUI *)handler_base;
-  //     CLI_assert(handler->handle_fn != NULL);
+  //     KLI_assert(handler->handle_fn != NULL);
   //     wmEvent event;
   //     wm_event_init_from_window(win, &event);
   //     event.type = EVT_BUT_CANCEL;
@@ -770,8 +770,8 @@ static int wm_operator_call_internal(cContext *C,
         if (!(region && region->regiontype == type) && area)
         {
           // ARegion *region_other = (type == RGN_TYPE_WINDOW) ?
-          //                         CKE_area_find_region_active_win(area) :
-          //                         CKE_area_find_region_type(area, type);
+          //                         KKE_area_find_region_active_win(area) :
+          //                         KKE_area_find_region_type(area, type);
           // if (region_other)
           // {
           //   CTX_wm_region_set(C, region_other);

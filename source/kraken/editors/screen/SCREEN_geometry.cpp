@@ -35,13 +35,13 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
-#include "CLI_assert.h"
-#include "CLI_math_inline.h"
+#include "KLI_assert.h"
+#include "KLI_math_inline.h"
 
 #include "WM_window.h"
 
@@ -73,7 +73,7 @@ ScrEdge *screen_geom_edge_add_ex(ScrAreaMap *area_map, ScrVert *v1, ScrVert *v2)
 {
   ScrEdge *se = new ScrEdge();
 
-  CKE_screen_sort_scrvert(&v1, &v2);
+  KKE_screen_sort_scrvert(&v1, &v2);
   se->v1 = v1;
   se->v2 = v2;
 

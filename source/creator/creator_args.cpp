@@ -26,8 +26,8 @@
 #  include <Windows.h>
 #endif
 
-#include "CKE_context.h"
-#include "CKE_main.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
 
 #include "WM_api.h"
 #include "WM_init_exit.h"
@@ -105,7 +105,7 @@ int CREATOR_parse_args(int argc, const char **argv)
 {
   if (run_diagnostics)
   {
-    wabi::CKE_kraken_enable_debug_codes();
+    wabi::KKE_kraken_enable_debug_codes();
   }
 
   if (load_stage.length() > 2)

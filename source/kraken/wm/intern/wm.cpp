@@ -37,8 +37,8 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_workspace.h"
 
 #include "WM_draw.h"
 #include "WM_event_system.h"
@@ -85,9 +85,9 @@ void wm_add_default(Main *cmain, cContext *C)
   cScreen *screen = ED_workspace_layout_add(C, ws, win, "Layout")->screen;
 
   WorkSpace *workspace;
-  WorkSpaceLayout *layout = CKE_workspace_layout_find_global(cmain, screen, &workspace);
-  CKE_workspace_active_set(win->workspace_hook, workspace);
-  CKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
+  WorkSpaceLayout *layout = KKE_workspace_layout_find_global(cmain, screen, &workspace);
+  KKE_workspace_active_set(win->workspace_hook, workspace);
+  KKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
   screen->winid = win->winid;
 
   UserDef *uprefs = new UserDef(C);

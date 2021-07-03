@@ -44,15 +44,15 @@
 #include "ANCHOR_event_consumer.h"
 #include "ANCHOR_system.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
-#include "CLI_icons.h"
-#include "CLI_math_inline.h"
-#include "CLI_string_utils.h"
-#include "CLI_time.h"
+#include "KLI_icons.h"
+#include "KLI_math_inline.h"
+#include "KLI_string_utils.h"
+#include "KLI_time.h"
 
 #include "ED_fileselect.h"
 #include "ED_screen.h"
@@ -118,7 +118,7 @@ void wm_cursor_position_get(wmWindow *win, int *r_x, int *r_y)
 
 static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool activate)
 {
-  // CLI_assert(ELEM(wm->windrawable, NULL, win));
+  // KLI_assert(ELEM(wm->windrawable, NULL, win));
 
   wm->windrawable = win;
   // if (activate) {
@@ -190,26 +190,26 @@ void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win)
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win)
 {
   const WorkSpace *workspace = WM_window_get_active_workspace(win);
-  return (ARCH_LIKELY(workspace != NULL) ? CKE_workspace_active_layout_get(win->workspace_hook) : NULL);
+  return (ARCH_LIKELY(workspace != NULL) ? KKE_workspace_active_layout_get(win->workspace_hook) : NULL);
 }
 
 
 void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceLayout *layout)
 {
-  CKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
+  KKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
 }
 
 
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win)
 {
-  return CKE_workspace_active_get(win->workspace_hook);
+  return KKE_workspace_active_get(win->workspace_hook);
 }
 
 
 cScreen *WM_window_get_active_screen(const wmWindow *win)
 {
   const WorkSpace *workspace = WM_window_get_active_workspace(win);
-  return (ARCH_LIKELY(workspace != NULL) ? CKE_workspace_active_screen_get(win->workspace_hook) : NULL);
+  return (ARCH_LIKELY(workspace != NULL) ? KKE_workspace_active_screen_get(win->workspace_hook) : NULL);
 }
 
 
@@ -454,7 +454,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         if (pixelsize != prev_pixelsize)
         {
-          // CKE_icon_changed(WM_window_get_active_screen(win)->id.icon_id);
+          // KKE_icon_changed(WM_window_get_active_screen(win)->id.icon_id);
 
           /* Close all popups since they are positioned with the pixel
            * size baked in and it's difficult to correct them. */
@@ -551,7 +551,7 @@ static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWi
 
       if (win_icon.GetAssetPath().empty())
       {
-        FormFactory(win->icon, SdfAssetPath(CLI_icon(ICON_KRAKEN)));
+        FormFactory(win->icon, SdfAssetPath(KLI_icon(ICON_KRAKEN)));
       }
     }
 
@@ -606,12 +606,12 @@ void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
         screen_rect.SetMinY(screen_rect.GetMinY() - height);
         break;
       default:
-        CLI_assert_unreachable();
+        KLI_assert_unreachable();
         break;
     }
   }
 
-  CLI_assert(screen_rect.IsValid());
+  KLI_assert(screen_rect.IsValid());
 
   *r_rect = screen_rect;
 }
@@ -805,7 +805,7 @@ wmWindow *WM_window_open(cContext *C,
   if (WM_window_get_active_workspace(win) == POINTER_ZERO)
   {
     WorkSpace *workspace = WM_window_get_active_workspace(win_prev);
-    CKE_workspace_active_set(win->workspace_hook, workspace);
+    KKE_workspace_active_set(win->workspace_hook, workspace);
   }
 
   if (screen == POINTER_ZERO)
@@ -814,7 +814,7 @@ wmWindow *WM_window_open(cContext *C,
     WorkSpace *workspace = WM_window_get_active_workspace(win);
     WorkSpaceLayout *layout = ED_workspace_layout_add(C, workspace, win, "temp");
 
-    screen = CKE_workspace_layout_screen_get(layout);
+    screen = KKE_workspace_layout_screen_get(layout);
     WM_window_set_active_layout(win, workspace, layout);
   }
 
@@ -1065,7 +1065,7 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
 
   cScreen *screen = WM_window_get_active_screen(win);
   WorkSpace *workspace = WM_window_get_active_workspace(win);
-  WorkSpaceLayout *layout = CKE_workspace_active_layout_get(win->workspace_hook);
+  WorkSpaceLayout *layout = KKE_workspace_active_layout_get(win->workspace_hook);
 
   /** Remove Window From HashMap */
   wm->windows.erase(win->path);
@@ -1122,7 +1122,7 @@ wmWindow *wm_window_new(cContext *C, wmWindowManager *wm, wmWindow *parent, bool
 
   /* Dialogs may have a child window as parent. Otherwise, a child must not be a parent too. */
   win->parent = (!dialog && parent && parent->parent) ? parent->parent : parent;
-  win->workspace_hook = CKE_workspace_instance_hook_create(cmain, win->winid);
+  win->workspace_hook = KKE_workspace_instance_hook_create(cmain, win->winid);
 
   return win;
 }
@@ -1147,7 +1147,7 @@ wmWindow *wm_window_copy(cContext *C,
   win_dst->size.Set(GfVec2f(GET_X(win_srcsize), GET_Y(win_srcsize)));
 
   win_dst->scene = win_src->scene;
-  CKE_workspace_active_set(win_dst->workspace_hook, workspace);
+  KKE_workspace_active_set(win_dst->workspace_hook, workspace);
 
   /** 
    * TODO: Duplicate layouts */
@@ -1191,7 +1191,7 @@ static int wm_window_close_exec(cContext *C, wmOperator *UNUSED(op))
 static int wm_window_new_exec(cContext *C, wmOperator *UNUSED(op))
 {
   wmWindow *win_src = CTX_wm_window(C);
-  ScrArea *area = CKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TYPE_ANY, 0);
+  ScrArea *area = KKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TYPE_ANY, 0);
 
   SdfAssetPath icon = FormFactory(win_src->icon);
   GfVec2f size = FormFactory(win_src->size);

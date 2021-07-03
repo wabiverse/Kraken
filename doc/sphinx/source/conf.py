@@ -229,7 +229,7 @@ exhale_args = {
                           EXCLUDE_SYMBOLS        += UsdImagingGL_*
                           EXCLUDE_PATTERNS        = */gf/*.template.h
                           EXCLUDE_PATTERNS       += */garch/glApi.h
-                          EXCLUDE_PATTERNS       += */covalib/CLI_string_utils.h
+                          EXCLUDE_PATTERNS       += */kraklib/KLI_string_utils.h
                           EXCLUDE_PATTERNS       += */sdf/abstractData.h
                           EXCLUDE_PATTERNS       += */usdImaging/adapterRegistry.h
                           EXCLUDE_PATTERNS       += */usdAbc/alembicFileFormat.h
@@ -300,7 +300,7 @@ exclude_patterns = ['../_build',
                     'darkenergy/*.txt',
                     '*.template.h',
                     'garch/glApi.h',
-                    'covalib/CLI_string_utils.h',
+                    'kraklib/KLI_string_utils.h',
                     'sdf/abstractData.h',
                     'usdImaging/adapterRegistry.h',
                     'usdAbc/alembicFileFormat.h',

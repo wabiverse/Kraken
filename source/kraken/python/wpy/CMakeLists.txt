@@ -2,8 +2,8 @@ set(INC
   .
   ../../../../.
   ../editors/include
-  ../../covakernel
-  ../../covalib
+  ../../krakernel
+  ../../kraklib
   ../../universe
   ../../wm
 )

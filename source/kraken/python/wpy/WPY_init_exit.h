@@ -26,7 +26,7 @@
 
 #include "WPY_api.h"
 
-#include "CKE_main.h"
+#include "KKE_main.h"
 
 /**
  *  -----  The Kraken Python Module. ----- */

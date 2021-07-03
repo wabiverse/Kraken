@@ -23,12 +23,12 @@ def print_stage(text):
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--no-cova", action="store_true")
+    parser.add_argument("--no-kraken", action="store_true")
     parser.add_argument("--git-command", default="git")
     return parser.parse_args()
 
 
-def get_cova_git_root():
+def get_kraken_git_root():
     return check_output([args.git_command, "rev-parse", "--show-toplevel"])
 
 # Test if git repo can be updated.
@@ -64,23 +64,23 @@ def git_update_skip(args, check_remote_exists=True):
 
 
 # Update kraken repository.
-def cova_update(args):
+def kraken_update(args):
     print_stage("Updating Kraken Git Repository")
     call([args.git_command, "pull", "--rebase"])
 
 
 if __name__ == "__main__":
     args = parse_arguments()
-    cova_skip_msg = ""
+    kraken_skip_msg = ""
 
     # Test if we are building a specific release version.
     branch = make_utils.git_branch(args.git_command)
     tag = make_utils.git_tag(args.git_command)
     release_version = make_utils.git_branch_release_version(branch, tag)
 
-    if not args.no_cova:
-        cova_skip_msg = git_update_skip(args)
-        if cova_skip_msg:
-            cova_skip_msg = "Kraken repository skipped: " + cova_skip_msg + "\n"
+    if not args.no_kraken:
+        kraken_skip_msg = git_update_skip(args)
+        if kraken_skip_msg:
+            kraken_skip_msg = "Kraken repository skipped: " + kraken_skip_msg + "\n"
         else:
-            cova_update(args)
+            kraken_update(args)

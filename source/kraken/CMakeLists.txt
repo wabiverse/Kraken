@@ -1,8 +1,8 @@
 add_subdirectory(anchor)
 add_subdirectory(editors)
 add_subdirectory(wm)
-add_subdirectory(covakernel)
-add_subdirectory(covalib)
+add_subdirectory(krakernel)
+add_subdirectory(kraklib)
 add_subdirectory(universe)
 add_subdirectory(python)
 

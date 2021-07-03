@@ -36,13 +36,13 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
-#include "CKE_screen.h"
-#include "CKE_workspace.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+#include "KKE_workspace.h"
 
-#include "CLI_assert.h"
-#include "CLI_math_inline.h"
+#include "KLI_assert.h"
+#include "KLI_math_inline.h"
 
 #include "WM_window.h"
 
@@ -58,8 +58,8 @@ bool ED_screen_change(cContext *C, cScreen *screen)
 {
   Main *cmain = CTX_data_main(C);
   wmWindow *win = CTX_wm_window(C);
-  WorkSpace *workspace = CKE_workspace_active_get(win->workspace_hook);
-  WorkSpaceLayout *layout = CKE_workspace_layout_find(workspace, screen);
+  WorkSpace *workspace = KKE_workspace_active_get(win->workspace_hook);
+  WorkSpaceLayout *layout = KKE_workspace_layout_find(workspace, screen);
   cScreen *screen_old = CTX_wm_screen(C);
 
   /* Get the actual layout/screen to be activated (guaranteed to be unused, even if that means
@@ -69,7 +69,7 @@ bool ED_screen_change(cContext *C, cScreen *screen)
                                                                                 layout,
                                                                                 layout,
                                                                                 win);
-  cScreen *screen_new = CKE_workspace_layout_screen_get(layout_new);
+  cScreen *screen_new = KKE_workspace_layout_screen_get(layout_new);
 
   // screen_change_prepare(screen_old, screen_new, cmain, C, win);
 

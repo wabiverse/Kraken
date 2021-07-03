@@ -35,10 +35,10 @@
 
 #include "UNI_context.h"
 
-#include "CLI_icons.h"
+#include "KLI_icons.h"
 
-#include "CKE_context.h"
-#include "CKE_main.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
 
 #include "ED_debug_codes.h"
 

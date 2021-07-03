@@ -31,7 +31,7 @@
 #include "UNI_window.h"
 #include "UNI_workspace.h"
 
-#include "CKE_context.h"
+#include "KKE_context.h"
 
 #include "ED_defines.h"
 

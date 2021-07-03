@@ -26,8 +26,8 @@
 #  include <Windows.h>
 #endif
 
-#include "CKE_context.h"
-#include "CKE_main.h"
+#include "KKE_context.h"
+#include "KKE_main.h"
 
 #include "UNI_pixar_utils.h"
 
@@ -55,10 +55,10 @@ int main(int argc, const char **argv)
   /* Create Context C. */
   C = CTX_create();
 
-  CKE_kraken_globals_init();
+  KKE_kraken_globals_init();
 
   /* Init plugins. */
-  CKE_kraken_plugins_init();
+  KKE_kraken_plugins_init();
 
   /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
@@ -68,7 +68,7 @@ int main(int argc, const char **argv)
   }
 
   /* Determining Stage Configuration and Loadup. */
-  CKE_kraken_main_init(C, argc, (const char **)argv);
+  KKE_kraken_main_init(C, argc, (const char **)argv);
 
   /* Runtime. */
   WM_init(C, argc, (const char **)argv);

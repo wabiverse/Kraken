@@ -11,8 +11,8 @@ set(INC
   ../include/.
   ../../../../.
   ../../anchor
-  ../../covalib
-  ../../covakernel
+  ../../kraklib
+  ../../krakernel
   ../../universe
 )
 
