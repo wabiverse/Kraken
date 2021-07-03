@@ -26,7 +26,7 @@ set(INC_SYS
 
 set(LIB
   krakenverse
-
+  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LINKFLAGS}

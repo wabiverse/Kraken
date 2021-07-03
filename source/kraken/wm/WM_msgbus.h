@@ -51,8 +51,7 @@ WABI_NAMESPACE_BEGIN
 /**
  *  -----  Forward Declarations. ----- */
 
-
-TF_DECLARE_WEAK_AND_REF_PTRS(MsgBusCallback);
+TF_DECLARE_WEAK_AND_REF_STRUCT_PTRS(MsgBusCallback);
 
 typedef MsgBusCallbackPtr MsgBus;
 

@@ -34,48 +34,29 @@
 
 /* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
 
-KRAKEN_LIB_API
 int KLI_strcasecmp(const char *s1, const char *s2);
-
-KRAKEN_LIB_API
 char *KLI_strcasestr(const char *s, const char *find);
-
-KRAKEN_LIB_API
 int KLI_strncasecmp(const char *s1, const char *s2, size_t len);
 
-KRAKEN_LIB_API
 size_t KLI_split_name_num(char *left, int *nr, const char *name, const char delim);
 
-KRAKEN_LIB_API
 char *KLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t maxncpy);
-
-KRAKEN_LIB_API
 size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy);
 
-KRAKEN_LIB_API
 size_t KLI_strnlen(const char *s, const size_t maxlen);
 
-KRAKEN_LIB_API
 size_t KLI_vsnprintf(char *__restrict buffer, size_t maxncpy, const char *__restrict format, va_list arg);
-
-KRAKEN_LIB_API
 size_t KLI_vsnprintf_rlen(char *__restrict buffer,
                           size_t maxncpy,
                           const char *__restrict format,
                           va_list arg);
 
-KRAKEN_LIB_API
 size_t KLI_snprintf(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...);
-
-KRAKEN_LIB_API
 size_t KLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...);
 
 typedef bool (*UniquenameCheckCallback)(void *arg, const char *name);
 
-KRAKEN_LIB_API
 bool KLI_uniquename(std::vector<void *> list, void *vlink, const char *defname, char delim, int name_offset, size_t name_len);
-
-KRAKEN_LIB_API
 bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        void *arg,
                        const char *defname,
@@ -102,8 +83,5 @@ bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
 
 /* ------------------------------------------------------ MODERN CXX STD::STRING UTILITIES ----- */
 
-KRAKEN_LIB_API
 std::string KLI_str_CapSpaceAmmender(std::string str);
-
-KRAKEN_LIB_API
 std::string KLI_str_UpperCamel(std::string str);

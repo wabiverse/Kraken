@@ -31,6 +31,8 @@
 #  include <utility>
 #  include <vector>
 
+#  include <functional>
+
 #  define gsl_lite_MAJOR 0
 #  define gsl_lite_MINOR 32
 #  define gsl_lite_PATCH 0

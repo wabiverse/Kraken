@@ -42,10 +42,7 @@ WABI_NAMESPACE_BEGIN
  *  -----  Python Init & Exit. ----- */
 
 
-KRAKEN_PYTHON_API
 void WPY_python_init(cContext *C);
-
-KRAKEN_PYTHON_API
 void WPY_python_exit(void);
 
 

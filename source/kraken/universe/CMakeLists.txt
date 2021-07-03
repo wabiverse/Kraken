@@ -40,6 +40,7 @@ set(SRC
 set(LIB
   krakenverse
   kraken_lib
+  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

@@ -26,5 +26,4 @@
 
 #include "KLI_api.h"
 
-KRAKEN_LIB_API
 void PIL_sleep_ms(int ms);

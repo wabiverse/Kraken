@@ -28,19 +28,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-KRAKEN_WM_API
 void WM_init_default_styles();
-
-KRAKEN_WM_API
 void WM_init(cContext *C, int argc, const char **argv);
-
-KRAKEN_WM_API
 void WM_main(cContext *C);
-
-KRAKEN_WM_API
 void wm_add_default(struct Main *cmain, cContext *C);
-
-KRAKEN_WM_API
 void WM_check(cContext *C);
 
 enum eWmModes

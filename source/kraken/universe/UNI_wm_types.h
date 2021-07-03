@@ -26,6 +26,8 @@
 
 #include "WM_api.h"
 
+#include "KLI_math_inline.h"
+
 #include "KKE_context.h"
 
 #include <wabi/base/gf/vec2f.h>
@@ -680,8 +682,8 @@ struct wmEvent
     : type(EVENT_NONE),
       val(VALUE_ZERO),
       mouse_pos(VALUE_ZERO),
-      mval(ARRAY_ZERO),
-      utf8_buf(ARRAY_ZERO),
+      mval{VALUE_ZERO},
+      utf8_buf{VALUE_ZERO},
       ascii(VALUE_ZERO),
       is_repeat(VALUE_ZERO),
       prevtype(VALUE_ZERO),
@@ -718,7 +720,7 @@ struct wmMsgBus
   uint messages_tag_count;
 
   wmMsgBus()
-    : messages_gset(ARRAY_ZERO),
+    : messages_gset{VALUE_ZERO},
       messages(EMPTY),
       messages_tag_count(VALUE_ZERO)
   {}
@@ -763,7 +765,7 @@ struct wmDragAsset
   int import_type; /* eFileAssetImportType */
 
   wmDragAsset()
-    : name(ARRAY_ZERO),
+    : name{VALUE_ZERO},
       path(POINTER_ZERO),
       id_type(VALUE_ZERO),
       import_type(VALUE_ZERO)
@@ -793,12 +795,12 @@ struct wmDrag
     : icon(VALUE_ZERO),
       type(VALUE_ZERO),
       poin(POINTER_ZERO),
-      path(ARRAY_ZERO),
+      path{VALUE_ZERO},
       value(VALUE_ZERO),
       scale(VALUE_ZERO),
       sx(VALUE_ZERO),
       sy(VALUE_ZERO),
-      opname(ARRAY_ZERO),
+      opname{VALUE_ZERO},
       flags(VALUE_ZERO)
   {}
 };
@@ -839,7 +841,7 @@ struct wmKeyMapItem
   wmKeyMapItem()
     : idname(EMPTY),
       properties(EMPTY),
-      propvalue_str(ARRAY_ZERO),
+      propvalue_str{VALUE_ZERO},
       propvalue(VALUE_ZERO),
       type(VALUE_ZERO),
       val(VALUE_ZERO),
@@ -895,10 +897,10 @@ struct wmKeyMap
   wmKeyMap()
     : items(EMPTY),
       diff_items(EMPTY),
-      idname(ARRAY_ZERO),
+      idname{VALUE_ZERO},
       spaceid(VALUE_ZERO),
       regionid(VALUE_ZERO),
-      owner_id(ARRAY_ZERO),
+      owner_id{VALUE_ZERO},
       flag(VALUE_ZERO),
       kmi_id(VALUE_ZERO),
       modal_items(POINTER_ZERO)

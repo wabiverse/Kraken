@@ -9,6 +9,7 @@
 #undef ERROR
 
 #include <filesystem>
+#include <functional>
 namespace cpp_fs = std::filesystem;
 
 namespace Zep

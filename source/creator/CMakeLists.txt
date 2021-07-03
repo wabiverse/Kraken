@@ -326,16 +326,6 @@ if(UNIX)
   install(
     TARGETS
       krakenverse # <- Pixar monolithic
-      # ------------- KRAKEN RUNTIME -----
-      kraken_kernel
-      kraken_lib
-      kraken_python
-      kraken_universe
-      kraken_wm
-      kraken_editor_code
-      kraken_editor_screen
-      kraken_editor_spacefile
-      kraken_editor_spaceview3d
       # ---------------------------------
     DESTINATION
       "/usr/local/${TARGETDIR_VER}/lib/."
@@ -344,16 +334,6 @@ else()
   install(
     TARGETS
       krakenverse # <- Pixar monolithic
-      # ------------- KRAKEN RUNTIME -----
-      kraken_kernel
-      kraken_lib
-      kraken_python
-      kraken_universe
-      kraken_wm
-      kraken_editor_code
-      kraken_editor_screen
-      kraken_editor_spacefile
-      kraken_editor_spaceview3d
       # ---------------------------------
     DESTINATION
       "."
@@ -361,8 +341,24 @@ else()
 endif()
 
 if(WIN32)
+
+  file(TO_CMAKE_PATH $ENV{RMANTREE} RENDERMAN_LOCATION)
+
   install(
     FILES
+      # ARNOLD
+      ${LIBDIR}/arnold/bin/AdClmHub_2.0.0.dll
+      ${LIBDIR}/arnold/bin/adlmint.dll
+      ${LIBDIR}/arnold/bin/AdpSDKCore.dll
+      ${LIBDIR}/arnold/bin/AdpSDKUI.dll
+      ${LIBDIR}/arnold/bin/AdskLicensingSDK_5.0.1.dll
+      ${LIBDIR}/arnold/bin/ai.dll
+      ${LIBDIR}/arnold/bin/optix.6.6.0.dll
+      ${LIBDIR}/arnold/bin/UPI2.dll
+      # RENDERMAN
+      ${RENDERMAN_LOCATION}/bin/libpxrcore.dll
+      ${RENDERMAN_LOCATION}/bin/libstats.dll
+      ${RENDERMAN_LOCATION}/lib/libprman.dll
       # ALEMBIC
       ${LIBDIR}/alembic/bin/Alembic.dll
       ${LIBDIR}/hdf5/bin/hdf5.dll
@@ -401,8 +397,14 @@ if(WIN32)
       # OPENIMAGEIO
       ${LIBDIR}/OpenImageIO/bin/OpenImageIO.dll
       ${LIBDIR}/OpenImageIO/bin/OpenImageIO_Util.dll
+      # OPENIMAGEDENOISE
+      ${LIBDIR}/oidn/bin/OpenImageDenoise.dll
       # PTEX
-      ${LIBDIR}/ptex/lib/Ptex.dll
+      ${LIBDIR}/ptex/bin/Ptex.dll
+      # BLOSC
+      ${LIBDIR}/blosc/bin/blosc.dll
+      # TIFF
+      ${LIBDIR}/tiff/bin/tiff.dll
       # PNG
       ${LIBDIR}/png/bin/libpng16.dll
       # JPEG
@@ -411,16 +413,9 @@ if(WIN32)
       # OPENVDB
       ${LIBDIR}/openvdb/bin/openvdb.dll
       # TBB
-      ${LIBDIR}/tbb/bin/tbb12.dll
-      ${LIBDIR}/tbb/bin/tbb12_debug.dll
-      ${LIBDIR}/tbb/bin/tbbbind.dll
-      ${LIBDIR}/tbb/bin/tbbbind_2_0.dll
-      ${LIBDIR}/tbb/bin/tbbbind_2_0_debug.dll
-      ${LIBDIR}/tbb/bin/tbbbind_debug.dll
+      ${LIBDIR}/tbb/bin/tbb.dll
       ${LIBDIR}/tbb/bin/tbbmalloc.dll
-      ${LIBDIR}/tbb/bin/tbbmalloc_debug.dll
       ${LIBDIR}/tbb/bin/tbbmalloc_proxy.dll
-      ${LIBDIR}/tbb/bin/tbbmalloc_proxy_debug.dll
       # ZLIB
       ${LIBDIR}/zlib/bin/zlib.dll
 
@@ -726,13 +721,6 @@ elseif(WIN32)
     endif()
   endif()
 
-  # Install ZMQ dynamic runtime library.
-  install(
-    FILES
-      ${LIBDIR}/zmq/zmq/bin/libzmq-v142-mt-4_3_4.dll
-    DESTINATION "."
-  )
-
   if(WITH_OPENVDB)
     install(
       FILES ${LIBDIR}/openvdb/bin/openvdb.dll
@@ -853,18 +841,14 @@ elseif(WIN32)
 
 install(
   FILES
-    ${LIBDIR}/tbb/bin/tbb12.dll
-    ${LIBDIR}/tbb/bin/tbbbind.dll
-    ${LIBDIR}/tbb/bin/tbbbind_2_0.dll
+    ${LIBDIR}/tbb/bin/tbb.dll
   DESTINATION "."
   CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
 )
 
 install(
   FILES
-    ${LIBDIR}/tbb/bin/tbb12_debug.dll
-    ${LIBDIR}/tbb/bin/tbbbind_debug.dll
-    ${LIBDIR}/tbb/bin/tbbbind_2_0_debug.dll
+    ${LIBDIR}/tbb/bin/tbb_debug.dll
   DESTINATION "."
   CONFIGURATIONS Debug
 )
@@ -879,8 +863,8 @@ if(WITH_TBB_MALLOC_PROXY)
   )
   install(
     FILES
-      ${LIBDIR}/tbb/bin/tbbmalloc.dll
-      ${LIBDIR}/tbb/bin/tbbmalloc_proxy.dll
+      ${LIBDIR}/tbb/bin/tbbmalloc_debug.dll
+      ${LIBDIR}/tbb/bin/tbbmalloc_proxy_debug.dll
     DESTINATION "."
     CONFIGURATIONS Debug
   )
@@ -963,24 +947,6 @@ endif()
 #       "."
 #   )
 # endif()
-
-######################################################### REST ##########
-
-install(
-  FILES
-    ${LIBDIR}/rest/bin/cpprest_2_10.dll
-    ${LIBDIR}/rest/bin/cpprest_2_10.pdb
-  DESTINATION "."
-  CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
-)
-
-install(
-  FILES
-    ${LIBDIR}/rest/bin/cpprest_2_10d.dll
-    ${LIBDIR}/rest/bin/cpprest_2_10d.pdb
-  DESTINATION "."
-  CONFIGURATIONS Debug
-)
 
 elseif(APPLE)
   if(NOT WITH_PYTHON_MODULE)

@@ -53,7 +53,7 @@ set(LIB
   kraken_editor_spacefile
   kraken_editor_screen
   kraken_editor_spaceview3d
-  kraken_editor_code
+  # kraken_editor_code
   kraken_lib
   kraken_universe
   ${BOOST_LIBRARIES}

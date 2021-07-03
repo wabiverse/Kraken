@@ -36,7 +36,7 @@ std::string kraken_exe_path_init()
 std::string kraken_datafiles_path_init(Global KERNEL_GLOBALS)
 {
 #ifdef _WIN32
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, kraken_get_version_decimal() + "/datafiles/");
+  return STRCAT(KERNEL_GLOBALS.main->exe_path, KERNEL_GLOBALS.main->kraken_version_decimal + "/datafiles/");
 #else
   /**
    * On Linux, datafiles directory lies outside of BIN
@@ -48,7 +48,7 @@ std::string kraken_datafiles_path_init(Global KERNEL_GLOBALS)
 std::string kraken_python_path_init(Global KERNEL_GLOBALS)
 {
 #ifdef _WIN32
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, kraken_get_version_decimal() + "../python/lib/");
+  return STRCAT(KERNEL_GLOBALS.main->exe_path, KERNEL_GLOBALS.main->kraken_version_decimal + "../python/lib/");
 #else
   return STRCAT(KERNEL_GLOBALS.main->exe_path, "../python/lib/python3.9/site-packages");
 #endif

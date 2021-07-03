@@ -31,6 +31,10 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#  include <uchar.h>
+#endif
+
 /* wabi */
 #include <wabi/wabi.h>
 
@@ -94,9 +98,18 @@
 #  define POINTER_OFFSET(v, ofs) ((void *)((char *)(v) + (ofs)))
 #endif
 
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned long ulong;
+typedef unsigned char uchar;
+
 /* clang-format off */
 #define VALUE_ZERO 0
 #define ARRAY_ZERO {0}
 #define POINTER_ZERO nullptr
 #define EMPTY
 /* clang-format on */
+
+#ifdef _WIN32
+#define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
+#endif

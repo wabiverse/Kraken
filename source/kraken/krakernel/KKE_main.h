@@ -78,25 +78,12 @@ enum ckeErrorType
   KRAKEN_ERROR_HYDRA
 };
 
-KRAKEN_KERNEL_API
 Main KKE_main_init(void);
-
-KRAKEN_KERNEL_API
 void KKE_kraken_main_init(cContext *C, int argc, const char **argv);
-
-KRAKEN_KERNEL_API
 void KKE_kraken_globals_init();
-
-KRAKEN_KERNEL_API
 void KKE_kraken_plugins_init(void);
-
-KRAKEN_KERNEL_API
 void KKE_kraken_python_init(cContext *C);
-
-KRAKEN_KERNEL_API
 ckeStatusCode KKE_main_runtime(int backend);
-
-KRAKEN_KERNEL_API
 void KKE_kraken_enable_debug_codes(void);
 
 
@@ -104,10 +91,8 @@ void KKE_kraken_enable_debug_codes(void);
 
 
 /* Setup in KKE_kraken. */
-KRAKEN_KERNEL_API
 extern Global G;
 
-KRAKEN_KERNEL_API
 /* Setup in KKE_kraken. */
 extern float UI_DPI_FAC;
 

@@ -43,25 +43,15 @@ WABI_NAMESPACE_BEGIN
  * - Stage Destruction
  * - Opening Stages.
  * - Saving Stages. */
-
-KRAKEN_UNIVERSE_API
 void UNI_create_stage(cContext *C);
-
-KRAKEN_UNIVERSE_API
 void UNI_destroy(cContext *C);
-
-KRAKEN_UNIVERSE_API
 void UNI_open_stage(cContext *C);
-
-KRAKEN_UNIVERSE_API
 void UNI_save_stage(cContext *C);
 
 /**
  * Pixar Stage Defaults
  * - Kraken GUI defaults.
  * - Kraken Scene defaults. */
-
-KRAKEN_UNIVERSE_API
 void UNI_set_defaults(cContext *C);
 
 

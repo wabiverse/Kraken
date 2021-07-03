@@ -35,7 +35,6 @@
 #include <wabi/base/tf/pyInterpreter.h>
 #include <wabi/base/tf/stringUtils.h>
 
-
 /**
  *  -----  The Kraken Python Module. ----- */
 
@@ -56,7 +55,7 @@ void WPY_python_init(cContext *C)
 
   setenv("PYTHONPATH", CHARSTR(cmain->python_path), true);
 
-  TfPyInitialize();
+  // TfPyInitialize();
 }
 
 

@@ -26,6 +26,7 @@ set(SRC
 set(LIB
   krakenverse
   kraken_anchor
+  kraken_kernel
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

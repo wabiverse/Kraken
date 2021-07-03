@@ -63,7 +63,7 @@ void UNI_create_stage(cContext *C)
 
   main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
 
-  CTX_data_scene_set(C, new Scene(main->stage_id));
+  CTX_data_scene_set(C, new Scene(main->stage_id.string()));
 }
 
 void UNI_destroy(cContext *C)
@@ -77,7 +77,7 @@ void UNI_open_stage(cContext *C)
   Main *main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
 
-  stage->Open(main->stage_id);
+  stage->Open(main->stage_id.string());
 }
 
 void UNI_save_stage(cContext *C)

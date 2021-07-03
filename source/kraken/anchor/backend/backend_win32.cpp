@@ -24,6 +24,7 @@
 
 #include "ANCHOR_BACKEND_win32.h"
 #include "ANCHOR_api.h"
+#include "ANCHOR_window.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
@@ -661,3 +662,147 @@ void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd)
 }
 
 //---------------------------------------------------------------------------------------------------------
+
+ANCHOR_SystemWin32::ANCHOR_SystemWin32()
+  : ANCHOR_System(),
+    m_win32_window(nullptr)
+{}
+
+ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
+{}
+
+bool ANCHOR_SystemWin32::processEvents(bool waitForEvents)
+{
+  return false;
+}
+
+eAnchorStatus ANCHOR_SystemWin32::getModifierKeys(ANCHOR_ModifierKeys &keys) const
+{
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_SystemWin32::getButtons(ANCHOR_Buttons &buttons) const
+{
+  return ANCHOR_SUCCESS;
+}
+
+void ANCHOR_SystemWin32::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+{}
+
+void ANCHOR_SystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+{}
+
+eAnchorStatus ANCHOR_SystemWin32::init()
+{
+  return ANCHOR_SUCCESS;
+}
+
+ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
+                                                       const char *icon,
+                                                       AnchorS32 left,
+                                                       AnchorS32 top,
+                                                       AnchorU32 width,
+                                                       AnchorU32 height,
+                                                       eAnchorWindowState state,
+                                                       eAnchorDrawingContextType type,
+                                                       int vkSettings,
+                                                       const bool exclusive,
+                                                       const bool is_dialog,
+                                                       const ANCHOR_ISystemWindow *parentWindow)
+{
+  return nullptr;
+}
+
+bool ANCHOR_SystemWin32::generateWindowExposeEvents()
+{
+  return true;
+}
+
+eAnchorStatus ANCHOR_SystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
+{
+  return ANCHOR_SUCCESS;
+}
+
+
+//---------------------------------------------------------------------------------------------------------
+
+ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
+                                       const char *title,
+                                       const char *icon,
+                                       AnchorS32 left,
+                                       AnchorS32 top,
+                                       AnchorU32 width,
+                                       AnchorU32 height,
+                                       eAnchorWindowState state,
+                                       eAnchorDrawingContextType type,
+                                       const bool stereoVisual,
+                                       const bool exclusive,
+                                       const ANCHOR_ISystemWindow *parentWindow)
+  : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
+    m_system(system),
+    m_valid_setup(false),
+    m_invalid_window(false),
+    m_vulkan_context(nullptr)
+{}
+
+ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
+{}
+
+std::string ANCHOR_WindowWin32::getTitle() const
+{
+  return std::string("KRAKEN");
+}
+
+bool ANCHOR_WindowWin32::getValid() const
+{
+  return false;
+}
+
+void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
+{}
+
+void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
+{}
+
+eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
+{
+  return ANCHOR_SUCCESS;
+}
+
+void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
+                                        AnchorS32 inY,
+                                        AnchorS32 &outX,
+                                        AnchorS32 &outY) const
+{}
+
+void ANCHOR_WindowWin32::setTitle(const char *title)
+{}
+
+void ANCHOR_WindowWin32::setIcon(const char *icon)
+{}
+
+void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
+                                        AnchorS32 inY,
+                                        AnchorS32 &outX,
+                                        AnchorS32 &outY) const
+{}
+
+eAnchorStatus ANCHOR_WindowWin32::setClientSize(AnchorU32 width, AnchorU32 height)
+{
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
+{
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorWindowState ANCHOR_WindowWin32::getState() const
+{
+  return ANCHOR_WindowStateFullScreen;
+}
+
+AnchorU16 ANCHOR_WindowWin32::getDPIHint()
+{
+  return 100;
+}

@@ -25,8 +25,12 @@
  */
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_system.h"
+#include "ANCHOR_BACKEND_vulkan.h"
 
 #ifdef _WIN32
+
+class ANCHOR_WindowWin32;
 
 ANCHOR_BACKEND_API bool ANCHOR_ImplWin32_Init(void *hwnd);
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_Shutdown();
@@ -51,6 +55,141 @@ ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor); 
 // - Use to enable alpha compositing transparency with the desktop.
 // - Use together with e.g. clearing your framebuffer with zero-alpha.
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd);  // HWND hwnd
+
+class ANCHOR_SystemWin32 : public ANCHOR_System
+{
+ public:
+  ANCHOR_SystemWin32();
+  ~ANCHOR_SystemWin32();
+
+  bool processEvents(bool waitForEvent);
+
+  eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
+
+  eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
+
+  void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
+
+  void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
+
+ private:
+  eAnchorStatus init();
+
+  ANCHOR_ISystemWindow *createWindow(const char *title,
+                                     const char *icon,
+                                     AnchorS32 left,
+                                     AnchorS32 top,
+                                     AnchorU32 width,
+                                     AnchorU32 height,
+                                     eAnchorWindowState state,
+                                     eAnchorDrawingContextType type,
+                                     int vkSettings,
+                                     const bool exclusive = false,
+                                     const bool is_dialog = false,
+                                     const ANCHOR_ISystemWindow *parentWindow = NULL);
+
+  bool generateWindowExposeEvents();
+
+  eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
+
+  /** The vector of windows that need to be updated. */
+  // TODO std::vector<ANCHOR_WindowWin32 *> m_dirty_windows;
+  ANCHOR_WindowWin32 *m_win32_window;
+};
+
+
+class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
+{
+ private:
+  ANCHOR_SystemWin32 *m_system;
+  bool m_valid_setup;
+  bool m_invalid_window;
+
+  ANCHOR_VulkanGPU_Surface *m_vulkan_context;
+
+ public:
+  ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
+                   const char *title,
+                   const char *icon,
+                   AnchorS32 left,
+                   AnchorS32 top,
+                   AnchorU32 width,
+                   AnchorU32 height,
+                   eAnchorWindowState state,
+                   eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+                   const bool stereoVisual = false,
+                   const bool exclusive = false,
+                   const ANCHOR_ISystemWindow *parentWindow = NULL);
+
+  ~ANCHOR_WindowWin32();
+
+  std::string getTitle() const;
+
+  /* Windows specific */
+//   HWND *getHWND();
+
+  ANCHOR_VulkanGPU_Surface *getVulkanSurface()
+  {
+    return m_vulkan_context;
+  }
+
+  ANCHOR_VulkanGPU_Surface *updateVulkanSurface(ANCHOR_VulkanGPU_Surface *data)
+  {
+    m_vulkan_context = data;
+  }
+
+  bool getValid() const;
+
+  void getClientBounds(ANCHOR_Rect &bounds) const;
+
+ protected:
+  /**
+   * @param type: The type of rendering context create.
+   * @return Indication of success. */
+  void newDrawingContext(eAnchorDrawingContextType type);
+
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator. */
+  eAnchorStatus swapBuffers();
+
+  void screenToClient(AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 &outX,
+                      AnchorS32 &outY) const;
+
+  void setTitle(const char *title);
+  void setIcon(const char *icon);
+
+  void clientToScreen(AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 &outX,
+                      AnchorS32 &outY) const;
+
+  eAnchorStatus setClientSize(AnchorU32 width, AnchorU32 height);
+
+  eAnchorStatus setState(eAnchorWindowState state);
+
+  eAnchorWindowState getState() const;
+
+  eAnchorStatus setOrder(eAnchorWindowOrder order)
+  {
+    // TODO
+    return ANCHOR_SUCCESS;
+  }
+
+  eAnchorStatus beginFullScreen() const
+  {
+    return ANCHOR_ERROR;
+  }
+
+  eAnchorStatus endFullScreen() const
+  {
+    return ANCHOR_ERROR;
+  }
+
+  AnchorU16 getDPIHint();
+};
 
 #elif
 

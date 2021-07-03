@@ -80,6 +80,33 @@ struct TfDeclarePtrs
   typedef TfDeclarePtrs<class type>::RefPtrVector type##RefPtrVector; \
   typedef TfDeclarePtrs<class type>::ConstRefPtrVector type##ConstRefPtrVector
 
+/// Define standard weak pointer types. (struct variant)
+///
+/// \param type is a struct name.
+///
+/// \c TF_DECLARE_WEAK_PTRS(Struct) declares StructPtr, StructConstPtr,
+/// StructPtrVector and StructConstPtrVector.
+///
+/// \hideinitializer
+#define TF_DECLARE_WEAK_STRUCT_PTRS(type) \
+  typedef TfDeclarePtrs<struct type>::Ptr type##Ptr; \
+  typedef TfDeclarePtrs<struct type>::ConstPtr type##ConstPtr; \
+  typedef TfDeclarePtrs<struct type>::PtrVector type##PtrVector; \
+  typedef TfDeclarePtrs<struct type>::ConstPtrVector type##ConstPtrVector
+
+/// Define standard ref pointer types. (struct variant)
+///
+/// \param type is a struct name.
+///
+/// \c TF_DECLARE_REF_PTRS(Class) declares StructRefPtr and StructConstRefPtr.
+///
+/// \hideinitializer
+#define TF_DECLARE_REF_STRUCT_PTRS(type) \
+  typedef TfDeclarePtrs<struct type>::RefPtr type##RefPtr; \
+  typedef TfDeclarePtrs<struct type>::ConstRefPtr type##ConstRefPtr; \
+  typedef TfDeclarePtrs<struct type>::RefPtrVector type##RefPtrVector; \
+  typedef TfDeclarePtrs<struct type>::ConstRefPtrVector type##ConstRefPtrVector
+
 /// Define standard weak, ref, and vector pointer types.
 ///
 /// \param type is a class name.
@@ -91,6 +118,10 @@ struct TfDeclarePtrs
 #define TF_DECLARE_WEAK_AND_REF_PTRS(type) \
   TF_DECLARE_WEAK_PTRS(type); \
   TF_DECLARE_REF_PTRS(type)
+
+#define TF_DECLARE_WEAK_AND_REF_STRUCT_PTRS(type) \
+  TF_DECLARE_WEAK_STRUCT_PTRS(type); \
+  TF_DECLARE_REF_STRUCT_PTRS(type)
 
 WABI_NAMESPACE_END
 

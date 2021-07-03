@@ -55,6 +55,8 @@ static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
       return layout;
     }
   }
+
+  return nullptr;
 }
 
 

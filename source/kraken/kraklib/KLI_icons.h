@@ -95,7 +95,6 @@ enum
   ICON_CLICK_MIDDLE,
 };
 
-KRAKEN_LIB_API
 std::string KLI_icon(int icon_id);
 
 WABI_NAMESPACE_END
