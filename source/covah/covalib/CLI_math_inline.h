@@ -53,6 +53,10 @@ extern "C" {
 
 #include <math.h>
 
+#ifdef _WIN32
+# include <uchar.h>
+#endif
+
 #if defined(__GNUC__)
 #  define NAN_FLT __builtin_nanf("")
 #else
@@ -69,6 +73,11 @@ static const int NAN_INT = 0x7FC00000;
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
+
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned long ulong;
+typedef unsigned char uchar;
 
 MINLINE float pow2f(float x);
 MINLINE float pow3f(float x);

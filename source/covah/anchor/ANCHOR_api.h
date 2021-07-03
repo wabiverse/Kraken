@@ -111,15 +111,15 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 #  define ANCHOR_HAS_TABLE
 
 // Define attributes of all API symbols declarations (e.g. for DLL under Windows)
-// ANCHOR_API is used for core ANCHOR functions, ANCHOR_IMPL_API is used for the default backends
+// ANCHOR_API is used for core ANCHOR functions, ANCHOR_BACKEND_API is used for the default backends
 // files (ANCHOR_impl_xxx.h) Using ANCHOR via a shared library is not recommended, because we don't
 // guarantee backward nor forward ABI compatibility (also function call overhead, as ANCHOR is a
 // call-heavy API)
 #  ifndef ANCHOR_API
 #    define ANCHOR_API
 #  endif
-#  ifndef ANCHOR_IMPL_API
-#    define ANCHOR_IMPL_API ANCHOR_API
+#  ifndef ANCHOR_BACKEND_API
+#    define ANCHOR_BACKEND_API ANCHOR_API
 #  endif
 
 // Helper Macros
@@ -1042,18 +1042,18 @@ void GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width
  * @param systemhandle: Handle to backend system.
  * @return Indication of the presence of events. */
 ANCHOR_API
-ANCHOR_SystemWindowHandle CreateWindow(ANCHOR_SystemHandle systemhandle,
-                                       ANCHOR_SystemWindowHandle parent_windowhandle,
-                                       const char *title,
-                                       const char *icon,
-                                       AnchorS32 left,
-                                       AnchorS32 top,
-                                       AnchorU32 width,
-                                       AnchorU32 height,
-                                       eAnchorWindowState state,
-                                       bool is_dialog,
-                                       eAnchorDrawingContextType type,
-                                       int vkSettings);
+ANCHOR_SystemWindowHandle CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
+                                             ANCHOR_SystemWindowHandle parent_windowhandle,
+                                             const char *title,
+                                             const char *icon,
+                                             AnchorS32 left,
+                                             AnchorS32 top,
+                                             AnchorU32 width,
+                                             AnchorU32 height,
+                                             eAnchorWindowState state,
+                                             bool is_dialog,
+                                             eAnchorDrawingContextType type,
+                                             int vkSettings);
 
 /**
  * Preforms a swap on the swapchain.

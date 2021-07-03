@@ -495,18 +495,18 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
   /* ----- */
 
-  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateWindow(anchor_system,
-                                                             (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
-                                                             CHARALL(win_title),
-                                                             CHARALL(win_icon.GetAssetPath()),
-                                                             GET_X(win_pos),
-                                                             GET_Y(win_pos),
-                                                             GET_X(win_size),
-                                                             GET_Y(win_size),
-                                                             ANCHOR_WindowStateFullScreen,
-                                                             is_dialog,
-                                                             ANCHOR_DrawingContextTypeVulkan,
-                                                             0);
+  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
+                                                                   (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
+                                                                   CHARALL(win_title),
+                                                                   CHARALL(win_icon.GetAssetPath()),
+                                                                   GET_X(win_pos),
+                                                                   GET_Y(win_pos),
+                                                                   GET_X(win_size),
+                                                                   GET_Y(win_size),
+                                                                   ANCHOR_WindowStateFullScreen,
+                                                                   is_dialog,
+                                                                   ANCHOR_DrawingContextTypeVulkan,
+                                                                   0);
   if (anchorwin)
   {
     win->anchorwin = anchorwin;

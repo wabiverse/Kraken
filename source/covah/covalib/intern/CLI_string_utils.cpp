@@ -628,7 +628,7 @@ static bool uniquename_find_dupe(std::vector<void *> list, void *vlink, const ch
   {
     if (link != vlink)
     {
-      if (STREQ(POINTER_OFFSET((const char *)link, name_offset), name))
+      if (STREQ((const char *)POINTER_OFFSET((const char *)link, name_offset), name))
       {
         return true;
       }

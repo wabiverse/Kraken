@@ -27,6 +27,24 @@
 #ifdef __linux__
 #  include <sys/time.h>
 #  include <unistd.h>
+#elif _WIN32
+#  include <windows.h>
+#  include "stdlib.h"
+#  define sleep(x) _sleep(x)
+
+void usleep(__int64 usec) 
+{ 
+    HANDLE timer; 
+    LARGE_INTEGER ft; 
+
+    ft.QuadPart = -(10*usec);
+
+    timer = CreateWaitableTimer(NULL, TRUE, NULL); 
+    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0); 
+    WaitForSingleObject(timer, INFINITE); 
+    CloseHandle(timer); 
+}
+
 #endif
 
 void PIL_sleep_ms(int ms)

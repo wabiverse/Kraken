@@ -3793,18 +3793,18 @@ void ANCHOR::DispatchEvents(ANCHOR_SystemHandle systemhandle)
   system->dispatchEvents();
 }
 
-ANCHOR_SystemWindowHandle ANCHOR::CreateWindow(ANCHOR_SystemHandle systemhandle,
-                                               ANCHOR_SystemWindowHandle parent_windowhandle,
-                                               const char *title,
-                                               const char *icon,
-                                               AnchorS32 left,
-                                               AnchorS32 top,
-                                               AnchorU32 width,
-                                               AnchorU32 height,
-                                               eAnchorWindowState state,
-                                               bool is_dialog,
-                                               eAnchorDrawingContextType type,
-                                               int vkSettings)
+ANCHOR_SystemWindowHandle ANCHOR::CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
+                                                     ANCHOR_SystemWindowHandle parent_windowhandle,
+                                                     const char *title,
+                                                     const char *icon,
+                                                     AnchorS32 left,
+                                                     AnchorS32 top,
+                                                     AnchorU32 width,
+                                                     AnchorU32 height,
+                                                     eAnchorWindowState state,
+                                                     bool is_dialog,
+                                                     eAnchorDrawingContextType type,
+                                                     int vkSettings)
 {
   ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
 
@@ -12649,8 +12649,13 @@ static void ImeSetInputScreenPosFn_DefaultImpl(int x, int y)
     if (HIMC himc = ::ImmGetContext(hwnd))
     {
       COMPOSITIONFORM cf;
+      #ifndef _WIN32
       cf.ptCurrentPos[0] = x;
       cf.ptCurrentPos[1] = y;
+      #else
+      cf.ptCurrentPos.x = x;
+      cf.ptCurrentPos.y = y;
+      #endif
       cf.dwStyle = CFS_FORCE_POSITION;
       ::ImmSetCompositionWindow(himc, &cf);
       ::ImmReleaseContext(hwnd, himc);

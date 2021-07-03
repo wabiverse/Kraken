@@ -664,9 +664,9 @@ static void ShowDemoWindowWidgets()
       if (i > 0)
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
-      ANCHOR::PushStyleColor(ANCHOR_Col_Button, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.6f, 0.6f));
-      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.7f, 0.7f));
-      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.8f, 0.8f));
+      ANCHOR::PushStyleColor(ANCHOR_Col_Button, AnchorColor::HSV(i / 7.0f, 0.6f, 0.6f).Value);
+      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, AnchorColor::HSV(i / 7.0f, 0.7f, 0.7f).Value);
+      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, AnchorColor::HSV(i / 7.0f, 0.8f, 0.8f).Value);
       ANCHOR::Button("Click");
       ANCHOR::PopStyleColor(3);
       ANCHOR::PopID();
@@ -2549,10 +2549,10 @@ static void ShowDemoWindowWidgets()
       if (i > 0)
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBg, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.5f, 0.5f));
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgHovered, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.6f, 0.5f));
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgActive, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.7f, 0.5f));
-      ANCHOR::PushStyleColor(ANCHOR_Col_SliderGrab, (GfVec4f)AnchorColor::HSV(i / 7.0f, 0.9f, 0.9f));
+      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBg, AnchorColor::HSV(i / 7.0f, 0.5f, 0.5f).Value);
+      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgHovered, AnchorColor::HSV(i / 7.0f, 0.6f, 0.5f).Value);
+      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgActive, AnchorColor::HSV(i / 7.0f, 0.7f, 0.5f).Value);
+      ANCHOR::PushStyleColor(ANCHOR_Col_SliderGrab, AnchorColor::HSV(i / 7.0f, 0.9f, 0.9f).Value);
       ANCHOR::VSliderFloat("##v", GfVec2f(18, 160), &values[i], 0.0f, 1.0f, "");
       if (ANCHOR::IsItemActive() || ANCHOR::IsItemHovered())
         ANCHOR::SetTooltip("%.3f", values[i]);
@@ -3593,9 +3593,9 @@ static void ShowDemoWindowLayout()
                                                      (!(n % 5))   ? "Buzz" :
                                                                     num_buf;
         float hue = n * 0.05f;
-        ANCHOR::PushStyleColor(ANCHOR_Col_Button, (GfVec4f)AnchorColor::HSV(hue, 0.6f, 0.6f));
-        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, (GfVec4f)AnchorColor::HSV(hue, 0.7f, 0.7f));
-        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, (GfVec4f)AnchorColor::HSV(hue, 0.8f, 0.8f));
+        ANCHOR::PushStyleColor(ANCHOR_Col_Button, AnchorColor::HSV(hue, 0.6f, 0.6f).Value);
+        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, AnchorColor::HSV(hue, 0.7f, 0.7f).Value);
+        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, AnchorColor::HSV(hue, 0.8f, 0.8f).Value);
         ANCHOR::Button(label, GfVec2f(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
         ANCHOR::PopStyleColor(3);
         ANCHOR::PopID();

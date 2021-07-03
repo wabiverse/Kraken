@@ -7,16 +7,32 @@ set(INC
   ../covalib
 )
 
-set(SRC_PLATFORM_BACKENDS
-  # Platform Specific Backends.
-  backend/backend_sdl.cpp
+# ------------------------------------ SHARED BACKENDS -----
+list (APPEND SRC_PLATFORM_BACKENDS
+  # Everyone gets Vulkan.
   backend/backend_vulkan.cpp
-
-  # Platform Specific Backends.
-  backend/ANCHOR_BACKEND_sdl.h
   backend/ANCHOR_BACKEND_vulkan.h
 )
 
+# -------------------------------------- UNIX BACKENDS -----
+if(UNIX)
+  # Unix currently gets SDL.
+  list(APPEND SRC_PLATFORM_BACKENDS
+    backend/backend_sdl.cpp
+    backend/ANCHOR_BACKEND_sdl.h
+  )
+endif()
+
+# ------------------------------------- WIN32 BACKENDS -----
+if(WIN32)
+  # Windows currently gets native Win32 Support.
+  list(APPEND SRC_PLATFORM_BACKENDS
+    backend/backend_win32.cpp
+    backend/ANCHOR_BACKEND_win32.h
+  )
+endif()
+
+# --------------------------------------- SHARED SOURCE -----
 set(SRC
   # All Systems ->
   intern/system_interfaces.cpp
