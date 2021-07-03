@@ -124,20 +124,28 @@ endif()
 #-----------------------------------------------------------------------------
 # Set default config options
 
-# Hack, because CMAKE provided variables are not handed down from MSVC
-# and we need to ensure we are able to check Release v. Debug modes
-# to link and install with the proper Release v. Debug libraries.
-if(CMAKE_BINARY_DIR MATCHES ".*Release")
-  option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
-elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
-  option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
-endif()
-
 if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
   add_definitions(-DTBB_USE_DEBUG=1)
   add_definitions(-DTBB_USE_ASSERT=1)
   add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
   add_definitions(-DOSL_DEBUG=1)
+endif()
+
+# Hack, because CMAKE provided variables are not handed down from MSVC
+# and we need to ensure we are able to check Release v. Debug modes
+# to link and install with the proper Release v. Debug libraries.
+if(CMAKE_BINARY_DIR MATCHES ".*Release")
+  add_definitions(-DTBB_USE_DEBUG=0)
+  add_definitions(-DTBB_USE_ASSERT=0)
+  add_definitions(-DTBB_USE_PROFILING_TOOLS=0)
+  add_definitions(-DOSL_DEBUG=0)
+  option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
+elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
+  add_definitions(-DTBB_USE_DEBUG=1)
+  add_definitions(-DTBB_USE_ASSERT=1)
+  add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
+  add_definitions(-DOSL_DEBUG=1)
+  option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
 endif()
 
 get_kraken_version()
@@ -152,10 +160,10 @@ option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
 #-----------------------------------------------------------------------------
 # Build Options
 
-option(WITH_KRAKEN                    "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"      ON)
-option(WITH_KRAKEN_MONOLITHIC         "Build all Pixar API libraries as one big monolithic library, the krakenverse"                ON)
+option(WITH_KRAKEN                   "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"     ON)
+option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the krakenverse"               ON)
 option(WITH_LICENSING                "Save my investments god damnit"                                                             ON)
-option(WITH_TESTS                    "Build kraken test executables"                                                               ON)
+option(WITH_TESTS                    "Build kraken test executables"                                                              ON)
 option(WITH_USD                      "Enable Universal Scene Description (USD) Support"                                           ON)
 option(WITH_PIXAR_AR_BETA            "Enable developmental preview of Pixar Asset Resolution v2.0"                                ON)
 option(WITH_PIXAR_USDVIEW            "Build the Pixar UsdView Python Application"                                                 ON)
@@ -173,7 +181,7 @@ option(WITH_EMBREE                   "Enable RenderMan, Pixar's Render Engine"  
 option(WITH_ALEMBIC                  "Enable Alembic Support"                                                                     ON)
 option(WITH_ALEMBIC_HDF5             "Enable HDF5 in Alembic for high performance data management and storage"                    ON)
 option(WITH_DRACO                    "Enable Draco Support"                                                                       ON)
-option(WITH_MATERIALX                "Enable MaterialX support for KRAKEN through the usdMatx plugin"                              ON)
+option(WITH_MATERIALX                "Enable MaterialX support for KRAKEN through the usdMatx plugin"                             ON)
 option(WITH_OSL                      "Build with full OSL support for MaterialX, and others."                                     ON)
 option(WITH_OPENIMAGEIO              "Enable OpenImageIO Support (http://www.openimageio.org)"                                    ON)
 option(WITH_PTEX                     "Enable Walt Disney Animation Studios Ptex support (https://ptex.us/)"                       ON)
@@ -184,7 +192,7 @@ option(WITH_OPENVDB                  "Enable features relying on OpenVDB"       
 option(WITH_OPENVDB_BLOSC            "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support"  ON)
 option(WITH_NANOVDB                  "Enable usage of NanoVDB data structure for accelerated rendering on the GPU"               OFF)
 option(WITH_PYTHON                   "Enable Embedded Python API  (only disable for development)"                                 ON)
-option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with KRAKEN"                                 ON)
+option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with KRAKEN"                                ON)
 option(WITH_PYTHON_INSTALL_NUMPY     "Install numpy alongside python installation"                                                ON)
 option(WITH_PYTHON_INSTALL_REQUESTS  "Install requests alongside python installation"                                             ON)
 option(WITH_PYTHON_SECURITY          "Disables execution of scripts referenced within usd files by default"                       ON)

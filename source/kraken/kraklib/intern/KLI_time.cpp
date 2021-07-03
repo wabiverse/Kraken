@@ -30,7 +30,7 @@
 #elif _WIN32
 #  include "stdlib.h"
 #  include <windows.h>
-#  define sleep(x) _sleep(x)
+#  define sleep(x) Sleep(x)
 
 void usleep(__int64 usec)
 {
