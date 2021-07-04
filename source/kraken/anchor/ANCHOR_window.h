@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_Rect.h"
 
 class ANCHOR_ISystemWindow
 {
@@ -152,6 +153,11 @@ class ANCHOR_ISystemWindow
    * Returns the title displayed in the title bar.
    * @param title: The title displayed in the title bar. */
   virtual std::string getTitle() const = 0;
+
+  /**
+   * Returns the visibility state of the cursor.
+   * @return The visibility state of the cursor. */
+  virtual bool getCursorVisibility() const = 0;
 };
 
 class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
@@ -192,6 +198,18 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   {
     return false;
   }
+
+  eAnchorStatus getCursorGrabBounds(ANCHOR_Rect &bounds);
+
+  /**
+   * Returns the visibility state of the cursor.
+   * @return The visibility state of the cursor. */
+  inline bool getCursorVisibility() const;
+  inline bool getCursorGrabModeIsWarp() const;
+  inline eAnchorStandardCursor getCursorShape() const;
+  inline eAnchorAxisFlag getCursorGrabAxis() const;
+  inline void getCursorGrabAccum(AnchorS32 &x, AnchorS32 &y) const;
+  inline void setCursorGrabAccum(AnchorS32 x, AnchorS32 y);
 
   /**
    * Swaps front and back buffers of a window.
@@ -260,6 +278,12 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   /** The current grabbed state of the cursor */
   eAnchorGrabCursorMode m_cursorGrab;
 
+  /** Grab cursor axis. */
+  eAnchorAxisFlag m_cursorGrabAxis;
+
+  /** Wrap the cursor within this region. */
+  ANCHOR_Rect m_cursorGrabBounds;
+
   /** Accumulated offset from m_cursorGrabInitPos. */
   AnchorS32 m_cursorGrabAccumPos[2];
 
@@ -289,3 +313,35 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   /* macOS only, retina screens */
   float m_nativePixelSize;
 };
+
+inline bool ANCHOR_SystemWindow::getCursorVisibility() const
+{
+  return m_cursorVisible;
+}
+
+inline void ANCHOR_SystemWindow::getCursorGrabAccum(AnchorS32 &x, AnchorS32 &y) const
+{
+  x = m_cursorGrabAccumPos[0];
+  y = m_cursorGrabAccumPos[1];
+}
+
+inline eAnchorAxisFlag ANCHOR_SystemWindow::getCursorGrabAxis() const
+{
+  return m_cursorGrabAxis;
+}
+
+inline bool ANCHOR_SystemWindow::getCursorGrabModeIsWarp() const
+{
+  return (m_cursorGrab == ANCHOR_GrabWrap) || (m_cursorGrab == ANCHOR_GrabHide);
+}
+
+inline void ANCHOR_SystemWindow::setCursorGrabAccum(AnchorS32 x, AnchorS32 y)
+{
+  m_cursorGrabAccumPos[0] = x;
+  m_cursorGrabAccumPos[1] = y;
+}
+
+inline eAnchorStandardCursor ANCHOR_SystemWindow::getCursorShape() const
+{
+  return m_cursorShape;
+}

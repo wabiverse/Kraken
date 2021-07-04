@@ -33,6 +33,7 @@ TF_REGISTRY_FUNCTION(TfDebug)
 {
   TF_DEBUG_ENVIRONMENT_SYMBOL(ANCHOR_SDL_VULKAN, "Print Anchor SDL-Vulkan backend debug output");
   TF_DEBUG_ENVIRONMENT_SYMBOL(ANCHOR_DISPLAY_MANAGER, "Print Anchor Display Manager debug output");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(ANCHOR_WIN32, "Print Anchor Win32 backend debug output");
 }
 
 WABI_NAMESPACE_END

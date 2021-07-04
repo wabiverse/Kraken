@@ -23,6 +23,7 @@
  */
 
 #include "ANCHOR_window.h"
+#include "ANCHOR_Rect.h"
 
 #include <assert.h>
 
@@ -102,6 +103,12 @@ eAnchorStatus ANCHOR_SystemWindow::setModifiedState(bool isUnsavedChanges)
   m_isUnsavedChanges = isUnsavedChanges;
 
   return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus ANCHOR_SystemWindow::getCursorGrabBounds(ANCHOR_Rect &bounds)
+{
+  bounds = m_cursorGrabBounds;
+  return (bounds.m_l == -1 && bounds.m_r == -1) ? ANCHOR_ERROR : ANCHOR_SUCCESS;
 }
 
 bool ANCHOR_SystemWindow::getModifiedState()

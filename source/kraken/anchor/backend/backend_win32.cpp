@@ -23,7 +23,11 @@
  */
 
 #include "ANCHOR_BACKEND_win32.h"
+#include "ANCHOR_Rect.h"
 #include "ANCHOR_api.h"
+#include "ANCHOR_buttons.h"
+#include "ANCHOR_debug_codes.h"
+#include "ANCHOR_event.h"
 #include "ANCHOR_window.h"
 
 #include <wabi/base/tf/diagnostic.h>
@@ -46,6 +50,7 @@
 #include <dwmapi.h>
 #include <tchar.h>
 #include <windows.h>
+#include <winnt.h>
 
 // Configuration flags to add in your imconfig.h file:
 //#define ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD              // Disable gamepad support. This was meaningful before <1.81 but we now load XInput dynamically so the option is now less relevant.
@@ -57,38 +62,7 @@ typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITI
 typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
 #endif
 
-// CHANGELOG
-// (minor and older changes stripped away, please see git history for details)
-//  2021-06-29: Reorganized backend to pull data from a single structure to facilitate usage with multiple-contexts (all g_XXXX access changed to bd->XXXX).
-//  2021-06-08: Fix ANCHOR_ImplWin32_EnableDpiAwareness() and ANCHOR_ImplWin32_GetDpiScaleForMonitor() to handle Windows 8.1/10 features without a manifest (per-monitor DPI, and properly calls SetProcessDpiAwareness() on 8.1).
-//  2021-03-23: Inputs: Clearing keyboard down array when losing focus (WM_KILLFOCUS).
-//  2021-02-18: Added ANCHOR_ImplWin32_EnableAlphaCompositing(). Non Visual Studio users will need to link with dwmapi.lib (MinGW/gcc: use -ldwmapi).
-//  2021-02-17: Fixed ANCHOR_ImplWin32_EnableDpiAwareness() attempting to get SetProcessDpiAwareness from shcore.dll on Windows 8 whereas it is only supported on Windows 8.1.
-//  2021-01-25: Inputs: Dynamically loading XInput DLL.
-//  2020-12-04: Misc: Fixed setting of io.DisplaySize to invalid/uninitialized data when after hwnd has been closed.
-//  2020-03-03: Inputs: Calling AddInputCharacterUTF16() to support surrogate pairs leading to codepoint >= 0x10000 (for more complete CJK inputs)
-//  2020-02-17: Added ANCHOR_ImplWin32_EnableDpiAwareness(), ANCHOR_ImplWin32_GetDpiScaleForHwnd(), ANCHOR_ImplWin32_GetDpiScaleForMonitor() helper functions.
-//  2020-01-14: Inputs: Added support for #define ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD/ANCHOR_IMPL_WIN32_DISABLE_LINKING_XINPUT.
-//  2019-12-05: Inputs: Added support for ANCHOR_MouseCursor_NotAllowed mouse cursor.
-//  2019-05-11: Inputs: Don't filter value from WM_CHAR before calling AddInputCharacter().
-//  2019-01-17: Misc: Using GetForegroundWindow()+IsChild() instead of GetActiveWindow() to be compatible with windows created in a different thread or parent.
-//  2019-01-17: Inputs: Added support for mouse buttons 4 and 5 via WM_XBUTTON* messages.
-//  2019-01-15: Inputs: Added support for XInput gamepads (if ANCHORConfigFlags_NavEnableGamepad is set by user application).
-//  2018-11-30: Misc: Setting up io.BackendPlatformName so it can be displayed in the About Window.
-//  2018-06-29: Inputs: Added support for the ANCHOR_MouseCursor_Hand cursor.
-//  2018-06-10: Inputs: Fixed handling of mouse wheel messages to support fine position messages (typically sent by track-pads).
-//  2018-06-08: Misc: Extracted imgui_impl_win32.cpp/.h away from the old combined DX9/DX10/DX11/DX12 examples.
-//  2018-03-20: Misc: Setup io.BackendFlags ANCHORBackendFlags_HasMouseCursors and ANCHORBackendFlags_HasSetMousePos flags + honor ANCHORConfigFlags_NoMouseCursorChange flag.
-//  2018-02-20: Inputs: Added support for mouse cursors (ANCHOR::GetMouseCursor() value and WM_SETCURSOR message handling).
-//  2018-02-06: Inputs: Added mapping for ANCHOR_Key_Space.
-//  2018-02-06: Inputs: Honoring the io.WantSetMousePos by repositioning the mouse (when using navigation and ANCHORConfigFlags_NavMoveMouse is set).
-//  2018-02-06: Misc: Removed call to ANCHOR::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
-//  2018-01-20: Inputs: Added Horizontal Mouse Wheel support.
-//  2018-01-08: Inputs: Added mapping for ANCHOR_Key_Insert.
-//  2018-01-05: Inputs: Added WM_LBUTTONDBLCLK double-click handlers for window classes with the CS_DBLCLKS flag.
-//  2017-10-23: Inputs: Added WM_SYSKEYDOWN / WM_SYSKEYUP handlers so e.g. the VK_MENU key can be read.
-//  2017-10-23: Inputs: Using Win32 ::SetCapture/::GetCapture() to retrieve mouse positions outside the client area when dragging.
-//  2016-11-12: Inputs: Only call Win32 ::SetCursor(NULL) when io.MouseDrawCursor is set.
+WABI_NAMESPACE_USING
 
 struct ANCHOR_ImplWin32_Data
 {
@@ -860,6 +834,8 @@ static void initRawInput()
 #undef DEVICE_COUNT
 }
 
+typedef BOOL(WINAPI *ANCHOR_WIN32_EnableNonClientDpiScaling)(HWND);
+
 ANCHOR_SystemWin32::ANCHOR_SystemWin32()
   : m_win32_window(nullptr),
     m_hasPerformanceCounter(false),
@@ -891,20 +867,104 @@ ANCHOR_SystemWin32::ANCHOR_SystemWin32()
 }
 
 ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
-{}
-
-bool ANCHOR_SystemWin32::processEvents(bool waitForEvents)
 {
-  return false;
+  /**
+   * Shutdown COM. */
+  OleUninitialize();
+  toggleConsole(1);
+}
+
+AnchorU64 ANCHOR_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
+{
+  // Calculate the time passed since system initialization.
+  __int64 delta = (perf_ticks - m_start) * 1000;
+
+  AnchorU64 t = (AnchorU64)(delta / m_freq);
+  return t;
+}
+
+bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
+{
+  MSG msg;
+  bool hasEventHandled = false;
+
+  do
+  {
+    if (waitForEvent && !::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+    {
+      ::Sleep(1);
+    }
+
+    if (ANCHOR::GetTime())
+    {
+      hasEventHandled = true;
+    }
+
+    /**
+     * Process all the events waiting for us. */
+    while (::PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+    {
+      /**
+       * TranslateMessage doesn't alter the message, and doesn't change our raw keyboard data.
+       * Needed for MapVirtualKey or if we ever need to get chars from wm_ime_char or similar. */
+      ::TranslateMessage(&msg);
+      ::DispatchMessageW(&msg);
+      hasEventHandled = true;
+    }
+
+    /* PeekMessage above is allowed to dispatch messages to the wndproc without us
+     * noticing, so we need to check the event manager here to see if there are
+     * events waiting in the queue.
+     */
+    hasEventHandled |= this->m_eventManager->getNumEvents() > 0;
+
+  } while (waitForEvent && !hasEventHandled);
+
+  return hasEventHandled;
 }
 
 eAnchorStatus ANCHOR_SystemWin32::getModifierKeys(ANCHOR_ModifierKeys &keys) const
 {
+  bool down = HIBYTE(::GetKeyState(VK_LSHIFT)) != 0;
+  keys.set(ANCHOR_ModifierKeyLeftShift, down);
+  down = HIBYTE(::GetKeyState(VK_RSHIFT)) != 0;
+  keys.set(ANCHOR_ModifierKeyRightShift, down);
+
+  down = HIBYTE(::GetKeyState(VK_LMENU)) != 0;
+  keys.set(ANCHOR_ModifierKeyLeftAlt, down);
+  down = HIBYTE(::GetKeyState(VK_RMENU)) != 0;
+  keys.set(ANCHOR_ModifierKeyRightAlt, down);
+
+  down = HIBYTE(::GetKeyState(VK_LCONTROL)) != 0;
+  keys.set(ANCHOR_ModifierKeyLeftControl, down);
+  down = HIBYTE(::GetKeyState(VK_RCONTROL)) != 0;
+  keys.set(ANCHOR_ModifierKeyRightControl, down);
+
+  bool lwindown = HIBYTE(::GetKeyState(VK_LWIN)) != 0;
+  bool rwindown = HIBYTE(::GetKeyState(VK_RWIN)) != 0;
+  if (lwindown || rwindown)
+    keys.set(ANCHOR_ModifierKeyOS, true);
+  else
+    keys.set(ANCHOR_ModifierKeyOS, false);
   return ANCHOR_SUCCESS;
 }
 
 eAnchorStatus ANCHOR_SystemWin32::getButtons(ANCHOR_Buttons &buttons) const
 {
+  /**
+   * Check for swapped buttons (left-handed mouse buttons)
+   * GetAsyncKeyState() will give back the state of the
+   * physical mouse buttons. */
+  bool swapped = ::GetSystemMetrics(SM_SWAPBUTTON) == TRUE;
+
+  bool down = HIBYTE(::GetAsyncKeyState(VK_LBUTTON)) != 0;
+  buttons.set(swapped ? ANCHOR_ButtonMaskRight : ANCHOR_ButtonMaskLeft, down);
+
+  down = HIBYTE(::GetAsyncKeyState(VK_MBUTTON)) != 0;
+  buttons.set(ANCHOR_ButtonMaskMiddle, down);
+
+  down = HIBYTE(::GetAsyncKeyState(VK_RBUTTON)) != 0;
+  buttons.set(swapped ? ANCHOR_ButtonMaskLeft : ANCHOR_ButtonMaskRight, down);
   return ANCHOR_SUCCESS;
 }
 
@@ -916,7 +976,58 @@ void ANCHOR_SystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &he
 
 eAnchorStatus ANCHOR_SystemWin32::init()
 {
-  return ANCHOR_SUCCESS;
+  eAnchorStatus success = ANCHOR_System::init();
+  InitCommonControls();
+
+  /* Disable scaling on high DPI displays on Vista */
+  SetProcessDPIAware();
+  initRawInput();
+
+  m_lfstart = ::GetTickCount();
+
+  /* Determine whether this system has a high frequency performance counter. */
+  m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
+  if (m_hasPerformanceCounter)
+  {
+    TF_DEBUG(ANCHOR_WIN32).Msg("High Frequency Performance Timer available\n");
+    ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
+  }
+  else
+  {
+    TF_DEBUG(ANCHOR_WIN32).Msg("High Frequency Performance Timer not available\n");
+  }
+
+  if (success)
+  {
+    WNDCLASSW wc = {0};
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = s_wndProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = ::GetModuleHandle(0);
+    wc.hIcon = ::LoadIcon(wc.hInstance, "APPICON");
+
+    if (!wc.hIcon)
+    {
+      ::LoadIcon(NULL, IDI_APPLICATION);
+    }
+    wc.hCursor = ::LoadCursor(0, IDC_ARROW);
+    wc.hbrBackground =
+#ifdef INW32_COMPISITING
+      (HBRUSH)CreateSolidBrush
+#endif
+      (0x00000000);
+    wc.lpszMenuName = 0;
+    wc.lpszClassName = L"ANCHOR_WindowClass";
+
+    // Use RegisterClassEx for setting small icon
+    if (::RegisterClassW(&wc) == 0)
+    {
+      success = ANCHOR_ERROR;
+    }
+  }
+
+  return success;
 }
 
 ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
@@ -942,9 +1053,1482 @@ bool ANCHOR_SystemWin32::generateWindowExposeEvents()
 
 eAnchorStatus ANCHOR_SystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
 {
+  POINT point;
+  if (::GetCursorPos(&point))
+  {
+    x = point.x;
+    y = point.y;
+    return ANCHOR_SUCCESS;
+  }
+  return ANCHOR_ERROR;
+}
+
+eAnchorStatus ANCHOR_SystemWin32::setCursorPosition(AnchorS32 x, AnchorS32 y)
+{
+  if (!::GetActiveWindow())
+    return ANCHOR_ERROR;
+  return ::SetCursorPos(x, y) == TRUE ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+}
+
+void ANCHOR_SystemWin32::processMinMaxInfo(MINMAXINFO *minmax)
+{
+  minmax->ptMinTrackSize.x = 320;
+  minmax->ptMinTrackSize.y = 240;
+}
+
+LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  ANCHOR_Event *event = NULL;
+  bool eventHandled = false;
+
+  LRESULT lResult = 0;
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+#ifdef WITH_INPUT_IME
+  ANCHOR_EventManager *eventManager = system->getEventManager();
+#endif
+  ANCHOR_ASSERT(system);
+
+  if (hwnd)
+  {
+
+    if (msg == WM_NCCREATE)
+    {
+      // Tell Windows to automatically handle scaling of non-client areas
+      // such as the caption bar. EnableNonClientDpiScaling was introduced in Windows 10
+      HMODULE m_user32 = ::LoadLibrary("User32.dll");
+      if (m_user32)
+      {
+        ANCHOR_WIN32_EnableNonClientDpiScaling fpEnableNonClientDpiScaling =
+          (ANCHOR_WIN32_EnableNonClientDpiScaling)::GetProcAddress(m_user32, "EnableNonClientDpiScaling");
+        if (fpEnableNonClientDpiScaling)
+        {
+          fpEnableNonClientDpiScaling(hwnd);
+        }
+      }
+    }
+
+    ANCHOR_WindowWin32 *window = (ANCHOR_WindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+    if (window)
+    {
+      switch (msg)
+      {
+        // we need to check if new key layout has AltGr
+        case WM_INPUTLANGCHANGE: {
+          system->handleKeyboardChange();
+#ifdef WITH_INPUT_IME
+          window->getImeInput()->SetInputLanguage();
+#endif
+          break;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Keyboard events, processed
+        ////////////////////////////////////////////////////////////////////////
+        case WM_INPUT: {
+          RAWINPUT raw;
+          RAWINPUT *raw_ptr = &raw;
+          UINT rawSize = sizeof(RAWINPUT);
+
+          GetRawInputData((HRAWINPUT)lParam, RID_INPUT, raw_ptr, &rawSize, sizeof(RAWINPUTHEADER));
+
+          switch (raw.header.dwType)
+          {
+            case RIM_TYPEKEYBOARD:
+              event = processKeyEvent(window, raw);
+              if (!event)
+              {
+                TF_DEBUG(ANCHOR_WIN32).Msg("ANCHOR_SystemWin32::wndProc: key event ");
+                TF_DEBUG(ANCHOR_WIN32).Msg(std::to_string(msg));
+                TF_DEBUG(ANCHOR_WIN32).Msg(" key ignored\n");
+              }
+              break;
+#ifdef WITH_INPUT_NDOF
+            case RIM_TYPEHID:
+              if (system->processNDOF(raw))
+              {
+                eventHandled = true;
+              }
+              break;
+#endif
+          }
+          break;
+        }
+#ifdef WITH_INPUT_IME
+        ////////////////////////////////////////////////////////////////////////
+        // IME events, processed, read more in ANCHOR_IME.h
+        ////////////////////////////////////////////////////////////////////////
+        case WM_IME_SETCONTEXT: {
+          ANCHOR_ImeWin32 *ime = window->getImeInput();
+          ime->SetInputLanguage();
+          ime->CreateImeWindow(hwnd);
+          ime->CleanupComposition(hwnd);
+          ime->CheckFirst(hwnd);
+          break;
+        }
+        case WM_IME_STARTCOMPOSITION: {
+          ANCHOR_ImeWin32 *ime = window->getImeInput();
+          eventHandled = true;
+          /* remove input event before start comp event, avoid redundant input */
+          eventManager->removeTypeEvents(ANCHOR_EventTypeKeyDown, window);
+          ime->CreateImeWindow(hwnd);
+          ime->ResetComposition(hwnd);
+          event = processImeEvent(ANCHOR_EventTypeImeCompositionStart, window, &ime->eventImeData);
+          break;
+        }
+        case WM_IME_COMPOSITION: {
+          ANCHOR_ImeWin32 *ime = window->getImeInput();
+          eventHandled = true;
+          ime->UpdateImeWindow(hwnd);
+          ime->UpdateInfo(hwnd);
+          if (ime->eventImeData.result_len)
+          {
+            /* remove redundant IME event */
+            eventManager->removeTypeEvents(ANCHOR_EventTypeImeComposition, window);
+          }
+          event = processImeEvent(ANCHOR_EventTypeImeComposition, window, &ime->eventImeData);
+          break;
+        }
+        case WM_IME_ENDCOMPOSITION: {
+          ANCHOR_ImeWin32 *ime = window->getImeInput();
+          eventHandled = true;
+          /* remove input event after end comp event, avoid redundant input */
+          eventManager->removeTypeEvents(ANCHOR_EventTypeKeyDown, window);
+          ime->ResetComposition(hwnd);
+          ime->DestroyImeWindow(hwnd);
+          event = processImeEvent(ANCHOR_EventTypeImeCompositionEnd, window, &ime->eventImeData);
+          break;
+        }
+#endif /* WITH_INPUT_IME */
+        ////////////////////////////////////////////////////////////////////////
+        // Keyboard events, ignored
+        ////////////////////////////////////////////////////////////////////////
+        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+        /* These functions were replaced by #WM_INPUT. */
+        case WM_CHAR:
+        /* The WM_CHAR message is posted to the window with the keyboard focus when
+         * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
+         * contains the character code of the key that was pressed.
+         */
+        case WM_DEADCHAR:
+          /* The WM_DEADCHAR message is posted to the window with the keyboard focus when a
+           * WM_KEYUP message is translated by the TranslateMessage function. WM_DEADCHAR
+           * specifies a character code generated by a dead key. A dead key is a key that
+           * generates a character, such as the umlaut (double-dot), that is combined with
+           * another character to form a composite character. For example, the umlaut-O
+           * character (Ö) is generated by typing the dead key for the umlaut character, and
+           * then typing the O key.
+           */
+          break;
+        case WM_SYSDEADCHAR:
+        /* The WM_SYSDEADCHAR message is sent to the window with the keyboard focus when
+         * a WM_SYSKEYDOWN message is translated by the TranslateMessage function.
+         * WM_SYSDEADCHAR specifies the character code of a system dead key - that is,
+         * a dead key that is pressed while holding down the alt key.
+         */
+        case WM_SYSCHAR:
+          /* The WM_SYSCHAR message is sent to the window with the keyboard focus when
+           * a WM_SYSCHAR message is translated by the TranslateMessage function.
+           * WM_SYSCHAR specifies the character code of a dead key - that is,
+           * a dead key that is pressed while holding down the alt key.
+           * To prevent the sound, DefWindowProc must be avoided by return
+           */
+          break;
+        case WM_SYSCOMMAND:
+          /* The WM_SYSCOMMAND message is sent to the window when system commands such as
+           * maximize, minimize  or close the window are triggered. Also it is sent when ALT
+           * button is press for menu. To prevent this we must return preventing DefWindowProc.
+           *
+           * Note that the four low-order bits of the wParam parameter are used internally by the
+           * OS. To obtain the correct result when testing the value of wParam, an application
+           * must combine the value 0xFFF0 with the wParam value by using the bitwise AND operator.
+           */
+          switch (wParam & 0xFFF0)
+          {
+            case SC_KEYMENU:
+              eventHandled = true;
+              break;
+            case SC_RESTORE: {
+              ::ShowWindow(hwnd, SW_RESTORE);
+              window->setState(window->getState());
+
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+              ANCHOR_Wintab *wt = window->getWintab();
+              if (wt)
+              {
+                wt->enable();
+              }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+
+              eventHandled = true;
+              break;
+            }
+            case SC_MAXIMIZE: {
+
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+              ANCHOR_Wintab *wt = window->getWintab();
+              if (wt)
+              {
+                wt->enable();
+              }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+
+              /* Don't report event as handled so that default handling occurs. */
+              break;
+            }
+            case SC_MINIMIZE: {
+
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+              ANCHOR_Wintab *wt = window->getWintab();
+              if (wt)
+              {
+                wt->disable();
+              }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+
+              /* Don't report event as handled so that default handling occurs. */
+              break;
+            }
+          }
+          break;
+
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+
+        ////////////////////////////////////////////////////////////////////////
+        // Wintab events, processed
+        ////////////////////////////////////////////////////////////////////////
+        case WT_CSRCHANGE: {
+          ANCHOR_Wintab *wt = window->getWintab();
+          if (wt)
+          {
+            wt->updateCursorInfo();
+          }
+          eventHandled = true;
+          break;
+        }
+        case WT_PROXIMITY: {
+          ANCHOR_Wintab *wt = window->getWintab();
+          if (wt)
+          {
+            bool inRange = LOWORD(lParam);
+            if (inRange)
+            {
+              /* Some devices don't emit WT_CSRCHANGE events, so update cursor info here. */
+              wt->updateCursorInfo();
+            }
+            else
+            {
+              wt->leaveRange();
+            }
+          }
+          eventHandled = true;
+          break;
+        }
+        case WT_INFOCHANGE: {
+          ANCHOR_Wintab *wt = window->getWintab();
+          if (wt)
+          {
+            wt->processInfoChange(lParam);
+
+            if (window->usingTabletAPI(ANCHOR_TabletWintab))
+            {
+              window->resetPointerPenInfo();
+            }
+          }
+          eventHandled = true;
+          break;
+        }
+        case WT_PACKET:
+          processWintabEvent(window);
+          eventHandled = true;
+          break;
+
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+
+        ////////////////////////////////////////////////////////////////////////
+        // Pointer events, processed
+        ////////////////////////////////////////////////////////////////////////
+        case WM_POINTERUPDATE:
+        case WM_POINTERDOWN:
+        case WM_POINTERUP:
+          processPointerEvent(msg, window, wParam, lParam, eventHandled);
+          break;
+        case WM_POINTERLEAVE: {
+          AnchorU32 pointerId = GET_POINTERID_WPARAM(wParam);
+          POINTER_INFO pointerInfo;
+          if (!GetPointerInfo(pointerId, &pointerInfo))
+          {
+            break;
+          }
+
+          /* Reset pointer pen info if pen device has left tracking range. */
+          if (pointerInfo.pointerType == PT_PEN)
+          {
+            window->resetPointerPenInfo();
+            eventHandled = true;
+          }
+          break;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Mouse events, processed
+        ////////////////////////////////////////////////////////////////////////
+        case WM_LBUTTONDOWN:
+          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
+          break;
+        case WM_MBUTTONDOWN:
+          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
+          break;
+        case WM_RBUTTONDOWN:
+          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
+          break;
+        case WM_XBUTTONDOWN:
+          if ((short)HIWORD(wParam) == XBUTTON1)
+          {
+            event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
+          }
+          else if ((short)HIWORD(wParam) == XBUTTON2)
+          {
+            event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
+          }
+          break;
+        case WM_LBUTTONUP:
+          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
+          break;
+        case WM_MBUTTONUP:
+          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
+          break;
+        case WM_RBUTTONUP:
+          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
+          break;
+        case WM_XBUTTONUP:
+          if ((short)HIWORD(wParam) == XBUTTON1)
+          {
+            event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
+          }
+          else if ((short)HIWORD(wParam) == XBUTTON2)
+          {
+            event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
+          }
+          break;
+        case WM_MOUSEMOVE:
+          if (!window->m_mousePresent)
+          {
+            TRACKMOUSEEVENT tme = {sizeof(tme)};
+            tme.dwFlags = TME_LEAVE;
+            tme.hwndTrack = hwnd;
+            TrackMouseEvent(&tme);
+            window->m_mousePresent = true;
+
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+            ANCHOR_Wintab *wt = window->getWintab();
+            if (wt)
+            {
+              wt->gainFocus();
+            }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+          }
+          event = processCursorEvent(window);
+
+          break;
+        case WM_MOUSEWHEEL: {
+          /* The WM_MOUSEWHEEL message is sent to the focus window
+           * when the mouse wheel is rotated. The DefWindowProc
+           * function propagates the message to the window's parent.
+           * There should be no internal forwarding of the message,
+           * since DefWindowProc propagates it up the parent chain
+           * until it finds a window that processes it.
+           */
+          processWheelEvent(window, wParam, lParam);
+          eventHandled = true;
+#ifdef BROKEN_PEEK_TOUCHPAD
+          PostMessage(hwnd, WM_USER, 0, 0);
+#endif
+          break;
+        }
+        case WM_SETCURSOR:
+          /* The WM_SETCURSOR message is sent to a window if the mouse causes the cursor
+           * to move within a window and mouse input is not captured.
+           * This means we have to set the cursor shape every time the mouse moves!
+           * The DefWindowProc function uses this message to set the cursor to an
+           * arrow if it is not in the client area.
+           */
+          if (LOWORD(lParam) == HTCLIENT)
+          {
+            // Load the current cursor
+            window->loadCursor(window->getCursorVisibility(), window->getCursorShape());
+            // Bypass call to DefWindowProc
+            return 0;
+          }
+          else
+          {
+            // Outside of client area show standard cursor
+            window->loadCursor(true, ANCHOR_StandardCursorDefault);
+          }
+          break;
+        case WM_MOUSELEAVE: {
+          window->m_mousePresent = false;
+          if (window->getTabletData().Active == ANCHOR_TabletModeNone)
+          {
+            processCursorEvent(window);
+          }
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+          ANCHOR_Wintab *wt = window->getWintab();
+          if (wt)
+          {
+            wt->loseFocus();
+          }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+          break;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Mouse events, ignored
+        ////////////////////////////////////////////////////////////////////////
+        case WM_NCMOUSEMOVE:
+        /* The WM_NCMOUSEMOVE message is posted to a window when the cursor is moved
+         * within the non-client area of the window. This message is posted to the window that
+         * contains the cursor. If a window has captured the mouse, this message is not posted.
+         */
+        case WM_NCHITTEST:
+          /* The WM_NCHITTEST message is sent to a window when the cursor moves, or
+           * when a mouse button is pressed or released. If the mouse is not captured,
+           * the message is sent to the window beneath the cursor. Otherwise, the message
+           * is sent to the window that has captured the mouse.
+           */
+          break;
+
+        ////////////////////////////////////////////////////////////////////////
+        // Window events, processed
+        ////////////////////////////////////////////////////////////////////////
+        case WM_CLOSE:
+          /* The WM_CLOSE message is sent as a signal that a window
+           * or an application should terminate. Restore if minimized. */
+          if (IsIconic(hwnd))
+          {
+            ShowWindow(hwnd, SW_RESTORE);
+          }
+          event = processWindowEvent(ANCHOR_EventTypeWindowClose, window);
+          break;
+        case WM_ACTIVATE:
+          /* The WM_ACTIVATE message is sent to both the window being activated and the window
+           * being deactivated. If the windows use the same input queue, the message is sent
+           * synchronously, first to the window procedure of the top-level window being
+           * deactivated, then to the window procedure of the top-level window being activated.
+           * If the windows use different input queues, the message is sent asynchronously,
+           * so the window is activated immediately. */
+          {
+            ANCHOR_ModifierKeys modifiers;
+            modifiers.clear();
+            system->storeModifierKeys(modifiers);
+            system->m_wheelDeltaAccum = 0;
+            system->m_keycode_last_repeat_key = 0;
+            event = processWindowEvent(LOWORD(wParam) ? ANCHOR_EventTypeWindowActivate :
+                                                        ANCHOR_EventTypeWindowDeactivate,
+                                       window);
+            /* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
+             * will not be dispatched to OUR active window if we minimize one of OUR windows. */
+            if (LOWORD(wParam) == WA_INACTIVE)
+              window->lostMouseCapture();
+
+            lResult = ::DefWindowProc(hwnd, msg, wParam, lParam);
+            break;
+          }
+        case WM_ENTERSIZEMOVE:
+          /* The WM_ENTERSIZEMOVE message is sent one time to a window after it enters the moving
+           * or sizing modal loop. The window enters the moving or sizing modal loop when the user
+           * clicks the window's title bar or sizing border, or when the window passes the
+           * WM_SYSCOMMAND message to the DefWindowProc function and the wParam parameter of the
+           * message specifies the SC_MOVE or SC_SIZE value. The operation is complete when
+           * DefWindowProc returns.
+           */
+          window->m_inLiveResize = 1;
+          break;
+        case WM_EXITSIZEMOVE:
+          window->m_inLiveResize = 0;
+          break;
+        case WM_PAINT:
+          /* An application sends the WM_PAINT message when the system or another application
+           * makes a request to paint a portion of an application's window. The message is sent
+           * when the UpdateWindow or RedrawWindow function is called, or by the DispatchMessage
+           * function when the application obtains a WM_PAINT message by using the GetMessage or
+           * PeekMessage function.
+           */
+          if (!window->m_inLiveResize)
+          {
+            event = processWindowEvent(ANCHOR_EventTypeWindowUpdate, window);
+            ::ValidateRect(hwnd, NULL);
+          }
+          else
+          {
+            eventHandled = true;
+          }
+          break;
+        case WM_GETMINMAXINFO:
+          /* The WM_GETMINMAXINFO message is sent to a window when the size or
+           * position of the window is about to change. An application can use
+           * this message to override the window's default maximized size and
+           * position, or its default minimum or maximum tracking size.
+           */
+          processMinMaxInfo((MINMAXINFO *)lParam);
+          /* Let DefWindowProc handle it. */
+          break;
+        case WM_SIZING:
+          event = processWindowSizeEvent(window);
+          break;
+        case WM_SIZE:
+          /* The WM_SIZE message is sent to a window after its size has changed.
+           * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+           * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+           * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+           * message without calling DefWindowProc.
+           */
+          event = processWindowSizeEvent(window);
+          break;
+        case WM_CAPTURECHANGED:
+          window->lostMouseCapture();
+          break;
+        case WM_MOVING:
+          /* The WM_MOVING message is sent to a window that the user is moving. By processing
+           * this message, an application can monitor the size and position of the drag rectangle
+           * and, if needed, change its size or position.
+           */
+        case WM_MOVE:
+          /* The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+           * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+           * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+           * message without calling DefWindowProc.
+           */
+          /* See #WM_SIZE comment. */
+          if (window->m_inLiveResize)
+          {
+            system->pushEvent(processWindowEvent(ANCHOR_EventTypeWindowMove, window));
+            system->dispatchEvents();
+          }
+          else
+          {
+            event = processWindowEvent(ANCHOR_EventTypeWindowMove, window);
+          }
+
+          break;
+        case WM_DPICHANGED:
+          /* The WM_DPICHANGED message is sent when the effective dots per inch (dpi) for a
+           * window has changed. The DPI is the scale factor for a window. There are multiple
+           * events that can cause the DPI to change such as when the window is moved to a monitor
+           * with a different DPI.
+           */
+          {
+            // The suggested new size and position of the window.
+            RECT *const suggestedWindowRect = (RECT *)lParam;
+
+            // Push DPI change event first
+            system->pushEvent(processWindowEvent(ANCHOR_EventTypeWindowDPIHintChanged, window));
+            system->dispatchEvents();
+            eventHandled = true;
+
+            // Then move and resize window
+            SetWindowPos(hwnd,
+                         NULL,
+                         suggestedWindowRect->left,
+                         suggestedWindowRect->top,
+                         suggestedWindowRect->right - suggestedWindowRect->left,
+                         suggestedWindowRect->bottom - suggestedWindowRect->top,
+                         SWP_NOZORDER | SWP_NOACTIVATE);
+          }
+          break;
+        case WM_DISPLAYCHANGE: {
+#ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+          ANCHOR_Wintab *wt = window->getWintab();
+          if (wt)
+          {
+            wt->remapCoordinates();
+          }
+#endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+          break;
+        }
+        case WM_KILLFOCUS:
+          /* The WM_KILLFOCUS message is sent to a window immediately before it loses the keyboard
+           * focus. We want to prevent this if a window is still active and it loses focus to
+           * nowhere. */
+          if (!wParam && hwnd == ::GetActiveWindow())
+          {
+            ::SetFocus(hwnd);
+          }
+          break;
+        ////////////////////////////////////////////////////////////////////////
+        // Window events, ignored
+        ////////////////////////////////////////////////////////////////////////
+        case WM_WINDOWPOSCHANGED:
+        /* The WM_WINDOWPOSCHANGED message is sent to a window whose size, position, or place
+         * in the Z order has changed as a result of a call to the SetWindowPos function or
+         * another window-management function.
+         * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+         * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+         * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+         * message without calling DefWindowProc.
+         */
+        case WM_ERASEBKGND:
+        /* An application sends the WM_ERASEBKGND message when the window background must be
+         * erased (for example, when a window is resized). The message is sent to prepare an
+         * invalidated portion of a window for painting.
+         */
+        case WM_NCPAINT:
+        /* An application sends the WM_NCPAINT message to a window
+         * when its frame must be painted. */
+        case WM_NCACTIVATE:
+        /* The WM_NCACTIVATE message is sent to a window when its non-client area needs to be
+         * changed to indicate an active or inactive state. */
+        case WM_DESTROY:
+        /* The WM_DESTROY message is sent when a window is being destroyed. It is sent to the
+         * window procedure of the window being destroyed after the window is removed from the
+         * screen. This message is sent first to the window being destroyed and then to the child
+         * windows (if any) as they are destroyed. During the processing of the message, it can
+         * be assumed that all child windows still exist. */
+        case WM_NCDESTROY:
+          /* The WM_NCDESTROY message informs a window that its non-client area is being
+           * destroyed. The DestroyWindow function sends the WM_NCDESTROY message to the window
+           * following the WM_DESTROY message. WM_DESTROY is used to free the allocated memory
+           * object associated with the window.
+           */
+          break;
+        case WM_SHOWWINDOW:
+        /* The WM_SHOWWINDOW message is sent to a window when the window is
+         * about to be hidden or shown. */
+        case WM_WINDOWPOSCHANGING:
+        /* The WM_WINDOWPOSCHANGING message is sent to a window whose size, position, or place in
+         * the Z order is about to change as a result of a call to the SetWindowPos function or
+         * another window-management function.
+         */
+        case WM_SETFOCUS:
+          /* The WM_SETFOCUS message is sent to a window after it has gained the keyboard focus. */
+          break;
+        ////////////////////////////////////////////////////////////////////////
+        // Other events
+        ////////////////////////////////////////////////////////////////////////
+        case WM_GETTEXT:
+        /* An application sends a WM_GETTEXT message to copy the text that
+         * corresponds to a window into a buffer provided by the caller.
+         */
+        case WM_ACTIVATEAPP:
+        /* The WM_ACTIVATEAPP message is sent when a window belonging to a
+         * different application than the active window is about to be activated.
+         * The message is sent to the application whose window is being activated
+         * and to the application whose window is being deactivated.
+         */
+        case WM_TIMER:
+          /* The WIN32 docs say:
+           * The WM_TIMER message is posted to the installing thread's message queue
+           * when a timer expires. You can process the message by providing a WM_TIMER
+           * case in the window procedure. Otherwise, the default window procedure will
+           * call the TimerProc callback function specified in the call to the SetTimer
+           * function used to install the timer.
+           *
+           * In ANCHOR, we let DefWindowProc call the timer callback.
+           */
+          break;
+      }
+    }
+    else
+    {
+      // Event found for a window before the pointer to the class has been set.
+      TF_DEBUG(ANCHOR_WIN32).Msg("ANCHOR_SystemWin32::wndProc: ANCHOR window event before creation\n");
+      /* These are events we typically miss at this point:
+       * WM_GETMINMAXINFO 0x24
+       * WM_NCCREATE          0x81
+       * WM_NCCALCSIZE        0x83
+       * WM_CREATE            0x01
+       * We let DefWindowProc do the work.
+       */
+    }
+  }
+  else
+  {
+    // Events without valid hwnd
+    TF_DEBUG(ANCHOR_WIN32).Msg("ANCHOR_SystemWin32::wndProc: event without window\n");
+  }
+
+  if (event)
+  {
+    system->pushEvent(event);
+    eventHandled = true;
+  }
+
+  if (!eventHandled)
+    lResult = ::DefWindowProcW(hwnd, msg, wParam, lParam);
+
+  return lResult;
+}
+
+eAnchorKey ANCHOR_SystemWin32::convertKey(short vKey, short scanCode, short extend) const
+{
+  eAnchorKey key;
+
+  if ((vKey >= '0') && (vKey <= '9'))
+  {
+    // VK_0 thru VK_9 are the same as ASCII '0' thru '9' (0x30 - 0x39)
+    key = (eAnchorKey)(vKey - '0' + ANCHOR_Key0);
+  }
+  else if ((vKey >= 'A') && (vKey <= 'Z'))
+  {
+    // VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A)
+    key = (eAnchorKey)(vKey - 'A' + ANCHOR_KeyA);
+  }
+  else if ((vKey >= VK_F1) && (vKey <= VK_F24))
+  {
+    key = (eAnchorKey)(vKey - VK_F1 + ANCHOR_KeyF1);
+  }
+  else
+  {
+    switch (vKey)
+    {
+      case VK_RETURN:
+        key = (extend) ? ANCHOR_KeyNumpadEnter : ANCHOR_KeyEnter;
+        break;
+
+      case VK_BACK:
+        key = ANCHOR_KeyBackSpace;
+        break;
+      case VK_TAB:
+        key = ANCHOR_KeyTab;
+        break;
+      case VK_ESCAPE:
+        key = ANCHOR_KeyEsc;
+        break;
+      case VK_SPACE:
+        key = ANCHOR_KeySpace;
+        break;
+
+      case VK_INSERT:
+      case VK_NUMPAD0:
+        key = (extend) ? ANCHOR_KeyInsert : ANCHOR_KeyNumpad0;
+        break;
+      case VK_END:
+      case VK_NUMPAD1:
+        key = (extend) ? ANCHOR_KeyEnd : ANCHOR_KeyNumpad1;
+        break;
+      case VK_DOWN:
+      case VK_NUMPAD2:
+        key = (extend) ? ANCHOR_KeyDownArrow : ANCHOR_KeyNumpad2;
+        break;
+      case VK_NEXT:
+      case VK_NUMPAD3:
+        key = (extend) ? ANCHOR_KeyDownPage : ANCHOR_KeyNumpad3;
+        break;
+      case VK_LEFT:
+      case VK_NUMPAD4:
+        key = (extend) ? ANCHOR_KeyLeftArrow : ANCHOR_KeyNumpad4;
+        break;
+      case VK_CLEAR:
+      case VK_NUMPAD5:
+        key = (extend) ? ANCHOR_KeyUnknown : ANCHOR_KeyNumpad5;
+        break;
+      case VK_RIGHT:
+      case VK_NUMPAD6:
+        key = (extend) ? ANCHOR_KeyRightArrow : ANCHOR_KeyNumpad6;
+        break;
+      case VK_HOME:
+      case VK_NUMPAD7:
+        key = (extend) ? ANCHOR_KeyHome : ANCHOR_KeyNumpad7;
+        break;
+      case VK_UP:
+      case VK_NUMPAD8:
+        key = (extend) ? ANCHOR_KeyUpArrow : ANCHOR_KeyNumpad8;
+        break;
+      case VK_PRIOR:
+      case VK_NUMPAD9:
+        key = (extend) ? ANCHOR_KeyUpPage : ANCHOR_KeyNumpad9;
+        break;
+      case VK_DECIMAL:
+      case VK_DELETE:
+        key = (extend) ? ANCHOR_KeyDelete : ANCHOR_KeyNumpadPeriod;
+        break;
+
+      case VK_SNAPSHOT:
+        key = ANCHOR_KeyPrintScreen;
+        break;
+      case VK_PAUSE:
+        key = ANCHOR_KeyPause;
+        break;
+      case VK_MULTIPLY:
+        key = ANCHOR_KeyNumpadAsterisk;
+        break;
+      case VK_SUBTRACT:
+        key = ANCHOR_KeyNumpadMinus;
+        break;
+      case VK_DIVIDE:
+        key = ANCHOR_KeyNumpadSlash;
+        break;
+      case VK_ADD:
+        key = ANCHOR_KeyNumpadPlus;
+        break;
+
+      case VK_SEMICOLON:
+        key = ANCHOR_KeySemicolon;
+        break;
+      case VK_EQUALS:
+        key = ANCHOR_KeyEqual;
+        break;
+      case VK_COMMA:
+        key = ANCHOR_KeyComma;
+        break;
+      case VK_MINUS:
+        key = ANCHOR_KeyMinus;
+        break;
+      case VK_PERIOD:
+        key = ANCHOR_KeyPeriod;
+        break;
+      case VK_SLASH:
+        key = ANCHOR_KeySlash;
+        break;
+      case VK_BACK_QUOTE:
+        key = ANCHOR_KeyAccentGrave;
+        break;
+      case VK_OPEN_BRACKET:
+        key = ANCHOR_KeyLeftBracket;
+        break;
+      case VK_BACK_SLASH:
+        key = ANCHOR_KeyBackslash;
+        break;
+      case VK_CLOSE_BRACKET:
+        key = ANCHOR_KeyRightBracket;
+        break;
+      case VK_QUOTE:
+        key = ANCHOR_KeyQuote;
+        break;
+      case VK_GR_LESS:
+        key = ANCHOR_KeyGrLess;
+        break;
+
+      case VK_SHIFT:
+        /* Check single shift presses */
+        if (scanCode == 0x36)
+        {
+          key = ANCHOR_KeyRightShift;
+        }
+        else if (scanCode == 0x2a)
+        {
+          key = ANCHOR_KeyLeftShift;
+        }
+        else
+        {
+          /* Must be a combination SHIFT (Left or Right) + a Key
+           * Ignore this as the next message will contain
+           * the desired "Key" */
+          key = ANCHOR_KeyUnknown;
+        }
+        break;
+      case VK_CONTROL:
+        key = (extend) ? ANCHOR_KeyRightControl : ANCHOR_KeyLeftControl;
+        break;
+      case VK_MENU:
+        key = (extend) ? ANCHOR_KeyRightAlt : ANCHOR_KeyLeftAlt;
+        break;
+      case VK_LWIN:
+      case VK_RWIN:
+        key = ANCHOR_KeyOS;
+        break;
+      case VK_APPS:
+        key = ANCHOR_KeyApp;
+        break;
+      case VK_NUMLOCK:
+        key = ANCHOR_KeyNumLock;
+        break;
+      case VK_SCROLL:
+        key = ANCHOR_KeyScrollLock;
+        break;
+      case VK_CAPITAL:
+        key = ANCHOR_KeyCapsLock;
+        break;
+      case VK_OEM_8:
+        key = ((ANCHOR_SystemWin32 *)getSystem())->processSpecialKey(vKey, scanCode);
+        break;
+      case VK_MEDIA_PLAY_PAUSE:
+        key = ANCHOR_KeyMediaPlay;
+        break;
+      case VK_MEDIA_STOP:
+        key = ANCHOR_KeyMediaStop;
+        break;
+      case VK_MEDIA_PREV_TRACK:
+        key = ANCHOR_KeyMediaFirst;
+        break;
+      case VK_MEDIA_NEXT_TRACK:
+        key = ANCHOR_KeyMediaLast;
+        break;
+      default:
+        key = ANCHOR_KeyUnknown;
+        break;
+    }
+  }
+
+  return key;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
+                                                 WPARAM wParam,
+                                                 LPARAM lParam)
+{
+  AnchorS32 pointerId = GET_POINTERID_WPARAM(wParam);
+  AnchorS32 isPrimary = IS_POINTER_PRIMARY_WPARAM(wParam);
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)ANCHOR_System::getSystem();
+  AnchorU32 outCount = 0;
+
+  if (!(GetPointerPenInfoHistory(pointerId, &outCount, NULL)))
+  {
+    return ANCHOR_ERROR;
+  }
+
+  std::vector<POINTER_PEN_INFO> pointerPenInfo(outCount);
+  outPointerInfo.resize(outCount);
+
+  if (!(GetPointerPenInfoHistory(pointerId, &outCount, pointerPenInfo.data())))
+  {
+    return ANCHOR_ERROR;
+  }
+
+  for (AnchorU32 i = 0; i < outCount; i++)
+  {
+    POINTER_INFO pointerApiInfo = pointerPenInfo[i].pointerInfo;
+    // Obtain the basic information from the event
+    outPointerInfo[i].pointerId = pointerId;
+    outPointerInfo[i].isPrimary = isPrimary;
+
+    switch (pointerApiInfo.ButtonChangeType)
+    {
+      case POINTER_CHANGE_FIRSTBUTTON_DOWN:
+      case POINTER_CHANGE_FIRSTBUTTON_UP:
+        outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskLeft;
+        break;
+      case POINTER_CHANGE_SECONDBUTTON_DOWN:
+      case POINTER_CHANGE_SECONDBUTTON_UP:
+        outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskRight;
+        break;
+      case POINTER_CHANGE_THIRDBUTTON_DOWN:
+      case POINTER_CHANGE_THIRDBUTTON_UP:
+        outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskMiddle;
+        break;
+      case POINTER_CHANGE_FOURTHBUTTON_DOWN:
+      case POINTER_CHANGE_FOURTHBUTTON_UP:
+        outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskButton4;
+        break;
+      case POINTER_CHANGE_FIFTHBUTTON_DOWN:
+      case POINTER_CHANGE_FIFTHBUTTON_UP:
+        outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskButton5;
+        break;
+      default:
+        break;
+    }
+
+    outPointerInfo[i].pixelLocation = pointerApiInfo.ptPixelLocation;
+    outPointerInfo[i].tabletData.Active = ANCHOR_TabletModeStylus;
+    outPointerInfo[i].tabletData.Pressure = 1.0f;
+    outPointerInfo[i].tabletData.Xtilt = 0.0f;
+    outPointerInfo[i].tabletData.Ytilt = 0.0f;
+    outPointerInfo[i].time = system->performanceCounterToMillis(pointerApiInfo.PerformanceCount);
+
+    if (pointerPenInfo[i].penMask & PEN_MASK_PRESSURE)
+    {
+      outPointerInfo[i].tabletData.Pressure = pointerPenInfo[i].pressure / 1024.0f;
+    }
+
+    if (pointerPenInfo[i].penFlags & PEN_FLAG_ERASER)
+    {
+      outPointerInfo[i].tabletData.Active = ANCHOR_TabletModeEraser;
+    }
+
+    if (pointerPenInfo[i].penMask & PEN_MASK_TILT_X)
+    {
+      outPointerInfo[i].tabletData.Xtilt = fmin(fabs(pointerPenInfo[i].tiltX / 90.0f), 1.0f);
+    }
+
+    if (pointerPenInfo[i].penMask & PEN_MASK_TILT_Y)
+    {
+      outPointerInfo[i].tabletData.Ytilt = fmin(fabs(pointerPenInfo[i].tiltY / 90.0f), 1.0f);
+    }
+  }
+
+  if (!outPointerInfo.empty())
+  {
+    m_lastPointerTabletData = outPointerInfo.back().tabletData;
+  }
+
   return ANCHOR_SUCCESS;
 }
 
+/**
+ * @note this function can be extended to include other exotic cases as they arise. */
+eAnchorKey ANCHOR_SystemWin32::processSpecialKey(short vKey, short scanCode) const
+{
+  eAnchorKey key = ANCHOR_KeyUnknown;
+  switch (PRIMARYLANGID(m_langId))
+  {
+    case LANG_FRENCH:
+      if (vKey == VK_OEM_8)
+        key = ANCHOR_KeyF13;  // oem key; used purely for shortcuts .
+      break;
+    case LANG_ENGLISH:
+      if (SUBLANGID(m_langId) == SUBLANG_ENGLISH_UK && vKey == VK_OEM_8)  // "`¬"
+        key = ANCHOR_KeyAccentGrave;
+      break;
+  }
+
+  return key;
+}
+
+ANCHOR_Event *ANCHOR_SystemWin32::processWindowEvent(eAnchorEventType type,
+                                                     ANCHOR_WindowWin32 *window)
+{
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+
+  if (type == ANCHOR_EventTypeWindowActivate)
+  {
+    system->getWindowManager()->setActiveWindow(window);
+  }
+
+  return new ANCHOR_Event(ANCHOR::GetTime(), type, window);
+}
+
+void ANCHOR_SystemWin32::processWheelEvent(ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam)
+{
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+
+  int acc = system->m_wheelDeltaAccum;
+  int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+  if (acc * delta < 0)
+  {
+    // scroll direction reversed.
+    acc = 0;
+  }
+  acc += delta;
+  int direction = (acc >= 0) ? 1 : -1;
+  acc = abs(acc);
+
+  while (acc >= WHEEL_DELTA)
+  {
+    system->pushEvent(new ANCHOR_EventWheel(ANCHOR::GetTime(), window, direction));
+    acc -= WHEEL_DELTA;
+  }
+  system->m_wheelDeltaAccum = acc * direction;
+}
+
+void ANCHOR_SystemWin32::processPointerEvent(UINT type, ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
+{
+  /* Pointer events might fire when changing windows for a device which is set to use Wintab,
+   * even when Wintab is left enabled but set to the bottom of Wintab overlap order. */
+  // if (!window->usingTabletAPI(ANCHOR_TabletWinPointer)) {
+  //   return;
+  // }
+
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  std::vector<ANCHOR_PointerInfoWin32> pointerInfo;
+
+  if (window->getPointerInfo(pointerInfo, wParam, lParam) != ANCHOR_SUCCESS)
+  {
+    return;
+  }
+
+  switch (type)
+  {
+    case WM_POINTERUPDATE:
+      /* Coalesced pointer events are reverse chronological order, reorder chronologically.
+       * Only contiguous move events are coalesced. */
+      for (AnchorU32 i = pointerInfo.size(); i-- > 0;)
+      {
+        system->pushEvent(new ANCHOR_EventCursor(pointerInfo[i].time,
+                                                 ANCHOR_EventTypeCursorMove,
+                                                 window,
+                                                 pointerInfo[i].pixelLocation.x,
+                                                 pointerInfo[i].pixelLocation.y,
+                                                 pointerInfo[i].tabletData));
+      }
+
+      /* Leave event unhandled so that system cursor is moved. */
+
+      break;
+    case WM_POINTERDOWN:
+      /* Move cursor to point of contact because ANCHOR_EventButton does not include position. */
+      system->pushEvent(new ANCHOR_EventCursor(pointerInfo[0].time,
+                                               ANCHOR_EventTypeCursorMove,
+                                               window,
+                                               pointerInfo[0].pixelLocation.x,
+                                               pointerInfo[0].pixelLocation.y,
+                                               pointerInfo[0].tabletData));
+      system->pushEvent(new ANCHOR_EventButton(pointerInfo[0].time,
+                                               ANCHOR_EventTypeButtonDown,
+                                               window,
+                                               pointerInfo[0].buttonMask,
+                                               pointerInfo[0].tabletData));
+      window->updateMouseCapture(MousePressed);
+
+      /* Mark event handled so that mouse button events are not generated. */
+      eventHandled = true;
+
+      break;
+    case WM_POINTERUP:
+      system->pushEvent(new ANCHOR_EventButton(pointerInfo[0].time,
+                                               ANCHOR_EventTypeButtonUp,
+                                               window,
+                                               pointerInfo[0].buttonMask,
+                                               pointerInfo[0].tabletData));
+      window->updateMouseCapture(MouseReleased);
+
+      /* Mark event handled so that mouse button events are not generated. */
+      eventHandled = true;
+
+      break;
+    default:
+      break;
+  }
+}
+
+ANCHOR_EventCursor *ANCHOR_SystemWin32::processCursorEvent(ANCHOR_WindowWin32 *window)
+{
+  AnchorS32 x_screen, y_screen;
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+
+  if (window->getTabletData().Active != ANCHOR_TabletModeNone)
+  {
+    /* While pen devices are in range, cursor movement is handled by tablet input processing. */
+    return NULL;
+  }
+
+  system->getCursorPosition(x_screen, y_screen);
+
+  if (window->getCursorGrabModeIsWarp())
+  {
+    AnchorS32 x_new = x_screen;
+    AnchorS32 y_new = y_screen;
+    AnchorS32 x_accum, y_accum;
+    ANCHOR_Rect bounds;
+
+    /* Fallback to window bounds. */
+    if (window->getCursorGrabBounds(bounds) == ANCHOR_ERROR)
+    {
+      window->getClientBounds(bounds);
+    }
+
+    /* Could also clamp to screen bounds wrap with a window outside the view will fail atm.
+     * Use inset in case the window is at screen bounds. */
+    bounds.wrapPoint(x_new, y_new, 2, window->getCursorGrabAxis());
+
+    window->getCursorGrabAccum(x_accum, y_accum);
+    if (x_new != x_screen || y_new != y_screen)
+    {
+      /* When wrapping we don't need to add an event because the setCursorPosition call will cause
+       * a new event after. */
+      system->setCursorPosition(x_new, y_new); /* wrap */
+      window->setCursorGrabAccum(x_accum + (x_screen - x_new), y_accum + (y_screen - y_new));
+    }
+    else
+    {
+      return new ANCHOR_EventCursor(ANCHOR::GetTime(),
+                                    ANCHOR_EventTypeCursorMove,
+                                    window,
+                                    x_screen + x_accum,
+                                    y_screen + y_accum,
+                                    ANCHOR_TABLET_DATA_NONE);
+    }
+  }
+  else
+  {
+    return new ANCHOR_EventCursor(ANCHOR::GetTime(),
+                                  ANCHOR_EventTypeCursorMove,
+                                  window,
+                                  x_screen,
+                                  y_screen,
+                                  ANCHOR_TABLET_DATA_NONE);
+  }
+  return NULL;
+}
+
+ANCHOR_EventButton *ANCHOR_SystemWin32::processButtonEvent(eAnchorEventType type,
+                                                           ANCHOR_WindowWin32 *window,
+                                                           eAnchorButtonMask mask)
+{
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+
+  ANCHOR_TabletData td = window->getTabletData();
+
+  /* Move mouse to button event position. */
+  if (window->getTabletData().Active != ANCHOR_TabletModeNone)
+  {
+    /* Tablet should be handling in between mouse moves, only move to event position. */
+    DWORD msgPos = ::GetMessagePos();
+    int msgPosX = GET_X_LPARAM(msgPos);
+    int msgPosY = GET_Y_LPARAM(msgPos);
+    system->pushEvent(new ANCHOR_EventCursor(
+      ::GetMessageTime(), ANCHOR_EventTypeCursorMove, window, msgPosX, msgPosY, td));
+  }
+
+  window->updateMouseCapture(type == ANCHOR_EventTypeButtonDown ? MousePressed : MouseReleased);
+  return new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, mask, td);
+}
+
+eAnchorKey ANCHOR_SystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, bool *r_is_repeated_modifier)
+{
+  bool is_repeated_modifier = false;
+
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  eAnchorKey key = ANCHOR_KeyUnknown;
+  ANCHOR_ModifierKeys modifiers;
+  system->retrieveModifierKeys(modifiers);
+
+  // RI_KEY_BREAK doesn't work for sticky keys release, so we also
+  // check for the up message
+  unsigned int msg = raw.data.keyboard.Message;
+  *r_keyDown = !(raw.data.keyboard.Flags & RI_KEY_BREAK) && msg != WM_KEYUP && msg != WM_SYSKEYUP;
+
+  key = this->convertKey(raw.data.keyboard.VKey,
+                         raw.data.keyboard.MakeCode,
+                         (raw.data.keyboard.Flags & (RI_KEY_E1 | RI_KEY_E0)));
+
+  // extra handling of modifier keys: don't send repeats out from ANCHOR
+  if (key >= ANCHOR_KeyLeftShift && key <= ANCHOR_KeyRightAlt)
+  {
+    bool changed = false;
+    eAnchorModifierKeyMask modifier;
+    switch (key)
+    {
+      case ANCHOR_KeyLeftShift: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyLeftShift) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyLeftShift;
+        break;
+      }
+      case ANCHOR_KeyRightShift: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyRightShift) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyRightShift;
+        break;
+      }
+      case ANCHOR_KeyLeftControl: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyLeftControl) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyLeftControl;
+        break;
+      }
+      case ANCHOR_KeyRightControl: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyRightControl) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyRightControl;
+        break;
+      }
+      case ANCHOR_KeyLeftAlt: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyLeftAlt) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyLeftAlt;
+        break;
+      }
+      case ANCHOR_KeyRightAlt: {
+        changed = (modifiers.get(ANCHOR_ModifierKeyRightAlt) != *r_keyDown);
+        modifier = ANCHOR_ModifierKeyRightAlt;
+        break;
+      }
+      default:
+        break;
+    }
+
+    if (changed)
+    {
+      modifiers.set(modifier, *r_keyDown);
+      system->storeModifierKeys(modifiers);
+    }
+    else
+    {
+      is_repeated_modifier = true;
+    }
+  }
+
+  *r_is_repeated_modifier = is_repeated_modifier;
+  return key;
+}
+
+ANCHOR_Event *ANCHOR_SystemWin32::processWindowSizeEvent(ANCHOR_WindowWin32 *window)
+{
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  ANCHOR_Event *sizeEvent = new ANCHOR_Event(
+    ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
+
+  /* We get WM_SIZE before we fully init. Do not dispatch before we are continuously resizing. */
+  if (window->m_inLiveResize)
+  {
+    system->pushEvent(sizeEvent);
+    system->dispatchEvents();
+    return NULL;
+  }
+  else
+  {
+    return sizeEvent;
+  }
+}
+
+/** Error occurs when required parameter is missing. */
+#define UTF_ERROR_NULL_IN (1 << 0)
+/** Error if character is in illegal UTF range. */
+#define UTF_ERROR_ILLCHAR (1 << 1)
+/** Passed size is to small. It gives legal string with character missing at the end. */
+#define UTF_ERROR_SMALL (1 << 2)
+/** Error if sequence is broken and doesn't finish. */
+#define UTF_ERROR_ILLSEQ (1 << 3)
+
+static int conv_utf_16_to_8(const wchar_t *in16, char *out8, size_t size8)
+{
+  char *out8end = out8 + size8;
+  wchar_t u = 0;
+  int err = 0;
+  if (!size8 || !in16 || !out8)
+    return UTF_ERROR_NULL_IN;
+  out8end--;
+
+  for (; out8 < out8end && (u = *in16); in16++, out8++)
+  {
+    if (u < 0x0080)
+    {
+      *out8 = u;
+    }
+    else if (u < 0x0800)
+    {
+      if (out8 + 1 >= out8end)
+        break;
+      *out8++ = (0x3 << 6) | (0x1F & (u >> 6));
+      *out8 = (0x1 << 7) | (0x3F & (u));
+    }
+    else if (u < 0xD800 || u >= 0xE000)
+    {
+      if (out8 + 2 >= out8end)
+        break;
+      *out8++ = (0x7 << 5) | (0xF & (u >> 12));
+      *out8++ = (0x1 << 7) | (0x3F & (u >> 6));
+      *out8 = (0x1 << 7) | (0x3F & (u));
+    }
+    else if (u < 0xDC00)
+    {
+      wchar_t u2 = *++in16;
+
+      if (!u2)
+        break;
+      if (u2 >= 0xDC00 && u2 < 0xE000)
+      {
+        if (out8 + 3 >= out8end)
+          break;
+        else
+        {
+          unsigned int uc = 0x10000 + (u2 - 0xDC00) + ((u - 0xD800) << 10);
+
+          *out8++ = (0xF << 4) | (0x7 & (uc >> 18));
+          *out8++ = (0x1 << 7) | (0x3F & (uc >> 12));
+          *out8++ = (0x1 << 7) | (0x3F & (uc >> 6));
+          *out8 = (0x1 << 7) | (0x3F & (uc));
+        }
+      }
+      else
+      {
+        out8--;
+        err |= UTF_ERROR_ILLCHAR;
+      }
+    }
+    else if (u < 0xE000)
+    {
+      out8--;
+      err |= UTF_ERROR_ILLCHAR;
+    }
+  }
+
+  *out8 = *out8end = 0;
+
+  if (*in16)
+    err |= UTF_ERROR_SMALL;
+
+  return err;
+}
+
+ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window, RAWINPUT const &raw)
+{
+  bool keyDown = false;
+  bool is_repeated_modifier = false;
+  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  eAnchorKey key = system->hardKey(raw, &keyDown, &is_repeated_modifier);
+  ANCHOR_EventKey *event;
+
+  /* We used to check `if (key != ANCHOR_KeyUnknown)`, but since the message
+   * values `WM_SYSKEYUP`, `WM_KEYUP` and `WM_CHAR` are ignored, we capture
+   * those events here as well. */
+  if (!is_repeated_modifier)
+  {
+    char vk = raw.data.keyboard.VKey;
+    char utf8_char[6] = {0};
+    char ascii = 0;
+    bool is_repeat = false;
+
+    /* Unlike on Linux, not all keys can send repeat events. E.g. modifier keys don't. */
+    if (keyDown)
+    {
+      if (system->m_keycode_last_repeat_key == vk)
+      {
+        is_repeat = true;
+      }
+      system->m_keycode_last_repeat_key = vk;
+    }
+    else
+    {
+      if (system->m_keycode_last_repeat_key == vk)
+      {
+        system->m_keycode_last_repeat_key = 0;
+      }
+    }
+
+    wchar_t utf16[3] = {0};
+    BYTE state[256] = {0};
+    int r;
+    GetKeyboardState((PBYTE)state);
+    bool ctrl_pressed = state[VK_CONTROL] & 0x80;
+    bool alt_pressed = state[VK_MENU] & 0x80;
+
+    /* No text with control key pressed (Alt can be used to insert special characters though!). */
+    if (ctrl_pressed && !alt_pressed)
+    {
+      utf8_char[0] = '\0';
+    }
+    // Don't call ToUnicodeEx on dead keys as it clears the buffer and so won't allow diacritical
+    // composition.
+    else if (MapVirtualKeyW(vk, 2) != 0)
+    {
+      // todo: ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
+      // Could be up to 24 utf8 bytes.
+      if ((r = ToUnicodeEx(
+             vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout)))
+      {
+        if ((r > 0 && r < 3))
+        {
+          utf16[r] = 0;
+          conv_utf_16_to_8(utf16, utf8_char, 6);
+        }
+        else if (r == -1)
+        {
+          utf8_char[0] = '\0';
+        }
+      }
+    }
+
+    if (!keyDown)
+    {
+      utf8_char[0] = '\0';
+      ascii = '\0';
+    }
+    else
+    {
+      ascii = utf8_char[0] & 0x80 ? '?' : utf8_char[0];
+    }
+
+    event = new ANCHOR_EventKey(ANCHOR::GetTime(),
+                                keyDown ? ANCHOR_EventTypeKeyDown : ANCHOR_EventTypeKeyUp,
+                                window,
+                                key,
+                                ascii,
+                                utf8_char,
+                                is_repeat);
+  }
+  else
+  {
+    event = NULL;
+  }
+
+  return event;
+}
 
 //---------------------------------------------------------------------------------------------------------
 
@@ -980,6 +2564,21 @@ bool ANCHOR_WindowWin32::getValid() const
   return false;
 }
 
+void ANCHOR_WindowWin32::resetPointerPenInfo()
+{
+  m_lastPointerTabletData = ANCHOR_TABLET_DATA_NONE;
+}
+
+ANCHOR_TabletData ANCHOR_WindowWin32::getTabletData()
+{
+  // if (usingTabletAPI(ANCHOR_TabletWintab)) {
+  //   return m_wintab ? m_wintab->getLastTabletData() : ANCHOR_TABLET_DATA_NONE;
+  // }
+  // else {
+  return m_lastPointerTabletData;
+  // }
+}
+
 void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
 {}
 
@@ -1008,6 +2607,208 @@ void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
                                         AnchorS32 &outX,
                                         AnchorS32 &outY) const
 {}
+
+void ANCHOR_WindowWin32::lostMouseCapture()
+{
+  if (m_hasMouseCaptured)
+  {
+    m_hasGrabMouse = false;
+    m_nPressedButtons = 0;
+    m_hasMouseCaptured = false;
+  }
+}
+
+void ANCHOR_WindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
+{
+  switch (event)
+  {
+    case MousePressed:
+      m_nPressedButtons++;
+      break;
+    case MouseReleased:
+      if (m_nPressedButtons)
+        m_nPressedButtons--;
+      break;
+    case OperatorGrab:
+      m_hasGrabMouse = true;
+      break;
+    case OperatorUngrab:
+      m_hasGrabMouse = false;
+      break;
+  }
+
+  if (!m_nPressedButtons && !m_hasGrabMouse && m_hasMouseCaptured)
+  {
+    ::ReleaseCapture();
+    m_hasMouseCaptured = false;
+  }
+  else if ((m_nPressedButtons || m_hasGrabMouse) && !m_hasMouseCaptured)
+  {
+    ::SetCapture(m_hWnd);
+    m_hasMouseCaptured = true;
+  }
+}
+
+HCURSOR ANCHOR_WindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
+{
+  // Convert ANCHOR cursor to Windows OEM cursor
+  HANDLE cursor = NULL;
+  HMODULE module = ::GetModuleHandle(0);
+  AnchorU32 flags = LR_SHARED | LR_DEFAULTSIZE;
+  int cx = 0, cy = 0;
+
+  switch (shape)
+  {
+    case ANCHOR_StandardCursorCustom:
+      if (m_customCursor)
+      {
+        return m_customCursor;
+      }
+      else
+      {
+        return NULL;
+      }
+    case ANCHOR_StandardCursorRightArrow:
+      cursor = ::LoadImage(module, "arrowright_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorLeftArrow:
+      cursor = ::LoadImage(module, "arrowleft_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorUpArrow:
+      cursor = ::LoadImage(module, "arrowup_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorDownArrow:
+      cursor = ::LoadImage(module, "arrowdown_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorVerticalSplit:
+      cursor = ::LoadImage(module, "splitv_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorHorizontalSplit:
+      cursor = ::LoadImage(module, "splith_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorKnife:
+      cursor = ::LoadImage(module, "knife_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorEyedropper:
+      cursor = ::LoadImage(module, "eyedropper_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorZoomIn:
+      cursor = ::LoadImage(module, "zoomin_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorZoomOut:
+      cursor = ::LoadImage(module, "zoomout_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorMove:
+      cursor = ::LoadImage(module, "handopen_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorNSEWScroll:
+      cursor = ::LoadImage(module, "scrollnsew_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorNSScroll:
+      cursor = ::LoadImage(module, "scrollns_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorEWScroll:
+      cursor = ::LoadImage(module, "scrollew_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorHelp:
+      cursor = ::LoadImage(NULL, IDC_HELP, IMAGE_CURSOR, cx, cy, flags);
+      break;  // Arrow and question mark
+    case ANCHOR_StandardCursorWait:
+      cursor = ::LoadImage(NULL, IDC_WAIT, IMAGE_CURSOR, cx, cy, flags);
+      break;  // Hourglass
+    case ANCHOR_StandardCursorText:
+      cursor = ::LoadImage(NULL, IDC_IBEAM, IMAGE_CURSOR, cx, cy, flags);
+      break;  // I-beam
+    case ANCHOR_StandardCursorCrosshair:
+      cursor = ::LoadImage(module, "cross_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Standard Cross
+    case ANCHOR_StandardCursorCrosshairA:
+      cursor = ::LoadImage(module, "crossA_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Crosshair A
+    case ANCHOR_StandardCursorCrosshairB:
+      cursor = ::LoadImage(module, "crossB_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Diagonal Crosshair B
+    case ANCHOR_StandardCursorCrosshairC:
+      cursor = ::LoadImage(module, "crossC_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Minimal Crosshair C
+    case ANCHOR_StandardCursorBottomSide:
+    case ANCHOR_StandardCursorUpDown:
+      cursor = ::LoadImage(module, "movens_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Double-pointed arrow pointing north and south
+    case ANCHOR_StandardCursorLeftSide:
+    case ANCHOR_StandardCursorLeftRight:
+      cursor = ::LoadImage(module, "moveew_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Double-pointed arrow pointing west and east
+    case ANCHOR_StandardCursorTopSide:
+      cursor = ::LoadImage(NULL, IDC_UPARROW, IMAGE_CURSOR, cx, cy, flags);
+      break;  // Vertical arrow
+    case ANCHOR_StandardCursorTopLeftCorner:
+      cursor = ::LoadImage(NULL, IDC_SIZENWSE, IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorTopRightCorner:
+      cursor = ::LoadImage(NULL, IDC_SIZENESW, IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorBottomRightCorner:
+      cursor = ::LoadImage(NULL, IDC_SIZENWSE, IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorBottomLeftCorner:
+      cursor = ::LoadImage(NULL, IDC_SIZENESW, IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorPencil:
+      cursor = ::LoadImage(module, "pencil_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorEraser:
+      cursor = ::LoadImage(module, "eraser_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case ANCHOR_StandardCursorDestroy:
+    case ANCHOR_StandardCursorStop:
+      cursor = ::LoadImage(module, "forbidden_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;  // Slashed circle
+    case ANCHOR_StandardCursorDefault:
+      cursor = NULL;
+      break;
+    default:
+      return NULL;
+  }
+
+  if (cursor == NULL)
+  {
+    cursor = ::LoadImage(NULL, IDC_ARROW, IMAGE_CURSOR, cx, cy, flags);
+  }
+
+  return (HCURSOR)cursor;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::setWindowCursorShape(eAnchorStandardCursor cursorShape)
+{
+  if (::GetForegroundWindow() == m_hWnd)
+  {
+    loadCursor(getCursorVisibility(), cursorShape);
+  }
+
+  return ANCHOR_SUCCESS;
+}
+
+void ANCHOR_WindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) const
+{
+  if (!visible)
+  {
+    while (::ShowCursor(FALSE) >= 0)
+      ;
+  }
+  else
+  {
+    while (::ShowCursor(TRUE) < 0)
+      ;
+  }
+
+  HCURSOR cursor = getStandardCursor(shape);
+  if (cursor == NULL)
+  {
+    cursor = getStandardCursor(ANCHOR_StandardCursorDefault);
+  }
+  ::SetCursor(cursor);
+}
 
 eAnchorStatus ANCHOR_WindowWin32::setClientSize(AnchorU32 width, AnchorU32 height)
 {

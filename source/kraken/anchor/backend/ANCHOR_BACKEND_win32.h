@@ -26,21 +26,36 @@
 
 #include "ANCHOR_BACKEND_vulkan.h"
 #include "ANCHOR_api.h"
-#include "ANCHOR_system.h"
 #include "ANCHOR_modifier_keys.h"
+#include "ANCHOR_system.h"
 
 #ifdef _WIN32
 
+#  define WIN32_LEAN_AND_MEAN
+#  include <ole2.h>  // for drag-n-drop
+#  include <windows.h>
+
 class ANCHOR_WindowWin32;
+
+enum eAnchorMouseCaptureEventWin32 {
+  MousePressed,
+  MouseReleased,
+  OperatorGrab,
+  OperatorUngrab
+};
+
+struct ANCHOR_PointerInfoWin32 {
+  AnchorS32 pointerId;
+  AnchorS32 isPrimary;
+  eAnchorButtonMask buttonMask;
+  POINT pixelLocation;
+  AnchorU64 time;
+  ANCHOR_TabletData tabletData;
+};
 
 ANCHOR_BACKEND_API bool ANCHOR_ImplWin32_Init(void *hwnd);
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_Shutdown();
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_NewFrame();
-
-// Win32 message handler.
-#  if 0
-extern ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#  endif
 
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.
@@ -62,6 +77,15 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 
   bool processEvents(bool waitForEvent);
 
+  AnchorU64 performanceCounterToMillis(__int64 perf_ticks) const;
+
+  /**
+   * Updates the location of the cursor (location in screen coordinates).
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
+  eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
+
   eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
 
   eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
@@ -69,6 +93,58 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
 
   void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
+
+  /**
+   * Creates a window event.
+   * @param type: The type of event to create.
+   * @param window: The window receiving the event (the active window).
+   * @return The event created. */
+  static ANCHOR_Event *processWindowEvent(eAnchorEventType type, ANCHOR_WindowWin32 *window);
+
+  /**
+   * Creates tablet events from pointer events.
+   * @param type: The type of pointer event.
+   * @param window: The window receiving the event (the active window).
+   * @param wParam: The wParam from the wndproc.
+   * @param lParam: The lParam from the wndproc.
+   * @param eventhandled: True if the method handled the event. */
+  static void processPointerEvent(UINT type, ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventhandled);
+
+  /**
+   * Creates tablet events from pointer events.
+   * @param type: The type of pointer event.
+   * @param window: The window receiving the event (the active window).
+   * @param wParam: The wParam from the wndproc.
+   * @param lParam: The lParam from the wndproc.
+   * @param eventhandled: True if the method handled the event. */
+  static ANCHOR_EventCursor *processCursorEvent(ANCHOR_WindowWin32 *window);
+
+  /**
+   * Handles a mouse wheel event.
+   * @param window: The window receiving the event (the active window).
+   * @param wParam: The wParam from the wndproc.
+   * @param lParam: The lParam from the wndproc. */
+  static void processWheelEvent(ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam);
+
+  /**
+   * Handles minimum window size.
+   * @param minmax: The MINMAXINFO structure. */
+  static void processMinMaxInfo(MINMAXINFO *minmax);
+
+  /**
+   * Windows call back routine for our window class. */
+  static LRESULT WINAPI s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+  /**
+   * Returns the local state of the modifier keys (from the message queue).
+   * @param keys: The state of the keys. */
+  inline void retrieveModifierKeys(ANCHOR_ModifierKeys &keys) const;
+
+  /**
+   * Stores the state of the modifier keys locally.
+   * For internal use only!
+   * param keys The new state of the modifier keys. */
+  inline void storeModifierKeys(const ANCHOR_ModifierKeys &keys);
 
   /**
    * Check current key layout for AltGr. */
@@ -110,6 +186,38 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @return current status (1 -visible, 0 - hidden) */
   int toggleConsole(int action);
 
+  static ANCHOR_EventKey *processKeyEvent(ANCHOR_WindowWin32 *window, RAWINPUT const &raw);
+
+  static ANCHOR_Event *processWindowSizeEvent(ANCHOR_WindowWin32 *window);
+
+  /**
+   * Creates mouse button event.
+   * @param type: The type of event to create.
+   * @param window: The window receiving the event (the active window).
+   * @param mask: The button mask of this event.
+   * @return The event created. */
+  static ANCHOR_EventButton *processButtonEvent(eAnchorEventType type,
+                                                ANCHOR_WindowWin32 *window,
+                                                eAnchorButtonMask mask);
+
+  /**
+   * Converts raw WIN32 key codes from the wndproc to GHOST keys.
+   * @param vKey: The virtual key from #hardKey.
+   * @param ScanCode: The ScanCode of pressed key (similar to PS/2 Set 1).
+   * @param extend: Flag if key is not primly (left or right).
+   * @return The GHOST key (GHOST_kKeyUnknown if no match). */
+  eAnchorKey convertKey(short vKey, short ScanCode, short extend) const;
+
+  /**
+   * Catches raw WIN32 key codes from WM_INPUT in the wndproc.
+   * @param raw: RawInput structure with detailed info about the key event.
+   * @param keyDown: Pointer flag that specify if a key is down.
+   * @param vk: Pointer to virtual key.
+   * @return The GHOST key (GHOST_kKeyUnknown if no match). */
+  eAnchorKey hardKey(RAWINPUT const &raw, bool *r_keyDown, bool *r_is_repeated_modifier);
+
+  eAnchorKey processSpecialKey(short vKey, short scanCode) const;
+
   /** The current state of the modifier keys. */
   ANCHOR_ModifierKeys m_modifierKeys;
   /** The virtual-key code (VKey) of the last press event. Used to detect repeat events. */
@@ -137,6 +245,16 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 };
 
 
+inline void ANCHOR_SystemWin32::retrieveModifierKeys(ANCHOR_ModifierKeys &keys) const
+{
+  keys = m_modifierKeys;
+}
+
+inline void ANCHOR_SystemWin32::storeModifierKeys(const ANCHOR_ModifierKeys &keys)
+{
+  m_modifierKeys = keys;
+}
+
 inline void ANCHOR_SystemWin32::handleKeyboardChange(void)
 {
   m_keylayout = GetKeyboardLayout(0);  // get keylayout for current thread
@@ -146,12 +264,14 @@ inline void ANCHOR_SystemWin32::handleKeyboardChange(void)
   // save the language identifier.
   m_langId = LOWORD(m_keylayout);
 
-  for (m_hasAltGr = false, i = 32; i < 256; ++i) {
+  for (m_hasAltGr = false, i = 32; i < 256; ++i)
+  {
     s = VkKeyScanEx((char)i, m_keylayout);
     // s == -1 means no key that translates passed char code
     // high byte contains shift state. bit 2 ctrl pressed, bit 4 alt pressed
     // if both are pressed, we have AltGr keycombo on keylayout
-    if (s != -1 && (s & 0x600) == 0x600) {
+    if (s != -1 && (s & 0x600) == 0x600)
+    {
       m_hasAltGr = true;
       break;
     }
@@ -209,7 +329,6 @@ class ANCHOR_DisplayManagerWin32 : public ANCHOR_DisplayManager
 };
 
 
-
 class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 {
  private:
@@ -218,6 +337,12 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   bool m_invalid_window;
 
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
+
+  /** Most recent tablet data. */
+  ANCHOR_TabletData m_lastPointerTabletData;
+
+  /** Window handle. */
+  HWND m_hWnd;
 
  public:
   ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
@@ -283,6 +408,39 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   eAnchorWindowState getState() const;
 
+  /**
+   * Register a mouse capture state (should be called
+   * for any real button press, controls mouse
+   * capturing).
+   *
+   * @param event: Whether mouse was pressed and released,
+   * or an operator grabbed or ungrabbed the mouse. */
+  void updateMouseCapture(eAnchorMouseCaptureEventWin32 event);
+
+  /**
+   * Resets pointer pen tablet state. */
+  void resetPointerPenInfo();
+
+  /**
+   * Get the most recent Windows Pointer tablet data.
+   * @return Most recent pointer tablet data. */
+  ANCHOR_TabletData getTabletData(void);
+
+  void lostMouseCapture(void);
+
+  eAnchorStatus setWindowCursorShape(eAnchorStandardCursor cursorShape);
+
+  /**
+   * Loads the windows equivalent of a standard ANCHOR cursor.
+   * @param visible: Flag for cursor visibility.
+   * @param cursorShape: The cursor shape. */
+  HCURSOR getStandardCursor(eAnchorStandardCursor shape) const;
+  void loadCursor(bool visible, eAnchorStandardCursor cursorShape) const;
+
+  eAnchorStatus getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
+                               WPARAM wParam,
+                               LPARAM lParam);
+
   eAnchorStatus setOrder(eAnchorWindowOrder order)
   {
     // TODO
@@ -300,7 +458,30 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   }
 
   AnchorU16 getDPIHint();
+
+ private:
+  /** 
+   * True if the window currently resizing. */
+  bool m_inLiveResize;
+
+  /** 
+   * True if the mouse is either over or captured by the window. */
+  bool m_mousePresent;
+
+  bool m_hasGrabMouse;
+  int m_nPressedButtons;
+  bool m_hasMouseCaptured;
+
+  /** 
+   * Most recent tablet data. */
+  ANCHOR_TabletData m_lastPointerTabletData;
+
+  /** 
+   * HCURSOR structure of the custom cursor. */
+  HCURSOR m_customCursor;
 };
+
+
 
 #elif
 

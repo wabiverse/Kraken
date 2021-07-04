@@ -221,6 +221,15 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
+  if(WIN32)
+      add_executable(kraken-launcher WIN32
+        kraken_launcher_win32.c
+        ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
+        ${CMAKE_BINARY_DIR}/kraken.exe.manifest
+      )
+      target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
+      target_link_libraries(kraken-launcher Pathcch.lib)
+  endif()
 endif()
 
 if(WITH_BUILDINFO)
