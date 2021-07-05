@@ -43,12 +43,6 @@ int main(int argc, const char **argv)
 {
   cContext *C;
 
-#ifdef _WIN32
-  /* Hide Windows Terminal on Startup. */
-  HWND hwnd = GetConsoleWindow();
-  ShowWindow(hwnd, 0);
-#endif
-
   /* Environment variables. */
   CREATOR_kraken_env_init();
 
