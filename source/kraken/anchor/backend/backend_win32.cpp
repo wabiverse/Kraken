@@ -1076,6 +1076,104 @@ void ANCHOR_SystemWin32::processMinMaxInfo(MINMAXINFO *minmax)
   minmax->ptMinTrackSize.y = 240;
 }
 
+static DWORD GetParentProcessID(void)
+{
+  HANDLE snapshot;
+  PROCESSENTRY32 pe32 = {0};
+  DWORD ppid = 0, pid = GetCurrentProcessId();
+  snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if (snapshot == INVALID_HANDLE_VALUE) {
+    return -1;
+  }
+  pe32.dwSize = sizeof(pe32);
+  if (!Process32First(snapshot, &pe32)) {
+    CloseHandle(snapshot);
+    return -1;
+  }
+  do {
+    if (pe32.th32ProcessID == pid) {
+      ppid = pe32.th32ParentProcessID;
+      break;
+    }
+  } while (Process32Next(snapshot, &pe32));
+  CloseHandle(snapshot);
+  return ppid;
+}
+
+static bool getProcessName(int pid, char *buffer, int max_len)
+{
+  bool result = false;
+  HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+  if (handle) {
+    GetModuleFileNameEx(handle, 0, buffer, max_len);
+    result = true;
+  }
+  CloseHandle(handle);
+  return result;
+}
+
+static bool isStartedFromCommandPrompt()
+{
+  HWND hwnd = GetConsoleWindow();
+
+  if (hwnd) {
+    DWORD pid = (DWORD)-1;
+    DWORD ppid = GetParentProcessID();
+    char parent_name[MAX_PATH];
+    bool start_from_launcher = false;
+
+    GetWindowThreadProcessId(hwnd, &pid);
+    if (getProcessName(ppid, parent_name, sizeof(parent_name))) {
+      char *filename = strrchr(parent_name, '\\');
+      if (filename != NULL) {
+        start_from_launcher = strstr(filename, "kraken.exe") != NULL;
+      }
+    }
+
+    /* When we're starting from a wrapper we need to compare with parent process ID. */
+    if (pid != (start_from_launcher ? ppid : GetCurrentProcessId()))
+      return true;
+  }
+
+  return false;
+}
+
+int ANCHOR_SystemWin32::toggleConsole(int action)
+{
+  HWND wnd = GetConsoleWindow();
+
+  switch (action) {
+    case 3:  // startup: hide if not started from command prompt
+    {
+      if (!isStartedFromCommandPrompt()) {
+        ShowWindow(wnd, SW_HIDE);
+        m_consoleStatus = 0;
+      }
+      break;
+    }
+    case 0:  // hide
+      ShowWindow(wnd, SW_HIDE);
+      m_consoleStatus = 0;
+      break;
+    case 1:  // show
+      ShowWindow(wnd, SW_SHOW);
+      if (!isStartedFromCommandPrompt()) {
+        DeleteMenu(GetSystemMenu(wnd, FALSE), SC_CLOSE, MF_BYCOMMAND);
+      }
+      m_consoleStatus = 1;
+      break;
+    case 2:  // toggle
+      ShowWindow(wnd, m_consoleStatus ? SW_HIDE : SW_SHOW);
+      m_consoleStatus = !m_consoleStatus;
+      if (m_consoleStatus && !isStartedFromCommandPrompt()) {
+        DeleteMenu(GetSystemMenu(wnd, FALSE), SC_CLOSE, MF_BYCOMMAND);
+      }
+      break;
+  }
+
+  return m_consoleStatus;
+}
+
 LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   ANCHOR_Event *event = NULL;
@@ -2548,7 +2646,14 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_system(system),
     m_valid_setup(false),
     m_invalid_window(false),
-    m_vulkan_context(nullptr)
+    m_vulkan_context(nullptr),
+    m_mousePresent(false),
+    m_inLiveResize(false),
+    m_hasMouseCaptured(false),
+    m_hasGrabMouse(false),
+    m_nPressedButtons(0),
+    m_customCursor(0),
+    m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE)
 {}
 
 ANCHOR_WindowWin32::~ANCHOR_WindowWin32()

@@ -338,8 +338,17 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
-  /** Most recent tablet data. */
+  bool m_hasGrabMouse;
+  int m_nPressedButtons;
+  bool m_hasMouseCaptured;
+
+  /** 
+   * Most recent tablet data. */
   ANCHOR_TabletData m_lastPointerTabletData;
+
+  /** 
+   * HCURSOR structure of the custom cursor. */
+  HCURSOR m_customCursor;
 
   /** Window handle. */
   HWND m_hWnd;
@@ -459,7 +468,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   AnchorU16 getDPIHint();
 
- private:
+ public:
   /** 
    * True if the window currently resizing. */
   bool m_inLiveResize;
@@ -467,18 +476,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** 
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
-
-  bool m_hasGrabMouse;
-  int m_nPressedButtons;
-  bool m_hasMouseCaptured;
-
-  /** 
-   * Most recent tablet data. */
-  ANCHOR_TabletData m_lastPointerTabletData;
-
-  /** 
-   * HCURSOR structure of the custom cursor. */
-  HCURSOR m_customCursor;
 };
 
 

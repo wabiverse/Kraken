@@ -101,6 +101,7 @@ set(LIB
 
 if(WIN32)
   list(APPEND LIB
+    comctl32
     shcore
     shlwapi
   )
