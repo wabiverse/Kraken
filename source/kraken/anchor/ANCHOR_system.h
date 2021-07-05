@@ -251,6 +251,9 @@ class ANCHOR_System : public ANCHOR_ISystem
    * @return The current status. */
   bool getFullScreen(void);
 
+  void useWindowFocus(const bool use_focus);
+  bool m_windowFocus;
+
   /**
    * Returns whether a window is valid.
    * @param window: Pointer to the window to be checked.

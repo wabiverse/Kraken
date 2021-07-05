@@ -33,18 +33,24 @@
 
 #  define WIN32_LEAN_AND_MEAN
 #  include <ole2.h>  // for drag-n-drop
+#  include <shlobj.h>
 #  include <windows.h>
 
 class ANCHOR_WindowWin32;
 
-enum eAnchorMouseCaptureEventWin32 {
+enum eAnchorMouseCaptureEventWin32
+{
   MousePressed,
   MouseReleased,
   OperatorGrab,
   OperatorUngrab
 };
 
-struct ANCHOR_PointerInfoWin32 {
+typedef UINT(WINAPI *ANCHOR_WIN32_GetDpiForWindow)(HWND);
+typedef BOOL(WINAPI *ANCHOR_WIN32_AdjustWindowRectExForDpi)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
+
+struct ANCHOR_PointerInfoWin32
+{
   AnchorS32 pointerId;
   AnchorS32 isPrimary;
   eAnchorButtonMask buttonMask;
@@ -350,8 +356,22 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * HCURSOR structure of the custom cursor. */
   HCURSOR m_customCursor;
 
+  /** ITaskbarList3 structure for progress bar. */
+  ITaskbarList3 *m_Bar;
+
+  static const wchar_t *s_windowClassName;
+  static const int s_maxTitleLength;
+
   /** Window handle. */
   HWND m_hWnd;
+
+  /** Device context handle. */
+  HDC m_hDC;
+
+  /** `user32.dll` handle */
+  HMODULE m_user32;
+
+  HWND m_parentWindowHwnd;
 
  public:
   ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
@@ -365,9 +385,13 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                      eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
                      const bool stereoVisual = false,
                      const bool exclusive = false,
-                     const ANCHOR_ISystemWindow *parentWindow = NULL);
+                     ANCHOR_WindowWin32 *parentWindow = NULL);
 
   ~ANCHOR_WindowWin32();
+
+  void adjustWindowRectForClosestMonitor(LPRECT win_rect,
+                                         DWORD dwStyle,
+                                         DWORD dwExStyle);
 
   std::string getTitle() const;
 
@@ -477,7 +501,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
 };
-
 
 
 #elif

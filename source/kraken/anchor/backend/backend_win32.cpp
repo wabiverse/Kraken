@@ -22,6 +22,16 @@
  * Bare Metal.
  */
 
+
+/**
+ * Workaround min max hell
+ * Keeping NOMINMAX defined, 
+ * using the same Windows Min 
+ * Max, but prefixed with win
+ * as to not conflict with std:: */
+#define winmax(a,b) (((a) > (b)) ? (a) : (b))
+#define winmin(a,b) (((a) < (b)) ? (a) : (b))
+
 #include "ANCHOR_BACKEND_win32.h"
 #include "ANCHOR_Rect.h"
 #include "ANCHOR_api.h"
@@ -2534,6 +2544,148 @@ static int conv_utf_16_to_8(const wchar_t *in16, char *out8, size_t size8)
   return err;
 }
 
+static size_t count_utf_16_from_8(const char *string8)
+{
+  size_t count = 0;
+  char u;
+  char type = 0;
+  unsigned int u32 = 0;
+
+  if (!string8)
+    return 0;
+
+  for (; (u = *string8); string8++) {
+    if (type == 0) {
+      if ((u & 0x01 << 7) == 0) {
+        count++;
+        u32 = 0;
+        continue;
+      }  // 1 utf-8 char
+      if ((u & 0x07 << 5) == 0xC0) {
+        type = 1;
+        u32 = u & 0x1F;
+        continue;
+      }  // 2 utf-8 char
+      if ((u & 0x0F << 4) == 0xE0) {
+        type = 2;
+        u32 = u & 0x0F;
+        continue;
+      }  // 3 utf-8 char
+      if ((u & 0x1F << 3) == 0xF0) {
+        type = 3;
+        u32 = u & 0x07;
+        continue;
+      }  // 4 utf-8 char
+      continue;
+    }
+    else {
+      if ((u & 0xC0) == 0x80) {
+        u32 = (u32 << 6) | (u & 0x3F);
+        type--;
+      }
+      else {
+        u32 = 0;
+        type = 0;
+      }
+    }
+
+    if (type == 0) {
+      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000))
+        count++;
+      else if (0x10000 <= u32 && u32 < 0x110000)
+        count += 2;
+      u32 = 0;
+    }
+  }
+
+  return ++count;
+}
+
+static int conv_utf_8_to_16(const char *in8, wchar_t *out16, size_t size16)
+{
+  char u;
+  char type = 0;
+  unsigned int u32 = 0;
+  wchar_t *out16end = out16 + size16;
+  int err = 0;
+  if (!size16 || !in8 || !out16)
+    return UTF_ERROR_NULL_IN;
+  out16end--;
+
+  for (; out16 < out16end && (u = *in8); in8++) {
+    if (type == 0) {
+      if ((u & 0x01 << 7) == 0) {
+        *out16 = u;
+        out16++;
+        u32 = 0;
+        continue;
+      }  // 1 utf-8 char
+      if ((u & 0x07 << 5) == 0xC0) {
+        type = 1;
+        u32 = u & 0x1F;
+        continue;
+      }  // 2 utf-8 char
+      if ((u & 0x0F << 4) == 0xE0) {
+        type = 2;
+        u32 = u & 0x0F;
+        continue;
+      }  // 3 utf-8 char
+      if ((u & 0x1F << 3) == 0xF0) {
+        type = 3;
+        u32 = u & 0x07;
+        continue;
+      }  // 4 utf-8 char
+      err |= UTF_ERROR_ILLCHAR;
+      continue;
+    }
+    else {
+      if ((u & 0xC0) == 0x80) {
+        u32 = (u32 << 6) | (u & 0x3F);
+        type--;
+      }
+      else {
+        u32 = 0;
+        type = 0;
+        err |= UTF_ERROR_ILLSEQ;
+      }
+    }
+    if (type == 0) {
+      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000)) {
+        *out16 = u32;
+        out16++;
+      }
+      else if (0x10000 <= u32 && u32 < 0x110000) {
+        if (out16 + 1 >= out16end)
+          break;
+        u32 -= 0x10000;
+        *out16 = 0xD800 + (u32 >> 10);
+        out16++;
+        *out16 = 0xDC00 + (u32 & 0x3FF);
+        out16++;
+      }
+      u32 = 0;
+    }
+  }
+
+  *out16 = *out16end = 0;
+
+  if (*in8)
+    err |= UTF_ERROR_SMALL;
+
+  return err;
+}
+
+static wchar_t *alloc_utf16_from_8(const char *in8, size_t add)
+{
+  size_t bsize = count_utf_16_from_8(in8);
+  wchar_t *out16 = NULL;
+  if (!bsize)
+    return NULL;
+  out16 = (wchar_t *)malloc(sizeof(wchar_t) * (bsize + add));
+  conv_utf_8_to_16(in8, out16, bsize);
+  return out16;
+}
+
 ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window, RAWINPUT const &raw)
 {
   bool keyDown = false;
@@ -2630,6 +2782,14 @@ ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window,
 
 //---------------------------------------------------------------------------------------------------------
 
+const wchar_t *ANCHOR_WindowWin32::s_windowClassName = L"ANCHOR_WindowClass";
+const int ANCHOR_WindowWin32::s_maxTitleLength = 128;
+
+/* force NVidia Optimus to use dedicated graphics */
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+
 ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                                        const char *title,
                                        const char *icon,
@@ -2641,9 +2801,10 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                                        eAnchorDrawingContextType type,
                                        const bool stereoVisual,
                                        const bool exclusive,
-                                       const ANCHOR_ISystemWindow *parentWindow)
+                                       ANCHOR_WindowWin32 *parentWindow)
   : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
     m_system(system),
+    m_hDC(0),
     m_valid_setup(false),
     m_invalid_window(false),
     m_vulkan_context(nullptr),
@@ -2653,11 +2814,158 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_hasGrabMouse(false),
     m_nPressedButtons(0),
     m_customCursor(0),
-    m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE)
-{}
+    m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE),
+    m_user32(::LoadLibrary("user32.dll")),
+    m_parentWindowHwnd(parentWindow ? parentWindow->m_hWnd : HWND_DESKTOP)
+{
+  DWORD style = parentWindow ?
+                    WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
+                    WS_OVERLAPPEDWINDOW;
+
+  if (state == ANCHOR_WindowStateFullScreen) {
+    style |= WS_MAXIMIZE;
+  }
+
+  /* Forces owned windows onto taskbar and allows minimization. */
+  DWORD extended_style = parentWindow ? WS_EX_APPWINDOW : 0;
+
+  RECT win_rect = {left, top, (long)(left + width), (long)(top + height)};
+  adjustWindowRectForClosestMonitor(&win_rect, style, extended_style);
+
+  wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
+  m_hWnd = ::CreateWindowExW(extended_style,                  // window extended style
+                             s_windowClassName,               // pointer to registered class name
+                             title_16,                        // pointer to window name
+                             style,                           // window style
+                             win_rect.left,                   // horizontal position of window
+                             win_rect.top,                    // vertical position of window
+                             win_rect.right - win_rect.left,  // window width
+                             win_rect.bottom - win_rect.top,  // window height
+                             m_parentWindowHwnd,              // handle to parent or owner window
+                             0,                     // handle to menu or child-window identifier
+                             ::GetModuleHandle(0),  // handle to application instance
+                             0);                    // pointer to window-creation data
+  free(title_16);
+
+  if (m_hWnd == NULL) {
+    return;
+  }
+
+  /*  Store the device context. */
+  m_hDC = ::GetDC(m_hWnd);
+
+  if (!setDrawingContextType(type)) {
+    ::DestroyWindow(m_hWnd);
+    m_hWnd = NULL;
+    return;
+  }
+
+  RegisterTouchWindow(m_hWnd, 0);
+
+  /* Register as drop-target. #OleInitialize(0) required first. */
+  // m_dropTarget = new ANCHOR_DropTargetWin32(this, m_system);
+  // ::RegisterDragDrop(m_hWnd, m_dropTarget);
+
+  /* Store a pointer to this class in the window structure. */
+  ::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+
+  if (!m_system->m_windowFocus) {
+    /* If we don't want focus then lower to bottom. */
+    ::SetWindowPos(m_hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+  }
+
+  /* Show the window. */
+  int nCmdShow;
+  switch (state) {
+    case ANCHOR_WindowStateMaximized:
+      nCmdShow = SW_SHOWMAXIMIZED;
+      break;
+    case ANCHOR_WindowStateMinimized:
+      nCmdShow = (m_system->m_windowFocus) ? SW_SHOWMINIMIZED : SW_SHOWMINNOACTIVE;
+      break;
+    case ANCHOR_WindowStateNormal:
+    default:
+      nCmdShow = (m_system->m_windowFocus) ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE;
+      break;
+  }
+
+  ::ShowWindow(m_hWnd, nCmdShow);
+
+#ifdef WIN32_COMPOSITING
+  if (alphaBackground && parentwindowhwnd == 0) {
+
+    HRESULT hr = S_OK;
+
+    /* Create and populate the Blur Behind structure. */
+    DWM_BLURBEHIND bb = {0};
+
+    /* Enable Blur Behind and apply to the entire client area. */
+    bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+    bb.fEnable = true;
+    bb.hRgnBlur = CreateRectRgn(0, 0, -1, -1);
+
+    /* Apply Blur Behind. */
+    hr = DwmEnableBlurBehindWindow(m_hWnd, &bb);
+    DeleteObject(bb.hRgnBlur);
+  }
+#endif
+
+  /* Force an initial paint of the window. */
+  ::UpdateWindow(m_hWnd);
+
+  /* Initialize Wintab. */
+  // if (system->getTabletAPI() != ANCHOR_TabletWinPointer) {
+    // loadWintab(ANCHOR_WindowStateMinimized != state);
+  // }
+
+  /* Allow the showing of a progress bar on the taskbar. */
+  CoCreateInstance(
+      CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
+}
 
 ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
 {}
+
+void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
+                                                           DWORD dwStyle,
+                                                           DWORD dwExStyle)
+{
+  /* Get Details of the closest monitor. */
+  HMONITOR hmonitor = MonitorFromRect(win_rect, MONITOR_DEFAULTTONEAREST);
+  MONITORINFOEX monitor;
+  monitor.cbSize = sizeof(MONITORINFOEX);
+  monitor.dwFlags = 0;
+  GetMonitorInfo(hmonitor, &monitor);
+
+  /* Constrain requested size and position to fit within this monitor. */
+  LONG width = winmin(monitor.rcWork.right - monitor.rcWork.left, win_rect->right - win_rect->left);
+  LONG height = winmin(monitor.rcWork.bottom - monitor.rcWork.top, win_rect->bottom - win_rect->top);
+  win_rect->left = winmin(winmax(monitor.rcWork.left, win_rect->left), monitor.rcWork.right - width);
+  win_rect->right = win_rect->left + width;
+  win_rect->top = winmin(winmax(monitor.rcWork.top, win_rect->top), monitor.rcWork.bottom - height);
+  win_rect->bottom = win_rect->top + height;
+
+  /* With Windows 10 and newer we can adjust for chrome that differs with DPI and scale. */
+  ANCHOR_WIN32_AdjustWindowRectExForDpi fpAdjustWindowRectExForDpi = nullptr;
+  if (m_user32) {
+    fpAdjustWindowRectExForDpi = (ANCHOR_WIN32_AdjustWindowRectExForDpi)::GetProcAddress(
+        m_user32, "AdjustWindowRectExForDpi");
+  }
+
+  /* Adjust to allow for caption, borders, shadows, scaling, etc. Resulting values can be
+   * correctly outside of monitor bounds. Note: You cannot specify WS_OVERLAPPED when calling. */
+  if (fpAdjustWindowRectExForDpi) {
+    UINT dpiX, dpiY;
+    GetDpiForMonitor(hmonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+    fpAdjustWindowRectExForDpi(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle, dpiX);
+  }
+  else {
+    AdjustWindowRectEx(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle);
+  }
+
+  /* But never allow a top position that can hide part of the title bar. */
+  win_rect->top = winmax(monitor.rcWork.top, win_rect->top);
+}
 
 std::string ANCHOR_WindowWin32::getTitle() const
 {

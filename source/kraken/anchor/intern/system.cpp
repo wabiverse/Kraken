@@ -32,7 +32,8 @@
 WABI_NAMESPACE_USING
 
 ANCHOR_System::ANCHOR_System()
-  : m_displayManager(NULL),
+  : m_windowFocus(true),
+    m_displayManager(NULL),
     m_windowManager(NULL),
     m_eventManager(NULL),
     m_tabletAPI(ANCHOR_TabletAutomatic)
@@ -269,3 +270,8 @@ ANCHOR_SystemHandle ANCHOR_CreateSystem()
 // {
 //   ANCHOR_clean_vulkan(system);
 // }
+
+void ANCHOR_System::useWindowFocus(const bool use_focus)
+{
+  m_windowFocus = use_focus;
+}
