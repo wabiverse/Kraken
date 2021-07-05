@@ -368,6 +368,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** Device context handle. */
   HDC m_hDC;
 
+  bool m_isDialog;
+
   /** `user32.dll` handle */
   HMODULE m_user32;
 
@@ -385,7 +387,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                      eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
                      const bool stereoVisual = false,
                      const bool exclusive = false,
-                     ANCHOR_WindowWin32 *parentWindow = NULL);
+                     ANCHOR_WindowWin32 *parentWindow = NULL,
+                     bool dialog = false);
 
   ~ANCHOR_WindowWin32();
 

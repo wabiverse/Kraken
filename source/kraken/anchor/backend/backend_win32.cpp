@@ -1053,7 +1053,31 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
                                                        const bool is_dialog,
                                                        const ANCHOR_ISystemWindow *parentWindow)
 {
-  return nullptr;
+  ANCHOR_WindowWin32 *window = new ANCHOR_WindowWin32(this,
+                                                      title,
+                                                      icon,
+                                                      left,
+                                                      top,
+                                                      width,
+                                                      height,
+                                                      state,
+                                                      type,
+                                                      (ANCHOR_WindowWin32 *)parentWindow,
+                                                      is_dialog);
+
+  if (window->getValid()) {
+    /**
+     * Store the pointer to the window. */
+    m_windowManager->addWindow(window);
+    m_windowManager->setActiveWindow(window);
+  }
+  else {
+    TF_DEBUG(ANCHOR_WIN32).Msg("Window invalid\n");
+    delete window;
+    window = NULL;
+  }
+
+  return window;
 }
 
 bool ANCHOR_SystemWin32::generateWindowExposeEvents()
@@ -2801,10 +2825,12 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                                        eAnchorDrawingContextType type,
                                        const bool stereoVisual,
                                        const bool exclusive,
-                                       ANCHOR_WindowWin32 *parentWindow)
+                                       ANCHOR_WindowWin32 *parentWindow,
+                                       bool dialog)
   : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
     m_system(system),
     m_hDC(0),
+    m_isDialog(dialog),
     m_valid_setup(false),
     m_invalid_window(false),
     m_vulkan_context(nullptr),
