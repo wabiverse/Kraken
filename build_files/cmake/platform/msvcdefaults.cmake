@@ -47,7 +47,11 @@ set(_WABI_C_FLAGS_RELWITHDEBINFO   ${_WABI_C_FLAGS_RELWITHDEBINFO}    "/MD /Zi")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /std:c++20")
 
 # Enable exception handling.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_RELEASE} /EHsc")
+if(KRAKEN_RELEASE_MODE)
+    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_RELEASE} /EHsc")
+else()
+    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_DEBUG} /EHsc")
+endif()
 
 # Standards compliant.
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zc:rvalueCast /Zc:strictStrings")

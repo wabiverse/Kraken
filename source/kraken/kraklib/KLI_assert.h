@@ -34,6 +34,11 @@ void _KLI_assert_print_backtrace(void);
 void _KLI_assert_abort(void);
 void _KLI_assert_unreachable_print(const char *file, const int line, const char *function);
 
+#ifdef _WIN32
+#include <stdio.h>
+void KLI_system_backtrace(FILE *fp);
+#endif
+
 #ifdef _MSC_VER
 #  include <crtdbg.h> /* for _STATIC_ASSERT */
 #endif

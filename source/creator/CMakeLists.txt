@@ -385,17 +385,17 @@ if(WIN32)
       # EMBREE
       ${LIBDIR}/embree/bin/embree3.dll
       # BOOST
-      ${LIBDIR}/boost/lib/boost_atomic-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_chrono-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_date_time-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_iostreams-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_numpy39-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_program_options-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_regex-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_system-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_thread-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_python39-vc143-mt-x64-1_76.dll
-      ${LIBDIR}/boost/lib/boost_filesystem-vc143-mt-x64-1_76.dll
+      ${LIBDIR}/boost/lib/boost_atomic-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_chrono-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_date_time-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_regex-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_python39-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.dll
       # OSL
       ${LIBDIR}/osl/bin/oslcomp.dll
       ${LIBDIR}/osl/bin/oslexec.dll
@@ -734,13 +734,13 @@ elseif(WIN32)
     install(
       FILES ${LIBDIR}/openvdb/bin/openvdb.dll
       DESTINATION "."
-      CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+      # CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
     )
-    install(
-      FILES ${LIBDIR}/openvdb/bin/openvdb_d.dll
-      DESTINATION "."
-      CONFIGURATIONS Debug
-    )
+    # install(
+    #   FILES ${LIBDIR}/openvdb/bin/openvdb_d.dll
+    #   DESTINATION "."
+    #   CONFIGURATIONS Debug
+    # )
   endif()
 
   set(PYTHON_VERSION 3.9)

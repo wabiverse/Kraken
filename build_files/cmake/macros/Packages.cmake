@@ -214,20 +214,37 @@ if(WITH_VULKAN)
     list(APPEND VULKAN_LIBS ${X11_LIBRARIES})
   elseif(WIN32)
     file(TO_CMAKE_PATH "$ENV{VULKAN_SDK}" VULKAN_DIR_PATH)
-    list(APPEND VULKAN_LIBS
-      ${VULKAN_DIR_PATH}/Lib/glslang.lib
-      ${VULKAN_DIR_PATH}/Lib/OGLCompiler.lib
-      ${VULKAN_DIR_PATH}/Lib/GenericCodeGen.lib
-      ${VULKAN_DIR_PATH}/Lib/MachineIndependent.lib
-      ${VULKAN_DIR_PATH}/Lib/OSDependent.lib
-      ${VULKAN_DIR_PATH}/Lib/shaderc.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-link.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-opt.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-reduce.lib
-      ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-shared.lib
-    )
+    if(KRAKEN_RELEASE_MODE)
+      list(APPEND VULKAN_LIBS
+        ${VULKAN_DIR_PATH}/Lib/glslang.lib
+        ${VULKAN_DIR_PATH}/Lib/OGLCompiler.lib
+        ${VULKAN_DIR_PATH}/Lib/GenericCodeGen.lib
+        ${VULKAN_DIR_PATH}/Lib/MachineIndependent.lib
+        ${VULKAN_DIR_PATH}/Lib/OSDependent.lib
+        ${VULKAN_DIR_PATH}/Lib/shaderc.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-link.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-opt.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-reduce.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-shared.lib
+      )
+    else()
+      list(APPEND VULKAN_LIBS
+        ${VULKAN_DIR_PATH}/Lib/glslangd.lib
+        ${VULKAN_DIR_PATH}/Lib/OGLCompilerd.lib
+        ${VULKAN_DIR_PATH}/Lib/GenericCodeGend.lib
+        ${VULKAN_DIR_PATH}/Lib/MachineIndependentd.lib
+        ${VULKAN_DIR_PATH}/Lib/OSDependentd.lib
+        ${VULKAN_DIR_PATH}/Lib/shadercd.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRVd.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Toolsd.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-linkd.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-optd.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-reduced.lib
+        ${VULKAN_DIR_PATH}/Lib/SPIRV-Tools-sharedd.lib
+      )
+    endif()
   endif()
 
   add_definitions(-DWITH_VULKAN)
@@ -262,7 +279,11 @@ endif()
 if(WIN32)
   set(LIB_OBJ_EXT "lib")
   set(BOOST_VERSION_SCORE "1_76")
-  set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_76")
+  if(KRAKEN_RELEASE_MODE)
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_76")
+  else()
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-gd-x64-1_76")
+  endif()
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
   # set(Boost_USE_MULTITHREADED ON) # suffix -mt
   # set(Boost_USE_STATIC_LIBS ON) # suffix -s
@@ -272,17 +293,17 @@ if(WIN32)
   set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
 
   set(Boost_INCLUDE_DIRS           ${LIBDIR}/boost/include/boost-${BOOST_VERSION_SCORE})
-  set(Boost_ATOMIC_LIBRARY         ${LIBDIR}/boost/lib/boost_atomic-vc143-mt-x64-1_76.lib)
-  set(Boost_CHRONO_LIBRARY         ${LIBDIR}/boost/lib/boost_chrono-vc143-mt-x64-1_76.lib)
-  set(Boost_DATETIME_LIBRARY       ${LIBDIR}/boost/lib/boost_date_time-vc143-mt-x64-1_76.lib)
-  set(Boost_FILESYSTEM_LIBRARY     ${LIBDIR}/boost/lib/boost_filesystem-vc143-mt-x64-1_76.lib)
-  set(Boost_IOSTREAMS_LIBRARY      ${LIBDIR}/boost/lib/boost_iostreams-vc143-mt-x64-1_76.lib)
-  set(Boost_NUMPY_LIBRARY          ${LIBDIR}/boost/lib/boost_numpy${python_version_nodot}-vc143-mt-x64-1_76.lib)
-  set(Boost_PYTHON_LIBRARY         ${LIBDIR}/boost/lib/boost_python${python_version_nodot}-vc143-mt-x64-1_76.lib)
-  set(Boost_PROGRAMOPTIONS_LIBRARY ${LIBDIR}/boost/lib/boost_program_options-vc143-mt-x64-1_76.lib)
-  set(Boost_REGEX_LIBRARY          ${LIBDIR}/boost/lib/boost_regex-vc143-mt-x64-1_76.lib)
-  set(Boost_SYSTEM_LIBRARY         ${LIBDIR}/boost/lib/boost_system-vc143-mt-x64-1_76.lib)
-  set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-vc143-mt-x64-1_76.lib)
+  set(Boost_ATOMIC_LIBRARY         ${LIBDIR}/boost/lib/boost_atomic-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_CHRONO_LIBRARY         ${LIBDIR}/boost/lib/boost_chrono-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_DATETIME_LIBRARY       ${LIBDIR}/boost/lib/boost_date_time-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_FILESYSTEM_LIBRARY     ${LIBDIR}/boost/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_IOSTREAMS_LIBRARY      ${LIBDIR}/boost/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_NUMPY_LIBRARY          ${LIBDIR}/boost/lib/boost_numpy${python_version_nodot}-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_PYTHON_LIBRARY         ${LIBDIR}/boost/lib/boost_python${python_version_nodot}-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_PROGRAMOPTIONS_LIBRARY ${LIBDIR}/boost/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_REGEX_LIBRARY          ${LIBDIR}/boost/lib/boost_regex-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_SYSTEM_LIBRARY         ${LIBDIR}/boost/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.lib)
+  set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
 elseif(UNIX)
   set(BOOST_ROOT "${LIBDIR}")
@@ -365,11 +386,19 @@ if(WIN32)
   set(TBB_ROOT "${LIBDIR}/tbb")
   find_package(TBB REQUIRED COMPONENTS tbb)
   add_definitions(${TBB_DEFINITIONS})
-  list(APPEND TBB_LIBRARIES
-    "${LIBDIR}/tbb/lib/tbb.lib"
-    "${LIBDIR}/tbb/lib/tbbmalloc.lib"
-    "${LIBDIR}/tbb/lib/tbbmalloc_proxy.lib"
-  )
+  if(KRAKEN_RELEASE_MODE)
+    list(APPEND TBB_LIBRARIES
+      "${LIBDIR}/tbb/lib/tbb.lib"
+      "${LIBDIR}/tbb/lib/tbbmalloc.lib"
+      "${LIBDIR}/tbb/lib/tbbmalloc_proxy.lib"
+    )
+  else()
+    list(APPEND TBB_LIBRARIES
+      "${LIBDIR}/tbb/lib/tbb_debug.lib"
+      "${LIBDIR}/tbb/lib/tbbmalloc_debug.lib"
+      "${LIBDIR}/tbb/lib/tbbmalloc_proxy_debug.lib"
+    )    
+  endif()
 elseif(UNIX)
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
@@ -487,19 +516,31 @@ if(WITH_ARNOLD)
   find_package(Arnold REQUIRED)
 endif()
 
-if(WITH_CYCLES)
-  add_definitions(-DWITH_CYCLES)
-  if(UNIX)
-    set(CYCLES_HOME ${LIBDIR})
-  elseif(WIN32)
-    set(CYCLES_HOME ${LIBDIR}/Cycles)
+if(KRAKEN_RELEASE_MODE)
+  if(WITH_CYCLES)
+    add_definitions(-DWITH_CYCLES)
+    if(UNIX)
+      set(CYCLES_HOME ${LIBDIR})
+    elseif(WIN32)
+      if(KRAKEN_RELEASE_MODE)
+        set(CYCLES_HOME ${LIBDIR}/Cycles)
+      else()
+        set(CYCLES_HOME ${LIBDIR}/Cycles/debug)
+      endif()
+    endif()
+    find_package(Cycles REQUIRED)
+    find_package(OpenImageDenoise REQUIRED)
+    if(WIN32)
+      if(KRAKEN_RELEASE_MODE)
+        set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/include)
+      else()
+        set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/debug/include)
+      endif()
+    endif()
   endif()
-  find_package(Cycles REQUIRED)
-  find_package(OpenImageDenoise REQUIRED)
-endif()
-
-if(WIN32)
-  set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/include)
+else()
+  # Temporarily disable Cycles for Debug Builds.
+  set(WITH_CYCLES OFF)
 endif()
 
 if(WITH_PRORENDER)
@@ -542,6 +583,35 @@ endif()
 if(WITH_OSL)
   add_definitions(-DWITH_OSL)
   find_package(OSL REQUIRED)
+endif()
+
+if(WIN32)
+  if(KRAKEN_RELEASE_MODE)
+    # Fix Debug vs Release Libraries.
+    # Leave Release Libraies untouched
+    # as they are properly found via
+    # find_package(XXX) above. But
+    # Override the libraries to link
+    # with the debug libs if build not
+    # KRAKEN_RELEASE_MODE.
+  else()
+    set(OPENSUBDIV_LIBRARIES 
+      ${LIBDIR}/opensubdiv/lib/debug/osdCPU.lib
+      ${LIBDIR}/opensubdiv/lib/debug/osdGPU.lib
+    )
+    set(MATERIALX_LIBRARIES
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXCore.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXFormat.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXGenGlsl.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXGenMdl.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXGenOsl.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXGenShader.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXRender.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXRenderGlsl.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXRenderHw.lib
+      ${LIBDIR}/MaterialX/lib/debug/MaterialXRenderOsl.lib
+    )
+  endif()
 endif()
 
 # ----------------------------------------------

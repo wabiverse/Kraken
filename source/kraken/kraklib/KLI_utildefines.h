@@ -33,6 +33,8 @@
 
 #ifdef _WIN32
 #  include <uchar.h>
+#  include <stdbool.h>
+typedef unsigned __int64 size_t;
 #endif
 
 /* wabi */
