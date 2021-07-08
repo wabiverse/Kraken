@@ -734,13 +734,13 @@ elseif(WIN32)
     install(
       FILES ${LIBDIR}/openvdb/bin/openvdb.dll
       DESTINATION "."
-      # CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+      CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
     )
-    # install(
-    #   FILES ${LIBDIR}/openvdb/bin/openvdb_d.dll
-    #   DESTINATION "."
-    #   CONFIGURATIONS Debug
-    # )
+    install(
+      FILES ${LIBDIR}/openvdb/bin/openvdb_d.dll
+      DESTINATION "."
+      CONFIGURATIONS Debug
+    )
   endif()
 
   set(PYTHON_VERSION 3.9)

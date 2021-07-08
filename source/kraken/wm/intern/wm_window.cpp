@@ -984,6 +984,14 @@ int WM_window_pixels_x(const wmWindow *win)
 
   GfVec2f win_size = FormFactory(win->size);
 
+  /**
+   * Ensure valid window size. */
+  if(GET_X(win_size) < 0.0f)
+  {
+    FormFactory(win->size, GfVec2f(1920.0f, 1080.0f));
+    win_size = FormFactory(win->size);
+  }
+
   return (int)(f * GET_X(win_size));
 }
 
@@ -992,6 +1000,14 @@ int WM_window_pixels_y(const wmWindow *win)
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
   GfVec2f win_size = FormFactory(win->size);
+
+  /**
+   * Ensure valid window size. */
+  if(GET_Y(win_size) < 0.0f)
+  {
+    FormFactory(win->size, GfVec2f(1920.0f, 1080.0f));
+    win_size = FormFactory(win->size);
+  }
 
   return (int)(f * GET_Y(win_size));
 }

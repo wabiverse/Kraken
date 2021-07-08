@@ -611,6 +611,9 @@ if(WIN32)
       ${LIBDIR}/MaterialX/lib/debug/MaterialXRenderHw.lib
       ${LIBDIR}/MaterialX/lib/debug/MaterialXRenderOsl.lib
     )
+    set(OPENVDB_LIBRARY
+      ${LIBDIR}/openvdb/lib/openvdb_d.lib
+    )
   endif()
 endif()
 

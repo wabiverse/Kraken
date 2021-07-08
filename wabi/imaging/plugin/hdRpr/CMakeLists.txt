@@ -13,7 +13,7 @@ set(OptClass${ARGN})
 
 if(WITH_OPENVDB)
     add_definitions(-DUSE_VOLUME -DOPENVDB_DLL)
-    set(OptLibs ${OptLibs} ${OpenVDB_LIBRARIES})
+    set(OptLibs ${OptLibs} ${OPENVDB_LIBRARY})
     set(OptBin ${OptBin} ${OpenVDB_BINARIES})
     set(OptIncludeDir ${OptIncludeDir} ${OpenVDB_INCLUDE_DIR})
     set(OptClass ${OptClass} field volume)

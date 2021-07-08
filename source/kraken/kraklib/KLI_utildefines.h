@@ -46,13 +46,14 @@ typedef unsigned __int64 size_t;
 /* kraklib */
 #include "KLI_compiler_attrs.h"
 
+/* assert. */
+#include "KLI_assert.h"
+
 /**
  *  Macro to convert a value to string in the pre-processor: */
 #define STRINGIFY_ARG(x) "" #x
 #define STRINGIFY_APPEND(a, b) "" a #b
 #define STRINGIFY(x) STRINGIFY_APPEND("", x)
-
-#define KLI_assert(a) ((void)0)
 
 /**
  * UNUSED macro, for function argument */
