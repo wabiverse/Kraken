@@ -29,8 +29,8 @@
  * using the same Windows Min 
  * Max, but prefixed with win
  * as to not conflict with std:: */
-#define winmax(a,b) (((a) > (b)) ? (a) : (b))
-#define winmin(a,b) (((a) < (b)) ? (a) : (b))
+#define winmax(a, b) (((a) > (b)) ? (a) : (b))
+#define winmin(a, b) (((a) < (b)) ? (a) : (b))
 
 #include "ANCHOR_BACKEND_win32.h"
 #include "ANCHOR_Rect.h"
@@ -1065,13 +1065,15 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
                                                       (ANCHOR_WindowWin32 *)parentWindow,
                                                       is_dialog);
 
-  if (window->getValid()) {
+  if (window->getValid())
+  {
     /**
      * Store the pointer to the window. */
     m_windowManager->addWindow(window);
     m_windowManager->setActiveWindow(window);
   }
-  else {
+  else
+  {
     TF_DEBUG(ANCHOR_WIN32).Msg("Window invalid\n");
     delete window;
     window = NULL;
@@ -1116,16 +1118,20 @@ static DWORD GetParentProcessID(void)
   PROCESSENTRY32 pe32 = {0};
   DWORD ppid = 0, pid = GetCurrentProcessId();
   snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  if (snapshot == INVALID_HANDLE_VALUE) {
+  if (snapshot == INVALID_HANDLE_VALUE)
+  {
     return -1;
   }
   pe32.dwSize = sizeof(pe32);
-  if (!Process32First(snapshot, &pe32)) {
+  if (!Process32First(snapshot, &pe32))
+  {
     CloseHandle(snapshot);
     return -1;
   }
-  do {
-    if (pe32.th32ProcessID == pid) {
+  do
+  {
+    if (pe32.th32ProcessID == pid)
+    {
       ppid = pe32.th32ParentProcessID;
       break;
     }
@@ -1138,7 +1144,8 @@ static bool getProcessName(int pid, char *buffer, int max_len)
 {
   bool result = false;
   HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
-  if (handle) {
+  if (handle)
+  {
     GetModuleFileNameEx(handle, 0, buffer, max_len);
     result = true;
   }
@@ -1150,16 +1157,19 @@ static bool isStartedFromCommandPrompt()
 {
   HWND hwnd = GetConsoleWindow();
 
-  if (hwnd) {
+  if (hwnd)
+  {
     DWORD pid = (DWORD)-1;
     DWORD ppid = GetParentProcessID();
     char parent_name[MAX_PATH];
     bool start_from_launcher = false;
 
     GetWindowThreadProcessId(hwnd, &pid);
-    if (getProcessName(ppid, parent_name, sizeof(parent_name))) {
+    if (getProcessName(ppid, parent_name, sizeof(parent_name)))
+    {
       char *filename = strrchr(parent_name, '\\');
-      if (filename != NULL) {
+      if (filename != NULL)
+      {
         start_from_launcher = strstr(filename, "kraken.exe") != NULL;
       }
     }
@@ -1176,10 +1186,12 @@ int ANCHOR_SystemWin32::toggleConsole(int action)
 {
   HWND wnd = GetConsoleWindow();
 
-  switch (action) {
+  switch (action)
+  {
     case 3:  // startup: hide if not started from command prompt
     {
-      if (!isStartedFromCommandPrompt()) {
+      if (!isStartedFromCommandPrompt())
+      {
         ShowWindow(wnd, SW_HIDE);
         m_consoleStatus = 0;
       }
@@ -1191,7 +1203,8 @@ int ANCHOR_SystemWin32::toggleConsole(int action)
       break;
     case 1:  // show
       ShowWindow(wnd, SW_SHOW);
-      if (!isStartedFromCommandPrompt()) {
+      if (!isStartedFromCommandPrompt())
+      {
         DeleteMenu(GetSystemMenu(wnd, FALSE), SC_CLOSE, MF_BYCOMMAND);
       }
       m_consoleStatus = 1;
@@ -1199,7 +1212,8 @@ int ANCHOR_SystemWin32::toggleConsole(int action)
     case 2:  // toggle
       ShowWindow(wnd, m_consoleStatus ? SW_HIDE : SW_SHOW);
       m_consoleStatus = !m_consoleStatus;
-      if (m_consoleStatus && !isStartedFromCommandPrompt()) {
+      if (m_consoleStatus && !isStartedFromCommandPrompt())
+      {
         DeleteMenu(GetSystemMenu(wnd, FALSE), SC_CLOSE, MF_BYCOMMAND);
       }
       break;
@@ -2578,42 +2592,52 @@ static size_t count_utf_16_from_8(const char *string8)
   if (!string8)
     return 0;
 
-  for (; (u = *string8); string8++) {
-    if (type == 0) {
-      if ((u & 0x01 << 7) == 0) {
+  for (; (u = *string8); string8++)
+  {
+    if (type == 0)
+    {
+      if ((u & 0x01 << 7) == 0)
+      {
         count++;
         u32 = 0;
         continue;
       }  // 1 utf-8 char
-      if ((u & 0x07 << 5) == 0xC0) {
+      if ((u & 0x07 << 5) == 0xC0)
+      {
         type = 1;
         u32 = u & 0x1F;
         continue;
       }  // 2 utf-8 char
-      if ((u & 0x0F << 4) == 0xE0) {
+      if ((u & 0x0F << 4) == 0xE0)
+      {
         type = 2;
         u32 = u & 0x0F;
         continue;
       }  // 3 utf-8 char
-      if ((u & 0x1F << 3) == 0xF0) {
+      if ((u & 0x1F << 3) == 0xF0)
+      {
         type = 3;
         u32 = u & 0x07;
         continue;
       }  // 4 utf-8 char
       continue;
     }
-    else {
-      if ((u & 0xC0) == 0x80) {
+    else
+    {
+      if ((u & 0xC0) == 0x80)
+      {
         u32 = (u32 << 6) | (u & 0x3F);
         type--;
       }
-      else {
+      else
+      {
         u32 = 0;
         type = 0;
       }
     }
 
-    if (type == 0) {
+    if (type == 0)
+    {
       if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000))
         count++;
       else if (0x10000 <= u32 && u32 < 0x110000)
@@ -2636,25 +2660,31 @@ static int conv_utf_8_to_16(const char *in8, wchar_t *out16, size_t size16)
     return UTF_ERROR_NULL_IN;
   out16end--;
 
-  for (; out16 < out16end && (u = *in8); in8++) {
-    if (type == 0) {
-      if ((u & 0x01 << 7) == 0) {
+  for (; out16 < out16end && (u = *in8); in8++)
+  {
+    if (type == 0)
+    {
+      if ((u & 0x01 << 7) == 0)
+      {
         *out16 = u;
         out16++;
         u32 = 0;
         continue;
       }  // 1 utf-8 char
-      if ((u & 0x07 << 5) == 0xC0) {
+      if ((u & 0x07 << 5) == 0xC0)
+      {
         type = 1;
         u32 = u & 0x1F;
         continue;
       }  // 2 utf-8 char
-      if ((u & 0x0F << 4) == 0xE0) {
+      if ((u & 0x0F << 4) == 0xE0)
+      {
         type = 2;
         u32 = u & 0x0F;
         continue;
       }  // 3 utf-8 char
-      if ((u & 0x1F << 3) == 0xF0) {
+      if ((u & 0x1F << 3) == 0xF0)
+      {
         type = 3;
         u32 = u & 0x07;
         continue;
@@ -2662,23 +2692,29 @@ static int conv_utf_8_to_16(const char *in8, wchar_t *out16, size_t size16)
       err |= UTF_ERROR_ILLCHAR;
       continue;
     }
-    else {
-      if ((u & 0xC0) == 0x80) {
+    else
+    {
+      if ((u & 0xC0) == 0x80)
+      {
         u32 = (u32 << 6) | (u & 0x3F);
         type--;
       }
-      else {
+      else
+      {
         u32 = 0;
         type = 0;
         err |= UTF_ERROR_ILLSEQ;
       }
     }
-    if (type == 0) {
-      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000)) {
+    if (type == 0)
+    {
+      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000))
+      {
         *out16 = u32;
         out16++;
       }
-      else if (0x10000 <= u32 && u32 < 0x110000) {
+      else if (0x10000 <= u32 && u32 < 0x110000)
+      {
         if (out16 + 1 >= out16end)
           break;
         u32 -= 0x10000;
@@ -2845,10 +2881,11 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_parentWindowHwnd(parentWindow ? parentWindow->m_hWnd : HWND_DESKTOP)
 {
   DWORD style = parentWindow ?
-                    WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
-                    WS_OVERLAPPEDWINDOW;
+                  WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
+                  WS_OVERLAPPEDWINDOW;
 
-  if (state == ANCHOR_WindowStateFullScreen) {
+  if (state == ANCHOR_WindowStateFullScreen)
+  {
     style |= WS_MAXIMIZE;
   }
 
@@ -2868,19 +2905,21 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                              win_rect.right - win_rect.left,  // window width
                              win_rect.bottom - win_rect.top,  // window height
                              m_parentWindowHwnd,              // handle to parent or owner window
-                             0,                     // handle to menu or child-window identifier
-                             ::GetModuleHandle(0),  // handle to application instance
-                             0);                    // pointer to window-creation data
+                             0,                               // handle to menu or child-window identifier
+                             ::GetModuleHandle(0),            // handle to application instance
+                             0);                              // pointer to window-creation data
   free(title_16);
 
-  if (m_hWnd == NULL) {
+  if (m_hWnd == NULL)
+  {
     return;
   }
 
   /*  Store the device context. */
   m_hDC = ::GetDC(m_hWnd);
 
-  if (!setDrawingContextType(type)) {
+  if (!setDrawingContextType(type))
+  {
     ::DestroyWindow(m_hWnd);
     m_hWnd = NULL;
     return;
@@ -2895,14 +2934,16 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
   /* Store a pointer to this class in the window structure. */
   ::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-  if (!m_system->m_windowFocus) {
+  if (!m_system->m_windowFocus)
+  {
     /* If we don't want focus then lower to bottom. */
     ::SetWindowPos(m_hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
   }
 
   /* Show the window. */
   int nCmdShow;
-  switch (state) {
+  switch (state)
+  {
     case ANCHOR_WindowStateMaximized:
       nCmdShow = SW_SHOWMAXIMIZED;
       break;
@@ -2918,7 +2959,8 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
   ::ShowWindow(m_hWnd, nCmdShow);
 
 #ifdef WIN32_COMPOSITING
-  if (alphaBackground && parentwindowhwnd == 0) {
+  if (alphaBackground && parentwindowhwnd == 0)
+  {
 
     HRESULT hr = S_OK;
 
@@ -2941,12 +2983,12 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
 
   /* Initialize Wintab. */
   // if (system->getTabletAPI() != ANCHOR_TabletWinPointer) {
-    // loadWintab(ANCHOR_WindowStateMinimized != state);
+  // loadWintab(ANCHOR_WindowStateMinimized != state);
   // }
 
   /* Allow the showing of a progress bar on the taskbar. */
   CoCreateInstance(
-      CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
+    CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
 }
 
 ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
@@ -2973,19 +3015,22 @@ void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
 
   /* With Windows 10 and newer we can adjust for chrome that differs with DPI and scale. */
   ANCHOR_WIN32_AdjustWindowRectExForDpi fpAdjustWindowRectExForDpi = nullptr;
-  if (m_user32) {
+  if (m_user32)
+  {
     fpAdjustWindowRectExForDpi = (ANCHOR_WIN32_AdjustWindowRectExForDpi)::GetProcAddress(
-        m_user32, "AdjustWindowRectExForDpi");
+      m_user32, "AdjustWindowRectExForDpi");
   }
 
   /* Adjust to allow for caption, borders, shadows, scaling, etc. Resulting values can be
    * correctly outside of monitor bounds. Note: You cannot specify WS_OVERLAPPED when calling. */
-  if (fpAdjustWindowRectExForDpi) {
+  if (fpAdjustWindowRectExForDpi)
+  {
     UINT dpiX, dpiY;
     GetDpiForMonitor(hmonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
     fpAdjustWindowRectExForDpi(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle, dpiX);
   }
-  else {
+  else
+  {
     AdjustWindowRectEx(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle);
   }
 
@@ -3000,7 +3045,7 @@ std::string ANCHOR_WindowWin32::getTitle() const
 
 bool ANCHOR_WindowWin32::getValid() const
 {
-  return false;
+  return ANCHOR_SystemWindow::getValid() && m_hWnd != 0 && m_hDC != 0;
 }
 
 void ANCHOR_WindowWin32::resetPointerPenInfo()
@@ -3019,10 +3064,78 @@ ANCHOR_TabletData ANCHOR_WindowWin32::getTabletData()
 }
 
 void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
-{}
+{
+  RECT rect;
+  POINT coord;
+  if (!IsIconic(m_hWnd))
+  {
+    ::GetClientRect(m_hWnd, &rect);
+
+    coord.x = rect.left;
+    coord.y = rect.top;
+    ::ClientToScreen(m_hWnd, &coord);
+
+    bounds.m_l = coord.x;
+    bounds.m_t = coord.y;
+
+    coord.x = rect.right;
+    coord.y = rect.bottom;
+    ::ClientToScreen(m_hWnd, &coord);
+
+    bounds.m_r = coord.x;
+    bounds.m_b = coord.y;
+  }
+  else
+  {
+    bounds.m_b = 0;
+    bounds.m_l = 0;
+    bounds.m_r = 0;
+    bounds.m_t = 0;
+  }
+}
 
 void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
-{}
+{
+  if (type == ANCHOR_DrawingContextTypeVulkan) {
+    uint32_t extensions_count = 0;
+    m_vulkan_context = new ANCHOR_VulkanGPU_Surface();
+
+    /**
+     * Setup ANCHOR context. */
+    ANCHOR_CHECKVERSION();
+    ANCHOR::CreateContext();
+
+    /**
+     * Setup Keyboard & Gamepad controls. */
+    ANCHOR_IO &io = ANCHOR::GetIO();
+    io.ConfigFlags |= ANCHORConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad;
+
+    /**
+     * Setup Default Kraken theme.
+     *   Themes::
+     *     - ANCHOR::StyleColorsDefault()
+     *     - ANCHOR::StyleColorsLight()
+     *     - ANCHOR::StyleColorsDark() */
+    ANCHOR::StyleColorsDefault();
+
+    /**
+     * Setup Platform/Renderer backends. */
+    // ANCHOR_ImplVulkan_InitInfo init_info = {};
+    // init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
+    // init_info.PhysicalDevice = g_PhysicalDevice;
+    // init_info.Device = g_Device;
+    // init_info.QueueFamily = g_QueueFamily;
+    // init_info.Queue = g_Queue;
+    // init_info.PipelineCache = g_PipelineCache;
+    // init_info.DescriptorPool = g_DescriptorPool;
+    // init_info.Allocator = g_Allocator;
+    // init_info.MinImageCount = g_MinImageCount;
+    // init_info.ImageCount = m_vulkan_context->ImageCount;
+    // init_info.CheckVkResultFn = check_vk_result;
+    // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);    
+  }
+}
 
 eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
 {
@@ -3036,7 +3149,11 @@ void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
 {}
 
 void ANCHOR_WindowWin32::setTitle(const char *title)
-{}
+{
+  wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
+  ::SetWindowTextW(m_hWnd, (wchar_t *)title_16);
+  free(title_16);
+}
 
 void ANCHOR_WindowWin32::setIcon(const char *icon)
 {}
