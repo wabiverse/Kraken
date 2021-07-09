@@ -943,7 +943,7 @@ bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
       ::Sleep(1);
     }
 
-    if (ANCHOR::GetTime())
+    if (ANCHOR::GetCurrentContext())
     {
       hasEventHandled = true;
     }
@@ -3747,5 +3747,13 @@ eAnchorWindowState ANCHOR_WindowWin32::getState() const
 
 AnchorU16 ANCHOR_WindowWin32::getDPIHint()
 {
-  return 100;
+  if (m_user32) {
+    ANCHOR_WIN32_GetDpiForWindow fpGetDpiForWindow = (ANCHOR_WIN32_GetDpiForWindow)::GetProcAddress(m_user32, "GetDpiForWindow");
+
+    if (fpGetDpiForWindow) {
+      return fpGetDpiForWindow(this->m_hWnd);
+    }
+  }
+
+  return USER_DEFAULT_SCREEN_DPI;
 }

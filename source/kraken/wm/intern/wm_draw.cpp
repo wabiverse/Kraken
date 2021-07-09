@@ -39,10 +39,10 @@ void WM_draw_update(cContext *C)
   Main *cmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  TF_FOR_ALL (win, wm->windows)
+  UNIVERSE_FOR_ALL(win, wm->windows)
   {
-    CTX_wm_window_set(C, win->second);
-    WM_window_swap_buffers(win->second);
+    CTX_wm_window_set(C, VALUE(win));
+    WM_window_swap_buffers(VALUE(win));
   }
 }
 

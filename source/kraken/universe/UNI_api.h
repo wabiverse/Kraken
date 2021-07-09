@@ -80,3 +80,8 @@
 #define FILE_MAX 1024
 
 #define TIMECODE_DEFAULT UsdTimeCode::Default()
+
+#define DEFAULT_VALUE(v) VtValue(v)
+#define DEFAULT_TOKEN(t) VtValue(TfToken(t))
+#define DEFAULT_ASSET(a) VtValue(SdfAssetPath(a))
+#define DEFAULT_VEC2F(v1f, v2f) VtValue(GfVec2f(v1f, v2f))

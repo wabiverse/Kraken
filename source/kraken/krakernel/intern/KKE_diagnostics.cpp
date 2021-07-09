@@ -39,6 +39,7 @@ void KKE_kraken_enable_debug_codes()
    * Debugging messages for Anchor. */
   TfDebug::Enable(ANCHOR_SDL_VULKAN);
   TfDebug::Enable(ANCHOR_DISPLAY_MANAGER);
+  TfDebug::Enable(ANCHOR_WIN32);
 
   /**
    * Debugging messages for MsgBus. */

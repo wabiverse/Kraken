@@ -153,12 +153,15 @@ static void workspace_layout_name_set(WorkSpace *workspace,
                  '.',
                  offsetof(WorkSpaceLayout, name),
                  sizeof(CHARALL(layout->name)));
+  
+  FormFactory(workspace->name, layout->name);
 }
 
 WorkSpace *KKE_workspace_add(cContext *C, const char *name)
 {
   SdfPath path(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES));
   WorkSpace *new_workspace = new WorkSpace(C, path.AppendPath(SdfPath(name)));
+  FormFactory(new_workspace->name, TfToken(name));
   return new_workspace;
 }
 

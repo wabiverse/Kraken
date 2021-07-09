@@ -108,7 +108,7 @@ struct cScreen : public UsdUIScreen, public UniverseObject
 cScreen::cScreen(cContext *C, const SdfPath &stagepath)
   : UsdUIScreen(KRAKEN_UNIVERSE_CREATE(C)),
     path(stagepath),
-    align(CreateAlignmentAttr()),
+    align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
     areas_rel(CreateAreasRel()),
     verts(EMPTY),
     areas(EMPTY),

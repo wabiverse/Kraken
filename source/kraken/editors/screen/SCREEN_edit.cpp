@@ -141,6 +141,44 @@ void ED_area_exit(cContext *C, ScrArea *area)
   CTX_wm_area_set(C, prevsa);
 }
 
+static SdfPath make_areapath(const char *sa_name, int id)
+{
+  return SdfPath(sa_name + STRINGALL(id));
+}
+
+
+static int find_free_areaid(cContext *C)
+{
+  int id = 1;
+
+  Main *kmain = CTX_data_main(C);
+
+  /**
+   * Depending on the number of screens we have,
+   * each with their own areas, we may want to
+   * optimize this. But for now keeping it simple,
+   * and safe for ensuring id's are unique, will
+   * revisit this if it becomes a problem -- which,
+   * realistically speaking, I don't think will be
+   * of much concern, users are not likely to have
+   * any more than a MAX of about 8 or so areas per
+   * screen.
+   * 
+   * Though of course, users should be allowed to
+   * create any number of screen areas without them
+   * noticing a performance impact. */
+  UNIVERSE_FOR_ALL(screen, kmain->screens)
+  {
+    UNIVERSE_FOR_ALL(area, screen->areas)
+    {
+      if (id <= area->areaid)
+      {
+        id = area->areaid + 1;
+      }
+    }
+  }
+  return id;
+}
 
 static ScrArea *screen_addarea_ex(cContext *C,
                                   cScreen *screen,
@@ -151,7 +189,9 @@ static ScrArea *screen_addarea_ex(cContext *C,
                                   ScrVert *bottom_right,
                                   const TfToken &spacetype)
 {
-  ScrArea *area = new ScrArea(C, screen, SdfPath("Area"));
+  int id = find_free_areaid(C);
+  ScrArea *area = new ScrArea(C, screen, make_areapath("Area", id));
+  area->areaid = id;
 
   area->v1 = bottom_left;
   area->v2 = top_left;
@@ -160,6 +200,8 @@ static ScrArea *screen_addarea_ex(cContext *C,
   FormFactory(area->spacetype, spacetype);
 
   area_map->areas.push_back(area);
+
+  FormFactory(screen->areas_rel, area->path);
 
   return area;
 }
@@ -184,10 +226,34 @@ static ScrArea *screen_addarea(cContext *C,
 }
 
 
+static SdfPath make_screenpath(const char *layout_name, int id)
+{
+  SdfPath sdf_layout(SdfPath(layout_name + STRINGALL(id)));
+  return SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(sdf_layout);
+}
+
+
+static int find_free_screenid(cContext *C)
+{
+  int id = 1;
+
+  Main *kmain = CTX_data_main(C);
+  UNIVERSE_FOR_ALL(screen, kmain->screens)
+  {
+    if (id <= screen->winid)
+    {
+      id = screen->winid + 1;
+    }
+  }
+  return id;
+}
+
+
 cScreen *screen_add(cContext *C, const char *name, const GfRect2i *rect)
 {
-  SdfPath path(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES));
-  cScreen *screen = new cScreen(C, path.AppendPath(SdfPath(name)));
+  int id = find_free_screenid(C);
+  cScreen *screen = new cScreen(C, make_screenpath(name, id));
+  screen->winid = id;
 
   screen->do_refresh = true;
   screen->redraws_flag = TIME_ALL_3D_WIN | TIME_ALL_ANIM_WIN;

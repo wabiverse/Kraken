@@ -1055,6 +1055,10 @@ ANCHOR_SystemWindowHandle CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
                                              eAnchorDrawingContextType type,
                                              int vkSettings);
 
+
+ANCHOR_API
+void SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title);
+
 /**
  * Preforms a swap on the swapchain.
  *

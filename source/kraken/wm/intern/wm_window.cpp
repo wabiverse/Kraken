@@ -128,10 +128,8 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
 }
 
 
-static void wm_window_set_dpi(cContext *C, wmWindow *win)
+static void wm_window_set_dpi(const wmWindow *win)
 {
-  UserDef *prefs = CTX_data_prefs(C);
-
   float win_scale = FormFactory(win->scale);
   float win_linewidth = FormFactory(win->linewidth);
 
@@ -150,9 +148,8 @@ static void wm_window_set_dpi(cContext *C, wmWindow *win)
 
   /* ----- */
 
-  /** Change it globally as well. */
+  /** Change it globally. */
   UI_DPI_FAC = dpifac;
-  FormFactory(prefs->dpifac, float(dpifac));
 
   FormFactory(win->pixelsz, float(pixelsize));
   FormFactory(win->dpi, float(dpiadj));
@@ -173,7 +170,7 @@ void wm_window_clear_drawable(wmWindowManager *wm)
   }
 }
 
-void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win)
+void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
 {
   if (win != wm->windrawable && win->anchorwin)
   {
@@ -182,7 +179,7 @@ void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win)
     wm_window_set_drawable(wm, win, true);
 
     /* this can change per window */
-    wm_window_set_dpi(C, win);
+    wm_window_set_dpi(win);
   }
 }
 
@@ -343,7 +340,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         win->addmousemove = true; /* enables highlighted buttons */
 
-        wm_window_make_drawable(C, wm, win);
+        wm_window_make_drawable(wm, win);
 
         wmEvent event;
         WM_event_init_from_window(win, &event);
@@ -358,7 +355,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       }
       case ANCHOR_EventTypeWindowUpdate: {
-        wm_window_make_drawable(C, wm, win);
+        wm_window_make_drawable(wm, win);
         WM_event_add_notifier(C, NC_WINDOW, NULL);
         break;
       }
@@ -366,11 +363,11 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeWindowMove: {
         eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
         win->windowstate = state;
-        wm_window_set_dpi(C, win);
+        wm_window_set_dpi(win);
         break;
       }
       case ANCHOR_EventTypeWindowDPIHintChanged: {
-        wm_window_set_dpi(C, win);
+        wm_window_set_dpi(win);
 
         WM_main_add_notifier(C, NC_WINDOW, NULL);             /* full redraw */
         WM_main_add_notifier(C, NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
@@ -450,7 +447,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeNativeResolutionChange: {
         float pixelsize = FormFactory(win->pixelsz);
         float prev_pixelsize = pixelsize;
-        wm_window_set_dpi(C, win);
+        wm_window_set_dpi(win);
 
         if (pixelsize != prev_pixelsize)
         {
@@ -462,7 +459,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
           // UI_popup_handlers_remove_all(C, &win->modalhandlers);
           CTX_wm_window_set(C, NULL);
 
-          wm_window_make_drawable(C, wm, win);
+          wm_window_make_drawable(wm, win);
           WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
           WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
         }
@@ -507,14 +504,47 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
                                                                    is_dialog,
                                                                    ANCHOR_DrawingContextTypeVulkan,
                                                                    0);
+  printf("Checking anchorwin\n");
   if (anchorwin)
   {
+    printf("We have anchorwin\n");
     win->anchorwin = anchorwin;
   }
 }
 
 
-static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWindow *win, bool is_dialog)
+static void wm_window_title(wmWindowManager *wm, wmWindow *win)
+{
+  if (WM_window_is_temp_screen(win)) {
+    /* Nothing to do for 'temp' windows,
+     * because #WM_window_open always sets window title. */
+  }
+  else if (win->anchorwin) {
+    /* this is set to 1 if you don't have startup.usd open */
+    // if (G.save_over && KKE_main_pixarfile_path_from_global()[0]) {
+    //   char str[sizeof(((Main *)NULL)->name) + 24];
+    //   KLI_snprintf(str,
+    //                sizeof(str),
+    //                "Kraken%s [%s%s]",
+    //                wm->file_saved ? "" : "*",
+    //                KKE_main_pixarfile_path_from_global(),
+    //                G_MAIN->recovered ? " (Recovered)" : "");
+    //   ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, str);
+    // }
+    // else {
+    ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, "Kraken");
+    // }
+
+    /**
+     * Informs ANCHOR of unsaved changes, to set window modified visual indicator and to
+     * give hint of unsaved changes for a user warning mechanism in case of OS application
+     * terminate request (e.g. OS Shortcut Alt+F4, Command+Q, (...), or session end). */
+    // ANCHOR::SetWindowModifiedState(win->anchorwin, (AnchorU8)!wm->file_saved);
+  }
+}
+
+
+static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bool is_dialog)
 {
   if (!win->anchorwin)
   {
@@ -532,7 +562,7 @@ static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWi
 
     /* ----- */
 
-    if ((GET_X(win_size) == 0))
+    if (GET_X(win_size) <= 0)
     {
       FormFactory(win->pos, GfVec2f(0.0, 0.0));
       FormFactory(win->size, GfVec2f(1920, 1080));
@@ -556,8 +586,33 @@ static void wm_window_anchorwindow_ensure(cContext *C, wmWindowManager *wm, wmWi
     }
 
     wm_window_anchorwindow_add(wm, win, is_dialog);
-    wm_window_set_dpi(C, win);
   }
+
+  if (win->anchorwin)
+  {
+    // wm_window_ensure_eventstate(win);
+    wm_window_set_dpi(win);
+  }
+
+  /* add keymap handlers (1 handler for all keys in map!) */
+  // wmKeyMap *keymap = WM_keymap_ensure(wm->defaultconf, "Window", 0, 0);
+  // WM_event_add_keymap_handler(&win->handlers, keymap);
+
+  // keymap = WM_keymap_ensure(wm->defaultconf, "Screen", 0, 0);
+  // WM_event_add_keymap_handler(&win->handlers, keymap);
+
+  // keymap = WM_keymap_ensure(wm->defaultconf, "Screen Editing", 0, 0);
+  // WM_event_add_keymap_handler(&win->modalhandlers, keymap);
+
+  /* add drop boxes */
+  // {
+    // ListBase *lb = WM_dropboxmap_find("Window", 0, 0);
+    // WM_event_add_dropbox_handler(&win->handlers, lb);
+  // }
+  wm_window_title(wm, win);
+
+  /* add topbar */
+  // ED_screen_global_areas_refresh(win);  
 }
 
 static void wm_get_screensize(int *r_width, int *r_height)
@@ -617,11 +672,11 @@ void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
 }
 
 
-void WM_window_anchorwindows_ensure(cContext *C, wmWindowManager *wm)
+void WM_window_anchorwindows_ensure(wmWindowManager *wm)
 {
   UNIVERSE_FOR_ALL(win, wm->windows)
   {
-    wm_window_anchorwindow_ensure(C, wm, VALUE(win), false);
+    wm_window_anchorwindow_ensure(wm, VALUE(win), false);
   }
 }
 
@@ -824,7 +879,7 @@ wmWindow *WM_window_open(cContext *C,
   const bool new_window = (win->anchorwin == POINTER_ZERO);
   if (new_window)
   {
-    wm_window_anchorwindow_ensure(C, wm, win, dialog);
+    wm_window_anchorwindow_ensure(wm, win, dialog);
   }
   WM_check(C);
 
@@ -984,14 +1039,6 @@ int WM_window_pixels_x(const wmWindow *win)
 
   GfVec2f win_size = FormFactory(win->size);
 
-  /**
-   * Ensure valid window size. */
-  if(GET_X(win_size) < 0.0f)
-  {
-    FormFactory(win->size, GfVec2f(1920.0f, 1080.0f));
-    win_size = FormFactory(win->size);
-  }
-
   return (int)(f * GET_X(win_size));
 }
 
@@ -1000,14 +1047,6 @@ int WM_window_pixels_y(const wmWindow *win)
   float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
 
   GfVec2f win_size = FormFactory(win->size);
-
-  /**
-   * Ensure valid window size. */
-  if(GET_Y(win_size) < 0.0f)
-  {
-    FormFactory(win->size, GfVec2f(1920.0f, 1080.0f));
-    win_size = FormFactory(win->size);
-  }
 
   return (int)(f * GET_Y(win_size));
 }

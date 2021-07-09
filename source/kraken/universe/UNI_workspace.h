@@ -97,7 +97,7 @@ struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 WorkSpace::WorkSpace(cContext *C, const SdfPath &stagepath)
   : UsdUIWorkspace(KRAKEN_UNIVERSE_CREATE(C)),
     path(UsdUIWorkspace::GetPath()),
-    name(CreateNameAttr()),
+    name(CreateNameAttr(DEFAULT_TOKEN("Workspace"))),
     screen_rel(CreateScreenRel()),
     layouts(EMPTY),
     hook_layout_relations(EMPTY)

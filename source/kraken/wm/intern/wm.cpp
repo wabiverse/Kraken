@@ -75,37 +75,100 @@ void WM_main(cContext *C)
 
 void wm_add_default(Main *cmain, cContext *C)
 {
+  /**
+   * Create a new WindowManager. */
   wmWindowManager *wm = new wmWindowManager();
   CTX_wm_manager_set(C, wm);
 
+  /**
+   * Create a new 'Layout' Workspace. */
   WorkSpace *ws = ED_workspace_add(C, "Layout");
   cmain->workspaces.push_back(ws);
 
+  /**
+   * Create a new MainWindow. */
   wmWindow *win = wm_window_new(C, wm, NULL, false);
+
+  /**
+   * Create a new Screen and assign the
+   * new 'Layout' Workspace to it. */
   cScreen *screen = ED_workspace_layout_add(C, ws, win, "Layout")->screen;
 
+  /**
+   * This workspace should effectively point back the workspace
+   * created above, but globally searched to ensure it is not a
+   * duplicate. */
   WorkSpace *workspace;
   WorkSpaceLayout *layout = KKE_workspace_layout_find_global(cmain, screen, &workspace);
+
+  /**
+   * Set this workspace as active, additionally creating
+   * it's accompanying workspace layout, so that this
+   * workspace datablock will present a valid default gui
+   * layout upon startup. */
   KKE_workspace_active_set(win->workspace_hook, workspace);
   KKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
   screen->winid = win->winid;
 
+  /**
+   * Create default user preferences. */
   UserDef *uprefs = new UserDef(C);
-
-  CTX_wm_window_set(C, win);
-
   CTX_data_prefs_set(C, uprefs);
-
-  UNI_default_table_main_window(C);
   UNI_default_table_user_prefs(C);
+
+  /**
+   * Create default window, some of
+   * these fields may be incorrect,
+   * ##WM_check() -> below, will
+   * ensure anything incorrect,
+   * gets corrected. */
+  CTX_wm_window_set(C, win);
+  UNI_default_table_main_window(C);
+
+  /**
+   * Create default cube scene. */
   UNI_default_table_scene_data(C);
 
-  UNI_save_stage(C);
+  /* ----- */
+
+  WM_check(C);
+
+  /**
+   * Now that window is properly initialized,
+   * activate it, and signify that the changes
+   * have been saved ##WM_window_anchorwindows_ensure(),
+   * called within the ##WM_check() seen above,
+   * verifies a title, icon, and various other
+   * required fields are properly setup and are
+   * not empty. Additionally, it allocates a GPU
+   * surface, backend window, as well as backend
+   * system to handle event processing and GUI
+   * display. */
 
   wm->winactive = win;
   wm->file_saved = true;
 
-  WM_window_anchorwindows_ensure(C, wm);
+  /* ----- */
+
+  /**
+   * Save DPI factor, which ANCHOR properly
+   * sets up from the system backend, back
+   * to the Pixar Stage. */
+  FormFactory(uprefs->dpifac, UI_DPI_FAC);
+
+  /**
+   * Add window's workspace relationship, by adding
+   * the workspace created above as a target to our
+   * window's workspace relationships. */
+  FormFactory(win->workspace_rel, workspace->path);
+  FormFactory(workspace->screen_rel, screen->path);
+
+  /**
+   * Save defaults, all should now be
+   * properly setup, and verfied for
+   * correctness, this is now a valid
+   * startup Kraken project file. */
+  UNI_save_stage(C);
 }
 
 
@@ -139,7 +202,7 @@ void WM_check(cContext *C)
   // }
 
   /* Case: no open windows at all, for old file reads. */
-  WM_window_anchorwindows_ensure(C, wm);
+  WM_window_anchorwindows_ensure(wm);
   // }
 
   /* Case: fileread. */

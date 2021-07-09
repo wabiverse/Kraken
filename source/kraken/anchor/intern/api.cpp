@@ -3822,6 +3822,13 @@ ANCHOR_SystemWindowHandle ANCHOR::CreateSystemWindow(ANCHOR_SystemHandle systemh
                                                          (ANCHOR_ISystemWindow *)parent_windowhandle);
 }
 
+void ANCHOR::SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  window->setTitle(title);
+}
+
 eAnchorStatus ANCHOR::SwapChain(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;

@@ -6,13 +6,36 @@
 
 def "Kraken"
 {
-    def Window "MainWindow"
+    def "Workspaces"
+    {
+        def Workspace "Layout"
+        {
+            uniform token ui:workspace:name = "Layout"
+            prepend rel ui:workspace:screen = </Kraken/Workspaces/Layout1>
+        }
+
+        def Screen "Layout1"
+        {
+            uniform token ui:screen:alignment = "none"
+            prepend rel ui:screen:areas = </Kraken/Workspaces/Layout1/Area1>
+
+            def Area "Area1"
+            {
+                uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
+                uniform token ui:area:name = "Area"
+                uniform float2 ui:area:pos = (0, 0)
+                uniform float2 ui:area:size = (1, 1)
+                uniform token ui:area:spacetype = "SpaceEmpty"
+            }
+        }
+    }
+
+    def Window "MainWindow1"
     {
         uniform token ui:window:alignment = "alignAbsolute"
         uniform token ui:window:cursor = "default"
         uniform float ui:window:dpi = 1
-        uniform float ui:window:dpifac = 1
-        uniform asset ui:window:icon = @/usr/local/share/kraken/1.50/datafiles/icons/kraken-desktop.png@
+        uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
         uniform float ui:window:linewidth = 1
         uniform float ui:window:pixelsz = 1
         uniform float2 ui:window:pos = (0, 0)
@@ -22,41 +45,13 @@ def "Kraken"
         uniform token ui:window:title = "Kraken"
         uniform token ui:window:type = "normal"
         uniform float ui:window:widgetunit = 20
-        prepend rel ui:window:workspace = </Kraken/MainWindow/Workspaces/Layout>
+        prepend rel ui:window:workspace = </Kraken/Workspaces/Layout>
+    }
 
-        def "Workspaces"
-        {
-            def Workspace "Layout"
-            {
-                uniform token ui:workspace:name = "Layout"
-                prepend rel ui:workspace:screen = </Kraken/MainWindow/Workspaces/Layout/Screen>
-
-                def Screen "Screen"
-                {
-                    uniform token ui:screen:alignment = "verticalSplit"
-                    prepend rel ui:screen:areas = [
-                        </Kraken/MainWindow/Workspaces/Layout/Screen/View3D>,
-                        </Kraken/MainWindow/Workspaces/Layout/Screen/Outliner>,
-                    ]
-
-                    def Area "View3D"
-                    {
-                        uniform asset ui:area:icon = @/usr/local/share/kraken/1.50/datafiles/icons/hydra.png@
-                        uniform token ui:area:name = "View3D"
-                        uniform float2 ui:area:pos = (0, 0)
-                        uniform float2 ui:area:size = (1800, 1080)
-                    }
-
-                    def Area "Outliner"
-                    {
-                        uniform asset ui:area:icon = @/usr/local/share/kraken/1.50/datafiles/icons/luxo.png@
-                        uniform token ui:area:name = "Outliner"
-                        uniform float2 ui:area:pos = (1800, 0)
-                        uniform float2 ui:area:size = (120, 1080)
-                    }
-                }
-            }
-        }
+    def UserPref "UserDef"
+    {
+        uniform float ui:userpref:dpifac = 1
+        uniform bool ui:userpref:showSavePrompt = 1
     }
 }
 

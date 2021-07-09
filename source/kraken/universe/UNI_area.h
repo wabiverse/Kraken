@@ -29,6 +29,8 @@
 #include "UNI_screen.h"
 #include "UNI_space_types.h"
 
+#include "KLI_icons.h"
+
 #include "KKE_context.h"
 #include "KKE_screen.h"
 
@@ -67,6 +69,7 @@ struct ScrGlobalAreaData
 
 struct ScrArea : public UsdUIArea, public UniverseObject
 {
+  int areaid;
   SdfPath path;
 
   ScrVert *v1, *v2, *v3, *v4;
@@ -89,16 +92,17 @@ struct ScrArea : public UsdUIArea, public UniverseObject
 
 ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
+    areaid(VALUE_ZERO),
     path(UsdUIArea::GetPath()),
     v1(POINTER_ZERO),
     v2(POINTER_ZERO),
     v3(POINTER_ZERO),
     v4(POINTER_ZERO),
-    name(CreateNameAttr()),
-    spacetype(CreateSpacetypeAttr()),
-    icon(CreateIconAttr()),
-    pos(CreatePosAttr()),
-    size(CreateSizeAttr()),
+    name(CreateNameAttr(DEFAULT_TOKEN("Area"))),
+    spacetype(CreateSpacetypeAttr(DEFAULT_VALUE(UsdUITokens->spaceEmpty))),
+    icon(CreateIconAttr(DEFAULT_ASSET(KLI_icon(ICON_KRAKEN)))),
+    pos(CreatePosAttr(DEFAULT_VEC2F(0, 0))),
+    size(CreateSizeAttr(DEFAULT_VEC2F(1, 1))),
     type(POINTER_ZERO),
     global(POINTER_ZERO)
 {}

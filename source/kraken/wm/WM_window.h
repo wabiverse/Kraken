@@ -66,14 +66,15 @@ wmWindow *WM_window_open(cContext *C,
                          bool dialog,
                          bool temp);
 void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win);
-void wm_window_make_drawable(cContext *C, wmWindowManager *wm, wmWindow *win);
+void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win);
+bool WM_window_is_temp_screen(const wmWindow *win);
 
 void WM_anchor_init(cContext *C);
 void WM_anchor_exit(void);
 void WM_window_process_events(cContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
-void WM_window_anchorwindows_ensure(cContext *C, wmWindowManager *wm);
+void WM_window_anchorwindows_ensure(wmWindowManager *wm);
 
 /** Operators :: Register */
 void WM_window_operators_register();

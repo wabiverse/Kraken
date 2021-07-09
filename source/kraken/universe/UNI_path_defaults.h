@@ -59,13 +59,13 @@ struct KRAKEN_PATH_DEFAULTS
   const inline static TfToken KRAKEN_WINDOW = TfToken("/Kraken/MainWindow");
 
   /** Kraken :: MainWindow :: Workspaces Root. */
-  const inline static TfToken KRAKEN_WORKSPACES = TfToken("/Kraken/MainWindow/Workspaces");
+  const inline static TfToken KRAKEN_WORKSPACES = TfToken("/Kraken/Workspaces");
 
   /** Kraken :: MainWindow :: Workspaces :: Layout Root. */
-  const inline static TfToken KRAKEN_WORKSPACES_LAYOUT = TfToken("/Kraken/MainWindow/Workspaces/Layout");
+  const inline static TfToken KRAKEN_WORKSPACES_LAYOUT = TfToken("/Kraken/Workspaces/Layout");
 
   /** Kraken :: MainWindow :: Workspaces :: Layout :: Screen Root. */
-  const inline static TfToken KRAKEN_SCREEN_LAYOUT = TfToken("/Kraken/MainWindow/Workspaces/Layout/Screen");
+  const inline static TfToken KRAKEN_SCREEN_LAYOUT = TfToken("/Kraken/Workspaces/Layout/Screen");
 };
 
 WABI_NAMESPACE_END
