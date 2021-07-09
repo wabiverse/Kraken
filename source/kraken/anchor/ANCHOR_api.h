@@ -1000,6 +1000,9 @@ bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
 ANCHOR_API
 void DispatchEvents(ANCHOR_SystemHandle systemhandle);
 
+ANCHOR_API
+AnchorU64 GetMilliSeconds(ANCHOR_SystemHandle systemhandle);
+
 /**
  * Event Type
  *
@@ -1075,6 +1078,9 @@ void SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title);
  * @return Indication of success. */
 ANCHOR_API
 eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+eAnchorStatus ActivateWindowDrawingContext(ANCHOR_SystemWindowHandle windowhandle);
 
 /**
  * Adds a given event consumer to anchor.

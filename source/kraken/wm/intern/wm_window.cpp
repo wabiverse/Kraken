@@ -118,12 +118,12 @@ void wm_cursor_position_get(wmWindow *win, int *r_x, int *r_y)
 
 static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool activate)
 {
-  // KLI_assert(ELEM(wm->windrawable, NULL, win));
+  KLI_assert((wm->windrawable == NULL) && (wm->windrawable == win));
 
   wm->windrawable = win;
-  // if (activate) {
-  // ANCHOR::ActivateWindowDrawingContext(win->anchorwin);
-  // }
+  if (activate) {
+    ANCHOR::ActivateWindowDrawingContext((ANCHOR_SystemWindowHandle)win->anchorwin);
+  }
   // GPU_context_active_set(win->gpuctx);
 }
 
@@ -504,10 +504,8 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
                                                                    is_dialog,
                                                                    ANCHOR_DrawingContextTypeVulkan,
                                                                    0);
-  printf("Checking anchorwin\n");
   if (anchorwin)
   {
-    printf("We have anchorwin\n");
     win->anchorwin = anchorwin;
   }
 }

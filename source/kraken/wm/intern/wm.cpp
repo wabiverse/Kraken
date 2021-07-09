@@ -37,6 +37,8 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
+#include "KLI_string_utils.h"
+
 #include "KKE_context.h"
 #include "KKE_workspace.h"
 
@@ -75,55 +77,42 @@ void WM_main(cContext *C)
 
 void wm_add_default(Main *cmain, cContext *C)
 {
-  /**
-   * Create a new WindowManager. */
   wmWindowManager *wm = new wmWindowManager();
-  CTX_wm_manager_set(C, wm);
-
-  /**
-   * Create a new 'Layout' Workspace. */
-  WorkSpace *ws = ED_workspace_add(C, "Layout");
-  cmain->workspaces.push_back(ws);
-
-  /**
-   * Create a new MainWindow. */
-  wmWindow *win = wm_window_new(C, wm, NULL, false);
-
-  /**
-   * Create a new Screen and assign the
-   * new 'Layout' Workspace to it. */
-  cScreen *screen = ED_workspace_layout_add(C, ws, win, "Layout")->screen;
-
-  /**
-   * This workspace should effectively point back the workspace
-   * created above, but globally searched to ensure it is not a
-   * duplicate. */
+  wmWindow *win;
+  cScreen *screen = CTX_wm_screen(C);
   WorkSpace *workspace;
   WorkSpaceLayout *layout = KKE_workspace_layout_find_global(cmain, screen, &workspace);
 
-  /**
-   * Set this workspace as active, additionally creating
-   * it's accompanying workspace layout, so that this
-   * workspace datablock will present a valid default gui
-   * layout upon startup. */
+  CTX_wm_manager_set(C, wm);
+  win = wm_window_new(C, wm, NULL, false);
+
+  if(!workspace) {
+    workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES) + "Layout"));
+
+    if(!layout) {
+      layout = new WorkSpaceLayout();
+      layout->name = TfToken("Layout");
+    }
+
+    if(!screen) {
+      screen = new cScreen(C, workspace->path.AppendPath(SdfPath("LayoutScreen")));
+    }
+
+    layout->screen = screen;
+  }
   KKE_workspace_active_set(win->workspace_hook, workspace);
   KKE_workspace_active_layout_set(win->workspace_hook, win->winid, workspace, layout);
   screen->winid = win->winid;
+
+  wm->winactive = win;
+  wm->file_saved = 1;
+  wm_window_make_drawable(wm, win);
 
   /**
    * Create default user preferences. */
   UserDef *uprefs = new UserDef(C);
   CTX_data_prefs_set(C, uprefs);
   UNI_default_table_user_prefs(C);
-
-  /**
-   * Create default window, some of
-   * these fields may be incorrect,
-   * ##WM_check() -> below, will
-   * ensure anything incorrect,
-   * gets corrected. */
-  CTX_wm_window_set(C, win);
-  UNI_default_table_main_window(C);
 
   /**
    * Create default cube scene. */
@@ -144,9 +133,6 @@ void wm_add_default(Main *cmain, cContext *C)
    * surface, backend window, as well as backend
    * system to handle event processing and GUI
    * display. */
-
-  wm->winactive = win;
-  wm->file_saved = true;
 
   /* ----- */
 

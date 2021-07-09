@@ -3793,6 +3793,13 @@ void ANCHOR::DispatchEvents(ANCHOR_SystemHandle systemhandle)
   system->dispatchEvents();
 }
 
+AnchorU64 ANCHOR::GetMilliSeconds(ANCHOR_SystemHandle systemhandle)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  return system->getMilliSeconds();
+}
+
 ANCHOR_SystemWindowHandle ANCHOR::CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
                                                      ANCHOR_SystemWindowHandle parent_windowhandle,
                                                      const char *title,
@@ -3833,6 +3840,13 @@ eAnchorStatus ANCHOR::SwapChain(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
   return window->swapBuffers();
+}
+
+eAnchorStatus ANCHOR::ActivateWindowDrawingContext(ANCHOR_SystemWindowHandle windowhandle)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  return window->activateDrawingContext();
 }
 
 eAnchorStatus ANCHOR::AddEventConsumer(ANCHOR_SystemHandle systemhandle,

@@ -12,46 +12,34 @@ def "WabiAnimationStudios"
     {
         def "Kraken"
         {
-            def "Workspaces"
-            {
-                def Workspace "Layout"
-                {
-                    uniform token ui:workspace:name = "Layout"
-                    prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/Workspaces/LayoutScreen1>
-                }
-
-                def Screen "LayoutScreen1"
-                {
-                    uniform token ui:screen:alignment = "none"
-                    prepend rel ui:screen:areas = </WabiAnimationStudios/Internal/Kraken/Workspaces/LayoutScreen1/LayoutScreen1Area1>
-
-                    def Area "LayoutScreen1Area1"
-                    {
-                        uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/1.50/datafiles/icons/kraken-desktop.png@
-                        uniform token ui:area:name = "Area"
-                        uniform float2 ui:area:pos = (0, 0)
-                        uniform float2 ui:area:size = (1, 1)
-                        uniform token ui:area:spacetype = "SpaceEmpty"
-                    }
-                }
-            }
-
             def Window "MainWindow1"
             {
                 uniform token ui:window:alignment = "alignAbsolute"
-                uniform token ui:window:cursor = "default"
-                uniform float ui:window:dpi = 1
+                uniform token ui:window:cursor
+                uniform float ui:window:dpi
                 uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/1.50/datafiles/icons/kraken-desktop.png@
-                uniform float ui:window:linewidth = 1
-                uniform float ui:window:pixelsz = 1
+                uniform float ui:window:linewidth
+                uniform float ui:window:pixelsz
                 uniform float2 ui:window:pos = (0, 0)
-                uniform float ui:window:scale = 1
+                uniform float ui:window:scale
                 uniform float2 ui:window:size = (1920, 1080)
                 uniform token ui:window:state = "maximized"
                 uniform token ui:window:title = "Kraken"
-                uniform token ui:window:type = "normal"
-                uniform float ui:window:widgetunit = 20
-                prepend rel ui:window:workspace = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout>
+                uniform token ui:window:type
+                uniform float ui:window:widgetunit
+                prepend rel ui:window:workspace = </WabiAnimationStudios/Internal/Kraken/WorkspacesLayout>
+            }
+
+            def Workspace "WorkspacesLayout"
+            {
+                uniform token ui:workspace:name = "Workspace"
+                prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/WorkspacesLayout/LayoutScreen>
+
+                def Screen "LayoutScreen"
+                {
+                    uniform token ui:screen:alignment = "none"
+                    rel ui:screen:areas
+                }
             }
 
             def UserPref "UserDef"

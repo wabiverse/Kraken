@@ -98,6 +98,11 @@ eAnchorStatus ANCHOR_SystemWindow::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
+eAnchorStatus ANCHOR_SystemWindow::activateDrawingContext()
+{
+  return ANCHOR_SUCCESS;
+}
+
 eAnchorStatus ANCHOR_SystemWindow::setModifiedState(bool isUnsavedChanges)
 {
   m_isUnsavedChanges = isUnsavedChanges;

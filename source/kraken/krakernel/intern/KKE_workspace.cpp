@@ -94,30 +94,31 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
                                               const int parentid,
                                               WorkSpaceLayout *layout)
 {
-  auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation *r) -> bool {
-    if (r->parentid == parentid)
-    {
-      r->parent = parent;
-      r->value = layout;
-      return true;
-    }
+  if(relation_list.begin() != relation_list.end()) {
 
-    else
-    {
-      return false;
-    }
-  });
+    auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation *r) -> bool {
+      if (r->parentid == parentid)
+      {
+        r->parent = parent;
+        r->value = layout;
+        return true;
+      }
 
-  /* reinsert at the head of the list, so that more commonly used relations are found faster. */
-  if (relation != relation_list.end())
-  {
-    std::rotate(relation_list.begin(), relation, relation + 1);
+      else
+      {
+        return false;
+      }
+    });
+
+    /* reinsert at the head of the list, so that more commonly used relations are found faster. */
+    if (relation != relation_list.end())
+    {
+      std::rotate(relation_list.begin(), relation, relation + 1);
+      return;
+    }
   }
-  else
-  {
-    /* no matching relation found, add new one */
-    workspace_relation_add(relation_list, parent, parentid, layout);
-  }
+  /* no matching relation found, add new one */
+  workspace_relation_add(relation_list, parent, parentid, layout);
 }
 
 
@@ -173,7 +174,7 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
 
   if (r_workspace)
   {
-    *r_workspace = NULL;
+    *r_workspace = nullptr;
   }
 
   UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
@@ -189,7 +190,7 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 

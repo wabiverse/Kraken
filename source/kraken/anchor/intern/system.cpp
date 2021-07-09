@@ -44,6 +44,13 @@ ANCHOR_System::~ANCHOR_System()
   exit();
 }
 
+AnchorU64 ANCHOR_System::getMilliSeconds() const
+{
+  return std::chrono::duration_cast<std::chrono::milliseconds>(
+             std::chrono::steady_clock::now().time_since_epoch())
+      .count();
+}
+
 eAnchorStatus ANCHOR_System::init()
 {
   m_windowManager = new ANCHOR_WindowManager();

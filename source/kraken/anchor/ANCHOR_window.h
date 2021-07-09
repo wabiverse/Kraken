@@ -95,6 +95,11 @@ class ANCHOR_ISystemWindow
   virtual bool isDialog() const = 0;
 
   /**
+   * Activates the drawing context of this window.
+   * @return A boolean success indicator. */
+  virtual eAnchorStatus activateDrawingContext() = 0;
+
+  /**
    * Gets the window "modified" status, indicating unsaved changes
    * @return True if there are unsaved changes */
   virtual bool getModifiedState() = 0;
@@ -166,6 +171,10 @@ class ANCHOR_ISystemWindow
   virtual bool getCursorVisibility() const = 0;
 };
 
+
+/* ----------------------------------------------------------------------------------------- */
+
+
 class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
 {
  public:
@@ -216,6 +225,11 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   inline eAnchorAxisFlag getCursorGrabAxis() const;
   inline void getCursorGrabAccum(AnchorS32 &x, AnchorS32 &y) const;
   inline void setCursorGrabAccum(AnchorS32 x, AnchorS32 y);
+
+  /**
+   * Activates the drawing context of this window.
+   * @return A boolean success indicator. */
+  virtual eAnchorStatus activateDrawingContext();
 
   /**
    * Swaps front and back buffers of a window.

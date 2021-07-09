@@ -71,6 +71,14 @@
 #include <windows.h>
 #include <winnt.h>
 
+#  include <tchar.h>
+#  ifndef ERROR_PROFILE_DOES_NOT_MATCH_DEVICE
+#    define ERROR_PROFILE_DOES_NOT_MATCH_DEVICE 0x7E7
+#  endif
+
+#include <cstdio>
+#include <cstring>
+
 // Configuration flags to add in your imconfig.h file:
 //#define ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD              // Disable gamepad support. This was meaningful before <1.81 but we now load XInput dynamically so the option is now less relevant.
 
@@ -697,7 +705,9 @@ void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd)
   }
 }
 
+
 // --------------------------------------------------------------------------------------------------------
+
 
 ANCHOR_DisplayManagerWin32::ANCHOR_DisplayManagerWin32(void)
 {}
@@ -920,15 +930,6 @@ ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
    * Shutdown COM. */
   OleUninitialize();
   toggleConsole(1);
-}
-
-AnchorU64 ANCHOR_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
-{
-  // Calculate the time passed since system initialization.
-  __int64 delta = (perf_ticks - m_start) * 1000;
-
-  AnchorU64 t = (AnchorU64)(delta / m_freq);
-  return t;
 }
 
 bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
@@ -2878,6 +2879,34 @@ ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window,
   return event;
 }
 
+AnchorU64 ANCHOR_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
+{
+  // Calculate the time passed since system initialization.
+  __int64 delta = (perf_ticks - m_start) * 1000;
+
+  AnchorU64 t = (AnchorU64)(delta / m_freq);
+  return t;
+}
+
+AnchorU64 ANCHOR_SystemWin32::tickCountToMillis(__int64 ticks) const
+{
+  return ticks - m_lfstart;
+}
+
+AnchorU64 ANCHOR_SystemWin32::getMilliSeconds() const
+{
+  // Hardware does not support high resolution timers. We will use GetTickCount instead then.
+  if (!m_hasPerformanceCounter) {
+    return tickCountToMillis(::GetTickCount());
+  }
+
+  // Retrieve current count
+  __int64 count = 0;
+  ::QueryPerformanceCounter((LARGE_INTEGER *)&count);
+
+  return performanceCounterToMillis(count);
+}
+
 //---------------------------------------------------------------------------------------------------------
 
 const wchar_t *ANCHOR_WindowWin32::s_windowClassName = L"ANCHOR_WindowClass";
@@ -2915,6 +2944,7 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_nPressedButtons(0),
     m_customCursor(0),
     m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE),
+    m_normal_state(ANCHOR_WindowStateNormal),
     m_user32(::LoadLibrary("user32.dll")),
     m_parentWindowHwnd(parentWindow ? parentWindow->m_hWnd : HWND_DESKTOP)
 {
@@ -3501,16 +3531,145 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
    * - Will need a new Hgi::HgiDXD12 */
 }
 
-eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
+eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
 {
+  ANCHOR_IO &io = ANCHOR::GetIO();
+  ANCHOR_ASSERT(io.Fonts->IsBuilt() &&
+                "Font atlas not built! It is generally built by the renderer backend. Missing "
+                "call to renderer _NewFrame() function? e.g. ANCHOR_ImplOpenGL3_NewFrame().");
+  
+  /**
+   * Setup display size (every frame to accommodate for window resizing). */
+  ANCHOR_Rect rect;
+  getWindowBounds(rect);
+  if(getState() == ANCHOR_WindowStateMinimized)
+    rect.set(0, 0, 0, 0);
+  io.DisplaySize = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
+  if (rect.getWidth() > 0 && rect.getHeight() > 0)
+    io.DisplayFramebufferScale = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
+
+  /** 
+   * Setup time step. */
+  io.DeltaTime = m_system->getMilliSeconds();
+  ANCHOR::NewFrame();
+
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
-                                        AnchorS32 inY,
-                                        AnchorS32 &outX,
-                                        AnchorS32 &outY) const
-{}
+static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, ImDrawData *draw_data)
+{
+  VkResult err;
+
+  VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
+  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  err = vkAcquireNextImageKHR(
+    g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  {
+    g_SwapChainRebuild = true;
+    return;
+  }
+  check_vk_result(err);
+
+  ANCHOR_VulkanGPU_Frame *fd = &wd->Frames[wd->FrameIndex];
+  {
+    err = vkWaitForFences(g_Device,
+                          1,
+                          &fd->Fence,
+                          VK_TRUE,
+                          /* wait indefinitely==**/ UINT64_MAX);
+    check_vk_result(err);
+
+    err = vkResetFences(g_Device, 1, &fd->Fence);
+    check_vk_result(err);
+  }
+  {
+    err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
+    check_vk_result(err);
+    VkCommandBufferBeginInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
+    check_vk_result(err);
+  }
+  {
+    VkRenderPassBeginInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    info.renderPass = wd->RenderPass;
+    info.framebuffer = fd->Framebuffer;
+    info.renderArea.extent.width = wd->Width;
+    info.renderArea.extent.height = wd->Height;
+    info.clearValueCount = 1;
+    info.pClearValues = &wd->ClearValue;
+    vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+  }
+
+  /**
+   * Record ANCHOR primitives into command buffer. */
+  ANCHOR_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
+
+  /**
+   * Submit command buffer. */
+  vkCmdEndRenderPass(fd->CommandBuffer);
+  {
+    VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkSubmitInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &image_acquired_semaphore;
+    info.pWaitDstStageMask = &wait_stage;
+    info.commandBufferCount = 1;
+    info.pCommandBuffers = &fd->CommandBuffer;
+    info.signalSemaphoreCount = 1;
+    info.pSignalSemaphores = &render_complete_semaphore;
+
+    err = vkEndCommandBuffer(fd->CommandBuffer);
+    check_vk_result(err);
+    err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
+    check_vk_result(err);
+  }
+}
+
+static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
+{
+  if (g_SwapChainRebuild)
+    return;
+  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  VkPresentInfoKHR info = {};
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  info.waitSemaphoreCount = 1;
+  info.pWaitSemaphores = &render_complete_semaphore;
+  info.swapchainCount = 1;
+  info.pSwapchains = &wd->Swapchain;
+  info.pImageIndices = &wd->FrameIndex;
+  VkResult err = vkQueuePresentKHR(g_Queue, &info);
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  {
+    g_SwapChainRebuild = true;
+    return;
+  }
+  check_vk_result(err);
+  /**
+   * Now we can use the next set of semaphores. */
+  wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
+{
+  ANCHOR::Render();
+  ImDrawData *draw_data = ANCHOR::GetDrawData();
+  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
+  if (!is_minimized)
+  {
+    m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
+    m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
+    m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
+    m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
+    FrameRender(m_vulkan_context, draw_data);
+    FramePresent(m_vulkan_context);
+  }
+  return ANCHOR_SUCCESS;
+}
 
 void ANCHOR_WindowWin32::setTitle(const char *title)
 {
@@ -3522,11 +3681,27 @@ void ANCHOR_WindowWin32::setTitle(const char *title)
 void ANCHOR_WindowWin32::setIcon(const char *icon)
 {}
 
+void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
+                                        AnchorS32 inY,
+                                        AnchorS32 &outX,
+                                        AnchorS32 &outY) const
+{
+  POINT point = {inX, inY};
+  ::ScreenToClient(m_hWnd, &point);
+  outX = point.x;
+  outY = point.y;
+}
+
 void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
                                         AnchorS32 inY,
                                         AnchorS32 &outX,
                                         AnchorS32 &outY) const
-{}
+{
+  POINT point = {inX, inY};
+  ::ClientToScreen(m_hWnd, &point);
+  outX = point.x;
+  outY = point.y;
+}
 
 void ANCHOR_WindowWin32::lostMouseCapture()
 {
@@ -3732,17 +3907,75 @@ void ANCHOR_WindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) c
 
 eAnchorStatus ANCHOR_WindowWin32::setClientSize(AnchorU32 width, AnchorU32 height)
 {
-  return ANCHOR_SUCCESS;
+  eAnchorStatus success;
+  ANCHOR_Rect cBnds, wBnds;
+  getClientBounds(cBnds);
+  if ((cBnds.getWidth() != (AnchorS32)width) || (cBnds.getHeight() != (AnchorS32)height)) {
+    getWindowBounds(wBnds);
+    int cx = wBnds.getWidth() + width - cBnds.getWidth();
+    int cy = wBnds.getHeight() + height - cBnds.getHeight();
+    success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ?
+                  ANCHOR_SUCCESS :
+                  ANCHOR_ERROR;
+  }
+  else {
+    success = ANCHOR_SUCCESS;
+  }
+  return success;
 }
 
 eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
 {
-  return ANCHOR_SUCCESS;
+  eAnchorWindowState curstate = getState();
+  LONG_PTR style = GetWindowLongPtr(m_hWnd, GWL_STYLE) | WS_CAPTION;
+  WINDOWPLACEMENT wp;
+  wp.length = sizeof(WINDOWPLACEMENT);
+  ::GetWindowPlacement(m_hWnd, &wp);
+
+  switch (state) {
+    case ANCHOR_WindowStateMinimized:
+      wp.showCmd = SW_MINIMIZE;
+      break;
+    case ANCHOR_WindowStateMaximized:
+      wp.showCmd = SW_SHOWMAXIMIZED;
+      break;
+    case ANCHOR_WindowStateFullScreen:
+      if (curstate != state && curstate != ANCHOR_WindowStateMinimized) {
+        m_normal_state = curstate;
+      }
+      wp.showCmd = SW_SHOWMAXIMIZED;
+      wp.ptMaxPosition.x = 0;
+      wp.ptMaxPosition.y = 0;
+      style &= ~(WS_CAPTION | WS_MAXIMIZE);
+      break;
+    case ANCHOR_WindowStateNormal:
+    default:
+      if (curstate == ANCHOR_WindowStateFullScreen &&
+          m_normal_state == ANCHOR_WindowStateMaximized) {
+        wp.showCmd = SW_SHOWMAXIMIZED;
+        m_normal_state = ANCHOR_WindowStateNormal;
+      }
+      else {
+        wp.showCmd = SW_SHOWNORMAL;
+      }
+      break;
+  }
+  ::SetWindowLongPtr(m_hWnd, GWL_STYLE, style);
+  /* SetWindowLongPtr Docs: frame changes not visible until SetWindowPos with SWP_FRAMECHANGED. */
+  ::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? ANCHOR_SUCCESS : ANCHOR_ERROR;
 }
 
 eAnchorWindowState ANCHOR_WindowWin32::getState() const
 {
-  return ANCHOR_WindowStateFullScreen;
+  if (::IsIconic(m_hWnd)) {
+    return ANCHOR_WindowStateMinimized;
+  }
+  else if (::IsZoomed(m_hWnd)) {
+    LONG_PTR result = ::GetWindowLongPtr(m_hWnd, GWL_STYLE);
+    return (result & WS_CAPTION) ? ANCHOR_WindowStateMaximized : ANCHOR_WindowStateFullScreen;
+  }
+  return ANCHOR_WindowStateNormal;
 }
 
 AnchorU16 ANCHOR_WindowWin32::getDPIHint()

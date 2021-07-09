@@ -81,9 +81,26 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   ANCHOR_SystemWin32();
   ~ANCHOR_SystemWin32();
 
-  bool processEvents(bool waitForEvent);
-
+  /**
+   * This method converts performance counter measurements into milliseconds since the start of the
+   * system process.
+   * @return The number of milliseconds since the start of the system process. */
   AnchorU64 performanceCounterToMillis(__int64 perf_ticks) const;
+
+  /**
+   * This method converts system ticks into milliseconds since the start of the
+   * system process.
+   * @return The number of milliseconds since the start of the system process. */
+  AnchorU64 tickCountToMillis(__int64 ticks) const;
+
+  /**
+   * Returns the system time.
+   * Returns the number of milliseconds since the start of the system process.
+   * This overloaded method uses the high frequency timer if available.
+   * @return The number of milliseconds. */
+  AnchorU64 getMilliSeconds() const;
+
+  bool processEvents(bool waitForEvent);
 
   /**
    * Updates the location of the cursor (location in screen coordinates).
@@ -370,6 +387,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   bool m_isDialog;
 
+  eAnchorWindowState m_normal_state;
+
   /** `user32.dll` handle */
   HMODULE m_user32;
 
@@ -426,6 +445,11 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * @param type: The type of rendering context create.
    * @return Indication of success. */
   void newDrawingContext(eAnchorDrawingContextType type);
+
+  /**
+   * Activates the drawing context of this window.
+   * @return A boolean success indicator. */
+  eAnchorStatus activateDrawingContext();
 
   /**
    * Swaps front and back buffers of a window.

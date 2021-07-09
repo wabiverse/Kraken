@@ -66,6 +66,13 @@ class ANCHOR_ISystem
 
  public:
   /**
+   * Returns the system time.
+   * Returns the number of milliseconds since the start of the system process.
+   * Based on ANSI clock() routine.
+   * @return The number of milliseconds. */
+  virtual AnchorU64 getMilliSeconds() const = 0;
+
+  /**
    * Returns the dimensions of the main display on this system.
    * @return The dimension of the main display. */
   virtual void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;
@@ -229,6 +236,13 @@ class ANCHOR_System : public ANCHOR_ISystem
   virtual ~ANCHOR_System();
 
  public:
+  /**
+   * Returns the system time.
+   * Returns the number of milliseconds since the start of the system process.
+   * Based on ANSI clock() routine.
+   * @return The number of milliseconds. */
+  virtual AnchorU64 getMilliSeconds() const;
+
   /**
    * Begins full screen mode.
    * @param setting: The new setting of the display.
