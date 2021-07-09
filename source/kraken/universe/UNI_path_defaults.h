@@ -44,28 +44,22 @@ WABI_NAMESPACE_BEGIN
 struct KRAKEN_PATH_DEFAULTS
 {
   /** Kraken Root Namespace. */
-  const inline static TfToken KRAKEN_ROOT = TfToken("/Kraken");
+  const inline static TfToken KRAKEN_ROOT = TfToken("/WabiAnimationStudios/Internal/Kraken");
 
   /** Kraken :: Ops Root. */
-  const inline static TfToken KRAKEN_OPERATORS = TfToken("/Kraken/Ops");
+  const inline static TfToken KRAKEN_OPERATORS = TfToken("/WabiAnimationStudios/Internal/Kraken/Ops");
 
   /** Kraken :: UserDef Root. */
-  const inline static TfToken KRAKEN_USERPREFS = TfToken("/Kraken/UserDef");
+  const inline static TfToken KRAKEN_USERPREFS = TfToken("/WabiAnimationStudios/Internal/Kraken/UserDef");
 
   /** Kraken :: WindowManager Root. */
-  const inline static TfToken KRAKEN_WM = TfToken("/Kraken/WindowManager");
+  const inline static TfToken KRAKEN_WM = TfToken("/WabiAnimationStudios/Internal/Kraken/WindowManager");
 
   /** Kraken :: MainWindow Root. */
-  const inline static TfToken KRAKEN_WINDOW = TfToken("/Kraken/MainWindow");
+  const inline static TfToken KRAKEN_WINDOW = TfToken("/WabiAnimationStudios/Internal/Kraken/MainWindow");
 
   /** Kraken :: MainWindow :: Workspaces Root. */
-  const inline static TfToken KRAKEN_WORKSPACES = TfToken("/Kraken/Workspaces");
-
-  /** Kraken :: MainWindow :: Workspaces :: Layout Root. */
-  const inline static TfToken KRAKEN_WORKSPACES_LAYOUT = TfToken("/Kraken/Workspaces/Layout");
-
-  /** Kraken :: MainWindow :: Workspaces :: Layout :: Screen Root. */
-  const inline static TfToken KRAKEN_SCREEN_LAYOUT = TfToken("/Kraken/Workspaces/Layout/Screen");
+  const inline static TfToken KRAKEN_WORKSPACES = TfToken("/WabiAnimationStudios/Internal/Kraken/Workspaces");
 };
 
 WABI_NAMESPACE_END

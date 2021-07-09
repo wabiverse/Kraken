@@ -4,54 +4,60 @@
     upAxis = "Z"
 )
 
-def "Kraken"
+def "WabiAnimationStudios"
 {
-    def "Workspaces"
+    def "Internal"
     {
-        def Workspace "Layout"
+        def "Kraken"
         {
-            uniform token ui:workspace:name = "Layout"
-            prepend rel ui:workspace:screen = </Kraken/Workspaces/Layout1>
-        }
-
-        def Screen "LayoutScreen1"
-        {
-            uniform token ui:screen:alignment = "none"
-            prepend rel ui:screen:areas = </Kraken/Workspaces/LayoutScreen1/LayoutScreen1Area1>
-
-            def Area "LayoutScreen1Area1"
+            def "Workspaces"
             {
-                uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
-                uniform token ui:area:name = "Area"
-                uniform float2 ui:area:pos = (0, 0)
-                uniform float2 ui:area:size = (1, 1)
-                uniform token ui:area:spacetype = "SpaceEmpty"
+                def Workspace "Layout"
+                {
+                    uniform token ui:workspace:name = "Layout"
+                    prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout1>
+                }
+
+                def Screen "LayoutScreen1"
+                {
+                    uniform token ui:screen:alignment = "none"
+                    prepend rel ui:screen:areas = </WabiAnimationStudios/Internal/Kraken/Workspaces/LayoutScreen1/LayoutScreen1Area1>
+
+                    def Area "LayoutScreen1Area1"
+                    {
+                        uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
+                        uniform token ui:area:name = "Area"
+                        uniform float2 ui:area:pos = (0, 0)
+                        uniform float2 ui:area:size = (1, 1)
+                        uniform token ui:area:spacetype = "SpaceEmpty"
+                    }
+                }
+            }
+
+            def Window "MainWindow1"
+            {
+                uniform token ui:window:alignment = "alignAbsolute"
+                uniform token ui:window:cursor = "default"
+                uniform float ui:window:dpi = 1
+                uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
+                uniform float ui:window:linewidth = 1
+                uniform float ui:window:pixelsz = 1
+                uniform float2 ui:window:pos = (0, 0)
+                uniform float ui:window:scale = 1
+                uniform float2 ui:window:size = (1920, 1080)
+                uniform token ui:window:state = "maximized"
+                uniform token ui:window:title = "Kraken"
+                uniform token ui:window:type = "normal"
+                uniform float ui:window:widgetunit = 20
+                prepend rel ui:window:workspace = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout>
+            }
+
+            def UserPref "UserDef"
+            {
+                uniform float ui:userpref:dpifac = 1
+                uniform bool ui:userpref:showSavePrompt = 1
             }
         }
-    }
-
-    def Window "MainWindow1"
-    {
-        uniform token ui:window:alignment = "alignAbsolute"
-        uniform token ui:window:cursor = "default"
-        uniform float ui:window:dpi = 1
-        uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
-        uniform float ui:window:linewidth = 1
-        uniform float ui:window:pixelsz = 1
-        uniform float2 ui:window:pos = (0, 0)
-        uniform float ui:window:scale = 1
-        uniform float2 ui:window:size = (1920, 1080)
-        uniform token ui:window:state = "maximized"
-        uniform token ui:window:title = "Kraken"
-        uniform token ui:window:type = "normal"
-        uniform float ui:window:widgetunit = 20
-        prepend rel ui:window:workspace = </Kraken/Workspaces/Layout>
-    }
-
-    def UserPref "UserDef"
-    {
-        uniform float ui:userpref:dpifac = 1
-        uniform bool ui:userpref:showSavePrompt = 1
     }
 }
 
