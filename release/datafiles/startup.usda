@@ -17,7 +17,7 @@ def "WabiAnimationStudios"
                 def Workspace "Layout"
                 {
                     uniform token ui:workspace:name = "Layout"
-                    prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout1>
+                    prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/Workspaces/LayoutScreen1>
                 }
 
                 def Screen "LayoutScreen1"

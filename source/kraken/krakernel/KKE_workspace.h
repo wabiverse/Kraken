@@ -53,7 +53,8 @@ void KKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
 cScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook);
 cScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout) GETTER_ATTRS;
 
-WorkSpaceLayout *KKE_workspace_layout_add(Main *cmain,
+WorkSpaceLayout *KKE_workspace_layout_add(cContext *C,
+                                          Main *cmain,
                                           WorkSpace *workspace,
                                           cScreen *screen,
                                           const char *name) ATTR_NONNULL();

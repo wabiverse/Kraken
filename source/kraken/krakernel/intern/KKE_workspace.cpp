@@ -193,7 +193,8 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
 }
 
 
-WorkSpaceLayout *KKE_workspace_layout_add(Main *cmain,
+WorkSpaceLayout *KKE_workspace_layout_add(cContext *C,
+                                          Main *cmain,
                                           WorkSpace *workspace,
                                           cScreen *screen,
                                           const char *name)
@@ -202,8 +203,8 @@ WorkSpaceLayout *KKE_workspace_layout_add(Main *cmain,
 
   KLI_assert(!workspaces_is_screen_used(cmain, screen));
   layout->screen = screen;
-  layout->screen->winid = find_free_screenid(cmain);
-  layout->screen->path = make_screenpath(layout->screen->winid, name);
+  layout->screen->winid = find_free_screenid(C);
+  layout->screen->path = make_screenpath(name, layout->screen->winid);
   workspace_layout_name_set(workspace, layout, name);
   workspace->layouts.push_back(layout);
 

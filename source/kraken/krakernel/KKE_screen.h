@@ -166,8 +166,8 @@ struct SpaceType
 };
 
 
-int find_free_screenid(Main *cmain);
-SdfPath make_screenpath(int id, const char *name);
+SdfPath make_screenpath(const char *layout_name, int id);
+int find_free_screenid(cContext *C);
 
 SpaceType *KKE_spacetype_from_id(int spaceid);
 bool KKE_screen_is_used(const cScreen *screen);

@@ -226,33 +226,12 @@ static ScrArea *screen_addarea(cContext *C,
 }
 
 
-static SdfPath make_screenpath(const char *layout_name, int id)
-{
-  SdfPath sdf_layout(SdfPath(layout_name + STRINGALL("Screen") + STRINGALL(id)));
-  return SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(sdf_layout);
-}
-
-
-static int find_free_screenid(cContext *C)
-{
-  int id = 1;
-
-  Main *kmain = CTX_data_main(C);
-  UNIVERSE_FOR_ALL(screen, kmain->screens)
-  {
-    if (id <= screen->winid)
-    {
-      id = screen->winid + 1;
-    }
-  }
-  return id;
-}
-
-
 cScreen *screen_add(cContext *C, const char *name, const GfRect2i *rect)
 {
   int id = find_free_screenid(C);
-  cScreen *screen = new cScreen(C, make_screenpath(name, id));
+  SdfPath path(make_screenpath(name, id));
+  cScreen *screen = new cScreen(C, path);
+  screen->path = path;
   screen->winid = id;
 
   screen->do_refresh = true;

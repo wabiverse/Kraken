@@ -47,18 +47,19 @@ WABI_NAMESPACE_BEGIN
 static std::vector<SpaceType *> spacetypes;
 
 
-SdfPath make_screenpath(int id, const char *name)
+SdfPath make_screenpath(const char *layout_name, int id)
 {
-  SdfPath path(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES));
-  return path.AppendPath(SdfPath(name + STRINGALL(id)));
+  SdfPath sdf_layout(SdfPath(layout_name + STRINGALL("Screen") + STRINGALL(id)));
+  return SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(sdf_layout);
 }
 
 
-int find_free_screenid(Main *cmain)
+int find_free_screenid(cContext *C)
 {
   int id = 1;
 
-  UNIVERSE_FOR_ALL(screen, cmain->screens)
+  Main *kmain = CTX_data_main(C);
+  UNIVERSE_FOR_ALL(screen, kmain->screens)
   {
     if (id <= screen->winid)
     {

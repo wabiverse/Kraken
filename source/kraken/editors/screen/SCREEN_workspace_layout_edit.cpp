@@ -116,7 +116,7 @@ WorkSpaceLayout *ED_workspace_layout_add(cContext *C,
 
   Main *cmain = CTX_data_main(C);
 
-  return KKE_workspace_layout_add(cmain, workspace, screen, name);
+  return KKE_workspace_layout_add(C, cmain, workspace, screen, name);
 }
 
 WABI_NAMESPACE_END
