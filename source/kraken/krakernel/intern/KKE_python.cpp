@@ -34,7 +34,7 @@
 WABI_NAMESPACE_BEGIN
 
 
-void KKE_kraken_python_init(cContext *C)
+void KKE_kraken_python_init(kContext *C)
 {
   WPY_python_init(C);
 }

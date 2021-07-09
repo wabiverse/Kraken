@@ -81,7 +81,7 @@ struct ScrEdge
   {}
 };
 
-struct cScreen : public UsdUIScreen, public UniverseObject
+struct kScreen : public UsdUIScreen, public UniverseObject
 {
   SdfPath path;
 
@@ -102,10 +102,10 @@ struct cScreen : public UsdUIScreen, public UniverseObject
   char do_refresh;
 
 
-  inline cScreen(cContext *C, const SdfPath &stagepath);
+  inline kScreen(kContext *C, const SdfPath &stagepath);
 };
 
-cScreen::cScreen(cContext *C, const SdfPath &stagepath)
+kScreen::kScreen(kContext *C, const SdfPath &stagepath)
   : UsdUIScreen(KRAKEN_UNIVERSE_CREATE(C)),
     path(UsdUIScreen::GetPath()),
     align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
@@ -122,11 +122,11 @@ cScreen::cScreen(cContext *C, const SdfPath &stagepath)
 
 struct wmRegionMessageSubscribeParams
 {
-  const struct cContext *context;
+  const struct kContext *context;
   struct wmMsgBus *message_bus;
   struct WorkSpace *workspace;
   struct Scene *scene;
-  struct cScreen *screen;
+  struct kScreen *screen;
   struct ScrArea *area;
   struct ARegion *region;
 

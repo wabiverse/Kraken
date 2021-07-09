@@ -65,10 +65,10 @@ struct ARegionType
 
   void (*init)(wmWindowManager *wm, ARegion *region);
   void (*exit)(wmWindowManager *wm, ARegion *region);
-  void (*draw)(const cContext *C, ARegion *region);
+  void (*draw)(const kContext *C, ARegion *region);
 
-  void (*draw_overlay)(const cContext *C, ARegion *region);
-  void (*layout)(const cContext *C, ARegion *region);
+  void (*draw_overlay)(const kContext *C, ARegion *region);
+  void (*layout)(const kContext *C, ARegion *region);
   int (*snap_size)(const ARegion *region, int size, int axis);
   void (*listener)(const wmRegionListenerParams *params);
   void (*message_subscribe)(const struct wmRegionMessageSubscribeParams *params);
@@ -84,7 +84,7 @@ struct ARegionType
   /* return context data */
   cContextDataCallback context;
 
-  void (*on_view2d_changed)(const cContext *C, ARegion *region);
+  void (*on_view2d_changed)(const kContext *C, ARegion *region);
 
   int minsizex, minsizey;
   int prefsizex, prefsizey;
@@ -127,7 +127,7 @@ struct SpaceType
 
   void (*deactivate)(ScrArea *area);
 
-  void (*refresh)(const cContext *C, ScrArea *area);
+  void (*refresh)(const kContext *C, ScrArea *area);
 
   struct SpaceLink *(*duplicate)(struct SpaceLink *sl);
 
@@ -167,11 +167,11 @@ struct SpaceType
 
 
 SdfPath make_screenpath(const char *layout_name, int id);
-int find_free_screenid(cContext *C);
+int find_free_screenid(kContext *C);
 
 SpaceType *KKE_spacetype_from_id(int spaceid);
-bool KKE_screen_is_used(const cScreen *screen);
+bool KKE_screen_is_used(const kScreen *screen);
 void KKE_screen_sort_scrvert(struct ScrVert **v1, struct ScrVert **v2);
-ScrArea *KKE_screen_find_big_area(cScreen *screen, const int spacetype, const short min);
+ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const short min);
 
 WABI_NAMESPACE_END

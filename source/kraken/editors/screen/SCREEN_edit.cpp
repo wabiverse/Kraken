@@ -54,24 +54,24 @@
 WABI_NAMESPACE_BEGIN
 
 
-bool ED_screen_change(cContext *C, cScreen *screen)
+bool ED_screen_change(kContext *C, kScreen *screen)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindow *win = CTX_wm_window(C);
   WorkSpace *workspace = KKE_workspace_active_get(win->workspace_hook);
   WorkSpaceLayout *layout = KKE_workspace_layout_find(workspace, screen);
-  cScreen *screen_old = CTX_wm_screen(C);
+  kScreen *screen_old = CTX_wm_screen(C);
 
   /* Get the actual layout/screen to be activated (guaranteed to be unused, even if that means
    * having to duplicate an existing one). */
-  WorkSpaceLayout *layout_new = ED_workspace_screen_change_ensure_unused_layout(cmain,
+  WorkSpaceLayout *layout_new = ED_workspace_screen_change_ensure_unused_layout(kmain,
                                                                                 workspace,
                                                                                 layout,
                                                                                 layout,
                                                                                 win);
-  cScreen *screen_new = KKE_workspace_layout_screen_get(layout_new);
+  kScreen *screen_new = KKE_workspace_layout_screen_get(layout_new);
 
-  // screen_change_prepare(screen_old, screen_new, cmain, C, win);
+  // screen_change_prepare(screen_old, screen_new, kmain, C, win);
 
   if (screen_old != screen_new)
   {
@@ -85,7 +85,7 @@ bool ED_screen_change(cContext *C, cScreen *screen)
 }
 
 
-void ED_region_exit(cContext *C, ARegion *region)
+void ED_region_exit(kContext *C, ARegion *region)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
@@ -118,7 +118,7 @@ void ED_region_exit(cContext *C, ARegion *region)
 }
 
 
-void ED_area_exit(cContext *C, ScrArea *area)
+void ED_area_exit(kContext *C, ScrArea *area)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
@@ -141,13 +141,13 @@ void ED_area_exit(cContext *C, ScrArea *area)
   CTX_wm_area_set(C, prevsa);
 }
 
-static SdfPath make_areapath(cScreen *screen, int id)
+static SdfPath make_areapath(kScreen *screen, int id)
 {
   return SdfPath(screen->path.GetName() + "Area" + STRINGALL(id));
 }
 
 
-static int find_free_areaid(cContext *C)
+static int find_free_areaid(kContext *C)
 {
   int id = 1;
 
@@ -180,8 +180,8 @@ static int find_free_areaid(cContext *C)
   return id;
 }
 
-static ScrArea *screen_addarea_ex(cContext *C,
-                                  cScreen *screen,
+static ScrArea *screen_addarea_ex(kContext *C,
+                                  kScreen *screen,
                                   ScrAreaMap *area_map,
                                   ScrVert *bottom_left,
                                   ScrVert *top_left,
@@ -207,8 +207,8 @@ static ScrArea *screen_addarea_ex(cContext *C,
 }
 
 
-static ScrArea *screen_addarea(cContext *C,
-                               cScreen *screen,
+static ScrArea *screen_addarea(kContext *C,
+                               kScreen *screen,
                                ScrVert *left_bottom,
                                ScrVert *left_top,
                                ScrVert *right_top,
@@ -226,11 +226,11 @@ static ScrArea *screen_addarea(cContext *C,
 }
 
 
-cScreen *screen_add(cContext *C, const char *name, const GfRect2i *rect)
+kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
 {
   int id = find_free_screenid(C);
   SdfPath path(make_screenpath(name, id));
-  cScreen *screen = new cScreen(C, path);
+  kScreen *screen = new kScreen(C, path);
   screen->path = path;
   screen->winid = id;
 

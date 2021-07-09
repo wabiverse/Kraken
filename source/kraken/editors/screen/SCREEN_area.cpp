@@ -83,7 +83,7 @@ static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_al
 }
 
 
-void ED_area_newspace(cContext *C, ScrArea *area, const TfToken &type, const bool skip_region_exit)
+void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const bool skip_region_exit)
 {
   wmWindow *win = CTX_wm_window(C);
 

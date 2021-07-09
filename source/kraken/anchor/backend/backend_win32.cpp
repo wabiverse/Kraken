@@ -55,26 +55,23 @@
 #  define _WIN32_IE 0x0501 /* shipped before XP, so doesn't impose additional requirements */
 #endif
 
+#include <Dwmapi.h>
+
+#include <assert.h>
+#include <math.h>
+#include <string.h>
+
 #include <commctrl.h>
 #include <psapi.h>
 #include <shellapi.h>
 #include <shellscalingapi.h>
 #include <shlobj.h>
+#include <strsafe.h>
 #include <tlhelp32.h>
 #include <windowsx.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-#endif
-#include <dwmapi.h>
 #include <tchar.h>
-#include <windows.h>
 #include <winnt.h>
-
-#  include <tchar.h>
-#  ifndef ERROR_PROFILE_DOES_NOT_MATCH_DEVICE
-#    define ERROR_PROFILE_DOES_NOT_MATCH_DEVICE 0x7E7
-#  endif
 
 #include <cstdio>
 #include <cstring>
@@ -895,8 +892,7 @@ static void initRawInput()
 typedef BOOL(WINAPI *ANCHOR_WIN32_EnableNonClientDpiScaling)(HWND);
 
 ANCHOR_SystemWin32::ANCHOR_SystemWin32()
-  : m_win32_window(nullptr),
-    m_hasPerformanceCounter(false),
+  : m_hasPerformanceCounter(false),
     m_freq(0),
     m_start(0),
     m_lfstart(0)
@@ -1017,11 +1013,25 @@ eAnchorStatus ANCHOR_SystemWin32::getButtons(ANCHOR_Buttons &buttons) const
   return ANCHOR_SUCCESS;
 }
 
+AnchorU8 ANCHOR_SystemWin32::getNumDisplays() const
+{
+  ANCHOR_ASSERT(m_displayManager);
+  AnchorU8 numDisplays;
+  m_displayManager->getNumDisplays(numDisplays);
+  return numDisplays;
+}
+
 void ANCHOR_SystemWin32::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
-{}
+{
+  width = ::GetSystemMetrics(SM_CXSCREEN);
+  height = ::GetSystemMetrics(SM_CYSCREEN);
+}
 
 void ANCHOR_SystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
-{}
+{
+  width = ::GetSystemMetrics(SM_CXVIRTUALSCREEN);
+  height = ::GetSystemMetrics(SM_CYVIRTUALSCREEN);
+}
 
 eAnchorStatus ANCHOR_SystemWin32::init()
 {
@@ -1046,7 +1056,7 @@ eAnchorStatus ANCHOR_SystemWin32::init()
     TF_DEBUG(ANCHOR_WIN32).Msg("High Frequency Performance Timer not available\n");
   }
 
-  if (success)
+  if (success == ANCHOR_SUCCESS)
   {
     WNDCLASSW wc = {0};
     wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -1062,12 +1072,10 @@ eAnchorStatus ANCHOR_SystemWin32::init()
     }
     wc.hCursor = ::LoadCursor(0, IDC_ARROW);
     wc.hbrBackground =
-#ifdef INW32_COMPISITING
       (HBRUSH)CreateSolidBrush
-#endif
       (0x00000000);
     wc.lpszMenuName = 0;
-    wc.lpszClassName = L"ANCHOR_WindowClass";
+    wc.lpszClassName = LPCWSTR("ANCHOR_WindowClass");
 
     // Use RegisterClassEx for setting small icon
     if (::RegisterClassW(&wc) == 0)
@@ -1101,6 +1109,7 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
                                                       height,
                                                       state,
                                                       type,
+                                                      false,
                                                       (ANCHOR_WindowWin32 *)parentWindow,
                                                       is_dialog);
 
@@ -1119,11 +1128,6 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
   }
 
   return window;
-}
-
-bool ANCHOR_SystemWin32::generateWindowExposeEvents()
-{
-  return true;
 }
 
 eAnchorStatus ANCHOR_SystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
@@ -2550,6 +2554,53 @@ ANCHOR_Event *ANCHOR_SystemWin32::processWindowSizeEvent(ANCHOR_WindowWin32 *win
 /** Error if sequence is broken and doesn't finish. */
 #define UTF_ERROR_ILLSEQ (1 << 3)
 
+static size_t count_utf_8_from_16(const wchar_t *string16)
+{
+  int i;
+  size_t count = 0;
+  wchar_t u = 0;
+  if (!string16) {
+    return 0;
+  }
+
+  for (i = 0; (u = string16[i]); i++) {
+    if (u < 0x0080) {
+      count += 1;
+    }
+    else {
+      if (u < 0x0800) {
+        count += 2;
+      }
+      else {
+        if (u < 0xD800) {
+          count += 3;
+        }
+        else {
+          if (u < 0xDC00) {
+            i++;
+            if ((u = string16[i]) == 0) {
+              break;
+            }
+            if (u >= 0xDC00 && u < 0xE000) {
+              count += 4;
+            }
+          }
+          else {
+            if (u < 0xE000) {
+              /*illigal*/;
+            }
+            else {
+              count += 3;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return ++count;
+}
+
 static int conv_utf_16_to_8(const wchar_t *in16, char *out8, size_t size8)
 {
   char *out8end = out8 + size8;
@@ -2909,7 +2960,6 @@ AnchorU64 ANCHOR_SystemWin32::getMilliSeconds() const
 
 //---------------------------------------------------------------------------------------------------------
 
-const wchar_t *ANCHOR_WindowWin32::s_windowClassName = L"ANCHOR_WindowClass";
 const int ANCHOR_WindowWin32::s_maxTitleLength = 128;
 
 /* force NVidia Optimus to use dedicated graphics */
@@ -2926,23 +2976,21 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                                        AnchorU32 height,
                                        eAnchorWindowState state,
                                        eAnchorDrawingContextType type,
-                                       const bool stereoVisual,
-                                       const bool exclusive,
+                                       bool alphaBackground,
                                        ANCHOR_WindowWin32 *parentWindow,
                                        bool dialog)
-  : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
+  : ANCHOR_SystemWindow(width, height, state, false, false),
+    m_mousePresent(false),
+    m_inLiveResize(false),
     m_system(system),
     m_hDC(0),
     m_isDialog(dialog),
-    m_valid_setup(false),
-    m_invalid_window(false),
-    m_vulkan_context(nullptr),
-    m_mousePresent(false),
-    m_inLiveResize(false),
     m_hasMouseCaptured(false),
     m_hasGrabMouse(false),
     m_nPressedButtons(0),
+    m_vulkan_context(nullptr),
     m_customCursor(0),
+    m_wantAlphaBackground(alphaBackground),
     m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE),
     m_normal_state(ANCHOR_WindowStateNormal),
     m_user32(::LoadLibrary("user32.dll")),
@@ -2965,7 +3013,7 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
 
   wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
   m_hWnd = ::CreateWindowExW(extended_style,                  // window extended style
-                             s_windowClassName,               // pointer to registered class name
+                             LPCWSTR("ANCHOR_WindowClass"),   // pointer to registered class name
                              title_16,                        // pointer to window name
                              style,                           // window style
                              win_rect.left,                   // horizontal position of window
@@ -3026,8 +3074,7 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
 
   ::ShowWindow(m_hWnd, nCmdShow);
 
-#ifdef WIN32_COMPOSITING
-  if (alphaBackground && parentwindowhwnd == 0)
+  if (alphaBackground && m_parentWindowHwnd == 0)
   {
 
     HRESULT hr = S_OK;
@@ -3044,7 +3091,6 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     hr = DwmEnableBlurBehindWindow(m_hWnd, &bb);
     DeleteObject(bb.hRgnBlur);
   }
-#endif
 
   /* Force an initial paint of the window. */
   ::UpdateWindow(m_hWnd);
@@ -3060,7 +3106,61 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
 }
 
 ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
-{}
+{
+  if (m_Bar) {
+    m_Bar->SetProgressState(m_hWnd, TBPF_NOPROGRESS);
+    m_Bar->Release();
+    m_Bar = NULL;
+  }
+
+  // closeWintab();
+
+  if (m_user32) {
+    FreeLibrary(m_user32);
+    m_user32 = NULL;
+  }
+
+  if (m_customCursor) {
+    DestroyCursor(m_customCursor);
+    m_customCursor = NULL;
+  }
+
+  if (m_hWnd != NULL && m_hDC != NULL && releaseNativeHandles()) {
+    ::ReleaseDC(m_hWnd, m_hDC);
+    m_hDC = NULL;
+  }
+
+  if (m_hWnd) {
+    /* If this window is referenced by others as parent, clear that relation or windows will free
+     * the handle while we still reference it. */
+    for (ANCHOR_ISystemWindow *iter_win : m_system->getWindowManager()->getWindows()) {
+      ANCHOR_WindowWin32 *iter_winwin = (ANCHOR_WindowWin32 *)iter_win;
+      if (iter_winwin->m_parentWindowHwnd == m_hWnd) {
+        ::SetWindowLongPtr(iter_winwin->m_hWnd, GWLP_HWNDPARENT, NULL);
+        iter_winwin->m_parentWindowHwnd = 0;
+      }
+    }
+
+    // if (m_dropTarget) {
+    //   // Disable DragDrop
+    //   RevokeDragDrop(m_hWnd);
+    //   // Release our reference of the DropTarget and it will delete itself eventually.
+    //   m_dropTarget->Release();
+    //   m_dropTarget = NULL;
+    // }
+    ::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, NULL);
+    ::DestroyWindow(m_hWnd);
+    m_hWnd = 0;
+  }
+}
+
+eAnchorStatus ANCHOR_WindowWin32::releaseNativeHandles()
+{
+  m_hWnd = NULL;
+  m_hDC = NULL;
+
+  return ANCHOR_SUCCESS;
+}
 
 void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
                                                            DWORD dwStyle,
@@ -3106,14 +3206,14 @@ void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
   win_rect->top = winmax(monitor.rcWork.top, win_rect->top);
 }
 
-std::string ANCHOR_WindowWin32::getTitle() const
-{
-  return std::string("KRAKEN");
-}
-
 bool ANCHOR_WindowWin32::getValid() const
 {
   return ANCHOR_SystemWindow::getValid() && m_hWnd != 0 && m_hDC != 0;
+}
+
+HWND ANCHOR_WindowWin32::getHWND() const
+{
+  return m_hWnd;
 }
 
 void ANCHOR_WindowWin32::resetPointerPenInfo()
@@ -3161,6 +3261,27 @@ void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
     bounds.m_t = 0;
   }
 }
+
+void ANCHOR_WindowWin32::setTitle(const char *title)
+{
+  wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
+  ::SetWindowTextW(m_hWnd, (wchar_t *)title_16);
+  free(title_16);
+}
+
+std::string ANCHOR_WindowWin32::getTitle() const
+{
+  std::wstring wtitle(::GetWindowTextLengthW(m_hWnd) + 1, L'\0');
+  ::GetWindowTextW(m_hWnd, &wtitle[0], wtitle.capacity());
+
+  std::string title(count_utf_8_from_16(wtitle.c_str()) + 1, '\0');
+  conv_utf_16_to_8(wtitle.c_str(), &title[0], title.capacity());
+
+  return title;
+}
+
+void ANCHOR_WindowWin32::setIcon(const char *icon)
+{}
 
 void ANCHOR_WindowWin32::getWindowBounds(ANCHOR_Rect &bounds) const
 {
@@ -3465,6 +3586,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Platform/Renderer backends. */
+    ANCHOR_ImplWin32_Init(m_hWnd);
     ANCHOR_ImplVulkan_InitInfo init_info = {};
     init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
     init_info.PhysicalDevice = g_PhysicalDevice;
@@ -3554,6 +3676,11 @@ eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
   ANCHOR::NewFrame();
 
   return ANCHOR_SUCCESS;
+}
+
+bool ANCHOR_WindowWin32::isDialog() const
+{
+  return m_isDialog;
 }
 
 static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, ImDrawData *draw_data)
@@ -3671,16 +3798,6 @@ eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::setTitle(const char *title)
-{
-  wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
-  ::SetWindowTextW(m_hWnd, (wchar_t *)title_16);
-  free(title_16);
-}
-
-void ANCHOR_WindowWin32::setIcon(const char *icon)
-{}
-
 void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
                                         AnchorS32 inY,
                                         AnchorS32 &outX,
@@ -3701,6 +3818,33 @@ void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
   ::ClientToScreen(m_hWnd, &point);
   outX = point.x;
   outY = point.y;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::setOrder(eAnchorWindowOrder order)
+{
+  HWND hWndInsertAfter, hWndToRaise;
+
+  if (order == ANCHOR_WindowOrderBottom) {
+    hWndInsertAfter = HWND_BOTTOM;
+    hWndToRaise = ::GetWindow(m_hWnd, GW_HWNDNEXT); /* the window to raise */
+  }
+  else {
+    if (getState() == ANCHOR_WindowStateMinimized) {
+      setState(ANCHOR_WindowStateNormal);
+    }
+    hWndInsertAfter = HWND_TOP;
+    hWndToRaise = NULL;
+  }
+
+  if (::SetWindowPos(m_hWnd, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE) {
+    return ANCHOR_ERROR;
+  }
+
+  if (hWndToRaise &&
+      ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE) {
+    return ANCHOR_ERROR;
+  }
+  return ANCHOR_SUCCESS;
 }
 
 void ANCHOR_WindowWin32::lostMouseCapture()
@@ -3976,6 +4120,23 @@ eAnchorWindowState ANCHOR_WindowWin32::getState() const
     return (result & WS_CAPTION) ? ANCHOR_WindowStateMaximized : ANCHOR_WindowStateFullScreen;
   }
   return ANCHOR_WindowStateNormal;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::setProgressBar(float progress)
+{
+  /* #SetProgressValue sets state to #TBPF_NORMAL automatically. */
+  if (m_Bar && S_OK == m_Bar->SetProgressValue(m_hWnd, 10000 * progress, 10000))
+    return ANCHOR_SUCCESS;
+
+  return ANCHOR_ERROR;
+}
+
+eAnchorStatus ANCHOR_WindowWin32::endProgressBar()
+{
+  if (m_Bar && S_OK == m_Bar->SetProgressState(m_hWnd, TBPF_NOPROGRESS))
+    return ANCHOR_SUCCESS;
+
+  return ANCHOR_ERROR;
 }
 
 AnchorU16 ANCHOR_WindowWin32::getDPIHint()

@@ -203,7 +203,7 @@ WorkSpace *WM_window_get_active_workspace(const wmWindow *win)
 }
 
 
-cScreen *WM_window_get_active_screen(const wmWindow *win)
+kScreen *WM_window_get_active_screen(const wmWindow *win)
 {
   const WorkSpace *workspace = WM_window_get_active_workspace(win);
   return (ARCH_LIKELY(workspace != NULL) ? KKE_workspace_active_screen_get(win->workspace_hook) : NULL);
@@ -223,7 +223,7 @@ static void wm_window_update_eventstate(wmWindow *win)
  * the event system. */
 static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 {
-  cContext *C = (cContext *)C_void_ptr;
+  kContext *C = (kContext *)C_void_ptr;
   wmWindowManager *wm = CTX_wm_manager(C);
   eAnchorEventType type = ANCHOR::GetEventType(evt);
 
@@ -728,6 +728,17 @@ void wm_window_set_size(wmWindow *win, int width, int height)
 }
 
 
+static void wm_window_raise(wmWindow *win)
+{
+  /* Restore window if minimized */
+  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == ANCHOR_WindowStateMinimized)
+  {
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
+  }
+  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowOrderTop);
+}
+
+
 static bool wm_window_update_size_position(wmWindow *win)
 {
   ANCHOR_RectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
@@ -757,7 +768,7 @@ static bool wm_window_update_size_position(wmWindow *win)
 
 bool WM_window_is_temp_screen(const wmWindow *win)
 {
-  const cScreen *screen = WM_window_get_active_screen(win);
+  const kScreen *screen = WM_window_get_active_screen(win);
   return (screen && screen->temp != 0);
 }
 
@@ -768,7 +779,7 @@ bool WM_window_is_temp_screen(const wmWindow *win)
  * @param temp: whether this is considered a short-lived window
  * @param alignment: how this window is positioned relative to its parent
  * @return the window or NULL in case of failure. */
-wmWindow *WM_window_open(cContext *C,
+wmWindow *WM_window_open(kContext *C,
                          const char *title,
                          const char *icon,
                          int x,
@@ -780,7 +791,7 @@ wmWindow *WM_window_open(cContext *C,
                          bool dialog,
                          bool temp)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win_prev = CTX_wm_window(C);
   Scene *scene = CTX_data_scene(C);
@@ -851,7 +862,7 @@ wmWindow *WM_window_open(cContext *C,
 
   /* ----- */
 
-  cScreen *screen = WM_window_get_active_screen(win);
+  kScreen *screen = WM_window_get_active_screen(win);
 
   FormFactory(win->size, GfVec2f(GET_Z(rect) - GET_X(rect), GET_W(rect) - GET_Y(rect)));
 
@@ -901,11 +912,24 @@ wmWindow *WM_window_open(cContext *C,
     wm_window_update_size_position(win);
   }
 
-  return win;
+  /* Refresh screen dimensions, after the effective window size is known. */
+  // ED_screen_refresh(wm, win);
+
+  if (win->anchorwin) {
+    wm_window_raise(win);
+    ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, title);
+    return win;
+  }
+
+  /* In the event opening a new window fails. */
+  wm_window_close(C, wm, win);
+  CTX_wm_window_set(C, win_prev);
+
+  return nullptr;
 }
 
 
-static void wm_close_file_dialog(cContext *C, wmGenericCallback *post_action)
+static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
 {
   /**
    * TODO. */
@@ -916,7 +940,7 @@ static void wm_close_file_dialog(cContext *C, wmGenericCallback *post_action)
 }
 
 
-void wm_exit_schedule_delayed(cContext *C)
+void wm_exit_schedule_delayed(kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
@@ -927,12 +951,12 @@ void wm_exit_schedule_delayed(cContext *C)
 }
 
 
-static void wm_save_file_on_quit_dialog_callback(cContext *C, void *UNUSED(user_data))
+static void wm_save_file_on_quit_dialog_callback(kContext *C, void *UNUSED(user_data))
 {
   wm_exit_schedule_delayed(C);
 }
 
-static void wm_confirm_quit(cContext *C)
+static void wm_confirm_quit(kContext *C)
 {
   /** Save User's Work. */
   TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("WARNING: Saving without a confirmation Dialog. Overwriting existing changes.");
@@ -944,17 +968,6 @@ static void wm_confirm_quit(cContext *C)
     action->exec = (wmGenericCallbackFn)wm_save_file_on_quit_dialog_callback;
     wm_close_file_dialog(C, action);
   }
-}
-
-
-static void wm_window_raise(wmWindow *win)
-{
-  /* Restore window if minimized */
-  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == ANCHOR_WindowStateMinimized)
-  {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
-  }
-  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_kWindowOrderTop);
 }
 
 
@@ -1050,7 +1063,7 @@ int WM_window_pixels_y(const wmWindow *win)
 }
 
 
-void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win)
+void wm_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
 {
   wmWindow *win_ctx = CTX_wm_window(C);
 
@@ -1085,7 +1098,7 @@ void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win)
 
 
 /* this is event from anchor, or exit-kraken op */
-void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
+void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
 {
   Stage stage = CTX_data_stage(C);
 
@@ -1116,7 +1129,7 @@ void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win)
     }
   }
 
-  cScreen *screen = WM_window_get_active_screen(win);
+  kScreen *screen = WM_window_get_active_screen(win);
   WorkSpace *workspace = WM_window_get_active_workspace(win);
   WorkSpaceLayout *layout = KKE_workspace_active_layout_get(win->workspace_hook);
 
@@ -1164,24 +1177,24 @@ static int find_free_winid(wmWindowManager *wm)
 }
 
 
-wmWindow *wm_window_new(cContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog)
+wmWindow *wm_window_new(kContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog)
 {
   int id = find_free_winid(wm);
   wmWindow *win = new wmWindow(C, make_winpath(id));
   UNIVERSE_INSERT_WINDOW(wm, win->path, win);
   win->winid = id;
 
-  const Main *cmain = CTX_data_main(C);
+  const Main *kmain = CTX_data_main(C);
 
   /* Dialogs may have a child window as parent. Otherwise, a child must not be a parent too. */
   win->parent = (!dialog && parent && parent->parent) ? parent->parent : parent;
-  win->workspace_hook = KKE_workspace_instance_hook_create(cmain, win->winid);
+  win->workspace_hook = KKE_workspace_instance_hook_create(kmain, win->winid);
 
   return win;
 }
 
 
-wmWindow *wm_window_copy(cContext *C,
+wmWindow *wm_window_copy(kContext *C,
                          wmWindowManager *wm,
                          wmWindow *win_src,
                          const bool duplicate_layout,
@@ -1210,12 +1223,12 @@ wmWindow *wm_window_copy(cContext *C,
 }
 
 
-wmWindow *wm_window_copy_test(cContext *C,
+wmWindow *wm_window_copy_test(kContext *C,
                               wmWindow *win_src,
                               const bool duplicate_layout,
                               const bool child)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
   wmWindow *win_dst = wm_window_copy(C, wm, win_src, duplicate_layout, child);
@@ -1232,7 +1245,7 @@ wmWindow *wm_window_copy_test(cContext *C,
 }
 
 
-static int wm_window_close_exec(cContext *C, wmOperator *UNUSED(op))
+static int wm_window_close_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
@@ -1241,7 +1254,7 @@ static int wm_window_close_exec(cContext *C, wmOperator *UNUSED(op))
 }
 
 
-static int wm_window_new_exec(cContext *C, wmOperator *UNUSED(op))
+static int wm_window_new_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wmWindow *win_src = CTX_wm_window(C);
   ScrArea *area = KKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TYPE_ANY, 0);
@@ -1267,7 +1280,7 @@ static int wm_window_new_exec(cContext *C, wmOperator *UNUSED(op))
 }
 
 
-void WM_anchor_init(cContext *C)
+void WM_anchor_init(kContext *C)
 {
   /* Event handle of anchor stack. */
   ANCHOR_EventConsumerHandle consumer;
@@ -1289,7 +1302,7 @@ void WM_anchor_init(cContext *C)
 }
 
 
-void WM_window_process_events(cContext *C)
+void WM_window_process_events(kContext *C)
 {
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
@@ -1315,7 +1328,7 @@ void WM_window_swap_buffers(wmWindow *win)
  *  -----  The Window Operators. ----- */
 
 
-static int wm_window_new_main_exec(cContext *C, wmOperator *UNUSED(op))
+static int wm_window_new_main_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wmWindow *win_src = CTX_wm_window(C);
 
@@ -1325,7 +1338,7 @@ static int wm_window_new_main_exec(cContext *C, wmOperator *UNUSED(op))
 }
 
 
-static int wm_window_fullscreen_toggle_exec(cContext *C, wmOperator *UNUSED(op))
+static int wm_window_fullscreen_toggle_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wmWindow *window = CTX_wm_window(C);
 
@@ -1343,7 +1356,7 @@ static int wm_window_fullscreen_toggle_exec(cContext *C, wmOperator *UNUSED(op))
 }
 
 
-static bool wm_operator_winactive(cContext *C)
+static bool wm_operator_winactive(kContext *C)
 {
   if (CTX_wm_window(C) == NULL)
   {
@@ -1353,10 +1366,10 @@ static bool wm_operator_winactive(cContext *C)
 }
 
 
-static bool wm_operator_winactive_normal(cContext *C)
+static bool wm_operator_winactive_normal(kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
-  cScreen *screen;
+  kScreen *screen;
 
   if (win == NULL)
   {
@@ -1370,14 +1383,14 @@ static bool wm_operator_winactive_normal(cContext *C)
   return 1;
 }
 
-static int wm_exit_kraken_exec(cContext *C, wmOperator *UNUSED(op))
+static int wm_exit_kraken_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wm_exit_schedule_delayed(C);
   return OPERATOR_FINISHED;
 }
 
 
-static int wm_exit_kraken_invoke(cContext *C, wmOperator *UNUSED(op), wmEvent *UNUSED(event))
+static int wm_exit_kraken_invoke(kContext *C, wmOperator *UNUSED(op), wmEvent *UNUSED(event))
 {
   UserDef *uprefs = CTX_data_prefs(C);
 

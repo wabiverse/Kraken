@@ -302,6 +302,12 @@ enum eAnchorWindowState
   ANCHOR_WindowStateEmbedded,
 };
 
+enum eAnchorWindowOrder
+{
+  ANCHOR_WindowOrderTop = 0,
+  ANCHOR_WindowOrderBottom,
+};
+
 enum eAnchorStandardCursor
 {
   ANCHOR_StandardCursorFirstCursor = 0,
@@ -562,12 +568,6 @@ enum eAnchorTrackpadEventSubtypes
   ANCHOR_TrackpadEventSmartMagnify
 };
 
-enum eAnchorWindowOrder
-{
-  ANCHOR_kWindowOrderTop = 0,
-  ANCHOR_kWindowOrderBottom,
-};
-
 enum eAnchorDragnDropTypes
 {
   ANCHOR_DragnDropTypeUnknown = 0,
@@ -729,7 +729,7 @@ typedef void *AnchorTextureID;
 /**
  * For event handling with client applications,
  * in the case of kraken  --  ANCHOR_UserPtr is
- * assigned to the #cContext data structure. */
+ * assigned to the #kContext data structure. */
 typedef void *ANCHOR_UserPtr;
 typedef void *ANCHOR_EventDataPtr;
 
@@ -1058,6 +1058,8 @@ ANCHOR_SystemWindowHandle CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
                                              eAnchorDrawingContextType type,
                                              int vkSettings);
 
+ANCHOR_API
+AnchorU8 GetNumDisplays(ANCHOR_SystemHandle systemhandle);
 
 ANCHOR_API
 void SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title);

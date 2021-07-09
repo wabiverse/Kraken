@@ -60,9 +60,9 @@ static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *ref
 }
 
 
-void WM_main_add_notifier(cContext *C, unsigned int type, void *reference)
+void WM_main_add_notifier(kContext *C, unsigned int type, void *reference)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
   if (!wm || wm_test_duplicate_notifier(wm, type, reference))
@@ -107,7 +107,7 @@ void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, voi
   note->Push();
 }
 
-void WM_event_add_notifier(cContext *C, uint type, void *reference)
+void WM_event_add_notifier(kContext *C, uint type, void *reference)
 {
   WM_event_add_notifier_ex(CTX_wm_manager(C), CTX_wm_window(C), type, reference);
 }
@@ -233,7 +233,7 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
 }
 
 
-bool WM_operator_poll(cContext *C, wmOperatorType *ot)
+bool WM_operator_poll(kContext *C, wmOperatorType *ot)
 {
   // TF_FOR_ALL(macro, &ot->macro)
   // {
@@ -288,7 +288,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
 }
 
 
-static void wm_region_mouse_co(cContext *C, wmEvent *event)
+static void wm_region_mouse_co(kContext *C, wmEvent *event)
 {
   ARegion *region = CTX_wm_region(C);
   if (region)
@@ -308,7 +308,7 @@ static void wm_region_mouse_co(cContext *C, wmEvent *event)
 }
 
 
-static void wm_operator_finished(cContext *C, wmOperator *op, const bool repeat, const bool store)
+static void wm_operator_finished(kContext *C, wmOperator *op, const bool repeat, const bool store)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   enum
@@ -433,7 +433,7 @@ void WM_operator_free(wmOperator *op)
 }
 
 
-void wm_event_handler_ui_cancel_ex(cContext *C,
+void wm_event_handler_ui_cancel_ex(kContext *C,
                                    wmWindow *win,
                                    ARegion *region,
                                    bool reactivate_button)
@@ -460,7 +460,7 @@ void wm_event_handler_ui_cancel_ex(cContext *C,
 }
 
 
-static void wm_event_handler_ui_cancel(cContext *C)
+static void wm_event_handler_ui_cancel(kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
   ARegion *region = CTX_wm_region(C);
@@ -468,7 +468,7 @@ static void wm_event_handler_ui_cancel(cContext *C)
 }
 
 
-static int wm_operator_invoke(cContext *C,
+static int wm_operator_invoke(kContext *C,
                               wmOperatorType *ot,
                               wmEvent *event,
                               PointerUNI *properties,
@@ -671,7 +671,7 @@ static int wm_operator_invoke(cContext *C,
 }
 
 
-static int wm_operator_call_internal(cContext *C,
+static int wm_operator_call_internal(kContext *C,
                                      wmOperatorType *ot,
                                      PointerUNI *properties,
                                      ReportList *reports,
@@ -819,7 +819,7 @@ static int wm_operator_call_internal(cContext *C,
   return 0;
 }
 
-int WM_operator_name_call_ptr(cContext *C,
+int WM_operator_name_call_ptr(kContext *C,
                               wmOperatorType *ot,
                               short context,
                               PointerUNI *properties)
@@ -828,7 +828,7 @@ int WM_operator_name_call_ptr(cContext *C,
 }
 
 
-int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, PointerUNI *properties)
+int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, PointerUNI *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot)
@@ -840,7 +840,7 @@ int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, Po
 }
 
 
-void WM_event_do_refresh_wm(cContext *C)
+void WM_event_do_refresh_wm(kContext *C)
 {}
 
 

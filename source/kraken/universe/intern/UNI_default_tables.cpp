@@ -48,7 +48,7 @@ WABI_NAMESPACE_BEGIN
 /* clang-format off */
 
 
-void UNI_default_table_main_window(cContext *C)
+void UNI_default_table_main_window(kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
@@ -68,7 +68,7 @@ void UNI_default_table_main_window(cContext *C)
 }
 
 
-void UNI_default_table_user_prefs(cContext *C)
+void UNI_default_table_user_prefs(kContext *C)
 {
   UserDef *prefs = CTX_data_prefs(C);
 
@@ -77,7 +77,7 @@ void UNI_default_table_user_prefs(cContext *C)
 }
 
 
-void UNI_default_table_area_v3d(cContext *C)
+void UNI_default_table_area_v3d(kContext *C)
 {
   ScrArea *v3d = CTX_wm_area(C);
 
@@ -89,7 +89,7 @@ void UNI_default_table_area_v3d(cContext *C)
 }
 
 
-void UNI_default_table_area_outliner(cContext *C)
+void UNI_default_table_area_outliner(kContext *C)
 {
   ScrArea *outliner = CTX_wm_area(C);
 
@@ -101,9 +101,9 @@ void UNI_default_table_area_outliner(cContext *C)
 }
 
 
-void UNI_default_table_area_screen(cContext *C)
+void UNI_default_table_area_screen(kContext *C)
 {
-  cScreen *screen = CTX_wm_screen(C);
+  kScreen *screen = CTX_wm_screen(C);
 
   UNIVERSE_FOR_ALL(area, screen->areas)
   {
@@ -115,10 +115,10 @@ void UNI_default_table_area_screen(cContext *C)
 }
 
 
-void UNI_default_table_area_workspace(cContext *C)
+void UNI_default_table_area_workspace(kContext *C)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
-  cScreen *screen = CTX_wm_screen(C);
+  kScreen *screen = CTX_wm_screen(C);
 
   /** Add this screen to our default 'Layout' WorkSpace. */
   FormFactory(PROP_IFACE(workspace->name),       VALUE_IFACE(TfToken("Layout")));
@@ -126,7 +126,7 @@ void UNI_default_table_area_workspace(cContext *C)
 }
 
 
-void UNI_default_table_scene_data(cContext *C)
+void UNI_default_table_scene_data(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
 

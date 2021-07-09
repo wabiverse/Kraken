@@ -102,16 +102,11 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 
   bool processEvents(bool waitForEvent);
 
-  /**
-   * Updates the location of the cursor (location in screen coordinates).
-   * @param x: The x-coordinate of the cursor.
-   * @param y: The y-coordinate of the cursor.
-   * @return Indication of success. */
-  eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
-
   eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
 
   eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
+
+  AnchorU8 getNumDisplays() const;
 
   void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
 
@@ -189,13 +184,19 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
                                      const bool is_dialog = false,
                                      const ANCHOR_ISystemWindow *parentWindow = NULL);
 
-  bool generateWindowExposeEvents();
-
+  /**
+   * Returns the current location of the cursor (location in screen coordinates)
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
   eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
 
-  /** The vector of windows that need to be updated. */
-  // TODO std::vector<ANCHOR_WindowWin32 *> m_dirty_windows;
-  ANCHOR_WindowWin32 *m_win32_window;
+  /**
+   * Updates the location of the cursor (location in screen coordinates).
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
+  eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
 
  protected:
   /**
@@ -356,8 +357,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 {
  private:
   ANCHOR_SystemWin32 *m_system;
-  bool m_valid_setup;
-  bool m_invalid_window;
 
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
@@ -373,10 +372,14 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * HCURSOR structure of the custom cursor. */
   HCURSOR m_customCursor;
 
+  /** 
+   * Request Vulkan with alpha channel. */
+  bool m_wantAlphaBackground;
+
   /** ITaskbarList3 structure for progress bar. */
   ITaskbarList3 *m_Bar;
 
-  static const wchar_t *s_windowClassName;
+  // static wchar_t s_windowClassName;
   static const int s_maxTitleLength;
 
   /** Window handle. */
@@ -404,9 +407,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                      AnchorU32 height,
                      eAnchorWindowState state,
                      eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-                     const bool stereoVisual = false,
-                     const bool exclusive = false,
-                     ANCHOR_WindowWin32 *parentWindow = NULL,
+                     bool alphaBackground = false,
+                     ANCHOR_WindowWin32 *parentWindow = 0,
                      bool dialog = false);
 
   ~ANCHOR_WindowWin32();
@@ -415,7 +417,10 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                                          DWORD dwStyle,
                                          DWORD dwExStyle);
 
+  void setTitle(const char *title);
   std::string getTitle() const;
+
+  void setIcon(const char *icon);
 
   /**
    * Returns the window rectangle dimensions.
@@ -423,9 +428,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * relative to the upper-left corner of the screen.
    * @param bounds: The bounding rectangle of the window. */
   void getWindowBounds(ANCHOR_Rect &bounds) const;
-
-  /* Windows specific */
-  //   HWND *getHWND();
 
   ANCHOR_VulkanGPU_Surface *getVulkanSurface()
   {
@@ -437,7 +439,15 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
     m_vulkan_context = data;
   }
 
+  /**
+   * Returns indication as to whether the window is valid.
+   * @return The validity of the window. */
   bool getValid() const;
+
+  /**
+   * Access to the handle of the window.
+   * @return The handle of the window. */
+  HWND getHWND() const;
 
   void getClientBounds(ANCHOR_Rect &bounds) const;
 
@@ -451,6 +461,14 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * @return A boolean success indicator. */
   eAnchorStatus activateDrawingContext();
 
+  bool isDialog() const;
+
+  /**
+   * Removes references to native handles from this context and then returns
+   * @return ANCHOR_SUCCESS if it is OK for the parent to release the handles
+   * and ANCHOR_FAILURE if releasing the handles will interfere with sharing */
+  eAnchorStatus releaseNativeHandles();
+
   /**
    * Swaps front and back buffers of a window.
    * @return A boolean success indicator. */
@@ -460,9 +478,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                       AnchorS32 inY,
                       AnchorS32 &outX,
                       AnchorS32 &outY) const;
-
-  void setTitle(const char *title);
-  void setIcon(const char *icon);
 
   void clientToScreen(AnchorS32 inX,
                       AnchorS32 inY,
@@ -508,11 +523,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
                                WPARAM wParam,
                                LPARAM lParam);
 
-  eAnchorStatus setOrder(eAnchorWindowOrder order)
-  {
-    // TODO
-    return ANCHOR_SUCCESS;
-  }
+  eAnchorStatus setOrder(eAnchorWindowOrder order);
 
   eAnchorStatus beginFullScreen() const
   {
@@ -523,6 +534,9 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   {
     return ANCHOR_ERROR;
   }
+
+  eAnchorStatus setProgressBar(float progress);
+  eAnchorStatus endProgressBar();
 
   AnchorU16 getDPIHint();
 

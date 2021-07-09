@@ -54,7 +54,7 @@ SdfPath make_screenpath(const char *layout_name, int id)
 }
 
 
-int find_free_screenid(cContext *C)
+int find_free_screenid(kContext *C)
 {
   int id = 1;
 
@@ -70,7 +70,7 @@ int find_free_screenid(cContext *C)
 }
 
 
-bool KKE_screen_is_used(const cScreen *screen)
+bool KKE_screen_is_used(const kScreen *screen)
 {
   return (screen->winid != 0);
 }
@@ -89,7 +89,7 @@ SpaceType *KKE_spacetype_from_id(int spaceid)
 }
 
 
-ScrArea *KKE_screen_find_big_area(cScreen *screen, const int spacetype, const short min)
+ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const short min)
 {
   ScrArea *big = nullptr;
   int maxsize = 0;

@@ -30,7 +30,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-wmDrag *WM_event_start_drag(cContext *C, int icon, int type, void *poin, double value, unsigned int flags);
+wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags);
 void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
 
 WABI_NAMESPACE_END

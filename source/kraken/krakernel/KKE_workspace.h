@@ -38,37 +38,37 @@ WABI_NAMESPACE_BEGIN
 #define SETTER_ATTRS ATTR_NONNULL(1)
 /* clang-format on */
 
-WorkSpace *KKE_workspace_add(cContext *C, const char *name);
+WorkSpace *KKE_workspace_add(kContext *C, const char *name);
 
 void KKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
                                      const int winid,
                                      WorkSpace *workspace,
-                                     cScreen *screen);
+                                     kScreen *screen);
 
 void KKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
                                      const int winid,
                                      WorkSpace *workspace,
                                      WorkSpaceLayout *layout);
 
-cScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook);
-cScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout) GETTER_ATTRS;
+kScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook);
+kScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout) GETTER_ATTRS;
 
-WorkSpaceLayout *KKE_workspace_layout_add(cContext *C,
-                                          Main *cmain,
+WorkSpaceLayout *KKE_workspace_layout_add(kContext *C,
+                                          Main *kmain,
                                           WorkSpace *workspace,
-                                          cScreen *screen,
+                                          kScreen *screen,
                                           const char *name) ATTR_NONNULL();
 WorkSpaceLayout *KKE_workspace_active_layout_get(const WorkSpaceInstanceHook *hook);
-WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const cScreen *screen);
+WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const kScreen *screen);
 
-WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
-                                                  const cScreen *screen,
+WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *kmain,
+                                                  const kScreen *screen,
                                                   WorkSpace **r_workspace);
 
 void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace);
 
 WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook);
-WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *cmain, const int winid);
+WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid);
 
 
 WABI_NAMESPACE_END

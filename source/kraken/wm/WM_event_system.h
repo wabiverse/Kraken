@@ -39,20 +39,20 @@ struct wmEvent;
 
 void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata);
 wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add);
-void WM_main_add_notifier(cContext *C, unsigned int type, void *reference);
+void WM_main_add_notifier(kContext *C, unsigned int type, void *reference);
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference);
-void WM_event_add_notifier(cContext *C, uint type, void *reference);
+void WM_event_add_notifier(kContext *C, uint type, void *reference);
 void WM_event_add_mousemove(wmWindow *win);
 
-int WM_operator_name_call_ptr(cContext *C,
+int WM_operator_name_call_ptr(kContext *C,
                               wmOperatorType *ot,
                               short context,
                               PointerUNI *properties);
 
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
-int WM_operator_name_call(cContext *C, const TfToken &optoken, short context, PointerUNI *properties);
+int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, PointerUNI *properties);
 
-void WM_event_do_refresh_wm(cContext *C);
+void WM_event_do_refresh_wm(kContext *C);
 
 WABI_NAMESPACE_END

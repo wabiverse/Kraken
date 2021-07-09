@@ -87,10 +87,10 @@ struct ScrArea : public UsdUIArea, public UniverseObject
 
   std::vector<ARegion *> regions;
 
-  inline ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath);
+  inline ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };
 
-ScrArea::ScrArea(cContext *C, cScreen *prim, const SdfPath &stagepath)
+ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
     areaid(VALUE_ZERO),
     path(UsdUIArea::GetPath()),

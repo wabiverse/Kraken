@@ -80,11 +80,11 @@ struct UserDef : public UsdUIUserPref, public UniverseObject
 
   int uiflag;
 
-  inline UserDef(cContext *C,
+  inline UserDef(kContext *C,
                  const SdfPath &stagepath = SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_USERPREFS));
 };
 
-UserDef::UserDef(cContext *C, const SdfPath &stagepath)
+UserDef::UserDef(kContext *C, const SdfPath &stagepath)
   : UsdUIUserPref(KRAKEN_UNIVERSE_CREATE(C)),
     path(stagepath),
     showsave(CreateShowSavePromptAttr()),

@@ -889,7 +889,7 @@ struct wmKeyMap
 
   /* runtime */
   /** Verify if enabled in the current context, use #WM_keymap_poll instead of direct calls. */
-  bool (*poll)(cContext *);
+  bool (*poll)(kContext *);
   bool (*poll_modal_item)(const struct wmOperator *op, int value);
 
   const void *modal_items;

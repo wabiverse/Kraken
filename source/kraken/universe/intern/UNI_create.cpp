@@ -57,7 +57,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_create_stage(cContext *C)
+void UNI_create_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
 
@@ -66,13 +66,13 @@ void UNI_create_stage(cContext *C)
   CTX_data_scene_set(C, new Scene(main->stage_id.string()));
 }
 
-void UNI_destroy(cContext *C)
+void UNI_destroy(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->~UsdStage();
 }
 
-void UNI_open_stage(cContext *C)
+void UNI_open_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
@@ -80,13 +80,13 @@ void UNI_open_stage(cContext *C)
   stage->Open(main->stage_id.string());
 }
 
-void UNI_save_stage(cContext *C)
+void UNI_save_stage(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->GetRootLayer()->Save();
 }
 
-void UNI_set_defaults(cContext *C)
+void UNI_set_defaults(kContext *C)
 {
   /* ----- */
 
@@ -95,7 +95,7 @@ void UNI_set_defaults(cContext *C)
 
   /* ----- */
 
-  /** Insert into cScreen. */
+  /** Insert into kScreen. */
   // ScrArea *v3d = new ScrArea(C, screen, SdfPath("View3D"));
   // screen->areas.push_back(v3d);
 
@@ -110,7 +110,7 @@ void UNI_set_defaults(cContext *C)
   /** Outliner Creation. */
   // ScrArea *outliner = new ScrArea(C, screen, SdfPath("Outliner"));
 
-  /** Insert into cScreen. */
+  /** Insert into kScreen. */
   // screen->areas.push_back(outliner);
 
   /** CTX set Outliner. */
@@ -121,7 +121,7 @@ void UNI_set_defaults(cContext *C)
 
   /* ----- */
 
-  /** Load the cScreen defaults. */
+  /** Load the kScreen defaults. */
   // UNI_default_table_area_screen(C);
 
   /** Load the WorkSpace defaults. */

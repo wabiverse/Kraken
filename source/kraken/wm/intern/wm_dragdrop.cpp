@@ -63,7 +63,7 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
   drag->ids.push_back(drag_id);
 }
 
-wmDrag *WM_event_start_drag(cContext *C, int icon, int type, void *poin, double value, unsigned int flags)
+wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmDrag *drag = new wmDrag();

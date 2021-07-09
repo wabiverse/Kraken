@@ -50,7 +50,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-WorkSpace *ED_workspace_add(cContext *C, const char *name)
+WorkSpace *ED_workspace_add(kContext *C, const char *name)
 {
   return KKE_workspace_add(C, name);
 }

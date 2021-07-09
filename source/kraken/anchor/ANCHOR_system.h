@@ -73,6 +73,11 @@ class ANCHOR_ISystem
   virtual AnchorU64 getMilliSeconds() const = 0;
 
   /**
+   * Returns the number of displays on this system.
+   * @return The number of displays. */
+  virtual AnchorU8 getNumDisplays() const = 0;
+
+  /**
    * Returns the dimensions of the main display on this system.
    * @return The dimension of the main display. */
   virtual void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;

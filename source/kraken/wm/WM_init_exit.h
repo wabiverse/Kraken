@@ -29,10 +29,10 @@
 WABI_NAMESPACE_BEGIN
 
 void WM_init_default_styles();
-void WM_init(cContext *C, int argc, const char **argv);
-void WM_main(cContext *C);
-void wm_add_default(struct Main *cmain, cContext *C);
-void WM_check(cContext *C);
+void WM_init(kContext *C, int argc, const char **argv);
+void WM_main(kContext *C);
+void wm_add_default(struct Main *kmain, kContext *C);
+void WM_check(kContext *C);
 
 enum eWmModes
 {

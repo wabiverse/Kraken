@@ -51,7 +51,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_main(cContext *C)
+void WM_main(kContext *C)
 {
   while (1)
   {
@@ -75,13 +75,13 @@ void WM_main(cContext *C)
 }
 
 
-void wm_add_default(Main *cmain, cContext *C)
+void wm_add_default(Main *kmain, kContext *C)
 {
   wmWindowManager *wm = new wmWindowManager();
   wmWindow *win;
-  cScreen *screen = CTX_wm_screen(C);
+  kScreen *screen = CTX_wm_screen(C);
   WorkSpace *workspace;
-  WorkSpaceLayout *layout = KKE_workspace_layout_find_global(cmain, screen, &workspace);
+  WorkSpaceLayout *layout = KKE_workspace_layout_find_global(kmain, screen, &workspace);
 
   CTX_wm_manager_set(C, wm);
   win = wm_window_new(C, wm, NULL, false);
@@ -95,7 +95,7 @@ void wm_add_default(Main *cmain, cContext *C)
     }
 
     if(!screen) {
-      screen = new cScreen(C, workspace->path.AppendPath(SdfPath("Screen")));
+      screen = new kScreen(C, workspace->path.AppendPath(SdfPath("Screen")));
     }
 
     layout->screen = screen;
@@ -106,6 +106,28 @@ void wm_add_default(Main *cmain, cContext *C)
 
   wm->winactive = win;
   wm->file_saved = 1;
+
+  /* ----- */
+
+  CTX_wm_window_set(C, win);
+  UNI_default_table_main_window(C);
+
+  /**
+   * Now that window is properly initialized,
+   * activate it, and signify that the changes
+   * have been saved ##WM_window_anchorwindows_ensure(),
+   * called within the ##WM_check() seen below,
+   * verifies a title, icon, and various other
+   * required fields are properly setup and are
+   * not empty. Additionally, it allocates a GPU
+   * surface, backend window, as well as backend
+   * system to handle event processing and GUI
+   * display. */
+
+  WM_check(C);
+
+  /* ----- */
+
   wm_window_make_drawable(wm, win);
 
   /**
@@ -116,28 +138,7 @@ void wm_add_default(Main *cmain, cContext *C)
 
   /**
    * Create default cube scene. */
-  UNI_default_table_scene_data(C);
-
-  /* ----- */
-
-  CTX_wm_window_set(C, win);
-  UNI_default_table_main_window(C);
-
-  WM_check(C);
-
-  /**
-   * Now that window is properly initialized,
-   * activate it, and signify that the changes
-   * have been saved ##WM_window_anchorwindows_ensure(),
-   * called within the ##WM_check() seen above,
-   * verifies a title, icon, and various other
-   * required fields are properly setup and are
-   * not empty. Additionally, it allocates a GPU
-   * surface, backend window, as well as backend
-   * system to handle event processing and GUI
-   * display. */
-
-  /* ----- */
+  UNI_default_table_scene_data(C);  
 
   /**
    * Save DPI factor, which ANCHOR properly
@@ -161,9 +162,9 @@ void wm_add_default(Main *cmain, cContext *C)
 }
 
 
-void WM_check(cContext *C)
+void WM_check(kContext *C)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
   /* WM context. */
@@ -197,7 +198,7 @@ void WM_check(cContext *C)
   /* Case: fileread. */
   /* Note: this runs in background mode to set the screen context cb. */
   // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
-  //   ED_screens_init(cmain, wm);
+  //   ED_screens_init(kmain, wm);
   //   wm->initialized |= WM_WINDOW_IS_INIT;
   // }
 }

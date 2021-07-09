@@ -37,20 +37,20 @@ struct ScrArea;
 struct Main;
 struct ARegion;
 struct Scene;
-struct cScreen;
+struct kScreen;
 struct UserDef;
 struct wmWindowManager;
 struct wmWindow;
 struct WorkSpace;
-struct cContext;
+struct kContext;
 
 /**
  * Kraken Context:
  *  - Creation.
  *  - Destruction. */
 
-cContext *CTX_create(void);
-void CTX_free(cContext *C);
+kContext *CTX_create(void);
+void CTX_free(kContext *C);
 
 /**
  * Kraken Context Getters:
@@ -59,16 +59,16 @@ void CTX_free(cContext *C);
  *  - Scene data.
  *  - Stage data. */
 
-Main *CTX_data_main(cContext *C);
-wmWindowManager *CTX_wm_manager(cContext *C);
-wmWindow *CTX_wm_window(cContext *C);
-WorkSpace *CTX_wm_workspace(cContext *C);
-cScreen *CTX_wm_screen(cContext *C);
-ScrArea *CTX_wm_area(cContext *C);
-ARegion *CTX_wm_region(cContext *C);
-Scene *CTX_data_scene(cContext *C);
-Stage CTX_data_stage(cContext *C);
-UserDef *CTX_data_prefs(cContext *C);
+Main *CTX_data_main(kContext *C);
+wmWindowManager *CTX_wm_manager(kContext *C);
+wmWindow *CTX_wm_window(kContext *C);
+WorkSpace *CTX_wm_workspace(kContext *C);
+kScreen *CTX_wm_screen(kContext *C);
+ScrArea *CTX_wm_area(kContext *C);
+ARegion *CTX_wm_region(kContext *C);
+Scene *CTX_data_scene(kContext *C);
+Stage CTX_data_stage(kContext *C);
+UserDef *CTX_data_prefs(kContext *C);
 
 /**
  * Kraken Context Setters:
@@ -77,18 +77,18 @@ UserDef *CTX_data_prefs(cContext *C);
  *  - Scene data.
  *  - Stage data. */
 
-void CTX_data_main_set(cContext *C, Main *cmain);
-void CTX_wm_manager_set(cContext *C, wmWindowManager *wm);
-void CTX_wm_screen_set(cContext *C, cScreen *screen);
-void CTX_wm_area_set(cContext *C, ScrArea *area);
-void CTX_wm_region_set(cContext *C, ARegion *region);
-void CTX_wm_menu_set(cContext *C, ARegion *menu);
-void CTX_wm_window_set(cContext *C, wmWindow *win);
-void CTX_data_scene_set(cContext *C, Scene *cscene);
-void CTX_data_prefs_set(cContext *C, UserDef *uprefs);
+void CTX_data_main_set(kContext *C, Main *kmain);
+void CTX_wm_manager_set(kContext *C, wmWindowManager *wm);
+void CTX_wm_screen_set(kContext *C, kScreen *screen);
+void CTX_wm_area_set(kContext *C, ScrArea *area);
+void CTX_wm_region_set(kContext *C, ARegion *region);
+void CTX_wm_menu_set(kContext *C, ARegion *menu);
+void CTX_wm_window_set(kContext *C, wmWindow *win);
+void CTX_data_scene_set(kContext *C, Scene *cscene);
+void CTX_data_prefs_set(kContext *C, UserDef *uprefs);
 
-void CTX_wm_operator_poll_msg_clear(cContext *C);
-void CTX_wm_operator_poll_msg_set(cContext *C, const char *msg);
+void CTX_wm_operator_poll_msg_clear(kContext *C);
+void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
 
 struct cContextDataResult
 {
@@ -98,14 +98,14 @@ struct cContextDataResult
   short type; /* 0: normal, 1: seq */
 };
 
-typedef int (*cContextDataCallback)(const cContext *C,
+typedef int (*cContextDataCallback)(const kContext *C,
                                     const char *member,
                                     cContextDataResult *result);
 
 struct cContextPollMsgParams
 {
-  char *(*get_fn)(cContext *C, void *user_data);
-  void (*free_fn)(cContext *C, void *user_data);
+  char *(*get_fn)(kContext *C, void *user_data);
+  void (*free_fn)(kContext *C, void *user_data);
   void *user_data;
 };
 

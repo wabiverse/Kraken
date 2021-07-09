@@ -94,10 +94,10 @@ struct ARegion : public UsdUIArea, public UniverseObject
 
   struct ARegionType *type;
 
-  inline ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath);
+  inline ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };
 
-ARegion::ARegion(cContext *C, cScreen *prim, const SdfPath &stagepath)
+ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
   : UsdUIArea(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
     path(UsdUIArea::GetPath()),
     name(CreateNameAttr()),

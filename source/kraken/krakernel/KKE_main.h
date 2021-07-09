@@ -49,7 +49,7 @@ struct Main : public UniverseObject
   std::string kraken_version_decimal;
 
   std::vector<struct WorkSpace *> workspaces;
-  std::vector<struct cScreen *> screens;
+  std::vector<struct kScreen *> screens;
 };
 
 struct Global
@@ -78,10 +78,10 @@ enum ckeErrorType
 };
 
 Main KKE_main_init(void);
-void KKE_kraken_main_init(cContext *C, int argc, const char **argv);
+void KKE_kraken_main_init(kContext *C, int argc, const char **argv);
 void KKE_kraken_globals_init();
 void KKE_kraken_plugins_init(void);
-void KKE_kraken_python_init(cContext *C);
+void KKE_kraken_python_init(kContext *C);
 ckeStatusCode KKE_main_runtime(int backend);
 void KKE_kraken_enable_debug_codes(void);
 

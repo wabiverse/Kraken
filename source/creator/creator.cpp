@@ -41,7 +41,7 @@ WABI_NAMESPACE_USING
 
 int main(int argc, const char **argv)
 {
-  cContext *C;
+  kContext *C;
 
   /* Environment variables. */
   CREATOR_kraken_env_init();

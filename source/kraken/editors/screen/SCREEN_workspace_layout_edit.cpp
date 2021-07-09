@@ -49,9 +49,9 @@
 WABI_NAMESPACE_BEGIN
 
 
-static cScreen *screen_fullscreen_find_associated_normal_screen(const Main *cmain, cScreen *screen)
+static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL(screen_iter, cmain->screens)
+  UNIVERSE_FOR_ALL(screen_iter, kmain->screens)
   {
     if ((screen_iter != screen))
     {
@@ -67,22 +67,22 @@ static cScreen *screen_fullscreen_find_associated_normal_screen(const Main *cmai
 }
 
 
-static bool screen_is_used_by_other_window(const wmWindow *win, const cScreen *screen)
+static bool screen_is_used_by_other_window(const wmWindow *win, const kScreen *screen)
 {
   return KKE_screen_is_used(screen) && (screen->winid != win->winid);
 }
 
 
-WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *cmain,
+WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *kmain,
                                                                  WorkSpace *workspace,
                                                                  WorkSpaceLayout *layout_new,
                                                                  const WorkSpaceLayout *layout_fallback_base,
                                                                  wmWindow *win)
 {
   WorkSpaceLayout *layout_temp = layout_new;
-  cScreen *screen_temp = KKE_workspace_layout_screen_get(layout_new);
+  kScreen *screen_temp = KKE_workspace_layout_screen_get(layout_new);
 
-  screen_temp = screen_fullscreen_find_associated_normal_screen(cmain, screen_temp);
+  screen_temp = screen_fullscreen_find_associated_normal_screen(kmain, screen_temp);
   layout_temp = KKE_workspace_layout_find(workspace, screen_temp);
 
   // if (screen_is_used_by_other_window(win, screen_temp))
@@ -95,7 +95,7 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *cmain,
   //   if (!layout_temp || screen_is_used_by_other_window(win, screen_temp))
   //   {
   //     /* Fallback solution: duplicate layout. */
-  //     layout_temp = ED_workspace_layout_duplicate(cmain, workspace, layout_fallback_base, win);
+  //     layout_temp = ED_workspace_layout_duplicate(kmain, workspace, layout_fallback_base, win);
   //   }
   // }
 
@@ -103,20 +103,20 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *cmain,
 }
 
 
-WorkSpaceLayout *ED_workspace_layout_add(cContext *C,
+WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
                                          WorkSpace *workspace,
                                          wmWindow *win,
                                          const char *name)
 {
-  cScreen *screen;
+  kScreen *screen;
   GfRect2i screen_rect;
 
   WM_window_screen_rect_calc(win, &screen_rect);
   screen = screen_add(C, name, &screen_rect);
 
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
 
-  return KKE_workspace_layout_add(C, cmain, workspace, screen, name);
+  return KKE_workspace_layout_add(C, kmain, workspace, screen, name);
 }
 
 WABI_NAMESPACE_END

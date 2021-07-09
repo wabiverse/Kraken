@@ -63,7 +63,7 @@ ScrVert *screen_geom_vertex_add_ex(ScrAreaMap *area_map, short x, short y)
 }
 
 
-ScrVert *screen_geom_vertex_add(cScreen *screen, short x, short y)
+ScrVert *screen_geom_vertex_add(kScreen *screen, short x, short y)
 {
   return screen_geom_vertex_add_ex(AREAMAP_FROM_SCREEN(screen), x, y);
 }
@@ -82,7 +82,7 @@ ScrEdge *screen_geom_edge_add_ex(ScrAreaMap *area_map, ScrVert *v1, ScrVert *v2)
 }
 
 
-ScrEdge *screen_geom_edge_add(cScreen *screen, ScrVert *v1, ScrVert *v2)
+ScrEdge *screen_geom_edge_add(kScreen *screen, ScrVert *v1, ScrVert *v2)
 {
   return screen_geom_edge_add_ex(AREAMAP_FROM_SCREEN(screen), v1, v2);
 }

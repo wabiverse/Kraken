@@ -49,11 +49,11 @@ WABI_NAMESPACE_BEGIN
  *  -----  Python Init & Exit. ----- */
 
 
-void WPY_python_init(cContext *C)
+void WPY_python_init(kContext *C)
 {
-  Main *cmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
 
-  setenv("PYTHONPATH", CHARSTR(cmain->python_path), true);
+  setenv("PYTHONPATH", CHARSTR(kmain->python_path), true);
 
   // TfPyInitialize();
 }

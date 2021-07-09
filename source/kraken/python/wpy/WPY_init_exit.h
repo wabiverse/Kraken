@@ -42,7 +42,7 @@ WABI_NAMESPACE_BEGIN
  *  -----  Python Init & Exit. ----- */
 
 
-void WPY_python_init(cContext *C);
+void WPY_python_init(kContext *C);
 void WPY_python_exit(void);
 
 

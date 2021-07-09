@@ -97,8 +97,8 @@ static std::string kraken_get_version_decimal()
 
 Main *KKE_main_new(void)
 {
-  Main *cmain = new Main();
-  return cmain;
+  Main *kmain = new Main();
+  return kmain;
 }
 
 void KKE_kraken_globals_init()
@@ -120,7 +120,7 @@ void KKE_kraken_globals_init()
   G.main->stage_id = kraken_startup_file_init();
 }
 
-void KKE_kraken_main_init(cContext *C, int argc, const char **argv)
+void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 {
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||

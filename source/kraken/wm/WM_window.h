@@ -44,7 +44,7 @@ struct wmGenericUserData
   bool use_free;
 };
 
-typedef void (*wmGenericCallbackFn)(cContext *C, void *user_data);
+typedef void (*wmGenericCallbackFn)(kContext *C, void *user_data);
 
 struct wmGenericCallback
 {
@@ -53,8 +53,8 @@ struct wmGenericCallback
   wmGenericUserDataFreeFn free_user_data;
 };
 
-wmWindow *wm_window_new(cContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog);
-wmWindow *WM_window_open(cContext *C,
+wmWindow *wm_window_new(kContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog);
+wmWindow *WM_window_open(kContext *C,
                          const char *title,
                          const char *icon,
                          int x,
@@ -65,13 +65,13 @@ wmWindow *WM_window_open(cContext *C,
                          TfToken alignment,
                          bool dialog,
                          bool temp);
-void wm_window_close(cContext *C, wmWindowManager *wm, wmWindow *win);
+void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win);
 void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win);
 bool WM_window_is_temp_screen(const wmWindow *win);
 
-void WM_anchor_init(cContext *C);
+void WM_anchor_init(kContext *C);
 void WM_anchor_exit(void);
-void WM_window_process_events(cContext *C);
+void WM_window_process_events(kContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
 void WM_window_anchorwindows_ensure(wmWindowManager *wm);
@@ -92,7 +92,7 @@ void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 
 /** Cleanup. */
-void wm_exit_schedule_delayed(cContext *C);
-void wm_quit_with_optional_confirmation_prompt(cContext *C, wmWindow *win);
+void wm_exit_schedule_delayed(kContext *C);
+void wm_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win);
 
 WABI_NAMESPACE_END

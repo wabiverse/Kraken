@@ -47,7 +47,7 @@
 WABI_NAMESPACE_BEGIN
 
 
-void WM_init(cContext *C, int argc, const char **argv)
+void WM_init(kContext *C, int argc, const char **argv)
 {
   WM_anchor_init(C);
   WM_init_cursor_data();
@@ -55,8 +55,8 @@ void WM_init(cContext *C, int argc, const char **argv)
   WM_operators_init(C);
   WM_operators_register(C);
 
-  Main *cmain = CTX_data_main(C);
-  wm_add_default(cmain, C);
+  Main *kmain = CTX_data_main(C);
+  wm_add_default(kmain, C);
 }
 
 

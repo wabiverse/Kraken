@@ -37,7 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 struct WorkSpaceLayout
 {
-  cScreen *screen;
+  kScreen *screen;
   TfToken name;
 
   WorkSpaceLayout()
@@ -91,10 +91,10 @@ struct WorkSpace : public UsdUIWorkspace, public UniverseObject
 
   WorkSpaceDataRelationVector hook_layout_relations;
 
-  inline WorkSpace(cContext *C, const SdfPath &stagepath);
+  inline WorkSpace(kContext *C, const SdfPath &stagepath);
 };
 
-WorkSpace::WorkSpace(cContext *C, const SdfPath &stagepath)
+WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
   : UsdUIWorkspace(KRAKEN_UNIVERSE_CREATE(C)),
     path(UsdUIWorkspace::GetPath()),
     name(CreateNameAttr(DEFAULT_TOKEN("Workspace"))),

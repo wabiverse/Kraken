@@ -46,7 +46,7 @@ WABI_NAMESPACE_BEGIN
 
 
 static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
-                                                   const cScreen *screen)
+                                                   const kScreen *screen)
 {
   UNIVERSE_FOR_ALL(layout, workspace->layouts)
   {
@@ -122,9 +122,9 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
 }
 
 
-static bool workspaces_is_screen_used(const Main *cmain, cScreen *screen)
+static bool workspaces_is_screen_used(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
   {
     if (workspace_layout_find_exec(workspace, screen))
     {
@@ -158,7 +158,7 @@ static void workspace_layout_name_set(WorkSpace *workspace,
   FormFactory(workspace->name, layout->name);
 }
 
-WorkSpace *KKE_workspace_add(cContext *C, const char *name)
+WorkSpace *KKE_workspace_add(kContext *C, const char *name)
 {
   SdfPath path(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES));
   WorkSpace *new_workspace = new WorkSpace(C, path.AppendPath(SdfPath(name)));
@@ -166,8 +166,8 @@ WorkSpace *KKE_workspace_add(cContext *C, const char *name)
   return new_workspace;
 }
 
-WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
-                                                  const cScreen *screen,
+WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *kmain,
+                                                  const kScreen *screen,
                                                   WorkSpace **r_workspace)
 {
   WorkSpaceLayout *layout;
@@ -177,7 +177,7 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
     *r_workspace = nullptr;
   }
 
-  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
   {
     if ((layout = workspace_layout_find_exec(workspace, screen)))
     {
@@ -194,15 +194,15 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *cmain,
 }
 
 
-WorkSpaceLayout *KKE_workspace_layout_add(cContext *C,
-                                          Main *cmain,
+WorkSpaceLayout *KKE_workspace_layout_add(kContext *C,
+                                          Main *kmain,
                                           WorkSpace *workspace,
-                                          cScreen *screen,
+                                          kScreen *screen,
                                           const char *name)
 {
   WorkSpaceLayout *layout = new WorkSpaceLayout();
 
-  KLI_assert(!workspaces_is_screen_used(cmain, screen));
+  KLI_assert(!workspaces_is_screen_used(kmain, screen));
   layout->screen = screen;
   layout->screen->winid = find_free_screenid(C);
   layout->screen->path = make_screenpath(name, layout->screen->winid);
@@ -219,7 +219,7 @@ WorkSpaceLayout *KKE_workspace_active_layout_get(const WorkSpaceInstanceHook *ho
 }
 
 
-WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const cScreen *screen)
+WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const kScreen *screen)
 {
   WorkSpaceLayout *layout = workspace_layout_find_exec(workspace, screen);
   if (layout)
@@ -239,7 +239,7 @@ WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const cSc
 }
 
 
-cScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook)
+kScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook)
 {
   return hook->act_layout->screen;
 }
@@ -258,7 +258,7 @@ void KKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
 void KKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
                                      const int winid,
                                      WorkSpace *workspace,
-                                     cScreen *screen)
+                                     kScreen *screen)
 {
   /* we need to find the WorkspaceLayout that wraps this screen */
   WorkSpaceLayout *layout = KKE_workspace_layout_find(hook->active, screen);
@@ -266,12 +266,12 @@ void KKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
 }
 
 
-WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *cmain, const int winid)
+WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid)
 {
   WorkSpaceInstanceHook *hook = new WorkSpaceInstanceHook();
 
   /* set an active screen-layout for each possible window/workspace combination */
-  UNIVERSE_FOR_ALL(workspace, cmain->workspaces)
+  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
   {
     UNIVERSE_FOR_ALL(layout, workspace->layouts)
     {
@@ -301,7 +301,7 @@ void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
   }
 }
 
-cScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
+kScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
 {
   return layout->screen;
 }

@@ -104,13 +104,13 @@ void WM_operator_properties_create_ptr(PointerUNI *prop_ptr, wmOperatorType *ot)
   CreationFactory::PTR::New(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_WM), ot->uprops, prop_ptr);
 }
 
-void WM_operators_init(cContext *C)
+void WM_operators_init(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   global_ops_hash = new RHashOp();
 }
 
-void WM_operators_register(cContext *C)
+void WM_operators_register(kContext *C)
 {
   WM_window_operators_register();
 }

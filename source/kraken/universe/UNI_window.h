@@ -106,13 +106,13 @@ struct wmWindow : public UsdUIWindow, public UniverseObject
 
   ScrAreaMap global_areas;
 
-  inline wmWindow(cContext *C, const SdfPath &stagepath);
+  inline wmWindow(kContext *C, const SdfPath &stagepath);
 
-  inline wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath);
+  inline wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath);
 };
 
 
-wmWindow::wmWindow(cContext *C, const SdfPath &stagepath)
+wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
   : UsdUIWindow(KRAKEN_UNIVERSE_CREATE(C)),
     path(stagepath),
     parent(NULL),
@@ -139,7 +139,7 @@ wmWindow::wmWindow(cContext *C, const SdfPath &stagepath)
     workspace_hook(nullptr)
 {}
 
-wmWindow::wmWindow(cContext *C, wmWindow *prim, const SdfPath &stagepath)
+wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
   : UsdUIWindow(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
     path(UsdUIWindow::GetPath()),
     parent(prim),

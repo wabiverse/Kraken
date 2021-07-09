@@ -3800,6 +3800,13 @@ AnchorU64 ANCHOR::GetMilliSeconds(ANCHOR_SystemHandle systemhandle)
   return system->getMilliSeconds();
 }
 
+AnchorU8 ANCHOR::GetNumDisplays(ANCHOR_SystemHandle systemhandle)
+{
+  ANCHOR_ISystem *system = (ANCHOR_ISystem *)systemhandle;
+
+  return system->getNumDisplays();
+}
+
 ANCHOR_SystemWindowHandle ANCHOR::CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
                                                      ANCHOR_SystemWindowHandle parent_windowhandle,
                                                      const char *title,

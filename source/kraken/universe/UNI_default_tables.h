@@ -31,12 +31,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_default_table_main_window(cContext *C);
-void UNI_default_table_user_prefs(cContext *C);
-void UNI_default_table_area_v3d(cContext *C);
-void UNI_default_table_area_outliner(cContext *C);
-void UNI_default_table_area_screen(cContext *C);
-void UNI_default_table_area_workspace(cContext *C);
-void UNI_default_table_scene_data(cContext *C);
+void UNI_default_table_main_window(kContext *C);
+void UNI_default_table_user_prefs(kContext *C);
+void UNI_default_table_area_v3d(kContext *C);
+void UNI_default_table_area_outliner(kContext *C);
+void UNI_default_table_area_screen(kContext *C);
+void UNI_default_table_area_workspace(kContext *C);
+void UNI_default_table_scene_data(kContext *C);
 
 WABI_NAMESPACE_END
