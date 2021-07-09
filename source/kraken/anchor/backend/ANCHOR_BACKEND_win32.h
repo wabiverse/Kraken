@@ -398,6 +398,13 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   std::string getTitle() const;
 
+  /**
+   * Returns the window rectangle dimensions.
+   * The dimensions are given in screen coordinates that are
+   * relative to the upper-left corner of the screen.
+   * @param bounds: The bounding rectangle of the window. */
+  void getWindowBounds(ANCHOR_Rect &bounds) const;
+
   /* Windows specific */
   //   HWND *getHWND();
 

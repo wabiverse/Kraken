@@ -32,6 +32,9 @@
 #define winmax(a, b) (((a) > (b)) ? (a) : (b))
 #define winmin(a, b) (((a) < (b)) ? (a) : (b))
 
+#define VK_USE_PLATFORM_WIN32_KHR
+
+#include "ANCHOR_BACKEND_vulkan.h"
 #include "ANCHOR_BACKEND_win32.h"
 #include "ANCHOR_Rect.h"
 #include "ANCHOR_api.h"
@@ -40,7 +43,13 @@
 #include "ANCHOR_event.h"
 #include "ANCHOR_window.h"
 
+#include <vulkan/vulkan.h>
+
+#include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/diagnostic.h>
+#include <wabi/imaging/hgiVulkan/diagnostic.h>
+#include <wabi/imaging/hgiVulkan/hgi.h>
+#include <wabi/imaging/hgiVulkan/instance.h>
 
 #ifndef _WIN32_IE
 #  define _WIN32_IE 0x0501 /* shipped before XP, so doesn't impose additional requirements */
@@ -73,6 +82,35 @@ typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
 #endif
 
 WABI_NAMESPACE_USING
+
+/* clang-format off */
+
+/**
+ * PIXAR HYDRA GRAPHICS INTERFACE. */
+static HgiVulkan         *g_PixarHydra      = nullptr;
+static HgiVulkanInstance *g_PixarVkInstance = nullptr;
+
+/**
+ * HYDRA RENDERING PARAMS. */
+static UsdApolloRenderParams g_HDPARAMS_Apollo;
+
+/**
+ * ANCHOR VULKAN GLOBALS. */
+static VkAllocationCallbacks   *g_Allocator      = NULL;
+static VkInstance               g_Instance       = VK_NULL_HANDLE;
+static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
+static VkDevice                 g_Device         = VK_NULL_HANDLE;
+static uint32_t                 g_QueueFamily    = (uint32_t)-1;
+static VkQueue                  g_Queue          = VK_NULL_HANDLE;
+static VkDebugReportCallbackEXT g_DebugReport    = VK_NULL_HANDLE;
+static VkPipelineCache          g_PipelineCache  = VK_NULL_HANDLE;
+static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
+
+static ANCHOR_VulkanGPU_Surface  g_MainWindowData;
+static uint32_t                  g_MinImageCount    = 2;
+static bool                      g_SwapChainRebuild = false;
+
+/* clang-format on */
 
 struct ANCHOR_ImplWin32_Data
 {
@@ -3094,11 +3132,287 @@ void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
   }
 }
 
+void ANCHOR_WindowWin32::getWindowBounds(ANCHOR_Rect &bounds) const
+{
+  RECT rect;
+  ::GetWindowRect(m_hWnd, &rect);
+  bounds.m_b = rect.bottom;
+  bounds.m_l = rect.left;
+  bounds.m_r = rect.right;
+  bounds.m_t = rect.top;
+}
+
+static void check_vk_result(VkResult err)
+{
+  if (err == 0)
+    return;
+  TF_CODING_ERROR("[vulkan] Error: VkResult = %d\n", err);
+  if (err < 0)
+    abort();
+}
+
+static void SetupVulkan()
+{
+  VkResult err;
+
+  /**
+   * Setup VULKAN extensions. */
+  std::vector<const char *> extensions {
+    "VK_KHR_win32_surface",
+    VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
+    VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME,
+    VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+  };
+
+  /**
+   * Create Vulkan Instance. */
+  {
+    VkInstanceCreateInfo create_info = {};
+
+    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+
+    create_info.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    create_info.ppEnabledExtensionNames = extensions.data();
+
+    /**
+     * Create Vulkan Instance. */
+    err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
+    g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
+    check_vk_result(err);
+  }
+
+  /**
+   * Select GPU. */
+  {
+    uint32_t gpu_count;
+    err = vkEnumeratePhysicalDevices(g_PixarVkInstance->GetVulkanInstance(), &gpu_count, NULL);
+    check_vk_result(err);
+    ANCHOR_ASSERT(gpu_count > 0);
+
+    VkPhysicalDevice *gpus = (VkPhysicalDevice *)malloc(sizeof(VkPhysicalDevice) * gpu_count);
+    err = vkEnumeratePhysicalDevices(g_PixarVkInstance->GetVulkanInstance(), &gpu_count, gpus);
+    check_vk_result(err);
+
+    /**
+     * If a number >1 of GPUs got reported, find discrete GPU if present,
+     * or use first one available. This covers most common cases (multi-gpu
+     * & integrated+dedicated graphics).
+     *
+     * TODO: Handle more complicated setups (multiple dedicated GPUs). */
+    int use_gpu = 0;
+    for (int i = 0; i < (int)gpu_count; i++)
+    {
+
+      VkPhysicalDeviceProperties properties;
+      vkGetPhysicalDeviceProperties(gpus[i], &properties);
+      if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+      {
+        use_gpu = i;
+        break;
+      }
+    }
+
+    g_PhysicalDevice = gpus[use_gpu];
+    free(gpus);
+  }
+
+  /**
+   * Select graphics queue family. */
+  {
+    uint32_t count;
+    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
+    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) *
+                                                                        count);
+    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
+    for (uint32_t i = 0; i < count; i++)
+      if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+      {
+        g_QueueFamily = i;
+        break;
+      }
+    free(queues);
+    ANCHOR_ASSERT(g_QueueFamily != (uint32_t)-1);
+  }
+
+  /**
+   * Create Logical Device (with 1 queue). */
+  {
+    int device_extension_count = 1;
+    const char *device_extensions[] = {"VK_KHR_swapchain"};
+    const float queue_priority[] = {1.0f};
+    VkDeviceQueueCreateInfo queue_info[1] = {};
+    queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queue_info[0].queueFamilyIndex = g_QueueFamily;
+    queue_info[0].queueCount = 1;
+    queue_info[0].pQueuePriorities = queue_priority;
+    VkDeviceCreateInfo create_info = {};
+    create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    create_info.queueCreateInfoCount = sizeof(queue_info) / sizeof(queue_info[0]);
+    create_info.pQueueCreateInfos = queue_info;
+    create_info.enabledExtensionCount = device_extension_count;
+    create_info.ppEnabledExtensionNames = device_extensions;
+    err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
+    check_vk_result(err);
+    vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
+  }
+
+  /**
+   * Create Descriptor Pool. */
+  {
+    /* clang-format off */
+    VkDescriptorPoolSize pool_sizes[] = {
+      {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
+      {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
+      {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
+      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
+    };
+    /* clang-format on */
+    VkDescriptorPoolCreateInfo pool_info = {};
+    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.pPoolSizes = pool_sizes;
+    err = vkCreateDescriptorPool(g_Device, &pool_info, g_Allocator, &g_DescriptorPool);
+    check_vk_result(err);
+  }
+}
+
+static void SetFont()
+{
+  ANCHOR_IO &io = ANCHOR::GetIO();
+  io.Fonts->AddFontDefault();
+
+  const static std::string exe_path = TfGetPathName(ArchGetExecutablePath());
+
+  /* Gotham Font. */
+  const static std::string gm_ttf("datafiles/fonts/GothamPro.ttf");
+  const static char *gm_path = TfStringCatPaths(exe_path, gm_ttf).c_str();
+  io.Fonts->AddFontFromFileTTF(gm_path, 11.0f);
+
+  /* Dankmono Font. */
+  const static std::string dm_ttf("datafiles/fonts/dankmono.ttf");
+  const static char *dm_path = TfStringCatPaths(exe_path, dm_ttf).c_str();
+  io.Fonts->AddFontFromFileTTF(dm_path, 12.0f);
+
+  /* San Francisco Font (Default). */
+  const static std::string sf_ttf("datafiles/fonts/SFProText-Medium.ttf");
+  const static char *sf_path = TfStringCatPaths(exe_path, sf_ttf).c_str();
+  io.FontDefault = io.Fonts->AddFontFromFileTTF(sf_path, 14.0f);
+}
+
+static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface, int width, int height)
+{
+  wd->Surface = surface;
+
+  /**
+   * Check for WSI support. */
+  VkBool32 res;
+  vkGetPhysicalDeviceSurfaceSupportKHR(g_PhysicalDevice, g_QueueFamily, wd->Surface, &res);
+  if (res != VK_TRUE)
+  {
+    fprintf(stderr, "Error no WSI support on physical device 0\n");
+    exit(-1);
+  }
+
+  /**
+   * Select Surface Format. */
+  /* clang-format off */
+  const VkFormat requestSurfaceImageFormat[] = {
+    VK_FORMAT_B8G8R8A8_UNORM,
+    VK_FORMAT_R8G8B8A8_UNORM,
+    VK_FORMAT_B8G8R8_UNORM,
+    VK_FORMAT_R8G8B8_UNORM
+  };
+  /* clang-format on */
+  const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+
+  wd->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(
+    g_PhysicalDevice,
+    wd->Surface,
+    requestSurfaceImageFormat,
+    (size_t)ANCHOR_ARRAYSIZE(requestSurfaceImageFormat),
+    requestSurfaceColorSpace);
+
+  /**
+   * Render at maximum possible FPS. */
+  if (HgiVulkanIsMaxFPSEnabled())
+  {
+
+    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Rendering at maximum possible frames per second.\n");
+
+    /* clang-format off */
+    VkPresentModeKHR present_modes[] = {
+      /** Removes screen tearing. */
+      VK_PRESENT_MODE_MAILBOX_KHR,
+      /** Present frames immediately. */
+      VK_PRESENT_MODE_IMMEDIATE_KHR,
+      /** Required for presentation. */
+      VK_PRESENT_MODE_FIFO_KHR
+    };
+    /* clang-format on */
+
+    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
+      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+  }
+  else
+  { /** Throttled FPS ~75FPS */
+
+    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Throttled maximum frames per second.\n");
+
+    /* clang-format off */
+    VkPresentModeKHR present_modes[] = {
+      /** Required for presentation. */
+      VK_PRESENT_MODE_FIFO_KHR
+    };
+    /* clang-format on */
+
+    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
+      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+  }
+
+  TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Selected PresentMode = %d\n", wd->PresentMode);
+
+  /**
+   * Create SwapChain, RenderPass, Framebuffer, etc. */
+  ANCHOR_ASSERT(g_MinImageCount >= 2);
+  ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
+                                          g_PhysicalDevice,
+                                          g_Device,
+                                          wd,
+                                          g_QueueFamily,
+                                          g_Allocator,
+                                          width,
+                                          height,
+                                          g_MinImageCount);
+}
+
 void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 {
-  if (type == ANCHOR_DrawingContextTypeVulkan) {
-    uint32_t extensions_count = 0;
+  if (type == ANCHOR_DrawingContextTypeVulkan)
+  { 
+    SetupVulkan();
+
+    VkWin32SurfaceCreateInfoKHR createInfo = {};
+    createInfo.hwnd = m_hWnd;
+
+    VkSurfaceKHR surface;
+    if (vkCreateWin32SurfaceKHR(g_PixarVkInstance->GetVulkanInstance(), &createInfo, nullptr, &surface) != VK_SUCCESS) {
+      throw std::runtime_error("CRITICAL: Failed to create window surface!");
+    }    
+    
+    ANCHOR_Rect winrect;
+    getWindowBounds(winrect);
+
     m_vulkan_context = new ANCHOR_VulkanGPU_Surface();
+    SetupVulkanWindow(m_vulkan_context, surface, winrect.getWidth(), winrect.getHeight());
 
     /**
      * Setup ANCHOR context. */
@@ -3121,20 +3435,70 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Platform/Renderer backends. */
-    // ANCHOR_ImplVulkan_InitInfo init_info = {};
-    // init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
-    // init_info.PhysicalDevice = g_PhysicalDevice;
-    // init_info.Device = g_Device;
-    // init_info.QueueFamily = g_QueueFamily;
-    // init_info.Queue = g_Queue;
-    // init_info.PipelineCache = g_PipelineCache;
-    // init_info.DescriptorPool = g_DescriptorPool;
-    // init_info.Allocator = g_Allocator;
-    // init_info.MinImageCount = g_MinImageCount;
-    // init_info.ImageCount = m_vulkan_context->ImageCount;
-    // init_info.CheckVkResultFn = check_vk_result;
-    // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);    
+    ANCHOR_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
+    init_info.PhysicalDevice = g_PhysicalDevice;
+    init_info.Device = g_Device;
+    init_info.QueueFamily = g_QueueFamily;
+    init_info.Queue = g_Queue;
+    init_info.PipelineCache = g_PipelineCache;
+    init_info.DescriptorPool = g_DescriptorPool;
+    init_info.Allocator = g_Allocator;
+    init_info.MinImageCount = g_MinImageCount;
+    init_info.ImageCount = m_vulkan_context->ImageCount;
+    init_info.CheckVkResultFn = check_vk_result;
+    ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
+
+    /**
+     * Create Pixar Hydra Graphics Interface. */
+    HdDriver driver;
+    HgiUniquePtr hgi = HgiUniquePtr(g_PixarHydra);
+    driver.name = HgiTokens->renderDriver;
+    driver.driver = VtValue(hgi.get());
+
+    /**
+     * Setup Pixar Driver & Engine. */
+    ANCHOR::GetPixarDriver().name = driver.name;
+    ANCHOR::GetPixarDriver().driver = driver.driver;
+
+    SetFont();
+    /**
+     * Upload Fonts. */
+    {
+      /**
+       * Use any command queue. */
+      VkCommandPool command_pool = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
+      VkCommandBuffer command_buffer = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
+
+      VkResult err = vkResetCommandPool(g_Device, command_pool, 0);
+      check_vk_result(err);
+      VkCommandBufferBeginInfo begin_info = {};
+      begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+      begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+      err = vkBeginCommandBuffer(command_buffer, &begin_info);
+      check_vk_result(err);
+
+      ANCHOR_ImplVulkan_CreateFontsTexture(command_buffer);
+
+      VkSubmitInfo end_info = {};
+      end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+      end_info.commandBufferCount = 1;
+      end_info.pCommandBuffers = &command_buffer;
+      err = vkEndCommandBuffer(command_buffer);
+      check_vk_result(err);
+      err = vkQueueSubmit(g_Queue, 1, &end_info, VK_NULL_HANDLE);
+      check_vk_result(err);
+
+      err = vkDeviceWaitIdle(g_Device);
+      check_vk_result(err);
+      ANCHOR_ImplVulkan_DestroyFontUploadObjects();
+    }
   }
+
+  /**
+   * TODO: DX12 Backend
+   * - Compare with the Vulkan Implementation.
+   * - Will need a new Hgi::HgiDXD12 */
 }
 
 eAnchorStatus ANCHOR_WindowWin32::swapBuffers()

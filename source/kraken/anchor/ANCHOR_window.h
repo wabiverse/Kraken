@@ -155,6 +155,12 @@ class ANCHOR_ISystemWindow
   virtual std::string getTitle() const = 0;
 
   /**
+   * Returns the window rectangle dimensions.
+   * These are screen coordinates.
+   * @param bounds: The bounding rectangle of the window. */
+  virtual void getWindowBounds(ANCHOR_Rect &bounds) const = 0;
+
+  /**
    * Returns the visibility state of the cursor.
    * @return The visibility state of the cursor. */
   virtual bool getCursorVisibility() const = 0;
