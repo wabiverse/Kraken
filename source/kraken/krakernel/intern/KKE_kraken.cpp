@@ -112,12 +112,12 @@ void KKE_kraken_globals_init()
   G.main->exe_path = kraken_exe_path_init();
   G.main->temp_dir = kraken_system_tempdir_path();
 
-  G.main->datafiles_path = kraken_datafiles_path_init(G);
-  G.main->python_path = kraken_python_path_init(G);
-  G.main->icons_path = kraken_icon_path_init(G);
-  G.main->styles_path = kraken_styles_path_init(G);
-  G.main->stage_id = kraken_startup_file_init(G);
   G.main->kraken_version_decimal = kraken_get_version_decimal();
+
+  G.main->datafiles_path = kraken_datafiles_path_init();
+  G.main->python_path = kraken_python_path_init();
+  G.main->icons_path = kraken_icon_path_init();
+  G.main->stage_id = kraken_startup_file_init();
 }
 
 void KKE_kraken_main_init(cContext *C, int argc, const char **argv)

@@ -40,7 +40,6 @@ struct Main : public UniverseObject
 
   std::string exe_path;
   std::string temp_dir;
-  std::string styles_path;
   std::string icons_path;
   std::string python_path;
   std::string datafiles_path;

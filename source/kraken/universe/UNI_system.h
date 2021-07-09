@@ -39,9 +39,6 @@ struct SystemPaths
   /** System Temporary Directory, where we create files at. */
   char temp_dir[MAX_SYSTEM_FILE_PATH];
 
-  /** Styles Path, where kraken GUI stylesheet resides. */
-  char styles_path[MAX_SYSTEM_FILE_PATH];
-
   /** Icons Path, where kraken icons reside. */
   char icons_path[MAX_SYSTEM_FILE_PATH];
 

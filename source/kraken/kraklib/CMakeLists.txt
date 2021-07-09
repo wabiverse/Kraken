@@ -1,6 +1,8 @@
 set(INC
   .
-  ../../../.
+  ../../../. # Pixar USD
+  ../krakernel
+  ../universe
   ../editors/include
 )
 
@@ -40,6 +42,7 @@ set(INC_SYS
 
 list(APPEND LIB
   krakenverse
+  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

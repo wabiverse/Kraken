@@ -44,7 +44,6 @@ enum eWmKernelPaths
 {
   EXE_PATH = 0,
   DATAFILES_PATH,
-  STYLES_PATH,
   ICONS_PATH,
   PROJECT_FILE,
 

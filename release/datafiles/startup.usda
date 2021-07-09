@@ -1,5 +1,7 @@
 #usda 1.0
 (
+    colorConfiguration = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/datafiles/colormanagement/config.ocio@
+    colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
     upAxis = "Z"
 )

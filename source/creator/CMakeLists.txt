@@ -1069,13 +1069,23 @@ endif()
 # -----------------------------------------------------------------------------
 # Generic Install, for all targets
 
-if(UNIX AND WITH_ARNOLD)
-  install(
-    DIRECTORY
-      ${LIBDIR}/python/arnold
-    DESTINATION
-      ${TARGETDIR_VER}/python/lib/python3.9/site-packages
-  )
+# ARNOLD PYTHON MODULE
+if(WITH_ARNOLD)
+  if(UNIX)
+    install(
+      DIRECTORY
+        ${LIBDIR}/python/arnold
+      DESTINATION
+        ${TARGETDIR_VER}/python/lib/python3.9/site-packages
+    )
+  elseif(WIN32)
+    install(
+      DIRECTORY
+        ${LIBDIR}/arnold/python/arnold/
+      DESTINATION
+        ${TARGETDIR_VER}/python/lib/site-packages/arnold
+    )  
+  endif()
 endif()
 
 if(DEFINED KRAKEN_TEXT_FILES_DESTINATION)
@@ -1202,13 +1212,21 @@ else()
 endif()
 
 # -----------------------------------------------------------------------------
-# Ember Graphics Engine
+# Color Management (OCIO)
 
-# install(
-#   DIRECTORY
-#     ${CMAKE_SOURCE_DIR}/source/kraken/draw/engines/ember/resources/
-#   DESTINATION ${TARGETDIR_VER}/datafiles/usd/usdEmber/resources
-# )
+if(UNIX)
+  install(
+    DIRECTORY
+      ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement/
+    DESTINATION "/usr/local/${TARGETDIR_VER}/datafiles/colormanagement"
+  )
+else()
+  install(
+    DIRECTORY
+      ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement/
+    DESTINATION ${TARGETDIR_VER}/datafiles/colormanagement
+  )
+endif()
 
 # -----------------------------------------------------------------------------
 # Setup link libs

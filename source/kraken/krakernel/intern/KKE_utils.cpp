@@ -23,6 +23,7 @@
  */
 
 #include "KKE_utils.h"
+#include "KKE_main.h"
 
 
 WABI_NAMESPACE_BEGIN
@@ -33,41 +34,43 @@ std::string kraken_exe_path_init()
   return TfGetPathName(ArchGetExecutablePath());
 }
 
-std::string kraken_datafiles_path_init(Global KERNEL_GLOBALS)
+std::string kraken_datafiles_path_init()
 {
 #ifdef _WIN32
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, KERNEL_GLOBALS.main->kraken_version_decimal + "/datafiles/");
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/");
 #else
   /**
    * On Linux, datafiles directory lies outside of BIN
    * ex. BIN DATAFILES INCLUDE LIB PYTHON */
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, "../datafiles/");
+  return STRCAT(G.main->exe_path, "../datafiles/");
 #endif
 }
 
-std::string kraken_python_path_init(Global KERNEL_GLOBALS)
+std::string kraken_python_path_init()
 {
 #ifdef _WIN32
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, KERNEL_GLOBALS.main->kraken_version_decimal + "../python/lib/");
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/python/lib/");
 #else
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, "../python/lib/python3.9/site-packages");
+  return STRCAT(G.main->exe_path, "../python/lib/python3.9/site-packages");
 #endif
 }
 
-std::string kraken_icon_path_init(Global KERNEL_GLOBALS)
+std::string kraken_icon_path_init()
 {
-  /* Ends with '/' to indicate a directory. */
-  return STRCAT(KERNEL_GLOBALS.main->datafiles_path, "icons/");
+#ifdef _WIN32
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/icons/");
+#else
+  return STRCAT(G.main->exe_path, "../datafiles/icons/");
+#endif
 }
 
-std::string kraken_styles_path_init(Global KERNEL_GLOBALS)
+std::string kraken_startup_file_init()
 {
-  return STRCAT(KERNEL_GLOBALS.main->datafiles_path, "styles/");
-}
-
-std::string kraken_startup_file_init(Global KERNEL_GLOBALS)
-{
-  return STRCAT(KERNEL_GLOBALS.main->exe_path, "startup.usda");
+#ifdef _WIN32
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usd");
+#else
+  return STRCAT(G.main->exe_path, "../datafiles/startup.usd");
+#endif
 }
 
 std::string kraken_system_tempdir_path()

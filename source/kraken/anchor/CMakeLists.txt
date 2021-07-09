@@ -1,8 +1,8 @@
 set(INC
   .
+  ../../../. # Pixar USD
   ./backend
   ./intern
-  ../../../.
   ../krakernel
   ../kraklib
 )

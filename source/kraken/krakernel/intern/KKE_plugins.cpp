@@ -38,9 +38,8 @@ WABI_NAMESPACE_BEGIN
 
 void KKE_kraken_plugins_init()
 {
-  PlugRegistry::GetInstance().RegisterPlugins(TfStringCatPaths(G.main->datafiles_path, "krakenverse/"));
-  PlugRegistry::GetInstance().RegisterPlugins(
-    TfStringCatPaths(G.main->datafiles_path, "plugin/krakenverse/"));
+  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "krakenverse/"));
+  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "plugin/krakenverse/"));
 
   printf("::: KRAKENVERSE | INITIALIZED :::\n\n");
 }

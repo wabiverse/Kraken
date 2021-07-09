@@ -37,6 +37,7 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usdGeom/metrics.h>
 #include <wabi/usd/usdLux/domeLight.h>
+#include <wabi/imaging/hdx/tokens.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -134,10 +135,22 @@ Scene::Scene(const std::string &identifier, const TfToken &stageUpAxis, eSceneLo
     upAxis(stageUpAxis),
     loadSet(loadingSet)
 {
-  stage->GetSessionLayer();
+  /**
+   * Default Stage Up-Axis to Z-Up
+   * AKA Blender-Up. */
   stage->SetMetadata(UsdGeomTokens->upAxis, upAxis);
-  stage->GetRootLayer()->SetDocumentation(
-    std::string("Kraken v" + TfStringify(KRAKEN_VERSION_MAJOR) + "." + TfStringify(KRAKEN_VERSION_MINOR)));
+
+  /**
+   * Add Kraken Version number. */
+  stage->GetRootLayer()->SetDocumentation(std::string("Kraken v" +
+                                                      TfStringify(KRAKEN_VERSION_MAJOR) + "." +
+                                                      TfStringify(KRAKEN_VERSION_MINOR)));
+  /**
+   * Setup Default Color Management with OCIO,
+   * and pointed to the same OCIO config that
+   * Blender uses. */
+  stage->SetColorConfiguration(SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
+  stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
 }
 
 WABI_NAMESPACE_END

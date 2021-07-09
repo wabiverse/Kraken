@@ -102,7 +102,7 @@ function(wabi_python_bin BIN_NAME)
     if(UNIX)
         set(outfile /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
     elseif(WIN32)
-        set(outfile ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
+        set(outfile ${TARGETDIR_VER}/python/lib/site-packages/wabi/${BIN_NAME})
     endif()
 
     # /wabipythonsubst will be replaced with the full path to the configured
@@ -388,7 +388,7 @@ function(wabi_setup_python)
     if(UNIX)
         _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
     elseif(WIN32)
-        _get_install_dir("${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
+        _get_install_dir("${TARGETDIR_VER}/python/lib/site-packages/wabi" installPrefix)
     endif()
 
     if(WIN32)
@@ -437,6 +437,12 @@ function (wabi_create_test_module MODULE_NAME)
     set(initPyFile ${tm_SOURCE_DIR}/${MODULE_NAME}__init__.py)
     set(plugInfoFile ${tm_SOURCE_DIR}/${MODULE_NAME}_plugInfo.json)
 
+    if(WIN32)
+        set(PY_SITE_PACKAGES ${TARGETDIR_VER}/python/lib/site-packages/wabi/${MODULE_NAME})
+    elseif(UNIX)
+        set(PY_SITE_PACKAGES ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME})
+    endif()
+
     # XXX -- We shouldn't have to install to run tests.
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${initPyFile}")
         install(
@@ -445,7 +451,7 @@ function (wabi_create_test_module MODULE_NAME)
             RENAME
                 __init__.py
             DESTINATION
-                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME}
+                tests/${tm_INSTALL_PREFIX}/${PY_SITE_PACKAGES}
         )
     endif()
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${plugInfoFile}")
@@ -455,7 +461,7 @@ function (wabi_create_test_module MODULE_NAME)
             RENAME
                 plugInfo.json
             DESTINATION
-                tests/${tm_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME}
+                tests/${tm_INSTALL_PREFIX}/${PY_SITE_PACKAGES}
         )
     endif()
 endfunction() # wabi_create_test_module
@@ -794,7 +800,11 @@ function(wabi_register_test TEST_NAME)
     # Ensure that Python imports the Python files built by this build.
     # On Windows convert backslash to slash and don't change semicolons
     # to colons.
-    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages;$ENV{PYTHONPATH}")
+    if(WIN32)
+        set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/site-packages;$ENV{PYTHONPATH}")
+    elseif(UNIX)
+        set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages;$ENV{PYTHONPATH}")
+    endif()
     if(WIN32)
         string(REGEX REPLACE "\\\\" "/" _testPythonPath "${_testPythonPath}")
     else()

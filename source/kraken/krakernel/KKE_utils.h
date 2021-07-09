@@ -37,11 +37,10 @@ WABI_NAMESPACE_BEGIN
 std::string kraken_exe_path_init(void);
 std::string kraken_system_tempdir_path(void);
 
-std::string kraken_datafiles_path_init(Global KERNEL_GLOBALS);
-std::string kraken_python_path_init(Global KERNEL_GLOBALS);
-std::string kraken_icon_path_init(Global KERNEL_GLOBALS);
-std::string kraken_styles_path_init(Global KERNEL_GLOBALS);
-std::string kraken_startup_file_init(Global KERNEL_GLOBALS);
+std::string kraken_datafiles_path_init(void);
+std::string kraken_python_path_init(void);
+std::string kraken_icon_path_init(void);
+std::string kraken_startup_file_init(void);
 
 typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
 

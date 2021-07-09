@@ -1,6 +1,6 @@
 set(INC
   .
-  ../../../.
+  ../../../. # Pixar USD
   ../editors/include
   ../krakernel
   ../kraklib

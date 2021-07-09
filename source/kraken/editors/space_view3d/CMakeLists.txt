@@ -1,6 +1,6 @@
 set(INC
   .
-  ../../../../.
+  ../../../../. # Pixar USD
   ../include/.
   ../../anchor
   ../../kraklib
