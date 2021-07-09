@@ -201,7 +201,7 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
    * @return The validity of the window. */
   virtual bool getValid() const
   {
-    return true;
+    return (ANCHOR::GetCurrentContext() != NULL);
   }
 
   /**
