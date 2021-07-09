@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    colorConfiguration = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/datafiles/colormanagement/config.ocio@
+    colorConfiguration = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
     upAxis = "Z"
@@ -27,7 +27,7 @@ def "WabiAnimationStudios"
 
                     def Area "LayoutScreen1Area1"
                     {
-                        uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
+                        uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/1.50/datafiles/icons/kraken-desktop.png@
                         uniform token ui:area:name = "Area"
                         uniform float2 ui:area:pos = (0, 0)
                         uniform float2 ui:area:size = (1, 1)
@@ -41,7 +41,7 @@ def "WabiAnimationStudios"
                 uniform token ui:window:alignment = "alignAbsolute"
                 uniform token ui:window:cursor = "default"
                 uniform float ui:window:dpi = 1
-                uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
+                uniform asset ui:window:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/Debug/1.50/datafiles/icons/kraken-desktop.png@
                 uniform float ui:window:linewidth = 1
                 uniform float ui:window:pixelsz = 1
                 uniform float2 ui:window:pos = (0, 0)
