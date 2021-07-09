@@ -87,7 +87,7 @@ void wm_add_default(Main *cmain, cContext *C)
   win = wm_window_new(C, wm, NULL, false);
 
   if(!workspace) {
-    workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES) + "Layout"));
+    workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
 
     if(!layout) {
       layout = new WorkSpaceLayout();
@@ -95,7 +95,7 @@ void wm_add_default(Main *cmain, cContext *C)
     }
 
     if(!screen) {
-      screen = new cScreen(C, workspace->path.AppendPath(SdfPath("LayoutScreen")));
+      screen = new cScreen(C, workspace->path.AppendPath(SdfPath("Screen")));
     }
 
     layout->screen = screen;
@@ -119,6 +119,9 @@ void wm_add_default(Main *cmain, cContext *C)
   UNI_default_table_scene_data(C);
 
   /* ----- */
+
+  CTX_wm_window_set(C, win);
+  UNI_default_table_main_window(C);
 
   WM_check(C);
 
