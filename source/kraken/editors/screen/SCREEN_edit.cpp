@@ -141,9 +141,9 @@ void ED_area_exit(cContext *C, ScrArea *area)
   CTX_wm_area_set(C, prevsa);
 }
 
-static SdfPath make_areapath(const char *sa_name, int id)
+static SdfPath make_areapath(cScreen *screen, int id)
 {
-  return SdfPath(sa_name + STRINGALL(id));
+  return SdfPath(screen->path.GetName() + "Area" + STRINGALL(id));
 }
 
 
@@ -190,7 +190,7 @@ static ScrArea *screen_addarea_ex(cContext *C,
                                   const TfToken &spacetype)
 {
   int id = find_free_areaid(C);
-  ScrArea *area = new ScrArea(C, screen, make_areapath("Area", id));
+  ScrArea *area = new ScrArea(C, screen, make_areapath(screen, id));
   area->areaid = id;
 
   area->v1 = bottom_left;
@@ -228,7 +228,7 @@ static ScrArea *screen_addarea(cContext *C,
 
 static SdfPath make_screenpath(const char *layout_name, int id)
 {
-  SdfPath sdf_layout(SdfPath(layout_name + STRINGALL(id)));
+  SdfPath sdf_layout(SdfPath(layout_name + STRINGALL("Screen") + STRINGALL(id)));
   return SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(sdf_layout);
 }
 

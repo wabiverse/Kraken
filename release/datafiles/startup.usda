@@ -14,12 +14,12 @@ def "Kraken"
             prepend rel ui:workspace:screen = </Kraken/Workspaces/Layout1>
         }
 
-        def Screen "Layout1"
+        def Screen "LayoutScreen1"
         {
             uniform token ui:screen:alignment = "none"
-            prepend rel ui:screen:areas = </Kraken/Workspaces/Layout1/Area1>
+            prepend rel ui:screen:areas = </Kraken/Workspaces/LayoutScreen1/LayoutScreen1Area1>
 
-            def Area "Area1"
+            def Area "LayoutScreen1Area1"
             {
                 uniform asset ui:area:icon = @c:/Users/tyler/dev/build_KRAKEN_Debug/bin/datafiles/icons/kraken-desktop.png@
                 uniform token ui:area:name = "Area"
