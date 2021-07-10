@@ -34,7 +34,8 @@
 # define VK_USE_PLATFORM_WIN32_KHR
 # include <vulkan/vulkan.h>
 
-# include "wabi/imaging/hgiVulkan/vulkan.h"
+# include <wabi/imaging/hgiVulkan/vulkan.h>
+# include <wabi/imaging/hgiVulkan/capabilities.h>
 
 # define WIN32_LEAN_AND_MEAN
 # include <ole2.h>  // for drag-n-drop
@@ -404,23 +405,9 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   /**
    * Vulkan device objects. */
-  VkPhysicalDevice m_vkPhysicalDevice;
-  VkDevice m_vkDevice;
-  std::vector<VkExtensionProperties> m_vkExtensions;
-  uint32_t m_vkGfxsQueueFamilyIndex;
+  wabi::HgiVulkan *m_hgi;
   wabi::HgiVulkanCommandQueue *m_commandQueue;
-  wabi::HgiVulkanCapabilities *m_capabilities;
   wabi::HgiVulkanPipelineCache *m_pipelineCache;
-
-  /**
-   * Device extension function pointers */
-  PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR = 0;
-  PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = 0;
-  PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = 0;
-  PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT = 0;
-  PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = 0;
-  PFN_vkQueueBeginDebugUtilsLabelEXT vkQueueBeginDebugUtilsLabelEXT = 0;
-  PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT = 0;
 
  public:
   ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
@@ -462,13 +449,13 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
     return m_vulkan_context;
   }
 
+  int getMinImageCount();
+
   ANCHOR_VulkanGPU_Surface *updateVulkanSurface(ANCHOR_VulkanGPU_Surface *data)
   {
     m_vulkan_context = data;
     return m_vulkan_context;
   }
-
-  bool IsSupportedExtension(const char *extensionName) const;
 
   /**
    * Returns indication as to whether the window is valid.
@@ -583,7 +570,12 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
 
+  /**
+   * Vulkan device objects. */
   VmaAllocator m_vmaAllocator;
+  VkPhysicalDevice m_vkPhysicalDevice;
+  VkDevice m_vkDevice;
+  uint32_t m_vkGfxsQueueFamilyIndex;
 };
 
 
