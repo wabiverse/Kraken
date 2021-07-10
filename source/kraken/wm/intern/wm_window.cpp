@@ -116,18 +116,6 @@ void wm_cursor_position_get(wmWindow *win, int *r_x, int *r_y)
 }
 
 
-static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool activate)
-{
-  KLI_assert((wm->windrawable == NULL) && (wm->windrawable == win));
-
-  wm->windrawable = win;
-  if (activate) {
-    ANCHOR::ActivateWindowDrawingContext((ANCHOR_SystemWindowHandle)win->anchorwin);
-  }
-  // GPU_context_active_set(win->gpuctx);
-}
-
-
 static void wm_window_set_dpi(const wmWindow *win)
 {
   float win_scale = FormFactory(win->scale);
@@ -159,6 +147,18 @@ static void wm_window_set_dpi(const wmWindow *win)
 
   /* update font drawing */
   ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
+}
+
+
+static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool activate)
+{
+  KLI_assert((wm->windrawable == NULL) && (wm->windrawable != win));
+
+  wm->windrawable = win;
+  if (activate) {
+    ANCHOR::ActivateWindowDrawingContext((ANCHOR_SystemWindowHandle)win->anchorwin);
+  }
+  // GPU_context_active_set(win->gpuctx);
 }
 
 
@@ -492,21 +492,22 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
   /* ----- */
 
-  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
-                                                                   (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
-                                                                   CHARALL(win_title),
-                                                                   CHARALL(win_icon.GetAssetPath()),
-                                                                   GET_X(win_pos),
-                                                                   GET_Y(win_pos),
-                                                                   GET_X(win_size),
-                                                                   GET_Y(win_size),
-                                                                   ANCHOR_WindowStateFullScreen,
-                                                                   is_dialog,
-                                                                   ANCHOR_DrawingContextTypeVulkan,
-                                                                   0);
-  if (anchorwin)
+  ANCHOR_SystemWindowHandle anchorwin = nullptr;
+  anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
+                                         (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
+                                         CHARALL(win_title),
+                                         CHARALL(win_icon.GetAssetPath()),
+                                         GET_X(win_pos),
+                                         GET_Y(win_pos),
+                                         GET_X(win_size),
+                                         GET_Y(win_size),
+                                         ANCHOR_WindowStateFullScreen,
+                                         is_dialog,
+                                         ANCHOR_DrawingContextTypeVulkan,
+                                         0);
+  if (anchorwin != NULL)
   {
-    win->anchorwin = anchorwin;
+    win->anchorwin = (void*)anchorwin;
   }
 }
 

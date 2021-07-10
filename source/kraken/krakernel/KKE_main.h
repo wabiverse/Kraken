@@ -39,6 +39,7 @@ struct Main : public UniverseObject
   std::string build_hash;
 
   std::string exe_path;
+  std::string fonts_path;
   std::string temp_dir;
   std::string icons_path;
   std::string python_path;

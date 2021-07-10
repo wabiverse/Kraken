@@ -55,6 +55,15 @@ std::string kraken_python_path_init()
 #endif
 }
 
+std::string kraken_fonts_path_init()
+{
+#ifdef _WIN32
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/fonts/");
+#else
+  return STRCAT(G.main->exe_path, "../datafiles/fonts/");
+#endif
+}
+
 std::string kraken_icon_path_init()
 {
 #ifdef _WIN32

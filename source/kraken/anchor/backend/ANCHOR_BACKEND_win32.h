@@ -379,7 +379,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** ITaskbarList3 structure for progress bar. */
   ITaskbarList3 *m_Bar;
 
-  // static wchar_t s_windowClassName;
+  static const wchar_t *s_windowClassName;
   static const int s_maxTitleLength;
 
   /** Window handle. */
@@ -429,6 +429,9 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * @param bounds: The bounding rectangle of the window. */
   void getWindowBounds(ANCHOR_Rect &bounds) const;
 
+  void SetupVulkan();
+  void SetupVulkanWindow();
+
   ANCHOR_VulkanGPU_Surface *getVulkanSurface()
   {
     return m_vulkan_context;
@@ -437,6 +440,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   ANCHOR_VulkanGPU_Surface *updateVulkanSurface(ANCHOR_VulkanGPU_Surface *data)
   {
     m_vulkan_context = data;
+    return m_vulkan_context;
   }
 
   /**
@@ -468,6 +472,9 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * @return ANCHOR_SUCCESS if it is OK for the parent to release the handles
    * and ANCHOR_FAILURE if releasing the handles will interfere with sharing */
   eAnchorStatus releaseNativeHandles();
+
+  void FrameRender(ImDrawData *draw_data);
+  void FramePresent(void);
 
   /**
    * Swaps front and back buffers of a window.

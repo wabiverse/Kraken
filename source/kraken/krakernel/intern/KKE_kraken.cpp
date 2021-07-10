@@ -115,6 +115,7 @@ void KKE_kraken_globals_init()
   G.main->kraken_version_decimal = kraken_get_version_decimal();
 
   G.main->datafiles_path = kraken_datafiles_path_init();
+  G.main->fonts_path = kraken_fonts_path_init();
   G.main->python_path = kraken_python_path_init();
   G.main->icons_path = kraken_icon_path_init();
   G.main->stage_id = kraken_startup_file_init();

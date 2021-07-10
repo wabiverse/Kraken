@@ -5,6 +5,7 @@ set(INC
   ./intern
   ../krakernel
   ../kraklib
+  ../universe
 )
 
 # ------------------------------------ SHARED BACKENDS -----
@@ -90,6 +91,7 @@ set(INC_SYS
 
 set(LIB
   krakenverse
+  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
