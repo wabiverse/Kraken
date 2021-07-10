@@ -27,11 +27,16 @@
 #include "KKE_main.h"
 
 #include "ANCHOR_debug_codes.h"
+
 #include "WM_debug_codes.h"
 
+#include <wabi/base/tf/diagnostic.h>
+#include <wabi/base/tf/envSetting.h>
+#include <wabi/base/tf/setenv.h>
+
+#include <wabi/imaging/hgiVulkan/diagnostic.h>
 
 WABI_NAMESPACE_BEGIN
-
 
 void KKE_kraken_enable_debug_codes()
 {

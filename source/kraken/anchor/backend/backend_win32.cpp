@@ -49,6 +49,7 @@
 
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/diagnostic.h>
+#include <wabi/base/tf/envSetting.h>
 #include <wabi/imaging/hgiVulkan/diagnostic.h>
 #include <wabi/imaging/hgiVulkan/hgi.h>
 #include <wabi/imaging/hgiVulkan/instance.h>
@@ -3373,6 +3374,14 @@ void ANCHOR_WindowWin32::SetupVulkan()
 
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
+    if (HgiVulkanIsDebugEnabled())
+    {
+      instance_exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+      const char *debugLayers[] = {"VK_LAYER_KHRONOS_validation"};
+      create_info.ppEnabledLayerNames = debugLayers;
+      create_info.enabledLayerCount = (uint32_t)TfArraySize(debugLayers);
+    }
+
     create_info.ppEnabledExtensionNames = instance_exts.data();
     create_info.enabledExtensionCount = (uint32_t)instance_exts.size();
 
@@ -3706,7 +3715,8 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
       /**
        * Destroy the objects used for font texture upload. */
-
+      
+      m_hgi->GetPrimaryDevice()->WaitForIdle();
       ANCHOR_ImplVulkan_DestroyFontUploadObjects();
     }
   }
@@ -3746,6 +3756,10 @@ bool ANCHOR_WindowWin32::isDialog() const
 void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
 {
   VkResult err;
+
+  if(m_vulkan_context->ImageCount == 0) {
+    return;
+  }
 
   VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
