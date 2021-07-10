@@ -32,7 +32,9 @@
 #define winmax(a, b) (((a) > (b)) ? (a) : (b))
 #define winmin(a, b) (((a) < (b)) ? (a) : (b))
 
-#define VK_USE_PLATFORM_WIN32_KHR
+# define VK_USE_PLATFORM_WIN32_KHR
+
+# include <vulkan/vulkan.h>
 
 #include "ANCHOR_BACKEND_vulkan.h"
 #include "ANCHOR_BACKEND_win32.h"
@@ -45,8 +47,6 @@
 
 #include "KKE_main.h"
 
-#include <vulkan/vulkan.h>
-
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/diagnostic.h>
 #include <wabi/imaging/hgiVulkan/diagnostic.h>
@@ -57,6 +57,11 @@
 #include <wabi/imaging/hgiVulkan/pipelineCache.h>
 #include <wabi/imaging/hgiVulkan/texture.h>
 #include <wabi/imaging/hgiVulkan/garbageCollector.h>
+#include <wabi/imaging/hgiVulkan/capabilities.h>
+
+#define VMA_IMPLEMENTATION
+# include <wabi/imaging/hgiVulkan/vk_mem_alloc.h>
+#undef VMA_IMPLEMENTATION
 
 #ifndef _WIN32_IE
 #  define _WIN32_IE 0x0501 /* shipped before XP, so doesn't impose additional requirements */
@@ -988,11 +993,11 @@ bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
       {
         ANCHOR_ImplVulkan_SetMinImageCount(g_MinImageCount);
         ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
-                                                g_PhysicalDevice,
-                                                g_Device,
+                                                g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(),
+                                                g_PixarHydra->GetPrimaryDevice()->GetVulkanDevice(),
                                                 &g_MainWindowData,
                                                 g_QueueFamily,
-                                                g_Allocator,
+                                                window->m_vmaAllocator->GetAllocationCallbacks(),
                                                 winrect.getWidth(),
                                                 winrect.getHeight(),
                                                 g_MinImageCount);
@@ -3347,13 +3352,62 @@ static void check_vk_result(VkResult err)
     abort();
 }
 
+static uint32_t GetGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice)
+{
+  uint32_t queueCount = 0;
+  vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, 0);
+
+  std::vector<VkQueueFamilyProperties> queues(queueCount);
+  vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, queues.data());
+
+  for (uint32_t i = 0; i < queueCount; i++)
+  {
+    if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+    {
+      return i;
+    }
+  }
+
+  return VK_QUEUE_FAMILY_IGNORED;
+}
+
+static bool SupportsPresentation(VkPhysicalDevice physicalDevice, uint32_t familyIndex)
+{
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+  return vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, familyIndex);
+#elif defined(VK_USE_PLATFORM_XLIB_KHR)
+  Display *dsp = XOpenDisplay(nullptr);
+  VisualID visualID = XVisualIDFromVisual(DefaultVisual(dsp, DefaultScreen(dsp)));
+  return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, familyIndex, dsp, visualID);
+#elif defined(VK_USE_PLATFORM_MACOS_MVK)
+  // Presentation currently always supported on Metal / MoltenVk
+  return true;
+#else
+#  error Unsupported Platform
+  return true;
+#endif
+}
+
+bool ANCHOR_WindowWin32::IsSupportedExtension(const char *extensionName) const
+{
+  for (VkExtensionProperties const &ext : m_vkExtensions)
+  {
+    if (!strcmp(extensionName, ext.extensionName))
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void ANCHOR_WindowWin32::SetupVulkan()
 {
   VkResult err;
 
   /**
    * Setup VULKAN extensions. */
-  std::vector<const char *> extensions {
+  std::vector<const char *> instance_exts {
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
     VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
@@ -3368,8 +3422,8 @@ void ANCHOR_WindowWin32::SetupVulkan()
 
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
-    create_info.ppEnabledExtensionNames = extensions.data();
-    create_info.enabledExtensionCount = (uint32_t)extensions.size();
+    create_info.ppEnabledExtensionNames = instance_exts.data();
+    create_info.enabledExtensionCount = (uint32_t)instance_exts.size();
 
     err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
     g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
@@ -3377,83 +3431,228 @@ void ANCHOR_WindowWin32::SetupVulkan()
   }
 
   /**
-   * Select GPU. */
-  {
-    uint32_t gpu_count;
-    err = vkEnumeratePhysicalDevices(g_PixarVkInstance->GetVulkanInstance(), &gpu_count, NULL);
-    check_vk_result(err);
-    ANCHOR_ASSERT(gpu_count > 0);
+   * ------------------------------------------------------------------- Select GPU ----- 
+   *   Vulkan, GPU Device Selection. Allow up to 64 simultaneous GPUs to render within
+   *   the same Vulkan Instance, sharing the same GPU resources.                          */
 
-    VkPhysicalDevice *gpus = (VkPhysicalDevice *)malloc(sizeof(VkPhysicalDevice) * gpu_count);
-    err = vkEnumeratePhysicalDevices(g_PixarVkInstance->GetVulkanInstance(), &gpu_count, gpus);
-    check_vk_result(err);
+  const uint32_t maxDevices = 64;
+  VkPhysicalDevice physicalDevices[maxDevices];
+  uint32_t physicalDeviceCount = maxDevices;
+  TF_VERIFY(vkEnumeratePhysicalDevices(g_PixarVkInstance->GetVulkanInstance(),
+                                        &physicalDeviceCount,
+                                        physicalDevices) == VK_SUCCESS);
+
+  for (uint32_t i = 0; i < physicalDeviceCount; i++)
+  {
+    VkPhysicalDeviceProperties props;
+    vkGetPhysicalDeviceProperties(physicalDevices[i], &props);
+
+    uint32_t familyIndex = GetGraphicsQueueFamilyIndex(physicalDevices[i]);
+
+    if (familyIndex == VK_QUEUE_FAMILY_IGNORED)
+      continue;
 
     /**
-     * If a number >1 of GPUs got reported, find discrete GPU if present,
-     * or use first one available. This covers most common cases (multi-gpu
-     * & integrated+dedicated graphics).
-     *
-     * TODO: Handle more complicated setups (multiple dedicated GPUs). */
-    int use_gpu = 0;
-    for (int i = 0; i < (int)gpu_count; i++)
+     * Assume we always want a presentation capable device for now. */
+    if (!SupportsPresentation(physicalDevices[i], familyIndex))
     {
-
-      VkPhysicalDeviceProperties properties;
-      vkGetPhysicalDeviceProperties(gpus[i], &properties);
-      if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-      {
-        use_gpu = i;
-        break;
-      }
+      continue;
     }
 
-    g_PhysicalDevice = gpus[use_gpu];
-    free(gpus);
+    /**
+     * Ignore Api versions lower than 1.0. */
+    if (props.apiVersion < VK_API_VERSION_1_0)
+      continue;
+
+    /**
+     * Try to find a discrete device. Until we find a discrete device,
+     * store the first non-discrete device as fallback in case we never
+     * find a discrete device at all. */
+    if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+    {
+      m_vkPhysicalDevice = physicalDevices[i];
+      m_vkGfxsQueueFamilyIndex = familyIndex;
+      break;
+    }
+    else if (!m_vkPhysicalDevice)
+    {
+      m_vkPhysicalDevice = physicalDevices[i];
+      m_vkGfxsQueueFamilyIndex = familyIndex;
+    }
+  }
+
+  if (!m_vkPhysicalDevice)
+  {
+    TF_CODING_ERROR("VULKAN_ERROR: Unable to determine physical device");
+    return;
+  }
+
+
+  /**
+   * Query supported extensions for device */
+  uint32_t extensionCount = 0;
+  TF_VERIFY(vkEnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &extensionCount, nullptr) == VK_SUCCESS);
+
+  m_vkExtensions.resize(extensionCount);
+
+  TF_VERIFY(vkEnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &extensionCount, m_vkExtensions.data()) == VK_SUCCESS);
+
+
+
+  /**
+   * Create Device */
+  m_capabilities = new HgiVulkanCapabilities(g_PixarHydra->GetPrimaryDevice());
+
+  VkDeviceQueueCreateInfo queueInfo = {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
+  float queuePriorities[] = {1.0f};
+  queueInfo.queueFamilyIndex = m_vkGfxsQueueFamilyIndex;
+  queueInfo.queueCount = 1;
+  queueInfo.pQueuePriorities = queuePriorities;
+
+  std::vector<const char *> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+
+  /**
+   * Allow certain buffers/images to have dedicated memory allocations to
+   * improve performance on some GPUs. */
+  bool dedicatedAllocations = false;
+  if (IsSupportedExtension(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) &&
+      IsSupportedExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME))
+  {
+    dedicatedAllocations = true;
+    extensions.push_back(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
   }
 
   /**
-   * Select graphics queue family. */
+   * Allow OpenGL interop - Note requires two extensions in HgiVulkanInstance. */
+  if (IsSupportedExtension(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME) &&
+      IsSupportedExtension(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME))
   {
-    uint32_t count;
-    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
-    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) * count);
-    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
-    for (uint32_t i = 0; i < count; i++)
-      if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-      {
-        g_QueueFamily = i;
-        break;
-      }
-    free(queues);
-    ANCHOR_ASSERT(g_QueueFamily != (uint32_t)-1);
+    extensions.push_back(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME);
   }
 
   /**
-   * Create Logical Device (with 1 queue). */
+   * Memory budget query extension */
+  bool supportsMemExtension = false;
+  if (IsSupportedExtension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
   {
-    int device_extension_count = 1;
-    const char *device_extensions[] = {"VK_KHR_swapchain"};
-    const float queue_priority[] = {1.0f};
-    VkDeviceQueueCreateInfo queue_info[1] = {};
-    queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queue_info[0].queueFamilyIndex = g_QueueFamily;
-    queue_info[0].queueCount = 1;
-    queue_info[0].pQueuePriorities = queue_priority;
-    VkDeviceCreateInfo create_info = {};
-    create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    create_info.queueCreateInfoCount = sizeof(queue_info) / sizeof(queue_info[0]);
-    create_info.pQueueCreateInfos = queue_info;
-    create_info.enabledExtensionCount = device_extension_count;
-    create_info.ppEnabledExtensionNames = device_extensions;
-    err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
-    check_vk_result(err);
-    vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
+    supportsMemExtension = true;
+    extensions.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
   }
+
+  /**
+   *  Resolve depth during render pass resolve extension */
+  if (IsSupportedExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME))
+  {
+    extensions.push_back(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_MAINTENANCE2_EXTENSION_NAME);
+  }
+
+  /**
+   * Allows the same layout in structs between c++ and glsl (share structs).
+   * This means instead of 'std430' you can use 'scalar'. */
+  if (IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME))
+  {
+    extensions.push_back(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME);
+  }
+  else
+  {
+    TF_WARN("Unsupported VK_EXT_scalar_block_layout."
+            "Update gfx driver?");
+  }
+
+  /**
+   * This extension is needed to allow the viewport to be flipped in Y so that
+   * shaders and vertex data can remain the same between opengl and vulkan. */
+  extensions.push_back(VK_KHR_MAINTENANCE1_EXTENSION_NAME);
+
+  /** 
+   * Enabling certain features may incure a performance hit
+   * (e.g. robustBufferAccess), so only enable the features we will use. */
+  VkPhysicalDeviceFeatures2 features = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2};
+
+  /**
+   * extension features */
+  features.pNext = m_capabilities->vkDeviceFeatures2.pNext;
+
+  features.features.multiDrawIndirect = m_capabilities->vkDeviceFeatures.multiDrawIndirect;
+  features.features.samplerAnisotropy = m_capabilities->vkDeviceFeatures.samplerAnisotropy;
+  features.features.shaderSampledImageArrayDynamicIndexing =
+    m_capabilities->vkDeviceFeatures.shaderSampledImageArrayDynamicIndexing;
+  features.features.shaderStorageImageArrayDynamicIndexing =
+    m_capabilities->vkDeviceFeatures.shaderStorageImageArrayDynamicIndexing;
+  features.features.sampleRateShading = m_capabilities->vkDeviceFeatures.sampleRateShading;
+  features.features.shaderClipDistance = m_capabilities->vkDeviceFeatures.shaderClipDistance;
+  features.features.tessellationShader = m_capabilities->vkDeviceFeatures.tessellationShader;
+
+  /**
+   * Needed to write to storage buffers from vertex shader (eg. GPU culling). */
+  features.features.vertexPipelineStoresAndAtomics =
+    m_capabilities->vkDeviceFeatures.vertexPipelineStoresAndAtomics;
+
+#if !defined(VK_USE_PLATFORM_MACOS_MVK)
+  /**
+   * Needed for buffer address feature. */
+  features.features.shaderInt64 = m_capabilities->vkDeviceFeatures.shaderInt64;
+  /**
+   * Needed for gl_primtiveID. */
+  features.features.geometryShader = m_capabilities->vkDeviceFeatures.geometryShader;
+#endif
+
+  VkDeviceCreateInfo createInfo = {VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
+  createInfo.queueCreateInfoCount = 1;
+  createInfo.pQueueCreateInfos = &queueInfo;
+  createInfo.ppEnabledExtensionNames = extensions.data();
+  createInfo.enabledExtensionCount = (uint32_t)extensions.size();
+  createInfo.pNext = &features;
+
+  TF_VERIFY(vkCreateDevice(m_vkPhysicalDevice, &createInfo, HgiVulkanAllocator(), &m_vkDevice) == VK_SUCCESS);
+
+  /**
+   * Extension function pointers */
+
+  vkCreateRenderPass2KHR = (PFN_vkCreateRenderPass2KHR)vkGetDeviceProcAddr(m_vkDevice, "vkCreateRenderPass2KHR");
+
+  /**
+   * Memory allocator */
+
+  VmaAllocatorCreateInfo allocatorInfo = {};
+  allocatorInfo.instance = g_PixarVkInstance->GetVulkanInstance();
+  allocatorInfo.physicalDevice = m_vkPhysicalDevice;
+  allocatorInfo.device = m_vkDevice;
+  if (dedicatedAllocations)
+  {
+    allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
+  }
+
+  if (supportsMemExtension)
+  {
+    allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+  }
+
+  TF_VERIFY(vmaCreateAllocator(&allocatorInfo, &m_vmaAllocator) == VK_SUCCESS);
+
+  /**
+   * Command Queue */
+
+  m_commandQueue = new HgiVulkanCommandQueue(g_PixarHydra->GetPrimaryDevice());
+
+  /**
+   * Pipeline cache */
+
+  m_pipelineCache = new HgiVulkanPipelineCache(g_PixarHydra->GetPrimaryDevice());
+
 
   /**
    * Create Descriptor Pool. */
   {
+
     /* clang-format off */
+
     VkDescriptorPoolSize pool_sizes[] = {
       {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
       {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
@@ -3467,14 +3666,16 @@ void ANCHOR_WindowWin32::SetupVulkan()
       {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
       {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
     };
+
     /* clang-format on */
+
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
     pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
     pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
     pool_info.pPoolSizes = pool_sizes;
-    err = vkCreateDescriptorPool(g_Device, &pool_info, g_Allocator, &g_DescriptorPool);
+    err = vkCreateDescriptorPool(g_PixarHydra->GetPrimaryDevice()->GetVulkanDevice(), &pool_info, m_vmaAllocator->GetAllocationCallbacks(), &g_DescriptorPool);
     check_vk_result(err);
   }
 }
@@ -3511,7 +3712,7 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
     createInfo.hinstance = GetModuleHandle(0);
 
     VkSurfaceKHR surface;
-    if (vkCreateWin32SurfaceKHR(g_PixarVkInstance->GetVulkanInstance(), &createInfo, g_Allocator, &surface) != VK_SUCCESS) {
+    if (vkCreateWin32SurfaceKHR(g_PixarVkInstance->GetVulkanInstance(), &createInfo, m_vmaAllocator->GetAllocationCallbacks(), &surface) != VK_SUCCESS) {
       throw std::runtime_error("CRITICAL: Failed to create window surface!");
     }
 
@@ -3521,7 +3722,7 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
   /**
    * Check for WSI support. */
   VkBool32 res;
-  vkGetPhysicalDeviceSurfaceSupportKHR(g_PhysicalDevice, g_QueueFamily, m_vulkan_context->Surface, &res);
+  vkGetPhysicalDeviceSurfaceSupportKHR(g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(), m_vkGfxsQueueFamilyIndex, m_vulkan_context->Surface, &res);
   if (res != VK_TRUE)
   {
     fprintf(stderr, "Error no WSI support on physical device 0\n");
@@ -3541,7 +3742,7 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
   const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
 
   m_vulkan_context->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(
-    g_PhysicalDevice,
+    g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(),
     m_vulkan_context->Surface,
     requestSurfaceImageFormat,
     (size_t)ANCHOR_ARRAYSIZE(requestSurfaceImageFormat),
@@ -3565,8 +3766,10 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
     };
     /* clang-format on */
 
-    m_vulkan_context->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-      g_PhysicalDevice, m_vulkan_context->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+    m_vulkan_context->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(), 
+                                                                         m_vulkan_context->Surface, 
+                                                                         &present_modes[0], 
+                                                                         ANCHOR_ARRAYSIZE(present_modes));
   }
   else
   { /** Throttled FPS ~75FPS */
@@ -3581,7 +3784,7 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
     /* clang-format on */
 
     m_vulkan_context->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-      g_PhysicalDevice, m_vulkan_context->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+      g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(), m_vulkan_context->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
   }
 
   TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Selected PresentMode = %d\n", m_vulkan_context->PresentMode);
@@ -3590,11 +3793,11 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
    * Create SwapChain, RenderPass, Framebuffer, etc. */
   ANCHOR_ASSERT(g_MinImageCount >= 2);
   ANCHOR_ImplVulkanH_CreateOrResizeWindow(g_PixarVkInstance->GetVulkanInstance(),
-                                          g_PhysicalDevice,
-                                          g_Device,
+                                          g_PixarHydra->GetPrimaryDevice()->GetVulkanPhysicalDevice(),
+                                          g_PixarHydra->GetPrimaryDevice()->GetVulkanDevice(),
                                           m_vulkan_context,
-                                          g_QueueFamily,
-                                          g_Allocator,
+                                          m_vkGfxsQueueFamilyIndex,
+                                          m_vmaAllocator->GetAllocationCallbacks(),
                                           winrect.getWidth(),
                                           winrect.getHeight(),
                                           g_MinImageCount);
@@ -3614,11 +3817,13 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup ANCHOR context. */
+
     ANCHOR_CHECKVERSION();
     ANCHOR::CreateContext();
 
     /**
      * Setup Keyboard & Gamepad controls. */
+
     ANCHOR_IO &io = ANCHOR::GetIO();
     io.ConfigFlags |= ANCHORConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad;
@@ -3629,6 +3834,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
      *     - ANCHOR::StyleColorsDefault()
      *     - ANCHOR::StyleColorsLight()
      *     - ANCHOR::StyleColorsDark() */
+
     ANCHOR::StyleColorsDefault();
 
 
@@ -3636,14 +3842,17 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Get the Primary Graphics Device. */
+
     HgiVulkanDevice *device = g_PixarHydra->GetPrimaryDevice();
 
     /**
      * Retrieve the command queue. */
+
     HgiVulkanCommandQueue *cmdq = device->GetCommandQueue();
 
     /**
      * Aquire the Pixar command buffer. */
+
     HgiVulkanCommandBuffer *cmdbuffer = cmdq->AcquireCommandBuffer();
 
     /* ------ */
@@ -3654,6 +3863,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Platform/Renderer backends. */
+
     ANCHOR_ImplWin32_Init(m_hWnd);
     ANCHOR_ImplVulkan_InitInfo init_info = {};
     init_info.Instance                   = g_PixarVkInstance->GetVulkanInstance();
@@ -3663,7 +3873,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     init_info.Queue                      = cmdq->GetVulkanGraphicsQueue();
     init_info.PipelineCache              = device->GetPipelineCache()->GetVulkanPipelineCache();
     init_info.DescriptorPool             = g_DescriptorPool;
-    init_info.Allocator                  = g_Allocator;
+    init_info.Allocator                  = m_vmaAllocator->GetAllocationCallbacks();
     init_info.MinImageCount              = 2;
     init_info.ImageCount                 = m_vulkan_context->ImageCount;
     init_info.CheckVkResultFn            = check_vk_result;
@@ -3675,6 +3885,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Create Pixar Hydra Graphics Interface. */
+
     HdDriver driver;
     HgiUniquePtr hgi = HgiUniquePtr(g_PixarHydra);
     driver.name = HgiTokens->renderDriver;
@@ -3683,6 +3894,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Pixar Driver & Engine. */
+
     ANCHOR::GetPixarDriver().name = driver.name;
     ANCHOR::GetPixarDriver().driver = driver.driver;
 
@@ -3697,11 +3909,13 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     {
       /**
        * Get the Vulkan Command Pool and Buffer. */
+
       VkCommandPool command_pool = cmdbuffer->GetVulkanCommandPool();
       VkCommandBuffer command_buffer = cmdbuffer->GetVulkanCommandBuffer();
 
       /**
        * Reset the Vulkan Command Pool for command buffer memory. */
+
       VkResult err = vkResetCommandPool(device->GetVulkanDevice(), command_pool, 0);
       check_vk_result(err);
 
@@ -3711,12 +3925,14 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
       /**
        * Ready to begin recieving commands. We are now Inflight. */
+
       cmdbuffer->BeginCommandBuffer(cmdbuffer->GetInflightId());
 
 
 
       /**
        * Create a texture with all our fonts. */
+
       ANCHOR_ImplVulkan_CreateFontsTexture(command_buffer);
 
 
@@ -3724,6 +3940,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
       /**
        * Stop recording commands. We are ready to submit the
        * command buffer to the queue. No longer Inflight. */
+
       cmdbuffer->EndCommandBuffer();
 
 
@@ -3733,11 +3950,13 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
       /**
        * Commit the command buffer to the GPU queue for
        * processing. */
-      cmdq->SubmitToQueue(cmdbuffer, HgiSubmitWaitTypeWaitUntilCompleted);
+
+      cmdq->SubmitToQueue(cmdbuffer);
 
 
       /**
        * Destroy the objects used for font texture upload. */
+
       ANCHOR_ImplVulkan_DestroyFontUploadObjects();
     }
   }
@@ -3752,6 +3971,7 @@ eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
   
   /**
    * Setup display size (every frame to accommodate for window resizing). */
+
   ANCHOR_Rect rect;
   getWindowBounds(rect);
   if(getState() == ANCHOR_WindowStateMinimized)
@@ -3762,6 +3982,7 @@ eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
 
   /** 
    * Setup time step. */
+
   io.DeltaTime = m_system->getMilliSeconds();
 
   return ANCHOR_SUCCESS;
@@ -3826,10 +4047,12 @@ void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
 
   /**
    * Record ANCHOR primitives into command buffer. */
+
   ANCHOR_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
 
   /**
    * Submit command buffer. */
+  
   vkCmdEndRenderPass(fd->CommandBuffer);
   {
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;

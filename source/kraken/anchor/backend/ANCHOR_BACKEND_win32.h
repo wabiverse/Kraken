@@ -31,10 +31,15 @@
 
 #ifdef _WIN32
 
-#  define WIN32_LEAN_AND_MEAN
-#  include <ole2.h>  // for drag-n-drop
-#  include <shlobj.h>
-#  include <windows.h>
+# define VK_USE_PLATFORM_WIN32_KHR
+# include <vulkan/vulkan.h>
+
+# include "wabi/imaging/hgiVulkan/vulkan.h"
+
+# define WIN32_LEAN_AND_MEAN
+# include <ole2.h>  // for drag-n-drop
+# include <shlobj.h>
+# include <windows.h>
 
 class ANCHOR_WindowWin32;
 
@@ -397,6 +402,26 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   HWND m_parentWindowHwnd;
 
+  /**
+   * Vulkan device objects. */
+  VkPhysicalDevice m_vkPhysicalDevice;
+  VkDevice m_vkDevice;
+  std::vector<VkExtensionProperties> m_vkExtensions;
+  uint32_t m_vkGfxsQueueFamilyIndex;
+  wabi::HgiVulkanCommandQueue *m_commandQueue;
+  wabi::HgiVulkanCapabilities *m_capabilities;
+  wabi::HgiVulkanPipelineCache *m_pipelineCache;
+
+  /**
+   * Device extension function pointers */
+  PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR = 0;
+  PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = 0;
+  PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = 0;
+  PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT = 0;
+  PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = 0;
+  PFN_vkQueueBeginDebugUtilsLabelEXT vkQueueBeginDebugUtilsLabelEXT = 0;
+  PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT = 0;
+
  public:
   ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
                      const char *title,
@@ -442,6 +467,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
     m_vulkan_context = data;
     return m_vulkan_context;
   }
+
+  bool IsSupportedExtension(const char *extensionName) const;
 
   /**
    * Returns indication as to whether the window is valid.
@@ -555,6 +582,8 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** 
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
+
+  VmaAllocator m_vmaAllocator;
 };
 
 
