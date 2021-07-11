@@ -1031,6 +1031,9 @@ ANCHOR_API
 ANCHOR_UserPtr GetWindowUserData(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API
+void SetWindowUserData(ANCHOR_SystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
+
+ANCHOR_API
 AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API
@@ -1164,6 +1167,12 @@ eAnchorStatus SetClientSize(ANCHOR_SystemWindowHandle windowhandle,
 
 ANCHOR_API
 ANCHOR_RectangleHandle GetClientBounds(ANCHOR_SystemWindowHandle windowhandle);
+
+ANCHOR_API
+AnchorS32 GetHeightRectangle(ANCHOR_RectangleHandle rectanglehandle);
+
+ANCHOR_API
+AnchorS32 GetWidthRectangle(ANCHOR_RectangleHandle rectanglehandle);
 
 ANCHOR_API
 void GetRectangle(ANCHOR_RectangleHandle rectanglehandle,

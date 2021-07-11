@@ -3044,6 +3044,7 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_user32(::LoadLibrary("user32.dll")),
     m_parentWindowHwnd(parentWindow ? parentWindow->m_hWnd : HWND_DESKTOP),
     m_hgi(nullptr),
+    m_device(nullptr),
     m_commandQueue(nullptr),
     m_pipelineCache(nullptr)
 {
@@ -3406,6 +3407,10 @@ void ANCHOR_WindowWin32::SetupVulkan()
   m_vkDevice = m_hgi->GetPrimaryDevice()->GetVulkanDevice();
 
   /**
+   * Pixar Device */
+  m_device = m_hgi->GetPrimaryDevice();
+
+  /**
    * Gfxs Queue Family */
 
   m_vkGfxsQueueFamilyIndex = m_hgi->GetPrimaryDevice()->GetGfxQueueFamilyIndex();
@@ -3664,7 +3669,15 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     /**
      * ------------------------------------------------------ Upload Fonts ----- */
     {
+
+      /* ------ */
+
       HgiVulkanCommandBuffer *cmdbuffer = m_commandQueue->AcquireCommandBuffer();
+
+      /**
+       * Ready to begin recieving commands. We are now Inflight. */
+      cmdbuffer->ResetIfConsumedByGPU();
+      cmdbuffer->BeginCommandBuffer(cmdbuffer->GetInflightId());
 
       /**
        * Get the Vulkan Command Pool and Buffer. */
@@ -3672,36 +3685,11 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
       VkCommandPool command_pool = cmdbuffer->GetVulkanCommandPool();
       VkCommandBuffer command_buffer = cmdbuffer->GetVulkanCommandBuffer();
 
-      /**
-       * Reset the Vulkan Command Pool for command buffer memory. */
-
-
-      cmdbuffer->ResetIfConsumedByGPU();
-
-
-      /* ------ */
-
-
-      /**
-       * Ready to begin recieving commands. We are now Inflight. */
-
-      cmdbuffer->BeginCommandBuffer(cmdbuffer->GetInflightId());
-
-
 
       /**
        * Create a texture with all our fonts. */
 
       ANCHOR_ImplVulkan_CreateFontsTexture(command_buffer);
-
-
-
-      /**
-       * Stop recording commands. We are ready to submit the
-       * command buffer to the queue. No longer Inflight. */
-
-      cmdbuffer->EndCommandBuffer();
-
 
       /* ------ */
 
@@ -3716,7 +3704,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
       /**
        * Destroy the objects used for font texture upload. */
       
-      m_hgi->GetPrimaryDevice()->WaitForIdle();
+      m_device->WaitForIdle();
       ANCHOR_ImplVulkan_DestroyFontUploadObjects();
     }
   }
@@ -3756,10 +3744,6 @@ bool ANCHOR_WindowWin32::isDialog() const
 void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
 {
   VkResult err;
-
-  if(m_vulkan_context->ImageCount == 0) {
-    return;
-  }
 
   VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;

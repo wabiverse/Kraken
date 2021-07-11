@@ -26,6 +26,7 @@
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
 #include "WM_dragdrop.h"
+#include "WM_draw.h"
 #include "WM_event_system.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
@@ -217,6 +218,46 @@ static void wm_window_update_eventstate(wmWindow *win)
 }
 
 
+/* size of all screens (desktop), useful since the mouse is bound by this */
+static void wm_get_desktopsize(int *r_width, int *r_height)
+{
+  unsigned int uiwidth;
+  unsigned int uiheight;
+
+  ANCHOR::GetAllDisplayDimensions(anchor_system, &uiwidth, &uiheight);
+  *r_width = uiwidth;
+  *r_height = uiheight;
+}
+
+
+static bool wm_window_update_size_position(wmWindow *win)
+{
+  ANCHOR_RectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+  int l, t, r, b;
+  ANCHOR::GetRectangle(client_rect, &l, &t, &r, &b);
+
+  ANCHOR::DisposeRectangle(client_rect);
+
+  GfVec2f size = FormFactory(win->size);
+  GfVec2f pos = FormFactory(win->pos);
+
+  int scr_w, scr_h;
+  wm_get_desktopsize(&scr_w, &scr_h);
+  int sizex = r - l;
+  int sizey = b - t;
+  int posx = l;
+  int posy = scr_h - t - GET_Y(size);
+
+  if (GET_X(size) != sizex || GET_Y(size) != sizey || GET_X(pos) != posx || GET_Y(pos) != posy)
+  {
+    FormFactory(win->size, GfVec2f(sizex, sizey));
+    FormFactory(win->pos, GfVec2f(posx, posy));
+    return true;
+  }
+  return false;
+}
+
+
 /**
  * This is called by anchor, and this is where
  * we handle events for windows or send them to
@@ -235,8 +276,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
     wmWindow *win = nullptr;
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
     {
-      win = wm->windows.begin()->second;
-      win->anchorwin = anchorwin;
+      win = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
     }
     else
     {
@@ -270,14 +310,14 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       return 1;
     }
 
-    wmWindow *win = CTX_wm_window(C);
+    wmWindow *win = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
     win->anchorwin = anchorwin;
 
     switch (type)
     {
       case ANCHOR_EventTypeWindowDeactivate:
         WM_event_add_anchorevent(wm, win, type, data);
-        win->active = false;
+        win->active = 0;
 
         win->eventstate->alt = 0;
         win->eventstate->ctrl = 0;
@@ -291,7 +331,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
                                  (query_qual(CONTROL) ? KM_CTRL : 0) |
                                  (query_qual(ALT) ? KM_ALT : 0) | (query_qual(OS) ? KM_OSKEY : 0));
         wm->winactive = win;
-        win->active = true;
+        win->active = 1;
 
         kdata.ascii = '\0';
         kdata.utf8_buf[0] = '\0';
@@ -364,8 +404,35 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
         win->windowstate = state;
         wm_window_set_dpi(win);
+        if (state != ANCHOR_WindowStateMinimized) {
+          /**
+           * Anchor sometimes sends size or move events when the window hasn't changed.
+           * One case of this is using compiz on linux. To alleviate the problem
+           * we ignore all such events here.
+           *
+           * It might be good to eventually do that at Anchor level, but that is for
+           * another time.
+           */
+          if (wm_window_update_size_position(win)) {
+            const kScreen *screen = WM_window_get_active_screen(win);
+
+            wm_window_make_drawable(wm, win);
+            // KKE_icon_changed(screen->id.icon_id);
+            WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+            WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
+
+#if defined(__APPLE__) || defined(WIN32)
+            /* OSX and Win32 don't return to the mainloop while resize */
+            // WM_window_timer(C);
+            // WM_event_do_handlers(C);
+            // WM_event_do_notifiers(C);
+            WM_draw_update(C);
+#endif
+          }
+        }
         break;
       }
+
       case ANCHOR_EventTypeWindowDPIHintChanged: {
         wm_window_set_dpi(win);
 
@@ -392,6 +459,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         }
         break;
       }
+
       case ANCHOR_EventTypeDraggingDropDone: {
         Anchor_EventDragnDropData *ddd = (Anchor_EventDragnDropData *)ANCHOR::GetEventData(evt);
 
@@ -466,8 +534,33 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         break;
       }
+      case ANCHOR_EventTypeTrackpad: {
+        ANCHOR_EventTrackpadData *pd = (ANCHOR_EventTrackpadData *)data;
+
+        WM_cursor_position_from_anchor(win, &pd->x, &pd->y);
+        WM_event_add_anchorevent(wm, win, type, data);
+        break;
+      }
+      case ANCHOR_EventTypeCursorMove: {
+        ANCHOR_EventCursorData *cd = (ANCHOR_EventCursorData *)data;
+
+        WM_cursor_position_from_anchor(win, &cd->x, &cd->y);
+        WM_event_add_anchorevent(wm, win, type, data);
+        break;
+      }
+      case ANCHOR_EventTypeButtonDown:
+      case ANCHOR_EventTypeButtonUp: {
+        if (win->active == 0) {
+          /* Entering window, update cursor and tablet state.
+           * (anchor sends win-activate *after* the mouse-click in window!) */
+          wm_window_update_eventstate(win);
+        }
+
+        WM_event_add_anchorevent(wm, win, type, data);
+        break;
+      }
       default: {
-        // WM_event_add_anchorevent(wm, win, type, data);
+        WM_event_add_anchorevent(wm, win, type, data);
         break;
       }
     }
@@ -492,22 +585,67 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
   /* ----- */
 
-  ANCHOR_SystemWindowHandle anchorwin = nullptr;
-  anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
-                                         (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
-                                         CHARALL(win_title),
-                                         CHARALL(win_icon.GetAssetPath()),
-                                         GET_X(win_pos),
-                                         GET_Y(win_pos),
-                                         GET_X(win_size),
-                                         GET_Y(win_size),
-                                         ANCHOR_WindowStateFullScreen,
-                                         is_dialog,
-                                         ANCHOR_DrawingContextTypeVulkan,
-                                         0);
-  if (anchorwin != NULL)
+  int scr_w, scr_h;
+  wm_get_desktopsize(&scr_w, &scr_h);
+  int posy = (scr_h - GET_X(win_pos) - GET_Y(win_pos));
+
+  SET_VEC2(win_pos, GET_X(win_pos), posy);
+  FormFactory(win->pos, win_pos);
+
+  /* Clear drawable so we can set the new window. */
+  wmWindow *prev_windrawable = wm->windrawable;
+  wm_window_clear_drawable(wm);
+
+  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
+                                                                   (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
+                                                                   CHARALL(win_title),
+                                                                   CHARALL(win_icon.GetAssetPath()),
+                                                                   GET_X(win_pos),
+                                                                   GET_Y(win_pos),
+                                                                   GET_X(win_size),
+                                                                   GET_Y(win_size),
+                                                                   ANCHOR_WindowStateFullScreen,
+                                                                   is_dialog,
+                                                                   ANCHOR_DrawingContextTypeVulkan,
+                                                                   0);
+  if (anchorwin)
   {
-    win->anchorwin = (void*)anchorwin;
+    // win->gpuctx = GPU_context_create(anchorwin);
+    
+    // GPU_init();
+
+    /**
+     * Set window as drawable upon creation. Note this has
+     * already been activated by ANCHOR::CreateSystemWindow. */
+    wm_window_set_drawable(wm, win, false);
+
+    win->anchorwin = anchorwin;
+    ANCHOR::SetWindowUserData(anchorwin, win);
+
+    // wm_window_ensure_eventstate(win);
+
+    /* store actual window size in kraken window */
+    ANCHOR_RectangleHandle bounds = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+
+    /* win32: gives undefined window size when minimized */
+    if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) != ANCHOR_WindowStateMinimized) {
+      SET_VEC2(win_size, ANCHOR::GetWidthRectangle(bounds), ANCHOR::GetHeightRectangle(bounds));
+      FormFactory(win->size, win_size);
+    }
+    ANCHOR::DisposeRectangle(bounds);
+
+    /* until screens get drawn, make it nice gray */
+    // GPU_clear_color(0.55f, 0.55f, 0.55f, 1.0f);
+
+    /* needed here, because it's used before it reads userdef */
+    wm_window_set_dpi(win);
+
+    ANCHOR::ProcessEvents(anchor_system, false);
+    WM_window_swap_buffers(win);
+  }
+
+  else {
+    wm_window_set_drawable(wm, prev_windrawable, false);
   }
 }
 
@@ -712,17 +850,6 @@ static void wm_window_check_size(GfVec4i *rect)
 }
 
 
-/* size of all screens (desktop), useful since the mouse is bound by this */
-void wm_get_desktopsize(int *r_width, int *r_height)
-{
-  unsigned int uiwidth;
-  unsigned int uiheight;
-
-  ANCHOR::GetAllDisplayDimensions(anchor_system, &uiwidth, &uiheight);
-  *r_width = uiwidth;
-  *r_height = uiheight;
-}
-
 void wm_window_set_size(wmWindow *win, int width, int height)
 {
   ANCHOR::SetClientSize((ANCHOR_SystemWindowHandle)win->anchorwin, width, height);
@@ -737,34 +864,6 @@ static void wm_window_raise(wmWindow *win)
     ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
   }
   ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowOrderTop);
-}
-
-
-static bool wm_window_update_size_position(wmWindow *win)
-{
-  ANCHOR_RectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
-  int l, t, r, b;
-  ANCHOR::GetRectangle(client_rect, &l, &t, &r, &b);
-
-  ANCHOR::DisposeRectangle(client_rect);
-
-  GfVec2f size = FormFactory(win->size);
-  GfVec2f pos = FormFactory(win->pos);
-
-  int scr_w, scr_h;
-  wm_get_desktopsize(&scr_w, &scr_h);
-  int sizex = r - l;
-  int sizey = b - t;
-  int posx = l;
-  int posy = scr_h - t - GET_Y(size);
-
-  if (GET_X(size) != sizex || GET_Y(size) != sizey || GET_X(pos) != posx || GET_Y(pos) != posy)
-  {
-    FormFactory(win->size, GfVec2f(sizex, sizey));
-    FormFactory(win->pos, GfVec2f(posx, posy));
-    return true;
-  }
-  return false;
 }
 
 bool WM_window_is_temp_screen(const wmWindow *win)

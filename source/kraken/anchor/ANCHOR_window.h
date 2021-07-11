@@ -92,6 +92,11 @@ class ANCHOR_ISystemWindow
    * @return The window user data. */
   virtual ANCHOR_UserPtr getUserData() const = 0;
 
+  /**
+   * Changes the window user data.
+   * @param userData: The window user data. */
+  virtual void setUserData(const ANCHOR_UserPtr userData) = 0;
+
   virtual bool isDialog() const = 0;
 
   /**
@@ -258,6 +263,14 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   virtual inline AnchorU16 getDPIHint()
   {
     return 96;
+  }
+
+  /**
+   * Changes the window user data.
+   * @param userData: The window user data. */
+  void setUserData(const ANCHOR_UserPtr userData)
+  {
+    m_userData = userData;
   }
 
   float getNativePixelSize(void)

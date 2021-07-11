@@ -3934,6 +3934,13 @@ ANCHOR_UserPtr ANCHOR::GetWindowUserData(ANCHOR_SystemWindowHandle windowhandle)
   return window->getUserData();
 }
 
+void ANCHOR::SetWindowUserData(ANCHOR_SystemWindowHandle windowhandle, ANCHOR_UserPtr userdata)
+{
+  ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
+
+  window->setUserData(userdata);
+}
+
 AnchorU16 ANCHOR::GetDPIHint(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;
@@ -4029,6 +4036,16 @@ ANCHOR_RectangleHandle ANCHOR::GetClientBounds(ANCHOR_SystemWindowHandle windowh
   window->getClientBounds(*rectangle);
 
   return (ANCHOR_RectangleHandle)rectangle;
+}
+
+AnchorS32 ANCHOR::GetWidthRectangle(ANCHOR_RectangleHandle rectanglehandle)
+{
+  return ((ANCHOR_Rect *)rectanglehandle)->getWidth();
+}
+
+AnchorS32 ANCHOR::GetHeightRectangle(ANCHOR_RectangleHandle rectanglehandle)
+{
+  return ((ANCHOR_Rect *)rectanglehandle)->getHeight();
 }
 
 void ANCHOR::GetRectangle(ANCHOR_RectangleHandle rectanglehandle,

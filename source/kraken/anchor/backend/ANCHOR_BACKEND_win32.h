@@ -406,6 +406,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /**
    * Vulkan device objects. */
   wabi::HgiVulkan *m_hgi;
+  wabi::HgiVulkanDevice *m_device;
   wabi::HgiVulkanCommandQueue *m_commandQueue;
   wabi::HgiVulkanPipelineCache *m_pipelineCache;
 
