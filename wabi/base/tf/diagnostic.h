@@ -339,6 +339,12 @@ void Tf_TerminateHandler();
 #      define TF_DIAGNOSTIC_WARNING \
         Tf_DiagnosticHelper(TF_CALL_CONTEXT.Hide(), TF_DIAGNOSTIC_WARNING_TYPE).IssueWarning
 
+#      ifdef TF_RUNTIME_WARNING
+#        undef TF_RUNTIME_WARNING
+#      endif
+#      define TF_RUNTIME_WARNING(...) \
+        Tf_PostWarningHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_WARNING_TYPE, __VA_ARGS__)
+
 #      ifdef TF_RUNTIME_ERROR
 #        undef TF_RUNTIME_ERROR
 #      endif  // TF_RUNTIME_ERROR
@@ -371,6 +377,11 @@ void Tf_TerminateHandler();
 // * MACRO(ENUM, const std::string *msg)
 // * MACRO(TfDiagnosticInfo, ENUM, const char *, ...)
 // * MACRO(TfDiagnosticInfo, ENUM, const std::string *msg)
+
+#      ifdef TF_WARNING
+#        undef TF_WARNING
+#      endif  // TF_WARN
+#      define TF_WARNING(...) Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN

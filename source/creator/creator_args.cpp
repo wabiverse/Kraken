@@ -92,12 +92,16 @@ void CREATOR_setup_args(int argc, const char **argv)
     if (arg_vars.count("help"))
     {
       std::cout << options << "\n";
+      /* Just show help, exit. */
+      exit(wabi::KRAKEN_SUCCESS);
     }
   }
   catch (const CREATOR_ARGS::error &e)
   {
     fprintf(stderr, "%s\n", e.what());
     fprintf(stderr, "%s\n", wabi::CHARALL(options));
+    /* Let user fixup incorrect Arg, exit. */
+    exit(wabi::KRAKEN_ERROR);
   }
 }
 

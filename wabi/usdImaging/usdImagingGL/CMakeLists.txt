@@ -17,7 +17,6 @@ wabi_library(usdImagingGL
         work
         hio
         garch
-        vkf
         glf
         hd
         hdx

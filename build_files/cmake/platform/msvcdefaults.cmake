@@ -31,17 +31,51 @@
 
 _add_define("WIN32")
 
-set(WITH_WINDOWS_BUNDLE_CRT ON)
+option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
+mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
+
+option(WITH_WINDOWS_PDB "Generate a pdb file for client side stacktraces" ON)
+mark_as_advanced(WITH_WINDOWS_PDB)
+
 include(build_files/cmake/platform/platform_win32_bundle_crt.cmake)
 
-set(_WABI_CXX_FLAGS_DEBUG          ${_WABI_CXX_FLAGS_DEBUG}           "/MDd /Zi")
-set(_WABI_C_FLAGS_DEBUG            ${_WABI_C_FLAGS_DEBUG}             "/MDd /Zi")
-set(_WABI_CXX_FLAGS_RELEASE        ${_WABI_CXX_FLAGS_RELEASE}         "/MD /Z7")
-set(_WABI_C_FLAGS_RELEASE          ${_WABI_C_FLAGS_RELEASE}           "/MD /Z7")
-set(_WABI_CXX_FLAGS_MINSIZEREL     ${_WABI_CXX_FLAGS_MINSIZEREL}      "/MD /Z7")
-set(_WABI_C_FLAGS_MINSIZEREL       ${_WABI_C_FLAGS_MINSIZEREL}        "/MD /Z7")
-set(_WABI_CXX_FLAGS_RELWITHDEBINFO ${_WABI_CXX_FLAGS_RELWITHDEBINFO}  "/MD /Zi")
-set(_WABI_C_FLAGS_RELWITHDEBINFO   ${_WABI_C_FLAGS_RELWITHDEBINFO}    "/MD /Zi")
+# X64 ASAN is available and usable on MSVC 16.9 preview 4 and up)
+if(WITH_COMPILER_ASAN AND MSVC AND NOT MSVC_CLANG)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.28.29828)
+    #set a flag so we don't have to do this comparison all the time
+    SET(MSVC_ASAN On)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+    set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /fsanitize=address")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " /INCREMENTAL:NO")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS_DEBUG " /INCREMENTAL:NO")
+  else()
+    message("-- ASAN not supported on MSVC ${CMAKE_CXX_COMPILER_VERSION}")
+  endif()
+endif()
+
+if(MSVC_ASAN)
+  set(SYMBOL_FORMAT /Z7)
+  set(SYMBOL_FORMAT_RELEASE /Z7)
+else()
+  set(SYMBOL_FORMAT /ZI)
+  set(SYMBOL_FORMAT_RELEASE /Zi)
+endif()
+
+if(WITH_WINDOWS_PDB)
+  set(PDB_INFO_OVERRIDE_FLAGS "${SYMBOL_FORMAT_RELEASE}")
+  set(PDB_INFO_OVERRIDE_LINKER_FLAGS "/DEBUG /OPT:REF /OPT:ICF /INCREMENTAL:NO")
+endif()
+
+set(_WABI_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} /MDd ${SYMBOL_FORMAT}")
+set(_WABI_C_FLAGS_DEBUG   "${_WABI_C_FLAGS_DEBUG} /MDd ${SYMBOL_FORMAT}")
+set(_WABI_CXX_FLAGS_RELEASE    "${_WABI_CXX_FLAGS_RELEASE} /MD ${PDB_INFO_OVERRIDE_FLAGS}")
+set(_WABI_C_FLAGS_RELEASE      "${_WABI_C_FLAGS_RELEASE} /MD ${PDB_INFO_OVERRIDE_FLAGS}")
+set(_WABI_CXX_FLAGS_MINSIZEREL "${_WABI_CXX_FLAGS_MINSIZEREL} /MD ${PDB_INFO_OVERRIDE_FLAGS}")
+set(_WABI_C_FLAGS_MINSIZEREL   "${_WABI_C_FLAGS_MINSIZEREL} /MD ${PDB_INFO_OVERRIDE_FLAGS}")
+set(_WABI_CXX_FLAGS_RELWITHDEBINFO "${_WABI_CXX_FLAGS_RELWITHDEBINFO} /MD ${SYMBOL_FORMAT_RELEASE}")
+set(_WABI_C_FLAGS_RELWITHDEBINFO   "${_WABI_C_FLAGS_RELWITHDEBINFO} /MD ${SYMBOL_FORMAT_RELEASE}")
+unset(SYMBOL_FORMAT)
+unset(SYMBOL_FORMAT_RELEASE)
 
 # Enable CXX-20 features.
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /std:c++20")
@@ -107,6 +141,12 @@ _disable_warning("4180")
 # tbb/enumerable_thread_specific.h
 _disable_warning("4334")
 
+# Disable warnings for libraries like Vulkan which do not supply
+# debugging PDB files.
+_disable_warning("4099")
+
+set(_WABI_CXX_FLAGS ${_WABI_CXX_FLAGS} ${_WABI_CXX_WARNING_FLAGS})
+
 # Disable warning C4996 regarding fopen(), strcpy(), etc.
 _add_define("_CRT_SECURE_NO_WARNINGS")
 
@@ -155,12 +195,31 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Gm-")
 # for PCH. This raises the default 75 to 1000
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zm1000")
 
+# Enable 'Just My Code' debugging, allowing MSVC to step over system, framework,
+# libraries, and other non-user calls, and to collapse those calls in the call stack
+# window. The /JMC compiler option is available starting in Visual Studio 2017 version
+# 15.8 (1915) and up.
+if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
+  set(_WABI_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} /JMC")
+endif()
+
 # Ignore LNK4221.  This happens when making an archive with a object file
 # with no symbols in it.  We do this a lot because of a pattern of having
 # a C++ source file for many header-only facilities, e.g. tf/bitUtils.cpp.
-set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /IGNORE:4221")
-set(LINK_FLAGS "/SUBSYSTEM:CONSOLE /STACK:2097152 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
-set(LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /STACK:2097152 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
+string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:CONSOLE /STACK:2097152")
+set(PLATFORM_LINKFLAGS_RELEASE "/NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
+string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
+
+# Ignore meaningless for us linker warnings.
+string(APPEND PLATFORM_LINKFLAGS " /ignore:4049 /ignore:4217 /ignore:4221")
+set(PLATFORM_LINKFLAGS_RELEASE "${PLATFORM_LINKFLAGS} ${PDB_INFO_OVERRIDE_LINKER_FLAGS}")
+string(APPEND CMAKE_STATIC_LINKER_FLAGS " /ignore:4221")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  string(PREPEND PLATFORM_LINKFLAGS "/MACHINE:X64 ")
+else()
+  string(PREPEND PLATFORM_LINKFLAGS "/MACHINE:IX86 /LARGEADDRESSAWARE ")
+endif()
 
 # When Visual Studio IDE runs the project for testing
 # it needs to know which project to execute.

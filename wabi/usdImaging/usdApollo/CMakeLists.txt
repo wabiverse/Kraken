@@ -17,7 +17,6 @@ wabi_library(usdApollo
     work
     hio
     garch
-    vkf
     glf
     hd
     hdx

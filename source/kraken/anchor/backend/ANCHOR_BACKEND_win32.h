@@ -406,6 +406,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /**
    * Vulkan device objects. */
   wabi::HgiVulkan *m_hgi;
+  wabi::HgiVulkanInstance *m_vkinstance;
   wabi::HgiVulkanDevice *m_device;
   wabi::HgiVulkanCommandQueue *m_commandQueue;
   wabi::HgiVulkanPipelineCache *m_pipelineCache;
@@ -444,6 +445,16 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   void SetupVulkan();
   void SetupVulkanWindow();
+
+  wabi::HgiVulkanDevice *getHydraDevice()
+  {
+    return m_device;
+  }
+
+  wabi::HgiVulkanInstance *getHydraInstance()
+  {
+    return m_vkinstance;
+  }
 
   ANCHOR_VulkanGPU_Surface *getVulkanSurface()
   {
@@ -570,13 +581,6 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** 
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
-
-  /**
-   * Vulkan device objects. */
-  VmaAllocator m_vmaAllocator;
-  VkPhysicalDevice m_vkPhysicalDevice;
-  VkDevice m_vkDevice;
-  uint32_t m_vkGfxsQueueFamilyIndex;
 };
 
 
