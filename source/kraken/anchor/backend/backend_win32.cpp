@@ -1083,12 +1083,16 @@ eAnchorStatus ANCHOR_SystemWin32::init()
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
   if (m_hasPerformanceCounter)
   {
-    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] High Frequency Performance Timer available\n");
+    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+      TF_SUCCESS_MSG("Anchor -- High Frequency Performance Timer available");
+    }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
   }
   else
   {
-    TF_DEBUG(ANCHOR_WIN32).Msg("High Frequency Performance Timer not available\n");
+    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+      TF_WARN("Anchor -- High Frequency Performance Timer not available");
+    }
   }
 
   if (success == ANCHOR_SUCCESS)
@@ -1155,7 +1159,9 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
   }
   else
   {
-    TF_DEBUG(ANCHOR_WIN32).Msg("Window invalid\n");
+    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+      TF_ERROR_MSG("Window invalid");
+    }
     delete window;
     window = NULL;
   }
@@ -1358,9 +1364,11 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
               event = processKeyEvent(window, raw);
               if (!event)
               {
-                TF_DEBUG(ANCHOR_WIN32).Msg("ANCHOR_SystemWin32::wndProc: key event ");
-                TF_DEBUG(ANCHOR_WIN32).Msg(std::to_string(msg));
-                TF_DEBUG(ANCHOR_WIN32).Msg(" key ignored\n");
+                if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+                  TF_WARN("ANCHOR_SystemWin32::wndProc: key event ");
+                  TF_WARN(std::to_string(msg));
+                  TF_WARN(" key ignored");
+                }
               }
               break;
 #ifdef WITH_INPUT_NDOF
@@ -1952,7 +1960,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
     else
     {
       // Event found for a window before the pointer to the class has been set.
-      TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
+      // TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
       /* These are events we typically miss at this point:
        * WM_GETMINMAXINFO 0x24
        * WM_NCCREATE          0x81
@@ -3506,8 +3514,9 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
    * Render at maximum possible FPS. */
   if (HgiVulkanIsMaxFPSEnabled())
   {
-
-    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Rendering at maximum possible frames per second.\n");
+    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+      TF_SUCCESS_MSG("Anchor -- Rendering at maximum possible frames per second.");
+    }
 
     /* clang-format off */
     VkPresentModeKHR present_modes[] = {
@@ -3528,7 +3537,9 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
   else
   { /** Throttled FPS ~75FPS */
 
-    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Throttled maximum frames per second.\n");
+    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+      TF_WARN("Anchor -- Throttled maximum frames per second.");
+    }
 
     /* clang-format off */
     VkPresentModeKHR present_modes[] = {
@@ -3541,7 +3552,9 @@ void ANCHOR_WindowWin32::SetupVulkanWindow()
       m_device->GetVulkanPhysicalDevice(), m_vulkan_context->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
   }
 
-  TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] Selected PresentMode = %d\n", m_vulkan_context->PresentMode);
+  if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+    TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
+  }
 
   /**
    * Create SwapChain, RenderPass, Framebuffer, etc. */

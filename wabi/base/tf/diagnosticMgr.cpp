@@ -431,7 +431,7 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
       fprintf(stderr, "Fatal error: %s [%s].\n", msg.c_str(), ArchGetProgramNameForErrors());
       exit(1);
     }
-    else if (statusCode == TF_DIAGNOSTIC_RUNTIME_WARNING_TYPE)
+    else if (statusCode == TF_DIAGNOSTIC_RUNTIME_MSG_TYPE || statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE)
     {
       fprintf(stderr, "%s\n", msg.c_str());
     }
@@ -645,7 +645,22 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
 {
   string output;
   string codeName = TfDiagnosticMgr::GetCodeName(code);
-  if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), ""))
+
+#if _WIN32
+  /**
+   * Implement Console Colors.  */
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hConsole, code);
+#endif
+
+  if (context.IsDisabled())
+  {
+    output = TfStringPrintf("[%s]%s %s\n",
+                            codeName.c_str(),
+                            ArchIsMainThread() ? "" : " (secondary thread)",
+                            msg.c_str());
+  }
+  else if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), ""))
   {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),

@@ -49,6 +49,8 @@ struct Main : public UniverseObject
 
   std::string kraken_version_decimal;
 
+  char launch_time[UNI_MAX_TIME];
+
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;
 };

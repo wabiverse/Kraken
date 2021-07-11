@@ -64,10 +64,17 @@ struct SystemVersion
   char pixar_version[MAX_SYSTEM_VERSION_INFO];
 };
 
+struct SystemTime
+{
+  /** Returns the formatted launch time. */
+  char launch_time[UNI_MAX_TIME];
+};
+
 struct System
 {
   SystemPaths paths;
   SystemVersion version;
+  SystemTime time;
 };
 
 WABI_NAMESPACE_END

@@ -43,6 +43,11 @@ enum TfDiagnosticType : int;
 class TfEnum;
 class TfError;
 
+TF_API void Tf_PostErrorHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostErrorHelper(const TfCallContext &context, const std::string &msg);
+
 TF_API bool Tf_PostErrorHelper(const TfCallContext &context, const TfEnum &code, const std::string &msg);
 
 TF_API bool Tf_PostErrorHelper(const TfCallContext &context, TfDiagnosticType code, const std::string &msg);
@@ -110,6 +115,19 @@ TF_API void Tf_PostWarningHelper(const TfCallContext &context,
                                  const TfEnum &code,
                                  const char *fmt,
                                  ...) ARCH_PRINTF_FUNCTION(4, 5);
+
+
+TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const std::string &msg);
+
+
+TF_API void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostMsgHelper(const TfCallContext &context, const std::string &msg);
+
 
 TF_API void Tf_PostStatusHelper(const TfCallContext &context, const char *fmt, ...)
   ARCH_PRINTF_FUNCTION(2, 3);

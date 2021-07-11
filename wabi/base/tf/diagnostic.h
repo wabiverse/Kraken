@@ -339,11 +339,23 @@ void Tf_TerminateHandler();
 #      define TF_DIAGNOSTIC_WARNING \
         Tf_DiagnosticHelper(TF_CALL_CONTEXT.Hide(), TF_DIAGNOSTIC_WARNING_TYPE).IssueWarning
 
-#      ifdef TF_RUNTIME_WARNING
-#        undef TF_RUNTIME_WARNING
+#      ifdef TF_RUNTIME_MSG
+#        undef TF_RUNTIME_MSG
 #      endif
-#      define TF_RUNTIME_WARNING(...) \
-        Tf_PostWarningHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_WARNING_TYPE, __VA_ARGS__)
+#      define TF_RUNTIME_MSG(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_MSG_TYPE).IssueStatus
+
+#      ifdef TF_RUNTIME_SUCCESS_MSG
+#        undef TF_RUNTIME_SUCCESS_MSG
+#      endif
+#      define TF_RUNTIME_SUCCESS_MSG(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE).IssueStatus
+
+#      ifdef TF_RUNTIME_ERROR_MSG
+#        undef TF_RUNTIME_ERROR_MSG
+#      endif
+#      define TF_RUNTIME_ERROR_MSG(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE).IssueError
 
 #      ifdef TF_RUNTIME_ERROR
 #        undef TF_RUNTIME_ERROR
@@ -378,10 +390,20 @@ void Tf_TerminateHandler();
 // * MACRO(TfDiagnosticInfo, ENUM, const char *, ...)
 // * MACRO(TfDiagnosticInfo, ENUM, const std::string *msg)
 
-#      ifdef TF_WARNING
-#        undef TF_WARNING
-#      endif  // TF_WARN
-#      define TF_WARNING(...) Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+#      ifdef TF_MSG
+#        undef TF_MSG
+#      endif  // TF_MSG
+#      define TF_MSG(...) Tf_PostMsgHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_SUCCESS_MSG
+#        undef TF_SUCCESS_MSG
+#      endif  // TF_SUCCESS_MSG
+#      define TF_SUCCESS_MSG(...) Tf_PostMsgSuccessHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_ERROR_MSG
+#        undef TF_ERROR_MSG
+#      endif  // TF_ERROR_MSG
+#      define TF_ERROR_MSG(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN
