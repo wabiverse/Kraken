@@ -199,7 +199,7 @@ endfunction() #_install_python
 function(_install_resource_files NAME pluginInstallPrefix pluginToLibraryPath)
     # Resource files install into a structure that looks like:
     # lib/
-    #     krakenverse/
+    #     maelstrom/
     #         ${NAME}/
     #             resources/
     #                 resourceFileA
@@ -812,10 +812,10 @@ function(_wabi_target_link_libraries NAME)
         # monolithic library.
         if(WITH_KRAKEN_MONOLITHIC)
             if(internal)
-                if(TARGET krakenverse)
-                    set(internal krakenverse)
+                if(TARGET maelstrom)
+                    set(internal maelstrom)
                 else()
-                    set(internal krakenverse_static)
+                    set(internal maelstrom_static)
                 endif()
             endif()
         elseif(NOT BUILD_SHARED_LIBS)
@@ -1191,9 +1191,9 @@ function(_wabi_library NAME)
         if(NOT WABI_INSTALL_SUBDIR)
             # XXX -- Why this difference?
             if(UNIX)
-                _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/krakenverse" pluginInstallPrefix)
+                _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/maelstrom" pluginInstallPrefix)
             elseif(WIN32)
-                _get_install_dir("${TARGETDIR_VER}/datafiles/plugin/krakenverse" pluginInstallPrefix)
+                _get_install_dir("${TARGETDIR_VER}/datafiles/plugin/maelstrom" pluginInstallPrefix)
             endif()
         endif()
         if(NOT isObject)
@@ -1204,9 +1204,9 @@ function(_wabi_library NAME)
         endif()
     else()
         if(WIN32)
-            _get_install_dir("${TARGETDIR_VER}/datafiles/krakenverse" pluginInstallPrefix)
+            _get_install_dir("${TARGETDIR_VER}/datafiles/maelstrom" pluginInstallPrefix)
         elseif(UNIX)
-            _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/krakenverse" pluginInstallPrefix)
+            _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/maelstrom" pluginInstallPrefix)
         endif()
     endif()
     if(args_SUBDIR)
@@ -1283,11 +1283,11 @@ function(_wabi_library NAME)
     endif()
 
     if (WIN32)
-        set(PIXAR_USD_CORE_DIR ${TARGETDIR_VER}/datafiles/krakenverse)
-        set(PIXAR_USD_PLUGINS_DIR ${TARGETDIR_VER}/datafiles/plugin/krakenverse)
+        set(PIXAR_USD_CORE_DIR ${TARGETDIR_VER}/datafiles/maelstrom)
+        set(PIXAR_USD_PLUGINS_DIR ${TARGETDIR_VER}/datafiles/plugin/maelstrom)
     elseif(UNIX)
-        set(PIXAR_USD_CORE_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/krakenverse)
-        set(PIXAR_USD_PLUGINS_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/krakenverse)
+        set(PIXAR_USD_CORE_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/maelstrom)
+        set(PIXAR_USD_PLUGINS_DIR /usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/maelstrom)
     endif()
 
     target_compile_definitions(${NAME}

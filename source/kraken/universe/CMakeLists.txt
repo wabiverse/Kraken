@@ -38,7 +38,7 @@ set(SRC
 )
 
 set(LIB
-  krakenverse
+  maelstrom
   kraken_lib
   kraken_kernel
   ${BOOST_LIBRARIES}

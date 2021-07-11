@@ -1083,7 +1083,7 @@ eAnchorStatus ANCHOR_SystemWin32::init()
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
   if (m_hasPerformanceCounter)
   {
-    TF_DEBUG(ANCHOR_WIN32).Msg("High Frequency Performance Timer available\n");
+    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] High Frequency Performance Timer available\n");
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
   }
   else
@@ -1952,7 +1952,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
     else
     {
       // Event found for a window before the pointer to the class has been set.
-      TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] ANCHOR window event before creation\n");
+      TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
       /* These are events we typically miss at this point:
        * WM_GETMINMAXINFO 0x24
        * WM_NCCREATE          0x81
@@ -1965,7 +1965,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
   else
   {
     // Events without valid hwnd
-    TF_DEBUG(ANCHOR_WIN32).Msg("ANCHOR_SystemWin32::wndProc: event without window\n");
+    TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved event without valid hwnd\n");
   }
 
   if (event)

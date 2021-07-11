@@ -45,7 +45,7 @@ set(INC_SYS
 )
 
 set(LIB
-  krakenverse
+  maelstrom
   kraken_anchor
   kraken_lib
   kraken_python

@@ -79,7 +79,7 @@ HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device)
 
   if (HgiVulkanIsDebugEnabled())
   {
-    TF_WARN("Selected GPU %s\n", vkDeviceProperties.deviceName);
+    TF_WARNING("Selected GPU %s\n", vkDeviceProperties.deviceName);
   }
 }
 

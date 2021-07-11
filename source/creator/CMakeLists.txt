@@ -241,15 +241,15 @@ endif()
 # We must collect all the Pokemon, not just
 # some of the Pokemon, so we link whole archive
 if(WIN32)
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:krakenverse")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:krakenverse")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:krakenverse")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:krakenverse")
-  target_link_libraries(kraken krakenverse)
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:maelstrom")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:maelstrom")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:maelstrom")
+  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:maelstrom")
+  target_link_libraries(kraken maelstrom)
 elseif(APPLE)
-  target_link_libraries(kraken -Wl,-force_load krakenverse)
+  target_link_libraries(kraken -Wl,-force_load maelstrom)
 elseif(UNIX)
-  target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:krakenverse> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+  target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:maelstrom> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
 endif()
 
 set(KRAKEN_TEXT_FILES
@@ -334,7 +334,7 @@ endif()
 if(UNIX)
   install(
     TARGETS
-      krakenverse # <- Pixar monolithic
+      maelstrom # <- Pixar monolithic
       # ---------------------------------
     DESTINATION
       "/usr/local/${TARGETDIR_VER}/lib/."
@@ -342,7 +342,7 @@ if(UNIX)
 else()
   install(
     TARGETS
-      krakenverse # <- Pixar monolithic
+      maelstrom # <- Pixar monolithic
       # ---------------------------------
     DESTINATION
       "."
@@ -1233,6 +1233,9 @@ endif()
 
 target_link_libraries(kraken ${LIB})
 unset(LIB)
+
+setup_platform_linker_flags(maelstrom)
+setup_platform_linker_flags(maelstrom_static)
 
 setup_platform_linker_flags(kraken)
 setup_platform_linker_libs(kraken)

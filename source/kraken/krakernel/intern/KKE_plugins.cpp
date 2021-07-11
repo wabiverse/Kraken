@@ -38,10 +38,10 @@ WABI_NAMESPACE_BEGIN
 
 void KKE_kraken_plugins_init()
 {
-  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "krakenverse/"));
-  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "plugin/krakenverse/"));
+  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "maelstrom/"));
+  PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "plugin/maelstrom/"));
 
-  printf("::: KRAKENVERSE | INITIALIZED :::\n\n");
+  printf("::: MAELSTROM | INITIALIZED :::\n\n");
 }
 
 WABI_NAMESPACE_END

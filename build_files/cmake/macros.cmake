@@ -292,7 +292,7 @@ function(kraken_add_lib__impl
 
   # This is the only shared library currently.
   # -> Pixar Monolithic USD
-  add_dependencies(${name} krakenverse)
+  add_dependencies(${name} maelstrom)
 
   # if(UNIX)
   #   set_target_properties(${name} PROPERTIES BUILD_WITH_INSTALL_RPATH true)

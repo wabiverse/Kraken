@@ -20,7 +20,7 @@ set(INC_SYS
 )
 
 set(LIB
-  krakenverse
+  maelstrom
   kraken_wm
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

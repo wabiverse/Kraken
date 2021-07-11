@@ -161,7 +161,7 @@ option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
 # Build Options
 
 option(WITH_KRAKEN                   "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"     ON)
-option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the krakenverse"               ON)
+option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the maelstrom"               ON)
 option(WITH_LICENSING                "Save my investments god damnit"                                                             ON)
 option(WITH_TESTS                    "Build kraken test executables"                                                              ON)
 option(WITH_USD                      "Enable Universal Scene Description (USD) Support"                                           ON)
@@ -259,7 +259,7 @@ set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 include(Public)
 
-wabi_krakenverse_prologue()
+wabi_maelstrom_prologue()
 
 add_subdirectory(wabi)
 
@@ -267,7 +267,7 @@ if(WABI_BUILD_DOCUMENTATION)
   wabi_build_documentation()
 endif()
 
-wabi_krakenverse_epilogue()
+wabi_maelstrom_epilogue()
 
 #-----------------------------------------------------------------------------
 # KRAKEN. The Digital Content Creation Platform of the 21st Century.

@@ -791,10 +791,10 @@ function(wabi_register_test TEST_NAME)
     # these files in the "lib" directory where the libraries are installed.
     #
     # We don't want to copy these resource files for each test, so instead
-    # we set the WABI_PLUGINPATH_NAME env var to point to the "krakenverse"
+    # we set the WABI_PLUGINPATH_NAME env var to point to the "maelstrom"
     # directory where these files are installed.
     if (NOT TARGET shared_libs)
-        set(testWrapperCmd ${testWrapperCmd} --env-var=${WABI_PLUGINPATH_NAME}=${TARGETDIR_VER}/datafiles/krakenverse)
+        set(testWrapperCmd ${testWrapperCmd} --env-var=${WABI_PLUGINPATH_NAME}=${TARGETDIR_VER}/datafiles/maelstrom)
     endif()
 
     # Ensure that Python imports the Python files built by this build.
@@ -840,11 +840,11 @@ function(wabi_setup_plugins)
     _get_resources_dir_name(resourcesDir)
 
     if(UNIX)
-        set(PIXAR_USD_CORE_DIR "/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/krakenverse")
-        set(PIXAR_USD_PLUGINS_DIR "/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/krakenverse")
+        set(PIXAR_USD_CORE_DIR "/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/maelstrom")
+        set(PIXAR_USD_PLUGINS_DIR "/usr/local/share/kraken/${TARGETDIR_VER}/datafiles/plugin/maelstrom")
     elseif(WIN32)
-        set(PIXAR_USD_CORE_DIR "${TARGETDIR_VER}/datafiles/krakenverse")
-        set(PIXAR_USD_PLUGINS_DIR "${TARGETDIR_VER}/datafiles/plugin/krakenverse")
+        set(PIXAR_USD_CORE_DIR "${TARGETDIR_VER}/datafiles/maelstrom")
+        set(PIXAR_USD_PLUGINS_DIR "${TARGETDIR_VER}/datafiles/plugin/maelstrom")
     endif()
 
     # Add extra plugInfo.json include paths to the top-level plugInfo.json,
@@ -870,10 +870,10 @@ function(wabi_setup_plugins)
     )
 
     set(plugInfoContents "{\n    \"Includes\": [ \"*/${resourcesDir}/\" ]\n}\n")
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/krakenverse_plugInfo.json"
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/maelstrom_plugInfo.json"
          "${plugInfoContents}")
     install(
-        FILES "${CMAKE_CURRENT_BINARY_DIR}/krakenverse_plugInfo.json"
+        FILES "${CMAKE_CURRENT_BINARY_DIR}/maelstrom_plugInfo.json"
         DESTINATION ${PIXAR_USD_PLUGINS_DIR}
         RENAME "plugInfo.json"
     )
@@ -900,7 +900,7 @@ function(wabi_add_extra_plugins PLUGIN_AREAS)
     set(WABI_EXTRA_PLUGINS "${WABI_EXTRA_PLUGINS}" CACHE INTERNAL "${help}")
 endfunction() # wabi_setup_third_plugins
 
-function(wabi_krakenverse_prologue)
+function(wabi_maelstrom_prologue)
 
     if(UNIX)
         set(INCLUDE_WABI "/usr/local/share/kraken/${TARGETDIR_VER}/include/wabi")
@@ -922,7 +922,7 @@ function(wabi_krakenverse_prologue)
     # or create one.
     if(WITH_KRAKEN_MONOLITHIC)
         if(WABI_MONOLITHIC_IMPORT)
-            # Gather the export information for krakenverse.
+            # Gather the export information for maelstrom.
             include("${WABI_MONOLITHIC_IMPORT}" OPTIONAL RESULT_VARIABLE found)
 
             # If the import wasn't found then create it and import it.
@@ -946,8 +946,8 @@ function(wabi_krakenverse_prologue)
             # case we assume the files will be found there regardless
             # of IMPORTED_LOCATION.  Note, however, that the install
             # cannot be relocated in this case.
-            if(NOT WABI_INSTALL_LOCATION AND TARGET krakenverse)
-                get_property(location TARGET krakenverse PROPERTY IMPORTED_LOCATION)
+            if(NOT WABI_INSTALL_LOCATION AND TARGET maelstrom)
+                get_property(location TARGET maelstrom PROPERTY IMPORTED_LOCATION)
                 if(location)
                     # Remove filename and directory.
                     get_filename_component(parent "${location}" PATH)
@@ -955,7 +955,7 @@ function(wabi_krakenverse_prologue)
                     get_filename_component(parent "${parent}" ABSOLUTE)
                     get_filename_component(prefix "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
                     if(NOT "${parent}" STREQUAL "${prefix}")
-                        message("IMPORTED_LOCATION for krakenverse ${location} inconsistent with install directory ${CMAKE_INSTALL_PREFIX}.")
+                        message("IMPORTED_LOCATION for maelstrom ${location} inconsistent with install directory ${CMAKE_INSTALL_PREFIX}.")
                         message(WARNING "May not find plugins at runtime.")
                     endif()
                 endif()
@@ -970,14 +970,14 @@ function(wabi_krakenverse_prologue)
             # We need at least one source file for the library so we
             # create an empty one.
             add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/krakenverse.cpp"
-                COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/krakenverse.cpp"
+                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/maelstrom.cpp"
+                COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/maelstrom.cpp"
             )
 
             # Our shared library.
-            add_library(krakenverse SHARED "${CMAKE_CURRENT_BINARY_DIR}/krakenverse.cpp")
+            add_library(maelstrom SHARED "${CMAKE_CURRENT_BINARY_DIR}/maelstrom.cpp")
             _get_folder("" folder)
-            set_target_properties(krakenverse
+            set_target_properties(maelstrom
                 PROPERTIES
                     FOLDER "${folder}"
                     PREFIX "${WABI_LIB_PREFIX}"
@@ -985,14 +985,14 @@ function(wabi_krakenverse_prologue)
             )
             _get_install_dir("lib" libInstallPrefix)
             install(
-                TARGETS krakenverse
+                TARGETS maelstrom
                 LIBRARY DESTINATION ${libInstallPrefix}
                 ARCHIVE DESTINATION ${libInstallPrefix}
                 RUNTIME DESTINATION ${libInstallPrefix}
             )
             if(WIN32)
                 install(
-                    FILES $<TARGET_PDB_FILE:krakenverse>
+                    FILES $<TARGET_PDB_FILE:maelstrom>
                     DESTINATION ${libInstallPrefix}
                     OPTIONAL
                 )
@@ -1002,7 +1002,7 @@ function(wabi_krakenverse_prologue)
 
     # Create a target for shared libraries.  We currently use this only
     # to test its existence.
-    if(BUILD_SHARED_LIBS OR TARGET krakenverse)
+    if(BUILD_SHARED_LIBS OR TARGET maelstrom)
         add_custom_target(shared_libs)
     endif()
 
@@ -1011,61 +1011,61 @@ function(wabi_krakenverse_prologue)
     if(TARGET shared_libs AND WABI_ENABLE_PYTHON_SUPPORT)
         add_custom_target(python ALL)
     endif()
-endfunction() # wabi_krakenverse_prologue
+endfunction() # wabi_maelstrom_prologue
 
-function(wabi_krakenverse_epilogue)
+function(wabi_maelstrom_epilogue)
     # If we're building a shared monolithic library then link it against
-    # krakenverse_static.
-    if(TARGET krakenverse AND NOT WABI_MONOLITHIC_IMPORT)
+    # maelstrom_static.
+    if(TARGET maelstrom AND NOT WABI_MONOLITHIC_IMPORT)
         # We need to use whole-archive to get all the symbols.  Also note
-        # that we carefully avoid adding the krakenverse_static target itself by using
-        # TARGET_FILE.  Linking the krakenverse_static target would link krakenverse_static and
+        # that we carefully avoid adding the maelstrom_static target itself by using
+        # TARGET_FILE.  Linking the maelstrom_static target would link maelstrom_static and
         # everything it links to.
         if(MSVC)
-            target_link_libraries(krakenverse
+            target_link_libraries(maelstrom
                 PRIVATE
-                    -WHOLEARCHIVE:$<TARGET_FILE:krakenverse_static>
+                    -WHOLEARCHIVE:$<TARGET_FILE:maelstrom_static>
             )
         elseif(CMAKE_COMPILER_IS_GNUCXX)
-            target_link_libraries(krakenverse
+            target_link_libraries(maelstrom
                 PRIVATE
-                    -Wl,--whole-archive $<TARGET_FILE:krakenverse_static> -Wl,--no-whole-archive
+                    -Wl,--whole-archive $<TARGET_FILE:maelstrom_static> -Wl,--no-whole-archive
             )
         elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-            target_link_libraries(krakenverse
+            target_link_libraries(maelstrom
                 PRIVATE
-                    -Wl,-force_load $<TARGET_FILE:krakenverse_static>
+                    -Wl,-force_load $<TARGET_FILE:maelstrom_static>
             )
         endif()
 
-        # Since we didn't add a dependency to krakenverse on krakenverse_static above, we
+        # Since we didn't add a dependency to maelstrom on maelstrom_static above, we
         # manually add it here along with compile definitions, include
         # directories, etc
-        add_dependencies(krakenverse krakenverse_static)
+        add_dependencies(maelstrom maelstrom_static)
 
         # Add the stuff we didn't get because we didn't link against the
-        # krakenverse_static target.
-        target_compile_definitions(krakenverse
+        # maelstrom_static target.
+        target_compile_definitions(maelstrom
             PUBLIC
-                $<TARGET_PROPERTY:krakenverse_static,INTERFACE_COMPILE_DEFINITIONS>
+                $<TARGET_PROPERTY:maelstrom_static,INTERFACE_COMPILE_DEFINITIONS>
         )
-        target_include_directories(krakenverse
+        target_include_directories(maelstrom
             PUBLIC
-                $<TARGET_PROPERTY:krakenverse_static,INTERFACE_INCLUDE_DIRECTORIES>
+                $<TARGET_PROPERTY:maelstrom_static,INTERFACE_INCLUDE_DIRECTORIES>
         )
-        target_include_directories(krakenverse
+        target_include_directories(maelstrom
             SYSTEM
             PUBLIC
-                $<TARGET_PROPERTY:krakenverse_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                $<TARGET_PROPERTY:maelstrom_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
         foreach(lib ${WABI_OBJECT_LIBS})
             get_property(libs TARGET ${lib} PROPERTY INTERFACE_LINK_LIBRARIES)
-            target_link_libraries(krakenverse
+            target_link_libraries(maelstrom
                 PUBLIC
                     ${libs}
             )
         endforeach()
-        target_link_libraries(krakenverse
+        target_link_libraries(maelstrom
                 PUBLIC ${BOOST_LIBRARIES}
                 ${WABI_MALLOC_LIBRARY}
                 ${WABI_THREAD_LIBS}
@@ -1074,13 +1074,13 @@ function(wabi_krakenverse_epilogue)
         _wabi_init_rpath(rpath "${libInstallPrefix}")
         _wabi_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/${WABI_INSTALL_SUBDIR}/lib")
         _wabi_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
-        _wabi_install_rpath(rpath krakenverse)
+        _wabi_install_rpath(rpath maelstrom)
     endif()
 
     # Setup the plugins in the top epilogue to ensure that everybody has had a
     # chance to update WABI_EXTRA_PLUGINS with their plugin paths.
     wabi_setup_plugins()
-endfunction() # wabi_krakenverse_epilogue
+endfunction() # wabi_maelstrom_epilogue
 
 function(wabi_monolithic_epilogue)
     # When building a monolithic library we want all API functions to be
@@ -1110,13 +1110,13 @@ function(wabi_monolithic_epilogue)
     # add_executable();  it can't appear in target_sources().  We
     # need at least one source file so we create an empty one
     add_custom_command(
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/krakenverse_static.cpp"
-        COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/krakenverse_static.cpp"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/maelstrom_static.cpp"
+        COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/maelstrom_static.cpp"
     )
-    add_library(krakenverse_static STATIC "${CMAKE_CURRENT_BINARY_DIR}/krakenverse_static.cpp" ${objects})
+    add_library(maelstrom_static STATIC "${CMAKE_CURRENT_BINARY_DIR}/maelstrom_static.cpp" ${objects})
 
     _get_folder("" folder)
-    set_target_properties(krakenverse_static
+    set_target_properties(maelstrom_static
         PROPERTIES
             FOLDER "${folder}"
             POSITION_INDEPENDENT_CODE ON
@@ -1126,75 +1126,75 @@ function(wabi_monolithic_epilogue)
 
     # Adding $<TARGET_OBJECTS:foo> will not bring along compile
     # definitions, include directories, etc.  Since we'll want those
-    # attached to krakenverse_static we explicitly add them.
+    # attached to maelstrom_static we explicitly add them.
     foreach(lib ${WABI_OBJECT_LIBS})
-        target_compile_definitions(krakenverse_static
+        target_compile_definitions(maelstrom_static
             PUBLIC
                 $<TARGET_PROPERTY:${lib},INTERFACE_COMPILE_DEFINITIONS>
         )
-        target_include_directories(krakenverse_static
+        target_include_directories(maelstrom_static
             PUBLIC
                 $<TARGET_PROPERTY:${lib},INTERFACE_INCLUDE_DIRECTORIES>
         )
-        target_include_directories(krakenverse_static
+        target_include_directories(maelstrom_static
             SYSTEM
             PUBLIC
                 $<TARGET_PROPERTY:${lib},INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
 
         get_property(libs TARGET ${lib} PROPERTY INTERFACE_LINK_LIBRARIES)
-        target_link_libraries(krakenverse_static
+        target_link_libraries(maelstrom_static
             PUBLIC
                 ${libs}
         )
     endforeach()
 
-    # Manual export targets.  We can't use install(EXPORT) because krakenverse_static
+    # Manual export targets.  We can't use install(EXPORT) because maelstrom_static
     # depends on OBJECT libraries which cannot be exported yet must be
-    # in order to export krakenverse_static.  We also have boilerplate for krakenverse, the
-    # externally built monolithic shared library containing krakenverse_static.  The
+    # in order to export maelstrom_static.  We also have boilerplate for maelstrom, the
+    # externally built monolithic shared library containing maelstrom_static.  The
     # client should replace the FIXMEs with the appropriate paths or
-    # use the krakenverse_static export to build against and generate a krakenverse export.
+    # use the maelstrom_static export to build against and generate a maelstrom export.
     set(export "")
-    set(export "${export}add_library(krakenverse_static STATIC IMPORTED)\n")
-    set(export "${export}set_property(TARGET krakenverse_static PROPERTY IMPORTED_LOCATION $<TARGET_FILE:krakenverse_static>)\n")
-    set(export "${export}set_property(TARGET krakenverse_static PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:krakenverse_static,INTERFACE_COMPILE_DEFINITIONS>)\n")
-    set(export "${export}set_property(TARGET krakenverse_static PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_INCLUDE_DIRECTORIES>)\n")
-    set(export "${export}set_property(TARGET krakenverse_static PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)\n")
-    set(export "${export}set_property(TARGET krakenverse_static PROPERTY INTERFACE_LINK_LIBRARIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_LINK_LIBRARIES>)\n")
+    set(export "${export}add_library(maelstrom_static STATIC IMPORTED)\n")
+    set(export "${export}set_property(TARGET maelstrom_static PROPERTY IMPORTED_LOCATION $<TARGET_FILE:maelstrom_static>)\n")
+    set(export "${export}set_property(TARGET maelstrom_static PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:maelstrom_static,INTERFACE_COMPILE_DEFINITIONS>)\n")
+    set(export "${export}set_property(TARGET maelstrom_static PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_INCLUDE_DIRECTORIES>)\n")
+    set(export "${export}set_property(TARGET maelstrom_static PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)\n")
+    set(export "${export}set_property(TARGET maelstrom_static PROPERTY INTERFACE_LINK_LIBRARIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_LINK_LIBRARIES>)\n")
     file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/krakenverse-targets-$<CONFIG>.cmake"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/maelstrom-targets-$<CONFIG>.cmake"
         CONTENT "${export}"
     )
     set(export "")
-    set(export "${export}# Boilerplate for export of krakenverse.  Replace FIXMEs with appropriate paths\n")
-    set(export "${export}# or include krakenverse-targets-$<CONFIG>.cmake in your own build and generate your\n")
+    set(export "${export}# Boilerplate for export of maelstrom.  Replace FIXMEs with appropriate paths\n")
+    set(export "${export}# or include maelstrom-targets-$<CONFIG>.cmake in your own build and generate your\n")
     set(export "${export}# own export file.  Configure with WABI_MONOLITHIC_IMPORT set to the path of\n")
     set(export "${export}# the export file.\n")
-    set(export "${export}add_library(krakenverse SHARED IMPORTED)\n")
-    set(export "${export}set_property(TARGET krakenverse PROPERTY IMPORTED_LOCATION FIXME)\n")
-    set(export "${export}#set_property(TARGET krakenverse PROPERTY IMPORTED_IMPLIB FIXME)\n")
-    set(export "${export}set_property(TARGET krakenverse PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:krakenverse_static,INTERFACE_COMPILE_DEFINITIONS>)\n")
-    set(export "${export}set_property(TARGET krakenverse PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_INCLUDE_DIRECTORIES>)\n")
-    set(export "${export}set_property(TARGET krakenverse PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)\n")
-    set(export "${export}set_property(TARGET krakenverse PROPERTY INTERFACE_LINK_LIBRARIES $<TARGET_PROPERTY:krakenverse_static,INTERFACE_LINK_LIBRARIES>)\n")
+    set(export "${export}add_library(maelstrom SHARED IMPORTED)\n")
+    set(export "${export}set_property(TARGET maelstrom PROPERTY IMPORTED_LOCATION FIXME)\n")
+    set(export "${export}#set_property(TARGET maelstrom PROPERTY IMPORTED_IMPLIB FIXME)\n")
+    set(export "${export}set_property(TARGET maelstrom PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:maelstrom_static,INTERFACE_COMPILE_DEFINITIONS>)\n")
+    set(export "${export}set_property(TARGET maelstrom PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_INCLUDE_DIRECTORIES>)\n")
+    set(export "${export}set_property(TARGET maelstrom PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)\n")
+    set(export "${export}set_property(TARGET maelstrom PROPERTY INTERFACE_LINK_LIBRARIES $<TARGET_PROPERTY:maelstrom_static,INTERFACE_LINK_LIBRARIES>)\n")
     file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/krakenverse-imports-$<CONFIG>.cmake"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/maelstrom-imports-$<CONFIG>.cmake"
         CONTENT "${export}"
     )
 
     # Convenient name for building the monolithic library.
     add_custom_target(monolithic
         DEPENDS
-            krakenverse_static
+            maelstrom_static
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_CURRENT_BINARY_DIR}/krakenverse-targets-$<CONFIG>.cmake"
-            "${CMAKE_BINARY_DIR}/krakenverse-targets-$<CONFIG>.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/maelstrom-targets-$<CONFIG>.cmake"
+            "${CMAKE_BINARY_DIR}/maelstrom-targets-$<CONFIG>.cmake"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_CURRENT_BINARY_DIR}/krakenverse-imports-$<CONFIG>.cmake"
-            "${CMAKE_BINARY_DIR}/krakenverse-imports-$<CONFIG>.cmake"
-        COMMAND ${CMAKE_COMMAND} -E echo Export file: ${CMAKE_BINARY_DIR}/krakenverse-targets-$<CONFIG>.cmake
-        COMMAND ${CMAKE_COMMAND} -E echo Import file: ${CMAKE_BINARY_DIR}/krakenverse-imports-$<CONFIG>.cmake
+            "${CMAKE_CURRENT_BINARY_DIR}/maelstrom-imports-$<CONFIG>.cmake"
+            "${CMAKE_BINARY_DIR}/maelstrom-imports-$<CONFIG>.cmake"
+        COMMAND ${CMAKE_COMMAND} -E echo Export file: ${CMAKE_BINARY_DIR}/maelstrom-targets-$<CONFIG>.cmake
+        COMMAND ${CMAKE_COMMAND} -E echo Import file: ${CMAKE_BINARY_DIR}/maelstrom-imports-$<CONFIG>.cmake
     )
 endfunction() # wabi_monolithic_epilogue
 

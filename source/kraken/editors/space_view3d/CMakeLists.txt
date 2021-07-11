@@ -30,7 +30,7 @@ set(SRC
 )
 
 set(LIB
-  krakenverse
+  maelstrom
   kraken_anchor
   kraken_kernel
   ${TBB_LIBRARIES}

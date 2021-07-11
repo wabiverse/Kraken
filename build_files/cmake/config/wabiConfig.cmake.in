@@ -1,4 +1,4 @@
-# - Configuration file for the wabi krakenverse project
+# - Configuration file for the wabi maelstrom project
 # Defines the following variables:
 # WABI_INCLUDE_DIRS  - Root include directory for the installed project.
 # WABI_LIBRARIES     - List of all libraries, by target name.
@@ -10,7 +10,7 @@ get_filename_component(WABI_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # include("${WABI_CMAKE_DIR}/cmake/wabiTargets.cmake")
 # set(libs "@WABI_ALL_LIBS@")
 # set(libs ${})
-set(WABI_LIBRARIES "${WABI_CMAKE_DIR}/lib/Release/krakenverse.lib")
+set(WABI_LIBRARIES "${WABI_CMAKE_DIR}/lib/Release/maelstrom.lib")
 set(WABI_INCLUDE_DIRS "${WABI_CMAKE_DIR}/include")
 # string(REPLACE " " ";" libs "${libs}")
 # foreach(lib ${libs})

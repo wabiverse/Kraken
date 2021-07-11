@@ -41,7 +41,7 @@ set(INC_SYS
 )
 
 list(APPEND LIB
-  krakenverse
+  maelstrom
   kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

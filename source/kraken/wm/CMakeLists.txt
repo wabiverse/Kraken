@@ -48,7 +48,7 @@ set(SRC
 )
 
 set(LIB
-  krakenverse
+  maelstrom
   kraken_anchor
   kraken_editor_spacefile
   kraken_editor_screen

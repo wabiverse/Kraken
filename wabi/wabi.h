@@ -84,7 +84,7 @@
 #if WABI_USE_NAMESPACES
 
 #  define WABI_NS wabi
-#  define WABI_INTERNAL_NS KRAKENverse
+#  define WABI_INTERNAL_NS WABImaelstrom
 #  define WABI_NS_GLOBAL ::WABI_NS
 
 namespace WABI_INTERNAL_NS
