@@ -1146,7 +1146,7 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
                                                       height,
                                                       state,
                                                       type,
-                                                      false,
+                                                      true,
                                                       (ANCHOR_WindowWin32 *)parentWindow,
                                                       is_dialog);
 
@@ -3121,7 +3121,7 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
 
   ::ShowWindow(m_hWnd, nCmdShow);
 
-  if (alphaBackground && m_parentWindowHwnd == 0)
+  if (m_wantAlphaBackground && m_parentWindowHwnd == 0)
   {
 
     HRESULT hr = S_OK;

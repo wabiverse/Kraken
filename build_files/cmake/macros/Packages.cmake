@@ -152,6 +152,11 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
 set(WABI_THREAD_LIBS "${CMAKE_THREAD_LIBS_INIT}")
 
+if(WIN32)
+  set(PTHREADS_INCLUDE_DIR ${LIBDIR}/pthreads/include)
+  set(PTHREADS_LIBRARY ${LIBDIR}/pthreads/lib/pthreadVC3.lib)
+endif()
+
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Python
 

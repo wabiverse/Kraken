@@ -54,6 +54,7 @@
 #include "KLI_math_inline.h"
 #include "KLI_string_utils.h"
 #include "KLI_time.h"
+#include "KLI_threads.h"
 
 #include "ED_fileselect.h"
 #include "ED_screen.h"
@@ -1382,28 +1383,32 @@ static int wm_window_new_exec(kContext *C, wmOperator *UNUSED(op))
 
 void WM_anchor_init(kContext *C)
 {
-  /* Event handle of anchor stack. */
-  ANCHOR_EventConsumerHandle consumer;
+  if (!anchor_system) {
+    ANCHOR_EventConsumerHandle consumer;
 
-  if (C != NULL)
-  {
-    consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
-  }
+    if (C != NULL) {
+      consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
+    }
 
-  if (!anchor_system)
-  {
     anchor_system = ANCHOR_CreateSystem();
-  }
 
-  if (C != NULL)
-  {
-    ANCHOR::AddEventConsumer(anchor_system, consumer);
+    if (C != NULL) {
+      ANCHOR::AddEventConsumer(anchor_system, consumer);
+    }
+
+    if (true) {
+      ANCHOR::UseNativePixels();
+    }
+
+    ANCHOR::UseWindowFocus(true);
   }
 }
 
 
 void WM_window_process_events(kContext *C)
 {
+  KLI_assert(KLI_thread_is_main());
+
   bool has_event = ANCHOR::ProcessEvents(anchor_system, false);
 
   if (has_event)

@@ -3947,6 +3947,18 @@ AnchorU16 ANCHOR::GetDPIHint(ANCHOR_SystemWindowHandle windowhandle)
   return window->getDPIHint();
 }
 
+int ANCHOR::UseNativePixels(void)
+{
+  ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();
+  return system->useNativePixel();
+}
+
+void ANCHOR::UseWindowFocus(int use_focus)
+{
+  ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();
+  return system->useWindowFocus(use_focus);
+}
+
 float ANCHOR::GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle)
 {
   ANCHOR_ISystemWindow *window = (ANCHOR_ISystemWindow *)windowhandle;

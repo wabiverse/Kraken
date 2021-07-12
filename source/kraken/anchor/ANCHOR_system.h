@@ -154,6 +154,14 @@ class ANCHOR_ISystem
   virtual bool getFullScreen(void) = 0;
 
   /**
+   * Native pixel size support (MacBook 'retina'). */
+  virtual bool useNativePixel(void) = 0;
+
+  /**
+   * Focus window after opening, or put them in the background. */
+  virtual void useWindowFocus(const bool use_focus) = 0;
+
+  /**
    * Retrieves events from the system and stores them in the queue.
    * @param waitForEvent: Flag to wait for an event (or return immediately).
    * @return Indication of the presence of events. */
@@ -270,6 +278,14 @@ class ANCHOR_System : public ANCHOR_ISystem
    * @return The current status. */
   bool getFullScreen(void);
 
+  /**
+   * Native pixel size support (MacBook 'retina').
+   * @return The pixel size in float. */
+  bool useNativePixel(void);
+  bool m_nativePixel;
+
+  /**
+   * Focus window after opening, or put them in the background. */
   void useWindowFocus(const bool use_focus);
   bool m_windowFocus;
 

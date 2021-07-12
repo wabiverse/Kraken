@@ -18,8 +18,10 @@ set(SRC
   intern/KLI_string_utils.cpp
   intern/KLI_icons.cpp
   intern/KLI_math.c
+  intern/KLI_numaapi.cpp
   intern/KLI_path_utils.cpp
   intern/KLI_time.cpp
+  intern/KLI_threads.cpp
 
   ${SRC_WINDOWS}
 
@@ -28,9 +30,11 @@ set(SRC
   KLI_compiler_attrs.h
   KLI_icons.h
   KLI_math_inline.h
+  KLI_numaapi.h
   KLI_path_utils.h
   KLI_string_utils.h
   KLI_time.h
+  KLI_threads.h
   KLI_utildefines.h
 )
 
@@ -38,6 +42,7 @@ set(INC_SYS
   ${Boost_INCLUDE_DIRS}
   ${TBB_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
+  ${PTHREADS_INCLUDE_DIR}
 )
 
 list(APPEND LIB
@@ -46,6 +51,7 @@ list(APPEND LIB
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
+  ${PTHREADS_LIBRARY}
 )
 
 if(WIN32)

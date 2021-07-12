@@ -26,6 +26,8 @@
 #  include <Windows.h>
 #endif
 
+#include "KLI_threads.h"
+
 #include "KKE_context.h"
 #include "KKE_main.h"
 
@@ -49,6 +51,10 @@ int main(int argc, const char **argv)
   /* Create Context C. */
   C = CTX_create();
 
+  /* Initialize Threads. */
+  KLI_threadapi_init();
+
+  /* Initialize Globals (paths, sys). */
   KKE_kraken_globals_init();
 
   /* Init plugins. */

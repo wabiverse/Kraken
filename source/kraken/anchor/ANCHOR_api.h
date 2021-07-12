@@ -1037,6 +1037,12 @@ ANCHOR_API
 AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API
+int UseNativePixels(void);
+
+ANCHOR_API
+void UseWindowFocus(int use_focus);
+
+ANCHOR_API
 float GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API
