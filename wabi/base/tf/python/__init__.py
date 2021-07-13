@@ -41,7 +41,6 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
         import os
         dirs = []
         import_paths = os.getenv('PXR_USD_WINDOWS_DLL_PATH')
-        currentFile = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
         if import_paths is None:
             import_paths = os.getenv('PATH', '')
         for path in import_paths.split(os.pathsep):
