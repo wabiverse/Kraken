@@ -17,8 +17,6 @@ set(SRC
   intern/KLI_time.cpp
   intern/KLI_threads.cpp
 
-  ${SRC_WINDOWS}
-
   KLI_api.h
   KLI_assert.h
   KLI_compiler_attrs.h
@@ -59,7 +57,7 @@ if(WIN32)
     version.lib
   )
 
-  set(SRC_WINDOWS
+  list(APPEND SRC
     intern/KLI_system_win32.cpp
   )
 endif()

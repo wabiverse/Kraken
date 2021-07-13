@@ -265,30 +265,8 @@ function(kraken_add_lib__impl
   kraken_include_dirs("${includes}")
   kraken_include_dirs_sys("${includes_sys}")
   
-  # Build the runtime statically.
-  if(${name} STREQUAL "kraken_anchor")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_kernel")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_editor_code")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_editor_spacefile")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_editor_spaceview3d")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_editor_screen")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_wm")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_python")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_universe")
-    add_library(${name} STATIC ${sources})
-  elseif(${name} STREQUAL "kraken_lib")
-    add_library(${name} STATIC ${sources})
-  else()
-    add_library(${name} SHARED ${sources})
-  endif()
+  # Kraken is a static runtime.
+  add_library(${name} STATIC ${sources})
 
   # This is the only shared library currently.
   # -> Pixar Monolithic USD
