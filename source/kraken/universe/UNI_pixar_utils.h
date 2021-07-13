@@ -37,8 +37,6 @@
 
 #include <boost/program_options.hpp>
 
-namespace fs = std::filesystem;
-
 WABI_NAMESPACE_BEGIN
 
 /**

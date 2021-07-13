@@ -80,7 +80,7 @@ struct WorkSpaceDataRelation
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
-struct WorkSpace : public UsdUIWorkspace, public UniverseObject
+struct WorkSpace : public UsdUIWorkspace, public ObjectUNI
 {
   SdfPath path;
 

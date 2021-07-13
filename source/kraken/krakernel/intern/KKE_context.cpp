@@ -47,7 +47,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct kContext : public UniverseObject
+struct kContext : public ObjectUNI
 {
   kContext() = default;
 
@@ -81,7 +81,7 @@ struct kContext : public UniverseObject
 struct kContextDataResult
 {
   PointerUNI ptr;
-  std::vector<UniverseObject *> list;
+  std::vector<ObjectUNI *> list;
   const char **dir;
   short type; /* 0: normal, 1: seq */
 };

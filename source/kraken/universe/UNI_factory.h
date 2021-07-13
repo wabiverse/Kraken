@@ -88,9 +88,9 @@ namespace CreationFactory
 {
 namespace PTR
 {
-inline void New(SdfPath id, UniverseObject *type, void *data, PointerUNI *r_ptr)
+inline void New(SdfPath id, ObjectUNI *type, void *data, PointerUNI *r_ptr)
 {
-  r_ptr = new UniverseObject();
+  r_ptr = new ObjectUNI();
   r_ptr->path = id;
   r_ptr->type = type;
 }
@@ -99,7 +99,7 @@ namespace STR
 {
 inline void Set(PointerUNI *ptr, const std::string &name, const std::string &value)
 {
-  UniverseProperty strprop;
+  PropertyUNI strprop;
   strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->String;
   strprop.variability = SdfVariabilityUniform;
@@ -116,7 +116,7 @@ namespace BOOL
 {
 inline void Set(PointerUNI *ptr, const std::string &name, const bool &value)
 {
-  UniverseProperty strprop;
+  PropertyUNI strprop;
   strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->Bool;
   strprop.variability = SdfVariabilityUniform;

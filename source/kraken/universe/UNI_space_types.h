@@ -66,6 +66,24 @@ enum eSpaceLinkFlag
   SPACE_FLAG_TYPE_WAS_ACTIVE = (1 << 1),
 };
 
+enum eFileSelectParamsFlag {
+  FILE_PARAMS_FLAG_UNUSED_1 = (1 << 0), /* cleared */
+  FILE_RELPATH = (1 << 1),
+  FILE_LINK = (1 << 2),
+  FILE_HIDE_DOT = (1 << 3),
+  FILE_AUTOSELECT = (1 << 4),
+  FILE_ACTIVE_COLLECTION = (1 << 5),
+  FILE_PARAMS_FLAG_UNUSED_6 = (1 << 6), /* cleared */
+  FILE_DIRSEL_ONLY = (1 << 7),
+  FILE_FILTER = (1 << 8),
+  FILE_OBDATA_INSTANCE = (1 << 9),
+  FILE_COLLECTION_INSTANCE = (1 << 10),
+  FILE_SORT_INVERT = (1 << 11),
+  FILE_HIDE_TOOL_PROPS = (1 << 12),
+  FILE_CHECK_EXISTING = (1 << 13),
+  FILE_ASSETS_ONLY = (1 << 14),
+};
+
 struct SpaceLink
 {
   /** Storage of regions for inactive spaces. */

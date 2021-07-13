@@ -62,7 +62,7 @@ struct ScrAreaMap
   {}
 };
 
-struct wmWindow : public UsdUIWindow, public UniverseObject
+struct wmWindow : public UsdUIWindow, public ObjectUNI
 {
   SdfPath path;
   wmWindow *parent;
@@ -196,7 +196,7 @@ struct wmSpaceTypeListenerParams
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
-struct wmWindowManager : public UniverseObject
+struct wmWindowManager : public ObjectUNI
 {
   SdfPath path;
 

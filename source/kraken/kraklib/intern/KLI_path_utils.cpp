@@ -26,13 +26,131 @@
 
 #include "KLI_api.h"
 #include "KLI_assert.h"
+#include "KLI_fileops.h"
 #include "KLI_string_utils.h"
+#include "KLI_path_utils.h"
 
 #include <cstring>
 #include <stdarg.h>
 #include <string>
 
+#ifdef WIN32
+#  include "utfconv.h"
+#  include <io.h>
+#  ifdef _WIN32_IE
+#    undef _WIN32_IE
+#  endif
+#  define _WIN32_IE 0x0501
+#  include <shlobj.h>
+#  include <windows.h>
+#else /* non windows */
+#  ifdef WITH_BINRELOC
+#    include "binreloc.h"
+#  endif
+/* #mkdtemp on OSX (and probably all *BSD?), not worth making specific check for this OS. */
+#  include <unistd.h>
+#endif /* WIN32 */
+
+#include <wabi/base/arch/hints.h>
+#include <wabi/base/tf/stringUtils.h>
+#include <wabi/base/tf/pathUtils.h>
+
 WABI_NAMESPACE_BEGIN
+
+/**
+ * Get an env var, result has to be used immediately.
+ *
+ * On windows #getenv gets its variables from a static copy of the environment variables taken at
+ * process start-up, causing it to not pick up on environment variables created during runtime.
+ * This function uses an alternative method to get environment variables that does pick up on
+ * runtime environment variables. The result will be UTF-8 encoded. */
+const char *KLI_getenv(const char *env)
+{
+#ifdef _MSC_VER
+  const char *result = NULL;
+  /* 32767 is the maximum size of the environment variable on windows,
+   * reserve one more character for the zero terminator. */
+  static wchar_t buffer[32768];
+  wchar_t *env_16 = alloc_utf16_from_8(env, 0);
+  if (env_16) {
+    if (GetEnvironmentVariableW(env_16, buffer, ARRAY_SIZE(buffer))) {
+      char *res_utf8 = alloc_utf_8_from_16(buffer, 0);
+      /* Make sure the result is valid, and will fit into our temporary storage buffer. */
+      if (res_utf8) {
+        if (strlen(res_utf8) + 1 < sizeof(buffer)) {
+          /* We are re-using the utf16 buffer here, since allocating a second static buffer to
+           * contain the UTF-8 version to return would be wasteful. */
+          memcpy(buffer, res_utf8, strlen(res_utf8) + 1);
+          result = (const char *)buffer;
+        }
+        free(res_utf8);
+      }
+    }
+  }
+  return result;
+#else
+  return getenv(env);
+#endif
+}
+
+/**
+ * Simple appending of filename to dir, does not check for valid path!
+ * Puts result into `dst`, which may be same area as `dir`. */
+void KLI_join_dirfile(char *__restrict dst,
+                      const size_t maxlen,
+                      const char *__restrict dir,
+                      const char *__restrict file)
+{
+#ifdef DEBUG_STRSIZE
+  memset(dst, 0xff, sizeof(*dst) * maxlen);
+#endif
+  size_t dirlen = KLI_strnlen(dir, maxlen);
+
+  /* args can't match */
+  KLI_assert((dst != dir) && (dst != file));
+
+  if (dirlen == maxlen) {
+    memcpy(dst, dir, dirlen);
+    dst[dirlen - 1] = '\0';
+    return; /* dir fills the path */
+  }
+
+  memcpy(dst, dir, dirlen + 1);
+
+  if (dirlen + 1 >= maxlen) {
+    return; /* fills the path */
+  }
+
+  /* inline KLI_path_slash_ensure */
+  if ((dirlen > 0) && !((dst[dirlen - 1] != SEP) && (dst[dirlen - 1] != ALTSEP))) {
+    dst[dirlen++] = SEP;
+    dst[dirlen] = '\0';
+  }
+
+  if (dirlen >= maxlen) {
+    return; /* fills the path */
+  }
+
+  KLI_strncpy(dst + dirlen, file, maxlen - dirlen);
+}
+
+/**
+ * Moves joined @param path string into @param dst. */
+void KLI_path_join(char *__restrict dst, const std::string &path)
+{
+  KLI_strncpy(dst, CHARALL(path), FILE_MAXDIR);
+}
+
+/**
+ * Joins infinite strings into @param dst,
+ * ensuring only a single path separator between each. */
+void KLI_path_join(char *__restrict dst, const char *path, ...)
+{
+  va_list args;
+  va_start(args, path);
+  KLI_path_join(dst, TfVStringPrintf(CHARALL(STRCAT(path, "%s")), args));
+  va_end(args);
+}
 
 static bool path_extension_check_ex(const char *str,
                                     const size_t str_len,
@@ -98,5 +216,132 @@ bool KLI_has_pixar_extension(const std::string &str)
   const char *ext_test[5] = {".usd", ".usda", ".usdc", ".usdz", NULL};
   return KLI_path_extension_check_array(str, ext_test);
 }
+
+/**
+ * Append a filename to a dir, ensuring slash separates.
+ */
+void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__restrict file)
+{
+  size_t dirlen = KLI_strnlen(dst, maxlen);
+
+  /* inline BLI_path_slash_ensure */
+  if ((dirlen > 0) && (dst[dirlen - 1] != SEP)) {
+    dst[dirlen++] = SEP;
+    dst[dirlen] = '\0';
+  }
+
+  if (dirlen >= maxlen) {
+    return; /* fills the path */
+  }
+
+  KLI_strncpy(dst + dirlen, file, maxlen - dirlen);
+}
+
+/**
+ * Search for a binary (executable) */
+bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *name)
+{
+#ifdef DEBUG_STRSIZE
+  memset(fullname, 0xff, sizeof(*fullname) * maxlen);
+#endif
+  const char *path;
+  bool retval = false;
+
+#ifdef _WIN32
+  const char separator = ';';
+#else
+  const char separator = ':';
+#endif
+
+  path = KLI_getenv("PATH");
+  if (path) {
+    char filename[FILE_MAX];
+    const char *temp;
+
+    do {
+      temp = strchr(path, separator);
+      if (temp) {
+        memcpy(filename, path, temp - path);
+        filename[temp - path] = 0;
+        path = temp + 1;
+      }
+      else {
+        KLI_strncpy(filename, path, sizeof(filename));
+      }
+
+      KLI_path_append(filename, maxlen, name);
+      if (
+#ifdef _WIN32
+          KLI_path_program_extensions_add_win32(filename, maxlen)
+#else
+          KLI_exists(filename)
+#endif
+      ) {
+        KLI_strncpy(fullname, filename, maxlen);
+        retval = true;
+        break;
+      }
+    } while (temp);
+  }
+
+  if (retval == false) {
+    *fullname = '\0';
+  }
+
+  return retval;
+}
+
+#ifdef _WIN32
+/**
+ * Tries appending each of the semicolon-separated extensions in the PATHEXT
+ * environment variable (Windows-only) onto `name` in turn until such a file is found.
+ * Returns success/failure.
+ */
+bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
+{
+  bool retval = false;
+  fs::file_status type;
+
+  type = KLI_type(name);
+  if (KLI_exists(name) || KLI_ISDIR(type)) {
+    /* typically 3-5, ".EXE", ".BAT"... etc */
+    const int ext_max = 12;
+    const char *ext = KLI_getenv("PATHEXT");
+    if (ext) {
+      const int name_len = strlen(name);
+      char *filename = (char *)alloca(name_len + ext_max);
+      char *filename_ext;
+      const char *ext_next;
+
+      /* null terminated in the loop */
+      memcpy(filename, name, name_len);
+      filename_ext = filename + name_len;
+
+      do {
+        int ext_len;
+        ext_next = strchr(ext, ';');
+        ext_len = ext_next ? ((ext_next++) - ext) : strlen(ext);
+
+        if (ARCH_LIKELY(ext_len < ext_max)) {
+          memcpy(filename_ext, ext, ext_len);
+          filename_ext[ext_len] = '\0';
+
+          type = KLI_type(filename);
+          if (KLI_exists(name) && (!KLI_ISDIR(type))) {
+            retval = true;
+            KLI_strncpy(name, filename, maxlen);
+            break;
+          }
+        }
+      } while ((ext = ext_next));
+    }
+  }
+  else {
+    retval = true;
+  }
+
+  return retval;
+}
+#endif /* WIN32 */
 
 WABI_NAMESPACE_END

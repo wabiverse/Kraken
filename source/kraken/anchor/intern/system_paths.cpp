@@ -243,3 +243,40 @@ eAnchorStatus ANCHOR_CreateSystemPaths(void)
 {
   return ANCHOR_ISystemPaths::create();
 }
+
+eAnchorStatus ANCHOR_DisposeSystemPaths(void)
+{
+  return ANCHOR_ISystemPaths::dispose();
+}
+
+const AnchorU8 *ANCHOR_getSystemDir(int version, const char *versionstr)
+{
+  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  return systemPaths ? systemPaths->getSystemDir(version, versionstr) : NULL;
+}
+
+const AnchorU8 *ANCHOR_getUserDir(int version, const char *versionstr)
+{
+  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  return systemPaths ? systemPaths->getUserDir(version, versionstr) : NULL; /* shouldn't be NULL */
+}
+
+const AnchorU8 *ANCHOR_getUserSpecialDir(eAnchorUserSpecialDirTypes type)
+{
+  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  return systemPaths ? systemPaths->getUserSpecialDir(type) : NULL; /* shouldn't be NULL */
+}
+
+const AnchorU8 *ANCHOR_getBinaryDir()
+{
+  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  return systemPaths ? systemPaths->getBinaryDir() : NULL; /* shouldn't be NULL */
+}
+
+void ANCHOR_addToSystemRecentFiles(const char *filename)
+{
+  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  if (systemPaths) {
+    systemPaths->addToSystemRecentFiles(filename);
+  }
+}

@@ -494,6 +494,86 @@ size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, s
   return (size_t)(dst - r_dst);
 }
 
+size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
+                                 const wchar_t *__restrict src,
+                                 const size_t maxncpy)
+{
+  const size_t maxlen = maxncpy - 1;
+  /* 6 is max utf8 length of an unicode char. */
+  const int64_t maxlen_secured = (int64_t)maxlen - 6;
+  size_t len = 0;
+
+  KLI_assert(maxncpy != 0);
+
+#ifdef DEBUG_STRSIZE
+  memset(dst, 0xff, sizeof(*dst) * maxncpy);
+#endif
+
+  while (*src && len <= maxlen_secured) {
+    len += KLI_str_utf8_from_unicode((uint)*src++, dst + len);
+  }
+
+  /* We have to be more careful for the last six bytes,
+   * to avoid buffer overflow in case utf8-encoded char would be too long for our dst buffer. */
+  while (*src) {
+    char t[6];
+    size_t l = KLI_str_utf8_from_unicode((uint)*src++, t);
+    KLI_assert(l <= 6);
+    if (len + l > maxlen) {
+      break;
+    }
+    memcpy(dst + len, t, l);
+    len += l;
+  }
+
+  dst[len] = '\0';
+
+  return len;
+}
+
+size_t KLI_str_utf8_from_unicode(uint c, char *outbuf)
+{
+  /* If this gets modified, also update the copy in g_string_insert_unichar() */
+  uint len = 0;
+  uint first;
+  uint i;
+
+  if (c < 0x80) {
+    first = 0;
+    len = 1;
+  }
+  else if (c < 0x800) {
+    first = 0xc0;
+    len = 2;
+  }
+  else if (c < 0x10000) {
+    first = 0xe0;
+    len = 3;
+  }
+  else if (c < 0x200000) {
+    first = 0xf0;
+    len = 4;
+  }
+  else if (c < 0x4000000) {
+    first = 0xf8;
+    len = 5;
+  }
+  else {
+    first = 0xfc;
+    len = 6;
+  }
+
+  if (outbuf) {
+    for (i = len - 1; i > 0; i--) {
+      outbuf[i] = (c & 0x3f) | 0x80;
+      c >>= 6;
+    }
+    outbuf[0] = c | first;
+  }
+
+  return len;
+}
+
 /**
  * Determine the length of a fixed length string.
  *

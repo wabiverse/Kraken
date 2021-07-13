@@ -14,6 +14,7 @@ set(LIB
   kraken_wm
   kraken_kernel
   kraken_universe
+  kraken_intern_utfconv
 )
 
 list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
@@ -194,7 +195,7 @@ add_cc_flags_custom_test(kraken)
 if(WITH_PYTHON_MODULE)
   add_definitions(-DWITH_PYTHON_MODULE)
 
-  # creates ./bin/bpy.so which can be imported as a python module.
+  # creates ./bin/kpy.so which can be imported as a python module.
   #
   # note that 'SHARED' works on Linux and Windows,
   # but not OSX which _must_ be 'MODULE'

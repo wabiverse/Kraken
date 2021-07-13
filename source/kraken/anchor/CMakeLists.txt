@@ -102,7 +102,12 @@ set(LIB
 )
 
 if(WIN32)
+  list(APPEND INC
+    ../../../intern/utfconv
+  )
+
   list(APPEND LIB
+    kraken_intern_utfconv
     comctl32
     shcore
     shlwapi

@@ -13,6 +13,7 @@ set(INC
 )
 
 set(SRC
+  intern/KKE_appdir.cpp
   intern/KKE_context.cpp
   intern/KKE_kraken.cpp
   intern/KKE_diagnostics.cpp
@@ -25,6 +26,7 @@ set(SRC
   intern/KKE_workspace.cpp
 
   KKE_api.h
+  KKE_appdir.h
   KKE_context.h
   KKE_icons.h
   KKE_main.h
@@ -59,6 +61,22 @@ set(LIB
   ${VULKAN_LIBRARIES}
   ${PTHREADS_LIBRARY}
 )
+
+if(WIN32)
+  list(APPEND INC
+    ../../../intern/utfconv
+  )
+
+  list(APPEND LIB
+    kraken_intern_utfconv
+  )
+endif()
+
+if(WITH_PYTHON)
+  get_filename_component(_python_exe_name ${PYTHON_EXECUTABLE} NAME)
+  add_definitions(-DPYTHON_EXECUTABLE_NAME=${_python_exe_name})
+  unset(_python_exe_name)
+endif()
 
 add_definitions(-DKRAKEN_KERNEL_EXPORTS)
 kraken_add_lib(kraken_kernel "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

@@ -270,6 +270,11 @@ endif()
 wabi_maelstrom_epilogue()
 
 #-----------------------------------------------------------------------------
+# Internally Maintained Libraries.
+
+add_subdirectory(intern)
+
+#-----------------------------------------------------------------------------
 # KRAKEN. The Digital Content Creation Platform of the 21st Century.
 
 add_subdirectory(source)

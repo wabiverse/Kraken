@@ -30,24 +30,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-void kpy_intern_string_init(void);
-void kpy_intern_string_exit(void);
+int KPY_library_load_type_ready(void);
+extern PyMethodDef KPY_library_load_method_def;
 
-extern PyObject *kpy_intern_str___annotations__;
-extern PyObject *kpy_intern_str___doc__;
-extern PyObject *kpy_intern_str___main__;
-extern PyObject *kpy_intern_str___module__;
-extern PyObject *kpy_intern_str___name__;
-extern PyObject *kpy_intern_str___slots__;
-extern PyObject *kpy_intern_str_attr;
-extern PyObject *kpy_intern_str_kr_property;
-extern PyObject *kpy_intern_str_kr_uni;
-extern PyObject *kpy_intern_str_kr_target_properties;
-extern PyObject *kpy_intern_str_kpy_types;
-extern PyObject *kpy_intern_str_frame;
-extern PyObject *kpy_intern_str_properties;
-extern PyObject *kpy_intern_str_register;
-extern PyObject *kpy_intern_str_self;
-extern PyObject *kpy_intern_str_unregister;
+// extern PyMethodDef KPY_library_write_method_def;
 
 WABI_NAMESPACE_END

@@ -78,7 +78,7 @@ enum
 };
 
 
-struct ARegion : public UsdUIArea, public UniverseObject
+struct ARegion : public UsdUIArea, public ObjectUNI
 {
   SdfPath path;
 

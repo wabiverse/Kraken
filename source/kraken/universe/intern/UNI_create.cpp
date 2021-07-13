@@ -58,12 +58,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-UniverseObject UNI_Area;
-UniverseObject UNI_Region;
-UniverseObject UNI_Screen;
-UniverseObject UNI_Window;
-UniverseObject UNI_WorkSpace;
-UniverseObject UNI_Object;
+ObjectUNI UNI_Area;
+ObjectUNI UNI_Region;
+ObjectUNI UNI_Screen;
+ObjectUNI UNI_Window;
+ObjectUNI UNI_WorkSpace;
+ObjectUNI UNI_Object;
 
 void UNI_create_stage(kContext *C)
 {

@@ -148,7 +148,7 @@ struct SpaceType
 
   int (*space_subtype_get)(ScrArea *area);
   void (*space_subtype_set)(ScrArea *area, int value);
-  // void (*space_subtype_item_extend)(bContext *C, EnumPropertyItem **item, int *totitem);
+  // void (*space_subtype_item_extend)(kContext *C, EnumPropertyItem **item, int *totitem);
 
   /* region type definitions */
   std::vector<ARegionType *> regiontypes;

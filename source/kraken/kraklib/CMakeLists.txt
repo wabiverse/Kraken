@@ -6,15 +6,9 @@ set(INC
   ../editors/include
 )
 
-
-if(WIN32)
-  set(SRC_WINDOWS
-    intern/KLI_system_win32.cpp
-  )
-endif()
-
 set(SRC
   intern/KLI_assert.c
+  intern/KLI_storage.cpp
   intern/KLI_string_utils.cpp
   intern/KLI_icons.cpp
   intern/KLI_math.c
@@ -28,6 +22,7 @@ set(SRC
   KLI_api.h
   KLI_assert.h
   KLI_compiler_attrs.h
+  KLI_fileops.h
   KLI_icons.h
   KLI_math_inline.h
   KLI_numaapi.h
@@ -55,8 +50,17 @@ list(APPEND LIB
 )
 
 if(WIN32)
+  list(APPEND INC
+    ../../../intern/utfconv
+  )
+
   list(APPEND LIB
+    kraken_intern_utfconv
     version.lib
+  )
+
+  set(SRC_WINDOWS
+    intern/KLI_system_win32.cpp
   )
 endif()
 

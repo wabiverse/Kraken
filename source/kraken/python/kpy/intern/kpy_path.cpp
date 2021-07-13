@@ -16,8 +16,6 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
  * KRAKEN Python.
@@ -28,26 +26,30 @@
 
 #include "KPY_api.h"
 
+#include "kpy_path.h"
+
 WABI_NAMESPACE_BEGIN
 
-void kpy_intern_string_init(void);
-void kpy_intern_string_exit(void);
+/*----------------------------MODULE INIT-------------------------*/
+static struct PyModuleDef _kpy_path_module_def = {
+    PyModuleDef_HEAD_INIT,
+    "_kpy_path", /* m_name */
+    NULL,        /* m_doc */
+    0,           /* m_size */
+    NULL,        /* m_methods */
+    NULL,        /* m_reload */
+    NULL,        /* m_traverse */
+    NULL,        /* m_clear */
+    NULL,        /* m_free */
+};
 
-extern PyObject *kpy_intern_str___annotations__;
-extern PyObject *kpy_intern_str___doc__;
-extern PyObject *kpy_intern_str___main__;
-extern PyObject *kpy_intern_str___module__;
-extern PyObject *kpy_intern_str___name__;
-extern PyObject *kpy_intern_str___slots__;
-extern PyObject *kpy_intern_str_attr;
-extern PyObject *kpy_intern_str_kr_property;
-extern PyObject *kpy_intern_str_kr_uni;
-extern PyObject *kpy_intern_str_kr_target_properties;
-extern PyObject *kpy_intern_str_kpy_types;
-extern PyObject *kpy_intern_str_frame;
-extern PyObject *kpy_intern_str_properties;
-extern PyObject *kpy_intern_str_register;
-extern PyObject *kpy_intern_str_self;
-extern PyObject *kpy_intern_str_unregister;
+PyObject *KPyInit__kpy_path(void)
+{
+  PyObject *submodule;
+
+  submodule = PyModule_Create(&_kpy_path_module_def);
+
+  return submodule;
+}
 
 WABI_NAMESPACE_END

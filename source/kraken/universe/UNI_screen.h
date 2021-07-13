@@ -81,7 +81,7 @@ struct ScrEdge
   {}
 };
 
-struct kScreen : public UsdUIScreen, public UniverseObject
+struct kScreen : public UsdUIScreen, public ObjectUNI
 {
   SdfPath path;
 

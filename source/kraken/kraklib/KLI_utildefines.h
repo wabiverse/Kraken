@@ -49,6 +49,8 @@ typedef unsigned __int64 size_t;
 /* assert. */
 #include "KLI_assert.h"
 
+namespace fs = std::filesystem;
+
 /**
  *  Macro to convert a value to string in the pre-processor: */
 #define STRINGIFY_ARG(x) "" #x
@@ -70,6 +72,7 @@ typedef unsigned __int64 size_t;
 #endif
 
 #define IFACE_(msgid) msgid
+#define N_(msgid) msgid
 
 #if defined(__GNUC__) && !defined(__cplusplus) && !defined(__clang__) && !defined(__INTEL_COMPILER)
 #  define ARRAY_SIZE(arr) \

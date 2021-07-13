@@ -67,7 +67,7 @@ struct ScrGlobalAreaData
 };
 
 
-struct ScrArea : public UsdUIArea, public UniverseObject
+struct ScrArea : public UsdUIArea, public ObjectUNI
 {
   int areaid;
   SdfPath path;

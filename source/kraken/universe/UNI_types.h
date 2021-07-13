@@ -30,25 +30,35 @@ WABI_NAMESPACE_BEGIN
 
 struct Main;
 struct ReportList;
-struct UniverseObject;
-struct UniverseProperty;
+struct ObjectUNI;
+struct PropertyUNI;
 struct kContext;
 
-typedef struct UniverseObject UniverseObject;
+typedef struct ObjectUNI ObjectUNI;
 
-typedef int (*ObjectValidateFunc)(struct UniverseObject *ptr, void *data, int *have_function);
+typedef int (*ObjectValidateFunc)(struct ObjectUNI *ptr, void *data, int *have_function);
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
-                                  struct UniverseObject *ptr,
+                                  struct ObjectUNI *ptr,
                                   void *func,
                                   UsdAttributeVector list);
 typedef void (*ObjectFreeFunc)(void *data);
-typedef struct UniverseObject *(*ObjectRegisterFunc)(struct Main *kmain,
+typedef struct ObjectUNI *(*ObjectRegisterFunc)(struct Main *kmain,
                                                      struct ReportList *reports,
                                                      void *data,
                                                      const char *identifier,
                                                      ObjectValidateFunc validate,
                                                      ObjectCallbackFunc call,
                                                      ObjectFreeFunc free);
-typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct UniverseObject *type);
+typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct ObjectUNI *type);
+typedef void **(*ObjectInstanceFunc)(struct ObjectUNI *ptr);
+
+/**
+ * Kraken UNI
+ *
+ * Root UNI data structure that lists all prim types. */
+
+struct KrakenUNI {
+  std::vector<struct ObjectUNI*> objects;
+};
 
 WABI_NAMESPACE_END

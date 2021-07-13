@@ -32,7 +32,7 @@
 
 #include "KPY_api.h"
 
-/* --- bpy build options --- */
+/* --- kpy build options --- */
 #ifdef WITH_PYTHON_SAFETY
 
 /**
@@ -48,7 +48,7 @@
 #  define USE_PYUNI_INVALIDATE_WEAKREF
 
 /* support for inter references, currently only needed for corner case */
-#  define USE_PYUNI_STRUCT_REFERENCE
+#  define USE_PYUNI_OBJECT_REFERENCE
 
 #else /* WITH_PYTHON_SAFETY */
 
@@ -56,38 +56,109 @@
 
 #endif /* !WITH_PYTHON_SAFETY */
 
+#define USE_PYUNI_ITER
+
 WABI_NAMESPACE_BEGIN
 
-extern PyTypeObject pyuni_struct_meta_idprop_Type;
-extern PyTypeObject pyuni_struct_Type;
+extern PyTypeObject pyuni_object_meta_idprop_Type;
+extern PyTypeObject pyuni_object_Type;
 extern PyTypeObject pyuni_prop_Type;
 extern PyTypeObject pyuni_prop_array_Type;
 extern PyTypeObject pyuni_prop_collection_Type;
 extern PyTypeObject pyuni_func_Type;
 
-#define KPy_UniverseObject_Check(v) (PyObject_TypeCheck(v, &pyuni_struct_Type))
-#define KPy_UniverseObject_CheckExact(v) (Py_TYPE(v) == &pyuni_struct_Type)
-#define KPy_UniverseProperty_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
-#define KPy_UniverseProperty_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
+#define KPy_ObjectUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_object_Type))
+#define KPy_ObjectUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_object_Type)
+#define KPy_PropertyUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
+#define KPy_PropertyUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
 
-struct KPy_UniverseObject {
+#define PYUNI_STRUCT_CHECK_OBJ(obj) \
+  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) { \
+    return NULL; \
+  } \
+  (void)0
+#define PYUNI_STRUCT_CHECK_INT(obj) \
+  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) { \
+    return -1; \
+  } \
+  (void)0
+
+#define PYUNI_PROP_CHECK_OBJ(obj) \
+  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) { \
+    return NULL; \
+  } \
+  (void)0
+#define PYUNI_PROP_CHECK_INT(obj) \
+  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) { \
+    return -1; \
+  } \
+  (void)0
+
+#define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_ObjectUNI *)(pyuni))->ptr.type != NULL))
+#define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyUNI *)(pyuni))->ptr.type != NULL))
+
+struct KPy_UniverseDummyPointer {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
   PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
-#ifdef USE_PYUNI_STRUCT_REFERENCE
+};
+
+struct KPy_ObjectUNI {
+  PyObject_HEAD /* Required Python macro. */
+#ifdef USE_WEAKREFS
+  PyObject *in_weakreflist;
+#endif
+  PointerUNI ptr;
+#ifdef USE_PYUNI_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
    * hold onto the collection iterator to prevent it from
    * freeing allocated data we may use */
   PyObject *reference;
-#endif /* !USE_PYUNI_STRUCT_REFERENCE */
+#endif /* !USE_PYUNI_OBJECT_REFERENCE */
 
 #ifdef PYUNI_FREE_SUPPORT
   bool freeptr; /* needed in some cases if ptr.data is created on the fly, free when deallocing */
 #endif          /* PYUNI_FREE_SUPPORT */
 };
+
+struct KPy_PropertyUNI {
+  PyObject_HEAD /* Required Python macro. */
+#ifdef USE_WEAKREFS
+  PyObject *in_weakreflist;
+#endif
+  PointerUNI ptr;
+  PropertyUNI *prop;
+};
+
+struct KPy_CollectionPropertyUNI {
+  PyObject_HEAD /* Required Python macro. */
+#ifdef USE_WEAKREFS
+  PyObject *in_weakreflist;
+#endif
+
+  /* collection iterator specific parts */
+  CollectionPropertyUNI iter;
+};
+
+struct KPy_UniverseFunction {
+  PyObject_HEAD /* Required Python macro. */
+#ifdef USE_WEAKREFS
+  PyObject *in_weakreflist;
+#endif
+  PointerUNI ptr;
+  void *func;
+};
+
+void KPY_uni_init(void);
+PyObject *KPY_uni_types(void);
+PyObject *KPY_uni_module(void);
+
+ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix);
+PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr);
+void pyuni_alloc_types(void);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;
@@ -97,6 +168,6 @@ extern PyMethodDef meth_kpy_unregister_class;
 extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 
-extern KPy_UniverseObject *kpy_context_module;
+extern KPy_ObjectUNI *kpy_context_module;
 
 WABI_NAMESPACE_END

@@ -33,7 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Main : public UniverseObject
+struct Main : public ObjectUNI
 {
   uint64_t build_commit_timestamp;
   std::string build_hash;

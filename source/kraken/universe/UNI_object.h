@@ -37,7 +37,17 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct UniverseObject : public UsdPrim, public TfRefBase, public TfWeakBase
+struct PropertyUNI
+{
+  TfToken name;
+  SdfValueTypeName type;
+  SdfVariability variability;
+  bool custom;
+};
+
+typedef std::vector<PropertyUNI*> CollectionPropertyUNI;
+
+struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
 {
   SdfPath path;
 
@@ -47,43 +57,36 @@ struct UniverseObject : public UsdPrim, public TfRefBase, public TfWeakBase
 
   const char *identifier;
 
-  struct UniverseObject *type;
+  struct ObjectUNI *type;
   void *data;
 
   UsdAttributeVector props;
+  CollectionPropertyUNI collection;
 
   /**
    * Object this is derived from */
-  struct UniverseObject *base;
+  struct ObjectUNI *base;
 
   /**
    * Function to register/unregister subclasses */
   ObjectRegisterFunc reg;
   ObjectUnregisterFunc unreg;
 
-  virtual ~UniverseObject()
+  ObjectInstanceFunc instance;
+
+  virtual ~ObjectUNI()
   {}
 
-  inline UniverseObject();
+  inline ObjectUNI();
 };
 
-UniverseObject::UniverseObject()
+ObjectUNI::ObjectUNI()
   : notice(TfNotice()),
     type(nullptr),
     data(nullptr),
     base(nullptr)
 {}
 
-struct UniverseProperty
-{
-  TfToken name;
-  SdfValueTypeName type;
-  SdfVariability variability;
-  bool custom;
-};
-
-typedef UniverseObject PointerUNI;
-
-typedef std::vector<UniverseProperty> UniversePropertyVec;
+typedef ObjectUNI PointerUNI;
 
 WABI_NAMESPACE_END

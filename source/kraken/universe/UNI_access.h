@@ -35,19 +35,34 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* Types */
+extern KrakenUNI KRAKEN_UNI;
+
 /* Keep Sorted. */
-extern UniverseObject UNI_Area;
-extern UniverseObject UNI_Region;
-extern UniverseObject UNI_Screen;
-extern UniverseObject UNI_Window;
-extern UniverseObject UNI_WorkSpace;
-extern UniverseObject UNI_Object;
+extern ObjectUNI UNI_Area;
+extern ObjectUNI UNI_Context;
+extern ObjectUNI UNI_KrakenUNI;
+extern ObjectUNI UNI_Region;
+extern ObjectUNI UNI_Screen;
+extern ObjectUNI UNI_Window;
+extern ObjectUNI UNI_WorkSpace;
+extern ObjectUNI UNI_Object;
 
 void UNI_main_pointer_create(Main *kmain, PointerUNI *r_ptr);
 
-ObjectRegisterFunc UNI_object_register(UniverseObject *type);
-ObjectUnregisterFunc UNI_object_unregister(UniverseObject *type);
+void UNI_kraken_uni_pointer_create(PointerUNI *r_ptr);
 
-const char *UNI_object_identifier(const UniverseObject *type);
+ObjectRegisterFunc UNI_object_register(ObjectUNI *type);
+ObjectUnregisterFunc UNI_object_unregister(ObjectUNI *type);
+
+PropertyUNI *UNI_object_find_property(PointerUNI *ptr, const char *identifier);
+void **UNI_object_instance(PointerUNI *ptr);
+const char *UNI_object_identifier(const ObjectUNI *type);
+
+SdfValueTypeName UNI_property_type(PropertyUNI *prop);
+
+void UNI_property_collection_begin(PointerUNI *ptr,
+                                   PropertyUNI *prop,
+                                   CollectionPropertyUNI iter);
 
 WABI_NAMESPACE_END
