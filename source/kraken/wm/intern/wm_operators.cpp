@@ -101,7 +101,7 @@ void WM_operator_properties_free(PointerUNI *ptr)
 
 void WM_operator_properties_create_ptr(PointerUNI *prop_ptr, wmOperatorType *ot)
 {
-  CreationFactory::PTR::New(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_WM), ot->uprops, prop_ptr);
+  CreationFactory::PTR::New(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_WM), ot->uni, NULL, prop_ptr);
 }
 
 void WM_operators_init(kContext *C)

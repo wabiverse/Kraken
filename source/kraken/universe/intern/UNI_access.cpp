@@ -18,26 +18,37 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * Universe.
+ * Set the Stage.
  */
 
-#include "KKE_api.h"
-#include "KKE_context.h"
-#include "KKE_main.h"
+#include "KKE_utils.h"
 
-#include "kpy/KPY_init_exit.h"
-
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/wabi.h>
+#include "UNI_api.h"
+#include "UNI_object.h"
+#include "UNI_access.h"
 
 WABI_NAMESPACE_BEGIN
 
-
-void KKE_kraken_python_init(kContext *C)
+ObjectRegisterFunc UNI_object_register(UniverseObject *type)
 {
-  KPY_python_init(C);
+  return type->reg;
 }
 
+ObjectUnregisterFunc UNI_object_unregister(UniverseObject *type)
+{
+  do {
+    if (type->unreg) {
+      return type->unreg;
+    }
+  } while ((type = type->base));
+
+  return NULL;
+}
+
+const char *UNI_object_identifier(const UniverseObject *type)
+{
+  return type->identifier;
+}
 
 WABI_NAMESPACE_END

@@ -265,7 +265,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
   op->idname = ot->idname;
 
   /* Initialize properties. */
-  if (properties && !properties->type.empty())
+  if (properties && !properties->props.empty())
   {
     op->properties = properties;
   }
@@ -410,7 +410,7 @@ static bool isect_pt_v(const GfVec4i &rect, const GfVec2i &xy)
 
 void WM_operator_free(wmOperator *op)
 {
-  if (op && !op->properties->type.empty())
+  if (op && !op->properties->props.empty())
   {
     // IDP_FreeProperty(op->properties);
   }

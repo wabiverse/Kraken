@@ -22,23 +22,54 @@
  * It Bites.
  */
 
-#include "UNI_context.h"
-#include "UNI_scene.h"
+#include "KPY_init_exit.h" /* Own Include. */
+
+#include "KKE_context.h"
+#include "KKE_screen.h"
+#include "KKE_utils.h"
+
+#include "UNI_object.h"
+
+#include <wabi/base/arch/systemInfo.h>
+#include <wabi/base/arch/vsnprintf.h>
+
+#include <wabi/base/tf/error.h>
+#include <wabi/base/tf/pathUtils.h>
+#include <wabi/base/tf/pyInterpreter.h>
+#include <wabi/base/tf/stringUtils.h>
+
+/**
+ *  -----  The Kraken Python Module. ----- */
+
 
 WABI_NAMESPACE_BEGIN
 
-#if 0
-PYBIND11_MODULE(wpy, m)
+
+/* ------ */
+
+
+/**
+ *  -----  Python Init & Exit. ----- */
+
+
+void KPY_python_init(kContext *C)
 {
-  m.attr("__name__") = "wpy";
-  m.doc() = "Kraken python module";
+  Main *kmain = CTX_data_main(C);
+
+  setenv("PYTHONPATH", CHARSTR(kmain->python_path), true);
+
+  // TfPyInitialize();
 }
 
-PYBIND11_MODULE(context, m)
+
+void KPY_python_exit()
 {
-  m.attr("__name__") = "wpy.context";
-  m.doc() = "Main 'context' instanced by a <filepath>, from which all data is derived";
+  /**
+   * TODO: STUBBED */
 }
-#endif
+
+
+/* ------ */
+
 
 WABI_NAMESPACE_END

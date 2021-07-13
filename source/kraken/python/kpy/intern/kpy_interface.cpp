@@ -18,26 +18,31 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * KRAKEN Python.
+ * It Bites.
  */
 
-#include "KKE_api.h"
-#include "KKE_context.h"
-#include "KKE_main.h"
+#include "KPY_api.h"
 
-#include "kpy/KPY_init_exit.h"
-
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/wabi.h>
+#include "kpy_interface.h"
+#include "kpy_uni.h"
 
 WABI_NAMESPACE_BEGIN
 
-
-void KKE_kraken_python_init(kContext *C)
+void KPY_context_set(kContext *C)
 {
-  KPY_python_init(C);
+  kpy_context_module->ptr.data = (void *)C;
 }
 
+kContext *KPY_context_get(void)
+{
+  return (kContext *)kpy_context_module->ptr.data;
+}
+
+/* call KPY_context_set first */
+void KPY_python_start(kContext *C, int argc, const char **argv)
+{
+
+}
 
 WABI_NAMESPACE_END

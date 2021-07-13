@@ -18,55 +18,36 @@
 
 /**
  * @file
- * KRAKEN Python.
- * It Bites.
+ * Universe.
+ * Set the Stage.
  */
 
-#include "WPY_init_exit.h" /* Own Include. */
+#pragma once
 
 #include "KKE_context.h"
-#include "KKE_screen.h"
+#include "KKE_main.h"
 
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/arch/vsnprintf.h>
+#include "UNI_api.h"
+#include "UNI_types.h"
+#include "UNI_wm_types.h"
 
-#include <wabi/base/tf/error.h>
-#include <wabi/base/tf/pathUtils.h>
-#include <wabi/base/tf/pyInterpreter.h>
-#include <wabi/base/tf/stringUtils.h>
-
-/**
- *  -----  The Kraken Python Module. ----- */
-
+#include "UNI_object.h"
 
 WABI_NAMESPACE_BEGIN
 
+/* Keep Sorted. */
+extern UniverseObject UNI_Area;
+extern UniverseObject UNI_Region;
+extern UniverseObject UNI_Screen;
+extern UniverseObject UNI_Window;
+extern UniverseObject UNI_WorkSpace;
+extern UniverseObject UNI_Object;
 
-/* ------ */
+void UNI_main_pointer_create(Main *kmain, PointerUNI *r_ptr);
 
+ObjectRegisterFunc UNI_object_register(UniverseObject *type);
+ObjectUnregisterFunc UNI_object_unregister(UniverseObject *type);
 
-/**
- *  -----  Python Init & Exit. ----- */
-
-
-void WPY_python_init(kContext *C)
-{
-  Main *kmain = CTX_data_main(C);
-
-  setenv("PYTHONPATH", CHARSTR(kmain->python_path), true);
-
-  // TfPyInitialize();
-}
-
-
-void WPY_python_exit()
-{
-  /**
-   * TODO: STUBBED */
-}
-
-
-/* ------ */
-
+const char *UNI_object_identifier(const UniverseObject *type);
 
 WABI_NAMESPACE_END

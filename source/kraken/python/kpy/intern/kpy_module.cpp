@@ -18,26 +18,27 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * KRAKEN Python.
+ * It Bites.
  */
 
-#include "KKE_api.h"
-#include "KKE_context.h"
-#include "KKE_main.h"
-
-#include "kpy/KPY_init_exit.h"
-
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/wabi.h>
+#include "UNI_context.h"
+#include "UNI_scene.h"
 
 WABI_NAMESPACE_BEGIN
 
-
-void KKE_kraken_python_init(kContext *C)
+#if 0
+PYBIND11_MODULE(kpy, m)
 {
-  KPY_python_init(C);
+  m.attr("__name__") = "kpy";
+  m.doc() = "Kraken python module";
 }
 
+PYBIND11_MODULE(context, m)
+{
+  m.attr("__name__") = "kpy.context";
+  m.doc() = "Main 'context' instanced by a <filepath>, from which all data is derived";
+}
+#endif
 
 WABI_NAMESPACE_END

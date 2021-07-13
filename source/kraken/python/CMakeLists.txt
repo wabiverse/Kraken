@@ -1,1 +1,1 @@
-add_subdirectory(wpy)
+add_subdirectory(kpy)

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "UNI_api.h"
+#include "UNI_types.h"
 
 #include <wabi/base/tf/hashmap.h>
 #include <wabi/base/tf/notice.h>
@@ -40,9 +41,25 @@ struct UniverseObject : public UsdPrim, public TfRefBase, public TfWeakBase
 {
   SdfPath path;
 
-  UsdAttributeVector type;
-
+  /**
+   * Notifier to MsgBus */
   TfNotice notice = TfNotice();
+
+  const char *identifier;
+
+  struct UniverseObject *type;
+  void *data;
+
+  UsdAttributeVector props;
+
+  /**
+   * Object this is derived from */
+  struct UniverseObject *base;
+
+  /**
+   * Function to register/unregister subclasses */
+  ObjectRegisterFunc reg;
+  ObjectUnregisterFunc unreg;
 
   virtual ~UniverseObject()
   {}
@@ -51,7 +68,10 @@ struct UniverseObject : public UsdPrim, public TfRefBase, public TfWeakBase
 };
 
 UniverseObject::UniverseObject()
-  : notice(TfNotice())
+  : notice(TfNotice()),
+    type(nullptr),
+    data(nullptr),
+    base(nullptr)
 {}
 
 struct UniverseProperty
@@ -62,8 +82,8 @@ struct UniverseProperty
   bool custom;
 };
 
-typedef std::vector<UniverseProperty> UniversePropertyVec;
-
 typedef UniverseObject PointerUNI;
+
+typedef std::vector<UniverseProperty> UniversePropertyVec;
 
 WABI_NAMESPACE_END

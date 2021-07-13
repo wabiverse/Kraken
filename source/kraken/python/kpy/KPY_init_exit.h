@@ -24,8 +24,9 @@
 
 #pragma once
 
-#include "WPY_api.h"
+#include "KPY_api.h"
 
+#include "KKE_robinhood.h"
 #include "KKE_main.h"
 
 /**
@@ -42,8 +43,8 @@ WABI_NAMESPACE_BEGIN
  *  -----  Python Init & Exit. ----- */
 
 
-void WPY_python_init(kContext *C);
-void WPY_python_exit(void);
+void KPY_python_init(kContext *C);
+void KPY_python_exit(void);
 
 
 /* ------ */

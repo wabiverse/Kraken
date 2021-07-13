@@ -1,5 +1,6 @@
 set(INC
   .
+  ./intern/.
   ../../../../. # Pixar USD
   ../editors/include
   ../../krakernel
@@ -8,14 +9,21 @@ set(INC
   ../../wm
 )
 
-set(WPY_INSTALL_PATH "release/scripts/modules/wpy")
+set(KPY_INSTALL_PATH "release/scripts/modules/kpy")
 
 set(SRC
-  # intern/WPY_module.cpp
-  intern/WPY_init_exit.cpp
+  intern/kpy_init_exit.cpp
+  intern/kpy_interface.cpp
+  intern/kpy_intern_string.cpp
+  # intern/kpy_module.cpp
+  intern/kpy_uni.cpp
 
-  WPY_api.h
-  WPY_init_exit.h
+  intern/kpy_interface.h
+  intern/kpy_intern_string.h
+  intern/kpy_uni.h
+
+  KPY_api.h
+  KPY_init_exit.h
 )
 
 set(INC_SYS
@@ -27,13 +35,14 @@ set(INC_SYS
 set(LIB
   maelstrom
   kraken_kernel
+  kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LINKFLAGS}
   ${PYTHON_LIBRARIES}
 )
 
-configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${WPY_INSTALL_PATH}/__init__.py)
+configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)
 
 add_definitions(-DKRAKEN_PYTHON_EXPORTS)
 

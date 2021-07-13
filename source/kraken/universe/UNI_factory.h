@@ -88,11 +88,11 @@ namespace CreationFactory
 {
 namespace PTR
 {
-inline void New(SdfPath id, UsdAttributeVector pgroup, PointerUNI *r_ptr)
+inline void New(SdfPath id, UniverseObject *type, void *data, PointerUNI *r_ptr)
 {
   r_ptr = new UniverseObject();
   r_ptr->path = id;
-  r_ptr->type = pgroup;
+  r_ptr->type = type;
 }
 }  // namespace PTR
 namespace STR
@@ -109,7 +109,7 @@ inline void Set(PointerUNI *ptr, const std::string &name, const std::string &val
                                            strprop.type,
                                            strprop.variability);
   attr.Set(std::string(value));
-  ptr->type.push_back(attr);
+  ptr->props.push_back(attr);
 }
 }  // namespace STR
 namespace BOOL
@@ -126,7 +126,7 @@ inline void Set(PointerUNI *ptr, const std::string &name, const bool &value)
                                            strprop.type,
                                            strprop.variability);
   attr.Set(bool(value));
-  ptr->type.push_back(attr);
+  ptr->props.push_back(attr);
 }
 }  // namespace BOOL
 }  // namespace CreationFactory

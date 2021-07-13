@@ -16,28 +16,26 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * KRAKEN Python.
+ * It Bites.
  */
 
-#include "KKE_api.h"
+#include "KPY_api.h"
+
 #include "KKE_context.h"
 #include "KKE_main.h"
+#include "KKE_utils.h"
 
-#include "kpy/KPY_init_exit.h"
-
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/wabi.h>
+#include "UNI_api.h"
+#include "UNI_access.h"
+#include "UNI_object.h"
 
 WABI_NAMESPACE_BEGIN
 
-
-void KKE_kraken_python_init(kContext *C)
-{
-  KPY_python_init(C);
-}
-
+kContext *KPY_context_get(void);
 
 WABI_NAMESPACE_END

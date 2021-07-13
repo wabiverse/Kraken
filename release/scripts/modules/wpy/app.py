@@ -17,19 +17,19 @@
 "This module contains application values that remain unchanged during runtime."
 """
 
-import wpy
+import kpy
 
 def name():
-  return wpy.wg_info["name"]
+  return kpy.wg_info["name"]
 
 def author():
-  return wpy.wg_info["author"]
+  return kpy.wg_info["author"]
 
 def version():
-  return str(wpy.wg_info["kraken"])
+  return str(kpy.wg_info["kraken"])
 
 def description():
-  return wpy.wg_info["description"]
+  return kpy.wg_info["description"]
 
 def build_hash(build_dir):
   import os

@@ -64,7 +64,7 @@ struct wmOperatorType
   const TfNotice notice;
 
   /** Properties on this operator. */
-  UsdAttributeVector uprops;
+  UniverseObject *uni;
 
   eWmOperatorType flag;
 

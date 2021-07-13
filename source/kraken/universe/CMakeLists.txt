@@ -14,10 +14,12 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/UNI_access.cpp
   intern/UNI_create.cpp
   intern/UNI_default_tables.cpp
   intern/UNI_pixar_utils.cpp
 
+  UNI_access.h
   UNI_api.h
   UNI_area.h
   UNI_context.h
@@ -31,6 +33,7 @@ set(SRC
   UNI_scene.h
   UNI_screen.h
   UNI_system.h
+  UNI_types.h
   UNI_userpref.h
   UNI_wm_types.h
   UNI_window.h

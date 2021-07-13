@@ -22,6 +22,13 @@
  * Set the Stage.
  */
 
+#include "KLI_icons.h"
+
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_screen.h"
+
+#include "UNI_access.h"
 #include "UNI_api.h"
 #include "UNI_area.h"
 #include "UNI_context.h"
@@ -32,12 +39,6 @@
 #include "UNI_userpref.h"
 #include "UNI_window.h"
 #include "UNI_workspace.h"
-
-#include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_screen.h"
-
-#include "KLI_icons.h"
 
 #include <wabi/wabi.h>
 
@@ -56,6 +57,13 @@
 #include <wabi/usd/usd/stage.h>
 
 WABI_NAMESPACE_BEGIN
+
+UniverseObject UNI_Area;
+UniverseObject UNI_Region;
+UniverseObject UNI_Screen;
+UniverseObject UNI_Window;
+UniverseObject UNI_WorkSpace;
+UniverseObject UNI_Object;
 
 void UNI_create_stage(kContext *C)
 {

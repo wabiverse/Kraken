@@ -30,6 +30,7 @@
 #include "KKE_version.h"
 #include "KKE_workspace.h"
 
+#include "UNI_access.h"
 #include "UNI_area.h"
 #include "UNI_object.h"
 #include "UNI_region.h"
@@ -75,6 +76,14 @@ struct kContext : public UniverseObject
     Stage stage;
     UserDef *prefs;
   } data;
+};
+
+struct kContextDataResult
+{
+  PointerUNI ptr;
+  std::vector<UniverseObject *> list;
+  const char **dir;
+  short type; /* 0: normal, 1: seq */
 };
 
 static void *ctx_wm_python_context_get(const kContext *C,
@@ -132,32 +141,27 @@ wmWindowManager *CTX_wm_manager(kContext *C)
 
 wmWindow *CTX_wm_window(kContext *C)
 {
-  UniverseObject MAELSTROM_Window;
-  return (wmWindow*)ctx_wm_python_context_get(C, "window", &MAELSTROM_Window, C->wm.window);
+  return (wmWindow*)ctx_wm_python_context_get(C, "window", &UNI_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(kContext *C)
 {
-  UniverseObject MAELSTROM_WorkSpace;
-  return (WorkSpace*)ctx_wm_python_context_get(C, "workspace", &MAELSTROM_WorkSpace, C->wm.workspace);
+  return (WorkSpace*)ctx_wm_python_context_get(C, "workspace", &UNI_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(kContext *C)
 {
-  UniverseObject MAELSTROM_Screen;
-  return (kScreen*)ctx_wm_python_context_get(C, "screen", &MAELSTROM_Screen, C->wm.screen);
+  return (kScreen*)ctx_wm_python_context_get(C, "screen", &UNI_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(kContext *C)
 {
-  UniverseObject MAELSTROM_Area;
-  return (ScrArea*)ctx_wm_python_context_get(C, "area", &MAELSTROM_Area, C->wm.area);
+  return (ScrArea*)ctx_wm_python_context_get(C, "area", &UNI_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(kContext *C)
 {
-  UniverseObject MAELSTROM_Region;
-  return (ARegion*)ctx_wm_python_context_get(C, "region", &MAELSTROM_Region, C->wm.region);
+  return (ARegion*)ctx_wm_python_context_get(C, "region", &UNI_Region, C->wm.region);
 }
 
 Scene *CTX_data_scene(kContext *C)

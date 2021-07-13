@@ -42,7 +42,9 @@ struct UserDef;
 struct wmWindowManager;
 struct wmWindow;
 struct WorkSpace;
+
 struct kContext;
+struct kContextDataResult;
 
 /**
  * Kraken Context:
@@ -89,14 +91,6 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs);
 
 void CTX_wm_operator_poll_msg_clear(kContext *C);
 void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
-
-struct kContextDataResult
-{
-  PointerUNI ptr;
-  std::vector<UniverseObject *> list;
-  const char **dir;
-  short type; /* 0: normal, 1: seq */
-};
 
 typedef int (*kContextDataCallback)(const kContext *C,
                                     const char *member,

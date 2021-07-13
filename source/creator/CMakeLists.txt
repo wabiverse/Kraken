@@ -203,7 +203,7 @@ if(WITH_PYTHON_MODULE)
     kraken
     PROPERTIES
       PREFIX ""
-      OUTPUT_NAME wpy
+      OUTPUT_NAME kpy
       LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
       RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin  # only needed on windows
   )

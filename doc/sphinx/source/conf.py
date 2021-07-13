@@ -18,11 +18,11 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, '../../../release/scripts/modules')
 
-import wpy
+import kpy
 
-print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(wpy.__version__, wpy.__author__))
+print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(kpy.__version__, kpy.__author__))
 
-version = wpy.__version__.replace('(', '').replace(')', '').replace(', ', '.')
+version = kpy.__version__.replace('(', '').replace(')', '').replace(', ', '.')
 release = version
 
 # on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
