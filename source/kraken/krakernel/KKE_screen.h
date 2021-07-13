@@ -82,7 +82,7 @@ struct ARegionType
   void (*cursor)(wmWindow *win, ScrArea *area, ARegion *region);
 
   /* return context data */
-  cContextDataCallback context;
+  kContextDataCallback context;
 
   void (*on_view2d_changed)(const kContext *C, ARegion *region);
 
@@ -138,7 +138,7 @@ struct SpaceType
   void (*gizmos)(void);
 
   /* return context data */
-  cContextDataCallback context;
+  kContextDataCallback context;
 
   /* Used when we want to replace an ID by another (or NULL). */
   void (*id_remap)(ScrArea *area,

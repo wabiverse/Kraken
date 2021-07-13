@@ -90,7 +90,7 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs);
 void CTX_wm_operator_poll_msg_clear(kContext *C);
 void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
 
-struct cContextDataResult
+struct kContextDataResult
 {
   PointerUNI ptr;
   std::vector<UniverseObject *> list;
@@ -98,11 +98,11 @@ struct cContextDataResult
   short type; /* 0: normal, 1: seq */
 };
 
-typedef int (*cContextDataCallback)(const kContext *C,
+typedef int (*kContextDataCallback)(const kContext *C,
                                     const char *member,
-                                    cContextDataResult *result);
+                                    kContextDataResult *result);
 
-struct cContextPollMsgParams
+struct kContextPollMsgParams
 {
   char *(*get_fn)(kContext *C, void *user_data);
   void (*free_fn)(kContext *C, void *user_data);

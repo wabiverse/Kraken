@@ -22,6 +22,8 @@
  * Purple Underground.
  */
 
+#include "KLI_threads.h"
+
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
@@ -62,7 +64,7 @@ struct kContext : public UniverseObject
     ARegion *menu;
 
     const char *operator_poll_msg;
-    cContextPollMsgParams operator_poll_msg_params;
+    kContextPollMsgParams operator_poll_msg_params;
   } wm;
 
   /* data context */
@@ -74,6 +76,25 @@ struct kContext : public UniverseObject
     UserDef *prefs;
   } data;
 };
+
+static void *ctx_wm_python_context_get(const kContext *C,
+                                       const char *member,
+                                       const void *member_type,
+                                       void *fall_through)
+{
+  /**
+   * TODO: Setup Python. */
+  TF_UNUSED(C);
+  TF_UNUSED(member);
+  TF_UNUSED(member_type);
+
+  /* don't allow UI context access from non-main threads */
+  if (!KLI_thread_is_main()) {
+    return NULL;
+  }
+
+  return fall_through;
+}
 
 /**
  * Main CTX Creation. */
@@ -111,27 +132,32 @@ wmWindowManager *CTX_wm_manager(kContext *C)
 
 wmWindow *CTX_wm_window(kContext *C)
 {
-  return C->wm.window;
+  UniverseObject MAELSTROM_Window;
+  return (wmWindow*)ctx_wm_python_context_get(C, "window", &MAELSTROM_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(kContext *C)
 {
-  return C->wm.workspace;
+  UniverseObject MAELSTROM_WorkSpace;
+  return (WorkSpace*)ctx_wm_python_context_get(C, "workspace", &MAELSTROM_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(kContext *C)
 {
-  return C->wm.screen;
+  UniverseObject MAELSTROM_Screen;
+  return (kScreen*)ctx_wm_python_context_get(C, "screen", &MAELSTROM_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(kContext *C)
 {
-  return C->wm.area;
+  UniverseObject MAELSTROM_Area;
+  return (ScrArea*)ctx_wm_python_context_get(C, "area", &MAELSTROM_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(kContext *C)
 {
-  return C->wm.region;
+  UniverseObject MAELSTROM_Region;
+  return (ARegion*)ctx_wm_python_context_get(C, "region", &MAELSTROM_Region, C->wm.region);
 }
 
 Scene *CTX_data_scene(kContext *C)
@@ -214,7 +240,7 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs)
 
 void CTX_wm_operator_poll_msg_clear(kContext *C)
 {
-  cContextPollMsgParams *params = &C->wm.operator_poll_msg_params;
+  kContextPollMsgParams *params = &C->wm.operator_poll_msg_params;
   if (params->free_fn != NULL)
   {
     params->free_fn(C, params->user_data);
