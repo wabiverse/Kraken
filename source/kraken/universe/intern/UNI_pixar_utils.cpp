@@ -50,21 +50,21 @@ void UNI_pixutil_convert_usda(const fs::path &path, bool verbose)
 }
 
 
-std::string UNI_pixutil_resolve_asset(const fs::path &path, bool verbose)
+std::string UNI_pixutil_resolve_asset(const std::string &asset, bool verbose)
 {
   ArResolver &resolver = ArGetResolver();
 
-  const std::string resolved_path = resolver.Resolve(path.string());
+  const std::string resolved_asset = resolver.Resolve(asset);
 
   if(verbose) {
-    if(!resolved_path.empty()) {
-      TF_SUCCESS_MSG("Asset Resolved Path: %s", CHARALL(resolved_path));
+    if(!resolved_asset.empty()) {
+      TF_SUCCESS_MSG("Asset Resolved Path: %s", CHARALL(resolved_asset));
     } else {
-      TF_ERROR_MSG("Asset %s does not exist.", CHARALL(path.string()));
+      TF_ERROR_MSG("Asset %s does not exist.", CHARALL(asset));
     }
   }
 
-  return resolved_path;
+  return resolved_asset;
 }
 
 

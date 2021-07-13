@@ -139,13 +139,7 @@ int CREATOR_parse_args(int argc, const char **argv)
 
   if (resolve_asset.size() > 2)
   {
-    const std::filesystem::path fp = resolve_asset;
-    if(std::filesystem::exists(fp)) {
-      !UNI_pixutil_resolve_asset(fp, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) : exit(KRAKEN_ERROR);
-    }
-    
-    TF_ERROR_MSG("File at %s does not exist.", CHARALL(fp.string()));
-    exit(KRAKEN_ERROR);
+    !UNI_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) : exit(KRAKEN_ERROR);
   }
 
   return 0;

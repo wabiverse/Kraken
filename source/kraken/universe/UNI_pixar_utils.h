@@ -53,6 +53,6 @@ void UNI_pixutil_convert_usda(const fs::path &path, bool verbose = false);
  * @param path: path to asset to preform Asset Resolution.
  * @param verbose: whether to log status to console.
  * @returns the resolved path or empty string if the asset does not exist. */
-std::string UNI_pixutil_resolve_asset(const fs::path &path, bool verbose = false);
+std::string UNI_pixutil_resolve_asset(const std::string &path, bool verbose = false);
 
 WABI_NAMESPACE_END
