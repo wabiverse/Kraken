@@ -58,7 +58,7 @@ void KPY_python_init(kContext *C)
 
   setenv("PYTHONPATH", CHARSTR(kmain->python_path), true);
 
-  // TfPyInitialize();
+  TfPyInitialize();
 }
 
 

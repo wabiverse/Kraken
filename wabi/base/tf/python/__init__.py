@@ -32,7 +32,7 @@
 Tf -- Tools Foundation
 """
 
-import platform, sys, os, ctypes
+import platform, sys, os
 if sys.version_info >= (3, 8) and platform.system() == "Windows":
     import contextlib
 
@@ -41,6 +41,7 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
         import os
         dirs = []
         import_paths = os.getenv('PXR_USD_WINDOWS_DLL_PATH')
+        currentFile = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
         if import_paths is None:
             import_paths = os.getenv('PATH', '')
         for path in import_paths.split(os.pathsep):
@@ -58,6 +59,7 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
         del os
     del contextlib
 else:
+    import ctypes
     # Fix libai.so from crashing python, Linux problem only, Autodesk has a support ticket
     # for this. In the meantime. This will work. If you move the python installation be sure
     # to also update this path.
@@ -70,7 +72,8 @@ else:
             pass
         def __exit__(self, exc_type, ex_val, exc_tb):
             pass
-del platform, sys, os, ctypes
+    del ctypes
+del platform, sys, os
 
 
 def PreparePythonModule(moduleName=None):
