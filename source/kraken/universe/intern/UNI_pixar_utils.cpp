@@ -24,19 +24,47 @@
 
 #include "UNI_pixar_utils.h"
 
+#include <wabi/base/tf/diagnostic.h>
 #include <wabi/usd/usd/stage.h>
+#include <wabi/usd/ar/resolver.h>
 
 WABI_NAMESPACE_BEGIN
 
 
-void UNI_pixutil_convert(const std::string &args)
+void UNI_pixutil_convert_usda(const fs::path &path, bool verbose)
 {
-  UsdStageRefPtr stage = UsdStage::Open("/home/furby/animation/pixar/kitchen.usd");
-  stage->Flatten();
-  if (stage->Export("/home/furby/animation/pixar/kitchen.usda", true))
-  {
-    return;
+  const fs::path usda_path = STRCAT(path.parent_path().string(), "/" + path.stem().string() + ".usda");
+
+  UsdStageRefPtr stage = UsdStage::Open(path.string());
+
+  const bool success = stage->Export(usda_path.string());
+
+  if(verbose) {
+    if(success && fs::exists(usda_path)) {
+        TF_SUCCESS_MSG("Converted new file: %s", CHARALL(usda_path.string()));
+      return;
+    }
+
+    TF_ERROR_MSG("Could not convert file %s", CHARALL(path.string()));
   }
+}
+
+
+std::string UNI_pixutil_resolve_asset(const fs::path &path, bool verbose)
+{
+  ArResolver &resolver = ArGetResolver();
+
+  const std::string resolved_path = resolver.Resolve(path.string());
+
+  if(verbose) {
+    if(!resolved_path.empty()) {
+      TF_SUCCESS_MSG("Asset Resolved Path: %s", CHARALL(resolved_path));
+    } else {
+      TF_ERROR_MSG("Asset %s does not exist.", CHARALL(path.string()));
+    }
+  }
+
+  return resolved_path;
 }
 
 

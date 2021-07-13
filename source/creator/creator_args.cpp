@@ -47,9 +47,13 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <filesystem>
 
+#include <wabi/base/tf/diagnostic.h>
 #include <wabi/base/tf/iterator.h>
 #include <wabi/usd/usd/stage.h>
+
+WABI_NAMESPACE_USING
 
 /* NAMESPACES */
 namespace CREATOR_ARGS = boost::program_options;
@@ -58,6 +62,7 @@ static bool run_diagnostics = false;
 
 static std::string load_stage = "";
 static std::string convert_stage = "";
+static std::string resolve_asset = "";
 
 void CREATOR_setup_args(int argc, const char **argv)
 {
@@ -68,12 +73,15 @@ void CREATOR_setup_args(int argc, const char **argv)
     "Launch Kraken given a (usda|usd|usdc|usdz) file")
 
     ("convert", CREATOR_ARGS::value<std::string>(&convert_stage),
-    "Converts a file given a path to a new file format extension (usda|usd|usdc|usdz)")
+    "Converts a binary usd file to a human readable (.usda) file format")
 
-    ("factory-startup", CREATOR_ARGS::bool_switch(&wabi::G.factory_startup),
+    ("resolve", CREATOR_ARGS::value<std::string>(&resolve_asset),
+    "Print resolved path of a given asset path using Pixar Asset Resolver")
+
+    ("factory-startup", CREATOR_ARGS::bool_switch(&G.factory_startup),
     "Resets factory default settings and preferences on startup")
 
-    ("server", CREATOR_ARGS::bool_switch(&wabi::G.server),
+    ("server", CREATOR_ARGS::bool_switch(&G.server),
     "Puts KRAKEN in a headless client-serving server mode")
 
     ("diagnostics", CREATOR_ARGS::bool_switch(&run_diagnostics),
@@ -93,15 +101,15 @@ void CREATOR_setup_args(int argc, const char **argv)
     {
       std::cout << options << "\n";
       /* Just show help, exit. */
-      exit(wabi::KRAKEN_SUCCESS);
+      exit(KRAKEN_SUCCESS);
     }
   }
   catch (const CREATOR_ARGS::error &e)
   {
     fprintf(stderr, "%s\n", e.what());
-    fprintf(stderr, "%s\n", wabi::CHARALL(options));
+    fprintf(stderr, "%s\n", CHARALL(options));
     /* Let user fixup incorrect Arg, exit. */
-    exit(wabi::KRAKEN_ERROR);
+    exit(KRAKEN_ERROR);
   }
 }
 
@@ -109,18 +117,35 @@ int CREATOR_parse_args(int argc, const char **argv)
 {
   if (run_diagnostics)
   {
-    wabi::KKE_kraken_enable_debug_codes();
+    KKE_kraken_enable_debug_codes();
   }
 
   if (load_stage.length() > 2)
   {
-    wabi::G.main->stage_id = load_stage;
+    G.main->stage_id = load_stage;
   }
 
   if (convert_stage.size() > 2)
   {
-    wabi::UNI_pixutil_convert(convert_stage);
-    return 1;
+    const std::filesystem::path fp = convert_stage;
+    if(std::filesystem::exists(fp)) {
+      UNI_pixutil_convert_usda(fp, /*verbose==*/true);
+      exit(KRAKEN_SUCCESS);
+    }
+
+    TF_ERROR_MSG("File at %s does not exist.", CHARALL(fp.string()));
+    exit(KRAKEN_ERROR);
+  }
+
+  if (resolve_asset.size() > 2)
+  {
+    const std::filesystem::path fp = resolve_asset;
+    if(std::filesystem::exists(fp)) {
+      !UNI_pixutil_resolve_asset(fp, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) : exit(KRAKEN_ERROR);
+    }
+    
+    TF_ERROR_MSG("File at %s does not exist.", CHARALL(fp.string()));
+    exit(KRAKEN_ERROR);
   }
 
   return 0;

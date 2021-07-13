@@ -32,11 +32,27 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <filesystem>
 
 #include <boost/program_options.hpp>
 
+namespace fs = std::filesystem;
+
 WABI_NAMESPACE_BEGIN
 
-void UNI_pixutil_convert(const std::string &args);
+/**
+ * Converts a given binary usd file (usd|usdc|usdz) to a human readable
+ * (.usda) file to the same directory as the binary usd file passed in.
+ * @param path: filepath to (usd|usdc|usdz) file.
+ * @param verbose: whether to log status to console. */
+void UNI_pixutil_convert_usda(const fs::path &path, bool verbose = false);
+
+/**
+ * Uses Pixar's Asset Resolver to resolve a path to a given asset path.
+ * @param path: path to asset to preform Asset Resolution.
+ * @param verbose: whether to log status to console.
+ * @returns the resolved path or empty string if the asset does not exist. */
+std::string UNI_pixutil_resolve_asset(const fs::path &path, bool verbose = false);
 
 WABI_NAMESPACE_END
