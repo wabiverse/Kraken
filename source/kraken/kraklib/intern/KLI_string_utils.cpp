@@ -475,6 +475,31 @@ static const size_t utf8_skip_data[256] = {
   (void)0
 
 /**
+ * Like strncpy but ensures dst is always
+ * '\0' terminated.
+ *
+ * @note This is a duplicate of #BLI_strncpy that returns bytes copied.
+ * And is a drop in replacement for 'snprintf(str, sizeof(str), "%s", arg);'
+ *
+ * @param dst: Destination for copy
+ * @param src: Source string to copy
+ * @param maxncpy: Maximum number of characters to copy (generally the size of dst)
+ * @retval The number of bytes copied (The only difference from KLI_strncpy). */
+size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
+{
+  size_t srclen = KLI_strnlen(src, maxncpy - 1);
+  KLI_assert(maxncpy != 0);
+
+#ifdef DEBUG_STRSIZE
+  memset(dst, 0xff, sizeof(*dst) * maxncpy);
+#endif
+
+  memcpy(dst, src, srclen);
+  dst[srclen] = '\0';
+  return srclen;
+}
+
+/**
  * Like strncpy but for utf8 and ensures dst is always '\0' terminated.
  *
  * @param dst: Destination for copy.

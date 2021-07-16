@@ -37,9 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 const char *KLI_getenv(const char *env);
 
-void KLI_path_join(char *__restrict dst, const char *path, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
-void KLI_path_join(char *__restrict dst, const std::string &path);
+size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *path, ...);
 
 void KLI_join_dirfile(char *__restrict dst,
                       const size_t maxlen,

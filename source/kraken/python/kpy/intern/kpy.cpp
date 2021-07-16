@@ -232,9 +232,7 @@ void KPy_init_modules(struct kContext *C)
   PyObject *mod;
 
   /* Needs to be first since this dir is needed for future modules */
-  const char *const version_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
-  std::string scripts_dir = STRCAT(version_dir, "scripts");
-  const char *modpath = CHARALL(STRCAT(scripts_dir, "modules"));
+  const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
 
   if (modpath) {
     // printf("kpy: found module path '%s'.\n", modpath);

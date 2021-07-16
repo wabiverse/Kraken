@@ -166,7 +166,7 @@ bool KKE_appdir_folder_documents(char *dir)
 
   char try_documents_path[FILE_MAXDIR];
   /* Own attempt at getting a valid Documents path. */
-  KLI_path_join(try_documents_path, home_path, N_("Documents"));
+  KLI_path_join(try_documents_path, sizeof(try_documents_path), home_path, N_("Documents"), NULL);
   if (!KLI_is_dir(try_documents_path)) {
     return false;
   }
@@ -232,7 +232,7 @@ static bool test_path(char *targetpath,
 
   /* Only the last argument should be NULL. */
   KLI_assert(!(folder_name == NULL && (subfolder_name != NULL)));
-  KLI_path_join(targetpath, path_base, folder_name, subfolder_name);
+  KLI_path_join(targetpath, targetpath_len, path_base, folder_name, subfolder_name, NULL);
   if (check_is_dir == false) {
     TF_MSG("using without test: '%s'", targetpath);
     return true;
@@ -343,7 +343,7 @@ static bool get_path_local_ex(char *targetpath,
          STR_OR_FALLBACK(subfolder_name));
 
   if (folder_name) { /* `subfolder_name` may be NULL. */
-    KLI_path_join(relfolder, folder_name, subfolder_name);
+    KLI_path_join(relfolder, sizeof(relfolder), folder_name, subfolder_name, NULL);
   }
   else {
     relfolder[0] = '\0';
@@ -466,7 +466,7 @@ static bool get_path_system_ex(char *targetpath,
   char relfolder[FILE_MAX];
 
   if (folder_name) { /* `subfolder_name` may be NULL. */
-    KLI_path_join(relfolder, folder_name, subfolder_name);
+    KLI_path_join(relfolder, sizeof(relfolder), folder_name, subfolder_name, NULL);
   }
   else {
     relfolder[0] = '\0';

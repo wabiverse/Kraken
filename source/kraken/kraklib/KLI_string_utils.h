@@ -41,6 +41,7 @@ int KLI_strncasecmp(const char *s1, const char *s2, size_t len);
 size_t KLI_split_name_num(char *left, int *nr, const char *name, const char delim);
 
 char *KLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t maxncpy);
+size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy);
 
 size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy);
 size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
