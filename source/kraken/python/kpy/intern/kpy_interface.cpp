@@ -67,8 +67,6 @@ kContext *KPY_context_get(void)
 /* call KPY_context_set first */
 void KPY_python_start(kContext *C, int argc, const char **argv)
 {
-  setenv("PYTHONPATH", CHARSTR(G.main->python_path), true);
-
 #ifndef WITH_PYTHON_MODULE
   /* #PyPreConfig (early-configuration). */
   {
