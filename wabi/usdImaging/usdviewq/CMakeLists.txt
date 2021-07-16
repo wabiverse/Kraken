@@ -96,11 +96,11 @@ if(UNIX)
 elseif(WIN32)
     install(DIRECTORY
         resources/icons
-        DESTINATION ${TARGETDIR_VER}/python/lib/site-packages/wabi/Usdviewq
+        DESTINATION ${TARGETDIR_VER}/scripts/modules/wabi/Usdviewq
     )
 
     install(DIRECTORY
         resources/fonts
-        DESTINATION ${TARGETDIR_VER}/python/lib/site-packages/wabi/Usdviewq
+        DESTINATION ${TARGETDIR_VER}/scripts/modules/wabi/Usdviewq
     )
 endif()

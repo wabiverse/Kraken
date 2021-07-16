@@ -32,7 +32,7 @@
 Tf -- Tools Foundation
 """
 
-import platform, sys, os
+import platform, sys
 if sys.version_info >= (3, 8) and platform.system() == "Windows":
     import contextlib
 
@@ -58,7 +58,7 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
         del os
     del contextlib
 else:
-    import ctypes
+    import ctypes, os
     # Fix libai.so from crashing python, Linux problem only, Autodesk has a support ticket
     # for this. In the meantime. This will work. If you move the python installation be sure
     # to also update this path.
@@ -72,7 +72,7 @@ else:
         def __exit__(self, exc_type, ex_val, exc_tb):
             pass
     del ctypes
-del platform, sys, os
+del platform, sys
 
 
 def PreparePythonModule(moduleName=None):
@@ -80,7 +80,6 @@ def PreparePythonModule(moduleName=None):
     Python module associated with the caller's module (e.g. '_tf' for 'wabi.Tf')
     or the module with the specified moduleName and copy its contents into
     the caller's local namespace.
-
     Generally, this should only be called by the __init__.py script for a module
     upon loading a boost python module (generally '_libName.so')."""
     import importlib
@@ -146,25 +145,18 @@ def PrepareModule(module, result):
 
 def GetCodeLocation(framesUp):
     """Returns a tuple (moduleName, functionName, fileName, lineNo).
-
     To trace the current location of python execution, use GetCodeLocation().
     By default, the information is returned at the current stack-frame; thus
-
         info = GetCodeLocation()
-
     will return information about the line that GetCodeLocation() was called 
     from. One can write:
-
         def genericDebugFacility():
             info = GetCodeLocation(1)
             # print out data
-
-
         def someCode():
             ...
             if bad:
                 genericDebugFacility()
-
     and genericDebugFacility() will get information associated with its caller, 
     i.e. the function someCode()."""
     import sys
@@ -186,7 +178,6 @@ __SetErrorExceptionClass(ErrorException)
 
 def Warn(msg, template=""):
     """Issue a warning via the TfDiagnostic system.
-
     At this time, template is ignored.
     """
     codeInfo = GetCodeLocation(framesUp=1)
@@ -194,7 +185,6 @@ def Warn(msg, template=""):
     
 def Status(msg, verbose=True):
     """Issues a status update to the Tf diagnostic system.
-
     If verbose is True (the default) then information about where in the code
     the status update was issued from is included.
     """

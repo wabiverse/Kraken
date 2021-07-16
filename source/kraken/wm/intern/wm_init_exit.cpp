@@ -39,6 +39,9 @@
 
 #include "KKE_context.h"
 #include "KKE_main.h"
+#include "KKE_appdir.h"
+
+#include "KPY_extern_python.h"
 
 #include "ED_debug_codes.h"
 
@@ -52,11 +55,23 @@ void WM_init(kContext *C, int argc, const char **argv)
   WM_anchor_init(C);
   WM_init_cursor_data();
 
+  ANCHOR_CreateSystemPaths();
+
   WM_operators_init(C);
   WM_operators_register(C);
 
+  KPY_python_start(C, argc, argv);
+  KPY_python_reset(C);
+
+  ANCHOR::ToggleConsole(3);
+
   Main *kmain = CTX_data_main(C);
+
   wm_add_default(kmain, C);
+
+  CTX_wm_window_set(C, CTX_wm_manager(C)->windows.begin()->second);
+
+  CTX_wm_window_set(C, NULL);
 }
 
 

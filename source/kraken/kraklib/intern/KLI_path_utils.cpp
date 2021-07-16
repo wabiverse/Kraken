@@ -148,7 +148,7 @@ void KLI_path_join(char *__restrict dst, const char *path, ...)
 {
   va_list args;
   va_start(args, path);
-  KLI_path_join(dst, TfVStringPrintf(CHARALL(STRCAT(path, "%s")), args));
+  KLI_path_join(dst, TfVStringPrintf(CHARALL(STRCAT(path, "%s")), args) + "/");
   va_end(args);
 }
 

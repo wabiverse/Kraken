@@ -58,7 +58,12 @@
 
 WABI_NAMESPACE_BEGIN
 
+KrakenUNI KRAKEN_UNI;
+
 ObjectUNI UNI_Area;
+ObjectUNI UNI_Context;
+ObjectUNI UNI_KrakenData;
+ObjectUNI UNI_KrakenUNI;
 ObjectUNI UNI_Region;
 ObjectUNI UNI_Screen;
 ObjectUNI UNI_Window;

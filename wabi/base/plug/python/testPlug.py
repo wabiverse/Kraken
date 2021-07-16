@@ -44,7 +44,7 @@ testPluginsPython = ""
 if platform.system() == "Linux":
     testPluginsPython = testRoot + 'python/lib/python3.9/site-packages'
 elif platform.system() == "Windows":
-    testPluginsPython = testRoot + 'python/lib/site-packages'
+    testPluginsPython = testRoot + 'scripts/modules'
 
 testPluginsDsoSearch = testPluginsDso + '/*/Resources/'
 testPluginsPythonSearch = testPluginsPython + '/**/'

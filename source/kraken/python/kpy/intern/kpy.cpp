@@ -135,6 +135,34 @@ static PyObject *kpy_resolver_paths(PyObject *UNUSED(self), PyObject *args, PyOb
   return list;
 }
 
+static PyObject *kpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
+{
+  const struct PyC_StringEnumItems type_items[] = {
+      {KRAKEN_USER_DATAFILES, "DATAFILES"},
+      {KRAKEN_USER_CONFIG,    "CONFIG"},
+      {KRAKEN_USER_SCRIPTS,   "SCRIPTS"},
+      {KRAKEN_USER_AUTOSAVE,  "AUTOSAVE"},
+      {0, NULL},
+  };
+  struct PyC_StringEnum type = {type_items};
+
+  const char *subdir = NULL;
+
+  const char *path;
+
+  static const char *_keywords[] = {"type", "path", NULL};
+  static _PyArg_Parser _parser = {"O&|$s:user_resource", _keywords, 0};
+  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
+    return NULL;
+  }
+
+  /* same logic as KKE_appdir_folder_id_create(),
+   * but best leave it up to the script author to create */
+  path = KKE_appdir_folder_id_user_notest(type.value_found, subdir);
+
+  return PyC_UnicodeFromByte(path ? path : "");
+}
+
 static PyMethodDef meth_kpy_script_paths = {
     "script_paths",
     (PyCFunction)kpy_script_paths,
@@ -147,12 +175,12 @@ static PyMethodDef meth_kpy_resolver_paths = {
     METH_VARARGS | METH_KEYWORDS,
     kpy_resolver_paths_doc,
 };
-// static PyMethodDef meth_kpy_user_resource = {
-//     "user_resource",
-//     (PyCFunction)kpy_user_resource,
-//     METH_VARARGS | METH_KEYWORDS,
-//     NULL,
-// };
+static PyMethodDef meth_kpy_user_resource = {
+    "user_resource",
+    (PyCFunction)kpy_user_resource,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL,
+};
 // static PyMethodDef meth_kpy_system_resource = {
 //     "system_resource",
 //     (PyCFunction)kpy_system_resource,
@@ -204,7 +232,10 @@ void KPy_init_modules(struct kContext *C)
   PyObject *mod;
 
   /* Needs to be first since this dir is needed for future modules */
-  const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
+  const char *const version_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
+  std::string scripts_dir = STRCAT(version_dir, "scripts");
+  const char *modpath = CHARALL(STRCAT(scripts_dir, "modules"));
+
   if (modpath) {
     // printf("kpy: found module path '%s'.\n", modpath);
     PyObject *sys_path = PySys_GetObject("path"); /* borrow */
@@ -237,9 +268,9 @@ void KPy_init_modules(struct kContext *C)
 
   // KPY_uni_gizmo_module(mod);
 
-  kpy_import_test("kpy_types");
-  PyModule_AddObject(mod, "data", KPY_uni_module()); /* imports kpy_types by running this */
-  kpy_import_test("kpy_types");
+  // kpy_import_test("kpy_types");
+  // PyModule_AddObject(mod, "data", KPY_uni_module()); /* imports kpy_types by running this */
+  // kpy_import_test("kpy_types");
   // PyModule_AddObject(mod, "props", KPY_uni_props());
   /* ops is now a python module that does the conversion from SOME_OT_foo -> some.foo */
   // PyModule_AddObject(mod, "ops", KPY_operator_module());
@@ -265,9 +296,9 @@ void KPy_init_modules(struct kContext *C)
                      (PyObject *)PyCFunction_New(&meth_kpy_script_paths, NULL));
   PyModule_AddObject(
       mod, meth_kpy_resolver_paths.ml_name, (PyObject *)PyCFunction_New(&meth_kpy_resolver_paths, NULL));
-  // PyModule_AddObject(mod,
-  //                    meth_kpy_user_resource.ml_name,
-  //                    (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_user_resource.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));
   // PyModule_AddObject(mod,
   //                    meth_kpy_system_resource.ml_name,
   //                    (PyObject *)PyCFunction_New(&meth_kpy_system_resource, NULL));

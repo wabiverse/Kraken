@@ -41,6 +41,7 @@ extern KrakenUNI KRAKEN_UNI;
 /* Keep Sorted. */
 extern ObjectUNI UNI_Area;
 extern ObjectUNI UNI_Context;
+extern ObjectUNI UNI_KrakenData;
 extern ObjectUNI UNI_KrakenUNI;
 extern ObjectUNI UNI_Region;
 extern ObjectUNI UNI_Screen;
@@ -51,6 +52,7 @@ extern ObjectUNI UNI_Object;
 void UNI_main_pointer_create(Main *kmain, PointerUNI *r_ptr);
 
 void UNI_kraken_uni_pointer_create(PointerUNI *r_ptr);
+void UNI_main_pointer_create(struct Main *main, PointerUNI *r_ptr);
 
 ObjectRegisterFunc UNI_object_register(ObjectUNI *type);
 ObjectUnregisterFunc UNI_object_unregister(ObjectUNI *type);

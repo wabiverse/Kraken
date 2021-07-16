@@ -67,6 +67,8 @@ kContext *KPY_context_get(void)
 /* call KPY_context_set first */
 void KPY_python_start(kContext *C, int argc, const char **argv)
 {
+  setenv("PYTHONPATH", CHARSTR(G.main->python_path), true);
+
 #ifndef WITH_PYTHON_MODULE
   /* #PyPreConfig (early-configuration). */
   {
@@ -228,6 +230,17 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
                       (const char *[]){"atexit", "addon_utils", NULL},
                       "atexit.register(addon_utils.disable_all)");
 #endif
+}
+
+void KPY_python_reset(kContext *C)
+{
+  /* unrelated security stuff */
+  G.f &= ~(G_FLAG_SCRIPT_AUTOEXEC_FAIL | G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET);
+  G.autoexec_fail[0] = '\0';
+
+  // KPY_driver_reset();
+  // KPY_app_handlers_reset(false);
+  // KPY_modules_load_user(C);
 }
 
 WABI_NAMESPACE_END

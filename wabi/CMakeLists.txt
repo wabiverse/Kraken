@@ -30,10 +30,18 @@ export(PACKAGE wabi)
 configure_file(
   ${CMAKE_SOURCE_DIR}/build_files/cmake/config/wabiConfig.cmake.in
   "${PROJECT_BINARY_DIR}/wabiConfig.cmake" @ONLY)
-install(FILES
-  "${PROJECT_BINARY_DIR}/wabiConfig.cmake"
-  DESTINATION "${CMAKE_INSTALL_PREFIX}"
-)
+
+if(UNIX)
+  install(FILES
+    "${PROJECT_BINARY_DIR}/wabiConfig.cmake"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  )
+elseif(WIN32)
+  install(FILES
+    "${PROJECT_BINARY_DIR}/wabiConfig.cmake"
+    DESTINATION "./cmake/wabiConfig.cmake"
+  )
+endif()
 
 if(NOT WITH_KRAKEN_MONOLITHIC)
   install(EXPORT wabiTargets DESTINATION "cmake")

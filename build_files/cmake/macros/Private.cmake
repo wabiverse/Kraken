@@ -108,7 +108,7 @@ function(_plugInfo_subst libTarget pluginToLibraryPath plugInfoPath)
 endfunction() # _plugInfo_subst
 
 # Install compiled python files alongside the python object,
-# e.g. MSDOS: ${TARGETDIR_VER}/python/lib/site-packages/wabi/Ar/__init__.pyc
+# e.g. MSDOS: ${TARGETDIR_VER}/scripts/modules/wabi/Ar/__init__.pyc
 # e.g. LINUX: ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Ar/__init__.pyc
 function(_install_python LIBRARY_NAME)
     set(options  "")
@@ -122,7 +122,7 @@ function(_install_python LIBRARY_NAME)
     )
 
     if(WIN32)
-        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/site-packages)
+        set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     elseif(UNIX)
         set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
@@ -301,7 +301,7 @@ function(_install_pyside_ui_files LIBRARY_NAME)
     )
 
     if(WIN32)
-        set(libPythonPrefix ${TARGETDIR_VER}/python/lib/site-packages)
+        set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     elseif(UNIX)
         set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
     endif()
@@ -960,7 +960,7 @@ function(_wabi_python_module NAME)
     # into the default lib install, not into the third_party subdirectory
     # or similar.
     if(WIN32)
-        set(libInstallPrefix "${TARGETDIR_VER}/python/lib/site-packages/wabi/${pyModuleName}")
+        set(libInstallPrefix "${TARGETDIR_VER}/scripts/modules/wabi/${pyModuleName}")
     elseif(UNIX)
         set(libInstallPrefix "/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
     endif()

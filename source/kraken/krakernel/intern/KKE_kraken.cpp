@@ -132,9 +132,6 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 
   CTX_data_main_set(C, G.main);
 
-  /* Init & embed python. */
-  KKE_kraken_python_init(C);
-
   /** @em Always */
   UNI_create_stage(C);
 

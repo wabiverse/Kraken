@@ -30,6 +30,17 @@
 
 WABI_NAMESPACE_BEGIN
 
+struct PyC_StringEnumItems {
+  int value;
+  const char *id;
+};
+struct PyC_StringEnum {
+  const struct PyC_StringEnumItems *items;
+  int value_found;
+};
+
+int PyC_ParseStringEnum(PyObject *o, void *p);
+
 int PyC_ParseBool(PyObject *o, void *p);
 PyObject *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size);
 PyObject *PyC_UnicodeFromByte(const char *str);

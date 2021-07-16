@@ -15,6 +15,7 @@ set(LIB
   kraken_kernel
   kraken_universe
   kraken_intern_utfconv
+  kraken_python
 )
 
 list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
@@ -422,8 +423,6 @@ if(WIN32)
       # JPEG
       ${LIBDIR}/jpeg/bin/jpeg62.dll
       ${LIBDIR}/jpeg/bin/turbojpeg.dll
-      # OPENVDB
-      ${LIBDIR}/openvdb/bin/openvdb.dll
       # TBB
       ${LIBDIR}/tbb/bin/tbb.dll
       ${LIBDIR}/tbb/bin/tbbmalloc.dll
@@ -827,8 +826,10 @@ elseif(WIN32)
         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
       )
       install(
-        FILES ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
+        FILES ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}.dll
+              ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
               ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python_d.exe
+              ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python.exe
         DESTINATION ${KRAKEN_VERSION}/python/bin
         CONFIGURATIONS Debug
       )
@@ -927,7 +928,7 @@ endif()
 #     # ${LIBDIR}/usd-static/lib/python/
 #     ${CMAKE_SOURCE_DIR}/source/kraken/draw/engines/ember/python/
 #   DESTINATION
-#     ${TARGETDIR_VER}/python/lib/site-packages
+#     ${TARGETDIR_VER}/scripts/modules
 # )
 
 ######################################################## ARNOLD ##########
@@ -1074,6 +1075,25 @@ endif()
 # -----------------------------------------------------------------------------
 # Generic Install, for all targets
 
+# KRAKEN PYTHON MODULE
+if(WITH_PYTHON)
+  if(UNIX)
+    install(
+      DIRECTORY
+        ${CMAKE_SOURCE_DIR}/release/scripts/modules/kpy
+      DESTINATION
+        ${TARGETDIR_VER}/python/lib/python3.9/site-packages
+    )
+  elseif(WIN32)
+    install(
+      DIRECTORY
+        ${CMAKE_SOURCE_DIR}/release/scripts/modules/kpy/
+      DESTINATION
+        ${TARGETDIR_VER}/scripts/modules/kpy
+    )  
+  endif()
+endif()
+
 # ARNOLD PYTHON MODULE
 if(WITH_ARNOLD)
   if(UNIX)
@@ -1088,7 +1108,7 @@ if(WITH_ARNOLD)
       DIRECTORY
         ${LIBDIR}/arnold/python/arnold/
       DESTINATION
-        ${TARGETDIR_VER}/python/lib/site-packages/arnold
+        ${TARGETDIR_VER}/scripts/modules/arnold
     )  
   endif()
 endif()

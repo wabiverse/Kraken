@@ -9,7 +9,7 @@ set(INC
   ../../wm
 )
 
-set(KPY_INSTALL_PATH "release/scripts/modules/kpy")
+# set(KPY_INSTALL_PATH "release/scripts/modules/kpy")
 
 set(SRC
   intern/kpy_capi_utils.cpp
@@ -53,7 +53,7 @@ set(LIB
   ${PYTHON_LIBRARIES}
 )
 
-configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)
+# configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)
 
 add_definitions(-DKRAKEN_PYTHON_EXPORTS)
 

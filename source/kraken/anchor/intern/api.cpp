@@ -3947,6 +3947,12 @@ AnchorU16 ANCHOR::GetDPIHint(ANCHOR_SystemWindowHandle windowhandle)
   return window->getDPIHint();
 }
 
+int ANCHOR::ToggleConsole(int action)
+{
+  ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();
+  return system->toggleConsole(action);
+}
+
 int ANCHOR::UseNativePixels(void)
 {
   ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();

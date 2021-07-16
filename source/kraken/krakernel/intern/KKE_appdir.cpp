@@ -693,4 +693,53 @@ const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder)
 }
 
 
+/**
+ * Returns the path to a folder in the user area without checking that it actually exists first. */
+const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *subfolder)
+{
+  const int version = KRAKEN_VERSION;
+  static char path[FILE_MAX] = "";
+  const bool check_is_dir = false;
+
+  switch (folder_id) {
+    case KRAKEN_USER_DATAFILES:
+      if (get_path_environment_ex(
+              path, sizeof(path), subfolder, "KRAKEN_USER_DATAFILES", check_is_dir)) {
+        break;
+      }
+      get_path_user_ex(path, sizeof(path), "datafiles", subfolder, version, check_is_dir);
+      break;
+    case KRAKEN_USER_CONFIG:
+      if (get_path_environment_ex(
+              path, sizeof(path), subfolder, "KRAKEN_USER_CONFIG", check_is_dir)) {
+        break;
+      }
+      get_path_user_ex(path, sizeof(path), "config", subfolder, version, check_is_dir);
+      break;
+    case KRAKEN_USER_AUTOSAVE:
+      if (get_path_environment_ex(
+              path, sizeof(path), subfolder, "KRAKEN_USER_AUTOSAVE", check_is_dir)) {
+        break;
+      }
+      get_path_user_ex(path, sizeof(path), "autosave", subfolder, version, check_is_dir);
+      break;
+    case KRAKEN_USER_SCRIPTS:
+      if (get_path_environment_ex(
+              path, sizeof(path), subfolder, "KRAKEN_USER_SCRIPTS", check_is_dir)) {
+        break;
+      }
+      get_path_user_ex(path, sizeof(path), "scripts", subfolder, version, check_is_dir);
+      break;
+    default:
+      KLI_assert_unreachable();
+      break;
+  }
+
+  if ('\0' == path[0]) {
+    return NULL;
+  }
+  return path;
+}
+
+
 WABI_NAMESPACE_END

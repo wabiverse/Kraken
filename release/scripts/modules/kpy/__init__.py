@@ -19,26 +19,59 @@ Gives access to KRAKEN data and utility functions.
 """
 
 __all__ = (
-    "app"
+#     "app",
+#     "context",
+#     "data",
+#     "ops",
+#     "path",
+#     "props",
+#     "types",
+    "utils",
 )
 
+
+# internal kraken C module
+# from _kpy import (
+#     app,
+#     context,
+#     data,
+#     msgbus,
+#     props,
+#     types,
+# )
+
+# python modules
 from . import (
-    app
+#     ops,
+#     path,
+    utils,
 )
 
-wg_info = {
-    "name": "Kraken Python",
-    "author": "Wabi",
-    "kraken": (1, 50, 0),
-    "description": "Gives access to KRAKEN data and utility functions.",
-    "warning": "",
-    "doc_url": "https://docs.kraken.xyz/",
-    "tracker_url": "",
-    "support": 'OFFICIAL',
-    "category": "Internal"
-}
 
-__title__       = app.name()
-__author__      = app.author()
-__version__     = app.version()
-__description__ = app.description()
+def main():
+    import sys
+
+    # Possibly temp. addons path
+    from os.path import join, dirname
+    sys.path.extend([
+        join(dirname(dirname(dirname(__file__))), "addons", "modules"),
+        join(utils.user_resource('SCRIPTS'), "addons", "modules"),
+    ])
+
+    # fake module to allow:
+    #   from kpy.types import Panel
+    # sys.modules.update({
+        # "kpy.app": app,
+        # "kpy.app.handlers": app.handlers,
+        # "kpy.app.translations": app.translations,
+        # "kpy.types": types,
+    # })
+
+    # Initializes Python classes.
+    # (good place to run a profiler or trace).
+    # utils.load_scripts()
+
+
+main()
+
+del main

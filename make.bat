@@ -9,9 +9,6 @@ call "%KRAKEN_DIR%\build_files\scripts\windows\reset_args_and_stuff.cmd"
 call "%KRAKEN_DIR%\build_files\scripts\windows\check_args.cmd" %*
 if errorlevel 1 goto EOF
 
-set PYTHONPATH=C:\Users\tyler\.conda\envs\pixar\Lib\site-packages
-call conda activate pixar
-
 call "%KRAKEN_DIR%\build_files\scripts\windows\find_dependencies.cmd"
 if errorlevel 1 goto EOF
 

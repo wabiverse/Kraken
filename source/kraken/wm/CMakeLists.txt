@@ -6,6 +6,7 @@ set(INC
   ../krakernel
   ../kraklib
   ../universe
+  ../python/kpy
 )
 
 set(INC_SYS

@@ -102,7 +102,7 @@ function(wabi_python_bin BIN_NAME)
     if(UNIX)
         set(outfile /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${BIN_NAME})
     elseif(WIN32)
-        set(outfile ${TARGETDIR_VER}/python/lib/site-packages/wabi/${BIN_NAME})
+        set(outfile ${TARGETDIR_VER}/scripts/modules/wabi/${BIN_NAME})
     endif()
 
     # /wabipythonsubst will be replaced with the full path to the configured
@@ -388,16 +388,7 @@ function(wabi_setup_python)
     if(UNIX)
         _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
     elseif(WIN32)
-        _get_install_dir("${TARGETDIR_VER}/python/lib/site-packages/wabi" installPrefix)
-    endif()
-
-    if(WIN32)
-        install(
-            FILES ${CMAKE_SOURCE_DIR}/build_files/extras/windows_check.py
-            DESTINATION ${installPrefix}
-        )
-        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
-            "import wabi.windows_check\n\n")
+        _get_install_dir("${TARGETDIR_VER}/scripts/modules/wabi" installPrefix)
     endif()
 
     file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
@@ -438,7 +429,7 @@ function (wabi_create_test_module MODULE_NAME)
     set(plugInfoFile ${tm_SOURCE_DIR}/${MODULE_NAME}_plugInfo.json)
 
     if(WIN32)
-        set(PY_SITE_PACKAGES ${TARGETDIR_VER}/python/lib/site-packages/wabi/${MODULE_NAME})
+        set(PY_SITE_PACKAGES ${TARGETDIR_VER}/scripts/modules/wabi/${MODULE_NAME})
     elseif(UNIX)
         set(PY_SITE_PACKAGES ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${MODULE_NAME})
     endif()
@@ -801,7 +792,7 @@ function(wabi_register_test TEST_NAME)
     # On Windows convert backslash to slash and don't change semicolons
     # to colons.
     if(WIN32)
-        set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/site-packages;$ENV{PYTHONPATH}")
+        set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/scripts/modules;$ENV{PYTHONPATH}")
     elseif(UNIX)
         set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/python/lib/python3.9/site-packages;$ENV{PYTHONPATH}")
     endif()

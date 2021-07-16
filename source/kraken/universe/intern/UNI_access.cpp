@@ -102,9 +102,16 @@ void UNI_property_collection_begin(PointerUNI *ptr,
   iter.begin();
 }
 
+void UNI_main_pointer_create(struct Main *main, PointerUNI *r_ptr)
+{
+  r_ptr->path = SdfPath("/Main");
+  r_ptr->type = &UNI_KrakenData;
+  r_ptr->data = main;
+}
+
 void UNI_kraken_uni_pointer_create(PointerUNI *r_ptr)
 {
-  r_ptr->path = SdfPath("/");
+  r_ptr->path = SdfPath("/Kraken");
   r_ptr->type = &UNI_KrakenUNI;
   r_ptr->data = &KRAKEN_UNI;
 }

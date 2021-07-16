@@ -161,10 +161,28 @@ endif()
 # Find Python
 
 if(WIN32)
-  find_package(PythonInterp 3.9 REQUIRED)
-  set(python_version_nodot "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+  set(FOUND_PYTHON ON)
+  set(Python_VERSION_MAJOR "3")
+  set(Python_VERSION_MINOR "9")
+  set(python_version_nodot "${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
   set(PYTHON_INCLUDE_DIR ${LIBDIR}/python/${python_version_nodot}/include)
-  set(PYTHON_LIBRARIES ${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib)
+  set(PYTHON_LIBPATH ${LIBDIR}/python/${python_version_nodot}/lib)
+
+  if(KRAKEN_RELEASE_MODE)
+    set(PYTHON_EXECUTABLE ${LIBDIR}/python/${python_version_nodot}/bin/python.exe)
+    set(PYTHON_LIBRARIES ${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib)
+  else()
+    set(PYTHON_EXECUTABLE ${LIBDIR}/python/${python_version_nodot}/bin/python.exe)
+    set(PYTHON_LIBRARIES
+      ${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}_d.lib
+      ${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib  
+    )
+  endif()
+
+  link_libraries(
+    $<$<CONFIG:Debug>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}_d.lib>
+    $<$<CONFIG:Release>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib>
+  )
 else()
   find_package(Python 3.9 COMPONENTS Interpreter Development REQUIRED)
   set(PYTHON_INCLUDE_DIR ${Python_INCLUDE_DIRS})
@@ -483,18 +501,23 @@ endif()
 
 if(WITH_PIXAR_USDVIEW)
   # --PySide
-
-  find_package(PySide)
-  if(NOT PYSIDE_FOUND)
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install PySide2)
-    find_package(PySide REQUIRED)
+  if(UNIX)
+    find_package(PySide)
+  elseif(WIN32)
+    set(PYSIDE_FOUND ON)
+    set(PYSIDE_BIN_DIR ${LIBDIR}/python/${python_version_nodot}/lib/site-packages/PySide2)
+    set(PYSIDEUICBINARY ${LIBDIR}/python/${python_version_nodot}/lib/site-packages/PySide2/uic.exe)
   endif()
   # --PyOpenGL
-  find_package(PyOpenGL)
-  if(NOT PYOPENGL_FOUND)
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install PyOpenGL)
-    find_package(PyOpenGL REQUIRED)
+  if(UNIX)
+    find_package(PyOpenGL)
+  elseif(WIN32)
+    set(PYOPENGL_AVAILABLE ON)
   endif()
+endif()
+
+if(WIN32)
+  set(JINJA2_FOUND ON)
 endif()
 
 # Third Party Plugin Package Requirements

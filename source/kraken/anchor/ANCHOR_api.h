@@ -1034,6 +1034,9 @@ ANCHOR_API
 void SetWindowUserData(ANCHOR_SystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
 
 ANCHOR_API
+int ToggleConsole(int action);
+
+ANCHOR_API
 AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
 
 ANCHOR_API

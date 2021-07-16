@@ -129,7 +129,7 @@ int CREATOR_parse_args(int argc, const char **argv)
   {
     const std::filesystem::path fp = convert_stage;
     if(std::filesystem::exists(fp)) {
-      UNI_pixutil_convert_usda(fp, /*verbose==*/true);
+      UNI_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
       exit(KRAKEN_SUCCESS);
     }
 

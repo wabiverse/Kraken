@@ -39,4 +39,6 @@ struct kContext;
 /* wpy_interface.cpp */
 void KPY_python_start(struct kContext *C, int argc, const char **argv);
 
+void KPY_python_reset(struct kContext *C);
+
 WABI_NAMESPACE_END

@@ -26,8 +26,12 @@
 
 #include "UNI_api.h"
 
-#include <wabi/base/tf/hash.h>
-#include <wabi/base/tf/hashmap.h>
+#include <wabi/base/tf/diagnostic.h>
+#include <wabi/usd/sdf/fileFormat.h>
+#include <wabi/usd/usd/usdFileFormat.h>
+#include <wabi/usd/usd/usdaFileFormat.h>
+#include <wabi/usd/usd/usdcFileFormat.h>
+#include <wabi/usd/usd/usdzFileFormat.h>
 
 #include <map>
 #include <string>
@@ -43,8 +47,9 @@ WABI_NAMESPACE_BEGIN
  * Converts a given binary usd file (usd|usdc|usdz) to a human readable
  * (.usda) file to the same directory as the binary usd file passed in.
  * @param path: filepath to (usd|usdc|usdz) file.
+ * @param format: the file format to convert to (usd|usdc|usdz)
  * @param verbose: whether to log status to console. */
-void UNI_pixutil_convert_usda(const fs::path &path, bool verbose = false);
+void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format = UsdUsdaFileFormatTokens->Id, bool verbose = false);
 
 /**
  * Uses Pixar's Asset Resolver to resolve a path to a given asset path.

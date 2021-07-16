@@ -22,22 +22,34 @@
  * Set the Stage.
  */
 
+#include "KKE_main.h"
+#include "KKE_version.h"
+
 #include "UNI_pixar_utils.h"
 
-#include <wabi/base/tf/diagnostic.h>
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/ar/resolver.h>
 
 WABI_NAMESPACE_BEGIN
 
 
-void UNI_pixutil_convert_usda(const fs::path &path, bool verbose)
+void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool verbose)
 {
   const fs::path usda_path = STRCAT(path.parent_path().string(), "/" + path.stem().string() + ".usda");
 
-  UsdStageRefPtr stage = UsdStage::Open(path.string());
+  /**
+   * Setup File Formatting Args. */
+  SdfFileFormat::FileFormatArguments args;
+  args[UsdUsdFileFormatTokens->FormatArg] = format;
 
-  const bool success = stage->Export(usda_path.string());
+  /**
+   * Open the path as an SdfLayer & Convert. */
+  SdfLayerRefPtr layer = SdfLayer::FindOrOpen(path.string());
+  const bool success = layer->Export(usda_path.string(),
+                                     TfStringPrintf("Kraken v%d.%d",
+                                                    KRAKEN_VERSION_MAJOR,
+                                                    KRAKEN_VERSION_MINOR),
+                                     args);
 
   if(verbose) {
     if(success && fs::exists(usda_path)) {

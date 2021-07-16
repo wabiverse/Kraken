@@ -45,3 +45,12 @@ int conv_utf_8_to_16(const char *in8, wchar_t *out16, size_t size16);
 
 char *alloc_utf_8_from_16(const wchar_t *in16, size_t add);
 wchar_t *alloc_utf16_from_8(const char *in8, size_t add);
+
+#define UTF16_ENCODE(in8str) \
+  if (1) { \
+    wchar_t *in8str##_16 = alloc_utf16_from_8((const char *)in8str, 0)
+
+#define UTF16_UN_ENCODE(in8str) \
+  free(in8str##_16); \
+  } \
+  (void)0

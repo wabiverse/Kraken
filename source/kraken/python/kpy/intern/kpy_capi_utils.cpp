@@ -27,7 +27,42 @@
 #include <Python.h>
 #include <frameobject.h>
 
+#include "KLI_string_utils.h"
+
 #include "kpy_capi_utils.h"
+
+WABI_NAMESPACE_BEGIN
+
+/**
+ * Use with PyArg_ParseTuple's "O&" formatting. */
+int PyC_ParseStringEnum(PyObject *o, void *p)
+{
+  struct PyC_StringEnum *e = (PyC_StringEnum*)p;
+  const char *value = PyUnicode_AsUTF8(o);
+  if (value == NULL) {
+    PyErr_Format(PyExc_ValueError, "expected a string, got %s", Py_TYPE(o)->tp_name);
+    return 0;
+  }
+  int i;
+  for (i = 0; e->items[i].id; i++) {
+    if (STREQ(e->items[i].id, value)) {
+      e->value_found = e->items[i].value;
+      return 1;
+    }
+  }
+
+  /* Set as a precaution. */
+  e->value_found = -1;
+
+  PyObject *enum_items = PyTuple_New(i);
+  for (i = 0; e->items[i].id; i++) {
+    PyTuple_SET_ITEM(enum_items, i, PyUnicode_FromString(e->items[i].id));
+  }
+  PyErr_Format(PyExc_ValueError, "expected a string in %S, got '%s'", enum_items, value);
+  Py_DECREF(enum_items);
+  return 0;
+}
+
 
 /**
  * Use with PyArg_ParseTuple's "O&" formatting.
@@ -65,3 +100,5 @@ PyObject *PyC_UnicodeFromByte(const char *str)
 {
   return PyC_UnicodeFromByteAndSize(str, strlen(str));
 }
+
+WABI_NAMESPACE_END

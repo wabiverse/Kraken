@@ -64,6 +64,25 @@ struct Global
   bool custom_startup;
 
   bool is_rendering;
+
+  int f;
+
+  /** Message to use when auto execution fails. */
+  char autoexec_fail[200];
+};
+
+enum eGlobalFlag {
+  G_FLAG_RENDER_VIEWPORT = (1 << 0),
+  G_FLAG_PICKSEL = (1 << 2),
+  /** Support simulating events (for testing). */
+  G_FLAG_EVENT_SIMULATE = (1 << 3),
+  G_FLAG_USERPREF_NO_SAVE_ON_EXIT = (1 << 4),
+
+  G_FLAG_SCRIPT_AUTOEXEC = (1 << 13),
+  /** When this flag is set ignore the prefs #USER_SCRIPT_AUTOEXEC_DISABLE. */
+  G_FLAG_SCRIPT_OVERRIDE_PREF = (1 << 14),
+  G_FLAG_SCRIPT_AUTOEXEC_FAIL = (1 << 15),
+  G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET = (1 << 16),
 };
 
 enum ckeStatusCode

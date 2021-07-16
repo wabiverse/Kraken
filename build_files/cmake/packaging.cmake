@@ -1,8 +1,8 @@
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
-set(PROJECT_DESCRIPTION  "Kraken is the 3D creation software suite.")
-set(PROJECT_COPYRIGHT    "Copyright (C) 2018-${CURRENT_YEAR} Wabi")
-set(PROJECT_CONTACT      "dev@kraken.xyz")
+set(PROJECT_DESCRIPTION  "Kraken is the 3D animation platform built for the modern age.")
+set(PROJECT_COPYRIGHT    "Copyright (C) 2018-${CURRENT_YEAR} Wabi Animation")
+set(PROJECT_CONTACT      "dev@kraken3d.org")
 set(PROJECT_VENDOR       "Wabi Animation")
 
 set(MAJOR_VERSION ${KRAKEN_VERSION_MAJOR})
@@ -79,8 +79,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "wabi/KRAKEN ${MAJOR_VERSION}.${MINOR_VERSION}")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "wabi/KRAKEN ${MAJOR_VERSION}.${MINOR_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Wabi Animation/Kraken ${MAJOR_VERSION}.${MINOR_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Wabi Animation/Kraken ${MAJOR_VERSION}.${MINOR_VERSION}")
 
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
@@ -103,8 +103,8 @@ if(WIN32)
   set(CPACK_WIX_LIGHT_EXTRA_FLAGS -dcl:medium)
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "kraken" "kraken")
-set(CPACK_CREATE_DESKTOP_LINKS "kraken" "kraken")
+set(CPACK_PACKAGE_EXECUTABLES "kraken-launcher" "kraken")
+set(CPACK_CREATE_DESKTOP_LINKS "kraken-launcher" "kraken")
 
 include(CPack)
 

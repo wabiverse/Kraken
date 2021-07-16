@@ -28,6 +28,7 @@
 
 #include "KLI_threads.h"
 
+#include "KKE_appdir.h"
 #include "KKE_context.h"
 #include "KKE_main.h"
 
@@ -51,6 +52,9 @@ int main(int argc, const char **argv)
   /* Create Context C. */
   C = CTX_create();
 
+  /* Initialize path to executable. */
+  KKE_appdir_program_path_init();
+
   /* Initialize Threads. */
   KLI_threadapi_init();
 
@@ -66,6 +70,8 @@ int main(int argc, const char **argv)
   {
     return 0;
   }
+
+  KKE_appdir_init();
 
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C, argc, (const char **)argv);

@@ -60,12 +60,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-extern PyTypeObject pyuni_object_meta_idprop_Type;
+// extern PyTypeObject pyuni_object_meta_idprop_Type;
 extern PyTypeObject pyuni_object_Type;
-extern PyTypeObject pyuni_prop_Type;
-extern PyTypeObject pyuni_prop_array_Type;
-extern PyTypeObject pyuni_prop_collection_Type;
-extern PyTypeObject pyuni_func_Type;
+// extern PyTypeObject pyuni_prop_Type;
+// extern PyTypeObject pyuni_prop_array_Type;
+// extern PyTypeObject pyuni_prop_collection_Type;
+// extern PyTypeObject pyuni_func_Type;
 
 #define KPy_ObjectUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_object_Type))
 #define KPy_ObjectUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_object_Type)

@@ -106,6 +106,183 @@ static PyObject *kpy_types_module_dir(PyObject *self)
   Py_RETURN_NONE;
 }
 
+PyTypeObject pyuni_struct_meta_idprop_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0) "kpy_object_meta_idprop", /* tp_name */
+
+    /* NOTE! would be PyTypeObject, but subtypes of Type must be PyHeapTypeObject's */
+    sizeof(PyHeapTypeObject), /* tp_basicsize */
+
+    0, /* tp_itemsize */
+    /* methods */
+    NULL, /* tp_dealloc */
+    0,    /* tp_vectorcall_offset */
+    NULL, /* getattrfunc tp_getattr; */
+    NULL, /* setattrfunc tp_setattr; */
+    NULL,
+    /* tp_compare */ /* deprecated in Python 3.0! */
+    NULL,            /* tp_repr */
+
+    /* Method suites for standard classes */
+    NULL, /* PyNumberMethods *tp_as_number; */
+    NULL, /* PySequenceMethods *tp_as_sequence; */
+    NULL, /* PyMappingMethods *tp_as_mapping; */
+
+    /* More standard operations (here for binary compatibility) */
+    NULL,                                                        /* hashfunc tp_hash; */
+    NULL,                                                        /* ternaryfunc tp_call; */
+    NULL,                                                        /* reprfunc tp_str; */
+    NULL /* (getattrofunc) pyrna_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
+
+    NULL,// (setattrofunc)pyrna_struct_meta_idprop_setattro,             /* setattrofunc tp_setattro; */
+    
+
+    /* Functions to access object as input/output buffer */
+    NULL, /* PyBufferProcs *tp_as_buffer; */
+
+    /*** Flags to define presence of optional/expanded features ***/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* long tp_flags; */
+
+    NULL, /*  char *tp_doc;  Documentation string */
+    /*** Assigned meaning in release 2.0 ***/
+    /* call function for all accessible objects */
+    NULL, /* traverseproc tp_traverse; */
+
+    /* delete references to contained objects */
+    NULL, /* inquiry tp_clear; */
+
+    /***  Assigned meaning in release 2.1 ***/
+    /*** rich comparisons ***/
+    NULL, /* richcmpfunc tp_richcompare; */
+
+    /***  weak reference enabler ***/
+    0, /* long tp_weaklistoffset; */
+
+    /*** Added in release 2.2 ***/
+    /*   Iterators */
+    NULL, /* getiterfunc tp_iter; */
+    NULL, /* iternextfunc tp_iternext; */
+
+    /*** Attribute descriptor and subclassing stuff ***/
+    NULL, /* struct PyMethodDef *tp_methods; */
+    NULL, /* struct PyMemberDef *tp_members; */
+    NULL, /* struct PyGetSetDef *tp_getset; */
+#if defined(_MSC_VER)
+    NULL, /* defer assignment */
+#else
+    &PyType_Type, /* struct _typeobject *tp_base; */
+#endif
+    NULL, /* PyObject *tp_dict; */
+    NULL, /* descrgetfunc tp_descr_get; */
+    NULL, /* descrsetfunc tp_descr_set; */
+    0,    /* long tp_dictoffset; */
+    NULL, /* initproc tp_init; */
+    NULL, /* allocfunc tp_alloc; */
+    NULL, /* newfunc tp_new; */
+    /*  Low-level free-memory routine */
+    NULL, /* freefunc tp_free; */
+    /* For PyObject_IS_GC */
+    NULL, /* inquiry tp_is_gc; */
+    NULL, /* PyObject *tp_bases; */
+    /* method resolution order */
+    NULL, /* PyObject *tp_mro; */
+    NULL, /* PyObject *tp_cache; */
+    NULL, /* PyObject *tp_subclasses; */
+    NULL, /* PyObject *tp_weaklist; */
+    NULL,
+};
+
+PyTypeObject pyuni_object_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0) "kpy_object", /* tp_name */
+    sizeof(KPy_ObjectUNI),                       /* tp_basicsize */
+    0,                                           /* tp_itemsize */
+    /* methods */
+    NULL,//(destructor)pyuni_object_dealloc, /* tp_dealloc */
+    0,                                /* tp_vectorcall_offset */
+    NULL,                             /* getattrfunc tp_getattr; */
+    NULL,                             /* setattrfunc tp_setattr; */
+    NULL,
+    /* tp_compare */             /* DEPRECATED in Python 3.0! */
+    NULL,//(reprfunc)pyuni_object_repr, /* tp_repr */
+
+    /* Method suites for standard classes */
+
+    NULL,                      /* PyNumberMethods *tp_as_number; */
+    NULL,//&pyrna_struct_as_sequence, /* PySequenceMethods *tp_as_sequence; */
+    NULL,//&pyrna_struct_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
+
+    /* More standard operations (here for binary compatibility) */
+
+    NULL,//(hashfunc)pyuni_object_hash,         /* hashfunc tp_hash; */
+    NULL,                                /* ternaryfunc tp_call; */
+    NULL,//(reprfunc)pyuni_object_str,          /* reprfunc tp_str; */
+    NULL,//(getattrofunc)pyuni_object_getattro, /* getattrofunc tp_getattro; */
+    NULL,//(setattrofunc)pyuni_object_setattro, /* setattrofunc tp_setattro; */
+
+    /* Functions to access object as input/output buffer */
+    NULL, /* PyBufferProcs *tp_as_buffer; */
+
+    /*** Flags to define presence of optional/expanded features ***/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE
+#ifdef USE_PYRNA_STRUCT_REFERENCE
+        | Py_TPFLAGS_HAVE_GC
+#endif
+    , /* long tp_flags; */
+
+    NULL, /*  char *tp_doc;  Documentation string */
+/*** Assigned meaning in release 2.0 ***/
+/* call function for all accessible objects */
+#ifdef USE_PYRNA_STRUCT_REFERENCE
+    NULL,//(traverseproc)pyuni_struct_traverse, /* traverseproc tp_traverse; */
+
+    /* delete references to contained objects */
+    NULL,//(inquiry)pyuni_struct_clear, /* inquiry tp_clear; */
+#else
+    NULL,         /* traverseproc tp_traverse; */
+
+    /* delete references to contained objects */
+    NULL, /* inquiry tp_clear; */
+#endif /* !USE_PYRNA_STRUCT_REFERENCE */
+
+    /***  Assigned meaning in release 2.1 ***/
+    /*** rich comparisons ***/
+    NULL,//(richcmpfunc)pyrna_struct_richcmp, /* richcmpfunc tp_richcompare; */
+
+/***  weak reference enabler ***/
+#ifdef USE_WEAKREFS
+    offsetof(KPy_ObjectUNI, in_weakreflist), /* long tp_weaklistoffset; */
+#else
+    0,
+#endif
+    /*** Added in release 2.2 ***/
+    /*   Iterators */
+    NULL, /* getiterfunc tp_iter; */
+    NULL, /* iternextfunc tp_iternext; */
+
+    /*** Attribute descriptor and subclassing stuff ***/
+    NULL,//pyuni_object_methods,   /* struct PyMethodDef *tp_methods; */
+    NULL,                   /* struct PyMemberDef *tp_members; */
+    NULL,//pyuni_object_getseters, /* struct PyGetSetDef *tp_getset; */
+    NULL,                   /* struct _typeobject *tp_base; */
+    NULL,                   /* PyObject *tp_dict; */
+    NULL,                   /* descrgetfunc tp_descr_get; */
+    NULL,                   /* descrsetfunc tp_descr_set; */
+    0,                      /* long tp_dictoffset; */
+    NULL,                   /* initproc tp_init; */
+    NULL,                   /* allocfunc tp_alloc; */
+    NULL,//pyuni_object_new,       /* newfunc tp_new; */
+    /*  Low-level free-memory routine */
+    NULL, /* freefunc tp_free; */
+    /* For PyObject_IS_GC */
+    NULL, /* inquiry tp_is_gc; */
+    NULL, /* PyObject *tp_bases; */
+    /* method resolution order */
+    NULL, /* PyObject *tp_mro; */
+    NULL, /* PyObject *tp_cache; */
+    NULL, /* PyObject *tp_subclasses; */
+    NULL, /* PyObject *tp_weaklist; */
+    NULL,
+};
+
 static struct PyMethodDef kpy_types_module_methods[] = {
     {"__getattr__", (PyCFunction)kpy_types_module_getattro, METH_O, NULL},
     {"__dir__", (PyCFunction)kpy_types_module_dir, METH_NOARGS, NULL},
@@ -138,12 +315,12 @@ PyObject *KPY_uni_types(void)
   /* Internal base types we have no other accessors for. */
   {
     static PyTypeObject *pyuni_types[] = {
-        &pyuni_object_meta_idprop_Type,
+        // &pyuni_object_meta_idprop_Type,
         &pyuni_object_Type,
-        &pyuni_prop_Type,
-        &pyuni_prop_array_Type,
-        &pyuni_prop_collection_Type,
-        &pyuni_func_Type,
+        // &pyuni_prop_Type,
+        // &pyuni_prop_array_Type,
+        // &pyuni_prop_collection_Type,
+        // &pyuni_func_Type,
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
@@ -486,38 +663,38 @@ static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self)
 void KPY_uni_init(void)
 {
   /* For some reason MSVC complains of these. */
-#if defined(_MSC_VER)
-  pyuni_object_meta_idprop_Type.tp_base = &PyType_Type;
-#endif
+// #if defined(_MSC_VER)
+//   pyuni_object_meta_idprop_Type.tp_base = &PyType_Type;
+// #endif
 
   /* metaclass */
-  if (PyType_Ready(&pyuni_object_meta_idprop_Type) < 0) {
-    return;
-  }
+  // if (PyType_Ready(&pyuni_object_meta_idprop_Type) < 0) {
+  //   return;
+  // }
 
   if (PyType_Ready(&pyuni_object_Type) < 0) {
     return;
   }
 
-  if (PyType_Ready(&pyuni_prop_Type) < 0) {
-    return;
-  }
+  // if (PyType_Ready(&pyuni_prop_Type) < 0) {
+  //   return;
+  // }
 
-  if (PyType_Ready(&pyuni_prop_array_Type) < 0) {
-    return;
-  }
+  // if (PyType_Ready(&pyuni_prop_array_Type) < 0) {
+  //   return;
+  // }
 
-  if (PyType_Ready(&pyuni_prop_collection_Type) < 0) {
-    return;
-  }
+  // if (PyType_Ready(&pyuni_prop_collection_Type) < 0) {
+  //   return;
+  // }
 
   // if (PyType_Ready(&pyuni_prop_collection_idprop_Type) < 0) {
   //   return;
   // }
 
-  if (PyType_Ready(&pyuni_func_Type) < 0) {
-    return;
-  }
+  // if (PyType_Ready(&pyuni_func_Type) < 0) {
+  //   return;
+  // }
 
 #ifdef USE_PYUNI_ITER
   if (PyType_Ready(&pyuni_prop_collection_iter_Type) < 0) {
@@ -525,6 +702,31 @@ void KPY_uni_init(void)
   }
 #endif
 }
+
+
+PyDoc_STRVAR(pyuni_unregister_class_doc,
+             ".. method:: unregister_class(cls)\n"
+             "\n"
+             "   Unload the Python class from kraken.\n"
+             "\n"
+             "   If the class has an *unregister* class method it will be called\n"
+             "   before unregistering.\n");
+PyMethodDef meth_kpy_unregister_class = {
+    "unregister_class",
+    pyuni_unregister_class,
+    METH_O,
+    pyuni_unregister_class_doc,
+};
+static PyObject *pyuni_unregister_class(PyObject *UNUSED(self), PyObject *py_class)
+{
+  kContext *C = NULL;
+  ObjectUnregisterFunc unreg;
+  ObjectUNI *srna;
+  PyObject *py_cls_meth;
+
+  Py_RETURN_NONE;
+}
+
 
 /* 'kpy.data' from Python. */
 static PointerUNI *uni_module_ptr = NULL;
@@ -619,11 +821,11 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
     // else {
       // TF_MSG("could not make type '%s'", UNI_object_identifier(ptr->type));
 
-// #ifdef USE_PYUNI_OBJECT_REFERENCE
-      // pyuni = (KPy_ObjectUNI *)PyObject_GC_New(KPy_ObjectUNI, &pyuni_object_Type);
-// #else
-      // pyuni = (KPy_ObjectUNI *)PyObject_New(KPy_ObjectUNI, &pyuni_object_Type);
-// #endif
+#ifdef USE_PYUNI_OBJECT_REFERENCE
+      pyuni = (KPy_ObjectUNI *)PyObject_GC_New(KPy_ObjectUNI, &pyuni_object_Type);
+#else
+      pyuni = (KPy_ObjectUNI *)PyObject_New(KPy_ObjectUNI, &pyuni_object_Type);
+#endif
 
 // #ifdef USE_WEAKREFS
       // if (pyuni != NULL) {
@@ -662,5 +864,47 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
 #endif
   return (PyObject *)pyuni;
 }
+
+static PyObject *pyuni_kr_owner_id_get(PyObject *UNUSED(self))
+{
+  // const char *name = RNA_struct_state_owner_get();
+  // if (name) {
+  //   return PyUnicode_FromString(name);
+  // }
+  Py_RETURN_NONE;
+}
+
+static PyObject *pyuni_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
+{
+  const char *name;
+  if (value == Py_None) {
+    name = NULL;
+  }
+  else if (PyUnicode_Check(value)) {
+    name = PyUnicode_AsUTF8(value);
+  }
+  else {
+    PyErr_Format(PyExc_ValueError,
+                 "owner_set(...): "
+                 "expected None or a string, not '%.200s'",
+                 Py_TYPE(value)->tp_name);
+    return NULL;
+  }
+  // RNA_struct_state_owner_set(name);
+  Py_RETURN_NONE;
+}
+
+PyMethodDef meth_kpy_owner_id_get = {
+    "_kr_owner_id_get",
+    (PyCFunction)pyuni_kr_owner_id_get,
+    METH_NOARGS,
+    NULL,
+};
+PyMethodDef meth_kpy_owner_id_set = {
+    "_kr_owner_id_set",
+    (PyCFunction)pyuni_kr_owner_id_set,
+    METH_O,
+    NULL,
+};
 
 WABI_NAMESPACE_END
