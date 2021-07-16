@@ -292,8 +292,9 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod,
                      meth_kpy_script_paths.ml_name,
                      (PyObject *)PyCFunction_New(&meth_kpy_script_paths, NULL));
-  PyModule_AddObject(
-      mod, meth_kpy_resolver_paths.ml_name, (PyObject *)PyCFunction_New(&meth_kpy_resolver_paths, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_resolver_paths.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_resolver_paths, NULL));
   PyModule_AddObject(mod,
                      meth_kpy_user_resource.ml_name,
                      (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));

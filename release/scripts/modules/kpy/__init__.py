@@ -20,7 +20,7 @@ Gives access to KRAKEN data and utility functions.
 
 __all__ = (
 #     "app",
-#     "context",
+    "context",
 #     "data",
 #     "ops",
 #     "path",
@@ -31,14 +31,14 @@ __all__ = (
 
 
 # internal kraken C module
-# from _kpy import (
+from _kpy import (
 #     app,
-#     context,
+    context,
 #     data,
 #     msgbus,
 #     props,
 #     types,
-# )
+)
 
 # python modules
 from . import (

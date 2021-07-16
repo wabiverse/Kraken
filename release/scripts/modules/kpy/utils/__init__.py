@@ -1,10 +1,18 @@
 
 
 __all__ = (
+    "kraken_paths",
+    "register_class",
+    "script_paths",
+    "unregister_class",
     "user_resource",
 )
 
 from _kpy import (
+    kraken_paths,
+    register_class,
+    script_paths as _kpy_script_paths,
+    unregister_class,
     user_resource as _user_resource,
 )
 
