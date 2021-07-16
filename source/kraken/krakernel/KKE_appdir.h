@@ -38,6 +38,10 @@ const char *KKE_appdir_program_path(void);
 const char *KKE_appdir_program_dir(void);
 const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder);
 const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *subfolder);
+const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfolder);
+const char *KKE_appdir_folder_id_version(const int folder_id,
+                                         const int version,
+                                         const bool check_is_dir);
 
 bool KKE_appdir_folder_documents(char *dir);
 bool KKE_appdir_font_folder_default(char *dir);

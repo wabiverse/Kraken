@@ -8,6 +8,7 @@ set(INC
 
 set(SRC
   intern/KLI_assert.c
+  intern/KLI_fileops.cpp
   intern/KLI_storage.cpp
   intern/KLI_string_utils.cpp
   intern/KLI_icons.cpp
@@ -36,6 +37,7 @@ set(INC_SYS
   ${TBB_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${PTHREADS_INCLUDE_DIR}
+  ${ZLIB_INCLUDE_DIR}
 )
 
 list(APPEND LIB
@@ -45,6 +47,7 @@ list(APPEND LIB
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
   ${PTHREADS_LIBRARY}
+  ${ZLIB_LIBRARY}
 )
 
 if(WIN32)

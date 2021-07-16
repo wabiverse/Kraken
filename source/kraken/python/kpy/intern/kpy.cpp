@@ -163,6 +163,154 @@ static PyObject *kpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
   return PyC_UnicodeFromByte(path ? path : "");
 }
 
+PyDoc_STRVAR(kpy_system_resource_doc,
+             ".. function:: system_resource(type, path=\"\")\n"
+             "\n"
+             "   Return a system resource path.\n"
+             "\n"
+             "   :arg type: string in ['DATAFILES', 'SCRIPTS', 'PYTHON'].\n"
+             "   :type type: string\n"
+             "   :arg path: Optional subdirectory.\n"
+             "   :type path: string\n");
+static PyObject *kpy_system_resource(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
+{
+  const struct PyC_StringEnumItems type_items[] = {
+      {KRAKEN_SYSTEM_DATAFILES, "DATAFILES"},
+      {KRAKEN_SYSTEM_SCRIPTS,   "SCRIPTS"},
+      {KRAKEN_SYSTEM_PYTHON,    "PYTHON"},
+      {0, NULL},
+  };
+  struct PyC_StringEnum type = {type_items};
+
+  const char *subdir = NULL;
+
+  const char *path;
+
+  static const char *_keywords[] = {"type", "path", NULL};
+  static _PyArg_Parser _parser = {"O&|$s:system_resource", _keywords, 0};
+  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
+    return NULL;
+  }
+
+  path = KKE_appdir_folder_id(type.value_found, subdir);
+
+  return PyC_UnicodeFromByte(path ? path : "");
+}
+
+PyDoc_STRVAR(
+    kpy_resource_path_doc,
+    ".. function:: resource_path(type, major=kpy.app.version[0], minor=kpy.app.version[1])\n"
+    "\n"
+    "   Return the base path for storing system files.\n"
+    "\n"
+    "   :arg type: string in ['USER', 'LOCAL', 'SYSTEM'].\n"
+    "   :type type: string\n"
+    "   :arg major: major version, defaults to current.\n"
+    "   :type major: int\n"
+    "   :arg minor: minor version, defaults to current.\n"
+    "   :type minor: string\n"
+    "   :return: the resource path (not necessarily existing).\n"
+    "   :rtype: string\n");
+static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
+{
+  const struct PyC_StringEnumItems type_items[] = {
+      {KRAKEN_RESOURCE_PATH_USER,   "USER"},
+      {KRAKEN_RESOURCE_PATH_LOCAL,  "LOCAL"},
+      {KRAKEN_RESOURCE_PATH_SYSTEM, "SYSTEM"},
+      {0, NULL},
+  };
+  struct PyC_StringEnum type = {type_items};
+
+  int major = KRAKEN_VERSION / 100, minor = KRAKEN_VERSION % 100;
+  const char *path;
+
+  static const char *_keywords[] = {"type", "major", "minor", NULL};
+  static _PyArg_Parser _parser = {"O&|$ii:resource_path", _keywords, 0};
+  if (!_PyArg_ParseTupleAndKeywordsFast(
+          args, kw, &_parser, PyC_ParseStringEnum, &type, &major, &minor)) {
+    return NULL;
+  }
+
+  path = KKE_appdir_folder_id_version(type.value_found, (major * 100) + minor, false);
+
+  return PyC_UnicodeFromByte(path ? path : "");
+}
+
+PyDoc_STRVAR(kpy_escape_identifier_doc,
+             ".. function:: escape_identifier(string)\n"
+             "\n"
+             "   Simple string escaping function used for animation paths.\n"
+             "\n"
+             "   :arg string: text\n"
+             "   :type string: string\n"
+             "   :return: The escaped string.\n"
+             "   :rtype: string\n");
+static PyObject *kpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
+{
+  Py_ssize_t value_str_len;
+  const char *value_str = PyUnicode_AsUTF8AndSize(value, &value_str_len);
+
+  if (value_str == NULL) {
+    PyErr_SetString(PyExc_TypeError, "expected a string");
+    return NULL;
+  }
+
+  const size_t size = (value_str_len * 2) + 1;
+  char *value_escape_str = (char *)PyMem_MALLOC(size);
+  const Py_ssize_t value_escape_str_len = KLI_str_escape(value_escape_str, value_str, size);
+
+  PyObject *value_escape;
+  if (value_escape_str_len == value_str_len) {
+    Py_INCREF(value);
+    value_escape = value;
+  }
+  else {
+    value_escape = PyUnicode_FromStringAndSize(value_escape_str, value_escape_str_len);
+  }
+
+  PyMem_FREE(value_escape_str);
+
+  return value_escape;
+}
+
+PyDoc_STRVAR(kpy_unescape_identifier_doc,
+             ".. function:: unescape_identifier(string)\n"
+             "\n"
+             "   Simple string un-escape function used for animation paths.\n"
+             "   This performs the reverse of `escape_identifier`.\n"
+             "\n"
+             "   :arg string: text\n"
+             "   :type string: string\n"
+             "   :return: The un-escaped string.\n"
+             "   :rtype: string\n");
+static PyObject *kpy_unescape_identifier(PyObject *UNUSED(self), PyObject *value)
+{
+  Py_ssize_t value_str_len;
+  const char *value_str = PyUnicode_AsUTF8AndSize(value, &value_str_len);
+
+  if (value_str == NULL) {
+    PyErr_SetString(PyExc_TypeError, "expected a string");
+    return NULL;
+  }
+
+  const size_t size = value_str_len + 1;
+  char *value_unescape_str = (char *)PyMem_MALLOC(size);
+  const Py_ssize_t value_unescape_str_len = KLI_str_unescape(value_unescape_str, value_str, size);
+
+  PyObject *value_unescape;
+  if (value_unescape_str_len == value_str_len) {
+    Py_INCREF(value);
+    value_unescape = value;
+  }
+  else {
+    value_unescape = PyUnicode_FromStringAndSize(value_unescape_str, value_unescape_str_len);
+  }
+
+  PyMem_FREE(value_unescape_str);
+
+  return value_unescape;
+}
+
 static PyMethodDef meth_kpy_script_paths = {
     "script_paths",
     (PyCFunction)kpy_script_paths,
@@ -181,30 +329,30 @@ static PyMethodDef meth_kpy_user_resource = {
     METH_VARARGS | METH_KEYWORDS,
     NULL,
 };
-// static PyMethodDef meth_kpy_system_resource = {
-//     "system_resource",
-//     (PyCFunction)kpy_system_resource,
-//     METH_VARARGS | METH_KEYWORDS,
-//     kpy_system_resource_doc,
-// };
-// static PyMethodDef meth_kpy_resource_path = {
-//     "resource_path",
-//     (PyCFunction)kpy_resource_path,
-//     METH_VARARGS | METH_KEYWORDS,
-//     kpy_resource_path_doc,
-// };
-// static PyMethodDef meth_kpy_escape_identifier = {
-//     "escape_identifier",
-//     (PyCFunction)kpy_escape_identifier,
-//     METH_O,
-//     kpy_escape_identifier_doc,
-// };
-// static PyMethodDef meth_kpy_unescape_identifier = {
-//     "unescape_identifier",
-//     (PyCFunction)kpy_unescape_identifier,
-//     METH_O,
-//     kpy_unescape_identifier_doc,
-// };
+static PyMethodDef meth_kpy_system_resource = {
+    "system_resource",
+    (PyCFunction)kpy_system_resource,
+    METH_VARARGS | METH_KEYWORDS,
+    kpy_system_resource_doc,
+};
+static PyMethodDef meth_kpy_resource_path = {
+    "resource_path",
+    (PyCFunction)kpy_resource_path,
+    METH_VARARGS | METH_KEYWORDS,
+    kpy_resource_path_doc,
+};
+static PyMethodDef meth_kpy_escape_identifier = {
+    "escape_identifier",
+    (PyCFunction)kpy_escape_identifier,
+    METH_O,
+    kpy_escape_identifier_doc,
+};
+static PyMethodDef meth_kpy_unescape_identifier = {
+    "unescape_identifier",
+    (PyCFunction)kpy_unescape_identifier,
+    METH_O,
+    kpy_unescape_identifier_doc,
+};
 
 static PyObject *kpy_import_test(const char *modname)
 {
@@ -298,18 +446,18 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod,
                      meth_kpy_user_resource.ml_name,
                      (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));
-  // PyModule_AddObject(mod,
-  //                    meth_kpy_system_resource.ml_name,
-  //                    (PyObject *)PyCFunction_New(&meth_kpy_system_resource, NULL));
-  // PyModule_AddObject(mod,
-  //                    meth_kpy_resource_path.ml_name,
-  //                    (PyObject *)PyCFunction_New(&meth_kpy_resource_path, NULL));
-  // PyModule_AddObject(mod,
-  //                    meth_kpy_escape_identifier.ml_name,
-  //                    (PyObject *)PyCFunction_New(&meth_kpy_escape_identifier, NULL));
-  // PyModule_AddObject(mod,
-  //                    meth_kpy_unescape_identifier.ml_name,
-  //                    (PyObject *)PyCFunction_New(&meth_kpy_unescape_identifier, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_system_resource.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_system_resource, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_resource_path.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_resource_path, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_escape_identifier.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_escape_identifier, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_unescape_identifier.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_unescape_identifier, NULL));
 
   /* register funcs (kpy_uni.c) */
   PyModule_AddObject(mod,

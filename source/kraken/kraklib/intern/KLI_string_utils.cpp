@@ -33,6 +33,8 @@
 
 #include "KLI_string_utils.h" /* own include. */
 
+#include <wabi/base/arch/hints.h>
+
 /* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
 
 /**
@@ -723,6 +725,81 @@ size_t KLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__res
   va_end(arg);
 
   return n;
+}
+
+/**
+ * This roughly matches C and Python's string escaping with double quotes - `"`.
+ *
+ * Since every character may need escaping,
+ * it's common to create a buffer twice as large as the input.
+ *
+ * @param dst: The destination string, at least \a dst_maxncpy, typically `(strlen(src) * 2) + 1`.
+ * @param src: The un-escaped source string.
+ * @param dst_maxncpy: The maximum number of bytes allowable to copy. */
+size_t KLI_str_escape(char *__restrict dst, const char *__restrict src, const size_t dst_maxncpy)
+{
+
+  KLI_assert(dst_maxncpy != 0);
+
+  size_t len = 0;
+  for (; (len < dst_maxncpy) && (*src != '\0'); dst++, src++, len++) {
+    char c = *src;
+    if (((c == '\\') || (c == '"')) ||              /* Use as-is. */
+        ((c == '\t') && ((void)(c = 't'), true)) || /* Tab. */
+        ((c == '\n') && ((void)(c = 'n'), true)) || /* Newline. */
+        ((c == '\r') && ((void)(c = 'r'), true)) || /* Carriage return. */
+        ((c == '\a') && ((void)(c = 'a'), true)) || /* Bell. */
+        ((c == '\b') && ((void)(c = 'b'), true)) || /* Backspace. */
+        ((c == '\f') && ((void)(c = 'f'), true)))   /* Form-feed. */
+    {
+      if (ARCH_UNLIKELY(len + 1 >= dst_maxncpy)) {
+        /* Not enough space to escape. */
+        break;
+      }
+      *dst++ = '\\';
+      len++;
+    }
+    *dst = c;
+  }
+  *dst = '\0';
+
+  return len;
+}
+
+/**
+ * This roughly matches C and Python's string escaping with double quotes - `"`.
+ *
+ * The destination will never be larger than the source, it will either be the same
+ * or up to half when all characters are escaped.
+ *
+ * @param dst: The destination string, at least the size of `strlen(src) + 1`.
+ * @param src: The escaped source string.
+ * @param dst_maxncpy: The maximum number of bytes allowable to copy. */
+size_t KLI_str_unescape(char *__restrict dst, const char *__restrict src, const size_t src_maxncpy)
+{
+  size_t len = 0;
+  for (size_t i = 0; i < src_maxncpy && (*src != '\0'); i++, src++) {
+    char c = *src;
+    if (c == '\\') {
+      char c_next = *(src + 1);
+      if (((c_next == '"') && ((void)(c = '"'), true)) ||   /* Quote. */
+          ((c_next == '\\') && ((void)(c = '\\'), true)) || /* Backslash. */
+          ((c_next == 't') && ((void)(c = '\t'), true)) ||  /* Tab. */
+          ((c_next == 'n') && ((void)(c = '\n'), true)) ||  /* Newline. */
+          ((c_next == 'r') && ((void)(c = '\r'), true)) ||  /* Carriage return. */
+          ((c_next == 'a') && ((void)(c = '\a'), true)) ||  /* Bell. */
+          ((c_next == 'b') && ((void)(c = '\b'), true)) ||  /* Backspace. */
+          ((c_next == 'f') && ((void)(c = '\f'), true)))    /* Form-feed. */
+      {
+        i++;
+        src++;
+      }
+    }
+
+    dst[len++] = c;
+  }
+  dst[len] = 0;
+  return len;
 }
 
 /* Unique name utils. */

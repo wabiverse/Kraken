@@ -62,10 +62,6 @@
 static const char _str_null[] = "(null)";
 #define STR_OR_FALLBACK(a) ((a) ? (a) : _str_null)
 
-#ifdef _WIN32
-#define MAXPATHLEN MAX_PATH
-#endif /* _WIN32 */
-
 WABI_NAMESPACE_BEGIN
 
 struct AppDir {
@@ -739,6 +735,55 @@ const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *su
     return NULL;
   }
   return path;
+}
+
+const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfolder)
+{
+  const char *path;
+
+  /* Only for user folders. */
+  if ((folder_id != KRAKEN_USER_DATAFILES) &&
+      (folder_id != KRAKEN_USER_CONFIG) &&
+      (folder_id != KRAKEN_USER_SCRIPTS) &&
+      (folder_id != KRAKEN_USER_AUTOSAVE)) {
+    return NULL;
+  }
+
+  path = KKE_appdir_folder_id(folder_id, subfolder);
+
+  if (!path) {
+    path = KKE_appdir_folder_id_user_notest(folder_id, subfolder);
+    if (path) {
+      KLI_dir_create_recursive(path);
+    }
+  }
+
+  return path;
+}
+
+const char *KKE_appdir_folder_id_version(const int folder_id,
+                                         const int version,
+                                         const bool check_is_dir)
+{
+  static char path[FILE_MAX] = "";
+  bool ok;
+  switch (folder_id) {
+    case KRAKEN_RESOURCE_PATH_USER:
+      ok = get_path_user_ex(path, sizeof(path), NULL, NULL, version, check_is_dir);
+      break;
+    case KRAKEN_RESOURCE_PATH_LOCAL:
+      ok = get_path_local_ex(path, sizeof(path), NULL, NULL, version, check_is_dir);
+      break;
+    case KRAKEN_RESOURCE_PATH_SYSTEM:
+      ok = get_path_system_ex(path, sizeof(path), NULL, NULL, version, check_is_dir);
+      break;
+    default:
+      path[0] = '\0'; /* in case check_is_dir is false */
+      ok = false;
+      KLI_assert(!"incorrect ID");
+      break;
+  }
+  return ok ? path : NULL;
 }
 
 

@@ -355,6 +355,39 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
   return retval;
 }
 
+/**
+ * Returns pointer to the rightmost path separator in string. */
+const char *KLI_path_slash_rfind(const char *string)
+{
+  const char *const lfslash = strrchr(string, '/');
+  const char *const lbslash = strrchr(string, '\\');
+
+  if (!lfslash) {
+    return lbslash;
+  }
+  if (!lbslash) {
+    return lfslash;
+  }
+
+  return (lfslash > lbslash) ? lfslash : lbslash;
+}
+
+/**
+ * Removes the last slash and everything after it to the end of string, if there is one. */
+void KLI_path_slash_rstrip(char *string)
+{
+  int len = strlen(string);
+  while (len) {
+    if (string[len - 1] == SEP) {
+      string[len - 1] = '\0';
+      len--;
+    }
+    else {
+      break;
+    }
+  }
+}
+
 #ifdef _WIN32
 /**
  * Tries appending each of the semicolon-separated extensions in the PATHEXT

@@ -24,6 +24,34 @@
 
 #include "utfconv.h"
 
+
+/* --------------------------------- WINDOWS ONLY ----- */
+
+#ifdef WIN32
+
+#include <io.h>
+#include <wchar.h>
+#include <windows.h>
+
+int umkdir(const char *pathname)
+{
+  BOOL r = 0;
+  UTF16_ENCODE(pathname);
+
+  if (pathname_16) {
+    r = CreateDirectoryW(pathname_16, NULL);
+  }
+
+  UTF16_UN_ENCODE(pathname);
+
+  return r ? 0 : -1;
+}
+
+#endif /* WIN32 */
+
+/* ---------------------------------------------------- */
+
+
 size_t count_utf_8_from_16(const wchar_t *string16)
 {
   int i;

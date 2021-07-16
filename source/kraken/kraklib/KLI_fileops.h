@@ -28,6 +28,9 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* Cross Platform Implementations (Seperate by preprocessors) */
+bool KLI_dir_create_recursive(const char *dirname);
+
 bool KLI_exists(const fs::path &path);
 fs::file_status KLI_type(const fs::path &path);
 

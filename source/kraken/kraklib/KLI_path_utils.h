@@ -35,6 +35,10 @@
 
 WABI_NAMESPACE_BEGIN
 
+#ifdef _WIN32
+#define MAXPATHLEN MAX_PATH
+#endif /* _WIN32 */
+
 const char *KLI_getenv(const char *env);
 
 size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *path, ...);
@@ -51,6 +55,9 @@ bool KLI_path_extension_check_array(const std::string &str, const char **ext_arr
 void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__restrict file);
 
 bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *name);
+
+const char *KLI_path_slash_rfind(const char *string);
+void KLI_path_slash_rstrip(char *string);
 
 bool KLI_has_pixar_extension(const std::string &str);
 

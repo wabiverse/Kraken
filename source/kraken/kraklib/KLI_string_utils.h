@@ -60,6 +60,9 @@ size_t KLI_vsnprintf_rlen(char *__restrict buffer,
 size_t KLI_snprintf(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...);
 size_t KLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...);
 
+size_t KLI_str_escape(char *__restrict dst, const char *__restrict src, const size_t dst_maxncpy);
+size_t KLI_str_unescape(char *__restrict dst, const char *__restrict src, const size_t src_maxncpy);
+
 typedef bool (*UniquenameCheckCallback)(void *arg, const char *name);
 
 bool KLI_uniquename(std::vector<void *> list, void *vlink, const char *defname, char delim, int name_offset, size_t name_len);

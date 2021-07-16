@@ -28,6 +28,16 @@
 #include <stdlib.h>
 #include <wchar.h>
 
+/* --------------------------------- WINDOWS ONLY ----- */
+
+#ifdef WIN32
+
+int umkdir(const char *pathname);
+
+#endif /* WIN32 */
+
+/* ---------------------------------------------------- */
+
 /** Error occurs when required parameter is missing. */
 #define UTF_ERROR_NULL_IN (1 << 0)
 /** Error if character is in illegal UTF range. */
