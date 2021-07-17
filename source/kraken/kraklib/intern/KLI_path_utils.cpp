@@ -43,6 +43,9 @@
 #  define _WIN32_IE 0x0501
 #  include <shlobj.h>
 #  include <windows.h>
+
+#  include "KLI_winstuff.h"
+
 #else /* non windows */
 #  ifdef WITH_BINRELOC
 #    include "binreloc.h"
@@ -53,9 +56,20 @@
 
 #include <wabi/base/arch/hints.h>
 #include <wabi/base/tf/stringUtils.h>
+#include <wabi/base/tf/iterator.h>
 #include <wabi/base/tf/pathUtils.h>
 
 WABI_NAMESPACE_BEGIN
+
+#ifdef WIN32
+
+/**
+ * Return true if the path is absolute ie starts with a drive specifier
+ * (eg A:\) or is a UNC path.
+ */
+static bool KLI_path_is_abs(const char *name);
+
+#endif /* WIN32 */
 
 /**
  * Get an env var, result has to be used immediately.
@@ -73,7 +87,7 @@ const char *KLI_getenv(const char *env)
   static wchar_t buffer[32768];
   wchar_t *env_16 = alloc_utf16_from_8(env, 0);
   if (env_16) {
-    if (GetEnvironmentVariableW(env_16, buffer, ARRAY_SIZE(buffer))) {
+    if (GetEnvironmentVariableW(env_16, buffer, TfArraySize(buffer))) {
       char *res_utf8 = alloc_utf_8_from_16(buffer, 0);
       /* Make sure the result is valid, and will fit into our temporary storage buffer. */
       if (res_utf8) {
@@ -92,6 +106,20 @@ const char *KLI_getenv(const char *env)
   return getenv(env);
 #endif
 }
+
+#if defined(WIN32)
+
+/**
+ * Return true if the path is absolute ie starts with a drive specifier
+ * (eg A:\) or is a UNC path. */
+static bool KLI_path_is_abs(const char *name)
+{
+  return (name[1] == ':' && ((name[2] == '\\') || (name[2] == '/'))) || KLI_path_is_unc(name);
+}
+
+#endif /* WIN32 */
+
+static int KLI_path_unc_prefix_len(const char *path);
 
 /**
  * Simple appending of filename to dir, does not check for valid path!
@@ -216,6 +244,41 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
   return ofs;
 }
 
+
+/**
+ * Does path begin with the special "//" prefix that
+ * Kraken uses to indicate a path relative to the
+ * .usd file. */
+bool KLI_path_is_rel(const char *path)
+{
+  return path[0] == '/' && path[1] == '/';
+}
+
+/* return true if the path is a UNC share */
+bool KLI_path_is_unc(const char *name)
+{
+  return name[0] == '\\' && name[1] == '\\';
+}
+
+/**
+ * Returns the length of the identifying prefix
+ * of a UNC path which can start with '\\' (short version)
+ * or '\\?\' (long version)
+ * If the path is not a UNC path, return 0 */
+static int KLI_path_unc_prefix_len(const char *path)
+{
+  if (KLI_path_is_unc(path)) {
+    if ((path[2] == '?') && (path[3] == '\\')) {
+      /* we assume long UNC path like \\?\server\share\folder etc... */
+      return 4;
+    }
+
+    return 2;
+  }
+
+  return 0;
+}
+
 static bool path_extension_check_ex(const char *str,
                                     const size_t str_len,
                                     const char *ext,
@@ -275,6 +338,46 @@ bool KLI_path_extension_check_array(const std::string &str, const char **ext_arr
   return false;
 }
 
+
+/**
+ * Converts `/foo/bar.txt` to `/foo/` and `bar.txt`
+ *
+ * - Won't change @a string.
+ * - Won't create any directories.
+ * - Doesn't use CWD, or deal with relative paths.
+ * - Only fill's in @a dir and @a file when they are non NULL. */
+void KLI_split_dirfile(const char *string, char *dir, char *file, const size_t dirlen, const size_t filelen)
+{
+#ifdef DEBUG_STRSIZE
+  memset(dir, 0xff, sizeof(*dir) * dirlen);
+  memset(file, 0xff, sizeof(*file) * filelen);
+#endif
+  const char *lslash_str = KLI_path_slash_rfind(string);
+  const size_t lslash = lslash_str ? (size_t)(lslash_str - string) + 1 : 0;
+
+  if (dir) {
+    if (lslash) {
+      /* +1 to include the slash and the last char */
+      KLI_strncpy(dir, string, MIN2(dirlen, lslash + 1));
+    }
+    else {
+      dir[0] = '\0';
+    }
+  }
+
+  if (file) {
+    KLI_strncpy(file, string + lslash, filelen);
+  }
+}
+
+
+/**
+ * Copies the parent directory part of string into `dir`, max length `dirlen`. */
+void KLI_split_dir_part(const char *string, char *dir, const size_t dirlen)
+{
+  KLI_split_dirfile(string, dir, NULL, dirlen, 0);
+}
+
 bool KLI_has_pixar_extension(const std::string &str)
 {
   const char *ext_test[5] = {".usd", ".usda", ".usdc", ".usdz", NULL};
@@ -288,7 +391,7 @@ void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__re
 {
   size_t dirlen = KLI_strnlen(dst, maxlen);
 
-  /* inline BLI_path_slash_ensure */
+  /* inline KLI_path_slash_ensure */
   if ((dirlen > 0) && (dst[dirlen - 1] != SEP)) {
     dst[dirlen++] = SEP;
     dst[dirlen] = '\0';
@@ -299,6 +402,254 @@ void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__re
   }
 
   KLI_strncpy(dst + dirlen, file, maxlen - dirlen);
+}
+
+static int KLI_path_unc_prefix_len(const char *path); /* defined below in same file */
+
+/**
+ * If path begins with "//", strips that and replaces it with `basepath` directory.
+ *
+ * @note Also converts drive-letter prefix to something more sensible
+ * if this is a non-drive-letter-based system.
+ *
+ * @param path: The path to convert.
+ * @param basepath: The directory to base relative paths with.
+ * @return true if the path was relative (started with "//"). */
+bool KLI_path_abs(char *path, const char *basepath)
+{
+  const bool wasrelative = KLI_path_is_rel(path);
+  char tmp[FILE_MAX];
+  char base[FILE_MAX];
+#ifdef WIN32
+
+  /* without this: "" --> "C:\" */
+  if (*path == '\0') {
+    return wasrelative;
+  }
+
+  /* we are checking here if we have an absolute path that is not in the current
+   * blend file as a lib main - we are basically checking for the case that a
+   * UNIX root '/' is passed.
+   */
+  if (!wasrelative && !KLI_path_is_abs(path)) {
+    char *p = path;
+    KLI_windows_get_default_root_dir(tmp);
+    /* Get rid of the slashes at the beginning of the path. */
+    while ((*p == '\\') || (*p == '/')) {
+      p++;
+    }
+    strcat(tmp, p);
+  }
+  else {
+    KLI_strncpy(tmp, path, FILE_MAX);
+  }
+#else
+  KLI_strncpy(tmp, path, sizeof(tmp));
+
+  /* Check for loading a MS-Windows path on a POSIX system
+   * in this case, there is no use in trying `C:/` since it
+   * will never exist on a Unix system.
+   *
+   * Add a `/` prefix and lowercase the drive-letter, remove the `:`.
+   * `C:\foo.JPG` -> `/c/foo.JPG` */
+
+  if (isalpha(tmp[0]) && (tmp[1] == ':') && ELEM(tmp[2], '\\', '/')) {
+    tmp[1] = tolower(tmp[0]); /* Replace ':' with drive-letter. */
+    tmp[0] = '/';
+    /* `\` the slash will be converted later. */
+  }
+
+#endif
+
+  /* push slashes into unix mode - strings entering this part are
+   * potentially messed up: having both back- and forward slashes.
+   * Here we push into one conform direction, and at the end we
+   * push them into the system specific dir. This ensures uniformity
+   * of paths and solving some problems (and prevent potential future
+   * ones) -jesterKing.
+   * For UNC paths the first characters containing the UNC prefix
+   * shouldn't be switched as we need to distinguish them from
+   * paths relative to the .blend file -elubie */
+  KLI_str_replace_char(tmp + KLI_path_unc_prefix_len(tmp), '\\', '/');
+
+  /* Paths starting with // will get the blend file as their base,
+   * this isn't standard in any os but is used in blender all over the place */
+  if (wasrelative) {
+    const char *lslash;
+    KLI_strncpy(base, basepath, sizeof(base));
+
+    /* file component is ignored, so don't bother with the trailing slash */
+    KLI_path_normalize(NULL, base);
+    lslash = KLI_path_slash_rfind(base);
+    KLI_str_replace_char(base + KLI_path_unc_prefix_len(base), '\\', '/');
+
+    if (lslash) {
+      /* length up to and including last "/" */
+      const int baselen = (int)(lslash - base) + 1;
+      /* use path for temp storage here, we copy back over it right away */
+      KLI_strncpy(path, tmp + 2, FILE_MAX); /* strip "//" */
+
+      memcpy(tmp, base, baselen); /* prefix with base up to last "/" */
+      KLI_strncpy(tmp + baselen, path, sizeof(tmp) - baselen); /* append path after "//" */
+      KLI_strncpy(path, tmp, FILE_MAX);                        /* return as result */
+    }
+    else {
+      /* base doesn't seem to be a directory--ignore it and just strip "//" prefix on path */
+      KLI_strncpy(path, tmp + 2, FILE_MAX);
+    }
+  }
+  else {
+    /* base ignored */
+    KLI_strncpy(path, tmp, FILE_MAX);
+  }
+
+#ifdef WIN32
+  /* skip first two chars, which in case of
+   * absolute path will be drive:/blabla and
+   * in case of relpath //blabla/. So relpath
+   * // will be retained, rest will be nice and
+   * shiny win32 backward slashes :) -jesterKing
+   */
+  KLI_str_replace_char(path + 2, '/', '\\');
+#endif
+
+  /* ensure this is after correcting for path switch */
+  KLI_path_normalize(NULL, path);
+
+  return wasrelative;
+}
+
+/**
+ * Remove redundant characters from @a path and optionally make absolute.
+ *
+ * @param relabase: The path this is relative to, or ignored when NULL.
+ * @param path: Can be any input, and this function converts it to a regular full path.
+ * Also removes garbage from directory paths, like `/../` or double slashes etc.
+ *
+ * @note @a path isn't protected for max string names... */
+void KLI_path_normalize(const char *relabase, char *path)
+{
+  ptrdiff_t a;
+  char *start, *eind;
+  if (relabase) {
+    KLI_path_abs(path, relabase);
+  }
+  else {
+    if (path[0] == '/' && path[1] == '/') {
+      if (path[2] == '\0') {
+        return; /* path is "//" - can't clean it */
+      }
+      path = path + 2; /* leave the initial "//" untouched */
+    }
+  }
+
+  /* Note
+   *   memmove(start, eind, strlen(eind) + 1);
+   * is the same as
+   *   strcpy(start, eind);
+   * except strcpy should not be used because there is overlap,
+   * so use memmove's slightly more obscure syntax - Campbell
+   */
+
+#ifdef WIN32
+  while ((start = strstr(path, "\\..\\"))) {
+    eind = start + strlen("\\..\\") - 1;
+    a = start - path - 1;
+    while (a > 0) {
+      if (path[a] == '\\') {
+        break;
+      }
+      a--;
+    }
+    if (a < 0) {
+      break;
+    }
+    else {
+      memmove(path + a, eind, strlen(eind) + 1);
+    }
+  }
+
+  while ((start = strstr(path, "\\.\\"))) {
+    eind = start + strlen("\\.\\") - 1;
+    memmove(start, eind, strlen(eind) + 1);
+  }
+
+  /* remove two consecutive backslashes, but skip the UNC prefix,
+   * which needs to be preserved */
+  while ((start = strstr(path + KLI_path_unc_prefix_len(path), "\\\\"))) {
+    eind = start + strlen("\\\\") - 1;
+    memmove(start, eind, strlen(eind) + 1);
+  }
+#else
+  while ((start = strstr(path, "/../"))) {
+    a = start - path - 1;
+    if (a > 0) {
+      /* <prefix>/<parent>/../<postfix> => <prefix>/<postfix> */
+      eind = start + (4 - 1) /* strlen("/../") - 1 */; /* strip "/.." and keep last "/" */
+      while (a > 0 && path[a] != '/') {                /* find start of <parent> */
+        a--;
+      }
+      memmove(path + a, eind, strlen(eind) + 1);
+    }
+    else {
+      /* support for odd paths: eg /../home/me --> /home/me
+       * this is a valid path in blender but we can't handle this the usual way below
+       * simply strip this prefix then evaluate the path as usual.
+       * pythons os.path.normpath() does this */
+
+      /* Note: previous version of following call used an offset of 3 instead of 4,
+       * which meant that the "/../home/me" example actually became "home/me".
+       * Using offset of 3 gives behavior consistent with the aforementioned
+       * Python routine. */
+      memmove(path, path + 3, strlen(path + 3) + 1);
+    }
+  }
+
+  while ((start = strstr(path, "/./"))) {
+    eind = start + (3 - 1) /* strlen("/./") - 1 */;
+    memmove(start, eind, strlen(eind) + 1);
+  }
+
+  while ((start = strstr(path, "//"))) {
+    eind = start + (2 - 1) /* strlen("//") - 1 */;
+    memmove(start, eind, strlen(eind) + 1);
+  }
+#endif
+}
+
+/**
+ * Replaces path with the path of its parent directory, returning true if
+ * it was able to find a parent directory within the path.
+ */
+bool KLI_path_parent_dir(char *path)
+{
+  const char parent_dir[] = {'.', '.', SEP, '\0'}; /* "../" or "..\\" */
+  char tmp[FILE_MAX + 4];
+
+  KLI_join_dirfile(tmp, sizeof(tmp), path, parent_dir);
+  KLI_path_normalize(NULL, tmp); /* does all the work of normalizing the path for us */
+
+  if (!KLI_path_extension_check(tmp, parent_dir)) {
+    strcpy(path, tmp); /* We assume pardir is always shorter... */
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Strips off nonexistent (or non-accessible) sub-directories from the end of `dir`,
+ * leaving the path of the lowest-level directory that does exist and we can read.
+ */
+bool KLI_path_parent_dir_until_exists(char *dir)
+{
+  bool valid_path = true;
+
+  /* Loop as long as cur path is not a dir, and we can get a parent path. */
+  while ((KLI_access(dir, R_OK) != 0) && (valid_path = KLI_path_parent_dir(dir))) {
+    /* pass */
+  }
+  return (valid_path && dir[0]);
 }
 
 /**
@@ -353,6 +704,31 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
   }
 
   return retval;
+}
+
+/**
+ * like Python's `os.path.basename()`
+ *
+ * @return The pointer into @a path string immediately after last slash,
+ * or start of @a path if none found. */
+const char *KLI_path_basename(const char *path)
+{
+  const char *const filename = KLI_path_slash_rfind(path);
+  return filename ? filename + 1 : path;
+}
+
+/**
+ * Appends a slash to string if there isn't one there already.
+ * Returns the new length of the string. */
+int KLI_path_slash_ensure(char *string)
+{
+  int len = strlen(string);
+  if (len == 0 || string[len - 1] != SEP) {
+    string[len] = SEP;
+    string[len + 1] = '\0';
+    return len + 1;
+  }
+  return len;
 }
 
 /**

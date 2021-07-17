@@ -60,10 +60,9 @@ static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *ref
 }
 
 
-void WM_main_add_notifier(kContext *C, unsigned int type, void *reference)
+void WM_main_add_notifier(unsigned int type, void *reference)
 {
-  Main *kmain = CTX_data_main(C);
-  wmWindowManager *wm = CTX_wm_manager(C);
+  wmWindowManager *wm = G.main->wm.at(0);
 
   if (!wm || wm_test_duplicate_notifier(wm, type, reference))
   {

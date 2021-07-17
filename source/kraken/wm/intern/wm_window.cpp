@@ -437,8 +437,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case ANCHOR_EventTypeWindowDPIHintChanged: {
         wm_window_set_dpi(win);
 
-        WM_main_add_notifier(C, NC_WINDOW, NULL);             /* full redraw */
-        WM_main_add_notifier(C, NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
+        WM_main_add_notifier(NC_WINDOW, NULL);             /* full redraw */
+        WM_main_add_notifier(NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
         break;
       }
       case ANCHOR_EventTypeOpenMainFile: {

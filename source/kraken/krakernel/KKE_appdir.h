@@ -55,6 +55,13 @@ bool KKE_appdir_program_python_search(char *fullpath,
                                       const int version_major,
                                       const int version_minor);
 
+/* Initialize path to temporary directory. */
+void KKE_tempdir_init(const char *userdir);
+
+const char *KKE_tempdir_base(void);
+const char *KKE_tempdir_session(void);
+void KKE_tempdir_session_purge(void);
+
 /* folder_id */
 enum {
   /* general, will find based on user/local/system priority */

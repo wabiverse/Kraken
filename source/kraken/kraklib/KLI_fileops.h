@@ -26,15 +26,76 @@
 
 #include "KLI_api.h"
 
+#if defined(WIN32)
+typedef unsigned int mode_t;
+#endif
+
+#define FILELIST_DIRENTRY_SIZE_LEN 16
+#define FILELIST_DIRENTRY_MODE_LEN 4
+#define FILELIST_DIRENTRY_OWNER_LEN 16
+#define FILELIST_DIRENTRY_TIME_LEN 8
+#define FILELIST_DIRENTRY_DATE_LEN 16
+
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+
 WABI_NAMESPACE_BEGIN
 
 /* Cross Platform Implementations (Seperate by preprocessors) */
 bool KLI_dir_create_recursive(const char *dirname);
 
+int KLI_access(const char *filename, int mode);
+int KLI_delete(const char *file, bool dir, bool recursive);
+
 bool KLI_exists(const fs::path &path);
 fs::file_status KLI_type(const fs::path &path);
 
+#ifdef WIN32
+#  if defined(_MSC_VER)
+typedef struct _stat64 KLI_stat_t;
+#  else
+typedef struct _stat KLI_stat_t;
+#  endif
+#else
+typedef struct stat KLI_stat_t;
+#endif
+
+int KLI_fstat(int fd, KLI_stat_t *buffer) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
+int KLI_stat(const char *path, KLI_stat_t *buffer) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
+int64_t KLI_ftell(FILE *stream) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
+int KLI_fseek(FILE *stream, int64_t offset, int whence);
+int64_t KLI_lseek(int fd, int64_t offset, int whence);
+
+#ifdef WIN32
+int KLI_wstat(const wchar_t *path, KLI_stat_t *buffer);
+#endif
+
+void KLI_filelist_entry_free(struct direntry *entry);
+void KLI_filelist_free(struct direntry *filelist, const unsigned int nrentries);
+unsigned int KLI_filelist_dir_contents(const char *dirname, struct direntry **r_filelist);
+
 bool KLI_is_dir(const char *file);
 bool KLI_is_file(const char *path);
+
+struct direntry {
+  mode_t type;
+  const char *relname;
+  const char *path;
+#ifdef WIN32 /* keep in sync with the definition of KLI_stat_t in KLI_fileops.h */
+#  if defined(_MSC_VER)
+  struct _stat64 s;
+#  else
+  struct _stat s;
+#  endif
+#else
+  struct stat s;
+#endif
+};
+
+struct dirlink {
+  struct dirlink *next, *prev;
+  char *name;
+};
 
 WABI_NAMESPACE_END

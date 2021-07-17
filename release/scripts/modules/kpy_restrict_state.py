@@ -29,63 +29,48 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 """
-kpy -- The Kraken Python Module.
+kpy -- This module contains RestrictKraken context manager.
 """
 
 __all__ = (
-    "app",
-    "context",
-#     "data",
-#     "ops",
-#     "path",
-#     "props",
-#     "types",
-    "utils",
+    "RestrictKraken",
 )
 
-
-# internal kraken C module
-from _kpy import (
-    app,
-    context,
-#     data,
-#     msgbus,
-#     props,
-#     types,
-)
-
-# python modules
-from . import (
-#     ops,
-#     path,
-    utils,
-)
+import kpy as _kpy
 
 
-def main():
-    import sys
+class _RestrictContext:
+    __slots__ = ()
+    # _real_data = kpy.data
+    # safe, the pointer never changes
+    # _real_pref = kpy.context.preferences
 
-    # Possibly temp. addons path
-    from os.path import join, dirname
-    sys.path.extend([
-        join(dirname(dirname(dirname(__file__))), "addons", "modules"),
-        join(utils.user_resource('SCRIPTS'), "addons", "modules"),
-    ])
+    # @property
+    # def window_manager(self):
+    #     return self._real_data.window_managers[0]
 
-    # fake module to allow:
-    #   from kpy.types import Panel
-    sys.modules.update({
-        "kpy.app": app,
-        "kpy.app.handlers": app.handlers,
-        "kpy.app.translations": app.translations,
-        # "kpy.types": types,
-    })
-
-    # Initializes Python classes.
-    # (good place to run a profiler or trace).
-    utils.load_scripts()
+    # @property
+    # def preferences(self):
+    #     return self._real_pref
 
 
-main()
+class _RestrictData:
+    __slots__ = ()
 
-del main
+
+_context_restrict = _RestrictContext()
+_data_restrict = _RestrictData()
+
+
+class RestrictKraken:
+    __slots__ = ("context", "data")
+
+    def __enter__(self):
+        # self.data = kpy.data
+        self.context = kpy.context
+        # kpy.data = _data_restrict
+        kpy.context = _context_restrict
+
+    def __exit__(self, type, value, traceback):
+        # kpy.data = self.data
+        kpy.context = self.context

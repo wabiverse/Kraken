@@ -43,6 +43,8 @@
 #include "kpy_intern_string.h"
 #include "kpy_uni.h"
 
+#include <wabi/base/tf/iterator.h>
+
 #define USE_PEDANTIC_WRITE
 #define USE_MATHUTILS
 #define USE_STRING_COERCE
@@ -324,7 +326,7 @@ PyObject *KPY_uni_types(void)
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
-    for (int i = 0; i < ARRAY_SIZE(pyuni_types); i += 1) {
+    for (int i = 0; i < TfArraySize(pyuni_types); i += 1) {
       PyDict_SetItemString(submodule_dict, pyuni_types[i]->tp_name, (PyObject *)pyuni_types[i]);
     }
   }

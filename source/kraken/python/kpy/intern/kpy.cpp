@@ -40,6 +40,7 @@
 #include "UNI_wm_types.h"
 
 #include "kpy.h"
+#include "kpy_app.h"
 #include "kpy_capi_utils.h"
 #include "kpy_path.h"
 #include "kpy_interface.h"
@@ -420,7 +421,7 @@ void KPy_init_modules(struct kContext *C)
   // PyModule_AddObject(mod, "props", KPY_uni_props());
   /* ops is now a python module that does the conversion from SOME_OT_foo -> some.foo */
   // PyModule_AddObject(mod, "ops", KPY_operator_module());
-  // PyModule_AddObject(mod, "app", KPY_app_struct());
+  PyModule_AddObject(mod, "app", KPY_app_struct());
   // PyModule_AddObject(mod, "_utils_units", KPY_utils_units());
   // PyModule_AddObject(mod, "_utils_previews", KPY_utils_previews_module());
   // PyModule_AddObject(mod, "msgbus", KPY_msgbus_module());

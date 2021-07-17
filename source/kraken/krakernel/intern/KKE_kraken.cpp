@@ -77,11 +77,10 @@ Global G;
 
 /** User Prefs modifies this value globally. */
 float UI_DPI_FAC = float(1.0f);
+static std::string kraken_version_string = "";
 
 static void kraken_version_init()
 {
-  static std::string kraken_version_string;
-
   kraken_version_string = TfStringPrintf("%d.%02d.%d %s",
                                          KRAKEN_VERSION / 100,
                                          KRAKEN_VERSION % 100,
@@ -93,6 +92,11 @@ static void kraken_version_init()
 static std::string kraken_get_version_decimal()
 {
   return TfStringPrintf("%d.%02d", KRAKEN_VERSION / 100, KRAKEN_VERSION % 100);
+}
+
+const char *KKE_kraken_version_string(void)
+{
+  return CHARALL(kraken_version_string);
 }
 
 Main *KKE_main_new(void)

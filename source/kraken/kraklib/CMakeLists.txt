@@ -8,15 +8,17 @@ set(INC
 
 set(SRC
   intern/KLI_assert.c
+  intern/KLI_filelist.cpp
   intern/KLI_fileops.cpp
-  intern/KLI_storage.cpp
-  intern/KLI_string_utils.cpp
   intern/KLI_icons.cpp
   intern/KLI_math.c
   intern/KLI_numaapi.cpp
   intern/KLI_path_utils.cpp
+  intern/KLI_storage.cpp
+  intern/KLI_string_utils.cpp
   intern/KLI_time.cpp
   intern/KLI_threads.cpp
+  intern/KLI_winstuff.cpp
 
   KLI_api.h
   KLI_assert.h
@@ -27,9 +29,10 @@ set(SRC
   KLI_numaapi.h
   KLI_path_utils.h
   KLI_string_utils.h
-  KLI_time.h
   KLI_threads.h
+  KLI_time.h
   KLI_utildefines.h
+  KLI_winstuff.h
 )
 
 set(INC_SYS

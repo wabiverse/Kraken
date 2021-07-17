@@ -59,11 +59,40 @@ import kpy as _kpy
 import os as _os
 import sys as _sys
 
-# import addon_utils as _addon_utils
+import addon_utils as _addon_utils
 
 # _preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
 # _is_factory_startup = _kpy.app.factory_startup
+
+
+def _test_import(module_name, loaded_modules):
+    # use_time = _kpy.app.debug_python
+
+    if module_name in loaded_modules:
+        return None
+    if "." in module_name:
+        print("Ignoring '%s', can't import files containing "
+              "multiple periods" % module_name)
+        return None
+
+    # if use_time:
+    #     import time
+    #     t = time.time()
+
+    try:
+        mod = __import__(module_name)
+    except:
+        import traceback
+        traceback.print_exc()
+        return None
+
+    # if use_time:
+    #     print("time %s %.4f" % (module_name, time.time() - t))
+
+    loaded_modules.add(mod.__name__)  # should match mod.__name__ too
+    return mod
+
 
 # Check before adding paths as reloading would add twice.
 
@@ -73,6 +102,7 @@ _script_module_dirs = "startup", "modules"
 # Instead, track which paths have been added, clearing them before refreshing.
 # This supports the case of loading a new preferences file which may reset scripts path.
 _sys_path_ensure_paths = set()
+
 
 def _sys_path_ensure_prepend(path):
     if path not in _sys.path:
@@ -85,8 +115,180 @@ def _sys_path_ensure_append(path):
         _sys.path.append(path)
         _sys_path_ensure_paths.add(path)
 
+
+def modules_from_path(path, loaded_modules):
+    """
+    Load all modules in a path and return them as a list.
+
+    :arg path: this path is scanned for scripts and packages.
+    :type path: string
+    :arg loaded_modules: already loaded module names, files matching these
+       names will be ignored.
+    :type loaded_modules: set
+    :return: all loaded modules.
+    :rtype: list
+    """
+    modules = []
+
+    for mod_name, _mod_path in _kpy.path.module_names(path):
+        mod = _test_import(mod_name, loaded_modules)
+        if mod:
+            modules.append(mod)
+
+    return modules
+
+
 _global_loaded_modules = []  # store loaded module names for reloading.
-# import kpy_types as _bpy_types  # keep for comparisons, never ever reload this.
+# import kpy_types as _kpy_types  # keep for comparisons, never ever reload this.
+
+
+def load_scripts(*, reload_scripts=False, refresh_scripts=False):
+    """
+    Load scripts and run each modules register function.
+
+    :arg reload_scripts: Causes all scripts to have their unregister method
+       called before loading.
+    :type reload_scripts: bool
+    :arg refresh_scripts: only load scripts which are not already loaded
+       as modules.
+    :type refresh_scripts: bool
+    """
+    # use_time = use_class_register_check = _kpy.app.debug_python
+    # use_user = not _is_factory_startup
+    use_time = False
+    use_user = False
+
+    if use_time:
+        import time
+        t_main = time.time()
+
+    loaded_modules = set()
+
+    if refresh_scripts:
+        original_modules = _sys.modules.values()
+
+    # if reload_scripts:
+    #     # just unload, don't change user defaults, this means we can sync
+    #     # to reload. note that they will only actually reload of the
+    #     # modification time changes. This `won't` work for packages so...
+    #     # its not perfect.
+    #     for module_name in [ext.module for ext in _preferences.addons]:
+    #         _addon_utils.disable(module_name)
+
+    def register_module_call(mod):
+        register = getattr(mod, "register", None)
+        if register:
+            try:
+                register()
+            except:
+                import traceback
+                traceback.print_exc()
+        else:
+            print("\nWarning! '%s' has no register function, "
+                  "this is now a requirement for registerable scripts" %
+                  mod.__file__)
+
+    def unregister_module_call(mod):
+        unregister = getattr(mod, "unregister", None)
+        if unregister:
+            try:
+                unregister()
+            except:
+                import traceback
+                traceback.print_exc()
+
+    def test_reload(mod):
+        import importlib
+        # reloading this causes internal errors
+        # because the classes from this module are stored internally
+        # possibly to refresh internal references too but for now, best not to.
+        # if mod == _kpy_types:
+        #     return mod
+
+        try:
+            return importlib.reload(mod)
+        except:
+            import traceback
+            traceback.print_exc()
+
+    def test_register(mod):
+
+        if refresh_scripts and mod in original_modules:
+            return
+
+        if reload_scripts and mod:
+            print("Reloading:", mod)
+            mod = test_reload(mod)
+
+        if mod:
+            register_module_call(mod)
+            _global_loaded_modules.append(mod.__name__)
+
+    if reload_scripts:
+
+        # module names -> modules
+        _global_loaded_modules[:] = [_sys.modules[mod_name]
+                                     for mod_name in _global_loaded_modules]
+
+        # loop over and unload all scripts
+        _global_loaded_modules.reverse()
+        for mod in _global_loaded_modules:
+            unregister_module_call(mod)
+
+        for mod in _global_loaded_modules:
+            test_reload(mod)
+
+        del _global_loaded_modules[:]
+
+    from kpy_restrict_state import RestrictKraken
+
+    with RestrictKraken():
+        for base_path in script_paths(use_user=use_user):
+            for path_subdir in _script_module_dirs:
+                path = _os.path.join(base_path, path_subdir)
+                if _os.path.isdir(path):
+                    _sys_path_ensure_prepend(path)
+
+                    # Only add to 'sys.modules' unless this is 'startup'.
+                    if path_subdir == "startup":
+                        for mod in modules_from_path(path, loaded_modules):
+                            test_register(mod)
+
+    # load template (if set)
+    if any(_kpy.utils.app_template_paths()):
+        import kr_app_template_utils
+        kr_app_template_utils.reset(reload_scripts=reload_scripts)
+        del kr_app_template_utils
+
+    # deal with addons separately
+    _initialize = getattr(_addon_utils, "_initialize", None)
+    if _initialize is not None:
+        # first time, use fast-path
+        _initialize()
+        del _addon_utils._initialize
+    else:
+        _addon_utils.reset_all(reload_scripts=reload_scripts)
+    del _initialize
+
+    if reload_scripts:
+        _kpy.context.window_manager.tag_script_reload()
+
+        import gc
+        print("gc.collect() -> %d" % gc.collect())
+
+    if use_time:
+        print("Python Script Load Time %.4f" % (time.time() - t_main))
+
+    if use_class_register_check:
+        for cls in _kpy.types.uni_object.__subclasses__():
+            if getattr(cls, "is_registered", False):
+                for subcls in cls.__subclasses__():
+                    if not subcls.is_registered:
+                        print(
+                            "Warning, unregistered class: %s(%s)" %
+                            (subcls.__name__, cls.__name__)
+                        )
+
 
 # base scripts
 _scripts = (

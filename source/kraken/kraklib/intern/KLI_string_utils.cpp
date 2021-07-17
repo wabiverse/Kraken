@@ -38,6 +38,34 @@
 /* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
 
 /**
+ * Duplicates the first @a len bytes of cstring @a str
+ * into a newly mallocN'd string and returns it. @a str
+ * is assumed to be at least len bytes long.
+ *
+ * @param str: The string to be duplicated
+ * @param len: The number of bytes to duplicate
+ * @retval Returns the duplicated string */
+char *KLI_strdupn(const char *str, const size_t len)
+{
+  char *n = (char *)malloc(len + 1);
+  memcpy(n, str, len);
+  n[len] = '\0';
+
+  return n;
+}
+
+/**
+ * Duplicates the cstring @a str into a newly mallocN'd
+ * string and returns it.
+ *
+ * @param str: The string to be duplicated
+ * @retval Returns the duplicated string */
+char *KLI_strdup(const char *str)
+{
+  return KLI_strdupn(str, strlen(str));
+}
+
+/**
  * Looks for a numeric suffix preceded by delim character on the end of
  * name, puts preceding part into *left and value of suffix into *nr.
  * Returns the length of *left.
@@ -84,6 +112,28 @@ size_t KLI_split_name_num(char *left, int *nr, const char *name, const char deli
   }
 
   return name_len;
+}
+
+/**
+ * Appends the two strings, and returns new mallocN'ed string
+ * @param str1: first string for copy
+ * @param str2: second string for append
+ * @retval Returns dst */
+char *KLI_strdupcat(const char *__restrict str1, const char *__restrict str2)
+{
+  /* include the NULL terminator of str2 only */
+  const size_t str1_len = strlen(str1);
+  const size_t str2_len = strlen(str2) + 1;
+  char *str, *s;
+
+  str = (char*)malloc(str1_len + str2_len);
+  s = str;
+
+  memcpy(s, str1, str1_len); /* NOLINT: bugprone-not-null-terminated-result */
+  s += str1_len;
+  memcpy(s, str2, str2_len);
+
+  return str;
 }
 
 /**
@@ -156,6 +206,126 @@ int KLI_strncasecmp(const char *s1, const char *s2, size_t len)
   }
 
   return 0;
+}
+
+/* compare number on the left size of the string */
+static int left_number_strcmp(const char *s1, const char *s2, int *tiebreaker)
+{
+  const char *p1 = s1, *p2 = s2;
+  int numdigit, numzero1, numzero2;
+
+  /* count and skip leading zeros */
+  for (numzero1 = 0; *p1 == '0'; numzero1++) {
+    p1++;
+  }
+  for (numzero2 = 0; *p2 == '0'; numzero2++) {
+    p2++;
+  }
+
+  /* find number of consecutive digits */
+  for (numdigit = 0;; numdigit++) {
+    if (isdigit(*(p1 + numdigit)) && isdigit(*(p2 + numdigit))) {
+      continue;
+    }
+    if (isdigit(*(p1 + numdigit))) {
+      return 1; /* s2 is bigger */
+    }
+    if (isdigit(*(p2 + numdigit))) {
+      return -1; /* s1 is bigger */
+    }
+    break;
+  }
+
+  /* same number of digits, compare size of number */
+  if (numdigit > 0) {
+    int compare = (int)strncmp(p1, p2, (size_t)numdigit);
+
+    if (compare != 0) {
+      return compare;
+    }
+  }
+
+  /* use number of leading zeros as tie breaker if still equal */
+  if (*tiebreaker == 0) {
+    if (numzero1 > numzero2) {
+      *tiebreaker = 1;
+    }
+    else if (numzero1 < numzero2) {
+      *tiebreaker = -1;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * Case insensitive, *natural* string comparison,
+ * keeping numbers in order. */
+int KLI_strcasecmp_natural(const char *s1, const char *s2)
+{
+  int d1 = 0, d2 = 0;
+  char c1, c2;
+  int tiebreaker = 0;
+
+  /* if both chars are numeric, to a left_number_strcmp().
+   * then increase string deltas as long they are
+   * numeric, else do a tolower and char compare */
+
+  while (1) {
+    if (isdigit(s1[d1]) && isdigit(s2[d2])) {
+      int numcompare = left_number_strcmp(s1 + d1, s2 + d2, &tiebreaker);
+
+      if (numcompare != 0) {
+        return numcompare;
+      }
+
+      /* Some wasted work here, left_number_strcmp already consumes at least some digits. */
+      d1++;
+      while (isdigit(s1[d1])) {
+        d1++;
+      }
+      d2++;
+      while (isdigit(s2[d2])) {
+        d2++;
+      }
+    }
+
+    /* Test for end of strings first so that shorter strings are ordered in front. */
+    if ((0 == s1[d1]) || (0 == s2[d2])) {
+      break;
+    }
+
+    c1 = tolower(s1[d1]);
+    c2 = tolower(s2[d2]);
+
+    if (c1 == c2) {
+      /* Continue iteration */
+    }
+    /* Check for '.' so "foo.bar" comes before "foo 1.bar". */
+    else if (c1 == '.') {
+      return -1;
+    }
+    else if (c2 == '.') {
+      return 1;
+    }
+    else if (c1 < c2) {
+      return -1;
+    }
+    else if (c1 > c2) {
+      return 1;
+    }
+
+    d1++;
+    d2++;
+  }
+
+  if (tiebreaker) {
+    return tiebreaker;
+  }
+
+  /* we might still have a different string because of lower/upper case, in
+   * that case fall back to regular string comparison */
+  return strcmp(s1, s2);
 }
 
 char *KLI_strcasestr(const char *s, const char *find)
@@ -480,7 +650,7 @@ static const size_t utf8_skip_data[256] = {
  * Like strncpy but ensures dst is always
  * '\0' terminated.
  *
- * @note This is a duplicate of #BLI_strncpy that returns bytes copied.
+ * @note This is a duplicate of #KLI_strncpy that returns bytes copied.
  * And is a drop in replacement for 'snprintf(str, sizeof(str), "%s", arg);'
  *
  * @param dst: Destination for copy
@@ -556,6 +726,47 @@ size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
   dst[len] = '\0';
 
   return len;
+}
+
+/**
+ * In-place replace every @a src to @a dst in @a str.
+ *
+ * @param str: The string to operate on.
+ * @param src: The character to replace.
+ * @param dst: The character to replace with. */
+void KLI_str_replace_char(char *str, char src, char dst)
+{
+  while (*str) {
+    if (*str == src) {
+      *str = dst;
+    }
+    str++;
+  }
+}
+
+/** 
+ * @name Join Strings
+ *
+ * For non array versions of these functions, use the macros:
+ * - #KLI_string_join
+ * - #KLI_string_joinN
+ * - #KLI_string_join_by_sep_charN
+ * - #KLI_string_join_by_sep_char_with_tableN */
+char *KLI_string_join_array(char *result,
+                            size_t result_len,
+                            const char *strings[],
+                            uint strings_len)
+{
+  char *c = result;
+  char *c_end = &result[result_len - 1];
+  for (uint i = 0; i < strings_len; i++) {
+    const char *p = strings[i];
+    while (*p && (c < c_end)) {
+      *c++ = *p++;
+    }
+  }
+  *c = '\0';
+  return c;
 }
 
 size_t KLI_str_utf8_from_unicode(uint c, char *outbuf)

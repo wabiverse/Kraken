@@ -12,7 +12,10 @@ set(INC
 # set(KPY_INSTALL_PATH "release/scripts/modules/kpy")
 
 set(SRC
+  intern/kpy_app.cpp
+  intern/kpy_capi_packarray.c
   intern/kpy_capi_utils.cpp
+  intern/kpy_driver.cpp
   intern/kpy_init_exit.cpp
   intern/kpy_interface_atexit.cpp
   intern/kpy_interface.cpp
@@ -23,7 +26,10 @@ set(SRC
   intern/kpy_uni.cpp
   intern/kpy.cpp
 
+  intern/kpy_app.h
+  intern/kpy_capi_packarray.h
   intern/kpy_capi_utils.h
+  intern/kpy_driver.h
   intern/kpy_interface.h
   intern/kpy_intern_string.h
   intern/kpy_library.h

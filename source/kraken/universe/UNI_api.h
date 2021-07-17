@@ -86,3 +86,10 @@
 #define DEFAULT_TOKEN(t) VtValue(TfToken(t))
 #define DEFAULT_ASSET(a) VtValue(SdfAssetPath(a))
 #define DEFAULT_VEC2F(v1f, v2f) VtValue(GfVec2f(v1f, v2f))
+
+enum eIconSizes {
+  ICON_SIZE_ICON = 0,
+  ICON_SIZE_PREVIEW = 1,
+
+  NUM_ICON_SIZES,
+};

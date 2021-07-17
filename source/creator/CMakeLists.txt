@@ -1080,16 +1080,16 @@ if(WITH_PYTHON)
   if(UNIX)
     install(
       DIRECTORY
-        ${CMAKE_SOURCE_DIR}/release/scripts/modules/kpy
+        ${CMAKE_SOURCE_DIR}/release/scripts/modules/
       DESTINATION
         ${TARGETDIR_VER}/python/lib/python3.9/site-packages
     )
   elseif(WIN32)
     install(
       DIRECTORY
-        ${CMAKE_SOURCE_DIR}/release/scripts/modules/kpy/
+        ${CMAKE_SOURCE_DIR}/release/scripts/modules/
       DESTINATION
-        ${TARGETDIR_VER}/scripts/modules/kpy
+        ${TARGETDIR_VER}/scripts/modules
     )  
   endif()
 endif()

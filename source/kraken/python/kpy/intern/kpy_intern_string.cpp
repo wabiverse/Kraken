@@ -31,6 +31,8 @@
 #include "KLI_assert.h"
 #include "KLI_utildefines.h"
 
+#include <wabi/base/tf/iterator.h>
+
 WABI_NAMESPACE_BEGIN
 
 static PyObject *kpy_intern_str_arr[16];
@@ -81,12 +83,12 @@ void kpy_intern_string_init(void)
 
 #undef KPY_INTERN_STR
 
-  KLI_assert(i == ARRAY_SIZE(kpy_intern_str_arr));
+  KLI_assert(i == TfArraySize(kpy_intern_str_arr));
 }
 
 void kpy_intern_string_exit(void)
 {
-  uint i = ARRAY_SIZE(kpy_intern_str_arr);
+  uint i = TfArraySize(kpy_intern_str_arr);
   while (i--) {
     Py_DECREF(kpy_intern_str_arr[i]);
   }

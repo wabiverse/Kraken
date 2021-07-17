@@ -542,7 +542,7 @@ bool KKE_appdir_program_python_search(char *fullpath,
     const char *python_bin_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, "bin");
     if (python_bin_dir) {
 
-      for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
+      for (int i = 0; i < TfArraySize(python_names); i++) {
         KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
 
         if (
@@ -560,7 +560,7 @@ bool KKE_appdir_program_python_search(char *fullpath,
   }
 
   if (is_found == false) {
-    for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
+    for (int i = 0; i < TfArraySize(python_names); i++) {
       if (KLI_path_program_search(fullpath, fullpath_len, python_names[i])) {
         is_found = true;
         break;
@@ -785,6 +785,141 @@ const char *KKE_appdir_folder_id_version(const int folder_id,
   }
   return ok ? path : NULL;
 }
+
+
+/* -------------------------------------------------------------------- */
+/** \name Temporary Directories
+ * \{ */
+
+/**
+ * Gets the temp directory when kraken first runs.
+ * If the default path is not found, use try $TEMP
+ *
+ * Also make sure the temp dir has a trailing slash
+ *
+ * @param tempdir: The full path to the temporary temp directory.
+ * @param tempdir_len: The size of the @a tempdir buffer.
+ * @param userdir: Directory specified in user preferences (may be NULL).
+ * note that by default this is an empty string, only use when non-empty. */
+static void where_is_temp(char *tempdir, const size_t tempdir_len, const char *userdir)
+{
+
+  tempdir[0] = '\0';
+
+  if (userdir && KLI_is_dir(userdir)) {
+    KLI_strncpy(tempdir, userdir, tempdir_len);
+  }
+
+  if (tempdir[0] == '\0') {
+    const char *env_vars[] = {
+#ifdef WIN32
+        "TEMP",
+#else
+        /* Non standard (could be removed). */
+        "TMP",
+        /* Posix standard. */
+        "TMPDIR",
+#endif
+    };
+    for (int i = 0; i < TfArraySize(env_vars); i++) {
+      const char *tmp = KLI_getenv(env_vars[i]);
+      if (tmp && (tmp[0] != '\0') && KLI_is_dir(tmp)) {
+        KLI_strncpy(tempdir, tmp, tempdir_len);
+        break;
+      }
+    }
+  }
+
+  if (tempdir[0] == '\0') {
+    KLI_strncpy(tempdir, "/tmp/", tempdir_len);
+  }
+  else {
+    /* add a trailing slash if needed */
+    KLI_path_slash_ensure(tempdir);
+  }
+}
+
+static void tempdir_session_create(char *tempdir_session,
+                                   const size_t tempdir_session_len,
+                                   const char *tempdir)
+{
+  tempdir_session[0] = '\0';
+
+  const int tempdir_len = strlen(tempdir);
+  /* 'XXXXXX' is kind of tag to be replaced by `mktemp-family` by an UUID. */
+  const char *session_name = "kraken_XXXXXX";
+  const int session_name_len = strlen(session_name);
+
+  /* +1 as a slash is added,
+   * #_mktemp_s also requires the last null character is included. */
+  const int tempdir_session_len_required = tempdir_len + session_name_len + 1;
+
+  if (tempdir_session_len_required <= tempdir_session_len) {
+    /* No need to use path joining utility as we know the last character of #tempdir is a slash. */
+    KLI_strncpy(tempdir_session, CHARALL(STRCAT(tempdir, session_name)), tempdir_session_len);
+#ifdef WIN32
+    const bool needs_create = (_mktemp_s(tempdir_session, tempdir_session_len_required) == 0);
+#else
+    const bool needs_create = (mkdtemp(tempdir_session) == NULL);
+#endif
+    if (needs_create) {
+      KLI_dir_create_recursive(tempdir_session);
+    }
+    if (KLI_is_dir(tempdir_session)) {
+      KLI_path_slash_ensure(tempdir_session);
+      /* Success. */
+      return;
+    }
+  }
+
+  TF_ERROR_MSG("Could not generate a temp file name for '%s', falling back to '%s'", tempdir_session, tempdir);
+  KLI_strncpy(tempdir_session, tempdir, tempdir_session_len);
+}
+
+/**
+ * Sets #g_app.temp_dirname_base to \a userdir if specified and is a valid directory,
+ * otherwise chooses a suitable OS-specific temporary directory.
+ * Sets #g_app.temp_dirname_session to a #mkdtemp
+ * generated sub-dir of #g_app.temp_dirname_base.
+ */
+void KKE_tempdir_init(const char *userdir)
+{
+  where_is_temp(g_app.temp_dirname_base, sizeof(g_app.temp_dirname_base), userdir);
+
+  /* Clear existing temp dir, if needed. */
+  KKE_tempdir_session_purge();
+  /* Now that we have a valid temp dir, add system-generated unique sub-dir. */
+  tempdir_session_create(
+      g_app.temp_dirname_session, sizeof(g_app.temp_dirname_session), g_app.temp_dirname_base);
+}
+
+/**
+ * Path to temporary directory (with trailing slash)
+ */
+const char *KKE_tempdir_session(void)
+{
+  return g_app.temp_dirname_session[0] ? g_app.temp_dirname_session : KKE_tempdir_base();
+}
+
+/**
+ * Path to persistent temporary directory (with trailing slash)
+ */
+const char *KKE_tempdir_base(void)
+{
+  return g_app.temp_dirname_base;
+}
+
+/**
+ * Delete content of this instance's temp dir.
+ */
+void KKE_tempdir_session_purge(void)
+{
+  if (g_app.temp_dirname_session[0] && KLI_is_dir(g_app.temp_dirname_session)) {
+    KLI_delete(g_app.temp_dirname_session, true, true);
+  }
+}
+
+/** \} */
 
 
 WABI_NAMESPACE_END

@@ -51,9 +51,64 @@ struct Main : public ObjectUNI
 
   char launch_time[UNI_MAX_TIME];
 
+  std::vector<struct wmWindowManager *> wm; 
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;
 };
+
+/** #Global.debug */
+enum {
+  /* general debug flag, print more info in unexpected cases */
+  G_DEBUG = (1 << 0),
+  /* debug messages for ffmpeg */
+  G_DEBUG_FFMPEG = (1 << 1),
+  /* extra python info */
+  G_DEBUG_PYTHON = (1 << 2),
+  /* input/window/screen events */
+  G_DEBUG_EVENTS = (1 << 3),
+  /* events handling */
+  G_DEBUG_HANDLERS = (1 << 4),
+  /* operator, undo */
+  G_DEBUG_WM = (1 << 5),
+  /* jobs time profiling */
+  G_DEBUG_JOBS = (1 << 6),
+  /* freestyle messages */
+  G_DEBUG_FREESTYLE = (1 << 7),
+  /* UsdStage construction messages */
+  G_DEBUG_STAGE_BUILD = (1 << 8),
+  /* UsdStage evaluation messages */
+  G_DEBUG_STAGE_EVAL = (1 << 9),
+  /* UsdStage tagging messages */
+  G_DEBUG_STAGE_TAG = (1 << 10),
+  /* UsdStage timing statistics and messages */
+  G_DEBUG_STAGE_TIME = (1 << 11),
+  /* single threaded UsdStage */
+  G_DEBUG_STAGE_NO_THREADS = (1 << 12),
+  /* use pretty colors in UsdStage debug messages */
+  G_DEBUG_STAGE_PRETTY = (1 << 13),
+  /* UsdStage SdfPath and Asset Resolution messages */
+  G_DEBUG_STAGE_PATHS = (1 << 14),
+  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG |
+                   G_DEBUG_STAGE_TIME | G_DEBUG_STAGE_PATHS),
+  /* sim debug data display */
+  G_DEBUG_SIMDATA = (1 << 15),
+  /* gpu debug */
+  G_DEBUG_GPU = (1 << 16),
+  /* IO Debugging. */
+  G_DEBUG_IO = (1 << 17),
+  /* force gpu workarounds bypassing detections. */
+  G_DEBUG_GPU_FORCE_WORKAROUNDS = (1 << 18),
+  /* XR/OpenXR messages */
+  G_DEBUG_XR = (1 << 19),
+  /* XR/OpenXR timing messages */
+  G_DEBUG_XR_TIME = (1 << 20),
+  /* Debug ANCHOR module. */
+  G_DEBUG_ANCHOR = (1 << 21),
+};
+
+#define G_DEBUG_ALL \
+  (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
+   G_DEBUG_FREESTYLE | G_DEBUG_STAGE | G_DEBUG_IO | G_DEBUG_ANCHOR)
 
 struct Global
 {
@@ -65,7 +120,18 @@ struct Global
 
   bool is_rendering;
 
+  short debug_value;
+
   int f;
+
+  /** 
+   *   Debug Flag
+   * 
+   * - #G_DEBUG,
+   * - #G_DEBUG_PYTHON & friends,
+   * - set python or command line args */
+  int debug;
+
 
   /** Message to use when auto execution fails. */
   char autoexec_fail[200];
@@ -107,6 +173,7 @@ void KKE_kraken_python_init(kContext *C);
 ckeStatusCode KKE_main_runtime(int backend);
 void KKE_kraken_enable_debug_codes(void);
 
+const char *KKE_kraken_version_string(void);
 
 /* ------ */
 

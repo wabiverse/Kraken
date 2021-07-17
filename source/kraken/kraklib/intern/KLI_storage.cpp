@@ -27,6 +27,7 @@
 
 #ifdef WIN32
 # include "utfconv.h"
+# include <io.h>
 #endif /* WIN32 */
 
 #include <filesystem>
@@ -36,6 +37,74 @@ WABI_NAMESPACE_BEGIN
 bool KLI_exists(const fs::path &path)
 {
   return fs::exists(path);
+}
+
+#ifdef WIN32
+int KLI_fstat(int fd, KLI_stat_t *buffer)
+{
+#  if defined(_MSC_VER)
+  return _fstat64(fd, buffer);
+#  else
+  return _fstat(fd, buffer);
+#  endif
+}
+
+int KLI_stat(const char *path, KLI_stat_t *buffer)
+{
+  int r;
+  UTF16_ENCODE(path);
+
+  r = KLI_wstat(path_16, buffer);
+
+  UTF16_UN_ENCODE(path);
+  return r;
+}
+
+int KLI_wstat(const wchar_t *path, KLI_stat_t *buffer)
+{
+#  if defined(_MSC_VER)
+  return _wstat64(path, buffer);
+#  else
+  return _wstat(path, buffer);
+#  endif
+}
+#else
+int KLI_fstat(int fd, struct stat *buffer)
+{
+  return fstat(fd, buffer);
+}
+
+int KLI_stat(const char *path, struct stat *buffer)
+{
+  return stat(path, buffer);
+}
+#endif
+
+int64_t KLI_ftell(FILE *stream)
+{
+#ifdef WIN32
+  return _ftelli64(stream);
+#else
+  return ftell(stream);
+#endif
+}
+
+int KLI_fseek(FILE *stream, int64_t offset, int whence)
+{
+#ifdef WIN32
+  return _fseeki64(stream, offset, whence);
+#else
+  return fseek(stream, offset, whence);
+#endif
+}
+
+int64_t KLI_lseek(int fd, int64_t offset, int whence)
+{
+#ifdef WIN32
+  return _lseeki64(fd, offset, whence);
+#else
+  return lseek(fd, offset, whence);
+#endif
 }
 
 fs::file_status KLI_type(const fs::path &path)

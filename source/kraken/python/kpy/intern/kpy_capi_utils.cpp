@@ -31,6 +31,8 @@
 
 #include "kpy_capi_utils.h"
 
+#include <wabi/base/arch/hints.h>
+
 WABI_NAMESPACE_BEGIN
 
 /**
@@ -100,5 +102,148 @@ PyObject *PyC_UnicodeFromByte(const char *str)
 {
   return PyC_UnicodeFromByteAndSize(str, strlen(str));
 }
+
+/* -------------------------------------------------------------------- */
+/** \name Int Conversion
+ *
+ * \note Python doesn't provide overflow checks for specific bit-widths.
+ *
+ * \{ */
+
+/* Compiler optimizes out redundant checks. */
+#ifdef __GNUC__
+#  pragma warning(push)
+#  pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+
+/**
+ * Don't use `bool` return type, so -1 can be used as an error value.
+ */
+int PyC_Long_AsBool(PyObject *value)
+{
+  const int test = _PyLong_AsInt(value);
+  if (ARCH_UNLIKELY((uint)test > 1)) {
+    PyErr_SetString(PyExc_TypeError, "Python number not a bool (0/1)");
+    return -1;
+  }
+  return test;
+}
+
+int8_t PyC_Long_AsI8(PyObject *value)
+{
+  const int test = _PyLong_AsInt(value);
+  if (ARCH_UNLIKELY(test < INT8_MIN || test > INT8_MAX)) {
+    PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int8");
+    return -1;
+  }
+  return (int8_t)test;
+}
+
+int16_t PyC_Long_AsI16(PyObject *value)
+{
+  const int test = _PyLong_AsInt(value);
+  if (ARCH_UNLIKELY(test < INT16_MIN || test > INT16_MAX)) {
+    PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int16");
+    return -1;
+  }
+  return (int16_t)test;
+}
+
+/* Inlined in header:
+ * PyC_Long_AsI32
+ * PyC_Long_AsI64
+ */
+
+uint8_t PyC_Long_AsU8(PyObject *value)
+{
+  const ulong test = PyLong_AsUnsignedLong(value);
+  if (ARCH_UNLIKELY(test > UINT8_MAX)) {
+    PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint8");
+    return (uint8_t)-1;
+  }
+  return (uint8_t)test;
+}
+
+uint16_t PyC_Long_AsU16(PyObject *value)
+{
+  const ulong test = PyLong_AsUnsignedLong(value);
+  if (ARCH_UNLIKELY(test > UINT16_MAX)) {
+    PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint16");
+    return (uint16_t)-1;
+  }
+  return (uint16_t)test;
+}
+
+uint32_t PyC_Long_AsU32(PyObject *value)
+{
+  const ulong test = PyLong_AsUnsignedLong(value);
+  if (ARCH_UNLIKELY(test > UINT32_MAX)) {
+    PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint32");
+    return (uint32_t)-1;
+  }
+  return (uint32_t)test;
+}
+
+/* Inlined in header:
+ * PyC_Long_AsU64
+ */
+
+#ifdef __GNUC__
+#  pragma warning(pop)
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Exception Utilities
+ * \{ */
+
+/**
+ * Similar to #PyErr_Format(),
+ *
+ * Implementation - we can't actually prepend the existing exception,
+ * because it could have _any_ arguments given to it, so instead we get its
+ * ``__str__`` output and raise our own exception including it.
+ */
+PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *format, ...)
+{
+  PyObject *error_value_prefix;
+  va_list args;
+
+  va_start(args, format);
+  error_value_prefix = PyUnicode_FromFormatV(format, args); /* can fail and be NULL */
+  va_end(args);
+
+  if (PyErr_Occurred()) {
+    PyObject *error_type, *error_value, *error_traceback;
+    PyErr_Fetch(&error_type, &error_value, &error_traceback);
+
+    if (PyUnicode_Check(error_value)) {
+      PyErr_Format(exception_type_prefix, "%S, %S", error_value_prefix, error_value);
+    }
+    else {
+      PyErr_Format(exception_type_prefix,
+                   "%S, %.200s(%S)",
+                   error_value_prefix,
+                   Py_TYPE(error_value)->tp_name,
+                   error_value);
+    }
+  }
+  else {
+    PyErr_SetObject(exception_type_prefix, error_value_prefix);
+  }
+
+  Py_XDECREF(error_value_prefix);
+
+  /* dumb to always return NULL but matches PyErr_Format */
+  return NULL;
+}
+
+PyObject *PyC_Err_SetString_Prefix(PyObject *exception_type_prefix, const char *str)
+{
+  return PyC_Err_Format_Prefix(exception_type_prefix, "%s", str);
+}
+
+/** \} */
 
 WABI_NAMESPACE_END
