@@ -76,8 +76,8 @@ def main():
     #   from kpy.types import Panel
     sys.modules.update({
         "kpy.app": app,
-        "kpy.app.handlers": app.handlers,
-        "kpy.app.translations": app.translations,
+        # "kpy.app.handlers": app.handlers,
+        # "kpy.app.translations": app.translations,
         # "kpy.types": types,
     })
 

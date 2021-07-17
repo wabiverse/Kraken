@@ -86,8 +86,8 @@ def modules_refresh(*, module_cache=addons_fake_modules):
     def fake_module(mod_name, mod_path, speedy=True, force_support=None):
         global error_encoding
 
-        # if _kpy.app.debug_python:
-        #     print("fake_module", mod_path, mod_name)
+        if _kpy.app.debug_python:
+            print("fake_module", mod_path, mod_name)
         import ast
         ModuleType = type(ast)
         try:
@@ -418,8 +418,8 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
     mod.__addon_enabled__ = True
     mod.__addon_persistent__ = persistent
 
-    # if _kpy.app.debug_python:
-    #     print("\taddon_utils.enable", mod.__name__)
+    if _kpy.app.debug_python:
+        print("\taddon_utils.enable", mod.__name__)
 
     return mod
 
@@ -469,8 +469,8 @@ def disable(module_name, *, default_set=False, handle_error=None):
     if default_set:
         _addon_remove(module_name)
 
-    # if _kpy.app.debug_python:
-    #     print("\taddon_utils.disable", module_name)
+    if _kpy.app.debug_python:
+        print("\taddon_utils.disable", module_name)
 
 
 def reset_all(*, reload_scripts=False):

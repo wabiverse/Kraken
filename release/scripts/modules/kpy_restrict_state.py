@@ -41,9 +41,9 @@ import kpy as _kpy
 
 class _RestrictContext:
     __slots__ = ()
-    # _real_data = kpy.data
+    # _real_data = _kpy.data
     # safe, the pointer never changes
-    # _real_pref = kpy.context.preferences
+    # _real_pref = _kpy.context.preferences
 
     # @property
     # def window_manager(self):
@@ -66,11 +66,11 @@ class RestrictKraken:
     __slots__ = ("context", "data")
 
     def __enter__(self):
-        # self.data = kpy.data
-        self.context = kpy.context
-        # kpy.data = _data_restrict
-        kpy.context = _context_restrict
+        # self.data = _kpy.data
+        self.context = _kpy.context
+        # _kpy.data = _data_restrict
+        _kpy.context = _context_restrict
 
     def __exit__(self, type, value, traceback):
-        # kpy.data = self.data
-        kpy.context = self.context
+        # _kpy.data = self.data
+        _kpy.context = self.context

@@ -98,8 +98,8 @@ def _enable(template_id, *, handle_error=None, ignore_not_found=False):
     # * OK loaded successfully! *
     mod.__template_enabled__ = True
 
-    # if _kpy.app.debug_python:
-    #     print("\tapp_template_utils.enable", mod.__name__)
+    if _kpy.app.debug_python:
+        print("\tapp_template_utils.enable", mod.__name__)
 
     return mod
 
@@ -138,8 +138,8 @@ def _disable(template_id, *, handle_error=None):
         print("\tapp_template_utils.disable: %s not %s." %
               (template_id, "disabled" if mod is False else "loaded"))
 
-    # if _kpy.app.debug_python:
-    #     print("\tapp_template_utils.disable", template_id)
+    if _kpy.app.debug_python:
+        print("\tapp_template_utils.disable", template_id)
 
 
 def import_from_path(path, *, ignore_not_found=False):
@@ -194,7 +194,7 @@ def reset(*, reload_scripts=False):
     """
     # template_id = _kpy.context.preferences.app_template
     # if _kpy.app.debug_python:
-    #     print("bl_app_template_utils.reset('%s')" % template_id)
+        # print("kr_app_template_utils.reset('%s')" % template_id)
 
     # TODO reload_scripts
 

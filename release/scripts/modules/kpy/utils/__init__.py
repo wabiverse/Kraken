@@ -63,11 +63,47 @@ import addon_utils as _addon_utils
 
 # _preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
-# _is_factory_startup = _kpy.app.factory_startup
+_is_factory_startup = _kpy.app.factory_startup
+
+
+def execfile(filepath, *, mod=None):
+    """
+    Execute a file path as a Python script.
+
+    :arg filepath: Path of the script to execute.
+    :type filepath: string
+    :arg mod: Optional cached module, the result of a previous execution.
+    :type mod: Module or None
+    :return: The module which can be passed back in as ``mod``.
+    :rtype: ModuleType
+    """
+
+    import importlib.util
+    mod_name = "__main__"
+    mod_spec = importlib.util.spec_from_file_location(mod_name, filepath)
+    if mod is None:
+        mod = importlib.util.module_from_spec(mod_spec)
+
+    # While the module name is not added to `sys.modules`, it's important to temporarily
+    # include this so statements such as `sys.modules[cls.__module__].__dict__` behave as expected.
+    modules = _sys.modules
+    mod_orig = modules.get(mod_name, None)
+    modules[mod_name] = mod
+
+    # No error supression, just ensure `sys.modules[mod_name]` is properly restored in the case of an error.
+    try:
+        mod_spec.loader.exec_module(mod)
+    finally:
+        if mod_orig is None:
+            modules.pop(mod_name, None)
+        else:
+            modules[mod_name] = mod_orig
+
+    return mod
 
 
 def _test_import(module_name, loaded_modules):
-    # use_time = _kpy.app.debug_python
+    use_time = _kpy.app.debug_python
 
     if module_name in loaded_modules:
         return None
@@ -76,9 +112,9 @@ def _test_import(module_name, loaded_modules):
               "multiple periods" % module_name)
         return None
 
-    # if use_time:
-    #     import time
-    #     t = time.time()
+    if use_time:
+        import time
+        t = time.time()
 
     try:
         mod = __import__(module_name)
@@ -87,8 +123,8 @@ def _test_import(module_name, loaded_modules):
         traceback.print_exc()
         return None
 
-    # if use_time:
-    #     print("time %s %.4f" % (module_name, time.time() - t))
+    if use_time:
+        print("time %s %.4f" % (module_name, time.time() - t))
 
     loaded_modules.add(mod.__name__)  # should match mod.__name__ too
     return mod
@@ -153,8 +189,9 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
        as modules.
     :type refresh_scripts: bool
     """
-    # use_time = use_class_register_check = _kpy.app.debug_python
-    # use_user = not _is_factory_startup
+    use_time = use_class_register_check = _kpy.app.debug_python
+    use_user = not _is_factory_startup
+    
     use_time = False
     use_user = False
 
@@ -390,12 +427,11 @@ def refresh_script_paths():
             if _os.path.isdir(path):
                 _sys_path_ensure_prepend(path)
 
-    # TODO: Implement addon utils
-    # for path in _addon_utils.paths():
-    #     _sys_path_ensure_append(path)
-    #     path = _os.path.join(path, "modules")
-    #     if _os.path.isdir(path):
-    #         _sys_path_ensure_append(path)
+    for path in _addon_utils.paths():
+        _sys_path_ensure_append(path)
+        path = _os.path.join(path, "modules")
+        if _os.path.isdir(path):
+            _sys_path_ensure_append(path)
 
 
 def app_template_paths(*, path=None):
@@ -437,12 +473,11 @@ def preset_paths(subdir):
         elif _os.path.isdir(directory):
             dirs.append(directory)
 
-    # TODO: Implement addon utils
     # Find addons preset paths
-    # for path in _addon_utils.paths():
-    #     directory = _os.path.join(path, "presets", subdir)
-    #     if _os.path.isdir(directory):
-    #         dirs.append(directory)
+    for path in _addon_utils.paths():
+        directory = _os.path.join(path, "presets", subdir)
+        if _os.path.isdir(directory):
+            dirs.append(directory)
 
     return dirs
 
@@ -604,11 +639,10 @@ def preset_find(name, preset_path, *, display_name=False, ext=".py"):
 
         if display_name:
             filename = ""
-            # TODO: Implement Kraken path module
-            # for fn in _os.listdir(directory):
-            #     if fn.endswith(ext) and name == _kpy.path.display_name(fn, title_case=False):
-            #         filename = fn
-            #         break
+            for fn in _os.listdir(directory):
+                if fn.endswith(ext) and name == _kpy.path.display_name(fn, title_case=False):
+                    filename = fn
+                    break
         else:
             filename = name + ext
 
@@ -619,57 +653,57 @@ def preset_find(name, preset_path, *, display_name=False, ext=".py"):
 
 
 # TODO: Implement Kraken Python preferences module
-# def keyconfig_init():
-#     # Key configuration initialization and refresh, called from the Kraken
-#     # window manager on startup and refresh.
-#     active_config = _preferences.keymap.active_keyconfig
+def keyconfig_init():
+    # Key configuration initialization and refresh, called from the Kraken
+    # window manager on startup and refresh.
+    # active_config = _preferences.keymap.active_keyconfig
 
-#     # Load the default key configuration.
-#     default_filepath = preset_find("Kraken", "keyconfig")
-#     keyconfig_set(default_filepath)
+    # Load the default key configuration.
+    default_filepath = preset_find("Kraken", "keyconfig")
+    keyconfig_set(default_filepath)
 
-#     # Set the active key configuration if different
-#     filepath = preset_find(active_config, "keyconfig")
+    # Set the active key configuration if different
+    # filepath = preset_find(active_config, "keyconfig")
 
-#     if filepath and filepath != default_filepath:
-#         keyconfig_set(filepath)
+    # if filepath and filepath != default_filepath:
+        # keyconfig_set(filepath)
 
 
 # TODO: Implement Kraken Python window_manager module
-# def keyconfig_set(filepath, *, report=None):
-#     from os.path import basename, splitext
+def keyconfig_set(filepath, *, report=None):
+    from os.path import basename, splitext
 
-#     if _kpy.app.debug_python:
-#         print("loading preset:", filepath)
+    if _kpy.app.debug_python:
+        print("loading preset:", filepath)
 
-#     keyconfigs = _kpy.context.window_manager.keyconfigs
+    keyconfigs = _kpy.context.window_manager.keyconfigs
 
-#     try:
-#         error_msg = ""
-#         execfile(filepath)
-#     except:
-#         import traceback
-#         error_msg = traceback.format_exc()
+    try:
+        error_msg = ""
+        execfile(filepath)
+    except:
+        import traceback
+        error_msg = traceback.format_exc()
 
-#     name = splitext(basename(filepath))[0]
-#     kc_new = keyconfigs.get(name)
+    name = splitext(basename(filepath))[0]
+    kc_new = keyconfigs.get(name)
 
-#     if error_msg:
-#         if report is not None:
-#             report({'ERROR'}, error_msg)
-#         print(error_msg)
-#         if kc_new is not None:
-#             keyconfigs.remove(kc_new)
-#         return False
+    if error_msg:
+        if report is not None:
+            report({'ERROR'}, error_msg)
+        print(error_msg)
+        if kc_new is not None:
+            keyconfigs.remove(kc_new)
+        return False
 
-#     # Get name, exception for default keymap to keep backwards compatibility.
-#     if kc_new is None:
-#         if report is not None:
-#             report({'ERROR'}, "Failed to load keymap %r" % filepath)
-#         return False
-#     else:
-#         keyconfigs.active = kc_new
-#         return True
+    # Get name, exception for default keymap to keep backwards compatibility.
+    if kc_new is None:
+        if report is not None:
+            report({'ERROR'}, "Failed to load keymap %r" % filepath)
+        return False
+    else:
+        keyconfigs.active = kc_new
+        return True
 
 
 def user_resource(resource_type, *, path="", create=False):
