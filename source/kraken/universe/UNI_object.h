@@ -45,7 +45,7 @@ struct PropertyUNI
   bool custom;
 };
 
-typedef std::vector<PropertyUNI*> CollectionPropertyUNI;
+typedef std::vector<PropertyUNI *> CollectionPropertyUNI;
 
 struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
 {

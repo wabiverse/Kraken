@@ -51,9 +51,11 @@ void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool v
                                                     KRAKEN_VERSION_MINOR),
                                      args);
 
-  if(verbose) {
-    if(success && fs::exists(usda_path)) {
-        TF_SUCCESS_MSG("Converted new file: %s", CHARALL(usda_path.string()));
+  if (verbose)
+  {
+    if (success && fs::exists(usda_path))
+    {
+      TF_SUCCESS_MSG("Converted new file: %s", CHARALL(usda_path.string()));
       return;
     }
 
@@ -68,10 +70,14 @@ std::string UNI_pixutil_resolve_asset(const std::string &asset, bool verbose)
 
   const std::string resolved_asset = resolver.Resolve(asset);
 
-  if(verbose) {
-    if(!resolved_asset.empty()) {
+  if (verbose)
+  {
+    if (!resolved_asset.empty())
+    {
       TF_SUCCESS_MSG("Asset Resolved Path: %s", CHARALL(resolved_asset));
-    } else {
+    }
+    else
+    {
       TF_ERROR_MSG("Asset %s does not exist.", CHARALL(asset));
     }
   }

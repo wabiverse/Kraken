@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -225,7 +225,7 @@ void FreeTypeFont::CloseFont()
 void FreeTypeFont::SetPixelHeight(int pixel_height)
 {
   // Vuhdo: I'm not sure how to deal with font sizes properly. As far as I understand, currently
-  // ImGui assumes that the 'pixel_height' is a maximum height of an any given glyph, i.e. it's the
+  // Anchor assumes that the 'pixel_height' is a maximum height of an any given glyph, i.e. it's the
   // sum of font's ascender and descender. Seems strange to me. NB: FT_Set_Pixel_Sizes() doesn't
   // seem to get us the same result.
   FT_Size_RequestRec req;
@@ -376,8 +376,7 @@ void FreeTypeFont::BlitGlyph(const FT_Bitmap *ft_bitmap,
 }
 }  // namespace
 
-#ifndef STB_RECT_PACK_IMPLEMENTATION  // in case the user already have an implementation in the \
-                                      // _same_ compilation unit (e.g. unity builds)
+#ifndef STB_RECT_PACK_IMPLEMENTATION
 #  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 #    define STBRP_ASSERT(x) \
       do \
@@ -624,7 +623,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // The exact width doesn't really matter much, but some API/GPU have texture size limitations and
   // increasing width can decrease height. User can override TexDesiredWidth and TexGlyphPadding if
   // they wish, otherwise we use a simple heuristic to select the width based on expected surface.
-  const int surface_sqrt = (int)ImSqrt((float)total_surface) + 1;
+  const int surface_sqrt = (int)AnchorSqrt((float)total_surface) + 1;
   atlas->TexHeight = 0;
   if (atlas->TexDesiredWidth > 0)
     atlas->TexWidth = atlas->TexDesiredWidth;

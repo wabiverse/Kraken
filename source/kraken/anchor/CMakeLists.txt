@@ -39,8 +39,10 @@ set(SRC
   intern/system_interfaces.cpp
 
   # Platform Agnostic Implementation.
+  intern/anchor_rect.cpp
   intern/api.cpp
   intern/buttons.cpp
+  intern/curve_edit.cpp
   intern/debug_codes.cpp
   intern/demo.cpp
   intern/display_manager.cpp
@@ -48,8 +50,11 @@ set(SRC
   intern/event_consumer.cpp
   intern/event_manager.cpp
   intern/freetype.cpp
+  intern/gizmo.cpp
+  intern/gradient.cpp
+  intern/graph_editor.cpp
   intern/modifier_keys.cpp
-  intern/anchor_rect.cpp
+  intern/sequencer.cpp
   intern/system_paths.cpp
   intern/system.cpp
   intern/tables.cpp
@@ -62,22 +67,29 @@ set(SRC
   # Platform Agnostic API
   ANCHOR_api.h
   ANCHOR_buttons.h
+  ANCHOR_curve_edit.h
   ANCHOR_debug_codes.h
   ANCHOR_display_manager.h
   ANCHOR_event_consumer.h
   ANCHOR_event_manager.h
   ANCHOR_event.h
   ANCHOR_freetype.h
+  ANCHOR_gizmo.h
+  ANCHOR_gradient.h
+  ANCHOR_graph_editor.h
   ANCHOR_internal.h
   ANCHOR_modifier_keys.h
   ANCHOR_rectpack.h
-  ANCHOR_Rect.h
+  ANCHOR_sequencer.h
+  ANCHOR_rect.h
   ANCHOR_system_paths.h
   ANCHOR_system.h
   ANCHOR_textedit.h
   ANCHOR_truetype.h
+  ANCHOR_version.h
   ANCHOR_window_manager.h
   ANCHOR_window.h
+  ANCHOR_zoom_slider.h
 )
 
 set(INC_SYS

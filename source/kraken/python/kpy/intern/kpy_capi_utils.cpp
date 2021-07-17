@@ -39,15 +39,18 @@ WABI_NAMESPACE_BEGIN
  * Use with PyArg_ParseTuple's "O&" formatting. */
 int PyC_ParseStringEnum(PyObject *o, void *p)
 {
-  struct PyC_StringEnum *e = (PyC_StringEnum*)p;
+  struct PyC_StringEnum *e = (PyC_StringEnum *)p;
   const char *value = PyUnicode_AsUTF8(o);
-  if (value == NULL) {
+  if (value == NULL)
+  {
     PyErr_Format(PyExc_ValueError, "expected a string, got %s", Py_TYPE(o)->tp_name);
     return 0;
   }
   int i;
-  for (i = 0; e->items[i].id; i++) {
-    if (STREQ(e->items[i].id, value)) {
+  for (i = 0; e->items[i].id; i++)
+  {
+    if (STREQ(e->items[i].id, value))
+    {
       e->value_found = e->items[i].value;
       return 1;
     }
@@ -57,7 +60,8 @@ int PyC_ParseStringEnum(PyObject *o, void *p)
   e->value_found = -1;
 
   PyObject *enum_items = PyTuple_New(i);
-  for (i = 0; e->items[i].id; i++) {
+  for (i = 0; e->items[i].id; i++)
+  {
     PyTuple_SET_ITEM(enum_items, i, PyUnicode_FromString(e->items[i].id));
   }
   PyErr_Format(PyExc_ValueError, "expected a string in %S, got '%s'", enum_items, value);
@@ -74,7 +78,8 @@ int PyC_ParseBool(PyObject *o, void *p)
 {
   bool *bool_p = (bool *)p;
   long value;
-  if (((value = PyLong_AsLong(o)) == -1) || ((value != 0) && (value != 1))) {
+  if (((value = PyLong_AsLong(o)) == -1) || ((value != 0) && (value != 1)))
+  {
     PyErr_Format(PyExc_ValueError, "expected a bool or int (0/1), got %s", Py_TYPE(o)->tp_name);
     return 0;
   }
@@ -86,7 +91,8 @@ int PyC_ParseBool(PyObject *o, void *p)
 PyObject *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size)
 {
   PyObject *result = PyUnicode_FromStringAndSize(str, size);
-  if (result) {
+  if (result)
+  {
     /* 99% of the time this is enough but we better support non unicode
      * chars since blender doesn't limit this */
     return result;
@@ -122,7 +128,8 @@ PyObject *PyC_UnicodeFromByte(const char *str)
 int PyC_Long_AsBool(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY((uint)test > 1)) {
+  if (ARCH_UNLIKELY((uint)test > 1))
+  {
     PyErr_SetString(PyExc_TypeError, "Python number not a bool (0/1)");
     return -1;
   }
@@ -132,7 +139,8 @@ int PyC_Long_AsBool(PyObject *value)
 int8_t PyC_Long_AsI8(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY(test < INT8_MIN || test > INT8_MAX)) {
+  if (ARCH_UNLIKELY(test < INT8_MIN || test > INT8_MAX))
+  {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int8");
     return -1;
   }
@@ -142,7 +150,8 @@ int8_t PyC_Long_AsI8(PyObject *value)
 int16_t PyC_Long_AsI16(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY(test < INT16_MIN || test > INT16_MAX)) {
+  if (ARCH_UNLIKELY(test < INT16_MIN || test > INT16_MAX))
+  {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int16");
     return -1;
   }
@@ -157,7 +166,8 @@ int16_t PyC_Long_AsI16(PyObject *value)
 uint8_t PyC_Long_AsU8(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT8_MAX)) {
+  if (ARCH_UNLIKELY(test > UINT8_MAX))
+  {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint8");
     return (uint8_t)-1;
   }
@@ -167,7 +177,8 @@ uint8_t PyC_Long_AsU8(PyObject *value)
 uint16_t PyC_Long_AsU16(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT16_MAX)) {
+  if (ARCH_UNLIKELY(test > UINT16_MAX))
+  {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint16");
     return (uint16_t)-1;
   }
@@ -177,7 +188,8 @@ uint16_t PyC_Long_AsU16(PyObject *value)
 uint32_t PyC_Long_AsU32(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT32_MAX)) {
+  if (ARCH_UNLIKELY(test > UINT32_MAX))
+  {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint32");
     return (uint32_t)-1;
   }
@@ -214,14 +226,17 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
   error_value_prefix = PyUnicode_FromFormatV(format, args); /* can fail and be NULL */
   va_end(args);
 
-  if (PyErr_Occurred()) {
+  if (PyErr_Occurred())
+  {
     PyObject *error_type, *error_value, *error_traceback;
     PyErr_Fetch(&error_type, &error_value, &error_traceback);
 
-    if (PyUnicode_Check(error_value)) {
+    if (PyUnicode_Check(error_value))
+    {
       PyErr_Format(exception_type_prefix, "%S, %S", error_value_prefix, error_value);
     }
-    else {
+    else
+    {
       PyErr_Format(exception_type_prefix,
                    "%S, %.200s(%S)",
                    error_value_prefix,
@@ -229,7 +244,8 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
                    error_value);
     }
   }
-  else {
+  else
+  {
     PyErr_SetObject(exception_type_prefix, error_value_prefix);
   }
 

@@ -18,14 +18,14 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
 #include "ANCHOR_BACKEND_sdl.h"
 #include "ANCHOR_BACKEND_vulkan.h"
 
-#include "ANCHOR_Rect.h"
+#include "ANCHOR_rect.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_buttons.h"
 #include "ANCHOR_debug_codes.h"
@@ -84,7 +84,7 @@ static bool                      g_SwapChainRebuild = false;
 static SDL_Window *g_Window                                 = NULL;
 static Uint64 g_Time                                        = 0;
 static bool g_MousePressed[3]                               = {false, false, false};
-static SDL_Cursor *g_MouseCursors[ANCHOR_MouseCursor_COUNT] = {};
+static SDL_Cursor *g_MouseCursors[AnchorMouseCursor_COUNT] = {};
 static char *g_ClipboardTextData                            = NULL;
 static bool g_MouseCanUseGlobalState                        = true;
 
@@ -110,9 +110,9 @@ static void ANCHOR_ImplSDL2_SetClipboardText(void *, const char *text)
 // application. Generally you may always pass all inputs to ANCHOR, and hide them from your
 // application based on those two flags. If you have multiple SDL events and some of them are not
 // meant to be used by ANCHOR, you may need to filter events based on their windowID field.
-bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
+bool AnchorSystemSDL::ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   switch (event->type)
   {
     case SDL_MOUSEWHEEL: {
@@ -163,50 +163,50 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   g_Window = window;
 
   // Setup backend capabilities flags
-  ANCHOR_IO &io = ANCHOR::GetIO();
-  io.BackendFlags |= ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
-  io.BackendFlags |= ANCHORBackendFlags_HasSetMousePos;   // We can honor io.WantSetMousePos
+  AnchorIO &io = ANCHOR::GetIO();
+  io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
+  io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;   // We can honor io.WantSetMousePos
                                                           // requests (optional, rarely used)
   io.BackendPlatformName = "ANCHOR_BACKEND_sdl";
 
   // Keyboard mapping. ANCHOR will use those indices to peek into the io.KeysDown[] array.
-  io.KeyMap[ANCHOR_Key_Tab] = SDL_SCANCODE_TAB;
-  io.KeyMap[ANCHOR_Key_LeftArrow] = SDL_SCANCODE_LEFT;
-  io.KeyMap[ANCHOR_Key_RightArrow] = SDL_SCANCODE_RIGHT;
-  io.KeyMap[ANCHOR_Key_UpArrow] = SDL_SCANCODE_UP;
-  io.KeyMap[ANCHOR_Key_DownArrow] = SDL_SCANCODE_DOWN;
-  io.KeyMap[ANCHOR_Key_PageUp] = SDL_SCANCODE_PAGEUP;
-  io.KeyMap[ANCHOR_Key_PageDown] = SDL_SCANCODE_PAGEDOWN;
-  io.KeyMap[ANCHOR_Key_Home] = SDL_SCANCODE_HOME;
-  io.KeyMap[ANCHOR_Key_End] = SDL_SCANCODE_END;
-  io.KeyMap[ANCHOR_Key_Insert] = SDL_SCANCODE_INSERT;
-  io.KeyMap[ANCHOR_Key_Delete] = SDL_SCANCODE_DELETE;
-  io.KeyMap[ANCHOR_Key_Backspace] = SDL_SCANCODE_BACKSPACE;
-  io.KeyMap[ANCHOR_Key_Space] = SDL_SCANCODE_SPACE;
-  io.KeyMap[ANCHOR_Key_Enter] = SDL_SCANCODE_RETURN;
-  io.KeyMap[ANCHOR_Key_Escape] = SDL_SCANCODE_ESCAPE;
-  io.KeyMap[ANCHOR_Key_KeyPadEnter] = SDL_SCANCODE_KP_ENTER;
-  io.KeyMap[ANCHOR_Key_A] = SDL_SCANCODE_A;
-  io.KeyMap[ANCHOR_Key_C] = SDL_SCANCODE_C;
-  io.KeyMap[ANCHOR_Key_V] = SDL_SCANCODE_V;
-  io.KeyMap[ANCHOR_Key_X] = SDL_SCANCODE_X;
-  io.KeyMap[ANCHOR_Key_Y] = SDL_SCANCODE_Y;
-  io.KeyMap[ANCHOR_Key_Z] = SDL_SCANCODE_Z;
+  io.KeyMap[AnchorKey_Tab] = SDL_SCANCODE_TAB;
+  io.KeyMap[AnchorKey_LeftArrow] = SDL_SCANCODE_LEFT;
+  io.KeyMap[AnchorKey_RightArrow] = SDL_SCANCODE_RIGHT;
+  io.KeyMap[AnchorKey_UpArrow] = SDL_SCANCODE_UP;
+  io.KeyMap[AnchorKey_DownArrow] = SDL_SCANCODE_DOWN;
+  io.KeyMap[AnchorKey_PageUp] = SDL_SCANCODE_PAGEUP;
+  io.KeyMap[AnchorKey_PageDown] = SDL_SCANCODE_PAGEDOWN;
+  io.KeyMap[AnchorKey_Home] = SDL_SCANCODE_HOME;
+  io.KeyMap[AnchorKey_End] = SDL_SCANCODE_END;
+  io.KeyMap[AnchorKey_Insert] = SDL_SCANCODE_INSERT;
+  io.KeyMap[AnchorKey_Delete] = SDL_SCANCODE_DELETE;
+  io.KeyMap[AnchorKey_Backspace] = SDL_SCANCODE_BACKSPACE;
+  io.KeyMap[AnchorKey_Space] = SDL_SCANCODE_SPACE;
+  io.KeyMap[AnchorKey_Enter] = SDL_SCANCODE_RETURN;
+  io.KeyMap[AnchorKey_Escape] = SDL_SCANCODE_ESCAPE;
+  io.KeyMap[AnchorKey_KeyPadEnter] = SDL_SCANCODE_KP_ENTER;
+  io.KeyMap[AnchorKey_A] = SDL_SCANCODE_A;
+  io.KeyMap[AnchorKey_C] = SDL_SCANCODE_C;
+  io.KeyMap[AnchorKey_V] = SDL_SCANCODE_V;
+  io.KeyMap[AnchorKey_X] = SDL_SCANCODE_X;
+  io.KeyMap[AnchorKey_Y] = SDL_SCANCODE_Y;
+  io.KeyMap[AnchorKey_Z] = SDL_SCANCODE_Z;
 
   io.SetClipboardTextFn = ANCHOR_ImplSDL2_SetClipboardText;
   io.GetClipboardTextFn = ANCHOR_ImplSDL2_GetClipboardText;
   io.ClipboardUserData = NULL;
 
   // Load mouse cursors
-  g_MouseCursors[ANCHOR_MouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-  g_MouseCursors[ANCHOR_MouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-  g_MouseCursors[ANCHOR_MouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-  g_MouseCursors[ANCHOR_MouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-  g_MouseCursors[ANCHOR_MouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+  g_MouseCursors[AnchorMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  g_MouseCursors[AnchorMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+  g_MouseCursors[AnchorMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+  g_MouseCursors[AnchorMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+  g_MouseCursors[AnchorMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+  g_MouseCursors[AnchorMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  g_MouseCursors[AnchorMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+  g_MouseCursors[AnchorMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  g_MouseCursors[AnchorMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
   // Check and store if we are on a SDL backend that supports global mouse position
   // ("wayland" and "rpi" don't support it, but we chose to use a white-list instead of a
@@ -230,13 +230,13 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   return true;
 }
 
-bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context)
+bool AnchorSystemSDL::ANCHOR_ImplSDL2_InitForOpenGL(SDL_Window *window, void *sdl_gl_context)
 {
   (void)sdl_gl_context;  // Viewport branch will need this.
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
+bool AnchorSystemSDL::ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
 {
 #if !SDL_HAS_VULKAN
   ANCHOR_ASSERT(0 && "Unsupported");
@@ -244,7 +244,7 @@ bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForVulkan(SDL_Window *window)
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
+bool AnchorSystemSDL::ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
 {
 #if !defined(_WIN32)
   ANCHOR_ASSERT(0 && "Unsupported");
@@ -252,12 +252,12 @@ bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForD3D(SDL_Window *window)
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-bool ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window)
+bool AnchorSystemSDL::ANCHOR_ImplSDL2_InitForMetal(SDL_Window *window)
 {
   return ANCHOR_ImplSDL2_Init(window);
 }
 
-void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown()
+void AnchorSystemSDL::ANCHOR_ImplSDL2_Shutdown()
 {
   g_Window = NULL;
 
@@ -267,25 +267,25 @@ void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown()
   g_ClipboardTextData = NULL;
 
   // Destroy SDL mouse cursors
-  for (ANCHOR_MouseCursor cursor_n = 0; cursor_n < ANCHOR_MouseCursor_COUNT; cursor_n++)
+  for (AnchorMouseCursor cursor_n = 0; cursor_n < AnchorMouseCursor_COUNT; cursor_n++)
     SDL_FreeCursor(g_MouseCursors[cursor_n]);
   memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
 }
 
-ANCHOR_DisplayManagerSDL::ANCHOR_DisplayManagerSDL(ANCHOR_SystemSDL *system)
-  : ANCHOR_DisplayManager(),
+AnchorDisplayManagerSDL::AnchorDisplayManagerSDL(AnchorSystemSDL *system)
+  : AnchorDisplayManager(),
     m_system(system)
 {
   memset(&m_mode, 0, sizeof(m_mode));
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplays(AnchorU8 &numDisplays) const
+eAnchorStatus AnchorDisplayManagerSDL::getNumDisplays(AnchorU8 &numDisplays) const
 {
   numDisplays = SDL_GetNumVideoDisplays();
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
+eAnchorStatus AnchorDisplayManagerSDL::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
 {
   ANCHOR_ASSERT(display < 1);
 
@@ -311,9 +311,9 @@ static void anchor_mode_to_sdl(const ANCHOR_DisplaySetting &setting, SDL_Display
   mode->refresh_rate = setting.frequency;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getDisplaySetting(AnchorU8 display,
-                                                          AnchorS32 index,
-                                                          ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerSDL::getDisplaySetting(AnchorU8 display,
+                                                         AnchorS32 index,
+                                                         ANCHOR_DisplaySetting &setting) const
 {
   ANCHOR_ASSERT(display < 1);
 
@@ -325,8 +325,8 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::getDisplaySetting(AnchorU8 display,
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplaySetting(AnchorU8 display,
-                                                                 ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerSDL::getCurrentDisplaySetting(AnchorU8 display,
+                                                                ANCHOR_DisplaySetting &setting) const
 {
   SDL_DisplayMode mode;
   SDL_GetCurrentDisplayMode(display, &mode);
@@ -336,14 +336,14 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplaySetting(AnchorU8 displa
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::getCurrentDisplayModeSDL(SDL_DisplayMode &mode) const
+eAnchorStatus AnchorDisplayManagerSDL::getCurrentDisplayModeSDL(SDL_DisplayMode &mode) const
 {
   mode = m_mode;
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display,
-                                                                 const ANCHOR_DisplaySetting &setting)
+eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display,
+                                                                const ANCHOR_DisplaySetting &setting)
 {
   /*
    * Mode switching code ported from Quake 2 version 3.21 and bzflag version
@@ -387,7 +387,7 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 displa
     }
 
     if (best_fit == -1)
-      return ANCHOR_ERROR;
+      return ANCHOR_FAILURE;
 
     SDL_GetDisplayMode(display, best_fit, &mode);
   }
@@ -395,7 +395,7 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 displa
   m_mode = mode;
 
   /* evil, SDL2 needs a window to adjust display modes */
-  ANCHOR_WindowSDL *win = (ANCHOR_WindowSDL *)m_system->getWindowManager()->getActiveWindow();
+  AnchorWindowSDL *win = (AnchorWindowSDL *)m_system->getWindowManager()->getActiveWindow();
 
   if (win)
   {
@@ -418,10 +418,10 @@ eAnchorStatus ANCHOR_DisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 displa
 
 static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
 
   // Set OS mouse position if requested (rarely used, only when
-  // ANCHORConfigFlags_NavEnableSetMousePos is enabled by user)
+  // AnchorConfigFlags_NavEnableSetMousePos is enabled by user)
   if (io.WantSetMousePos)
     SDL_WarpMouseInWindow(g_Window, (int)io.MousePos[0], (int)io.MousePos[1]);
   else
@@ -470,12 +470,12 @@ static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 
 static void ANCHOR_ImplSDL2_UpdateMouseCursor()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
-  if (io.ConfigFlags & ANCHORConfigFlags_NoMouseCursorChange)
+  AnchorIO &io = ANCHOR::GetIO();
+  if (io.ConfigFlags & AnchorConfigFlags_NoMouseCursorChange)
     return;
 
-  ANCHOR_MouseCursor anchor_cursor = ANCHOR::GetMouseCursor();
-  if (io.MouseDrawCursor || anchor_cursor == ANCHOR_MouseCursor_None)
+  AnchorMouseCursor anchor_cursor = ANCHOR::GetMouseCursor();
+  if (io.MouseDrawCursor || anchor_cursor == AnchorMouseCursor_None)
   {
     // Hide OS mouse cursor if anchor is drawing it or if it wants no cursor
     SDL_ShowCursor(SDL_FALSE);
@@ -484,23 +484,23 @@ static void ANCHOR_ImplSDL2_UpdateMouseCursor()
   {
     // Show OS mouse cursor
     SDL_SetCursor(g_MouseCursors[anchor_cursor] ? g_MouseCursors[anchor_cursor] :
-                                                  g_MouseCursors[ANCHOR_MouseCursor_Arrow]);
+                                                  g_MouseCursors[AnchorMouseCursor_Arrow]);
     SDL_ShowCursor(SDL_TRUE);
   }
 }
 
 static void ANCHOR_ImplSDL2_UpdateGamepads()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   memset(io.NavInputs, 0, sizeof(io.NavInputs));
-  if ((io.ConfigFlags & ANCHORConfigFlags_NavEnableGamepad) == 0)
+  if ((io.ConfigFlags & AnchorConfigFlags_NavEnableGamepad) == 0)
     return;
 
   // Get gamepad
   SDL_GameController *game_controller = SDL_GameControllerOpen(0);
   if (!game_controller)
   {
-    io.BackendFlags &= ~ANCHORBackendFlags_HasGamepad;
+    io.BackendFlags &= ~AnchorBackendFlags_HasGamepad;
     return;
   }
 
@@ -517,32 +517,32 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
     if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
       io.NavInputs[NAV_NO] = vn; \
   }
-  const int thumb_dead_zone = 8000;                                            // SDL_gamecontroller.h suggests using this value.
-  MAP_BUTTON(ANCHOR_NavInput_Activate, SDL_CONTROLLER_BUTTON_A);               // Cross / A
-  MAP_BUTTON(ANCHOR_NavInput_Cancel, SDL_CONTROLLER_BUTTON_B);                 // Circle / B
-  MAP_BUTTON(ANCHOR_NavInput_Menu, SDL_CONTROLLER_BUTTON_X);                   // Square / X
-  MAP_BUTTON(ANCHOR_NavInput_Input, SDL_CONTROLLER_BUTTON_Y);                  // Triangle / Y
-  MAP_BUTTON(ANCHOR_NavInput_DpadLeft, SDL_CONTROLLER_BUTTON_DPAD_LEFT);       // D-Pad Left
-  MAP_BUTTON(ANCHOR_NavInput_DpadRight, SDL_CONTROLLER_BUTTON_DPAD_RIGHT);     // D-Pad Right
-  MAP_BUTTON(ANCHOR_NavInput_DpadUp, SDL_CONTROLLER_BUTTON_DPAD_UP);           // D-Pad Up
-  MAP_BUTTON(ANCHOR_NavInput_DpadDown, SDL_CONTROLLER_BUTTON_DPAD_DOWN);       // D-Pad Down
-  MAP_BUTTON(ANCHOR_NavInput_FocusPrev, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);   // L1 / LB
-  MAP_BUTTON(ANCHOR_NavInput_FocusNext, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);  // R1 / RB
-  MAP_BUTTON(ANCHOR_NavInput_TweakSlow, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);   // L1 / LB
-  MAP_BUTTON(ANCHOR_NavInput_TweakFast, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);  // R1 / RB
-  MAP_ANALOG(ANCHOR_NavInput_LStickLeft, SDL_CONTROLLER_AXIS_LEFTX, -thumb_dead_zone, -32768);
-  MAP_ANALOG(ANCHOR_NavInput_LStickRight, SDL_CONTROLLER_AXIS_LEFTX, +thumb_dead_zone, +32767);
-  MAP_ANALOG(ANCHOR_NavInput_LStickUp, SDL_CONTROLLER_AXIS_LEFTY, -thumb_dead_zone, -32767);
-  MAP_ANALOG(ANCHOR_NavInput_LStickDown, SDL_CONTROLLER_AXIS_LEFTY, +thumb_dead_zone, +32767);
+  const int thumb_dead_zone = 8000;                                           // SDL_gamecontroller.h suggests using this value.
+  MAP_BUTTON(AnchorNavInput_Activate, SDL_CONTROLLER_BUTTON_A);               // Cross / A
+  MAP_BUTTON(AnchorNavInput_Cancel, SDL_CONTROLLER_BUTTON_B);                 // Circle / B
+  MAP_BUTTON(AnchorNavInput_Menu, SDL_CONTROLLER_BUTTON_X);                   // Square / X
+  MAP_BUTTON(AnchorNavInput_Input, SDL_CONTROLLER_BUTTON_Y);                  // Triangle / Y
+  MAP_BUTTON(AnchorNavInput_DpadLeft, SDL_CONTROLLER_BUTTON_DPAD_LEFT);       // D-Pad Left
+  MAP_BUTTON(AnchorNavInput_DpadRight, SDL_CONTROLLER_BUTTON_DPAD_RIGHT);     // D-Pad Right
+  MAP_BUTTON(AnchorNavInput_DpadUp, SDL_CONTROLLER_BUTTON_DPAD_UP);           // D-Pad Up
+  MAP_BUTTON(AnchorNavInput_DpadDown, SDL_CONTROLLER_BUTTON_DPAD_DOWN);       // D-Pad Down
+  MAP_BUTTON(AnchorNavInput_FocusPrev, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);   // L1 / LB
+  MAP_BUTTON(AnchorNavInput_FocusNext, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);  // R1 / RB
+  MAP_BUTTON(AnchorNavInput_TweakSlow, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);   // L1 / LB
+  MAP_BUTTON(AnchorNavInput_TweakFast, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);  // R1 / RB
+  MAP_ANALOG(AnchorNavInput_LStickLeft, SDL_CONTROLLER_AXIS_LEFTX, -thumb_dead_zone, -32768);
+  MAP_ANALOG(AnchorNavInput_LStickRight, SDL_CONTROLLER_AXIS_LEFTX, +thumb_dead_zone, +32767);
+  MAP_ANALOG(AnchorNavInput_LStickUp, SDL_CONTROLLER_AXIS_LEFTY, -thumb_dead_zone, -32767);
+  MAP_ANALOG(AnchorNavInput_LStickDown, SDL_CONTROLLER_AXIS_LEFTY, +thumb_dead_zone, +32767);
 
-  io.BackendFlags |= ANCHORBackendFlags_HasGamepad;
+  io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 #undef MAP_BUTTON
 #undef MAP_ANALOG
 }
 
-void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
+void AnchorSystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ASSERT(io.Fonts->IsBuilt() &&
                 "Font atlas not built! It is generally built by the renderer backend. Missing "
                 "call to renderer _NewFrame() function? e.g. ANCHOR_ImplOpenGL3_NewFrame().");
@@ -571,19 +571,19 @@ void ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
   ANCHOR_ImplSDL2_UpdateGamepads();
 }
 
-ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
-                                   const char *title,
-                                   const char *icon,
-                                   AnchorS32 left,
-                                   AnchorS32 top,
-                                   AnchorU32 width,
-                                   AnchorU32 height,
-                                   eAnchorWindowState state,
-                                   eAnchorDrawingContextType type,
-                                   const bool stereoVisual,
-                                   const bool exclusive,
-                                   const ANCHOR_ISystemWindow *parentWindow)
-  : ANCHOR_SystemWindow(width, height, state, stereoVisual, exclusive),
+AnchorWindowSDL::AnchorWindowSDL(AnchorSystemSDL *system,
+                                 const char *title,
+                                 const char *icon,
+                                 AnchorS32 left,
+                                 AnchorS32 top,
+                                 AnchorU32 width,
+                                 AnchorU32 height,
+                                 eAnchorWindowState state,
+                                 eAnchorDrawingContextType type,
+                                 const bool stereoVisual,
+                                 const bool exclusive,
+                                 const AnchorISystemWindow *parentWindow)
+  : AnchorSystemWindow(width, height, state, stereoVisual, exclusive),
     m_system(system),
     m_valid_setup(false),
     m_invalid_window(false),
@@ -614,7 +614,7 @@ ANCHOR_WindowSDL::ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
   setIcon(icon);
 }
 
-ANCHOR_WindowSDL::~ANCHOR_WindowSDL()
+AnchorWindowSDL::~AnchorWindowSDL()
 {
   if (m_sdl_custom_cursor)
   {
@@ -819,7 +819,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
 
 static void SetFont()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   io.Fonts->AddFontDefault();
 
   const static std::string exe_path = TfGetPathName(ArchGetExecutablePath());
@@ -974,7 +974,7 @@ static void CleanupVulkanWindow()
     g_PixarVkInstance->GetVulkanInstance(), g_Device, &g_MainWindowData, g_Allocator);
 }
 
-static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, ImDrawData *draw_data)
+static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, AnchorDrawData *draw_data)
 {
   VkResult err;
 
@@ -1072,7 +1072,7 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
   wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount;
 }
 
-void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
+void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
 {
   if (type == ANCHOR_DrawingContextTypeVulkan)
   {
@@ -1108,9 +1108,9 @@ void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Keyboard & Gamepad controls. */
-    ANCHOR_IO &io = ANCHOR::GetIO();
-    io.ConfigFlags |= ANCHORConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad;
+    AnchorIO &io = ANCHOR::GetIO();
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad;
 
     /**
      * Setup Default Kraken theme.
@@ -1122,7 +1122,7 @@ void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
 
     /**
      * Setup Platform/Renderer backends. */
-    ANCHOR_SystemSDL::ANCHOR_ImplSDL2_InitForVulkan(m_sdl_win);
+    AnchorSystemSDL::ANCHOR_ImplSDL2_InitForVulkan(m_sdl_win);
     ANCHOR_ImplVulkan_InitInfo init_info = {};
     init_info.Instance = g_PixarVkInstance->GetVulkanInstance();
     init_info.PhysicalDevice = g_PhysicalDevice;
@@ -1185,10 +1185,10 @@ void ANCHOR_WindowSDL::newDrawingContext(eAnchorDrawingContextType type)
   }
 }
 
-void ANCHOR_WindowSDL::clientToScreen(AnchorS32 inX,
-                                      AnchorS32 inY,
-                                      AnchorS32 &outX,
-                                      AnchorS32 &outY) const
+void AnchorWindowSDL::clientToScreen(AnchorS32 inX,
+                                     AnchorS32 inY,
+                                     AnchorS32 &outX,
+                                     AnchorS32 &outY) const
 {
   /* XXXSDL_WEAK_ABS_COORDS */
   int x_win, y_win;
@@ -1198,13 +1198,13 @@ void ANCHOR_WindowSDL::clientToScreen(AnchorS32 inX,
   outY = inY + y_win;
 }
 
-eAnchorStatus ANCHOR_WindowSDL::setClientSize(AnchorU32 width, AnchorU32 height)
+eAnchorStatus AnchorWindowSDL::setClientSize(AnchorU32 width, AnchorU32 height)
 {
   SDL_SetWindowSize(m_sdl_win, width, height);
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowSDL::getClientBounds(ANCHOR_Rect &bounds) const
+void AnchorWindowSDL::getClientBounds(AnchorRect &bounds) const
 {
   int x, y, w, h;
   SDL_GetWindowSize(m_sdl_win, &w, &h);
@@ -1216,18 +1216,18 @@ void ANCHOR_WindowSDL::getClientBounds(ANCHOR_Rect &bounds) const
   bounds.m_b = y + h;
 }
 
-void ANCHOR_WindowSDL::setTitle(const char *title)
+void AnchorWindowSDL::setTitle(const char *title)
 {
   SDL_SetWindowTitle(m_sdl_win, title);
 }
 
-void ANCHOR_WindowSDL::setIcon(const char *icon)
+void AnchorWindowSDL::setIcon(const char *icon)
 {
   SDL_SetWindowIcon(m_sdl_win, IMG_Load(icon));
 }
 
-ANCHOR_SystemSDL::ANCHOR_SystemSDL()
-  : ANCHOR_System(),
+AnchorSystemSDL::AnchorSystemSDL()
+  : AnchorSystem(),
     m_sdl_window(nullptr)
 {
   /**
@@ -1238,12 +1238,12 @@ ANCHOR_SystemSDL::ANCHOR_SystemSDL()
   }
 }
 
-ANCHOR_SystemSDL::~ANCHOR_SystemSDL()
+AnchorSystemSDL::~AnchorSystemSDL()
 {
   SDL_Quit();
 }
 
-void ANCHOR_SystemSDL::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+void AnchorSystemSDL::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
 {
   SDL_DisplayMode mode;
   SDL_GetCurrentDisplayMode(0, &mode);
@@ -1251,7 +1251,7 @@ void ANCHOR_SystemSDL::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &hei
   height = mode.h;
 }
 
-void ANCHOR_SystemSDL::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+void AnchorSystemSDL::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
 {
   SDL_DisplayMode mode;
   SDL_GetDesktopDisplayMode(0, &mode); /* note, always 0 display */
@@ -1259,7 +1259,7 @@ void ANCHOR_SystemSDL::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &heig
   height = mode.h;
 }
 
-ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
+AnchorISystemWindow *AnchorSystemSDL::createWindow(
   const char *title,
   const char *icon,
   AnchorS32 left,
@@ -1271,29 +1271,29 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
   int vkSettings,
   const bool exclusive,
   const bool /* is_dialog */,
-  const ANCHOR_ISystemWindow *parentWindow)
+  const AnchorISystemWindow *parentWindow)
 {
-  m_sdl_window = new ANCHOR_WindowSDL(this,
-                                      title,
-                                      icon,
-                                      left,
-                                      top,
-                                      width,
-                                      height,
-                                      state,
-                                      type,
-                                      vkSettings,
-                                      exclusive,
-                                      parentWindow);
+  m_sdl_window = new AnchorWindowSDL(this,
+                                     title,
+                                     icon,
+                                     left,
+                                     top,
+                                     width,
+                                     height,
+                                     state,
+                                     type,
+                                     vkSettings,
+                                     exclusive,
+                                     parentWindow);
 
   if (m_sdl_window)
   {
-    if (ANCHOR_WindowStateFullScreen == state)
+    if (AnchorWindowStateFullScreen == state)
     {
       SDL_Window *sdl_win = m_sdl_window->getSDLWindow();
       SDL_DisplayMode mode;
 
-      // static_cast<ANCHOR_DisplayManagerSDL *>(m_displayManager)->getCurrentDisplayModeSDL(mode);
+      // static_cast<AnchorDisplayManagerSDL *>(m_displayManager)->getCurrentDisplayModeSDL(mode);
 
       SDL_SetWindowDisplayMode(sdl_win, &mode);
       SDL_ShowWindow(sdl_win);
@@ -1303,7 +1303,7 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
     if (m_sdl_window->getValid())
     {
       m_windowManager->addWindow(m_sdl_window);
-      pushEvent(new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, m_sdl_window));
+      pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, m_sdl_window));
     }
     else
     {
@@ -1314,27 +1314,27 @@ ANCHOR_ISystemWindow *ANCHOR_SystemSDL::createWindow(
   return m_sdl_window;
 }
 
-bool ANCHOR_WindowSDL::getValid() const
+bool AnchorWindowSDL::getValid() const
 {
-  return ANCHOR_SystemWindow::getValid() && m_valid_setup;
+  return AnchorSystemWindow::getValid() && m_valid_setup;
 }
 
-eAnchorStatus ANCHOR_WindowSDL::setState(eAnchorWindowState state)
+eAnchorStatus AnchorWindowSDL::setState(eAnchorWindowState state)
 {
   switch (state)
   {
-    case ANCHOR_WindowStateNormal:
+    case AnchorWindowStateNormal:
       SDL_SetWindowFullscreen(m_sdl_win, SDL_FALSE);
       SDL_RestoreWindow(m_sdl_win);
       break;
-    case ANCHOR_WindowStateMaximized:
+    case AnchorWindowStateMaximized:
       SDL_SetWindowFullscreen(m_sdl_win, SDL_FALSE);
       SDL_MaximizeWindow(m_sdl_win);
       break;
-    case ANCHOR_WindowStateMinimized:
+    case AnchorWindowStateMinimized:
       SDL_MinimizeWindow(m_sdl_win);
       break;
-    case ANCHOR_WindowStateFullScreen:
+    case AnchorWindowStateFullScreen:
       SDL_SetWindowFullscreen(m_sdl_win, SDL_TRUE);
       break;
     default:
@@ -1344,26 +1344,26 @@ eAnchorStatus ANCHOR_WindowSDL::setState(eAnchorWindowState state)
   return ANCHOR_SUCCESS;
 }
 
-eAnchorWindowState ANCHOR_WindowSDL::getState() const
+eAnchorWindowState AnchorWindowSDL::getState() const
 {
   Uint32 flags = SDL_GetWindowFlags(m_sdl_win);
 
   if (flags & SDL_WINDOW_FULLSCREEN)
-    return ANCHOR_WindowStateFullScreen;
+    return AnchorWindowStateFullScreen;
   else if (flags & SDL_WINDOW_MAXIMIZED)
-    return ANCHOR_WindowStateMaximized;
+    return AnchorWindowStateMaximized;
   else if (flags & SDL_WINDOW_MINIMIZED)
-    return ANCHOR_WindowStateMinimized;
-  return ANCHOR_WindowStateNormal;
+    return AnchorWindowStateMinimized;
+  return AnchorWindowStateNormal;
 }
 
-eAnchorStatus ANCHOR_SystemSDL::init()
+eAnchorStatus AnchorSystemSDL::init()
 {
-  eAnchorStatus success = ANCHOR_System::init();
+  eAnchorStatus success = AnchorSystem::init();
 
   if (success)
   {
-    m_displayManager = new ANCHOR_DisplayManagerSDL(this);
+    m_displayManager = new AnchorDisplayManagerSDL(this);
 
     if (m_displayManager)
     {
@@ -1371,18 +1371,18 @@ eAnchorStatus ANCHOR_SystemSDL::init()
     }
   }
 
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-bool ANCHOR_SystemSDL::generateWindowExposeEvents()
+bool AnchorSystemSDL::generateWindowExposeEvents()
 {
   // TODO
-  // std::vector<ANCHOR_WindowSDL *>::iterator w_start = m_dirty_windows.begin();
-  // std::vector<ANCHOR_WindowSDL *>::const_iterator w_end = m_dirty_windows.end();
+  // std::vector<AnchorWindowSDL *>::iterator w_start = m_dirty_windows.begin();
+  // std::vector<AnchorWindowSDL *>::const_iterator w_end = m_dirty_windows.end();
   // bool anyProcessed = false;
 
   // for (; w_start != w_end; ++w_start) {
-  //   ANCHOR_Event *a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventWindowUpdate, *w_start);
+  //   AnchorEvent *a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventWindowUpdate, *w_start);
 
   //   (*w_start)->validate();
 
@@ -1397,7 +1397,7 @@ bool ANCHOR_SystemSDL::generateWindowExposeEvents()
   return false;
 }
 
-ANCHOR_WindowSDL *ANCHOR_SystemSDL::findAnchorWindow(SDL_Window *sdl_win)
+AnchorWindowSDL *AnchorSystemSDL::findAnchorWindow(SDL_Window *sdl_win)
 {
   if (sdl_win == NULL)
     return NULL;
@@ -1407,14 +1407,14 @@ ANCHOR_WindowSDL *ANCHOR_SystemSDL::findAnchorWindow(SDL_Window *sdl_win)
   // We should always check the window manager's list of windows
   // and only process events on these windows.
 
-  const std::vector<ANCHOR_ISystemWindow *> &win_vec = m_windowManager->getWindows();
+  const std::vector<AnchorISystemWindow *> &win_vec = m_windowManager->getWindows();
 
-  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_it = win_vec.begin();
-  std::vector<ANCHOR_ISystemWindow *>::const_iterator win_end = win_vec.end();
+  std::vector<AnchorISystemWindow *>::const_iterator win_it = win_vec.begin();
+  std::vector<AnchorISystemWindow *>::const_iterator win_end = win_vec.end();
 
   for (; win_it != win_end; ++win_it)
   {
-    ANCHOR_WindowSDL *window = static_cast<ANCHOR_WindowSDL *>(*win_it);
+    AnchorWindowSDL *window = static_cast<AnchorWindowSDL *>(*win_it);
     if (window->getSDLWindow() == sdl_win)
     {
       return window;
@@ -1423,7 +1423,7 @@ ANCHOR_WindowSDL *ANCHOR_SystemSDL::findAnchorWindow(SDL_Window *sdl_win)
   return NULL;
 }
 
-eAnchorStatus ANCHOR_SystemSDL::getModifierKeys(ANCHOR_ModifierKeys &keys) const
+eAnchorStatus AnchorSystemSDL::getModifierKeys(AnchorModifierKeys &keys) const
 {
   SDL_Keymod mod = SDL_GetModState();
 
@@ -1435,10 +1435,10 @@ eAnchorStatus ANCHOR_SystemSDL::getModifierKeys(ANCHOR_ModifierKeys &keys) const
   keys.set(ANCHOR_ModifierKeyRightAlt, (mod & KMOD_RALT) != 0);
   keys.set(ANCHOR_ModifierKeyOS, (mod & (KMOD_LGUI | KMOD_RGUI)) != 0);
 
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_SystemSDL::getButtons(ANCHOR_Buttons &buttons) const
+eAnchorStatus AnchorSystemSDL::getButtons(AnchorButtons &buttons) const
 {
   Uint8 state = SDL_GetMouseState(NULL, NULL);
   buttons.set(ANCHOR_ButtonMaskLeft, (state & SDL_BUTTON_LMASK) != 0);
@@ -1459,19 +1459,19 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
 
   if ((key >= SDL_SCANCODE_A) && (key <= SDL_SCANCODE_Z))
   {
-    type = eAnchorKey(key - SDL_SCANCODE_A + int(ANCHOR_KeyA));
+    type = eAnchorKey(key - SDL_SCANCODE_A + int(AnchorKeyA));
   }
   else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0))
   {
-    type = (key == SDL_SCANCODE_0) ? ANCHOR_Key0 : eAnchorKey(key - SDL_SCANCODE_1 + int(ANCHOR_Key1));
+    type = (key == SDL_SCANCODE_0) ? AnchorKey0 : eAnchorKey(key - SDL_SCANCODE_1 + int(AnchorKey1));
   }
   else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12))
   {
-    type = eAnchorKey(key - SDL_SCANCODE_F1 + int(ANCHOR_KeyF1));
+    type = eAnchorKey(key - SDL_SCANCODE_F1 + int(AnchorKeyF1));
   }
   else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24))
   {
-    type = eAnchorKey(key - SDL_SCANCODE_F13 + int(ANCHOR_KeyF13));
+    type = eAnchorKey(key - SDL_SCANCODE_F13 + int(AnchorKeyF13));
   }
   else
   {
@@ -1479,53 +1479,53 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
     {
       /* TODO SDL_SCANCODE_NONUSBACKSLASH */
 
-      AXMAP(type, SDL_SCANCODE_BACKSPACE, ANCHOR_KeyBackSpace);
-      AXMAP(type, SDL_SCANCODE_TAB, ANCHOR_KeyTab);
-      AXMAP(type, SDL_SCANCODE_RETURN, ANCHOR_KeyEnter);
-      AXMAP(type, SDL_SCANCODE_ESCAPE, ANCHOR_KeyEsc);
-      AXMAP(type, SDL_SCANCODE_SPACE, ANCHOR_KeySpace);
+      AXMAP(type, SDL_SCANCODE_BACKSPACE, AnchorKeyBackSpace);
+      AXMAP(type, SDL_SCANCODE_TAB, AnchorKeyTab);
+      AXMAP(type, SDL_SCANCODE_RETURN, AnchorKeyEnter);
+      AXMAP(type, SDL_SCANCODE_ESCAPE, AnchorKeyEsc);
+      AXMAP(type, SDL_SCANCODE_SPACE, AnchorKeySpace);
 
-      AXMAP(type, SDL_SCANCODE_SEMICOLON, ANCHOR_KeySemicolon);
-      AXMAP(type, SDL_SCANCODE_PERIOD, ANCHOR_KeyPeriod);
-      AXMAP(type, SDL_SCANCODE_COMMA, ANCHOR_KeyComma);
-      AXMAP(type, SDL_SCANCODE_APOSTROPHE, ANCHOR_KeyQuote);
-      AXMAP(type, SDL_SCANCODE_GRAVE, ANCHOR_KeyAccentGrave);
-      AXMAP(type, SDL_SCANCODE_MINUS, ANCHOR_KeyMinus);
-      AXMAP(type, SDL_SCANCODE_EQUALS, ANCHOR_KeyEqual);
+      AXMAP(type, SDL_SCANCODE_SEMICOLON, AnchorKeySemicolon);
+      AXMAP(type, SDL_SCANCODE_PERIOD, AnchorKeyPeriod);
+      AXMAP(type, SDL_SCANCODE_COMMA, AnchorKeyComma);
+      AXMAP(type, SDL_SCANCODE_APOSTROPHE, AnchorKeyQuote);
+      AXMAP(type, SDL_SCANCODE_GRAVE, AnchorKeyAccentGrave);
+      AXMAP(type, SDL_SCANCODE_MINUS, AnchorKeyMinus);
+      AXMAP(type, SDL_SCANCODE_EQUALS, AnchorKeyEqual);
 
-      AXMAP(type, SDL_SCANCODE_SLASH, ANCHOR_KeySlash);
-      AXMAP(type, SDL_SCANCODE_BACKSLASH, ANCHOR_KeyBackslash);
-      AXMAP(type, SDL_SCANCODE_KP_EQUALS, ANCHOR_KeyEqual);
-      AXMAP(type, SDL_SCANCODE_LEFTBRACKET, ANCHOR_KeyLeftBracket);
-      AXMAP(type, SDL_SCANCODE_RIGHTBRACKET, ANCHOR_KeyRightBracket);
-      AXMAP(type, SDL_SCANCODE_PAUSE, ANCHOR_KeyPause);
+      AXMAP(type, SDL_SCANCODE_SLASH, AnchorKeySlash);
+      AXMAP(type, SDL_SCANCODE_BACKSLASH, AnchorKeyBackslash);
+      AXMAP(type, SDL_SCANCODE_KP_EQUALS, AnchorKeyEqual);
+      AXMAP(type, SDL_SCANCODE_LEFTBRACKET, AnchorKeyLeftBracket);
+      AXMAP(type, SDL_SCANCODE_RIGHTBRACKET, AnchorKeyRightBracket);
+      AXMAP(type, SDL_SCANCODE_PAUSE, AnchorKeyPause);
 
-      AXMAP(type, SDL_SCANCODE_LSHIFT, ANCHOR_KeyLeftShift);
-      AXMAP(type, SDL_SCANCODE_RSHIFT, ANCHOR_KeyRightShift);
-      AXMAP(type, SDL_SCANCODE_LCTRL, ANCHOR_KeyLeftControl);
-      AXMAP(type, SDL_SCANCODE_RCTRL, ANCHOR_KeyRightControl);
-      AXMAP(type, SDL_SCANCODE_LALT, ANCHOR_KeyLeftAlt);
-      AXMAP(type, SDL_SCANCODE_RALT, ANCHOR_KeyRightAlt);
-      AXMAP(type, SDL_SCANCODE_LGUI, ANCHOR_KeyOS);
-      AXMAP(type, SDL_SCANCODE_RGUI, ANCHOR_KeyOS);
-      AXMAP(type, SDL_SCANCODE_APPLICATION, ANCHOR_KeyApp);
+      AXMAP(type, SDL_SCANCODE_LSHIFT, AnchorKeyLeftShift);
+      AXMAP(type, SDL_SCANCODE_RSHIFT, AnchorKeyRightShift);
+      AXMAP(type, SDL_SCANCODE_LCTRL, AnchorKeyLeftControl);
+      AXMAP(type, SDL_SCANCODE_RCTRL, AnchorKeyRightControl);
+      AXMAP(type, SDL_SCANCODE_LALT, AnchorKeyLeftAlt);
+      AXMAP(type, SDL_SCANCODE_RALT, AnchorKeyRightAlt);
+      AXMAP(type, SDL_SCANCODE_LGUI, AnchorKeyOS);
+      AXMAP(type, SDL_SCANCODE_RGUI, AnchorKeyOS);
+      AXMAP(type, SDL_SCANCODE_APPLICATION, AnchorKeyApp);
 
-      AXMAP(type, SDL_SCANCODE_INSERT, ANCHOR_KeyInsert);
-      AXMAP(type, SDL_SCANCODE_DELETE, ANCHOR_KeyDelete);
-      AXMAP(type, SDL_SCANCODE_HOME, ANCHOR_KeyHome);
-      AXMAP(type, SDL_SCANCODE_END, ANCHOR_KeyEnd);
-      AXMAP(type, SDL_SCANCODE_PAGEUP, ANCHOR_KeyUpPage);
-      AXMAP(type, SDL_SCANCODE_PAGEDOWN, ANCHOR_KeyDownPage);
+      AXMAP(type, SDL_SCANCODE_INSERT, AnchorKeyInsert);
+      AXMAP(type, SDL_SCANCODE_DELETE, AnchorKeyDelete);
+      AXMAP(type, SDL_SCANCODE_HOME, AnchorKeyHome);
+      AXMAP(type, SDL_SCANCODE_END, AnchorKeyEnd);
+      AXMAP(type, SDL_SCANCODE_PAGEUP, AnchorKeyUpPage);
+      AXMAP(type, SDL_SCANCODE_PAGEDOWN, AnchorKeyDownPage);
 
-      AXMAP(type, SDL_SCANCODE_LEFT, ANCHOR_KeyLeftArrow);
-      AXMAP(type, SDL_SCANCODE_RIGHT, ANCHOR_KeyRightArrow);
-      AXMAP(type, SDL_SCANCODE_UP, ANCHOR_KeyUpArrow);
-      AXMAP(type, SDL_SCANCODE_DOWN, ANCHOR_KeyDownArrow);
+      AXMAP(type, SDL_SCANCODE_LEFT, AnchorKeyLeftArrow);
+      AXMAP(type, SDL_SCANCODE_RIGHT, AnchorKeyRightArrow);
+      AXMAP(type, SDL_SCANCODE_UP, AnchorKeyUpArrow);
+      AXMAP(type, SDL_SCANCODE_DOWN, AnchorKeyDownArrow);
 
-      AXMAP(type, SDL_SCANCODE_CAPSLOCK, ANCHOR_KeyCapsLock);
-      AXMAP(type, SDL_SCANCODE_SCROLLLOCK, ANCHOR_KeyScrollLock);
-      AXMAP(type, SDL_SCANCODE_NUMLOCKCLEAR, ANCHOR_KeyNumLock);
-      AXMAP(type, SDL_SCANCODE_PRINTSCREEN, ANCHOR_KeyPrintScreen);
+      AXMAP(type, SDL_SCANCODE_CAPSLOCK, AnchorKeyCapsLock);
+      AXMAP(type, SDL_SCANCODE_SCROLLLOCK, AnchorKeyScrollLock);
+      AXMAP(type, SDL_SCANCODE_NUMLOCKCLEAR, AnchorKeyNumLock);
+      AXMAP(type, SDL_SCANCODE_PRINTSCREEN, AnchorKeyPrintScreen);
 
       /**
        * Keypad Events ---------------- */
@@ -1535,35 +1535,35 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
        * that aren't supported by ANCHOR, such as:
        * - #SDL_SCANCODE_KP_PERCENT
        * - #SDL_SCANCODE_KP_XOR. */
-      AXMAP(type, SDL_SCANCODE_KP_0, ANCHOR_KeyNumpad0);
-      AXMAP(type, SDL_SCANCODE_KP_1, ANCHOR_KeyNumpad1);
-      AXMAP(type, SDL_SCANCODE_KP_2, ANCHOR_KeyNumpad2);
-      AXMAP(type, SDL_SCANCODE_KP_3, ANCHOR_KeyNumpad3);
-      AXMAP(type, SDL_SCANCODE_KP_4, ANCHOR_KeyNumpad4);
-      AXMAP(type, SDL_SCANCODE_KP_5, ANCHOR_KeyNumpad5);
-      AXMAP(type, SDL_SCANCODE_KP_6, ANCHOR_KeyNumpad6);
-      AXMAP(type, SDL_SCANCODE_KP_7, ANCHOR_KeyNumpad7);
-      AXMAP(type, SDL_SCANCODE_KP_8, ANCHOR_KeyNumpad8);
-      AXMAP(type, SDL_SCANCODE_KP_9, ANCHOR_KeyNumpad9);
-      AXMAP(type, SDL_SCANCODE_KP_PERIOD, ANCHOR_KeyNumpadPeriod);
+      AXMAP(type, SDL_SCANCODE_KP_0, AnchorKeyNumpad0);
+      AXMAP(type, SDL_SCANCODE_KP_1, AnchorKeyNumpad1);
+      AXMAP(type, SDL_SCANCODE_KP_2, AnchorKeyNumpad2);
+      AXMAP(type, SDL_SCANCODE_KP_3, AnchorKeyNumpad3);
+      AXMAP(type, SDL_SCANCODE_KP_4, AnchorKeyNumpad4);
+      AXMAP(type, SDL_SCANCODE_KP_5, AnchorKeyNumpad5);
+      AXMAP(type, SDL_SCANCODE_KP_6, AnchorKeyNumpad6);
+      AXMAP(type, SDL_SCANCODE_KP_7, AnchorKeyNumpad7);
+      AXMAP(type, SDL_SCANCODE_KP_8, AnchorKeyNumpad8);
+      AXMAP(type, SDL_SCANCODE_KP_9, AnchorKeyNumpad9);
+      AXMAP(type, SDL_SCANCODE_KP_PERIOD, AnchorKeyNumpadPeriod);
 
-      AXMAP(type, SDL_SCANCODE_KP_ENTER, ANCHOR_KeyNumpadEnter);
-      AXMAP(type, SDL_SCANCODE_KP_PLUS, ANCHOR_KeyNumpadPlus);
-      AXMAP(type, SDL_SCANCODE_KP_MINUS, ANCHOR_KeyNumpadMinus);
-      AXMAP(type, SDL_SCANCODE_KP_MULTIPLY, ANCHOR_KeyNumpadAsterisk);
-      AXMAP(type, SDL_SCANCODE_KP_DIVIDE, ANCHOR_KeyNumpadSlash);
+      AXMAP(type, SDL_SCANCODE_KP_ENTER, AnchorKeyNumpadEnter);
+      AXMAP(type, SDL_SCANCODE_KP_PLUS, AnchorKeyNumpadPlus);
+      AXMAP(type, SDL_SCANCODE_KP_MINUS, AnchorKeyNumpadMinus);
+      AXMAP(type, SDL_SCANCODE_KP_MULTIPLY, AnchorKeyNumpadAsterisk);
+      AXMAP(type, SDL_SCANCODE_KP_DIVIDE, AnchorKeyNumpadSlash);
 
       /**
        * Media keys in some keyboards and laptops with XFree86/Xorg */
-      AXMAP(type, SDL_SCANCODE_AUDIOPLAY, ANCHOR_KeyMediaPlay);
-      AXMAP(type, SDL_SCANCODE_AUDIOSTOP, ANCHOR_KeyMediaStop);
-      AXMAP(type, SDL_SCANCODE_AUDIOPREV, ANCHOR_KeyMediaFirst);
-      // AXMAP(type,XF86XK_AudioRewind,       ANCHOR_KeyMediaFirst);
-      AXMAP(type, SDL_SCANCODE_AUDIONEXT, ANCHOR_KeyMediaLast);
+      AXMAP(type, SDL_SCANCODE_AUDIOPLAY, AnchorKeyMediaPlay);
+      AXMAP(type, SDL_SCANCODE_AUDIOSTOP, AnchorKeyMediaStop);
+      AXMAP(type, SDL_SCANCODE_AUDIOPREV, AnchorKeyMediaFirst);
+      // AXMAP(type,XF86XK_AudioRewind,       AnchorKeyMediaFirst);
+      AXMAP(type, SDL_SCANCODE_AUDIONEXT, AnchorKeyMediaLast);
 
       default:
         TF_CODING_ERROR("Unknown\n");
-        type = ANCHOR_KeyUnknown;
+        type = AnchorKeyUnknown;
         break;
     }
   }
@@ -1584,35 +1584,35 @@ static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
 }
 
 
-void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
+void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
 {
-  ANCHOR_Event *a_event = NULL;
+  AnchorEvent *a_event = NULL;
 
   switch (sdl_event->type)
   {
     case SDL_WINDOWEVENT: {
       SDL_WindowEvent &sdl_sub_evt = sdl_event->window;
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
 
       switch (sdl_sub_evt.event)
       {
         case SDL_WINDOWEVENT_EXPOSED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowUpdate, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowUpdate, window);
           break;
         case SDL_WINDOWEVENT_RESIZED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, window);
           break;
         case SDL_WINDOWEVENT_MOVED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowMove, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowMove, window);
           break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowActivate, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowActivate, window);
           break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowDeactivate, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowDeactivate, window);
           break;
         case SDL_WINDOWEVENT_CLOSE:
-          a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeWindowClose, window);
+          a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowClose, window);
           break;
       }
 
@@ -1620,15 +1620,15 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
     }
 
     case SDL_QUIT: {
-      ANCHOR_ISystemWindow *window = m_windowManager->getActiveWindow();
-      a_event = new ANCHOR_Event(ANCHOR::GetTime(), ANCHOR_EventTypeQuitRequest, window);
+      AnchorISystemWindow *window = m_windowManager->getActiveWindow();
+      a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeQuitRequest, window);
       break;
     }
 
     case SDL_MOUSEMOTION: {
       SDL_MouseMotionEvent &sdl_sub_evt = sdl_event->motion;
       SDL_Window *sdl_win = SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID);
-      ANCHOR_WindowSDL *window = findAnchorWindow(sdl_win);
+      AnchorWindowSDL *window = findAnchorWindow(sdl_win);
       assert(window != NULL);
 
       int x_win, y_win;
@@ -1637,8 +1637,8 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       AnchorS32 x_root = sdl_sub_evt.x + x_win;
       AnchorS32 y_root = sdl_sub_evt.y + y_win;
       {
-        a_event = new ANCHOR_EventCursor(
-          ANCHOR::GetTime(), ANCHOR_EventTypeCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
+        a_event = new AnchorEventCursor(
+          ANCHOR::GetTime(), AnchorEventTypeCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
       }
       break;
     }
@@ -1646,10 +1646,10 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
     case SDL_MOUSEBUTTONDOWN: {
       SDL_MouseButtonEvent &sdl_sub_evt = sdl_event->button;
       eAnchorButtonMask abmask = ANCHOR_ButtonMaskLeft;
-      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeButtonDown :
-                                                                   ANCHOR_EventTypeButtonUp;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? AnchorEventTypeButtonDown :
+                                                                   AnchorEventTypeButtonUp;
 
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
 
       /* process rest of normal mouse buttons */
@@ -1667,24 +1667,24 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
       else
         break;
 
-      a_event = new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
+      a_event = new AnchorEventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
       break;
     }
     case SDL_MOUSEWHEEL: {
       SDL_MouseWheelEvent &sdl_sub_evt = sdl_event->wheel;
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
-      a_event = new ANCHOR_EventWheel(ANCHOR::GetTime(), window, sdl_sub_evt.y);
+      a_event = new AnchorEventWheel(ANCHOR::GetTime(), window, sdl_sub_evt.y);
       break;
     }
     case SDL_KEYDOWN:
     case SDL_KEYUP: {
       SDL_KeyboardEvent &sdl_sub_evt = sdl_event->key;
       SDL_Keycode sym = sdl_sub_evt.keysym.sym;
-      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? ANCHOR_EventTypeKeyDown :
-                                                                   ANCHOR_EventTypeKeyUp;
+      eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? AnchorEventTypeKeyDown :
+                                                                   AnchorEventTypeKeyUp;
 
-      ANCHOR_WindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
 
       eAnchorKey akey = convertSDLKey(sdl_sub_evt.keysym.scancode);
@@ -1828,7 +1828,7 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
         }
       }
 
-      a_event = new ANCHOR_EventKey(ANCHOR::GetTime(), type, window, akey, sym, NULL, false);
+      a_event = new AnchorEventKey(ANCHOR::GetTime(), type, window, akey, sym, NULL, false);
       break;
     }
   }
@@ -1839,7 +1839,7 @@ void ANCHOR_SystemSDL::processEvent(SDL_Event *sdl_event)
   }
 }
 
-bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
+bool AnchorSystemSDL::processEvents(bool waitForEvent)
 {
   bool anyProcessed = false;
 
@@ -1878,12 +1878,12 @@ bool ANCHOR_SystemSDL::processEvents(bool waitForEvent)
   // }
 
   ANCHOR_ImplVulkan_NewFrame();
-  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_NewFrame(m_sdl_window->getSDLWindow());
+  AnchorSystemSDL::ANCHOR_ImplSDL2_NewFrame(m_sdl_window->getSDLWindow());
   ANCHOR::NewFrame();
   return anyProcessed;
 }
 
-eAnchorStatus ANCHOR_SystemSDL::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
+eAnchorStatus AnchorSystemSDL::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
 {
   int x_win, y_win;
   SDL_Window *win = SDL_GetMouseFocus();
@@ -1898,16 +1898,16 @@ eAnchorStatus ANCHOR_SystemSDL::getCursorPosition(AnchorS32 &x, AnchorS32 &y) co
 }
 
 
-std::string ANCHOR_WindowSDL::getTitle() const
+std::string AnchorWindowSDL::getTitle() const
 {
   return SDL_GetWindowTitle(m_sdl_win);
 }
 
 
-void ANCHOR_WindowSDL::screenToClient(AnchorS32 inX,
-                                      AnchorS32 inY,
-                                      AnchorS32 &outX,
-                                      AnchorS32 &outY) const
+void AnchorWindowSDL::screenToClient(AnchorS32 inX,
+                                     AnchorS32 inY,
+                                     AnchorS32 &outX,
+                                     AnchorS32 &outY) const
 {
   int x_win, y_win;
   SDL_GetWindowPosition(m_sdl_win, &x_win, &y_win);
@@ -1925,10 +1925,10 @@ void ANCHOR_WindowSDL::screenToClient(AnchorS32 inX,
  * on an old NVIDIA GTX 1080Ti (other GPU was
  * not even enabled in Vulkan Device selection). */
 
-eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
+eAnchorStatus AnchorWindowSDL::swapBuffers()
 {
   ANCHOR::Render();
-  ImDrawData *draw_data = ANCHOR::GetDrawData();
+  AnchorDrawData *draw_data = ANCHOR::GetDrawData();
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
   if (!is_minimized)
   {
@@ -1942,7 +1942,7 @@ eAnchorStatus ANCHOR_WindowSDL::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
-AnchorU16 ANCHOR_WindowSDL::getDPIHint()
+AnchorU16 AnchorWindowSDL::getDPIHint()
 {
   int displayIndex = SDL_GetWindowDisplayIndex(m_sdl_win);
   if (displayIndex < 0)
@@ -1959,13 +1959,13 @@ AnchorU16 ANCHOR_WindowSDL::getDPIHint()
   return (int)ddpi;
 }
 
-void ANCHOR_clean_vulkan(ANCHOR_WindowSDL *window /**Todo::VkResult &err*/)
+void ANCHOR_clean_vulkan(AnchorWindowSDL *window /**Todo::VkResult &err*/)
 {
   // err = vkDeviceWaitIdle(g_Device);
   // check_vk_result(err);
   vkDeviceWaitIdle(g_Device);
   ANCHOR_ImplVulkan_Shutdown();
-  ANCHOR_SystemSDL::ANCHOR_ImplSDL2_Shutdown();
+  AnchorSystemSDL::ANCHOR_ImplSDL2_Shutdown();
   ANCHOR::DestroyContext();
 
   CleanupVulkanWindow();

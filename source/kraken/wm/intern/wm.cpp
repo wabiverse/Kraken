@@ -86,15 +86,18 @@ void wm_add_default(Main *kmain, kContext *C)
   CTX_wm_manager_set(C, wm);
   win = wm_window_new(C, wm, NULL, false);
 
-  if(!workspace) {
+  if (!workspace)
+  {
     workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
 
-    if(!layout) {
+    if (!layout)
+    {
       layout = new WorkSpaceLayout();
       layout->name = TfToken("Layout");
     }
 
-    if(!screen) {
+    if (!screen)
+    {
       screen = new kScreen(C, workspace->path.AppendPath(SdfPath("Screen")));
     }
 
@@ -138,7 +141,7 @@ void wm_add_default(Main *kmain, kContext *C)
 
   /**
    * Create default cube scene. */
-  UNI_default_table_scene_data(C);  
+  UNI_default_table_scene_data(C);
 
   /**
    * Save DPI factor, which ANCHOR properly

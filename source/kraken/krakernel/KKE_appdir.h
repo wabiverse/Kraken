@@ -63,7 +63,8 @@ const char *KKE_tempdir_session(void);
 void KKE_tempdir_session_purge(void);
 
 /* folder_id */
-enum {
+enum
+{
   /* general, will find based on user/local/system priority */
   KRAKEN_DATAFILES = 2,
 
@@ -80,7 +81,8 @@ enum {
 };
 
 /* for KKE_appdir_folder_id_version only */
-enum {
+enum
+{
   KRAKEN_RESOURCE_PATH_USER = 0,
   KRAKEN_RESOURCE_PATH_LOCAL = 1,
   KRAKEN_RESOURCE_PATH_SYSTEM = 2,

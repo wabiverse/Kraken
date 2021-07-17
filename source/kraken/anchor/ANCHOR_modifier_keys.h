@@ -16,26 +16,26 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-#pragma once
 
 #include "ANCHOR_api.h"
 
 /**
  * Stores the state of modifier keys.
  * Discriminates between left and right modifier keys. */
-struct ANCHOR_ModifierKeys
+struct AnchorModifierKeys
 {
   /**
    * Constructor. */
-  ANCHOR_ModifierKeys();
+  AnchorModifierKeys();
 
-  ~ANCHOR_ModifierKeys();
+  ~AnchorModifierKeys();
 
   /**
    * Returns the modifier key's key code from a modifier key mask.
@@ -63,7 +63,7 @@ struct ANCHOR_ModifierKeys
    * Determines whether to modifier key states are equal.
    * @param keys: The modifier key state to compare to.
    * @return Indication of equality. */
-  bool equals(const ANCHOR_ModifierKeys &keys) const;
+  bool equals(const AnchorModifierKeys &keys) const;
 
   /**
    * Bitfields that store the appropriate key state. */

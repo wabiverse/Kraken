@@ -45,8 +45,7 @@ void KKE_kraken_plugins_init()
   KLI_pretty_time(TfGetAppLaunchTime(), G.main->launch_time);
 
   TF_MSG("Kraken Awakens | %s", G.main->launch_time);
-  TF_MSG("Pixar Universe | Maelstrom v%s.%s\n", CHARALL(WABI_VERSION_MINOR), 
-                                                CHARALL(WABI_VERSION_PATCH));
+  TF_MSG("Pixar Universe | Maelstrom v%s.%s\n", CHARALL(WABI_VERSION_MINOR), CHARALL(WABI_VERSION_PATCH));
 }
 
 WABI_NAMESPACE_END

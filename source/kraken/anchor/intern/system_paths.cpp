@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -50,13 +50,13 @@ static const char *static_path = PREFIX "/share";
 static const char *static_path = NULL;
 #  endif
 
-ANCHOR_SystemPathsUnix::ANCHOR_SystemPathsUnix()
+AnchorSystemPathsUnix::AnchorSystemPathsUnix()
 {}
 
-ANCHOR_SystemPathsUnix::~ANCHOR_SystemPathsUnix()
+AnchorSystemPathsUnix::~AnchorSystemPathsUnix()
 {}
 
-const AnchorU8 *ANCHOR_SystemPathsUnix::getSystemDir(int, const char *versionstr) const
+const AnchorU8 *AnchorSystemPathsUnix::getSystemDir(int, const char *versionstr) const
 {
   /* no prefix assumes a portable build which only uses bundled scripts */
   if (static_path)
@@ -68,7 +68,7 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getSystemDir(int, const char *versionstr
   return NULL;
 }
 
-const AnchorU8 *ANCHOR_SystemPathsUnix::getUserDir(int version, const char *versionstr) const
+const AnchorU8 *AnchorSystemPathsUnix::getUserDir(int version, const char *versionstr) const
 {
   static string user_path = "";
   static int last_version = 0;
@@ -119,7 +119,7 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserDir(int version, const char *vers
   }
 }
 
-const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
+const AnchorU8 *AnchorSystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
 {
   const char *type_str;
 
@@ -145,7 +145,7 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirT
       break;
     default:
       TF_CODING_ERROR(
-        "ANCHOR_SystemPathsUnix::getUserSpecialDir(): Invalid enum value for type parameter\n");
+        "AnchorSystemPathsUnix::getUserSpecialDir(): Invalid enum value for type parameter\n");
       return NULL;
   }
 
@@ -171,7 +171,7 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirT
   }
   if (pclose(fstream) == -1)
   {
-    perror("ANCHOR_SystemPathsUnix::getUserSpecialDir failed at pclose()");
+    perror("AnchorSystemPathsUnix::getUserSpecialDir failed at pclose()");
     return NULL;
   }
 
@@ -179,41 +179,42 @@ const AnchorU8 *ANCHOR_SystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirT
   return path[0] ? (const AnchorU8 *)path.c_str() : NULL;
 }
 
-const AnchorU8 *ANCHOR_SystemPathsUnix::getBinaryDir() const
+const AnchorU8 *AnchorSystemPathsUnix::getBinaryDir() const
 {
   return NULL;
 }
 
-void ANCHOR_SystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) const
+void AnchorSystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) const
 {
   /* TODO: implement for X11 */
 }
 #elif defined(_WIN32) /* __linux__ */
 
-#ifndef _WIN32_IE
-#  define _WIN32_IE 0x0501
-#endif
-#include "utfconv.h"
-#include <shlobj.h>
+#  ifndef _WIN32_IE
+#    define _WIN32_IE 0x0501
+#  endif
+#  include "utfconv.h"
+#  include <shlobj.h>
 
-ANCHOR_SystemPathsWin32::ANCHOR_SystemPathsWin32()
+AnchorSystemPathsWin32::AnchorSystemPathsWin32()
 {
 }
 
-ANCHOR_SystemPathsWin32::~ANCHOR_SystemPathsWin32()
+AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 {
 }
 
-const AnchorU8 *ANCHOR_SystemPathsWin32::getSystemDir(int, const char *versionstr) const
+const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
   /* 1 utf-16 might translate into 3 utf-8. 2 utf-16 translates into 4 utf-8. */
   static char knownpath[MAX_PATH * 3 + 128] = {0};
   PWSTR knownpath_16 = NULL;
 
   HRESULT hResult = SHGetKnownFolderPath(
-      FOLDERID_ProgramData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
+    FOLDERID_ProgramData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
 
-  if (hResult == S_OK) {
+  if (hResult == S_OK)
+  {
     conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
     CoTaskMemFree(knownpath_16);
     strcat(knownpath, "\\Wabi Animation\\Kraken\\");
@@ -224,15 +225,16 @@ const AnchorU8 *ANCHOR_SystemPathsWin32::getSystemDir(int, const char *versionst
   return NULL;
 }
 
-const AnchorU8 *ANCHOR_SystemPathsWin32::getUserDir(int, const char *versionstr) const
+const AnchorU8 *AnchorSystemPathsWin32::getUserDir(int, const char *versionstr) const
 {
   static char knownpath[MAX_PATH * 3 + 128] = {0};
   PWSTR knownpath_16 = NULL;
 
   HRESULT hResult = SHGetKnownFolderPath(
-      FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
+    FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
 
-  if (hResult == S_OK) {
+  if (hResult == S_OK)
+  {
     conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
     CoTaskMemFree(knownpath_16);
     strcat(knownpath, "\\Wabi Animation\\Kraken\\");
@@ -243,11 +245,12 @@ const AnchorU8 *ANCHOR_SystemPathsWin32::getUserDir(int, const char *versionstr)
   return NULL;
 }
 
-const AnchorU8 *ANCHOR_SystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
+const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
 {
   GUID folderid;
 
-  switch (type) {
+  switch (type)
+  {
     case ANCHOR_UserSpecialDirDesktop:
       folderid = FOLDERID_Desktop;
       break;
@@ -275,7 +278,8 @@ const AnchorU8 *ANCHOR_SystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDir
   PWSTR knownpath_16 = NULL;
   HRESULT hResult = SHGetKnownFolderPath(folderid, KF_FLAG_DEFAULT, NULL, &knownpath_16);
 
-  if (hResult == S_OK) {
+  if (hResult == S_OK)
+  {
     conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
     CoTaskMemFree(knownpath_16);
     return (AnchorU8 *)knownpath;
@@ -285,12 +289,13 @@ const AnchorU8 *ANCHOR_SystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDir
   return NULL;
 }
 
-const AnchorU8 *ANCHOR_SystemPathsWin32::getBinaryDir() const
+const AnchorU8 *AnchorSystemPathsWin32::getBinaryDir() const
 {
   static char fullname[MAX_PATH * 3] = {0};
   wchar_t fullname_16[MAX_PATH * 3];
 
-  if (GetModuleFileNameW(0, fullname_16, MAX_PATH)) {
+  if (GetModuleFileNameW(0, fullname_16, MAX_PATH))
+  {
     conv_utf_16_to_8(fullname_16, fullname, MAX_PATH * 3);
     return (AnchorU8 *)fullname;
   }
@@ -298,7 +303,7 @@ const AnchorU8 *ANCHOR_SystemPathsWin32::getBinaryDir() const
   return NULL;
 }
 
-void ANCHOR_SystemPathsWin32::addToSystemRecentFiles(const char *filename) const
+void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
 {
   /* SHARD_PATH resolves to SHARD_PATHA for non-UNICODE build */
   UTF16_ENCODE(filename);
@@ -309,32 +314,32 @@ void ANCHOR_SystemPathsWin32::addToSystemRecentFiles(const char *filename) const
 #endif /* _WIN32 */
 
 
-ANCHOR_ISystemPaths *ANCHOR_ISystemPaths::m_systemPaths = NULL;
+AnchorISystemPaths *AnchorISystemPaths::m_systemPaths = NULL;
 
-eAnchorStatus ANCHOR_ISystemPaths::create()
+eAnchorStatus AnchorISystemPaths::create()
 {
   eAnchorStatus success;
   if (!m_systemPaths)
   {
 #ifdef WIN32
-    m_systemPaths = new ANCHOR_SystemPathsWin32();
+    m_systemPaths = new AnchorSystemPathsWin32();
 #else
 #  ifdef __APPLE__
-    m_systemPaths = new ANCHOR_SystemPathsCocoa();
+    m_systemPaths = new AnchorSystemPathsCocoa();
 #  else
-    m_systemPaths = new ANCHOR_SystemPathsUnix();
+    m_systemPaths = new AnchorSystemPathsUnix();
 #  endif
 #endif
-    success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+    success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_ISystemPaths::dispose()
+eAnchorStatus AnchorISystemPaths::dispose()
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
   if (m_systemPaths)
@@ -344,12 +349,12 @@ eAnchorStatus ANCHOR_ISystemPaths::dispose()
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-ANCHOR_ISystemPaths *ANCHOR_ISystemPaths::get()
+AnchorISystemPaths *AnchorISystemPaths::get()
 {
   if (!m_systemPaths)
   {
@@ -360,42 +365,43 @@ ANCHOR_ISystemPaths *ANCHOR_ISystemPaths::get()
 
 eAnchorStatus ANCHOR_CreateSystemPaths(void)
 {
-  return ANCHOR_ISystemPaths::create();
+  return AnchorISystemPaths::create();
 }
 
 eAnchorStatus ANCHOR_DisposeSystemPaths(void)
 {
-  return ANCHOR_ISystemPaths::dispose();
+  return AnchorISystemPaths::dispose();
 }
 
 const AnchorU8 *ANCHOR_getSystemDir(int version, const char *versionstr)
 {
-  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  AnchorISystemPaths *systemPaths = AnchorISystemPaths::get();
   return systemPaths ? systemPaths->getSystemDir(version, versionstr) : NULL;
 }
 
 const AnchorU8 *ANCHOR_getUserDir(int version, const char *versionstr)
 {
-  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  AnchorISystemPaths *systemPaths = AnchorISystemPaths::get();
   return systemPaths ? systemPaths->getUserDir(version, versionstr) : NULL; /* shouldn't be NULL */
 }
 
 const AnchorU8 *ANCHOR_getUserSpecialDir(eAnchorUserSpecialDirTypes type)
 {
-  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  AnchorISystemPaths *systemPaths = AnchorISystemPaths::get();
   return systemPaths ? systemPaths->getUserSpecialDir(type) : NULL; /* shouldn't be NULL */
 }
 
 const AnchorU8 *ANCHOR_getBinaryDir()
 {
-  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
+  AnchorISystemPaths *systemPaths = AnchorISystemPaths::get();
   return systemPaths ? systemPaths->getBinaryDir() : NULL; /* shouldn't be NULL */
 }
 
 void ANCHOR_addToSystemRecentFiles(const char *filename)
 {
-  ANCHOR_ISystemPaths *systemPaths = ANCHOR_ISystemPaths::get();
-  if (systemPaths) {
+  AnchorISystemPaths *systemPaths = AnchorISystemPaths::get();
+  if (systemPaths)
+  {
     systemPaths->addToSystemRecentFiles(filename);
   }
 }

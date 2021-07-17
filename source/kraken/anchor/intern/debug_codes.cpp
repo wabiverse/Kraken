@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 

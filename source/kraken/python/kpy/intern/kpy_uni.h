@@ -73,23 +73,27 @@ extern PyTypeObject pyuni_object_Type;
 #define KPy_PropertyUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
 
 #define PYUNI_STRUCT_CHECK_OBJ(obj) \
-  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) \
+  { \
     return NULL; \
   } \
   (void)0
 #define PYUNI_STRUCT_CHECK_INT(obj) \
-  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) \
+  { \
     return -1; \
   } \
   (void)0
 
 #define PYUNI_PROP_CHECK_OBJ(obj) \
-  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) \
+  { \
     return NULL; \
   } \
   (void)0
 #define PYUNI_PROP_CHECK_INT(obj) \
-  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) \
+  { \
     return -1; \
   } \
   (void)0
@@ -97,18 +101,20 @@ extern PyTypeObject pyuni_object_Type;
 #define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_ObjectUNI *)(pyuni))->ptr.type != NULL))
 #define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyUNI *)(pyuni))->ptr.type != NULL))
 
-struct KPy_UniverseDummyPointer {
+struct KPy_UniverseDummyPointer
+{
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 };
 
-struct KPy_ObjectUNI {
+struct KPy_ObjectUNI
+{
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 #ifdef USE_PYUNI_OBJECT_REFERENCE
@@ -124,29 +130,32 @@ struct KPy_ObjectUNI {
 #endif          /* PYUNI_FREE_SUPPORT */
 };
 
-struct KPy_PropertyUNI {
+struct KPy_PropertyUNI
+{
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   PropertyUNI *prop;
 };
 
-struct KPy_CollectionPropertyUNI {
+struct KPy_CollectionPropertyUNI
+{
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
 
   /* collection iterator specific parts */
   CollectionPropertyUNI iter;
 };
 
-struct KPy_UniverseFunction {
+struct KPy_UniverseFunction
+{
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   void *func;

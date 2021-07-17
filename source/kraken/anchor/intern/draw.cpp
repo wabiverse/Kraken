@@ -18,130 +18,105 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-// ANCHOR, v1.84 WIP
-// (drawing and font code)
-
-/*
-
-Index of this file:
-
-// [SECTION] STB libraries implementation
-// [SECTION] Style functions
-// [SECTION] ImDrawList
-// [SECTION] ImDrawListSplitter
-// [SECTION] ImDrawData
-// [SECTION] Helpers ShadeVertsXXX functions
-// [SECTION] AnchorFontConfig
-// [SECTION] AnchorFontAtlas
-// [SECTION] AnchorFontAtlas glyph ranges helpers
-// [SECTION] AnchorFontGlyphRangesBuilder
-// [SECTION] AnchorFont
-// [SECTION] ANCHOR Internal Render Helpers
-// [SECTION] Decompression code
-// [SECTION] Default font data (ProggyClean.ttf)
-
-*/
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include "ANCHOR_api.h"
-#ifndef ANCHOR_DISABLE
 
-#  ifndef ANCHOR_DEFINE_MATH_OPERATORS
-#    define ANCHOR_DEFINE_MATH_OPERATORS
-#  endif
+#ifndef ANCHOR_DEFINE_MATH_OPERATORS
+#  define ANCHOR_DEFINE_MATH_OPERATORS
+#endif
 
-#  include "ANCHOR_internal.h"
-#  ifdef ANCHOR_ENABLE_FREETYPE
-#    include "ANCHOR_freetype.h"
-#  endif
+#include "ANCHOR_internal.h"
+#ifdef ANCHOR_ENABLE_FREETYPE
+#  include "ANCHOR_freetype.h"
+#endif
 
-#  include <stdio.h>  // vsnprintf, sscanf, printf
-#  if !defined(alloca)
-#    if defined(__GLIBC__) || defined(__sun) || defined(__APPLE__) || defined(__NEWLIB__)
-#      include <alloca.h>  // alloca (glibc uses <alloca.h>. Note that Cygwin may have _WIN32 defined, so the order matters here)
-#    elif defined(_WIN32)
-#      include <malloc.h>  // alloca
-#      if !defined(alloca)
-#        define alloca _alloca  // for clang with MS Codegen
-#      endif
-#    else
-#      include <stdlib.h>  // alloca
+#include <stdio.h>  // vsnprintf, sscanf, printf
+#if !defined(alloca)
+#  if defined(__GLIBC__) || defined(__sun) || defined(__APPLE__) || defined(__NEWLIB__)
+#    include <alloca.h>  // alloca (glibc uses <alloca.h>. Note that Cygwin may have _WIN32 defined, so the order matters here)
+#  elif defined(_WIN32)
+#    include <malloc.h>  // alloca
+#    if !defined(alloca)
+#      define alloca _alloca  // for clang with MS Codegen
 #    endif
+#  else
+#    include <stdlib.h>  // alloca
 #  endif
+#endif
 
 // Visual Studio warnings
-#  ifdef _MSC_VER
-#    pragma warning(disable : 4127)   // condition expression is constant
-#    pragma warning(disable : 4505)   // unreferenced local function has been removed (stb stuff)
-#    pragma warning(disable : 4996)   // 'This function or variable may be unsafe': strcpy, strdup, \
+#ifdef _MSC_VER
+#  pragma warning(disable : 4127)   // condition expression is constant
+#  pragma warning(disable : 4505)   // unreferenced local function has been removed (stb stuff)
+#  pragma warning(disable : 4996)   // 'This function or variable may be unsafe': strcpy, strdup, \
                                       // sprintf, vsnprintf, sscanf, fopen
-#    pragma warning(disable : 6255)   // [Static Analyzer] _alloca indicates failure by raising a stack \
+#  pragma warning(disable : 6255)   // [Static Analyzer] _alloca indicates failure by raising a stack \
                                       // overflow exception.  Consider using _malloca instead.
-#    pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator \
+#  pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator \
                                       // 'xxx' on a 4 byte value and then casting the result to a 8 \
                                       // byte value. Cast the value to the wider type before \
                                       // calling operator 'xxx' to avoid overflow(io.2).
-#    pragma warning(disable : 26812)  // [Static Analyzer] The enum type 'xxx' is unscoped. Prefer 'enum \
+#  pragma warning(disable : 26812)  // [Static Analyzer] The enum type 'xxx' is unscoped. Prefer 'enum \
                                       // class' over 'enum' (Enum.3). [MSVC Static Analyzer)
-#  endif
+#endif
 
 // Clang/GCC warnings with -Weverything
-#  if defined(__clang__)
-#    if __has_warning("-Wunknown-warning-option")
-#      pragma clang diagnostic ignored \
-        "-Wunknown-warning-option"  // warning: unknown warning group 'xxx' // not all warnings \
+#if defined(__clang__)
+#  if __has_warning("-Wunknown-warning-option")
+#    pragma clang diagnostic ignored \
+      "-Wunknown-warning-option"  // warning: unknown warning group 'xxx' // not all warnings \
                                     // are known by all Clang versions and they tend to be \
                                     // rename-happy.. so ignoring warnings triggers new warnings \
                                     // on some configuration. Great!
-#    endif
-#    if __has_warning("-Walloca")
-#      pragma clang diagnostic ignored \
-        "-Walloca"  // warning: use of function '__builtin_alloca' is discouraged
-#    endif
-#    pragma clang diagnostic ignored "-Wunknown-pragmas"  // warning: unknown warning group 'xxx'
-#    pragma clang diagnostic ignored "-Wold-style-cast"   // warning: use of old-style cast // yes, \
+#  endif
+#  if __has_warning("-Walloca")
+#    pragma clang diagnostic ignored \
+      "-Walloca"  // warning: use of function '__builtin_alloca' is discouraged
+#  endif
+#  pragma clang diagnostic ignored "-Wunknown-pragmas"  // warning: unknown warning group 'xxx'
+#  pragma clang diagnostic ignored "-Wold-style-cast"   // warning: use of old-style cast // yes, \
                                                           // they are more terse.
-#    pragma clang diagnostic ignored \
-      "-Wfloat-equal"  // warning: comparing floating point with == or != is unsafe // storing \
+#  pragma clang diagnostic ignored \
+    "-Wfloat-equal"  // warning: comparing floating point with == or != is unsafe // storing \
                        // and comparing against same constants ok.
-#    pragma clang diagnostic ignored \
-      "-Wglobal-constructors"                             // warning: declaration requires a global destructor         // \
+#  pragma clang diagnostic ignored \
+    "-Wglobal-constructors"                             // warning: declaration requires a global destructor         // \
                                                           // similar to above, not sure what the exact difference is.
-#    pragma clang diagnostic ignored "-Wsign-conversion"  // warning: implicit conversion changes signedness
-#    pragma clang diagnostic ignored \
-      "-Wzero-as-null-pointer-constant"                     // warning: zero as null pointer constant // some \
+#  pragma clang diagnostic ignored "-Wsign-conversion"  // warning: implicit conversion changes signedness
+#  pragma clang diagnostic ignored \
+    "-Wzero-as-null-pointer-constant"                     // warning: zero as null pointer constant // some \
                                                             // standard header variations use #define NULL 0
-#    pragma clang diagnostic ignored "-Wcomma"              // warning: possible misuse of comma operator here
-#    pragma clang diagnostic ignored "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
-#    pragma clang diagnostic ignored \
-      "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing \
+#  pragma clang diagnostic ignored "-Wcomma"              // warning: possible misuse of comma operator here
+#  pragma clang diagnostic ignored "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
+#  pragma clang diagnostic ignored \
+    "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing \
                             // argument to function  // using printf() is a misery with this as \
                             // C++ va_arg ellipsis changes float to double.
-#    pragma clang diagnostic ignored \
-      "-Wimplicit-int-float-conversion"  // warning: implicit conversion from 'xxx' to 'float' \
+#  pragma clang diagnostic ignored \
+    "-Wimplicit-int-float-conversion"  // warning: implicit conversion from 'xxx' to 'float' \
                                          // may lose precision
-#  elif defined(__GNUC__)
-#    pragma GCC diagnostic ignored \
-      "-Wpragmas"                                        // warning: unknown option after '#pragma GCC diagnostic' kind
-#    pragma GCC diagnostic ignored "-Wunused-function"   // warning: 'xxxx' defined but not used
-#    pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to \
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic ignored \
+    "-Wpragmas"                                        // warning: unknown option after '#pragma GCC diagnostic' kind
+#  pragma GCC diagnostic ignored "-Wunused-function"   // warning: 'xxxx' defined but not used
+#  pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to \
                                                          // 'double' when passing argument to function
-#    pragma GCC diagnostic ignored \
-      "-Wconversion"                                    // warning: conversion to 'xxxx' from 'xxxx' may alter its value
-#    pragma GCC diagnostic ignored "-Wstack-protector"  // warning: stack protector not protecting local \
+#  pragma GCC diagnostic ignored \
+    "-Wconversion"                                    // warning: conversion to 'xxxx' from 'xxxx' may alter its value
+#  pragma GCC diagnostic ignored "-Wstack-protector"  // warning: stack protector not protecting local \
                                                         // variables: variable length buffer
-#    pragma GCC diagnostic ignored \
-      "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
+#  pragma GCC diagnostic ignored \
+    "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
                            // of type 'xxxx' with no trivial copy-assignment; use assignment or \
                            // value-initialization instead
-#  endif
+#endif
 
 //-------------------------------------------------------------------------
 // [SECTION] STB libraries implementation
@@ -154,107 +129,107 @@ Index of this file:
 //#define ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
 //#define ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 
-#  ifdef ANCHOR_STB_NAMESPACE
+#ifdef ANCHOR_STB_NAMESPACE
 namespace ANCHOR_STB_NAMESPACE
 {
-#  endif
+#endif
 
-#  ifdef _MSC_VER
-#    pragma warning(push)
-#    pragma warning(disable : 4456)   // declaration of 'xx' hides previous local declaration
-#    pragma warning(disable : 6011)   // (stb_rectpack) Dereferencing NULL pointer 'cur->next'.
-#    pragma warning(disable : 6385)   // (stb_truetype) Reading invalid data from 'buffer':  the readable size \
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable : 4456)   // declaration of 'xx' hides previous local declaration
+#  pragma warning(disable : 6011)   // (stb_rectpack) Dereferencing NULL pointer 'cur->next'.
+#  pragma warning(disable : 6385)   // (stb_truetype) Reading invalid data from 'buffer':  the readable size \
                                       // is '_Old_3`kernel_width' bytes, but '3' bytes may be read.
-#    pragma warning(disable : 28182)  // (stb_rectpack) Dereferencing NULL pointer. 'cur' contains \
+#  pragma warning(disable : 28182)  // (stb_rectpack) Dereferencing NULL pointer. 'cur' contains \
                                       // the same NULL value as 'cur->next' did.
-#  endif
+#endif
 
-#  if defined(__clang__)
-#    pragma clang diagnostic push
-#    pragma clang diagnostic ignored "-Wunused-function"
-#    pragma clang diagnostic ignored "-Wmissing-prototypes"
-#    pragma clang diagnostic ignored "-Wimplicit-fallthrough"
-#    pragma clang diagnostic ignored \
-      "-Wcast-qual"  // warning: cast from 'const xxxx *' to 'xxx *' drops const qualifier
-#  endif
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wunused-function"
+#  pragma clang diagnostic ignored "-Wmissing-prototypes"
+#  pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#  pragma clang diagnostic ignored \
+    "-Wcast-qual"  // warning: cast from 'const xxxx *' to 'xxx *' drops const qualifier
+#endif
 
-#  if defined(__GNUC__)
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wtype-limits"  // warning: comparison is always true due to \
+#if defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wtype-limits"  // warning: comparison is always true due to \
                                                     // limited range of data type [-Wtype-limits]
-#    pragma GCC diagnostic ignored "-Wcast-qual"    // warning: cast from type 'const xxxx *' to type \
+#  pragma GCC diagnostic ignored "-Wcast-qual"    // warning: cast from type 'const xxxx *' to type \
                                                     // 'xxxx *' casts away qualifiers
-#  endif
+#endif
 
-#  ifndef STB_RECT_PACK_IMPLEMENTATION                   // in case the user already have an implementation in the \
+#ifndef STB_RECT_PACK_IMPLEMENTATION                   // in case the user already have an implementation in the \
                                                          // _same_ compilation unit (e.g. unity builds)
-#    ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION  // in case the user already have an \
+#  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION  // in case the user already have an \
                                                          // implementation in another compilation \
                                                          // unit
-#      define STBRP_STATIC
-#      define STBRP_ASSERT(x) \
+#    define STBRP_STATIC
+#    define STBRP_ASSERT(x) \
+      do \
+      { \
+        ANCHOR_ASSERT(x); \
+      } while (0)
+#    define STBRP_SORT ImQsort
+#    define STB_RECT_PACK_IMPLEMENTATION
+#  endif
+#  ifdef ANCHOR_STB_RECT_PACK_FILENAME
+#    include ANCHOR_STB_RECT_PACK_FILENAME
+#  else
+#    include "ANCHOR_rectpack.h"
+#  endif
+#endif
+
+#ifdef ANCHOR_ENABLE_STB_TRUETYPE
+#  ifndef STB_TRUETYPE_IMPLEMENTATION                   // in case the user already have an implementation in the \
+                                                          // _same_ compilation unit (e.g. unity builds)
+#    ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION  // in case the user already have an \
+                                                          // implementation in another compilation \
+                                                          // unit
+#      define STBTT_malloc(x, u) ((void)(u), IM_ALLOC(x))
+#      define STBTT_free(x, u) ((void)(u), IM_FREE(x))
+#      define STBTT_assert(x) \
         do \
         { \
           ANCHOR_ASSERT(x); \
         } while (0)
-#      define STBRP_SORT ImQsort
-#      define STB_RECT_PACK_IMPLEMENTATION
-#    endif
-#    ifdef ANCHOR_STB_RECT_PACK_FILENAME
-#      include ANCHOR_STB_RECT_PACK_FILENAME
+#      define STBTT_fmod(x, y) AnchorFmod(x, y)
+#      define STBTT_sqrt(x) AnchorSqrt(x)
+#      define STBTT_pow(x, y) AnchorPow(x, y)
+#      define STBTT_fabs(x) AnchorFabs(x)
+#      define STBTT_ifloor(x) ((int)AnchorFloorSigned(x))
+#      define STBTT_iceil(x) ((int)ImCeil(x))
+#      define STBTT_STATIC
+#      define STB_TRUETYPE_IMPLEMENTATION
 #    else
-#      include "ANCHOR_rectpack.h"
+#      define STBTT_DEF extern
+#    endif
+#    ifdef ANCHOR_STB_TRUETYPE_FILENAME
+#      include ANCHOR_STB_TRUETYPE_FILENAME
+#    else
+#      include "ANCHOR_truetype.h"
 #    endif
 #  endif
+#endif  // ANCHOR_ENABLE_STB_TRUETYPE
 
-#  ifdef ANCHOR_ENABLE_STB_TRUETYPE
-#    ifndef STB_TRUETYPE_IMPLEMENTATION                   // in case the user already have an implementation in the \
-                                                          // _same_ compilation unit (e.g. unity builds)
-#      ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION  // in case the user already have an \
-                                                          // implementation in another compilation \
-                                                          // unit
-#        define STBTT_malloc(x, u) ((void)(u), IM_ALLOC(x))
-#        define STBTT_free(x, u) ((void)(u), IM_FREE(x))
-#        define STBTT_assert(x) \
-          do \
-          { \
-            ANCHOR_ASSERT(x); \
-          } while (0)
-#        define STBTT_fmod(x, y) ImFmod(x, y)
-#        define STBTT_sqrt(x) ImSqrt(x)
-#        define STBTT_pow(x, y) ImPow(x, y)
-#        define STBTT_fabs(x) ImFabs(x)
-#        define STBTT_ifloor(x) ((int)ImFloorSigned(x))
-#        define STBTT_iceil(x) ((int)ImCeil(x))
-#        define STBTT_STATIC
-#        define STB_TRUETYPE_IMPLEMENTATION
-#      else
-#        define STBTT_DEF extern
-#      endif
-#      ifdef ANCHOR_STB_TRUETYPE_FILENAME
-#        include ANCHOR_STB_TRUETYPE_FILENAME
-#      else
-#        include "ANCHOR_truetype.h"
-#      endif
-#    endif
-#  endif  // ANCHOR_ENABLE_STB_TRUETYPE
+#if defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 
-#  if defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#  endif
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#endif
 
-#  if defined(__clang__)
-#    pragma clang diagnostic pop
-#  endif
+#if defined(_MSC_VER)
+#  pragma warning(pop)
+#endif
 
-#  if defined(_MSC_VER)
-#    pragma warning(pop)
-#  endif
-
-#  ifdef ANCHOR_STB_NAMESPACE
+#ifdef ANCHOR_STB_NAMESPACE
 }  // namespace ImStb
 using namespace ANCHOR_STB_NAMESPACE;
-#  endif
+#endif
 
 WABI_NAMESPACE_USING
 
@@ -262,210 +237,210 @@ WABI_NAMESPACE_USING
 // [SECTION] Style functions
 //-----------------------------------------------------------------------------
 
-void ANCHOR::StyleColorsDark(ANCHOR_Style *dst)
+void ANCHOR::StyleColorsDark(AnchorStyle *dst)
 {
-  ANCHOR_Style *style = dst ? dst : &ANCHOR::GetStyle();
+  AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
   GfVec4f *colors = style->Colors;
 
-  colors[ANCHOR_Col_Text] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[ANCHOR_Col_TextDisabled] = GfVec4f(0.50f, 0.50f, 0.50f, 1.00f);
-  colors[ANCHOR_Col_WindowBg] = GfVec4f(0.06f, 0.06f, 0.06f, 0.94f);
-  colors[ANCHOR_Col_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_PopupBg] = GfVec4f(0.08f, 0.08f, 0.08f, 0.94f);
-  colors[ANCHOR_Col_Border] = GfVec4f(0.43f, 0.43f, 0.50f, 0.50f);
-  colors[ANCHOR_Col_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_FrameBg] = GfVec4f(0.16f, 0.29f, 0.48f, 0.54f);
-  colors[ANCHOR_Col_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[ANCHOR_Col_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[ANCHOR_Col_TitleBg] = GfVec4f(0.04f, 0.04f, 0.04f, 1.00f);
-  colors[ANCHOR_Col_TitleBgActive] = GfVec4f(0.16f, 0.29f, 0.48f, 1.00f);
-  colors[ANCHOR_Col_TitleBgCollapsed] = GfVec4f(0.00f, 0.00f, 0.00f, 0.51f);
-  colors[ANCHOR_Col_MenuBarBg] = GfVec4f(0.14f, 0.14f, 0.14f, 1.00f);
-  colors[ANCHOR_Col_ScrollbarBg] = GfVec4f(0.02f, 0.02f, 0.02f, 0.53f);
-  colors[ANCHOR_Col_ScrollbarGrab] = GfVec4f(0.31f, 0.31f, 0.31f, 1.00f);
-  colors[ANCHOR_Col_ScrollbarGrabHovered] = GfVec4f(0.41f, 0.41f, 0.41f, 1.00f);
-  colors[ANCHOR_Col_ScrollbarGrabActive] = GfVec4f(0.51f, 0.51f, 0.51f, 1.00f);
-  colors[ANCHOR_Col_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_SliderGrab] = GfVec4f(0.24f, 0.52f, 0.88f, 1.00f);
-  colors[ANCHOR_Col_SliderGrabActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[ANCHOR_Col_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
-  colors[ANCHOR_Col_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
-  colors[ANCHOR_Col_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_Separator] = colors[ANCHOR_Col_Border];
-  colors[ANCHOR_Col_SeparatorHovered] = GfVec4f(0.10f, 0.40f, 0.75f, 0.78f);
-  colors[ANCHOR_Col_SeparatorActive] = GfVec4f(0.10f, 0.40f, 0.75f, 1.00f);
-  colors[ANCHOR_Col_ResizeGrip] = GfVec4f(0.26f, 0.59f, 0.98f, 0.20f);
-  colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
-  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
-  colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
-  colors[ANCHOR_Col_TabActive] = ImLerp(
-    colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
-  colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
-    colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
-  colors[ANCHOR_Col_PlotLines] = GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
-  colors[ANCHOR_Col_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.19f, 0.19f, 0.20f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.35f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.06f);
-  colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
-  colors[ANCHOR_Col_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
-  colors[ANCHOR_Col_NavHighlight] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
-  colors[ANCHOR_Col_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
-  colors[ANCHOR_Col_ModalWindowDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.35f);
+  colors[AnchorCol_Text] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_TextDisabled] = GfVec4f(0.50f, 0.50f, 0.50f, 1.00f);
+  colors[AnchorCol_WindowBg] = GfVec4f(0.06f, 0.06f, 0.06f, 0.94f);
+  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = GfVec4f(0.08f, 0.08f, 0.08f, 0.94f);
+  colors[AnchorCol_Border] = GfVec4f(0.43f, 0.43f, 0.50f, 0.50f);
+  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = GfVec4f(0.16f, 0.29f, 0.48f, 0.54f);
+  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_TitleBg] = GfVec4f(0.04f, 0.04f, 0.04f, 1.00f);
+  colors[AnchorCol_TitleBgActive] = GfVec4f(0.16f, 0.29f, 0.48f, 1.00f);
+  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(0.00f, 0.00f, 0.00f, 0.51f);
+  colors[AnchorCol_MenuBarBg] = GfVec4f(0.14f, 0.14f, 0.14f, 1.00f);
+  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.02f, 0.02f, 0.02f, 0.53f);
+  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.31f, 0.31f, 0.31f, 1.00f);
+  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.41f, 0.41f, 0.41f, 1.00f);
+  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.51f, 0.51f, 0.51f, 1.00f);
+  colors[AnchorCol_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_SliderGrab] = GfVec4f(0.24f, 0.52f, 0.88f, 1.00f);
+  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
+  colors[AnchorCol_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
+  colors[AnchorCol_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
+  colors[AnchorCol_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Separator] = colors[AnchorCol_Border];
+  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.10f, 0.40f, 0.75f, 0.78f);
+  colors[AnchorCol_SeparatorActive] = GfVec4f(0.10f, 0.40f, 0.75f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = GfVec4f(0.26f, 0.59f, 0.98f, 0.20f);
+  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.80f);
+  colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
+  colors[AnchorCol_TabActive] = AnchorLerp(
+    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
+    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_PlotLines] = GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.19f, 0.19f, 0.20f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.35f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableBorderLight] = GfVec4f(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.06f);
+  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
+  colors[AnchorCol_NavHighlight] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
-void ANCHOR::StyleColorsDefault(ANCHOR_Style *dst)
+void ANCHOR::StyleColorsDefault(AnchorStyle *dst)
 {
-  ANCHOR_Style *style = dst ? dst : &ANCHOR::GetStyle();
+  AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
   GfVec4f *colors = style->Colors;
 
-  colors[ANCHOR_Col_Text] = GfVec4f(0.90f, 0.90f, 0.90f, 1.00f);
-  colors[ANCHOR_Col_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
-  colors[ANCHOR_Col_WindowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.85f);
-  colors[ANCHOR_Col_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_PopupBg] = GfVec4f(0.11f, 0.11f, 0.14f, 0.92f);
-  colors[ANCHOR_Col_Border] = GfVec4f(0.50f, 0.50f, 0.50f, 0.50f);
-  colors[ANCHOR_Col_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_FrameBg] = GfVec4f(0.43f, 0.43f, 0.43f, 0.39f);
-  colors[ANCHOR_Col_FrameBgHovered] = GfVec4f(0.47f, 0.47f, 0.69f, 0.40f);
-  colors[ANCHOR_Col_FrameBgActive] = GfVec4f(0.42f, 0.41f, 0.64f, 0.69f);
-  colors[ANCHOR_Col_TitleBg] = GfVec4f(0.27f, 0.27f, 0.54f, 0.83f);
-  colors[ANCHOR_Col_TitleBgActive] = GfVec4f(0.32f, 0.32f, 0.63f, 0.87f);
-  colors[ANCHOR_Col_TitleBgCollapsed] = GfVec4f(0.40f, 0.40f, 0.80f, 0.20f);
-  colors[ANCHOR_Col_MenuBarBg] = GfVec4f(0.40f, 0.40f, 0.55f, 0.80f);
-  colors[ANCHOR_Col_ScrollbarBg] = GfVec4f(0.20f, 0.25f, 0.30f, 0.60f);
-  colors[ANCHOR_Col_ScrollbarGrab] = GfVec4f(0.40f, 0.40f, 0.80f, 0.30f);
-  colors[ANCHOR_Col_ScrollbarGrabHovered] = GfVec4f(0.40f, 0.40f, 0.80f, 0.40f);
-  colors[ANCHOR_Col_ScrollbarGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
-  colors[ANCHOR_Col_CheckMark] = GfVec4f(0.90f, 0.90f, 0.90f, 0.50f);
-  colors[ANCHOR_Col_SliderGrab] = GfVec4f(1.00f, 1.00f, 1.00f, 0.30f);
-  colors[ANCHOR_Col_SliderGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
-  colors[ANCHOR_Col_Button] = GfVec4f(0.35f, 0.40f, 0.61f, 0.62f);
-  colors[ANCHOR_Col_ButtonHovered] = GfVec4f(0.40f, 0.48f, 0.71f, 0.79f);
-  colors[ANCHOR_Col_ButtonActive] = GfVec4f(0.46f, 0.54f, 0.80f, 1.00f);
-  colors[ANCHOR_Col_Header] = GfVec4f(0.40f, 0.40f, 0.90f, 0.45f);
-  colors[ANCHOR_Col_HeaderHovered] = GfVec4f(0.45f, 0.45f, 0.90f, 0.80f);
-  colors[ANCHOR_Col_HeaderActive] = GfVec4f(0.53f, 0.53f, 0.87f, 0.80f);
-  colors[ANCHOR_Col_Separator] = GfVec4f(0.50f, 0.50f, 0.50f, 0.60f);
-  colors[ANCHOR_Col_SeparatorHovered] = GfVec4f(0.60f, 0.60f, 0.70f, 1.00f);
-  colors[ANCHOR_Col_SeparatorActive] = GfVec4f(0.70f, 0.70f, 0.90f, 1.00f);
-  colors[ANCHOR_Col_ResizeGrip] = GfVec4f(1.00f, 1.00f, 1.00f, 0.10f);
-  colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.78f, 0.82f, 1.00f, 0.60f);
-  colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
-  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.80f);
-  colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
-  colors[ANCHOR_Col_TabActive] = ImLerp(
-    colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
-  colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
-    colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
-  colors[ANCHOR_Col_PlotLines] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[ANCHOR_Col_PlotLinesHovered] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.27f, 0.27f, 0.38f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.45f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.26f, 0.26f, 0.28f, 1.00f);   // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.07f);
-  colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.00f, 0.00f, 1.00f, 0.35f);
-  colors[ANCHOR_Col_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
-  colors[ANCHOR_Col_NavHighlight] = colors[ANCHOR_Col_HeaderHovered];
-  colors[ANCHOR_Col_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
-  colors[ANCHOR_Col_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
-  colors[ANCHOR_Col_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
+  colors[AnchorCol_Text] = GfVec4f(0.90f, 0.90f, 0.90f, 1.00f);
+  colors[AnchorCol_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
+  colors[AnchorCol_WindowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.85f);
+  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = GfVec4f(0.11f, 0.11f, 0.14f, 0.92f);
+  colors[AnchorCol_Border] = GfVec4f(0.50f, 0.50f, 0.50f, 0.50f);
+  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = GfVec4f(0.43f, 0.43f, 0.43f, 0.39f);
+  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.47f, 0.47f, 0.69f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = GfVec4f(0.42f, 0.41f, 0.64f, 0.69f);
+  colors[AnchorCol_TitleBg] = GfVec4f(0.27f, 0.27f, 0.54f, 0.83f);
+  colors[AnchorCol_TitleBgActive] = GfVec4f(0.32f, 0.32f, 0.63f, 0.87f);
+  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(0.40f, 0.40f, 0.80f, 0.20f);
+  colors[AnchorCol_MenuBarBg] = GfVec4f(0.40f, 0.40f, 0.55f, 0.80f);
+  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.20f, 0.25f, 0.30f, 0.60f);
+  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.40f, 0.40f, 0.80f, 0.30f);
+  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.40f, 0.40f, 0.80f, 0.40f);
+  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
+  colors[AnchorCol_CheckMark] = GfVec4f(0.90f, 0.90f, 0.90f, 0.50f);
+  colors[AnchorCol_SliderGrab] = GfVec4f(1.00f, 1.00f, 1.00f, 0.30f);
+  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
+  colors[AnchorCol_Button] = GfVec4f(0.35f, 0.40f, 0.61f, 0.62f);
+  colors[AnchorCol_ButtonHovered] = GfVec4f(0.40f, 0.48f, 0.71f, 0.79f);
+  colors[AnchorCol_ButtonActive] = GfVec4f(0.46f, 0.54f, 0.80f, 1.00f);
+  colors[AnchorCol_Header] = GfVec4f(0.40f, 0.40f, 0.90f, 0.45f);
+  colors[AnchorCol_HeaderHovered] = GfVec4f(0.45f, 0.45f, 0.90f, 0.80f);
+  colors[AnchorCol_HeaderActive] = GfVec4f(0.53f, 0.53f, 0.87f, 0.80f);
+  colors[AnchorCol_Separator] = GfVec4f(0.50f, 0.50f, 0.50f, 0.60f);
+  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.60f, 0.60f, 0.70f, 1.00f);
+  colors[AnchorCol_SeparatorActive] = GfVec4f(0.70f, 0.70f, 0.90f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = GfVec4f(1.00f, 1.00f, 1.00f, 0.10f);
+  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.78f, 0.82f, 1.00f, 0.60f);
+  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
+  colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.80f);
+  colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
+  colors[AnchorCol_TabActive] = AnchorLerp(
+    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
+    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_PlotLines] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.27f, 0.27f, 0.38f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.31f, 0.31f, 0.45f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableBorderLight] = GfVec4f(0.26f, 0.26f, 0.28f, 1.00f);   // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.07f);
+  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.00f, 0.00f, 1.00f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
+  colors[AnchorCol_NavHighlight] = colors[AnchorCol_HeaderHovered];
+  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
-void ANCHOR::StyleColorsLight(ANCHOR_Style *dst)
+void ANCHOR::StyleColorsLight(AnchorStyle *dst)
 {
-  ANCHOR_Style *style = dst ? dst : &ANCHOR::GetStyle();
+  AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
   GfVec4f *colors = style->Colors;
 
-  colors[ANCHOR_Col_Text] = GfVec4f(0.00f, 0.00f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
-  colors[ANCHOR_Col_WindowBg] = GfVec4f(0.94f, 0.94f, 0.94f, 1.00f);
-  colors[ANCHOR_Col_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_PopupBg] = GfVec4f(1.00f, 1.00f, 1.00f, 0.98f);
-  colors[ANCHOR_Col_Border] = GfVec4f(0.00f, 0.00f, 0.00f, 0.30f);
-  colors[ANCHOR_Col_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_FrameBg] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[ANCHOR_Col_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[ANCHOR_Col_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[ANCHOR_Col_TitleBg] = GfVec4f(0.96f, 0.96f, 0.96f, 1.00f);
-  colors[ANCHOR_Col_TitleBgActive] = GfVec4f(0.82f, 0.82f, 0.82f, 1.00f);
-  colors[ANCHOR_Col_TitleBgCollapsed] = GfVec4f(1.00f, 1.00f, 1.00f, 0.51f);
-  colors[ANCHOR_Col_MenuBarBg] = GfVec4f(0.86f, 0.86f, 0.86f, 1.00f);
-  colors[ANCHOR_Col_ScrollbarBg] = GfVec4f(0.98f, 0.98f, 0.98f, 0.53f);
-  colors[ANCHOR_Col_ScrollbarGrab] = GfVec4f(0.69f, 0.69f, 0.69f, 0.80f);
-  colors[ANCHOR_Col_ScrollbarGrabHovered] = GfVec4f(0.49f, 0.49f, 0.49f, 0.80f);
-  colors[ANCHOR_Col_ScrollbarGrabActive] = GfVec4f(0.49f, 0.49f, 0.49f, 1.00f);
-  colors[ANCHOR_Col_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_SliderGrab] = GfVec4f(0.26f, 0.59f, 0.98f, 0.78f);
-  colors[ANCHOR_Col_SliderGrabActive] = GfVec4f(0.46f, 0.54f, 0.80f, 0.60f);
-  colors[ANCHOR_Col_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[ANCHOR_Col_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
-  colors[ANCHOR_Col_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
-  colors[ANCHOR_Col_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_Separator] = GfVec4f(0.39f, 0.39f, 0.39f, 0.62f);
-  colors[ANCHOR_Col_SeparatorHovered] = GfVec4f(0.14f, 0.44f, 0.80f, 0.78f);
-  colors[ANCHOR_Col_SeparatorActive] = GfVec4f(0.14f, 0.44f, 0.80f, 1.00f);
-  colors[ANCHOR_Col_ResizeGrip] = GfVec4f(0.35f, 0.35f, 0.35f, 0.17f);
-  colors[ANCHOR_Col_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[ANCHOR_Col_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
-  colors[ANCHOR_Col_Tab] = ImLerp(colors[ANCHOR_Col_Header], colors[ANCHOR_Col_TitleBgActive], 0.90f);
-  colors[ANCHOR_Col_TabHovered] = colors[ANCHOR_Col_HeaderHovered];
-  colors[ANCHOR_Col_TabActive] = ImLerp(
-    colors[ANCHOR_Col_HeaderActive], colors[ANCHOR_Col_TitleBgActive], 0.60f);
-  colors[ANCHOR_Col_TabUnfocused] = ImLerp(colors[ANCHOR_Col_Tab], colors[ANCHOR_Col_TitleBg], 0.80f);
-  colors[ANCHOR_Col_TabUnfocusedActive] = ImLerp(
-    colors[ANCHOR_Col_TabActive], colors[ANCHOR_Col_TitleBg], 0.40f);
-  colors[ANCHOR_Col_PlotLines] = GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
-  colors[ANCHOR_Col_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_PlotHistogramHovered] = GfVec4f(1.00f, 0.45f, 0.00f, 1.00f);
-  colors[ANCHOR_Col_TableHeaderBg] = GfVec4f(0.78f, 0.87f, 0.98f, 1.00f);
-  colors[ANCHOR_Col_TableBorderStrong] = GfVec4f(0.57f, 0.57f, 0.64f, 1.00f);  // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableBorderLight] = GfVec4f(0.68f, 0.68f, 0.74f, 1.00f);   // Prefer using Alpha=1.0 here
-  colors[ANCHOR_Col_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[ANCHOR_Col_TableRowBgAlt] = GfVec4f(0.30f, 0.30f, 0.30f, 0.09f);
-  colors[ANCHOR_Col_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
-  colors[ANCHOR_Col_DragDropTarget] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
-  colors[ANCHOR_Col_NavHighlight] = colors[ANCHOR_Col_HeaderHovered];
-  colors[ANCHOR_Col_NavWindowingHighlight] = GfVec4f(0.70f, 0.70f, 0.70f, 0.70f);
-  colors[ANCHOR_Col_NavWindowingDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.20f);
-  colors[ANCHOR_Col_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
+  colors[AnchorCol_Text] = GfVec4f(0.00f, 0.00f, 0.00f, 1.00f);
+  colors[AnchorCol_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
+  colors[AnchorCol_WindowBg] = GfVec4f(0.94f, 0.94f, 0.94f, 1.00f);
+  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = GfVec4f(1.00f, 1.00f, 1.00f, 0.98f);
+  colors[AnchorCol_Border] = GfVec4f(0.00f, 0.00f, 0.00f, 0.30f);
+  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_TitleBg] = GfVec4f(0.96f, 0.96f, 0.96f, 1.00f);
+  colors[AnchorCol_TitleBgActive] = GfVec4f(0.82f, 0.82f, 0.82f, 1.00f);
+  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(1.00f, 1.00f, 1.00f, 0.51f);
+  colors[AnchorCol_MenuBarBg] = GfVec4f(0.86f, 0.86f, 0.86f, 1.00f);
+  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.98f, 0.98f, 0.98f, 0.53f);
+  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.69f, 0.69f, 0.69f, 0.80f);
+  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.49f, 0.49f, 0.49f, 0.80f);
+  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.49f, 0.49f, 0.49f, 1.00f);
+  colors[AnchorCol_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_SliderGrab] = GfVec4f(0.26f, 0.59f, 0.98f, 0.78f);
+  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.46f, 0.54f, 0.80f, 0.60f);
+  colors[AnchorCol_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
+  colors[AnchorCol_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
+  colors[AnchorCol_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
+  colors[AnchorCol_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Separator] = GfVec4f(0.39f, 0.39f, 0.39f, 0.62f);
+  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.14f, 0.44f, 0.80f, 0.78f);
+  colors[AnchorCol_SeparatorActive] = GfVec4f(0.14f, 0.44f, 0.80f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = GfVec4f(0.35f, 0.35f, 0.35f, 0.17f);
+  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.90f);
+  colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
+  colors[AnchorCol_TabActive] = AnchorLerp(
+    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
+    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_PlotLines] = GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.45f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.78f, 0.87f, 0.98f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.57f, 0.57f, 0.64f, 1.00f);  // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableBorderLight] = GfVec4f(0.68f, 0.68f, 0.74f, 1.00f);   // Prefer using Alpha=1.0 here
+  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = GfVec4f(0.30f, 0.30f, 0.30f, 0.09f);
+  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_NavHighlight] = colors[AnchorCol_HeaderHovered];
+  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(0.70f, 0.70f, 0.70f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] ImDrawList
+// [SECTION] AnchorDrawList
 //-----------------------------------------------------------------------------
 
-ImDrawListSharedData::ImDrawListSharedData()
+AnchorDrawListSharedData::AnchorDrawListSharedData()
 {
   memset(this, 0, sizeof(*this));
   for (int i = 0; i < ANCHOR_ARRAYSIZE(ArcFastVtx); i++)
   {
     const float a = ((float)i * 2 * IM_PI) / (float)ANCHOR_ARRAYSIZE(ArcFastVtx);
-    ArcFastVtx[i] = GfVec2f(ImCos(a), ImSin(a));
+    ArcFastVtx[i] = GfVec2f(AnchorCos(a), AnchorSin(a));
   }
-  ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX,
-                                                               CircleSegmentMaxError);
+  ArcFastRadiusCutoff = ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX,
+                                                                   CircleSegmentMaxError);
 }
 
-void ImDrawListSharedData::SetCircleTessellationMaxError(float max_error)
+void AnchorDrawListSharedData::SetCircleTessellationMaxError(float max_error)
 {
   if (CircleSegmentMaxError == max_error)
     return;
@@ -476,21 +451,21 @@ void ImDrawListSharedData::SetCircleTessellationMaxError(float max_error)
   {
     const float radius = (float)i;
     CircleSegmentCounts[i] =
-      (AnchorU8)((i > 0) ? IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, CircleSegmentMaxError) : 0);
+      (AnchorU8)((i > 0) ? ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, CircleSegmentMaxError) : 0);
   }
-  ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX,
-                                                               CircleSegmentMaxError);
+  ArcFastRadiusCutoff = ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX,
+                                                                   CircleSegmentMaxError);
 }
 
 // Initialize before use in a new frame. We always have a command ready in the buffer.
-void ImDrawList::_ResetForNewFrame()
+void AnchorDrawList::_ResetForNewFrame()
 {
-  // Verify that the ImDrawCmd fields we want to memcmp() are contiguous in memory.
+  // Verify that the AnchorDrawCmd fields we want to memcmp() are contiguous in memory.
   // (those should be IM_STATIC_ASSERT() in theory but with our pre C++11 setup the whole check
   // doesn't compile with GCC)
-  ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, ClipRect) == 0);
-  ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, TextureId) == sizeof(GfVec4f));
-  ANCHOR_ASSERT(ANCHOR_OFFSETOF(ImDrawCmd, VtxOffset) == sizeof(GfVec4f) + sizeof(AnchorTextureID));
+  ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, ClipRect) == 0);
+  ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, TextureId) == sizeof(GfVec4f));
+  ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, VtxOffset) == sizeof(GfVec4f) + sizeof(AnchorTextureID));
 
   CmdBuffer.resize(0);
   IdxBuffer.resize(0);
@@ -504,16 +479,16 @@ void ImDrawList::_ResetForNewFrame()
   _TextureIdStack.resize(0);
   _Path.resize(0);
   _Splitter.Clear();
-  CmdBuffer.push_back(ImDrawCmd());
+  CmdBuffer.push_back(AnchorDrawCmd());
   _FringeScale = 1.0f;
 }
 
-void ImDrawList::_ClearFreeMemory()
+void AnchorDrawList::_ClearFreeMemory()
 {
   CmdBuffer.clear();
   IdxBuffer.clear();
   VtxBuffer.clear();
-  Flags = ImDrawListFlags_None;
+  Flags = AnchorDrawListFlags_None;
   _VtxCurrentIdx = 0;
   _VtxWritePtr = NULL;
   _IdxWritePtr = NULL;
@@ -523,9 +498,9 @@ void ImDrawList::_ClearFreeMemory()
   _Splitter.ClearFreeMemory();
 }
 
-ImDrawList *ImDrawList::CloneOutput() const
+AnchorDrawList *AnchorDrawList::CloneOutput() const
 {
-  ImDrawList *dst = IM_NEW(ImDrawList(_Data));
+  AnchorDrawList *dst = IM_NEW(AnchorDrawList(_Data));
   dst->CmdBuffer = CmdBuffer;
   dst->IdxBuffer = IdxBuffer;
   dst->VtxBuffer = VtxBuffer;
@@ -533,10 +508,10 @@ ImDrawList *ImDrawList::CloneOutput() const
   return dst;
 }
 
-void ImDrawList::AddDrawCmd()
+void AnchorDrawList::AddDrawCmd()
 {
-  ImDrawCmd draw_cmd;
-  draw_cmd.ClipRect = _CmdHeader.ClipRect;  // Same as calling ImDrawCmd_HeaderCopy()
+  AnchorDrawCmd draw_cmd;
+  draw_cmd.ClipRect = _CmdHeader.ClipRect;  // Same as calling AnchorDrawCmd_HeaderCopy()
   draw_cmd.TextureId = _CmdHeader.TextureId;
   draw_cmd.VtxOffset = _CmdHeader.VtxOffset;
   draw_cmd.IdxOffset = IdxBuffer.Size;
@@ -547,20 +522,20 @@ void ImDrawList::AddDrawCmd()
 }
 
 // Pop trailing draw command (used before merging or presenting to user)
-// Note that this leaves the ImDrawList in a state unfit for further commands, as most code assume
+// Note that this leaves the AnchorDrawList in a state unfit for further commands, as most code assume
 // that CmdBuffer.Size > 0 && CmdBuffer.back().UserCallback == NULL
-void ImDrawList::_PopUnusedDrawCmd()
+void AnchorDrawList::_PopUnusedDrawCmd()
 {
   if (CmdBuffer.Size == 0)
     return;
-  ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   if (curr_cmd->ElemCount == 0 && curr_cmd->UserCallback == NULL)
     CmdBuffer.pop_back();
 }
 
-void ImDrawList::AddCallback(ImDrawCallback callback, void *callback_data)
+void AnchorDrawList::AddCallback(AnchorDrawCallback callback, void *callback_data)
 {
-  ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   ANCHOR_ASSERT(curr_cmd->UserCallback == NULL);
   if (curr_cmd->ElemCount != 0)
   {
@@ -574,20 +549,20 @@ void ImDrawList::AddCallback(ImDrawCallback callback, void *callback_data)
 }
 
 // Compare ClipRect, TextureId and VtxOffset with a single memcmp()
-#  define ImDrawCmd_HeaderSize (ANCHOR_OFFSETOF(ImDrawCmd, VtxOffset) + sizeof(unsigned int))
-#  define ImDrawCmd_HeaderCompare(CMD_LHS, CMD_RHS) \
-    (memcmp(CMD_LHS, CMD_RHS, ImDrawCmd_HeaderSize))  // Compare ClipRect, TextureId, VtxOffset
-#  define ImDrawCmd_HeaderCopy(CMD_DST, CMD_SRC) \
-    (memcpy(CMD_DST, CMD_SRC, ImDrawCmd_HeaderSize))  // Copy ClipRect, TextureId, VtxOffset
+#define AnchorDrawCmd_HeaderSize (ANCHOR_OFFSETOF(AnchorDrawCmd, VtxOffset) + sizeof(unsigned int))
+#define AnchorDrawCmd_HeaderCompare(CMD_LHS, CMD_RHS) \
+  (memcmp(CMD_LHS, CMD_RHS, AnchorDrawCmd_HeaderSize))  // Compare ClipRect, TextureId, VtxOffset
+#define AnchorDrawCmd_HeaderCopy(CMD_DST, CMD_SRC) \
+  (memcpy(CMD_DST, CMD_SRC, AnchorDrawCmd_HeaderSize))  // Copy ClipRect, TextureId, VtxOffset
 
 // Our scheme may appears a bit unusual, basically we want the most-common calls AddLine AddRect
 // etc. to not have to perform any check so we always have a command ready in the stack. The cost
 // of figuring out if a new command has to be added or if we can merge is paid in those Update**
 // functions only.
-void ImDrawList::_OnChangedClipRect()
+void AnchorDrawList::_OnChangedClipRect()
 {
   // If current command is used with different settings we need to add a new command
-  ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   if (curr_cmd->ElemCount != 0 && memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(GfVec4f)) != 0)
   {
     AddDrawCmd();
@@ -596,9 +571,9 @@ void ImDrawList::_OnChangedClipRect()
   ANCHOR_ASSERT(curr_cmd->UserCallback == NULL);
 
   // Try to merge with previous command if it matches, else use current command
-  ImDrawCmd *prev_cmd = curr_cmd - 1;
+  AnchorDrawCmd *prev_cmd = curr_cmd - 1;
   if (curr_cmd->ElemCount == 0 && CmdBuffer.Size > 1 &&
-      ImDrawCmd_HeaderCompare(&_CmdHeader, prev_cmd) == 0 && prev_cmd->UserCallback == NULL)
+      AnchorDrawCmd_HeaderCompare(&_CmdHeader, prev_cmd) == 0 && prev_cmd->UserCallback == NULL)
   {
     CmdBuffer.pop_back();
     return;
@@ -607,10 +582,10 @@ void ImDrawList::_OnChangedClipRect()
   curr_cmd->ClipRect = _CmdHeader.ClipRect;
 }
 
-void ImDrawList::_OnChangedTextureID()
+void AnchorDrawList::_OnChangedTextureID()
 {
   // If current command is used with different settings we need to add a new command
-  ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   if (curr_cmd->ElemCount != 0 && curr_cmd->TextureId != _CmdHeader.TextureId)
   {
     AddDrawCmd();
@@ -619,9 +594,9 @@ void ImDrawList::_OnChangedTextureID()
   ANCHOR_ASSERT(curr_cmd->UserCallback == NULL);
 
   // Try to merge with previous command if it matches, else use current command
-  ImDrawCmd *prev_cmd = curr_cmd - 1;
+  AnchorDrawCmd *prev_cmd = curr_cmd - 1;
   if (curr_cmd->ElemCount == 0 && CmdBuffer.Size > 1 &&
-      ImDrawCmd_HeaderCompare(&_CmdHeader, prev_cmd) == 0 && prev_cmd->UserCallback == NULL)
+      AnchorDrawCmd_HeaderCompare(&_CmdHeader, prev_cmd) == 0 && prev_cmd->UserCallback == NULL)
   {
     CmdBuffer.pop_back();
     return;
@@ -630,12 +605,12 @@ void ImDrawList::_OnChangedTextureID()
   curr_cmd->TextureId = _CmdHeader.TextureId;
 }
 
-void ImDrawList::_OnChangedVtxOffset()
+void AnchorDrawList::_OnChangedVtxOffset()
 {
   // We don't need to compare curr_cmd->VtxOffset != _CmdHeader.VtxOffset because we know it'll be
   // different at the time we call this.
   _VtxCurrentIdx = 0;
-  ImDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   // ANCHOR_ASSERT(curr_cmd->VtxOffset != _CmdHeader.VtxOffset); // See #3349
   if (curr_cmd->ElemCount != 0)
   {
@@ -646,20 +621,20 @@ void ImDrawList::_OnChangedVtxOffset()
   curr_cmd->VtxOffset = _CmdHeader.VtxOffset;
 }
 
-int ImDrawList::_CalcCircleAutoSegmentCount(float radius) const
+int AnchorDrawList::_CalcCircleAutoSegmentCount(float radius) const
 {
   // Automatic segment count
   const int radius_idx = (int)(radius + 0.999999f);  // ceil to never reduce accuracy
   if (radius_idx < ANCHOR_ARRAYSIZE(_Data->CircleSegmentCounts))
     return _Data->CircleSegmentCounts[radius_idx];  // Use cached value
   else
-    return IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, _Data->CircleSegmentMaxError);
+    return ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, _Data->CircleSegmentMaxError);
 }
 
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side
 // coarse clipping. Prefer using higher-level ANCHOR::PushClipRect() to affect logic (hit-testing
 // and widget culling)
-void ImDrawList::PushClipRect(GfVec2f cr_min, GfVec2f cr_max, bool intersect_with_current_clip_rect)
+void AnchorDrawList::PushClipRect(GfVec2f cr_min, GfVec2f cr_max, bool intersect_with_current_clip_rect)
 {
   GfVec4f cr(cr_min[0], cr_min[1], cr_max[0], cr_max[1]);
   if (intersect_with_current_clip_rect)
@@ -682,13 +657,13 @@ void ImDrawList::PushClipRect(GfVec2f cr_min, GfVec2f cr_max, bool intersect_wit
   _OnChangedClipRect();
 }
 
-void ImDrawList::PushClipRectFullScreen()
+void AnchorDrawList::PushClipRectFullScreen()
 {
   PushClipRect(GfVec2f(_Data->ClipRectFullscreen[0], _Data->ClipRectFullscreen[1]),
                GfVec2f(_Data->ClipRectFullscreen[2], _Data->ClipRectFullscreen[3]));
 }
 
-void ImDrawList::PopClipRect()
+void AnchorDrawList::PopClipRect()
 {
   _ClipRectStack.pop_back();
   _CmdHeader.ClipRect = (_ClipRectStack.Size == 0) ? _Data->ClipRectFullscreen :
@@ -696,14 +671,14 @@ void ImDrawList::PopClipRect()
   _OnChangedClipRect();
 }
 
-void ImDrawList::PushTextureID(AnchorTextureID texture_id)
+void AnchorDrawList::PushTextureID(AnchorTextureID texture_id)
 {
   _TextureIdStack.push_back(texture_id);
   _CmdHeader.TextureId = texture_id;
   _OnChangedTextureID();
 }
 
-void ImDrawList::PopTextureID()
+void AnchorDrawList::PopTextureID()
 {
   _TextureIdStack.pop_back();
   _CmdHeader.TextureId = (_TextureIdStack.Size == 0) ? (AnchorTextureID)NULL :
@@ -715,12 +690,12 @@ void ImDrawList::PopTextureID()
 // You must finish filling your reserved data before calling PrimReserve() again, as it may
 // reallocate or submit the intermediate results. PrimUnreserve() can be used to release unused
 // allocations.
-void ImDrawList::PrimReserve(int idx_count, int vtx_count)
+void AnchorDrawList::PrimReserve(int idx_count, int vtx_count)
 {
   // Large mesh support (when enabled)
   ANCHOR_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
-  if (sizeof(ImDrawIdx) == 2 && (_VtxCurrentIdx + vtx_count >= (1 << 16)) &&
-      (Flags & ImDrawListFlags_AllowVtxOffset))
+  if (sizeof(AnchorDrawIdx) == 2 && (_VtxCurrentIdx + vtx_count >= (1 << 16)) &&
+      (Flags & AnchorDrawListFlags_AllowVtxOffset))
   {
     // FIXME: In theory we should be testing that vtx_count <64k here.
     // In practice, RenderText() relies on reserving ahead for a worst case scenario so it is
@@ -730,7 +705,7 @@ void ImDrawList::PrimReserve(int idx_count, int vtx_count)
     _OnChangedVtxOffset();
   }
 
-  ImDrawCmd *draw_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *draw_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   draw_cmd->ElemCount += idx_count;
 
   int vtx_buffer_old_size = VtxBuffer.Size;
@@ -744,27 +719,27 @@ void ImDrawList::PrimReserve(int idx_count, int vtx_count)
 
 // Release the a number of reserved vertices/indices from the end of the last reservation made with
 // PrimReserve().
-void ImDrawList::PrimUnreserve(int idx_count, int vtx_count)
+void AnchorDrawList::PrimUnreserve(int idx_count, int vtx_count)
 {
   ANCHOR_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
 
-  ImDrawCmd *draw_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+  AnchorDrawCmd *draw_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   draw_cmd->ElemCount -= idx_count;
   VtxBuffer.shrink(VtxBuffer.Size - vtx_count);
   IdxBuffer.shrink(IdxBuffer.Size - idx_count);
 }
 
 // Fully unrolled with inline call to keep our debug builds decently fast.
-void ImDrawList::PrimRect(const GfVec2f &a, const GfVec2f &c, AnchorU32 col)
+void AnchorDrawList::PrimRect(const GfVec2f &a, const GfVec2f &c, AnchorU32 col)
 {
   GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv(_Data->TexUvWhitePixel);
-  ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
+  AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
   _IdxWritePtr[0] = idx;
-  _IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
-  _IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+  _IdxWritePtr[1] = (AnchorDrawIdx)(idx + 1);
+  _IdxWritePtr[2] = (AnchorDrawIdx)(idx + 2);
   _IdxWritePtr[3] = idx;
-  _IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
-  _IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+  _IdxWritePtr[4] = (AnchorDrawIdx)(idx + 2);
+  _IdxWritePtr[5] = (AnchorDrawIdx)(idx + 3);
   _VtxWritePtr[0].pos = a;
   _VtxWritePtr[0].uv = uv;
   _VtxWritePtr[0].col = col;
@@ -782,20 +757,20 @@ void ImDrawList::PrimRect(const GfVec2f &a, const GfVec2f &c, AnchorU32 col)
   _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimRectUV(const GfVec2f &a,
-                            const GfVec2f &c,
-                            const GfVec2f &uv_a,
-                            const GfVec2f &uv_c,
-                            AnchorU32 col)
+void AnchorDrawList::PrimRectUV(const GfVec2f &a,
+                                const GfVec2f &c,
+                                const GfVec2f &uv_a,
+                                const GfVec2f &uv_c,
+                                AnchorU32 col)
 {
   GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv_b(uv_c[0], uv_a[1]), uv_d(uv_a[0], uv_c[1]);
-  ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
+  AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
   _IdxWritePtr[0] = idx;
-  _IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
-  _IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+  _IdxWritePtr[1] = (AnchorDrawIdx)(idx + 1);
+  _IdxWritePtr[2] = (AnchorDrawIdx)(idx + 2);
   _IdxWritePtr[3] = idx;
-  _IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
-  _IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+  _IdxWritePtr[4] = (AnchorDrawIdx)(idx + 2);
+  _IdxWritePtr[5] = (AnchorDrawIdx)(idx + 3);
   _VtxWritePtr[0].pos = a;
   _VtxWritePtr[0].uv = uv_a;
   _VtxWritePtr[0].col = col;
@@ -813,23 +788,23 @@ void ImDrawList::PrimRectUV(const GfVec2f &a,
   _IdxWritePtr += 6;
 }
 
-void ImDrawList::PrimQuadUV(const GfVec2f &a,
-                            const GfVec2f &b,
-                            const GfVec2f &c,
-                            const GfVec2f &d,
-                            const GfVec2f &uv_a,
-                            const GfVec2f &uv_b,
-                            const GfVec2f &uv_c,
-                            const GfVec2f &uv_d,
-                            AnchorU32 col)
+void AnchorDrawList::PrimQuadUV(const GfVec2f &a,
+                                const GfVec2f &b,
+                                const GfVec2f &c,
+                                const GfVec2f &d,
+                                const GfVec2f &uv_a,
+                                const GfVec2f &uv_b,
+                                const GfVec2f &uv_c,
+                                const GfVec2f &uv_d,
+                                AnchorU32 col)
 {
-  ImDrawIdx idx = (ImDrawIdx)_VtxCurrentIdx;
+  AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
   _IdxWritePtr[0] = idx;
-  _IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
-  _IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+  _IdxWritePtr[1] = (AnchorDrawIdx)(idx + 1);
+  _IdxWritePtr[2] = (AnchorDrawIdx)(idx + 2);
   _IdxWritePtr[3] = idx;
-  _IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
-  _IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+  _IdxWritePtr[4] = (AnchorDrawIdx)(idx + 2);
+  _IdxWritePtr[5] = (AnchorDrawIdx)(idx + 3);
   _VtxWritePtr[0].pos = a;
   _VtxWritePtr[0].uv = uv_a;
   _VtxWritePtr[0].col = col;
@@ -849,50 +824,50 @@ void ImDrawList::PrimQuadUV(const GfVec2f &a,
 
 // On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using GfVec2f and superfluous
 // function calls to optimize debug/non-inlined builds. Those macros expects l-values.
-#  define IM_NORMALIZE2F_OVER_ZERO(VX, VY) \
-    do \
+#define IM_NORMALIZE2F_OVER_ZERO(VX, VY) \
+  do \
+  { \
+    float d2 = VX * VX + VY * VY; \
+    if (d2 > 0.0f) \
     { \
-      float d2 = VX * VX + VY * VY; \
-      if (d2 > 0.0f) \
-      { \
-        float inv_len = ImRsqrt(d2); \
-        VX *= inv_len; \
-        VY *= inv_len; \
-      } \
-    } while (0)
-#  define IM_FIXNORMAL2F_MAX_INVLEN2 100.0f  // 500.0f (see #4053, #3366)
-#  define IM_FIXNORMAL2F(VX, VY) \
-    do \
+      float inv_len = AnchorRsqrt(d2); \
+      VX *= inv_len; \
+      VY *= inv_len; \
+    } \
+  } while (0)
+#define IM_FIXNORMAL2F_MAX_INVLEN2 100.0f  // 500.0f (see #4053, #3366)
+#define IM_FIXNORMAL2F(VX, VY) \
+  do \
+  { \
+    float d2 = VX * VX + VY * VY; \
+    if (d2 > 0.000001f) \
     { \
-      float d2 = VX * VX + VY * VY; \
-      if (d2 > 0.000001f) \
-      { \
-        float inv_len2 = 1.0f / d2; \
-        if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) \
-          inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; \
-        VX *= inv_len2; \
-        VY *= inv_len2; \
-      } \
-    } while (0)
+      float inv_len2 = 1.0f / d2; \
+      if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) \
+        inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; \
+      VX *= inv_len2; \
+      VY *= inv_len2; \
+    } \
+  } while (0)
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
 // We avoid using the GfVec2f math operators here to reduce cost to a minimum for debug/non-inlined
 // builds.
-void ImDrawList::AddPolyline(const GfVec2f *points,
-                             const int points_count,
-                             AnchorU32 col,
-                             ImDrawFlags flags,
-                             float thickness)
+void AnchorDrawList::AddPolyline(const GfVec2f *points,
+                                 const int points_count,
+                                 AnchorU32 col,
+                                 AnchorDrawFlags flags,
+                                 float thickness)
 {
   if (points_count < 2)
     return;
 
-  const bool closed = (flags & ImDrawFlags_Closed) != 0;
+  const bool closed = (flags & AnchorDrawFlags_Closed) != 0;
   const GfVec2f opaque_uv = _Data->TexUvWhitePixel;
   const int count = closed ? points_count : points_count - 1;  // The number of line segments we need to draw
   const bool thick_line = (thickness > _FringeScale);
 
-  if (Flags & ImDrawListFlags_AntiAliasedLines)
+  if (Flags & AnchorDrawListFlags_AntiAliasedLines)
   {
     // Anti-aliased stroke
     const float AA_SIZE = _FringeScale;
@@ -907,12 +882,12 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
     // - For now, only draw integer-width lines using textures to avoid issues with the way scaling
     // occurs, could be improved.
     // - If AA_SIZE is not 1.0f we cannot use the texture path.
-    const bool use_texture = (Flags & ImDrawListFlags_AntiAliasedLinesUseTex) &&
-                             (integer_thickness < IM_DRAWLIST_TEX_LINES_WIDTH_MAX) &&
+    const bool use_texture = (Flags & AnchorDrawListFlags_AntiAliasedLinesUseTex) &&
+                             (integer_thickness < ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX) &&
                              (fractional_thickness <= 0.00001f) && (AA_SIZE == 1.0f);
 
     // We should never hit this, because NewFrame() doesn't set
-    // ImDrawListFlags_AntiAliasedLinesUseTex unless AnchorFontAtlasFlags_NoBakedLines is off
+    // AnchorDrawListFlags_AntiAliasedLinesUseTex unless AnchorFontAtlasFlags_NoBakedLines is off
     ANCHOR_ASSERT_PARANOID(!use_texture ||
                            !(_Data->Font->ContainerAtlas->Flags & AnchorFontAtlasFlags_NoBakedLines));
 
@@ -1000,29 +975,29 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
         if (use_texture)
         {
           // Add indices for two triangles
-          _IdxWritePtr[0] = (ImDrawIdx)(idx2 + 0);
-          _IdxWritePtr[1] = (ImDrawIdx)(idx1 + 0);
-          _IdxWritePtr[2] = (ImDrawIdx)(idx1 + 1);  // Right tri
-          _IdxWritePtr[3] = (ImDrawIdx)(idx2 + 1);
-          _IdxWritePtr[4] = (ImDrawIdx)(idx1 + 1);
-          _IdxWritePtr[5] = (ImDrawIdx)(idx2 + 0);  // Left tri
+          _IdxWritePtr[0] = (AnchorDrawIdx)(idx2 + 0);
+          _IdxWritePtr[1] = (AnchorDrawIdx)(idx1 + 0);
+          _IdxWritePtr[2] = (AnchorDrawIdx)(idx1 + 1);  // Right tri
+          _IdxWritePtr[3] = (AnchorDrawIdx)(idx2 + 1);
+          _IdxWritePtr[4] = (AnchorDrawIdx)(idx1 + 1);
+          _IdxWritePtr[5] = (AnchorDrawIdx)(idx2 + 0);  // Left tri
           _IdxWritePtr += 6;
         }
         else
         {
           // Add indexes for four triangles
-          _IdxWritePtr[0] = (ImDrawIdx)(idx2 + 0);
-          _IdxWritePtr[1] = (ImDrawIdx)(idx1 + 0);
-          _IdxWritePtr[2] = (ImDrawIdx)(idx1 + 2);  // Right tri 1
-          _IdxWritePtr[3] = (ImDrawIdx)(idx1 + 2);
-          _IdxWritePtr[4] = (ImDrawIdx)(idx2 + 2);
-          _IdxWritePtr[5] = (ImDrawIdx)(idx2 + 0);  // Right tri 2
-          _IdxWritePtr[6] = (ImDrawIdx)(idx2 + 1);
-          _IdxWritePtr[7] = (ImDrawIdx)(idx1 + 1);
-          _IdxWritePtr[8] = (ImDrawIdx)(idx1 + 0);  // Left tri 1
-          _IdxWritePtr[9] = (ImDrawIdx)(idx1 + 0);
-          _IdxWritePtr[10] = (ImDrawIdx)(idx2 + 0);
-          _IdxWritePtr[11] = (ImDrawIdx)(idx2 + 1);  // Left tri 2
+          _IdxWritePtr[0] = (AnchorDrawIdx)(idx2 + 0);
+          _IdxWritePtr[1] = (AnchorDrawIdx)(idx1 + 0);
+          _IdxWritePtr[2] = (AnchorDrawIdx)(idx1 + 2);  // Right tri 1
+          _IdxWritePtr[3] = (AnchorDrawIdx)(idx1 + 2);
+          _IdxWritePtr[4] = (AnchorDrawIdx)(idx2 + 2);
+          _IdxWritePtr[5] = (AnchorDrawIdx)(idx2 + 0);  // Right tri 2
+          _IdxWritePtr[6] = (AnchorDrawIdx)(idx2 + 1);
+          _IdxWritePtr[7] = (AnchorDrawIdx)(idx1 + 1);
+          _IdxWritePtr[8] = (AnchorDrawIdx)(idx1 + 0);  // Left tri 1
+          _IdxWritePtr[9] = (AnchorDrawIdx)(idx1 + 0);
+          _IdxWritePtr[10] = (AnchorDrawIdx)(idx2 + 0);
+          _IdxWritePtr[11] = (AnchorDrawIdx)(idx2 + 1);  // Left tri 2
           _IdxWritePtr += 12;
         }
 
@@ -1038,7 +1013,7 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
         {
             const GfVec4f tex_uvs_1 = _Data->TexUvLines[integer_thickness + 1];
             tex_uvs[0] = tex_uvs[0] + (tex_uvs_1[0] - tex_uvs[0]) * fractional_thickness; //
-        inlined ImLerp() tex_uvs[1] = tex_uvs[1] + (tex_uvs_1[1] - tex_uvs[1]) *
+        inlined AnchorLerp() tex_uvs[1] = tex_uvs[1] + (tex_uvs_1[1] - tex_uvs[1]) *
         fractional_thickness; tex_uvs[2] = tex_uvs[2] + (tex_uvs_1[2] - tex_uvs[2]) *
         fractional_thickness; tex_uvs[3] = tex_uvs[3] + (tex_uvs_1[3] - tex_uvs[3]) *
         fractional_thickness;
@@ -1132,24 +1107,24 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
         out_vtx[3][1] = points[i2][1] - dm_out_y;
 
         // Add indexes
-        _IdxWritePtr[0] = (ImDrawIdx)(idx2 + 1);
-        _IdxWritePtr[1] = (ImDrawIdx)(idx1 + 1);
-        _IdxWritePtr[2] = (ImDrawIdx)(idx1 + 2);
-        _IdxWritePtr[3] = (ImDrawIdx)(idx1 + 2);
-        _IdxWritePtr[4] = (ImDrawIdx)(idx2 + 2);
-        _IdxWritePtr[5] = (ImDrawIdx)(idx2 + 1);
-        _IdxWritePtr[6] = (ImDrawIdx)(idx2 + 1);
-        _IdxWritePtr[7] = (ImDrawIdx)(idx1 + 1);
-        _IdxWritePtr[8] = (ImDrawIdx)(idx1 + 0);
-        _IdxWritePtr[9] = (ImDrawIdx)(idx1 + 0);
-        _IdxWritePtr[10] = (ImDrawIdx)(idx2 + 0);
-        _IdxWritePtr[11] = (ImDrawIdx)(idx2 + 1);
-        _IdxWritePtr[12] = (ImDrawIdx)(idx2 + 2);
-        _IdxWritePtr[13] = (ImDrawIdx)(idx1 + 2);
-        _IdxWritePtr[14] = (ImDrawIdx)(idx1 + 3);
-        _IdxWritePtr[15] = (ImDrawIdx)(idx1 + 3);
-        _IdxWritePtr[16] = (ImDrawIdx)(idx2 + 3);
-        _IdxWritePtr[17] = (ImDrawIdx)(idx2 + 2);
+        _IdxWritePtr[0] = (AnchorDrawIdx)(idx2 + 1);
+        _IdxWritePtr[1] = (AnchorDrawIdx)(idx1 + 1);
+        _IdxWritePtr[2] = (AnchorDrawIdx)(idx1 + 2);
+        _IdxWritePtr[3] = (AnchorDrawIdx)(idx1 + 2);
+        _IdxWritePtr[4] = (AnchorDrawIdx)(idx2 + 2);
+        _IdxWritePtr[5] = (AnchorDrawIdx)(idx2 + 1);
+        _IdxWritePtr[6] = (AnchorDrawIdx)(idx2 + 1);
+        _IdxWritePtr[7] = (AnchorDrawIdx)(idx1 + 1);
+        _IdxWritePtr[8] = (AnchorDrawIdx)(idx1 + 0);
+        _IdxWritePtr[9] = (AnchorDrawIdx)(idx1 + 0);
+        _IdxWritePtr[10] = (AnchorDrawIdx)(idx2 + 0);
+        _IdxWritePtr[11] = (AnchorDrawIdx)(idx2 + 1);
+        _IdxWritePtr[12] = (AnchorDrawIdx)(idx2 + 2);
+        _IdxWritePtr[13] = (AnchorDrawIdx)(idx1 + 2);
+        _IdxWritePtr[14] = (AnchorDrawIdx)(idx1 + 3);
+        _IdxWritePtr[15] = (AnchorDrawIdx)(idx1 + 3);
+        _IdxWritePtr[16] = (AnchorDrawIdx)(idx2 + 3);
+        _IdxWritePtr[17] = (AnchorDrawIdx)(idx2 + 2);
         _IdxWritePtr += 18;
 
         idx1 = idx2;
@@ -1173,7 +1148,7 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
         _VtxWritePtr += 4;
       }
     }
-    _VtxCurrentIdx += (ImDrawIdx)vtx_count;
+    _VtxCurrentIdx += (AnchorDrawIdx)vtx_count;
   }
   else
   {
@@ -1212,12 +1187,12 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
       _VtxWritePtr[3].col = col;
       _VtxWritePtr += 4;
 
-      _IdxWritePtr[0] = (ImDrawIdx)(_VtxCurrentIdx);
-      _IdxWritePtr[1] = (ImDrawIdx)(_VtxCurrentIdx + 1);
-      _IdxWritePtr[2] = (ImDrawIdx)(_VtxCurrentIdx + 2);
-      _IdxWritePtr[3] = (ImDrawIdx)(_VtxCurrentIdx);
-      _IdxWritePtr[4] = (ImDrawIdx)(_VtxCurrentIdx + 2);
-      _IdxWritePtr[5] = (ImDrawIdx)(_VtxCurrentIdx + 3);
+      _IdxWritePtr[0] = (AnchorDrawIdx)(_VtxCurrentIdx);
+      _IdxWritePtr[1] = (AnchorDrawIdx)(_VtxCurrentIdx + 1);
+      _IdxWritePtr[2] = (AnchorDrawIdx)(_VtxCurrentIdx + 2);
+      _IdxWritePtr[3] = (AnchorDrawIdx)(_VtxCurrentIdx);
+      _IdxWritePtr[4] = (AnchorDrawIdx)(_VtxCurrentIdx + 2);
+      _IdxWritePtr[5] = (AnchorDrawIdx)(_VtxCurrentIdx + 3);
       _IdxWritePtr += 6;
       _VtxCurrentIdx += 4;
     }
@@ -1226,14 +1201,14 @@ void ImDrawList::AddPolyline(const GfVec2f *points,
 
 // We intentionally avoid using GfVec2f and its math operators here to reduce cost to a minimum for
 // debug/non-inlined builds.
-void ImDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points_count, AnchorU32 col)
+void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points_count, AnchorU32 col)
 {
   if (points_count < 3)
     return;
 
   const GfVec2f uv = _Data->TexUvWhitePixel;
 
-  if (Flags & ImDrawListFlags_AntiAliasedFill)
+  if (Flags & AnchorDrawListFlags_AntiAliasedFill)
   {
     // Anti-aliased Fill
     const float AA_SIZE = _FringeScale;
@@ -1247,9 +1222,9 @@ void ImDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points_cou
     unsigned int vtx_outer_idx = _VtxCurrentIdx + 1;
     for (int i = 2; i < points_count; i++)
     {
-      _IdxWritePtr[0] = (ImDrawIdx)(vtx_inner_idx);
-      _IdxWritePtr[1] = (ImDrawIdx)(vtx_inner_idx + ((i - 1) << 1));
-      _IdxWritePtr[2] = (ImDrawIdx)(vtx_inner_idx + (i << 1));
+      _IdxWritePtr[0] = (AnchorDrawIdx)(vtx_inner_idx);
+      _IdxWritePtr[1] = (AnchorDrawIdx)(vtx_inner_idx + ((i - 1) << 1));
+      _IdxWritePtr[2] = (AnchorDrawIdx)(vtx_inner_idx + (i << 1));
       _IdxWritePtr += 3;
     }
 
@@ -1289,15 +1264,15 @@ void ImDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points_cou
       _VtxWritePtr += 2;
 
       // Add indexes for fringes
-      _IdxWritePtr[0] = (ImDrawIdx)(vtx_inner_idx + (i1 << 1));
-      _IdxWritePtr[1] = (ImDrawIdx)(vtx_inner_idx + (i0 << 1));
-      _IdxWritePtr[2] = (ImDrawIdx)(vtx_outer_idx + (i0 << 1));
-      _IdxWritePtr[3] = (ImDrawIdx)(vtx_outer_idx + (i0 << 1));
-      _IdxWritePtr[4] = (ImDrawIdx)(vtx_outer_idx + (i1 << 1));
-      _IdxWritePtr[5] = (ImDrawIdx)(vtx_inner_idx + (i1 << 1));
+      _IdxWritePtr[0] = (AnchorDrawIdx)(vtx_inner_idx + (i1 << 1));
+      _IdxWritePtr[1] = (AnchorDrawIdx)(vtx_inner_idx + (i0 << 1));
+      _IdxWritePtr[2] = (AnchorDrawIdx)(vtx_outer_idx + (i0 << 1));
+      _IdxWritePtr[3] = (AnchorDrawIdx)(vtx_outer_idx + (i0 << 1));
+      _IdxWritePtr[4] = (AnchorDrawIdx)(vtx_outer_idx + (i1 << 1));
+      _IdxWritePtr[5] = (AnchorDrawIdx)(vtx_inner_idx + (i1 << 1));
       _IdxWritePtr += 6;
     }
-    _VtxCurrentIdx += (ImDrawIdx)vtx_count;
+    _VtxCurrentIdx += (AnchorDrawIdx)vtx_count;
   }
   else
   {
@@ -1314,20 +1289,20 @@ void ImDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points_cou
     }
     for (int i = 2; i < points_count; i++)
     {
-      _IdxWritePtr[0] = (ImDrawIdx)(_VtxCurrentIdx);
-      _IdxWritePtr[1] = (ImDrawIdx)(_VtxCurrentIdx + i - 1);
-      _IdxWritePtr[2] = (ImDrawIdx)(_VtxCurrentIdx + i);
+      _IdxWritePtr[0] = (AnchorDrawIdx)(_VtxCurrentIdx);
+      _IdxWritePtr[1] = (AnchorDrawIdx)(_VtxCurrentIdx + i - 1);
+      _IdxWritePtr[2] = (AnchorDrawIdx)(_VtxCurrentIdx + i);
       _IdxWritePtr += 3;
     }
-    _VtxCurrentIdx += (ImDrawIdx)vtx_count;
+    _VtxCurrentIdx += (AnchorDrawIdx)vtx_count;
   }
 }
 
-void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
-                                  float radius,
-                                  int a_min_sample,
-                                  int a_max_sample,
-                                  int a_step)
+void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
+                                      float radius,
+                                      int a_min_sample,
+                                      int a_max_sample,
+                                      int a_step)
 {
   if (radius <= 0.0f)
   {
@@ -1337,12 +1312,12 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
 
   // Calculate arc auto segment step size
   if (a_step <= 0)
-    a_step = IM_DRAWLIST_ARCFAST_SAMPLE_MAX / _CalcCircleAutoSegmentCount(radius);
+    a_step = ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX / _CalcCircleAutoSegmentCount(radius);
 
   // Make sure we never do steps larger than one quarter of the circle
-  a_step = ImClamp(a_step, 1, IM_DRAWLIST_ARCFAST_TABLE_SIZE / 4);
+  a_step = AnchorClamp(a_step, 1, ANCHOR_DRAWLIST_ARCFAST_TABLE_SIZE / 4);
 
-  const int sample_range = ImAbs(a_max_sample - a_min_sample);
+  const int sample_range = AnchorAbs(a_max_sample - a_min_sample);
   const int a_next_step = a_step;
 
   int samples = sample_range + 1;
@@ -1368,11 +1343,11 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
   GfVec2f *out_ptr = _Path.Data + (_Path.Size - samples);
 
   int sample_index = a_min_sample;
-  if (sample_index < 0 || sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
+  if (sample_index < 0 || sample_index >= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX)
   {
-    sample_index = sample_index % IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+    sample_index = sample_index % ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
     if (sample_index < 0)
-      sample_index += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+      sample_index += ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
   }
 
   if (a_max_sample >= a_min_sample)
@@ -1380,10 +1355,10 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
     for (int a = a_min_sample; a <= a_max_sample;
          a += a_step, sample_index += a_step, a_step = a_next_step)
     {
-      // a_step is clamped to IM_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
+      // a_step is clamped to ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
       // not wrap over range twice or more
-      if (sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
-        sample_index -= IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+      if (sample_index >= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX)
+        sample_index -= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
       const GfVec2f s = _Data->ArcFastVtx[sample_index];
       out_ptr->data()[0] = center[0] + s[0] * radius;
@@ -1396,10 +1371,10 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
     for (int a = a_min_sample; a >= a_max_sample;
          a -= a_step, sample_index -= a_step, a_step = a_next_step)
     {
-      // a_step is clamped to IM_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
+      // a_step is clamped to ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
       // not wrap over range twice or more
       if (sample_index < 0)
-        sample_index += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+        sample_index += ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
       const GfVec2f s = _Data->ArcFastVtx[sample_index];
       out_ptr->data()[0] = center[0] + s[0] * radius;
@@ -1410,9 +1385,9 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
 
   if (extra_max_sample)
   {
-    int normalized_max_sample = a_max_sample % IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+    int normalized_max_sample = a_max_sample % ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
     if (normalized_max_sample < 0)
-      normalized_max_sample += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+      normalized_max_sample += ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
     const GfVec2f s = _Data->ArcFastVtx[normalized_max_sample];
     out_ptr->data()[0] = center[0] + s[0] * radius;
@@ -1423,7 +1398,7 @@ void ImDrawList::_PathArcToFastEx(const GfVec2f &center,
   ANCHOR_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void ImDrawList::_PathArcToN(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
+void AnchorDrawList::_PathArcToN(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
 {
   if (radius <= 0.0f)
   {
@@ -1437,12 +1412,12 @@ void ImDrawList::_PathArcToN(const GfVec2f &center, float radius, float a_min, f
   for (int i = 0; i <= num_segments; i++)
   {
     const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-    _Path.push_back(GfVec2f(center[0] + ImCos(a) * radius, center[1] + ImSin(a) * radius));
+    _Path.push_back(GfVec2f(center[0] + AnchorCos(a) * radius, center[1] + AnchorSin(a) * radius));
   }
 }
 
 // 0: East, 3: South, 6: West, 9: North, 12: East
-void ImDrawList::PathArcToFast(const GfVec2f &center, float radius, int a_min_of_12, int a_max_of_12)
+void AnchorDrawList::PathArcToFast(const GfVec2f &center, float radius, int a_min_of_12, int a_max_of_12)
 {
   if (radius <= 0.0f)
   {
@@ -1451,12 +1426,12 @@ void ImDrawList::PathArcToFast(const GfVec2f &center, float radius, int a_min_of
   }
   _PathArcToFastEx(center,
                    radius,
-                   a_min_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12,
-                   a_max_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12,
+                   a_min_of_12 * ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX / 12,
+                   a_max_of_12 * ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX / 12,
                    0);
 }
 
-void ImDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
+void AnchorDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
 {
   if (radius <= 0.0f)
   {
@@ -1477,30 +1452,30 @@ void ImDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, flo
 
     // We are going to use precomputed values for mid samples.
     // Determine first and last sample in lookup table that belong to the arc.
-    const float a_min_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (IM_PI * 2.0f);
-    const float a_max_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (IM_PI * 2.0f);
+    const float a_min_sample_f = ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (IM_PI * 2.0f);
+    const float a_max_sample_f = ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (IM_PI * 2.0f);
 
-    const int a_min_sample = a_is_reverse ? (int)ImFloorSigned(a_min_sample_f) : (int)ImCeil(a_min_sample_f);
-    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) : (int)ImFloorSigned(a_max_sample_f);
+    const int a_min_sample = a_is_reverse ? (int)AnchorFloorSigned(a_min_sample_f) : (int)ImCeil(a_min_sample_f);
+    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) : (int)AnchorFloorSigned(a_max_sample_f);
     const int a_mid_samples = a_is_reverse ? AnchorMax(a_min_sample - a_max_sample, 0) :
                                              AnchorMax(a_max_sample - a_min_sample, 0);
 
-    const float a_min_segment_angle = a_min_sample * IM_PI * 2.0f / IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
-    const float a_max_segment_angle = a_max_sample * IM_PI * 2.0f / IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+    const float a_min_segment_angle = a_min_sample * IM_PI * 2.0f / ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
+    const float a_max_segment_angle = a_max_sample * IM_PI * 2.0f / ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
     const bool a_emit_start = (a_min_segment_angle - a_min) != 0.0f;
     const bool a_emit_end = (a_max - a_max_segment_angle) != 0.0f;
 
     _Path.reserve(_Path.Size + (a_mid_samples + 1 + (a_emit_start ? 1 : 0) + (a_emit_end ? 1 : 0)));
     if (a_emit_start)
-      _Path.push_back(GfVec2f(center[0] + ImCos(a_min) * radius, center[1] + ImSin(a_min) * radius));
+      _Path.push_back(GfVec2f(center[0] + AnchorCos(a_min) * radius, center[1] + AnchorSin(a_min) * radius));
     if (a_mid_samples > 0)
       _PathArcToFastEx(center, radius, a_min_sample, a_max_sample, 0);
     if (a_emit_end)
-      _Path.push_back(GfVec2f(center[0] + ImCos(a_max) * radius, center[1] + ImSin(a_max) * radius));
+      _Path.push_back(GfVec2f(center[0] + AnchorCos(a_max) * radius, center[1] + AnchorSin(a_max) * radius));
   }
   else
   {
-    const float arc_length = ImAbs(a_max - a_min);
+    const float arc_length = AnchorAbs(a_max - a_min);
     const int circle_segment_count = _CalcCircleAutoSegmentCount(radius);
     const int arc_segment_count = AnchorMax((int)ImCeil(circle_segment_count * arc_length / (IM_PI * 2.0f)),
                                             (int)(2.0f * IM_PI / arc_length));
@@ -1508,11 +1483,11 @@ void ImDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, flo
   }
 }
 
-GfVec2f ImBezierCubicCalc(const GfVec2f &p1,
-                          const GfVec2f &p2,
-                          const GfVec2f &p3,
-                          const GfVec2f &p4,
-                          float t)
+GfVec2f AnchorBezierCubicCalc(const GfVec2f &p1,
+                              const GfVec2f &p2,
+                              const GfVec2f &p3,
+                              const GfVec2f &p4,
+                              float t)
 {
   float u = 1.0f - t;
   float w1 = u * u * u;
@@ -1523,7 +1498,7 @@ GfVec2f ImBezierCubicCalc(const GfVec2f &p1,
                  w1 * p1[1] + w2 * p2[1] + w3 * p3[1] + w4 * p4[1]);
 }
 
-GfVec2f ImBezierQuadraticCalc(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, float t)
+GfVec2f AnchorBezierQuadraticCalc(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, float t)
 {
   float u = 1.0f - t;
   float w1 = u * u;
@@ -1532,7 +1507,7 @@ GfVec2f ImBezierQuadraticCalc(const GfVec2f &p1, const GfVec2f &p2, const GfVec2
   return GfVec2f(w1 * p1[0] + w2 * p2[0] + w3 * p3[0], w1 * p1[1] + w2 * p2[1] + w3 * p3[1]);
 }
 
-// Closely mimics ImBezierCubicClosestPointCasteljau() in ANCHOR.cpp
+// Closely mimics AnchorBezierCubicClosestPointCasteljau() in ANCHOR.cpp
 static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
                                             float x1,
                                             float y1,
@@ -1594,10 +1569,10 @@ static void PathBezierQuadraticCurveToCasteljau(AnchorVector<GfVec2f> *path,
   }
 }
 
-void ImDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
-                                        const GfVec2f &p3,
-                                        const GfVec2f &p4,
-                                        int num_segments)
+void AnchorDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
+                                            const GfVec2f &p3,
+                                            const GfVec2f &p4,
+                                            int num_segments)
 {
   GfVec2f p1 = _Path.back();
   if (num_segments == 0)
@@ -1618,11 +1593,11 @@ void ImDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
   {
     float t_step = 1.0f / (float)num_segments;
     for (int i_step = 1; i_step <= num_segments; i_step++)
-      _Path.push_back(ImBezierCubicCalc(p1, p2, p3, p4, t_step * i_step));
+      _Path.push_back(AnchorBezierCubicCalc(p1, p2, p3, p4, t_step * i_step));
   }
 }
 
-void ImDrawList::PathBezierQuadraticCurveTo(const GfVec2f &p2, const GfVec2f &p3, int num_segments)
+void AnchorDrawList::PathBezierQuadraticCurveTo(const GfVec2f &p2, const GfVec2f &p3, int num_segments)
 {
   GfVec2f p1 = _Path.back();
   if (num_segments == 0)
@@ -1641,65 +1616,65 @@ void ImDrawList::PathBezierQuadraticCurveTo(const GfVec2f &p2, const GfVec2f &p3
   {
     float t_step = 1.0f / (float)num_segments;
     for (int i_step = 1; i_step <= num_segments; i_step++)
-      _Path.push_back(ImBezierQuadraticCalc(p1, p2, p3, t_step * i_step));
+      _Path.push_back(AnchorBezierQuadraticCalc(p1, p2, p3, t_step * i_step));
   }
 }
 
-IM_STATIC_ASSERT(ImDrawFlags_RoundCornersTopLeft == (1 << 4));
-static inline ImDrawFlags FixRectCornerFlags(ImDrawFlags flags)
+IM_STATIC_ASSERT(AnchorDrawFlags_RoundCornersTopLeft == (1 << 4));
+static inline AnchorDrawFlags FixRectCornerFlags(AnchorDrawFlags flags)
 {
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-  // Legacy Support for hard coded ~0 (used to be a suggested equivalent to ImDrawCornerFlags_All)
-  //   ~0   --> ImDrawFlags_RoundCornersAll or 0
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+  // Legacy Support for hard coded ~0 (used to be a suggested equivalent to AnchorDrawCornerFlags_All)
+  //   ~0   --> AnchorDrawFlags_RoundCornersAll or 0
   if (flags == ~0)
-    return ImDrawFlags_RoundCornersAll;
+    return AnchorDrawFlags_RoundCornersAll;
 
   // Legacy Support for hard coded 0x01 to 0x0F (matching 15 out of 16 old flags combinations)
-  //   0x01 --> ImDrawFlags_RoundCornersTopLeft (VALUE 0x01 OVERLAPS ImDrawFlags_Closed but
-  //   ImDrawFlags_Closed is never valid in this path!) 0x02 --> ImDrawFlags_RoundCornersTopRight
-  //   0x03 --> ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersTopRight
-  //   0x04 --> ImDrawFlags_RoundCornersBotLeft
-  //   0x05 --> ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersBotLeft
+  //   0x01 --> AnchorDrawFlags_RoundCornersTopLeft (VALUE 0x01 OVERLAPS AnchorDrawFlags_Closed but
+  //   AnchorDrawFlags_Closed is never valid in this path!) 0x02 --> AnchorDrawFlags_RoundCornersTopRight
+  //   0x03 --> AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersTopRight
+  //   0x04 --> AnchorDrawFlags_RoundCornersBotLeft
+  //   0x05 --> AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersBotLeft
   //   ...
-  //   0x0F --> ImDrawFlags_RoundCornersAll or 0
-  // (See all values in ImDrawCornerFlags_)
+  //   0x0F --> AnchorDrawFlags_RoundCornersAll or 0
+  // (See all values in AnchorDrawCornerFlags_)
   if (flags >= 0x01 && flags <= 0x0F)
     return (flags << 4);
 
     // We cannot support hard coded 0x00 with 'float rounding > 0.0f' --> replace with
-    // ImDrawFlags_RoundCornersNone or use 'float rounding = 0.0f'
-#  endif
+    // AnchorDrawFlags_RoundCornersNone or use 'float rounding = 0.0f'
+#endif
 
   // If this triggers, please update your code replacing hardcoded values with new
-  // ImDrawFlags_RoundCorners* values. Note that ImDrawFlags_Closed (== 0x01) is an invalid flag
+  // AnchorDrawFlags_RoundCorners* values. Note that AnchorDrawFlags_Closed (== 0x01) is an invalid flag
   // for AddRect(), AddRectFilled(), PathRect() etc...
-  ANCHOR_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded ImDrawCornerFlags values!");
+  ANCHOR_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded AnchorDrawCornerFlags values!");
 
-  if ((flags & ImDrawFlags_RoundCornersMask_) == 0)
-    flags |= ImDrawFlags_RoundCornersAll;
+  if ((flags & AnchorDrawFlags_RoundCornersMask_) == 0)
+    flags |= AnchorDrawFlags_RoundCornersAll;
 
   return flags;
 }
 
-void ImDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, ImDrawFlags flags)
+void AnchorDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, AnchorDrawFlags flags)
 {
   flags = FixRectCornerFlags(flags);
-  rounding = ImMin(rounding,
-                   ImFabs(b[0] - a[0]) *
-                       (((flags & ImDrawFlags_RoundCornersTop) == ImDrawFlags_RoundCornersTop) ||
-                            ((flags & ImDrawFlags_RoundCornersBottom) == ImDrawFlags_RoundCornersBottom) ?
-                          0.5f :
-                          1.0f) -
-                     1.0f);
-  rounding = ImMin(rounding,
-                   ImFabs(b[1] - a[1]) *
-                       (((flags & ImDrawFlags_RoundCornersLeft) == ImDrawFlags_RoundCornersLeft) ||
-                            ((flags & ImDrawFlags_RoundCornersRight) == ImDrawFlags_RoundCornersRight) ?
-                          0.5f :
-                          1.0f) -
-                     1.0f);
+  rounding = AnchorMin(rounding,
+                       AnchorFabs(b[0] - a[0]) *
+                           (((flags & AnchorDrawFlags_RoundCornersTop) == AnchorDrawFlags_RoundCornersTop) ||
+                                ((flags & AnchorDrawFlags_RoundCornersBottom) == AnchorDrawFlags_RoundCornersBottom) ?
+                              0.5f :
+                              1.0f) -
+                         1.0f);
+  rounding = AnchorMin(rounding,
+                       AnchorFabs(b[1] - a[1]) *
+                           (((flags & AnchorDrawFlags_RoundCornersLeft) == AnchorDrawFlags_RoundCornersLeft) ||
+                                ((flags & AnchorDrawFlags_RoundCornersRight) == AnchorDrawFlags_RoundCornersRight) ?
+                              0.5f :
+                              1.0f) -
+                         1.0f);
 
-  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
+  if (rounding <= 0.0f || (flags & AnchorDrawFlags_RoundCornersMask_) == AnchorDrawFlags_RoundCornersNone)
   {
     PathLineTo(a);
     PathLineTo(GfVec2f(b[0], a[1]));
@@ -1708,10 +1683,10 @@ void ImDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, Im
   }
   else
   {
-    const float rounding_tl = (flags & ImDrawFlags_RoundCornersTopLeft) ? rounding : 0.0f;
-    const float rounding_tr = (flags & ImDrawFlags_RoundCornersTopRight) ? rounding : 0.0f;
-    const float rounding_br = (flags & ImDrawFlags_RoundCornersBottomRight) ? rounding : 0.0f;
-    const float rounding_bl = (flags & ImDrawFlags_RoundCornersBottomLeft) ? rounding : 0.0f;
+    const float rounding_tl = (flags & AnchorDrawFlags_RoundCornersTopLeft) ? rounding : 0.0f;
+    const float rounding_tr = (flags & AnchorDrawFlags_RoundCornersTopRight) ? rounding : 0.0f;
+    const float rounding_br = (flags & AnchorDrawFlags_RoundCornersBottomRight) ? rounding : 0.0f;
+    const float rounding_bl = (flags & AnchorDrawFlags_RoundCornersBottomLeft) ? rounding : 0.0f;
     PathArcToFast(GfVec2f(a[0] + rounding_tl, a[1] + rounding_tl), rounding_tl, 6, 9);
     PathArcToFast(GfVec2f(b[0] - rounding_tr, a[1] + rounding_tr), rounding_tr, 9, 12);
     PathArcToFast(GfVec2f(b[0] - rounding_br, b[1] - rounding_br), rounding_br, 0, 3);
@@ -1719,7 +1694,7 @@ void ImDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, Im
   }
 }
 
-void ImDrawList::AddLine(const GfVec2f &p1, const GfVec2f &p2, AnchorU32 col, float thickness)
+void AnchorDrawList::AddLine(const GfVec2f &p1, const GfVec2f &p2, AnchorU32 col, float thickness)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1730,34 +1705,34 @@ void ImDrawList::AddLine(const GfVec2f &p1, const GfVec2f &p2, AnchorU32 col, fl
 
 // p_min = upper-left, p_max = lower-right
 // Note we don't render 1 pixels sized rectangles properly.
-void ImDrawList::AddRect(const GfVec2f &p_min,
-                         const GfVec2f &p_max,
-                         AnchorU32 col,
-                         float rounding,
-                         ImDrawFlags flags,
-                         float thickness)
+void AnchorDrawList::AddRect(const GfVec2f &p_min,
+                             const GfVec2f &p_max,
+                             AnchorU32 col,
+                             float rounding,
+                             AnchorDrawFlags flags,
+                             float thickness)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
-  if (Flags & ImDrawListFlags_AntiAliasedLines)
+  if (Flags & AnchorDrawListFlags_AntiAliasedLines)
     PathRect(p_min + GfVec2f(0.50f, 0.50f), p_max - GfVec2f(0.50f, 0.50f), rounding, flags);
   else
     PathRect(p_min + GfVec2f(0.50f, 0.50f),
              p_max - GfVec2f(0.49f, 0.49f),
              rounding,
              flags);  // Better looking lower-right corner and rounded non-AA shapes.
-  PathStroke(col, ImDrawFlags_Closed, thickness);
+  PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddRectFilled(const GfVec2f &p_min,
-                               const GfVec2f &p_max,
-                               AnchorU32 col,
-                               float rounding,
-                               ImDrawFlags flags)
+void AnchorDrawList::AddRectFilled(const GfVec2f &p_min,
+                                   const GfVec2f &p_max,
+                                   AnchorU32 col,
+                                   float rounding,
+                                   AnchorDrawFlags flags)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
-  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
+  if (rounding <= 0.0f || (flags & AnchorDrawFlags_RoundCornersMask_) == AnchorDrawFlags_RoundCornersNone)
   {
     PrimReserve(6, 4);
     PrimRect(p_min, p_max, col);
@@ -1770,66 +1745,34 @@ void ImDrawList::AddRectFilled(const GfVec2f &p_min,
 }
 
 // p_min = upper-left, p_max = lower-right
-void ImDrawList::AddRectFilledMultiColor(const GfVec2f &p_min,
-                                         const GfVec2f &p_max,
-                                         AnchorU32 col_upr_left,
-                                         AnchorU32 col_upr_right,
-                                         AnchorU32 col_bot_right,
-                                         AnchorU32 col_bot_left)
+void AnchorDrawList::AddRectFilledMultiColor(const GfVec2f &p_min,
+                                             const GfVec2f &p_max,
+                                             AnchorU32 col_upr_left,
+                                             AnchorU32 col_upr_right,
+                                             AnchorU32 col_bot_right,
+                                             AnchorU32 col_bot_left)
 {
   if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & ANCHOR_COL32_A_MASK) == 0)
     return;
 
   const GfVec2f uv = _Data->TexUvWhitePixel;
   PrimReserve(6, 4);
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx));
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 1));
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 2));
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx));
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 2));
-  PrimWriteIdx((ImDrawIdx)(_VtxCurrentIdx + 3));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 1));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 2));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 2));
+  PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 3));
   PrimWriteVtx(p_min, uv, col_upr_left);
   PrimWriteVtx(GfVec2f(p_max[0], p_min[1]), uv, col_upr_right);
   PrimWriteVtx(p_max, uv, col_bot_right);
   PrimWriteVtx(GfVec2f(p_min[0], p_max[1]), uv, col_bot_left);
 }
 
-void ImDrawList::AddQuad(const GfVec2f &p1,
-                         const GfVec2f &p2,
-                         const GfVec2f &p3,
-                         const GfVec2f &p4,
-                         AnchorU32 col,
-                         float thickness)
-{
-  if ((col & ANCHOR_COL32_A_MASK) == 0)
-    return;
-
-  PathLineTo(p1);
-  PathLineTo(p2);
-  PathLineTo(p3);
-  PathLineTo(p4);
-  PathStroke(col, ImDrawFlags_Closed, thickness);
-}
-
-void ImDrawList::AddQuadFilled(const GfVec2f &p1,
-                               const GfVec2f &p2,
-                               const GfVec2f &p3,
-                               const GfVec2f &p4,
-                               AnchorU32 col)
-{
-  if ((col & ANCHOR_COL32_A_MASK) == 0)
-    return;
-
-  PathLineTo(p1);
-  PathLineTo(p2);
-  PathLineTo(p3);
-  PathLineTo(p4);
-  PathFillConvex(col);
-}
-
-void ImDrawList::AddTriangle(const GfVec2f &p1,
+void AnchorDrawList::AddQuad(const GfVec2f &p1,
                              const GfVec2f &p2,
                              const GfVec2f &p3,
+                             const GfVec2f &p4,
                              AnchorU32 col,
                              float thickness)
 {
@@ -1839,10 +1782,42 @@ void ImDrawList::AddTriangle(const GfVec2f &p1,
   PathLineTo(p1);
   PathLineTo(p2);
   PathLineTo(p3);
-  PathStroke(col, ImDrawFlags_Closed, thickness);
+  PathLineTo(p4);
+  PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddTriangleFilled(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, AnchorU32 col)
+void AnchorDrawList::AddQuadFilled(const GfVec2f &p1,
+                                   const GfVec2f &p2,
+                                   const GfVec2f &p3,
+                                   const GfVec2f &p4,
+                                   AnchorU32 col)
+{
+  if ((col & ANCHOR_COL32_A_MASK) == 0)
+    return;
+
+  PathLineTo(p1);
+  PathLineTo(p2);
+  PathLineTo(p3);
+  PathLineTo(p4);
+  PathFillConvex(col);
+}
+
+void AnchorDrawList::AddTriangle(const GfVec2f &p1,
+                                 const GfVec2f &p2,
+                                 const GfVec2f &p3,
+                                 AnchorU32 col,
+                                 float thickness)
+{
+  if ((col & ANCHOR_COL32_A_MASK) == 0)
+    return;
+
+  PathLineTo(p1);
+  PathLineTo(p2);
+  PathLineTo(p3);
+  PathStroke(col, AnchorDrawFlags_Closed, thickness);
+}
+
+void AnchorDrawList::AddTriangleFilled(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1853,11 +1828,11 @@ void ImDrawList::AddTriangleFilled(const GfVec2f &p1, const GfVec2f &p2, const G
   PathFillConvex(col);
 }
 
-void ImDrawList::AddCircle(const GfVec2f &center,
-                           float radius,
-                           AnchorU32 col,
-                           int num_segments,
-                           float thickness)
+void AnchorDrawList::AddCircle(const GfVec2f &center,
+                               float radius,
+                               AnchorU32 col,
+                               int num_segments,
+                               float thickness)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || radius <= 0.0f)
     return;
@@ -1871,7 +1846,7 @@ void ImDrawList::AddCircle(const GfVec2f &center,
   else
   {
     // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
-    num_segments = ImClamp(num_segments, 3, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
+    num_segments = AnchorClamp(num_segments, 3, ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
   }
 
   // Because we are filling a closed shape we remove 1 from the count of segments/points
@@ -1880,10 +1855,10 @@ void ImDrawList::AddCircle(const GfVec2f &center,
     PathArcToFast(center, radius - 0.5f, 0, 12 - 1);
   else
     PathArcTo(center, radius - 0.5f, 0.0f, a_max, num_segments - 1);
-  PathStroke(col, ImDrawFlags_Closed, thickness);
+  PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void ImDrawList::AddCircleFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
+void AnchorDrawList::AddCircleFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || radius <= 0.0f)
     return;
@@ -1897,7 +1872,7 @@ void ImDrawList::AddCircleFilled(const GfVec2f &center, float radius, AnchorU32 
   else
   {
     // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
-    num_segments = ImClamp(num_segments, 3, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
+    num_segments = AnchorClamp(num_segments, 3, ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
   }
 
   // Because we are filling a closed shape we remove 1 from the count of segments/points
@@ -1910,11 +1885,11 @@ void ImDrawList::AddCircleFilled(const GfVec2f &center, float radius, AnchorU32 
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgon(const GfVec2f &center,
-                         float radius,
-                         AnchorU32 col,
-                         int num_segments,
-                         float thickness)
+void AnchorDrawList::AddNgon(const GfVec2f &center,
+                             float radius,
+                             AnchorU32 col,
+                             int num_segments,
+                             float thickness)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || num_segments <= 2)
     return;
@@ -1922,11 +1897,11 @@ void ImDrawList::AddNgon(const GfVec2f &center,
   // Because we are filling a closed shape we remove 1 from the count of segments/points
   const float a_max = (IM_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
   PathArcTo(center, radius - 0.5f, 0.0f, a_max, num_segments - 1);
-  PathStroke(col, ImDrawFlags_Closed, thickness);
+  PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
 // Guaranteed to honor 'num_segments'
-void ImDrawList::AddNgonFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
+void AnchorDrawList::AddNgonFilled(const GfVec2f &center, float radius, AnchorU32 col, int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0 || num_segments <= 2)
     return;
@@ -1938,13 +1913,13 @@ void ImDrawList::AddNgonFilled(const GfVec2f &center, float radius, AnchorU32 co
 }
 
 // Cubic Bezier takes 4 controls points
-void ImDrawList::AddBezierCubic(const GfVec2f &p1,
-                                const GfVec2f &p2,
-                                const GfVec2f &p3,
-                                const GfVec2f &p4,
-                                AnchorU32 col,
-                                float thickness,
-                                int num_segments)
+void AnchorDrawList::AddBezierCubic(const GfVec2f &p1,
+                                    const GfVec2f &p2,
+                                    const GfVec2f &p3,
+                                    const GfVec2f &p4,
+                                    AnchorU32 col,
+                                    float thickness,
+                                    int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1955,12 +1930,12 @@ void ImDrawList::AddBezierCubic(const GfVec2f &p1,
 }
 
 // Quadratic Bezier takes 3 controls points
-void ImDrawList::AddBezierQuadratic(const GfVec2f &p1,
-                                    const GfVec2f &p2,
-                                    const GfVec2f &p3,
-                                    AnchorU32 col,
-                                    float thickness,
-                                    int num_segments)
+void AnchorDrawList::AddBezierQuadratic(const GfVec2f &p1,
+                                        const GfVec2f &p2,
+                                        const GfVec2f &p3,
+                                        AnchorU32 col,
+                                        float thickness,
+                                        int num_segments)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1970,14 +1945,14 @@ void ImDrawList::AddBezierQuadratic(const GfVec2f &p1,
   PathStroke(col, 0, thickness);
 }
 
-void ImDrawList::AddText(const AnchorFont *font,
-                         float font_size,
-                         const GfVec2f &pos,
-                         AnchorU32 col,
-                         const char *text_begin,
-                         const char *text_end,
-                         float wrap_width,
-                         const GfVec4f *cpu_fine_clip_rect)
+void AnchorDrawList::AddText(const AnchorFont *font,
+                             float font_size,
+                             const GfVec2f &pos,
+                             AnchorU32 col,
+                             const char *text_begin,
+                             const char *text_end,
+                             float wrap_width,
+                             const GfVec4f *cpu_fine_clip_rect)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1987,7 +1962,7 @@ void ImDrawList::AddText(const AnchorFont *font,
   if (text_begin == text_end)
     return;
 
-  // Pull default font/size from the shared ImDrawListSharedData instance
+  // Pull default font/size from the shared AnchorDrawListSharedData instance
   if (font == NULL)
     font = _Data->Font;
   if (font_size == 0.0f)
@@ -1995,31 +1970,31 @@ void ImDrawList::AddText(const AnchorFont *font,
 
   ANCHOR_ASSERT(font->ContainerAtlas->TexID ==
                 _CmdHeader.TextureId);  // Use high-level ANCHOR::PushFont() or low-level
-                                        // ImDrawList::PushTextureId() to change font.
+                                        // AnchorDrawList::PushTextureId() to change font.
 
   GfVec4f clip_rect = _CmdHeader.ClipRect;
   if (cpu_fine_clip_rect)
   {
     clip_rect[0] = AnchorMax(clip_rect[0], cpu_fine_clip_rect->data()[0]);
     clip_rect[1] = AnchorMax(clip_rect[1], cpu_fine_clip_rect->data()[1]);
-    clip_rect[2] = ImMin(clip_rect[2], cpu_fine_clip_rect->data()[2]);
-    clip_rect[3] = ImMin(clip_rect[3], cpu_fine_clip_rect->data()[3]);
+    clip_rect[2] = AnchorMin(clip_rect[2], cpu_fine_clip_rect->data()[2]);
+    clip_rect[3] = AnchorMin(clip_rect[3], cpu_fine_clip_rect->data()[3]);
   }
   font->RenderText(
     this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip_rect != NULL);
 }
 
-void ImDrawList::AddText(const GfVec2f &pos, AnchorU32 col, const char *text_begin, const char *text_end)
+void AnchorDrawList::AddText(const GfVec2f &pos, AnchorU32 col, const char *text_begin, const char *text_end)
 {
   AddText(NULL, 0.0f, pos, col, text_begin, text_end);
 }
 
-void ImDrawList::AddImage(AnchorTextureID user_texture_id,
-                          const GfVec2f &p_min,
-                          const GfVec2f &p_max,
-                          const GfVec2f &uv_min,
-                          const GfVec2f &uv_max,
-                          AnchorU32 col)
+void AnchorDrawList::AddImage(AnchorTextureID user_texture_id,
+                              const GfVec2f &p_min,
+                              const GfVec2f &p_max,
+                              const GfVec2f &uv_min,
+                              const GfVec2f &uv_max,
+                              AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -2035,16 +2010,16 @@ void ImDrawList::AddImage(AnchorTextureID user_texture_id,
     PopTextureID();
 }
 
-void ImDrawList::AddImageQuad(AnchorTextureID user_texture_id,
-                              const GfVec2f &p1,
-                              const GfVec2f &p2,
-                              const GfVec2f &p3,
-                              const GfVec2f &p4,
-                              const GfVec2f &uv1,
-                              const GfVec2f &uv2,
-                              const GfVec2f &uv3,
-                              const GfVec2f &uv4,
-                              AnchorU32 col)
+void AnchorDrawList::AddImageQuad(AnchorTextureID user_texture_id,
+                                  const GfVec2f &p1,
+                                  const GfVec2f &p2,
+                                  const GfVec2f &p3,
+                                  const GfVec2f &p4,
+                                  const GfVec2f &uv1,
+                                  const GfVec2f &uv2,
+                                  const GfVec2f &uv3,
+                                  const GfVec2f &uv4,
+                                  AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -2060,20 +2035,20 @@ void ImDrawList::AddImageQuad(AnchorTextureID user_texture_id,
     PopTextureID();
 }
 
-void ImDrawList::AddImageRounded(AnchorTextureID user_texture_id,
-                                 const GfVec2f &p_min,
-                                 const GfVec2f &p_max,
-                                 const GfVec2f &uv_min,
-                                 const GfVec2f &uv_max,
-                                 AnchorU32 col,
-                                 float rounding,
-                                 ImDrawFlags flags)
+void AnchorDrawList::AddImageRounded(AnchorTextureID user_texture_id,
+                                     const GfVec2f &p_min,
+                                     const GfVec2f &p_max,
+                                     const GfVec2f &uv_min,
+                                     const GfVec2f &uv_max,
+                                     AnchorU32 col,
+                                     float rounding,
+                                     AnchorDrawFlags flags)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
 
   flags = FixRectCornerFlags(flags);
-  if (rounding <= 0.0f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
+  if (rounding <= 0.0f || (flags & AnchorDrawFlags_RoundCornersMask_) == AnchorDrawFlags_RoundCornersNone)
   {
     AddImage(user_texture_id, p_min, p_max, uv_min, uv_max, col);
     return;
@@ -2094,13 +2069,13 @@ void ImDrawList::AddImageRounded(AnchorTextureID user_texture_id,
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] ImDrawListSplitter
+// [SECTION] AnchorDrawListSplitter
 //-----------------------------------------------------------------------------
 // FIXME: This may be a little confusing, trying to be a little too low-level/optimal instead of
 // just doing vector swap..
 //-----------------------------------------------------------------------------
 
-void ImDrawListSplitter::ClearFreeMemory()
+void AnchorDrawListSplitter::ClearFreeMemory()
 {
   for (int i = 0; i < _Channels.Size; i++)
   {
@@ -2115,12 +2090,12 @@ void ImDrawListSplitter::ClearFreeMemory()
   _Channels.clear();
 }
 
-void ImDrawListSplitter::Split(ImDrawList *draw_list, int channels_count)
+void AnchorDrawListSplitter::Split(AnchorDrawList *draw_list, int channels_count)
 {
   TF_UNUSED(draw_list);
   ANCHOR_ASSERT(_Current == 0 && _Count <= 1 &&
                 "Nested channel splitting is not supported. Please use separate instances of "
-                "ImDrawListSplitter.");
+                "AnchorDrawListSplitter.");
   int old_channels_count = _Channels.Size;
   if (old_channels_count < channels_count)
   {
@@ -2134,13 +2109,13 @@ void ImDrawListSplitter::Split(ImDrawList *draw_list, int channels_count)
   // clear it to make state tidy in a debugger but we don't strictly need to. When we switch to the
   // next channel, we'll copy draw_list->_CmdBuffer/_IdxBuffer into Channels[0] and then
   // Channels[1] into draw_list->CmdBuffer/_IdxBuffer
-  memset(&_Channels[0], 0, sizeof(ImDrawChannel));
+  memset(&_Channels[0], 0, sizeof(AnchorDrawChannel));
   for (int i = 1; i < channels_count; i++)
   {
     if (i >= old_channels_count)
     {
       IM_PLACEMENT_NEW(&_Channels[i])
-      ImDrawChannel();
+      AnchorDrawChannel();
     }
     else
     {
@@ -2150,7 +2125,7 @@ void ImDrawListSplitter::Split(ImDrawList *draw_list, int channels_count)
   }
 }
 
-void ImDrawListSplitter::Merge(ImDrawList *draw_list)
+void AnchorDrawListSplitter::Merge(AnchorDrawList *draw_list)
 {
   // Note that we never use or rely on _Channels.Size because it is merely a buffer that we never
   // shrink back to 0 to keep all sub-buffers ready for use.
@@ -2163,11 +2138,11 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
   // Calculate our final buffer sizes. Also fix the incorrect IdxOffset values in each command.
   int new_cmd_buffer_count = 0;
   int new_idx_buffer_count = 0;
-  ImDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ? &draw_list->CmdBuffer.back() : NULL;
+  AnchorDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ? &draw_list->CmdBuffer.back() : NULL;
   int idx_offset = last_cmd ? last_cmd->IdxOffset + last_cmd->ElemCount : 0;
   for (int i = 1; i < _Count; i++)
   {
-    ImDrawChannel &ch = _Channels[i];
+    AnchorDrawChannel &ch = _Channels[i];
 
     // Equivalent of PopUnusedDrawCmd() for this channel's cmdbuffer and except we don't need to
     // test for UserCallback.
@@ -2176,8 +2151,8 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
 
     if (ch._CmdBuffer.Size > 0 && last_cmd != NULL)
     {
-      ImDrawCmd *next_cmd = &ch._CmdBuffer[0];
-      if (ImDrawCmd_HeaderCompare(last_cmd, next_cmd) == 0 && last_cmd->UserCallback == NULL &&
+      AnchorDrawCmd *next_cmd = &ch._CmdBuffer[0];
+      if (AnchorDrawCmd_HeaderCompare(last_cmd, next_cmd) == 0 && last_cmd->UserCallback == NULL &&
           next_cmd->UserCallback == NULL)
       {
         // Merge previous channel last draw command with current channel first draw command if
@@ -2202,19 +2177,19 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
 
   // Write commands and indices in order (they are fairly small structures, we don't copy vertices
   // only indices)
-  ImDrawCmd *cmd_write = draw_list->CmdBuffer.Data + draw_list->CmdBuffer.Size - new_cmd_buffer_count;
-  ImDrawIdx *idx_write = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size - new_idx_buffer_count;
+  AnchorDrawCmd *cmd_write = draw_list->CmdBuffer.Data + draw_list->CmdBuffer.Size - new_cmd_buffer_count;
+  AnchorDrawIdx *idx_write = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size - new_idx_buffer_count;
   for (int i = 1; i < _Count; i++)
   {
-    ImDrawChannel &ch = _Channels[i];
+    AnchorDrawChannel &ch = _Channels[i];
     if (int sz = ch._CmdBuffer.Size)
     {
-      memcpy(cmd_write, ch._CmdBuffer.Data, sz * sizeof(ImDrawCmd));
+      memcpy(cmd_write, ch._CmdBuffer.Data, sz * sizeof(AnchorDrawCmd));
       cmd_write += sz;
     }
     if (int sz = ch._IdxBuffer.Size)
     {
-      memcpy(idx_write, ch._IdxBuffer.Data, sz * sizeof(ImDrawIdx));
+      memcpy(idx_write, ch._IdxBuffer.Data, sz * sizeof(AnchorDrawIdx));
       idx_write += sz;
     }
   }
@@ -2225,16 +2200,16 @@ void ImDrawListSplitter::Merge(ImDrawList *draw_list)
     draw_list->AddDrawCmd();
 
   // If current command is used with different settings we need to add a new command
-  ImDrawCmd *curr_cmd = &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1];
   if (curr_cmd->ElemCount == 0)
-    ImDrawCmd_HeaderCopy(curr_cmd, &draw_list->_CmdHeader);  // Copy ClipRect, TextureId, VtxOffset
-  else if (ImDrawCmd_HeaderCompare(curr_cmd, &draw_list->_CmdHeader) != 0)
+    AnchorDrawCmd_HeaderCopy(curr_cmd, &draw_list->_CmdHeader);  // Copy ClipRect, TextureId, VtxOffset
+  else if (AnchorDrawCmd_HeaderCompare(curr_cmd, &draw_list->_CmdHeader) != 0)
     draw_list->AddDrawCmd();
 
   _Count = 1;
 }
 
-void ImDrawListSplitter::SetCurrentChannel(ImDrawList *draw_list, int idx)
+void AnchorDrawListSplitter::SetCurrentChannel(AnchorDrawList *draw_list, int idx)
 {
   ANCHOR_ASSERT(idx >= 0 && idx < _Count);
   if (_Current == idx)
@@ -2250,31 +2225,31 @@ void ImDrawListSplitter::SetCurrentChannel(ImDrawList *draw_list, int idx)
   draw_list->_IdxWritePtr = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size;
 
   // If current command is used with different settings we need to add a new command
-  ImDrawCmd *curr_cmd = (draw_list->CmdBuffer.Size == 0) ?
-                          NULL :
-                          &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1];
+  AnchorDrawCmd *curr_cmd = (draw_list->CmdBuffer.Size == 0) ?
+                              NULL :
+                              &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1];
   if (curr_cmd == NULL)
     draw_list->AddDrawCmd();
   else if (curr_cmd->ElemCount == 0)
-    ImDrawCmd_HeaderCopy(curr_cmd, &draw_list->_CmdHeader);  // Copy ClipRect, TextureId, VtxOffset
-  else if (ImDrawCmd_HeaderCompare(curr_cmd, &draw_list->_CmdHeader) != 0)
+    AnchorDrawCmd_HeaderCopy(curr_cmd, &draw_list->_CmdHeader);  // Copy ClipRect, TextureId, VtxOffset
+  else if (AnchorDrawCmd_HeaderCompare(curr_cmd, &draw_list->_CmdHeader) != 0)
     draw_list->AddDrawCmd();
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] ImDrawData
+// [SECTION] AnchorDrawData
 //-----------------------------------------------------------------------------
 
 // For backward compatibility: convert all buffers from indexed to de-indexed, in case you cannot
 // render indexed. Note: this is slow and most likely a waste of resources. Always prefer indexed
 // rendering!
-void ImDrawData::DeIndexAllBuffers()
+void AnchorDrawData::DeIndexAllBuffers()
 {
-  AnchorVector<ImDrawVert> new_vtx_buffer;
+  AnchorVector<AnchorDrawVert> new_vtx_buffer;
   TotalVtxCount = TotalIdxCount = 0;
   for (int i = 0; i < CmdListsCount; i++)
   {
-    ImDrawList *cmd_list = CmdLists[i];
+    AnchorDrawList *cmd_list = CmdLists[i];
     if (cmd_list->IdxBuffer.empty())
       continue;
     new_vtx_buffer.resize(cmd_list->IdxBuffer.Size);
@@ -2286,17 +2261,17 @@ void ImDrawData::DeIndexAllBuffers()
   }
 }
 
-// Helper to scale the ClipRect field of each ImDrawCmd.
+// Helper to scale the ClipRect field of each AnchorDrawCmd.
 // Use if your final output buffer is at a different scale than draw_data->DisplaySize,
 // or if there is a difference between your window resolution and framebuffer resolution.
-void ImDrawData::ScaleClipRects(const GfVec2f &fb_scale)
+void AnchorDrawData::ScaleClipRects(const GfVec2f &fb_scale)
 {
   for (int i = 0; i < CmdListsCount; i++)
   {
-    ImDrawList *cmd_list = CmdLists[i];
+    AnchorDrawList *cmd_list = CmdLists[i];
     for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
     {
-      ImDrawCmd *cmd = &cmd_list->CmdBuffer[cmd_i];
+      AnchorDrawCmd *cmd = &cmd_list->CmdBuffer[cmd_i];
       cmd->ClipRect = GfVec4f(cmd->ClipRect[0] * fb_scale[0],
                               cmd->ClipRect[1] * fb_scale[1],
                               cmd->ClipRect[2] * fb_scale[0],
@@ -2310,7 +2285,7 @@ void ImDrawData::ScaleClipRects(const GfVec2f &fb_scale)
 //-----------------------------------------------------------------------------
 
 // Generic linear color gradient, write to RGB fields, leave A untouched.
-void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList *draw_list,
+void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(AnchorDrawList *draw_list,
                                                     int vert_start_idx,
                                                     int vert_end_idx,
                                                     GfVec2f gradient_p0,
@@ -2319,19 +2294,19 @@ void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList *draw_list,
                                                     AnchorU32 col1)
 {
   GfVec2f gradient_extent = gradient_p1 - gradient_p0;
-  float gradient_inv_length2 = 1.0f / ImLengthSqr(gradient_extent);
-  ImDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
-  ImDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
+  float gradient_inv_length2 = 1.0f / AnchorLengthSqr(gradient_extent);
+  AnchorDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
+  AnchorDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
   const int col0_r = (int)(col0 >> ANCHOR_COL32_R_SHIFT) & 0xFF;
   const int col0_g = (int)(col0 >> ANCHOR_COL32_G_SHIFT) & 0xFF;
   const int col0_b = (int)(col0 >> ANCHOR_COL32_B_SHIFT) & 0xFF;
   const int col_delta_r = ((int)(col1 >> ANCHOR_COL32_R_SHIFT) & 0xFF) - col0_r;
   const int col_delta_g = ((int)(col1 >> ANCHOR_COL32_G_SHIFT) & 0xFF) - col0_g;
   const int col_delta_b = ((int)(col1 >> ANCHOR_COL32_B_SHIFT) & 0xFF) - col0_b;
-  for (ImDrawVert *vert = vert_start; vert < vert_end; vert++)
+  for (AnchorDrawVert *vert = vert_start; vert < vert_end; vert++)
   {
-    float d = ImDot(vert->pos - gradient_p0, gradient_extent);
-    float t = ImClamp(d * gradient_inv_length2, 0.0f, 1.0f);
+    float d = AnchorDot(vert->pos - gradient_p0, gradient_extent);
+    float t = AnchorClamp(d * gradient_inv_length2, 0.0f, 1.0f);
     int r = (int)(col0_r + col_delta_r * t);
     int g = (int)(col0_g + col_delta_g * t);
     int b = (int)(col0_b + col_delta_b * t);
@@ -2341,7 +2316,7 @@ void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList *draw_list,
 }
 
 // Distribute UV over (a, b) rectangle
-void ANCHOR::ShadeVertsLinearUV(ImDrawList *draw_list,
+void ANCHOR::ShadeVertsLinearUV(AnchorDrawList *draw_list,
                                 int vert_start_idx,
                                 int vert_end_idx,
                                 const GfVec2f &a,
@@ -2355,19 +2330,19 @@ void ANCHOR::ShadeVertsLinearUV(ImDrawList *draw_list,
   const GfVec2f scale = GfVec2f(size[0] != 0.0f ? (uv_size[0] / size[0]) : 0.0f,
                                 size[1] != 0.0f ? (uv_size[1] / size[1]) : 0.0f);
 
-  ImDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
-  ImDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
+  AnchorDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
+  AnchorDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
   if (clamp)
   {
-    const GfVec2f min = ImMin(uv_a, uv_b);
+    const GfVec2f min = AnchorMin(uv_a, uv_b);
     const GfVec2f max = AnchorMax(uv_a, uv_b);
-    for (ImDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
-      vertex->uv = ImClamp(uv_a + ImMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale), min, max);
+    for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
+      vertex->uv = AnchorClamp(uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale), min, max);
   }
   else
   {
-    for (ImDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
-      vertex->uv = uv_a + ImMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale);
+    for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
+      vertex->uv = uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale);
   }
 }
 
@@ -2452,16 +2427,16 @@ static const char
     "                                                      -    XX           XX    -              "
     "               "};
 
-static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_MouseCursor_COUNT][3] = {
+static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[AnchorMouseCursor_COUNT][3] = {
   // Pos ........ Size ......... Offset ......
-  {GfVec2f(0, 3), GfVec2f(12, 19), GfVec2f(0, 0)},     // ANCHOR_MouseCursor_Arrow
-  {GfVec2f(13, 0), GfVec2f(7, 16), GfVec2f(1, 8)},     // ANCHOR_MouseCursor_TextInput
-  {GfVec2f(31, 0), GfVec2f(23, 23), GfVec2f(11, 11)},  // ANCHOR_MouseCursor_ResizeAll
-  {GfVec2f(21, 0), GfVec2f(9, 23), GfVec2f(4, 11)},    // ANCHOR_MouseCursor_ResizeNS
-  {GfVec2f(55, 18), GfVec2f(23, 9), GfVec2f(11, 4)},   // ANCHOR_MouseCursor_ResizeEW
-  {GfVec2f(73, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_MouseCursor_ResizeNESW
-  {GfVec2f(55, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_MouseCursor_ResizeNWSE
-  {GfVec2f(91, 0), GfVec2f(17, 22), GfVec2f(5, 0)},    // ANCHOR_MouseCursor_Hand
+  {GfVec2f(0, 3), GfVec2f(12, 19), GfVec2f(0, 0)},     // AnchorMouseCursor_Arrow
+  {GfVec2f(13, 0), GfVec2f(7, 16), GfVec2f(1, 8)},     // AnchorMouseCursor_TextInput
+  {GfVec2f(31, 0), GfVec2f(23, 23), GfVec2f(11, 11)},  // AnchorMouseCursor_ResizeAll
+  {GfVec2f(21, 0), GfVec2f(9, 23), GfVec2f(4, 11)},    // AnchorMouseCursor_ResizeNS
+  {GfVec2f(55, 18), GfVec2f(23, 9), GfVec2f(11, 4)},   // AnchorMouseCursor_ResizeEW
+  {GfVec2f(73, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // AnchorMouseCursor_ResizeNESW
+  {GfVec2f(55, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // AnchorMouseCursor_ResizeNWSE
+  {GfVec2f(91, 0), GfVec2f(17, 22), GfVec2f(5, 0)},    // AnchorMouseCursor_Hand
 };
 
 AnchorFontAtlas::AnchorFontAtlas()
@@ -2659,10 +2634,10 @@ AnchorFont *AnchorFontAtlas::AddFontDefault(const AnchorFontConfig *font_cfg_tem
   if (font_cfg.SizePixels <= 0.0f)
     font_cfg.SizePixels = 13.0f * 1.0f;
   if (font_cfg.Name[0] == '\0')
-    ImFormatString(
+    AnchorFormatString(
       font_cfg.Name, ANCHOR_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf, %dpx", (int)font_cfg.SizePixels);
   font_cfg.EllipsisChar = (AnchorWChar)0x0085;
-  font_cfg.GlyphOffset[1] = 1.0f * IM_FLOOR(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
+  font_cfg.GlyphOffset[1] = 1.0f * ANCHOR_FLOOR(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
 
   const char *ttf_compressed_base85 = GetDefaultCompressedFontDataTTFBase85();
   const AnchorWChar *glyph_ranges = font_cfg.GlyphRanges != NULL ? font_cfg.GlyphRanges :
@@ -2694,7 +2669,7 @@ AnchorFont *AnchorFontAtlas::AddFontFromFileTTF(const char *filename,
     for (p = filename + strlen(filename); p > filename && p[-1] != '/' && p[-1] != '\\'; p--)
     {
     }
-    ImFormatString(font_cfg.Name, ANCHOR_ARRAYSIZE(font_cfg.Name), "%s, %.0fpx", p, size_pixels);
+    AnchorFormatString(font_cfg.Name, ANCHOR_ARRAYSIZE(font_cfg.Name), "%s, %.0fpx", p, size_pixels);
   }
   return AddFontFromMemoryTTF(data, (int)data_size, size_pixels, &font_cfg, glyph_ranges);
 }
@@ -2771,9 +2746,9 @@ int AnchorFontAtlas::AddCustomRectFontGlyph(AnchorFont *font,
                                             float advance_x,
                                             const GfVec2f &offset)
 {
-#  ifdef ANCHOR_USE_WCHAR32
+#ifdef ANCHOR_USE_WCHAR32
   ANCHOR_ASSERT(id <= IM_UNICODE_CODEPOINT_MAX);
-#  endif
+#endif
   ANCHOR_ASSERT(font != NULL);
   ANCHOR_ASSERT(width > 0 && width <= 0xFFFF);
   ANCHOR_ASSERT(height > 0 && height <= 0xFFFF);
@@ -2800,13 +2775,13 @@ void AnchorFontAtlas::CalcCustomRectUV(const AnchorFontAtlasCustomRect *rect,
                         (float)(rect->Y + rect->Height) * TexUvScale[1]);
 }
 
-bool AnchorFontAtlas::GetMouseCursorTexData(ANCHOR_MouseCursor cursor_type,
+bool AnchorFontAtlas::GetMouseCursorTexData(AnchorMouseCursor cursor_type,
                                             GfVec2f *out_offset,
                                             GfVec2f *out_size,
                                             GfVec2f out_uv_border[2],
                                             GfVec2f out_uv_fill[2])
 {
-  if (cursor_type <= ANCHOR_MouseCursor_None || cursor_type >= ANCHOR_MouseCursor_COUNT)
+  if (cursor_type <= AnchorMouseCursor_None || cursor_type >= AnchorMouseCursor_COUNT)
     return false;
   if (Flags & AnchorFontAtlasFlags_NoMouseCursors)
     return false;
@@ -2842,13 +2817,13 @@ bool AnchorFontAtlas::Build()
   const AnchorFontBuilderIO *builder_io = FontBuilderIO;
   if (builder_io == NULL)
   {
-#  ifdef ANCHOR_ENABLE_FREETYPE
+#ifdef ANCHOR_ENABLE_FREETYPE
     builder_io = AnchorFreeType::GetBuilderForFreeType();
-#  elif defined(ANCHOR_ENABLE_STB_TRUETYPE)
+#elif defined(ANCHOR_ENABLE_STB_TRUETYPE)
     builder_io = AnchorFontAtlasGetBuilderForStbTruetype();
-#  else
+#else
     ANCHOR_ASSERT(0);  // Invalid Build function
-#  endif
+#endif
   }
 
   // Build
@@ -2878,7 +2853,7 @@ void AnchorFontAtlasBuildMultiplyRectAlpha8(const unsigned char table[256],
       data[i] = table[data[i]];
 }
 
-#  ifdef ANCHOR_ENABLE_STB_TRUETYPE
+#ifdef ANCHOR_ENABLE_STB_TRUETYPE
 // Temporary data for one source font (multiple source fonts can be merged into one destination
 // AnchorFont) (C++03 doesn't allow instancing AnchorVector<> with function-local types so we
 // declare the type here.)
@@ -3086,7 +3061,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
   // The exact width doesn't really matter much, but some API/GPU have texture size limitations and
   // increasing width can decrease height. User can override TexDesiredWidth and TexGlyphPadding if
   // they wish, otherwise we use a simple heuristic to select the width based on expected surface.
-  const int surface_sqrt = (int)ImSqrt((float)total_surface) + 1;
+  const int surface_sqrt = (int)AnchorSqrt((float)total_surface) + 1;
   atlas->TexHeight = 0;
   if (atlas->TexDesiredWidth > 0)
     atlas->TexWidth = atlas->TexDesiredWidth;
@@ -3177,8 +3152,8 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     int unscaled_ascent, unscaled_descent, unscaled_line_gap;
     stbtt_GetFontVMetrics(&src_tmp.FontInfo, &unscaled_ascent, &unscaled_descent, &unscaled_line_gap);
 
-    const float ascent = ImFloor(unscaled_ascent * font_scale + ((unscaled_ascent > 0.0f) ? +1 : -1));
-    const float descent = ImFloor(unscaled_descent * font_scale + ((unscaled_descent > 0.0f) ? +1 : -1));
+    const float ascent = AnchorFloor(unscaled_ascent * font_scale + ((unscaled_ascent > 0.0f) ? +1 : -1));
+    const float descent = AnchorFloor(unscaled_descent * font_scale + ((unscaled_descent > 0.0f) ? +1 : -1));
     AnchorFontAtlasBuildSetupFont(atlas, dst_font, &cfg, ascent, descent);
     const float font_off_x = cfg.GlyphOffset[0];
     const float font_off_y = cfg.GlyphOffset[1] + IM_ROUND(dst_font->Ascent);
@@ -3221,7 +3196,7 @@ const AnchorFontBuilderIO *AnchorFontAtlasGetBuilderForStbTruetype()
   return &io;
 }
 
-#  endif  // ANCHOR_ENABLE_STB_TRUETYPE
+#endif  // ANCHOR_ENABLE_STB_TRUETYPE
 
 void AnchorFontAtlasBuildSetupFont(AnchorFontAtlas *atlas,
                                    AnchorFont *font,
@@ -3386,7 +3361,7 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
   // of each other to allow interpolation between them
   AnchorFontAtlasCustomRect *r = atlas->GetCustomRectByIndex(atlas->PackIdLines);
   ANCHOR_ASSERT(r->IsPacked());
-  for (unsigned int n = 0; n < IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++)  // +1 because of the zero-width row
+  for (unsigned int n = 0; n < ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++)  // +1 because of the zero-width row
   {
     // Each line consists of at least two empty pixels at the ends, with a line of solid pixels in
     // the middle
@@ -3458,8 +3433,8 @@ void AnchorFontAtlasBuildInit(AnchorFontAtlas *atlas)
   if (atlas->PackIdLines < 0)
   {
     if (!(atlas->Flags & AnchorFontAtlasFlags_NoBakedLines))
-      atlas->PackIdLines = atlas->AddCustomRectRegular(IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 2,
-                                                       IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
+      atlas->PackIdLines = atlas->AddCustomRectRegular(ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 2,
+                                                       ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
   }
 }
 
@@ -6736,7 +6711,7 @@ void AnchorFontGlyphRangesBuilder::AddText(const char *text, const char *text_en
   while (text_end ? (text < text_end) : *text)
   {
     unsigned int c = 0;
-    int c_len = ImTextCharFromUtf8(&c, text, text_end);
+    int c_len = AnchorTextCharFromUtf8(&c, text, text_end);
     text += c_len;
     if (c_len == 0)
       break;
@@ -6911,10 +6886,10 @@ void AnchorFont::AddGlyph(const AnchorFontConfig *cfg,
   {
     // Clamp & recenter if needed
     const float advance_x_original = advance_x;
-    advance_x = ImClamp(advance_x, cfg->GlyphMinAdvanceX, cfg->GlyphMaxAdvanceX);
+    advance_x = AnchorClamp(advance_x, cfg->GlyphMinAdvanceX, cfg->GlyphMaxAdvanceX);
     if (advance_x != advance_x_original)
     {
-      float char_off_x = cfg->PixelSnapH ? ImFloor((advance_x - advance_x_original) * 0.5f) :
+      float char_off_x = cfg->PixelSnapH ? AnchorFloor((advance_x - advance_x_original) * 0.5f) :
                                            (advance_x - advance_x_original) * 0.5f;
       x0 += char_off_x;
       x1 += char_off_x;
@@ -7026,7 +7001,7 @@ const char *AnchorFont::CalcWordWrapPositionA(float scale,
     if (c < 0x80)
       next_s = s + 1;
     else
-      next_s = s + ImTextCharFromUtf8(&c, s, text_end);
+      next_s = s + AnchorTextCharFromUtf8(&c, s, text_end);
     if (c == 0)
       break;
 
@@ -7047,7 +7022,7 @@ const char *AnchorFont::CalcWordWrapPositionA(float scale,
     }
 
     const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] : FallbackAdvanceX);
-    if (ImCharIsBlankW(c))
+    if (AnchorCharIsBlankW(c))
     {
       if (inside_word)
       {
@@ -7138,7 +7113,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
         while (s < text_end)
         {
           const char c = *s;
-          if (ImCharIsBlankA(c))
+          if (AnchorCharIsBlankA(c))
           {
             s++;
           }
@@ -7165,7 +7140,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
     }
     else
     {
-      s += ImTextCharFromUtf8(&c, s, text_end);
+      s += AnchorTextCharFromUtf8(&c, s, text_end);
       if (c == 0)  // Malformed UTF-8?
         break;
     }
@@ -7206,9 +7181,9 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
   return text_size;
 }
 
-// Note: as with every ImDrawList drawing function, this expects that the font atlas texture is
+// Note: as with every AnchorDrawList drawing function, this expects that the font atlas texture is
 // bound.
-void AnchorFont::RenderChar(ImDrawList *draw_list,
+void AnchorFont::RenderChar(AnchorDrawList *draw_list,
                             float size,
                             GfVec2f pos,
                             AnchorU32 col,
@@ -7220,8 +7195,8 @@ void AnchorFont::RenderChar(ImDrawList *draw_list,
   if (glyph->Colored)
     col |= ~ANCHOR_COL32_A_MASK;
   float scale = (size >= 0.0f) ? (size / FontSize) : 1.0f;
-  pos[0] = IM_FLOOR(pos[0]);
-  pos[1] = IM_FLOOR(pos[1]);
+  pos[0] = ANCHOR_FLOOR(pos[0]);
+  pos[1] = ANCHOR_FLOOR(pos[1]);
   draw_list->PrimReserve(6, 4);
   draw_list->PrimRectUV(GfVec2f(pos[0] + glyph->X0 * scale, pos[1] + glyph->Y0 * scale),
                         GfVec2f(pos[0] + glyph->X1 * scale, pos[1] + glyph->Y1 * scale),
@@ -7230,9 +7205,9 @@ void AnchorFont::RenderChar(ImDrawList *draw_list,
                         col);
 }
 
-// Note: as with every ImDrawList drawing function, this expects that the font atlas texture is
+// Note: as with every AnchorDrawList drawing function, this expects that the font atlas texture is
 // bound.
-void AnchorFont::RenderText(ImDrawList *draw_list,
+void AnchorFont::RenderText(AnchorDrawList *draw_list,
                             float size,
                             GfVec2f pos,
                             AnchorU32 col,
@@ -7247,8 +7222,8 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
                                                  // text_end, so this is merely to handle direct calls.
 
   // Align to be pixel perfect
-  pos[0] = IM_FLOOR(pos[0]);
-  pos[1] = IM_FLOOR(pos[1]);
+  pos[0] = ANCHOR_FLOOR(pos[0]);
+  pos[1] = ANCHOR_FLOOR(pos[1]);
   float x = pos[0];
   float y = pos[1];
   if (y > clip_rect[3])
@@ -7293,8 +7268,8 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
   const int idx_expected_size = draw_list->IdxBuffer.Size + idx_count_max;
   draw_list->PrimReserve(idx_count_max, vtx_count_max);
 
-  ImDrawVert *vtx_write = draw_list->_VtxWritePtr;
-  ImDrawIdx *idx_write = draw_list->_IdxWritePtr;
+  AnchorDrawVert *vtx_write = draw_list->_VtxWritePtr;
+  AnchorDrawIdx *idx_write = draw_list->_IdxWritePtr;
   unsigned int vtx_current_idx = draw_list->_VtxCurrentIdx;
 
   const AnchorU32 col_untinted = col | ~ANCHOR_COL32_A_MASK;
@@ -7324,7 +7299,7 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
         while (s < text_end)
         {
           const char c = *s;
-          if (ImCharIsBlankA(c))
+          if (AnchorCharIsBlankA(c))
           {
             s++;
           }
@@ -7350,7 +7325,7 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
     }
     else
     {
-      s += ImTextCharFromUtf8(&c, s, text_end);
+      s += AnchorTextCharFromUtf8(&c, s, text_end);
       if (c == 0)  // Malformed UTF-8?
         break;
     }
@@ -7427,12 +7402,12 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
         // We are NOT calling PrimRectUV() here because non-inlined causes too much overhead in a
         // debug builds. Inlined here:
         {
-          idx_write[0] = (ImDrawIdx)(vtx_current_idx);
-          idx_write[1] = (ImDrawIdx)(vtx_current_idx + 1);
-          idx_write[2] = (ImDrawIdx)(vtx_current_idx + 2);
-          idx_write[3] = (ImDrawIdx)(vtx_current_idx);
-          idx_write[4] = (ImDrawIdx)(vtx_current_idx + 2);
-          idx_write[5] = (ImDrawIdx)(vtx_current_idx + 3);
+          idx_write[0] = (AnchorDrawIdx)(vtx_current_idx);
+          idx_write[1] = (AnchorDrawIdx)(vtx_current_idx + 1);
+          idx_write[2] = (AnchorDrawIdx)(vtx_current_idx + 2);
+          idx_write[3] = (AnchorDrawIdx)(vtx_current_idx);
+          idx_write[4] = (AnchorDrawIdx)(vtx_current_idx + 2);
+          idx_write[5] = (AnchorDrawIdx)(vtx_current_idx + 3);
           vtx_write[0].pos[0] = x1;
           vtx_write[0].pos[1] = y1;
           vtx_write[0].col = glyph_col;
@@ -7490,7 +7465,7 @@ void AnchorFont::RenderText(ImDrawList *draw_list,
 
 // Render an arrow aimed to be aligned with text (p_min is a position in the same space text would
 // be positioned). To e.g. denote expanded/collapsed state
-void ANCHOR::RenderArrow(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col, ANCHOR_Dir dir, float scale)
+void ANCHOR::RenderArrow(AnchorDrawList *draw_list, GfVec2f pos, AnchorU32 col, AnchorDir dir, float scale)
 {
   const float h = draw_list->_Data->FontSize * 1.00f;
   float r = h * 0.40f * scale;
@@ -7499,36 +7474,36 @@ void ANCHOR::RenderArrow(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col, ANCH
   GfVec2f a, b, c;
   switch (dir)
   {
-    case ANCHOR_Dir_Up:
-    case ANCHOR_Dir_Down:
-      if (dir == ANCHOR_Dir_Up)
+    case AnchorDir_Up:
+    case AnchorDir_Down:
+      if (dir == AnchorDir_Up)
         r = -r;
       a = GfVec2f(+0.000f, +0.750f) * r;
       b = GfVec2f(-0.866f, -0.750f) * r;
       c = GfVec2f(+0.866f, -0.750f) * r;
       break;
-    case ANCHOR_Dir_Left:
-    case ANCHOR_Dir_Right:
-      if (dir == ANCHOR_Dir_Left)
+    case AnchorDir_Left:
+    case AnchorDir_Right:
+      if (dir == AnchorDir_Left)
         r = -r;
       a = GfVec2f(+0.750f, +0.000f) * r;
       b = GfVec2f(-0.750f, +0.866f) * r;
       c = GfVec2f(-0.750f, -0.866f) * r;
       break;
-    case ANCHOR_Dir_None:
-    case ANCHOR_Dir_COUNT:
+    case AnchorDir_None:
+    case AnchorDir_COUNT:
       ANCHOR_ASSERT(0);
       break;
   }
   draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
 }
 
-void ANCHOR::RenderBullet(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col)
+void ANCHOR::RenderBullet(AnchorDrawList *draw_list, GfVec2f pos, AnchorU32 col)
 {
   draw_list->AddCircleFilled(pos, draw_list->_Data->FontSize * 0.20f, col, 8);
 }
 
-void ANCHOR::RenderCheckMark(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col, float sz)
+void ANCHOR::RenderCheckMark(AnchorDrawList *draw_list, GfVec2f pos, AnchorU32 col, float sz)
 {
   float thickness = AnchorMax(sz / 5.0f, 1.0f);
   sz -= thickness * 0.5f;
@@ -7543,17 +7518,17 @@ void ANCHOR::RenderCheckMark(ImDrawList *draw_list, GfVec2f pos, AnchorU32 col, 
   draw_list->PathStroke(col, 0, thickness);
 }
 
-void ANCHOR::RenderMouseCursor(ImDrawList *draw_list,
+void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
                                GfVec2f pos,
                                float scale,
-                               ANCHOR_MouseCursor mouse_cursor,
+                               AnchorMouseCursor mouse_cursor,
                                AnchorU32 col_fill,
                                AnchorU32 col_border,
                                AnchorU32 col_shadow)
 {
-  if (mouse_cursor == ANCHOR_MouseCursor_None)
+  if (mouse_cursor == AnchorMouseCursor_None)
     return;
-  ANCHOR_ASSERT(mouse_cursor > ANCHOR_MouseCursor_None && mouse_cursor < ANCHOR_MouseCursor_COUNT);
+  ANCHOR_ASSERT(mouse_cursor > AnchorMouseCursor_None && mouse_cursor < AnchorMouseCursor_COUNT);
 
   AnchorFontAtlas *font_atlas = draw_list->_Data->Font->ContainerAtlas;
   GfVec2f offset, size, uv[4];
@@ -7574,58 +7549,58 @@ void ANCHOR::RenderMouseCursor(ImDrawList *draw_list,
 
 // Render an arrow. 'pos' is position of the arrow tip. half_sz[0] is length from base to tip.
 // half_sz[1] is length on each side.
-void ANCHOR::RenderArrowPointingAt(ImDrawList *draw_list,
+void ANCHOR::RenderArrowPointingAt(AnchorDrawList *draw_list,
                                    GfVec2f pos,
                                    GfVec2f half_sz,
-                                   ANCHOR_Dir direction,
+                                   AnchorDir direction,
                                    AnchorU32 col)
 {
   switch (direction)
   {
-    case ANCHOR_Dir_Left:
+    case AnchorDir_Left:
       draw_list->AddTriangleFilled(GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
                                    GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
                                    pos,
                                    col);
       return;
-    case ANCHOR_Dir_Right:
+    case AnchorDir_Right:
       draw_list->AddTriangleFilled(GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
                                    GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
                                    pos,
                                    col);
       return;
-    case ANCHOR_Dir_Up:
+    case AnchorDir_Up:
       draw_list->AddTriangleFilled(GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
                                    GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
                                    pos,
                                    col);
       return;
-    case ANCHOR_Dir_Down:
+    case AnchorDir_Down:
       draw_list->AddTriangleFilled(GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
                                    GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
                                    pos,
                                    col);
       return;
-    case ANCHOR_Dir_None:
-    case ANCHOR_Dir_COUNT:
+    case AnchorDir_None:
+    case AnchorDir_COUNT:
       break;  // Fix warnings
   }
 }
 
-static inline float ImAcos01(float x)
+static inline float AnchorAcos01(float x)
 {
   if (x <= 0.0f)
     return IM_PI * 0.5f;
   if (x >= 1.0f)
     return 0.0f;
-  return ImAcos(x);
+  return AnchorAcos(x);
   // return (-0.69813170079773212f * x * x - 0.87266462599716477f) * x + 1.5707963267948966f; //
   // Cheap approximation, may be enough for what we do.
 }
 
-// FIXME: Cleanup and move code to ImDrawList.
-void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
-                                    const ImRect &rect,
+// FIXME: Cleanup and move code to AnchorDrawList.
+void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
+                                    const AnchorRect &rect,
                                     AnchorU32 col,
                                     float x_start_norm,
                                     float x_end_norm,
@@ -7634,23 +7609,23 @@ void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
   if (x_end_norm == x_start_norm)
     return;
   if (x_start_norm > x_end_norm)
-    ImSwap(x_start_norm, x_end_norm);
+    AnchorSwap(x_start_norm, x_end_norm);
 
-  GfVec2f p0 = GfVec2f(ImLerp(rect.Min[0], rect.Max[0], x_start_norm), rect.Min[1]);
-  GfVec2f p1 = GfVec2f(ImLerp(rect.Min[0], rect.Max[0], x_end_norm), rect.Max[1]);
+  GfVec2f p0 = GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_start_norm), rect.Min[1]);
+  GfVec2f p1 = GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_end_norm), rect.Max[1]);
   if (rounding == 0.0f)
   {
     draw_list->AddRectFilled(p0, p1, col, 0.0f);
     return;
   }
 
-  rounding = ImClamp(
-    ImMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) - 1.0f, 0.0f, rounding);
+  rounding = AnchorClamp(
+    AnchorMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) - 1.0f, 0.0f, rounding);
   const float inv_rounding = 1.0f / rounding;
-  const float arc0_b = ImAcos01(1.0f - (p0[0] - rect.Min[0]) * inv_rounding);
-  const float arc0_e = ImAcos01(1.0f - (p1[0] - rect.Min[0]) * inv_rounding);
+  const float arc0_b = AnchorAcos01(1.0f - (p0[0] - rect.Min[0]) * inv_rounding);
+  const float arc0_e = AnchorAcos01(1.0f - (p1[0] - rect.Min[0]) * inv_rounding);
   const float half_pi = IM_PI * 0.5f;  // We will == compare to this because we know this is the
-                                       // exact value ImAcos01 can return.
+                                       // exact value AnchorAcos01 can return.
   const float x0 = AnchorMax(p0[0], rect.Min[0] + rounding);
   if (arc0_b == arc0_e)
   {
@@ -7669,9 +7644,9 @@ void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
   }
   if (p1[0] > rect.Min[0] + rounding)
   {
-    const float arc1_b = ImAcos01(1.0f - (rect.Max[0] - p1[0]) * inv_rounding);
-    const float arc1_e = ImAcos01(1.0f - (rect.Max[0] - p0[0]) * inv_rounding);
-    const float x1 = ImMin(p1[0], rect.Max[0] - rounding);
+    const float arc1_b = AnchorAcos01(1.0f - (rect.Max[0] - p1[0]) * inv_rounding);
+    const float arc1_e = AnchorAcos01(1.0f - (rect.Max[0] - p0[0]) * inv_rounding);
+    const float x1 = AnchorMin(p1[0], rect.Max[0] - rounding);
     if (arc1_b == arc1_e)
     {
       draw_list->PathLineTo(GfVec2f(x1, p0[1]));
@@ -7691,9 +7666,9 @@ void ANCHOR::RenderRectFilledRangeH(ImDrawList *draw_list,
   draw_list->PathFillConvex(col);
 }
 
-void ANCHOR::RenderRectFilledWithHole(ImDrawList *draw_list,
-                                      ImRect outer,
-                                      ImRect inner,
+void ANCHOR::RenderRectFilledWithHole(AnchorDrawList *draw_list,
+                                      AnchorRect outer,
+                                      AnchorRect inner,
                                       AnchorU32 col,
                                       float rounding)
 {
@@ -7706,73 +7681,73 @@ void ANCHOR::RenderRectFilledWithHole(ImDrawList *draw_list,
                              GfVec2f(inner.Min[0], inner.Max[1]),
                              col,
                              rounding,
-                             (fill_U ? 0 : ImDrawFlags_RoundCornersTopLeft) |
-                               (fill_D ? 0 : ImDrawFlags_RoundCornersBottomLeft));
+                             (fill_U ? 0 : AnchorDrawFlags_RoundCornersTopLeft) |
+                               (fill_D ? 0 : AnchorDrawFlags_RoundCornersBottomLeft));
   if (fill_R)
     draw_list->AddRectFilled(GfVec2f(inner.Max[0], inner.Min[1]),
                              GfVec2f(outer.Max[0], inner.Max[1]),
                              col,
                              rounding,
-                             (fill_U ? 0 : ImDrawFlags_RoundCornersTopRight) |
-                               (fill_D ? 0 : ImDrawFlags_RoundCornersBottomRight));
+                             (fill_U ? 0 : AnchorDrawFlags_RoundCornersTopRight) |
+                               (fill_D ? 0 : AnchorDrawFlags_RoundCornersBottomRight));
   if (fill_U)
     draw_list->AddRectFilled(GfVec2f(inner.Min[0], outer.Min[1]),
                              GfVec2f(inner.Max[0], inner.Min[1]),
                              col,
                              rounding,
-                             (fill_L ? 0 : ImDrawFlags_RoundCornersTopLeft) |
-                               (fill_R ? 0 : ImDrawFlags_RoundCornersTopRight));
+                             (fill_L ? 0 : AnchorDrawFlags_RoundCornersTopLeft) |
+                               (fill_R ? 0 : AnchorDrawFlags_RoundCornersTopRight));
   if (fill_D)
     draw_list->AddRectFilled(GfVec2f(inner.Min[0], inner.Max[1]),
                              GfVec2f(inner.Max[0], outer.Max[1]),
                              col,
                              rounding,
-                             (fill_L ? 0 : ImDrawFlags_RoundCornersBottomLeft) |
-                               (fill_R ? 0 : ImDrawFlags_RoundCornersBottomRight));
+                             (fill_L ? 0 : AnchorDrawFlags_RoundCornersBottomLeft) |
+                               (fill_R ? 0 : AnchorDrawFlags_RoundCornersBottomRight));
   if (fill_L && fill_U)
     draw_list->AddRectFilled(GfVec2f(outer.Min[0], outer.Min[1]),
                              GfVec2f(inner.Min[0], inner.Min[1]),
                              col,
                              rounding,
-                             ImDrawFlags_RoundCornersTopLeft);
+                             AnchorDrawFlags_RoundCornersTopLeft);
   if (fill_R && fill_U)
     draw_list->AddRectFilled(GfVec2f(inner.Max[0], outer.Min[1]),
                              GfVec2f(outer.Max[0], inner.Min[1]),
                              col,
                              rounding,
-                             ImDrawFlags_RoundCornersTopRight);
+                             AnchorDrawFlags_RoundCornersTopRight);
   if (fill_L && fill_D)
     draw_list->AddRectFilled(GfVec2f(outer.Min[0], inner.Max[1]),
                              GfVec2f(inner.Min[0], outer.Max[1]),
                              col,
                              rounding,
-                             ImDrawFlags_RoundCornersBottomLeft);
+                             AnchorDrawFlags_RoundCornersBottomLeft);
   if (fill_R && fill_D)
     draw_list->AddRectFilled(GfVec2f(inner.Max[0], inner.Max[1]),
                              GfVec2f(outer.Max[0], outer.Max[1]),
                              col,
                              rounding,
-                             ImDrawFlags_RoundCornersBottomRight);
+                             AnchorDrawFlags_RoundCornersBottomRight);
 }
 
 // Helper for ColorPicker4()
 // NB: This is rather brittle and will show artifact when rounding this enabled if rounded corners
 // overlap multiple cells. Caller currently responsible for avoiding that. Spent a non reasonable
 // amount of time trying to getting this right for ColorButton with
-// rounding+anti-aliasing+ANCHOR_ColorEditFlags_HalfAlphaPreview flag + various grid sizes and
+// rounding+anti-aliasing+AnchorColorEditFlags_HalfAlphaPreview flag + various grid sizes and
 // offsets, and eventually gave up... probably more reasonable to disable rounding altogether.
 // FIXME: uses ANCHOR::GetColorU32
-void ANCHOR::RenderColorRectWithAlphaCheckerboard(ImDrawList *draw_list,
+void ANCHOR::RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
                                                   GfVec2f p_min,
                                                   GfVec2f p_max,
                                                   AnchorU32 col,
                                                   float grid_step,
                                                   GfVec2f grid_off,
                                                   float rounding,
-                                                  ImDrawFlags flags)
+                                                  AnchorDrawFlags flags)
 {
-  if ((flags & ImDrawFlags_RoundCornersMask_) == 0)
-    flags = ImDrawFlags_RoundCornersDefault_;
+  if ((flags & AnchorDrawFlags_RoundCornersMask_) == 0)
+    flags = AnchorDrawFlags_RoundCornersDefault_;
   if (((col & ANCHOR_COL32_A_MASK) >> ANCHOR_COL32_A_SHIFT) < 0xFF)
   {
     AnchorU32 col_bg1 = GetColorU32(ImAlphaBlendColors(ANCHOR_COL32(204, 204, 204, 255), col));
@@ -7782,33 +7757,33 @@ void ANCHOR::RenderColorRectWithAlphaCheckerboard(ImDrawList *draw_list,
     int yi = 0;
     for (float y = p_min[1] + grid_off[1]; y < p_max[1]; y += grid_step, yi++)
     {
-      float y1 = ImClamp(y, p_min[1], p_max[1]), y2 = ImMin(y + grid_step, p_max[1]);
+      float y1 = AnchorClamp(y, p_min[1], p_max[1]), y2 = AnchorMin(y + grid_step, p_max[1]);
       if (y2 <= y1)
         continue;
       for (float x = p_min[0] + grid_off[0] + (yi & 1) * grid_step; x < p_max[0]; x += grid_step * 2.0f)
       {
-        float x1 = ImClamp(x, p_min[0], p_max[0]), x2 = ImMin(x + grid_step, p_max[0]);
+        float x1 = AnchorClamp(x, p_min[0], p_max[0]), x2 = AnchorMin(x + grid_step, p_max[0]);
         if (x2 <= x1)
           continue;
-        ImDrawFlags cell_flags = ImDrawFlags_RoundCornersNone;
+        AnchorDrawFlags cell_flags = AnchorDrawFlags_RoundCornersNone;
         if (y1 <= p_min[1])
         {
           if (x1 <= p_min[0])
-            cell_flags |= ImDrawFlags_RoundCornersTopLeft;
+            cell_flags |= AnchorDrawFlags_RoundCornersTopLeft;
           if (x2 >= p_max[0])
-            cell_flags |= ImDrawFlags_RoundCornersTopRight;
+            cell_flags |= AnchorDrawFlags_RoundCornersTopRight;
         }
         if (y2 >= p_max[1])
         {
           if (x1 <= p_min[0])
-            cell_flags |= ImDrawFlags_RoundCornersBottomLeft;
+            cell_flags |= AnchorDrawFlags_RoundCornersBottomLeft;
           if (x2 >= p_max[0])
-            cell_flags |= ImDrawFlags_RoundCornersBottomRight;
+            cell_flags |= AnchorDrawFlags_RoundCornersBottomRight;
         }
 
         // Combine flags
-        cell_flags = (flags == ImDrawFlags_RoundCornersNone || cell_flags == ImDrawFlags_RoundCornersNone) ?
-                       ImDrawFlags_RoundCornersNone :
+        cell_flags = (flags == AnchorDrawFlags_RoundCornersNone || cell_flags == AnchorDrawFlags_RoundCornersNone) ?
+                       AnchorDrawFlags_RoundCornersNone :
                        (cell_flags & flags);
         draw_list->AddRectFilled(GfVec2f(x1, y1), GfVec2f(x2, y2), col_bg2, rounding, cell_flags);
       }
@@ -7873,9 +7848,9 @@ static void stb__lit(const unsigned char *data, unsigned int length)
   stb__dout += length;
 }
 
-#  define stb__in2(x) ((i[x] << 8) + i[(x) + 1])
-#  define stb__in3(x) ((i[x] << 16) + stb__in2((x) + 1))
-#  define stb__in4(x) ((i[x] << 24) + stb__in3((x) + 1))
+#define stb__in2(x) ((i[x] << 8) + i[(x) + 1])
+#define stb__in3(x) ((i[x] << 16) + stb__in2((x) + 1))
+#define stb__in4(x) ((i[x] << 24) + stb__in3((x) + 1))
 
 static const unsigned char *stb_decompress_token(const unsigned char *i)
 {
@@ -8183,5 +8158,3 @@ static const char *GetDefaultCompressedFontDataTTFBase85()
 {
   return proggy_clean_ttf_compressed_data_base85;
 }
-
-#endif  // #ifndef ANCHOR_DISABLE

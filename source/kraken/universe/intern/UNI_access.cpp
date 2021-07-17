@@ -37,8 +37,10 @@ ObjectRegisterFunc UNI_object_register(ObjectUNI *type)
 
 ObjectUnregisterFunc UNI_object_unregister(ObjectUNI *type)
 {
-  do {
-    if (type->unreg) {
+  do
+  {
+    if (type->unreg)
+    {
       return type->unreg;
     }
   } while ((type = type->base));
@@ -55,8 +57,10 @@ void **UNI_object_instance(PointerUNI *ptr)
 {
   ObjectUNI *type = ptr->type;
 
-  do {
-    if (type->instance) {
+  do
+  {
+    if (type->instance)
+    {
       return type->instance(ptr);
     }
   } while ((type = type->base));

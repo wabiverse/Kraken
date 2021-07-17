@@ -18,56 +18,56 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
 #include "ANCHOR_modifier_keys.h"
 
-ANCHOR_ModifierKeys::ANCHOR_ModifierKeys()
+AnchorModifierKeys::AnchorModifierKeys()
 {
   clear();
 }
 
-ANCHOR_ModifierKeys::~ANCHOR_ModifierKeys()
+AnchorModifierKeys::~AnchorModifierKeys()
 {}
 
-eAnchorKey ANCHOR_ModifierKeys::getModifierKeyCode(eAnchorModifierKeyMask mask)
+eAnchorKey AnchorModifierKeys::getModifierKeyCode(eAnchorModifierKeyMask mask)
 {
   eAnchorKey key;
   switch (mask)
   {
     case ANCHOR_ModifierKeyLeftShift:
-      key = ANCHOR_KeyLeftShift;
+      key = AnchorKeyLeftShift;
       break;
     case ANCHOR_ModifierKeyRightShift:
-      key = ANCHOR_KeyRightShift;
+      key = AnchorKeyRightShift;
       break;
     case ANCHOR_ModifierKeyLeftAlt:
-      key = ANCHOR_KeyLeftAlt;
+      key = AnchorKeyLeftAlt;
       break;
     case ANCHOR_ModifierKeyRightAlt:
-      key = ANCHOR_KeyRightAlt;
+      key = AnchorKeyRightAlt;
       break;
     case ANCHOR_ModifierKeyLeftControl:
-      key = ANCHOR_KeyLeftControl;
+      key = AnchorKeyLeftControl;
       break;
     case ANCHOR_ModifierKeyRightControl:
-      key = ANCHOR_KeyRightControl;
+      key = AnchorKeyRightControl;
       break;
     case ANCHOR_ModifierKeyOS:
-      key = ANCHOR_KeyOS;
+      key = AnchorKeyOS;
       break;
     default:
       /**
        * Should not happen. */
-      key = ANCHOR_KeyUnknown;
+      key = AnchorKeyUnknown;
       break;
   }
   return key;
 }
 
-bool ANCHOR_ModifierKeys::get(eAnchorModifierKeyMask mask) const
+bool AnchorModifierKeys::get(eAnchorModifierKeyMask mask) const
 {
   switch (mask)
   {
@@ -90,7 +90,7 @@ bool ANCHOR_ModifierKeys::get(eAnchorModifierKeyMask mask) const
   }
 }
 
-void ANCHOR_ModifierKeys::set(eAnchorModifierKeyMask mask, bool down)
+void AnchorModifierKeys::set(eAnchorModifierKeyMask mask, bool down)
 {
   switch (mask)
   {
@@ -120,7 +120,7 @@ void ANCHOR_ModifierKeys::set(eAnchorModifierKeyMask mask, bool down)
   }
 }
 
-void ANCHOR_ModifierKeys::clear()
+void AnchorModifierKeys::clear()
 {
   m_LeftShift = false;
   m_RightShift = false;
@@ -131,7 +131,7 @@ void ANCHOR_ModifierKeys::clear()
   m_OS = false;
 }
 
-bool ANCHOR_ModifierKeys::equals(const ANCHOR_ModifierKeys &keys) const
+bool AnchorModifierKeys::equals(const AnchorModifierKeys &keys) const
 {
   return (m_LeftShift == keys.m_LeftShift) && (m_RightShift == keys.m_RightShift) &&
          (m_LeftAlt == keys.m_LeftAlt) && (m_RightAlt == keys.m_RightAlt) &&

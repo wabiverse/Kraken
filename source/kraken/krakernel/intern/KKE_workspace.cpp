@@ -94,7 +94,8 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
                                               const int parentid,
                                               WorkSpaceLayout *layout)
 {
-  if(relation_list.begin() != relation_list.end()) {
+  if (relation_list.begin() != relation_list.end())
+  {
 
     auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation *r) -> bool {
       if (r->parentid == parentid)
@@ -154,7 +155,7 @@ static void workspace_layout_name_set(WorkSpace *workspace,
                  '.',
                  offsetof(WorkSpaceLayout, name),
                  sizeof(CHARALL(layout->name)));
-  
+
   FormFactory(workspace->name, layout->name);
 }
 

@@ -39,9 +39,9 @@ void ED_code_run(bool *show)
 
   static bool show_new_file = false;
 
-  ANCHOR_WindowFlags flags;
+  AnchorWindowFlags flags;
 
-  flags |= ANCHOR_WindowFlags_MenuBar;
+  flags |= AnchorWindowFlags_MenuBar;
 
   if (!ANCHOR::Begin("Code Editor", show, flags))
   {

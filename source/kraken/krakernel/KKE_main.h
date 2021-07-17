@@ -51,13 +51,14 @@ struct Main : public ObjectUNI
 
   char launch_time[UNI_MAX_TIME];
 
-  std::vector<struct wmWindowManager *> wm; 
+  std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;
 };
 
 /** #Global.debug */
-enum {
+enum
+{
   /* general debug flag, print more info in unexpected cases */
   G_DEBUG = (1 << 0),
   /* debug messages for ffmpeg */
@@ -137,7 +138,8 @@ struct Global
   char autoexec_fail[200];
 };
 
-enum eGlobalFlag {
+enum eGlobalFlag
+{
   G_FLAG_RENDER_VIEWPORT = (1 << 0),
   G_FLAG_PICKSEL = (1 << 2),
   /** Support simulating events (for testing). */

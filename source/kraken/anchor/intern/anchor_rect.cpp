@@ -18,13 +18,13 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-#include "ANCHOR_Rect.h"
+#include "ANCHOR_rect.h"
 
-void ANCHOR_Rect::inset(AnchorS32 i)
+void AnchorRect::inset(AnchorS32 i)
 {
   if (i > 0)
   {
@@ -61,7 +61,7 @@ void ANCHOR_Rect::inset(AnchorS32 i)
   }
 }
 
-eAnchorVisibility ANCHOR_Rect::getVisibility(ANCHOR_Rect &r) const
+eAnchorVisibility AnchorRect::getVisibility(AnchorRect &r) const
 {
   bool lt = isInside(r.m_l, r.m_t);
   bool rt = isInside(r.m_r, r.m_t);
@@ -94,7 +94,7 @@ eAnchorVisibility ANCHOR_Rect::getVisibility(ANCHOR_Rect &r) const
   return v;
 }
 
-void ANCHOR_Rect::setCenter(AnchorS32 cx, AnchorS32 cy)
+void AnchorRect::setCenter(AnchorS32 cx, AnchorS32 cy)
 {
   AnchorS32 offset = cx - (m_l + (m_r - m_l) / 2);
   m_l += offset;
@@ -104,7 +104,7 @@ void ANCHOR_Rect::setCenter(AnchorS32 cx, AnchorS32 cy)
   m_b += offset;
 }
 
-void ANCHOR_Rect::setCenter(AnchorS32 cx, AnchorS32 cy, AnchorS32 w, AnchorS32 h)
+void AnchorRect::setCenter(AnchorS32 cx, AnchorS32 cy, AnchorS32 w, AnchorS32 h)
 {
   long w_2, h_2;
 
@@ -116,7 +116,7 @@ void ANCHOR_Rect::setCenter(AnchorS32 cx, AnchorS32 cy, AnchorS32 w, AnchorS32 h
   m_b = m_t + h;
 }
 
-bool ANCHOR_Rect::clip(ANCHOR_Rect &r) const
+bool AnchorRect::clip(AnchorRect &r) const
 {
   bool clipped = false;
   if (r.m_l < m_l)

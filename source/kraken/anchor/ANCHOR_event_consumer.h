@@ -16,47 +16,47 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
 
-class ANCHOR_IEventConsumer
+class AnchorIEventConsumer
 {
  public:
   /**
    * Destructor. */
-  virtual ~ANCHOR_IEventConsumer()
+  virtual ~AnchorIEventConsumer()
   {}
 
   /**
    * This method is called by the system when it has events to dispatch.
-   * @see ANCHOR_System#dispatchEvents
+   * @see AnchorSystem#dispatchEvents
    * @param event: The event that can be handled or ignored.
    * @return Indication as to whether the event was handled. */
-  virtual bool processEvent(ANCHOR_IEvent *event) = 0;
+  virtual bool processEvent(AnchorIEvent *event) = 0;
 };
 
 /**
  * Callback routine that threads the Kraken backend. */
-typedef int (*ANCHOR_EventCallbackProcPtr)(ANCHOR_EventHandle event, ANCHOR_UserPtr userdata);
+typedef int (*AnchorEventCallbackProcPtr)(AnchorEventHandle event, ANCHOR_UserPtr userdata);
 
-ANCHOR_EventConsumerHandle ANCHOR_CreateEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
-                                                      ANCHOR_UserPtr userdata);
+AnchorEventConsumerHandle ANCHOR_CreateEventConsumer(AnchorEventCallbackProcPtr eventCallback,
+                                                     ANCHOR_UserPtr userdata);
 
-class ANCHOR_CallbackEventConsumer : public ANCHOR_IEventConsumer
+class ANCHOR_CallbackEventConsumer : public AnchorIEventConsumer
 {
  public:
   /**
    * Constructor.
    * @param eventCallback: The call-back routine invoked.
    * @param userData: The data passed back through the call-back routine. */
-  ANCHOR_CallbackEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback, ANCHOR_UserPtr userData);
+  ANCHOR_CallbackEventConsumer(AnchorEventCallbackProcPtr eventCallback, ANCHOR_UserPtr userData);
 
   /**
    * Destructor. */
@@ -67,11 +67,11 @@ class ANCHOR_CallbackEventConsumer : public ANCHOR_IEventConsumer
    * This method is called by an event producer when an event is available.
    * @param event: The event that can be handled or ignored.
    * @return Indication as to whether the event was handled. */
-  bool processEvent(ANCHOR_IEvent *event);
+  bool processEvent(AnchorIEvent *event);
 
  protected:
   /** The call-back routine invoked. */
-  ANCHOR_EventCallbackProcPtr m_eventCallback;
+  AnchorEventCallbackProcPtr m_eventCallback;
   /** The data passed back through the call-back routine. */
   ANCHOR_UserPtr m_userData;
 };

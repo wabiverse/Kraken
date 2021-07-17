@@ -145,7 +145,7 @@ PenaltyBreakAssignment: 110
 
 AllowShortFunctionsOnASingleLine: None
 
-SortIncludes: true
+SortIncludes: false
 
 # Don't right align escaped newlines to the right because we have a wide default
 AlignEscapedNewlines: DontAlign

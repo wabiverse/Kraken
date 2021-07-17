@@ -157,7 +157,8 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
   KLI_assert((wm->windrawable == NULL) && (wm->windrawable != win));
 
   wm->windrawable = win;
-  if (activate) {
+  if (activate)
+  {
     ANCHOR::ActivateWindowDrawingContext((ANCHOR_SystemWindowHandle)win->anchorwin);
   }
   // GPU_context_active_set(win->gpuctx);
@@ -233,7 +234,7 @@ static void wm_get_desktopsize(int *r_width, int *r_height)
 
 static bool wm_window_update_size_position(wmWindow *win)
 {
-  ANCHOR_RectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+  AnchorRectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
   int l, t, r, b;
   ANCHOR::GetRectangle(client_rect, &l, &t, &r, &b);
 
@@ -405,7 +406,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
         win->windowstate = state;
         wm_window_set_dpi(win);
-        if (state != ANCHOR_WindowStateMinimized) {
+        if (state != AnchorWindowStateMinimized)
+        {
           /**
            * Anchor sometimes sends size or move events when the window hasn't changed.
            * One case of this is using compiz on linux. To alleviate the problem
@@ -414,7 +416,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
            * It might be good to eventually do that at Anchor level, but that is for
            * another time.
            */
-          if (wm_window_update_size_position(win)) {
+          if (wm_window_update_size_position(win))
+          {
             const kScreen *screen = WM_window_get_active_screen(win);
 
             wm_window_make_drawable(wm, win);
@@ -551,7 +554,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
       }
       case ANCHOR_EventTypeButtonDown:
       case ANCHOR_EventTypeButtonUp: {
-        if (win->active == 0) {
+        if (win->active == 0)
+        {
           /* Entering window, update cursor and tablet state.
            * (anchor sends win-activate *after* the mouse-click in window!) */
           wm_window_update_eventstate(win);
@@ -603,16 +607,16 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
                                                                    CHARALL(win_icon.GetAssetPath()),
                                                                    GET_X(win_pos),
                                                                    GET_Y(win_pos),
-                                                                   GET_X(win_size),
-                                                                   GET_Y(win_size),
-                                                                   ANCHOR_WindowStateFullScreen,
+                                                                   50,
+                                                                   50,
+                                                                   AnchorWindowStateNormal,
                                                                    is_dialog,
                                                                    ANCHOR_DrawingContextTypeVulkan,
                                                                    0);
   if (anchorwin)
   {
     // win->gpuctx = GPU_context_create(anchorwin);
-    
+
     // GPU_init();
 
     /**
@@ -626,10 +630,11 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     // wm_window_ensure_eventstate(win);
 
     /* store actual window size in kraken window */
-    ANCHOR_RectangleHandle bounds = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+    AnchorRectangleHandle bounds = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
 
     /* win32: gives undefined window size when minimized */
-    if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) != ANCHOR_WindowStateMinimized) {
+    if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) != AnchorWindowStateMinimized)
+    {
       SET_VEC2(win_size, ANCHOR::GetWidthRectangle(bounds), ANCHOR::GetHeightRectangle(bounds));
       FormFactory(win->size, win_size);
     }
@@ -645,7 +650,8 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     WM_window_swap_buffers(win);
   }
 
-  else {
+  else
+  {
     wm_window_set_drawable(wm, prev_windrawable, false);
   }
 }
@@ -653,11 +659,13 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
 static void wm_window_title(wmWindowManager *wm, wmWindow *win)
 {
-  if (WM_window_is_temp_screen(win)) {
+  if (WM_window_is_temp_screen(win))
+  {
     /* Nothing to do for 'temp' windows,
      * because #WM_window_open always sets window title. */
   }
-  else if (win->anchorwin) {
+  else if (win->anchorwin)
+  {
     /* this is set to 1 if you don't have startup.usd open */
     // if (G.save_over && KKE_main_pixarfile_path_from_global()[0]) {
     //   char str[sizeof(((Main *)NULL)->name) + 24];
@@ -744,13 +752,13 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
 
   /* add drop boxes */
   // {
-    // ListBase *lb = WM_dropboxmap_find("Window", 0, 0);
-    // WM_event_add_dropbox_handler(&win->handlers, lb);
+  // ListBase *lb = WM_dropboxmap_find("Window", 0, 0);
+  // WM_event_add_dropbox_handler(&win->handlers, lb);
   // }
   wm_window_title(wm, win);
 
   /* add topbar */
-  // ED_screen_global_areas_refresh(win);  
+  // ED_screen_global_areas_refresh(win);
 }
 
 static void wm_get_screensize(int *r_width, int *r_height)
@@ -860,11 +868,11 @@ void wm_window_set_size(wmWindow *win, int width, int height)
 static void wm_window_raise(wmWindow *win)
 {
   /* Restore window if minimized */
-  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == ANCHOR_WindowStateMinimized)
+  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == AnchorWindowStateMinimized)
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowStateNormal);
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, AnchorWindowStateNormal);
   }
-  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, ANCHOR_WindowOrderTop);
+  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, AnchorWindowOrderTop);
 }
 
 bool WM_window_is_temp_screen(const wmWindow *win)
@@ -1016,7 +1024,8 @@ wmWindow *WM_window_open(kContext *C,
   /* Refresh screen dimensions, after the effective window size is known. */
   // ED_screen_refresh(wm, win);
 
-  if (win->anchorwin) {
+  if (win->anchorwin)
+  {
     wm_window_raise(win);
     ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, title);
     return win;
@@ -1383,20 +1392,24 @@ static int wm_window_new_exec(kContext *C, wmOperator *UNUSED(op))
 
 void WM_anchor_init(kContext *C)
 {
-  if (!anchor_system) {
+  if (!anchor_system)
+  {
     ANCHOR_EventConsumerHandle consumer;
 
-    if (C != NULL) {
+    if (C != NULL)
+    {
       consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
     }
 
     anchor_system = ANCHOR_CreateSystem();
 
-    if (C != NULL) {
+    if (C != NULL)
+    {
       ANCHOR::AddEventConsumer(anchor_system, consumer);
     }
 
-    if (true) {
+    if (true)
+    {
       ANCHOR::UseNativePixels();
     }
 
@@ -1448,13 +1461,13 @@ static int wm_window_fullscreen_toggle_exec(kContext *C, wmOperator *UNUSED(op))
   wmWindow *window = CTX_wm_window(C);
 
   eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin);
-  if (state != ANCHOR_WindowStateFullScreen)
+  if (state != AnchorWindowStateFullScreen)
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateFullScreen);
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, AnchorWindowStateFullScreen);
   }
   else
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, ANCHOR_WindowStateNormal);
+    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, AnchorWindowStateNormal);
   }
 
   return OPERATOR_FINISHED;

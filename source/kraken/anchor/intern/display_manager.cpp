@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -29,14 +29,14 @@
 
 WABI_NAMESPACE_USING
 
-ANCHOR_DisplayManager::ANCHOR_DisplayManager(void)
+AnchorDisplayManager::AnchorDisplayManager(void)
   : m_settingsInitialized(false)
 {}
 
-ANCHOR_DisplayManager::~ANCHOR_DisplayManager(void)
+AnchorDisplayManager::~AnchorDisplayManager(void)
 {}
 
-eAnchorStatus ANCHOR_DisplayManager::initialize(void)
+eAnchorStatus AnchorDisplayManager::initialize(void)
 {
   eAnchorStatus success;
   if (!m_settingsInitialized)
@@ -51,14 +51,14 @@ eAnchorStatus ANCHOR_DisplayManager::initialize(void)
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getNumDisplays(AnchorU8 & /*numDisplays*/) const
+eAnchorStatus AnchorDisplayManager::getNumDisplays(AnchorU8 & /*numDisplays*/) const
 {
   /**
    * Don't know if we have a display... */
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
+eAnchorStatus AnchorDisplayManager::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
 {
   eAnchorStatus success;
 
@@ -73,15 +73,15 @@ eAnchorStatus ANCHOR_DisplayManager::getNumDisplaySettings(AnchorU8 display, Anc
     }
     else
     {
-      success = ANCHOR_ERROR;
+      success = ANCHOR_FAILURE;
     }
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getDisplaySetting(AnchorU8 display,
-                                                       AnchorS32 index,
-                                                       ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManager::getDisplaySetting(AnchorU8 display,
+                                                      AnchorS32 index,
+                                                      ANCHOR_DisplaySetting &setting) const
 {
   eAnchorStatus success;
 
@@ -96,27 +96,27 @@ eAnchorStatus ANCHOR_DisplayManager::getDisplaySetting(AnchorU8 display,
     }
     else
     {
-      success = ANCHOR_ERROR;
+      success = ANCHOR_FAILURE;
     }
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::getCurrentDisplaySetting(AnchorU8 /*display*/,
-                                                              ANCHOR_DisplaySetting & /*setting*/) const
+eAnchorStatus AnchorDisplayManager::getCurrentDisplaySetting(AnchorU8 /*display*/,
+                                                             ANCHOR_DisplaySetting & /*setting*/) const
 {
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::setCurrentDisplaySetting(AnchorU8 /*display*/,
-                                                              const ANCHOR_DisplaySetting & /*setting*/)
+eAnchorStatus AnchorDisplayManager::setCurrentDisplaySetting(AnchorU8 /*display*/,
+                                                             const ANCHOR_DisplaySetting & /*setting*/)
 {
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
-                                               const ANCHOR_DisplaySetting &setting,
-                                               ANCHOR_DisplaySetting &match) const
+eAnchorStatus AnchorDisplayManager::findMatch(AnchorU8 display,
+                                              const ANCHOR_DisplaySetting &setting,
+                                              ANCHOR_DisplaySetting &match) const
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
   ANCHOR_ASSERT(m_settingsInitialized);
@@ -155,7 +155,7 @@ eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
 
   match = m_settings[display][found];
 
-  TF_DEBUG(ANCHOR_DISPLAY_MANAGER).Msg("ANCHOR_DisplayManager::findMatch(): settings of match:\n");
+  TF_DEBUG(ANCHOR_DISPLAY_MANAGER).Msg("AnchorDisplayManager::findMatch(): settings of match:\n");
   TF_DEBUG(ANCHOR_DISPLAY_MANAGER).Msg("  setting.xPixels=%d\n", match.xPixels);
   TF_DEBUG(ANCHOR_DISPLAY_MANAGER).Msg("  setting.yPixels=%d\n", match.yPixels);
   TF_DEBUG(ANCHOR_DISPLAY_MANAGER).Msg("  setting.bpp=%d\n", match.bpp);
@@ -164,7 +164,7 @@ eAnchorStatus ANCHOR_DisplayManager::findMatch(AnchorU8 display,
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManager::initializeSettings(void)
+eAnchorStatus AnchorDisplayManager::initializeSettings(void)
 {
   AnchorU8 numDisplays;
   eAnchorStatus success = getNumDisplays(numDisplays);

@@ -36,9 +36,9 @@ WABI_NAMESPACE_BEGIN
 
 void ED_view3d_run(bool *show)
 {
-  static ANCHOR_WindowFlags flags;
+  static AnchorWindowFlags flags;
 
-  flags |= ANCHOR_WindowFlags_MenuBar;
+  flags |= AnchorWindowFlags_MenuBar;
 
   if (!ANCHOR::Begin("View3D", show, flags))
   {

@@ -18,27 +18,27 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
 
-ANCHOR_CallbackEventConsumer::ANCHOR_CallbackEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
+ANCHOR_CallbackEventConsumer::ANCHOR_CallbackEventConsumer(AnchorEventCallbackProcPtr eventCallback,
                                                            ANCHOR_UserPtr userData)
 {
   m_eventCallback = eventCallback;
   m_userData = userData;
 }
 
-bool ANCHOR_CallbackEventConsumer::processEvent(ANCHOR_IEvent *event)
+bool ANCHOR_CallbackEventConsumer::processEvent(AnchorIEvent *event)
 {
-  return m_eventCallback((ANCHOR_EventHandle)event, m_userData) != 0;
+  return m_eventCallback((AnchorEventHandle)event, m_userData) != 0;
 }
 
-ANCHOR_EventConsumerHandle ANCHOR_CreateEventConsumer(ANCHOR_EventCallbackProcPtr eventCallback,
-                                                      ANCHOR_UserPtr userdata)
+AnchorEventConsumerHandle ANCHOR_CreateEventConsumer(AnchorEventCallbackProcPtr eventCallback,
+                                                     ANCHOR_UserPtr userdata)
 {
-  return (ANCHOR_EventConsumerHandle) new ANCHOR_CallbackEventConsumer(eventCallback, userdata);
+  return (AnchorEventConsumerHandle) new ANCHOR_CallbackEventConsumer(eventCallback, userdata);
 }

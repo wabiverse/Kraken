@@ -16,20 +16,20 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-#pragma once
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_display_manager.h"
 #include "ANCHOR_event_manager.h"
 #include "ANCHOR_window_manager.h"
 
-class ANCHOR_ISystem
+class AnchorISystem
 {
  public:
   /**
@@ -46,7 +46,7 @@ class ANCHOR_ISystem
    * Returns a pointer to the one and only
    * system (nil if it hasn't been created).
    * @return A pointer to the system. */
-  static ANCHOR_ISystem *getSystem();
+  static AnchorISystem *getSystem();
 
  protected:
   /**
@@ -54,14 +54,14 @@ class ANCHOR_ISystem
    * Protected default constructor to
    * force use of static createSystem
    * member. */
-  ANCHOR_ISystem()
+  AnchorISystem()
   {}
 
   /**
    * Destructor.
    * Protected default constructor to
    * force use of static dispose member. */
-  virtual ~ANCHOR_ISystem()
+  virtual ~AnchorISystem()
   {}
 
  public:
@@ -104,18 +104,18 @@ class ANCHOR_ISystem
    * @param is_dialog: Stay on top of parent window, no icon in taskbar, can't be minimized.
    * @param parentWindow: Parent (embedder) window
    * @return The new window (or 0 if creation failed). */
-  virtual ANCHOR_ISystemWindow *createWindow(const char *title,
-                                             const char *icon,
-                                             AnchorS32 left,
-                                             AnchorS32 top,
-                                             AnchorU32 width,
-                                             AnchorU32 height,
-                                             eAnchorWindowState state,
-                                             eAnchorDrawingContextType type,
-                                             int vkSettings,
-                                             const bool exclusive = false,
-                                             const bool is_dialog = false,
-                                             const ANCHOR_ISystemWindow *parentWindow = NULL) = 0;
+  virtual AnchorISystemWindow *createWindow(const char *title,
+                                            const char *icon,
+                                            AnchorS32 left,
+                                            AnchorS32 top,
+                                            AnchorU32 width,
+                                            AnchorU32 height,
+                                            eAnchorWindowState state,
+                                            eAnchorDrawingContextType type,
+                                            int vkSettings,
+                                            const bool exclusive = false,
+                                            const bool is_dialog = false,
+                                            const AnchorISystemWindow *parentWindow = NULL) = 0;
 
   /**
    * Begins full screen mode.
@@ -124,7 +124,7 @@ class ANCHOR_ISystem
    * This window is invalid after full screen has been ended.
    * @return Indication of success. */
   virtual eAnchorStatus beginFullScreen(const ANCHOR_DisplaySetting &setting,
-                                        ANCHOR_ISystemWindow **window,
+                                        AnchorISystemWindow **window,
                                         const bool stereoVisual,
                                         const bool alphaBackground = 0) = 0;
 
@@ -171,7 +171,7 @@ class ANCHOR_ISystem
    * Returns whether a window is valid.
    * @param window: Pointer to the window to be checked.
    * @return Indication of validity. */
-  virtual bool validWindow(ANCHOR_ISystemWindow *window) = 0;
+  virtual bool validWindow(AnchorISystemWindow *window) = 0;
 
   /**
    * Retrieves events from the queue and send them to the event consumers. */
@@ -181,13 +181,13 @@ class ANCHOR_ISystem
    * Adds the given event consumer to our list.
    * @param consumer: The event consumer to add.
    * @return Indication of success. */
-  virtual eAnchorStatus addEventConsumer(ANCHOR_IEventConsumer *consumer) = 0;
+  virtual eAnchorStatus addEventConsumer(AnchorIEventConsumer *consumer) = 0;
 
   /**
    * Removes the given event consumer to our list.
    * @param consumer: The event consumer to remove.
    * @return Indication of success. */
-  virtual eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer) = 0;
+  virtual eAnchorStatus removeEventConsumer(AnchorIEventConsumer *consumer) = 0;
 
   /**
    * Returns the state of a modifier key (outside the message queue).
@@ -232,21 +232,21 @@ class ANCHOR_ISystem
 
   /**
    * The one and only system */
-  static ANCHOR_ISystem *m_system;
+  static AnchorISystem *m_system;
 };
 
-class ANCHOR_System : public ANCHOR_ISystem
+class AnchorSystem : public AnchorISystem
 {
  protected:
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member. */
-  ANCHOR_System();
+  AnchorSystem();
 
   /**
    * Destructor.
    * Protected default constructor to force use of static dispose member. */
-  virtual ~ANCHOR_System();
+  virtual ~AnchorSystem();
 
  public:
   /**
@@ -264,7 +264,7 @@ class ANCHOR_System : public ANCHOR_ISystem
    * This window is invalid after full screen has been ended.
    * @return Indication of success. */
   eAnchorStatus beginFullScreen(const ANCHOR_DisplaySetting &setting,
-                                ANCHOR_ISystemWindow **window,
+                                AnchorISystemWindow **window,
                                 const bool stereoVisual,
                                 const bool alphaBackground);
 
@@ -293,7 +293,7 @@ class ANCHOR_System : public ANCHOR_ISystem
    * Returns whether a window is valid.
    * @param window: Pointer to the window to be checked.
    * @return Indication of validity. */
-  bool validWindow(ANCHOR_ISystemWindow *window);
+  bool validWindow(AnchorISystemWindow *window);
 
   /**
    * Dispatches all the events on the stack.
@@ -304,13 +304,13 @@ class ANCHOR_System : public ANCHOR_ISystem
    * Adds the given event consumer to our list.
    * @param consumer: The event consumer to add.
    * @return Indication of success. */
-  eAnchorStatus addEventConsumer(ANCHOR_IEventConsumer *consumer);
+  eAnchorStatus addEventConsumer(AnchorIEventConsumer *consumer);
 
   /**
    * Remove the given event consumer to our list.
    * @param consumer: The event consumer to remove.
    * @return Indication of success. */
-  eAnchorStatus removeEventConsumer(ANCHOR_IEventConsumer *consumer);
+  eAnchorStatus removeEventConsumer(AnchorIEventConsumer *consumer);
 
   /**
    * Returns the state of a modifier key (outside the message queue).
@@ -339,27 +339,27 @@ class ANCHOR_System : public ANCHOR_ISystem
    * or dispatchEvents().
    * Do not delete the event!
    * @param event: The event to push on the stack. */
-  eAnchorStatus pushEvent(ANCHOR_IEvent *event);
+  eAnchorStatus pushEvent(AnchorIEvent *event);
 
   /**
    * @return A pointer to our event manager. */
-  inline ANCHOR_EventManager *getEventManager() const;
+  inline AnchorEventManager *getEventManager() const;
 
   /**
    * @return A pointer to our window manager. */
-  inline ANCHOR_WindowManager *getWindowManager() const;
+  inline AnchorWindowManager *getWindowManager() const;
 
   /**
    * Returns the state of all modifier keys.
    * \param keys: The state of all modifier keys (true == pressed).
    * \return Indication of success. */
-  virtual eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const = 0;
+  virtual eAnchorStatus getModifierKeys(AnchorModifierKeys &keys) const = 0;
 
   /**
    * Returns the state of the mouse buttons (outside the message queue).
    * \param buttons: The state of the buttons.
    * \return Indication of success. */
-  virtual eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const = 0;
+  virtual eAnchorStatus getButtons(AnchorButtons &buttons) const = 0;
 
  protected:
   /**
@@ -376,22 +376,22 @@ class ANCHOR_System : public ANCHOR_ISystem
    * Creates a fullscreen window.
    * @param window: The window created.
    * @return Indication of success. */
-  eAnchorStatus createFullScreenWindow(ANCHOR_SystemWindow **window,
+  eAnchorStatus createFullScreenWindow(AnchorSystemWindow **window,
                                        const ANCHOR_DisplaySetting &settings,
                                        const bool stereoVisual,
                                        const bool alphaBackground = 0);
 
   /**
    * The display manager (platform dependent). */
-  ANCHOR_DisplayManager *m_displayManager;
+  AnchorDisplayManager *m_displayManager;
 
   /**
    * The window manager. */
-  ANCHOR_WindowManager *m_windowManager;
+  AnchorWindowManager *m_windowManager;
 
   /**
    * The event manager. */
-  ANCHOR_EventManager *m_eventManager;
+  AnchorEventManager *m_eventManager;
 
   /**
    * Settings of the display before the display went fullscreen. */
@@ -402,15 +402,15 @@ class ANCHOR_System : public ANCHOR_ISystem
   eAnchorTabletAPI m_tabletAPI;
 };
 
-inline ANCHOR_EventManager *ANCHOR_System::getEventManager() const
+inline AnchorEventManager *AnchorSystem::getEventManager() const
 {
   return m_eventManager;
 }
 
-inline ANCHOR_WindowManager *ANCHOR_System::getWindowManager() const
+inline AnchorWindowManager *AnchorSystem::getWindowManager() const
 {
   return m_windowManager;
 }
 
 ANCHOR_API
-ANCHOR_SystemHandle ANCHOR_CreateSystem();
+AnchorSystemHandle ANCHOR_CreateSystem();

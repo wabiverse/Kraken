@@ -44,7 +44,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGIVULKAN_DEBUG, true, "Enable debugging for HgiVulkan");
+TF_DEFINE_ENV_SETTING(HGIVULKAN_DEBUG, false, "Enable debugging for HgiVulkan");
 TF_DEFINE_ENV_SETTING(HGIVULKAN_DEBUG_VERBOSE, false, "Enable verbose debugging for HgiVulkan");
 
 bool HgiVulkanIsDebugEnabled()

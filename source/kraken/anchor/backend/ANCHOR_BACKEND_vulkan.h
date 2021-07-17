@@ -20,7 +20,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -55,7 +55,7 @@ struct ANCHOR_ImplVulkan_InitInfo
 ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_Init(ANCHOR_ImplVulkan_InitInfo *info, VkRenderPass render_pass);
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_Shutdown();
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_NewFrame();
-ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
+ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
                                                          VkCommandBuffer command_buffer,
                                                          VkPipeline pipeline = VK_NULL_HANDLE);
 ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer);

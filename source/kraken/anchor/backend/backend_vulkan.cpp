@@ -18,80 +18,9 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-// ANCHOR: Renderer Backend for Vulkan
-// This needs to be used along with a Platform Backend (e.g. GLFW, SDL, Win32, custom..)
-
-// Implemented features:
-//  [X] Renderer: Support for large meshes (64k+ vertices) with 16-bit indices.
-// Missing features:
-//  [ ] Renderer: User texture binding. Changes of AnchorTextureID aren't supported by this
-//  backend! See https://github.com/ocornut/anchor/pull/914
-
-// You can use unmodified anchor_impl_* files in your project. See examples/ folder for examples of
-// using this. Prefer including the entire anchor/ repository into your project (either as a copy
-// or as a submodule), and only build the backends you need. If you are new to ANCHOR, read
-// documentation from the docs/ folder + read the top of anchor.cpp. Read online:
-// https://github.com/ocornut/anchor/tree/master/docs
-
-// The aim of anchor_impl_vulkan.h/.cpp is to be usable in your engine without any modification.
-// IF YOU FEEL YOU NEED TO MAKE ANY CHANGE TO THIS CODE, please share them and your feedback at
-// https://github.com/ocornut/anchor/
-
-// Important note to the reader who wish to integrate anchor_impl_vulkan.cpp/.h in their own
-// engine/app.
-// - Common ANCHOR_ImplVulkan_XXX functions and structures are used to interface with
-// anchor_impl_vulkan.cpp/.h.
-//   You will use those if you want to use this rendering backend in your engine/app.
-// - Helper ANCHOR_ImplVulkanH_XXX functions and structures are only used by this example
-// (main.cpp) and by
-//   the backend itself (anchor_impl_vulkan.cpp), but should PROBABLY NOT be used by your own
-//   engine/app code.
-// Read comments in anchor_impl_vulkan.h.
-
-// CHANGELOG
-// (minor and older changes stripped away, please see git history for details)
-//  2021-03-22: Vulkan: Fix mapped memory validation error when buffer sizes are not multiple of
-//  VkPhysicalDeviceLimits::nonCoherentAtomSize. 2021-02-18: Vulkan: Change blending equation to
-//  preserve alpha in output buffer. 2021-01-27: Vulkan: Added support for custom function load and
-//  ANCHOR_IMPL_VULKAN_NO_PROTOTYPES by using ANCHOR_ImplVulkan_LoadFunctions(). 2020-11-11:
-//  Vulkan: Added support for specifying which subpass to reference during VkPipeline creation.
-//  2020-09-07: Vulkan: Added VkPipeline parameter to ANCHOR_ImplVulkan_RenderDrawData (default to
-//  one passed to ANCHOR_ImplVulkan_Init). 2020-05-04: Vulkan: Fixed crash if initial frame has no
-//  vertices. 2020-04-26: Vulkan: Fixed edge case where render callbacks wouldn't be called if the
-//  ImDrawData didn't have vertices. 2019-08-01: Vulkan: Added support for specifying multisample
-//  count. Set ANCHOR_ImplVulkan_InitInfo::MSAASamples to one of the VkSampleCountFlagBits values
-//  to use, default is non-multisampled as before. 2019-05-29: Vulkan: Added support for large mesh
-//  (64K+ vertices), enable ANCHORBackendFlags_RendererHasVtxOffset flag. 2019-04-30: Vulkan: Added
-//  support for special ImDrawCallback_ResetRenderState callback to reset render state. 2019-04-04:
-//  *BREAKING CHANGE*: Vulkan: Added ImageCount/MinImageCount fields in ANCHOR_ImplVulkan_InitInfo,
-//  required for initialization (was previously a hard #define ANCHOR_VK_QUEUED_FRAMES 2). Added
-//  ANCHOR_ImplVulkan_SetMinImageCount(). 2019-04-04: Vulkan: Added VkInstance argument to
-//  ANCHOR_ImplVulkanH_CreateWindow() optional helper. 2019-04-04: Vulkan: Avoid passing negative
-//  coordinates to vkCmdSetScissor, which debug validation layers do not like. 2019-04-01: Vulkan:
-//  Support for 32-bit index buffer (#define ImDrawIdx unsigned int). 2019-02-16: Vulkan: Viewport
-//  and clipping rectangles correctly using draw_data->FramebufferScale to allow retina display.
-//  2018-11-30: Misc: Setting up io.BackendRendererName so it can be displayed in the About Window.
-//  2018-08-25: Vulkan: Fixed mishandled VkSurfaceCapabilitiesKHR::maxImageCount=0 case.
-//  2018-06-22: Inverted the parameters to ANCHOR_ImplVulkan_RenderDrawData() to be consistent with
-//  other backends. 2018-06-08: Misc: Extracted anchor_impl_vulkan.cpp/.h away from the old
-//  combined GLFW+Vulkan example. 2018-06-08: Vulkan: Use draw_data->DisplayPos and
-//  draw_data->DisplaySize to setup projection matrix and clipping rectangle. 2018-03-03: Vulkan:
-//  Various refactor, created a couple of ANCHOR_ImplVulkanH_XXX helper that the example can use
-//  and that viewport support will use. 2018-03-01: Vulkan: Renamed ANCHOR_ImplVulkan_Init_Info to
-//  ANCHOR_ImplVulkan_InitInfo and fields to match more closely Vulkan terminology. 2018-02-16:
-//  Misc: Obsoleted the io.RenderDrawListsFn callback, ANCHOR_ImplVulkan_Render() calls
-//  ANCHOR_ImplVulkan_RenderDrawData() itself. 2018-02-06: Misc: Removed call to ANCHOR::Shutdown()
-//  which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext
-//  themselves. 2017-05-15: Vulkan: Fix scissor offset being negative. Fix new Vulkan validation
-//  warnings. Set required depth member for buffer image copy. 2016-11-13: Vulkan: Fix validation
-//  layer warnings and errors and redeclare gl_PerVertex. 2016-10-18: Vulkan: Add location
-//  decorators & change to use structs as in/out in glsl, update embedded spv (produced with
-//  glslangValidator -x). Null the released resources. 2016-08-27: Vulkan: Fix Vulkan example for
-//  use when a depth buffer is active.
 
 #include "ANCHOR_BACKEND_vulkan.h"
 #include <stdio.h>
@@ -863,7 +792,7 @@ static void CreateOrResizeBuffer(VkBuffer &buffer,
   p_buffer_size = req.size;
 }
 
-static void ANCHOR_ImplVulkan_SetupRenderState(ImDrawData *draw_data,
+static void ANCHOR_ImplVulkan_SetupRenderState(AnchorDrawData *draw_data,
                                                VkPipeline pipeline,
                                                VkCommandBuffer command_buffer,
                                                ANCHOR_VulkanGPU_FrameRenderBuffers *rb,
@@ -887,7 +816,7 @@ static void ANCHOR_ImplVulkan_SetupRenderState(ImDrawData *draw_data,
     vkCmdBindIndexBuffer(command_buffer,
                          rb->IndexBuffer,
                          0,
-                         sizeof(ImDrawIdx) == 2 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+                         sizeof(AnchorDrawIdx) == 2 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
   }
 
   // Setup viewport:
@@ -929,7 +858,7 @@ static void ANCHOR_ImplVulkan_SetupRenderState(ImDrawData *draw_data,
 }
 
 // Render function
-void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
+void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
                                       VkCommandBuffer command_buffer,
                                       VkPipeline pipeline)
 {
@@ -961,8 +890,8 @@ void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
   if (draw_data->TotalVtxCount > 0)
   {
     // Create or resize the vertex/index buffers
-    size_t vertex_size = draw_data->TotalVtxCount * sizeof(ImDrawVert);
-    size_t index_size = draw_data->TotalIdxCount * sizeof(ImDrawIdx);
+    size_t vertex_size = draw_data->TotalVtxCount * sizeof(AnchorDrawVert);
+    size_t index_size = draw_data->TotalIdxCount * sizeof(AnchorDrawIdx);
     if (rb->VertexBuffer == VK_NULL_HANDLE || rb->VertexBufferSize < vertex_size)
       CreateOrResizeBuffer(rb->VertexBuffer,
                            rb->VertexBufferMemory,
@@ -977,8 +906,8 @@ void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
                            VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 
     // Upload vertex/index data into a single contiguous GPU buffer
-    ImDrawVert *vtx_dst = NULL;
-    ImDrawIdx *idx_dst = NULL;
+    AnchorDrawVert *vtx_dst = NULL;
+    AnchorDrawIdx *idx_dst = NULL;
     VkResult err = vkMapMemory(
       v->Device, rb->VertexBufferMemory, 0, rb->VertexBufferSize, 0, (void **)(&vtx_dst));
     check_vk_result(err);
@@ -986,9 +915,9 @@ void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
     check_vk_result(err);
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
-      const ImDrawList *cmd_list = draw_data->CmdLists[n];
-      memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
-      memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+      const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
+      memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(AnchorDrawVert));
+      memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(AnchorDrawIdx));
       vtx_dst += cmd_list->VtxBuffer.Size;
       idx_dst += cmd_list->IdxBuffer.Size;
     }
@@ -1019,16 +948,16 @@ void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
   int global_idx_offset = 0;
   for (int n = 0; n < draw_data->CmdListsCount; n++)
   {
-    const ImDrawList *cmd_list = draw_data->CmdLists[n];
+    const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
     for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
     {
-      const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+      const AnchorDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
       if (pcmd->UserCallback != NULL)
       {
-        // User callback, registered via ImDrawList::AddCallback()
-        // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request
+        // User callback, registered via AnchorDrawList::AddCallback()
+        // (AnchorDrawCallback_ResetRenderState is a special callback value used by the user to request
         // the renderer to reset render state.)
-        if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
+        if (pcmd->UserCallback == AnchorDrawCallback_ResetRenderState)
           ANCHOR_ImplVulkan_SetupRenderState(draw_data, pipeline, command_buffer, rb, fb_width, fb_height);
         else
           pcmd->UserCallback(cmd_list, pcmd);
@@ -1077,7 +1006,7 @@ void ANCHOR_ImplVulkan_RenderDrawData(ImDrawData *draw_data,
 bool ANCHOR_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
 {
   ANCHOR_ImplVulkan_InitInfo *v = &g_VulkanInitInfo;
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
 
   unsigned char *pixels;
   int width, height;
@@ -1355,22 +1284,22 @@ static void ANCHOR_ImplVulkan_CreatePipeline(VkDevice device,
   stage[1].pName = "main";
 
   VkVertexInputBindingDescription binding_desc[1] = {};
-  binding_desc[0].stride = sizeof(ImDrawVert);
+  binding_desc[0].stride = sizeof(AnchorDrawVert);
   binding_desc[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
   VkVertexInputAttributeDescription attribute_desc[3] = {};
   attribute_desc[0].location = 0;
   attribute_desc[0].binding = binding_desc[0].binding;
   attribute_desc[0].format = VK_FORMAT_R32G32_SFLOAT;
-  attribute_desc[0].offset = ANCHOR_OFFSETOF(ImDrawVert, pos);
+  attribute_desc[0].offset = ANCHOR_OFFSETOF(AnchorDrawVert, pos);
   attribute_desc[1].location = 1;
   attribute_desc[1].binding = binding_desc[0].binding;
   attribute_desc[1].format = VK_FORMAT_R32G32_SFLOAT;
-  attribute_desc[1].offset = ANCHOR_OFFSETOF(ImDrawVert, uv);
+  attribute_desc[1].offset = ANCHOR_OFFSETOF(AnchorDrawVert, uv);
   attribute_desc[2].location = 2;
   attribute_desc[2].binding = binding_desc[0].binding;
   attribute_desc[2].format = VK_FORMAT_R8G8B8A8_UNORM;
-  attribute_desc[2].offset = ANCHOR_OFFSETOF(ImDrawVert, col);
+  attribute_desc[2].offset = ANCHOR_OFFSETOF(AnchorDrawVert, col);
 
   VkPipelineVertexInputStateCreateInfo vertex_info = {};
   vertex_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -1619,9 +1548,9 @@ bool ANCHOR_ImplVulkan_Init(ANCHOR_ImplVulkan_InitInfo *info, VkRenderPass rende
                 "ANCHOR_IMPL_VULKAN_NO_PROTOTYPES or VK_NO_PROTOTYPES are set!");
 
   // Setup backend capabilities flags
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   io.BackendRendererName = "anchor_impl_vulkan";
-  io.BackendFlags |= ANCHORBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset
+  io.BackendFlags |= AnchorBackendFlags_RendererHasVtxOffset;  // We can honor the AnchorDrawCmd::VtxOffset
                                                                // field, allowing for large meshes.
 
   ANCHOR_ASSERT(info->Instance != VK_NULL_HANDLE);

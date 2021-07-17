@@ -26,8 +26,8 @@
 #include "KLI_path_utils.h"
 
 #ifdef WIN32
-# include "utfconv.h"
-# include <io.h>
+#  include "utfconv.h"
+#  include <io.h>
 #endif /* WIN32 */
 
 #include <filesystem>

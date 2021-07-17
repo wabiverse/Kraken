@@ -16,28 +16,28 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
 
-class ANCHOR_IEventConsumer;
+class AnchorIEventConsumer;
 
-class ANCHOR_EventManager
+class AnchorEventManager
 {
  public:
   /**
    * Constructor. */
-  ANCHOR_EventManager();
+  AnchorEventManager();
 
   /**
    * Destructor. */
-  ~ANCHOR_EventManager();
+  ~AnchorEventManager();
 
   /**
    * Returns the number of events currently on the stack.
@@ -55,11 +55,11 @@ class ANCHOR_EventManager
    * To dispatch it, call dispatchEvent() or dispatchEvents().
    * Do not delete the event!
    * @param event: The event to push on the stack. */
-  eAnchorStatus pushEvent(ANCHOR_IEvent *event);
+  eAnchorStatus pushEvent(AnchorIEvent *event);
 
   /**
    * Dispatches the given event directly, bypassing the event stack. */
-  void dispatchEvent(ANCHOR_IEvent *event);
+  void dispatchEvent(AnchorIEvent *event);
 
   /**
    * Dispatches the event at the back of the stack.
@@ -76,13 +76,13 @@ class ANCHOR_EventManager
    * Adds a consumer to the list of event consumers.
    * @param consumer: The consumer added to the list.
    * @return Indication as to whether addition has succeeded. */
-  eAnchorStatus addConsumer(ANCHOR_IEventConsumer *consumer);
+  eAnchorStatus addConsumer(AnchorIEventConsumer *consumer);
 
   /**
    * Removes a consumer from the list of event consumers.
    * @param consumer: The consumer removed from the list.
    * @return Indication as to whether removal has succeeded. */
-  eAnchorStatus removeConsumer(ANCHOR_IEventConsumer *consumer);
+  eAnchorStatus removeConsumer(AnchorIEventConsumer *consumer);
 
  protected:
   /**
@@ -90,16 +90,16 @@ class ANCHOR_EventManager
   void destroyEvents();
   /**
    * A stack with events. */
-  typedef std::deque<ANCHOR_IEvent *> EventStack;
+  typedef std::deque<AnchorIEvent *> EventStack;
 
   /**
    * The event stack. */
-  std::deque<ANCHOR_IEvent *> m_events;
-  std::deque<ANCHOR_IEvent *> m_handled_events;
+  std::deque<AnchorIEvent *> m_events;
+  std::deque<AnchorIEvent *> m_handled_events;
 
   /**
    * A vector with event consumers. */
-  typedef std::vector<ANCHOR_IEventConsumer *> ConsumerVector;
+  typedef std::vector<AnchorIEventConsumer *> ConsumerVector;
 
   /**
    * The list with event consumers. */

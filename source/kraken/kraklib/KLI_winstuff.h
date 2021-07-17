@@ -88,7 +88,8 @@ typedef SSIZE_T ssize_t;
 WABI_NAMESPACE_BEGIN
 
 /* Directory reading compatibility with UNIX. */
-struct dirent {
+struct dirent
+{
   int d_ino;
   int d_off;
   unsigned short d_reclen;

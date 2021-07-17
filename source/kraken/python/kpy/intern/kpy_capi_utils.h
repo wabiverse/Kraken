@@ -30,11 +30,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct PyC_StringEnumItems {
+struct PyC_StringEnumItems
+{
   int value;
   const char *id;
 };
-struct PyC_StringEnum {
+struct PyC_StringEnum
+{
   const struct PyC_StringEnumItems *items;
   int value_found;
 };

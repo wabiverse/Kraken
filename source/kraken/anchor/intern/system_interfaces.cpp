@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -32,25 +32,25 @@
 #  include "ANCHOR_BACKEND_cocoa.h"
 #endif
 
-ANCHOR_ISystem *ANCHOR_ISystem::m_system = NULL;
+AnchorISystem *AnchorISystem::m_system = NULL;
 
-eAnchorStatus ANCHOR_ISystem::createSystem()
+eAnchorStatus AnchorISystem::createSystem()
 {
   eAnchorStatus success;
   if (!m_system)
   {
 #if defined(__linux__)
-    m_system = new ANCHOR_SystemSDL();
+    m_system = new AnchorSystemSDL();
 #elif defined(WIN32)
-    m_system = new ANCHOR_SystemWin32();
+    m_system = new AnchorSystemWin32();
 #elif defined(__APPLE__)
-    m_system = new ANCHOR_SystemCocoa();
+    m_system = new AnchorSystemCocoa();
 #endif
-    success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+    success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
 
   if (success == ANCHOR_SUCCESS)
@@ -60,7 +60,7 @@ eAnchorStatus ANCHOR_ISystem::createSystem()
   return success;
 }
 
-eAnchorStatus ANCHOR_ISystem::destroySystem()
+eAnchorStatus AnchorISystem::destroySystem()
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
   if (m_system)
@@ -70,12 +70,12 @@ eAnchorStatus ANCHOR_ISystem::destroySystem()
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-ANCHOR_ISystem *ANCHOR_ISystem::getSystem()
+AnchorISystem *AnchorISystem::getSystem()
 {
   return m_system;
 }

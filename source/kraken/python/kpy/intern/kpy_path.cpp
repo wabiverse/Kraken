@@ -32,15 +32,15 @@ WABI_NAMESPACE_BEGIN
 
 /*----------------------------MODULE INIT-------------------------*/
 static struct PyModuleDef _kpy_path_module_def = {
-    PyModuleDef_HEAD_INIT,
-    "_kpy_path", /* m_name */
-    NULL,        /* m_doc */
-    0,           /* m_size */
-    NULL,        /* m_methods */
-    NULL,        /* m_reload */
-    NULL,        /* m_traverse */
-    NULL,        /* m_clear */
-    NULL,        /* m_free */
+  PyModuleDef_HEAD_INIT,
+  "_kpy_path", /* m_name */
+  NULL,        /* m_doc */
+  0,           /* m_size */
+  NULL,        /* m_methods */
+  NULL,        /* m_reload */
+  NULL,        /* m_traverse */
+  NULL,        /* m_clear */
+  NULL,        /* m_free */
 };
 
 PyObject *KPyInit__kpy_path(void)

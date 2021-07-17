@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -31,31 +31,31 @@
 
 WABI_NAMESPACE_USING
 
-ANCHOR_System::ANCHOR_System()
+AnchorSystem::AnchorSystem()
   : m_nativePixel(false),
     m_windowFocus(true),
     m_displayManager(NULL),
     m_windowManager(NULL),
     m_eventManager(NULL),
-    m_tabletAPI(ANCHOR_TabletAutomatic)
+    m_tabletAPI(AnchorTabletAutomatic)
 {}
 
-ANCHOR_System::~ANCHOR_System()
+AnchorSystem::~AnchorSystem()
 {
   exit();
 }
 
-AnchorU64 ANCHOR_System::getMilliSeconds() const
+AnchorU64 AnchorSystem::getMilliSeconds() const
 {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
-             std::chrono::steady_clock::now().time_since_epoch())
-      .count();
+           std::chrono::steady_clock::now().time_since_epoch())
+    .count();
 }
 
-eAnchorStatus ANCHOR_System::init()
+eAnchorStatus AnchorSystem::init()
 {
-  m_windowManager = new ANCHOR_WindowManager();
-  m_eventManager = new ANCHOR_EventManager();
+  m_windowManager = new AnchorWindowManager();
+  m_eventManager = new AnchorEventManager();
 
   if (m_windowManager && m_eventManager)
   {
@@ -63,11 +63,11 @@ eAnchorStatus ANCHOR_System::init()
   }
   else
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 }
 
-eAnchorStatus ANCHOR_System::exit()
+eAnchorStatus AnchorSystem::exit()
 {
   if (getFullScreen())
   {
@@ -86,82 +86,82 @@ eAnchorStatus ANCHOR_System::exit()
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_System::createFullScreenWindow(ANCHOR_SystemWindow **window,
-                                                    const ANCHOR_DisplaySetting &settings,
-                                                    const bool stereoVisual,
-                                                    const bool alphaBackground)
+eAnchorStatus AnchorSystem::createFullScreenWindow(AnchorSystemWindow **window,
+                                                   const ANCHOR_DisplaySetting &settings,
+                                                   const bool stereoVisual,
+                                                   const bool alphaBackground)
 {
   ANCHOR_ASSERT(m_displayManager);
-  *window = (ANCHOR_SystemWindow *)createWindow("",
-                                                "",
-                                                0,
-                                                0,
-                                                settings.xPixels,
-                                                settings.yPixels,
-                                                ANCHOR_WindowStateNormal,
-                                                ANCHOR_DrawingContextTypeVulkan,
-                                                0,
-                                                true /* exclusive */);
-  return (*window == NULL) ? ANCHOR_ERROR : ANCHOR_SUCCESS;
+  *window = (AnchorSystemWindow *)createWindow("",
+                                               "",
+                                               0,
+                                               0,
+                                               settings.xPixels,
+                                               settings.yPixels,
+                                               AnchorWindowStateNormal,
+                                               ANCHOR_DrawingContextTypeVulkan,
+                                               0,
+                                               true /* exclusive */);
+  return (*window == NULL) ? ANCHOR_FAILURE : ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_System::beginFullScreen(const ANCHOR_DisplaySetting &setting,
-                                             ANCHOR_ISystemWindow **window,
-                                             const bool stereoVisual,
-                                             const bool alphaBackground)
+eAnchorStatus AnchorSystem::beginFullScreen(const ANCHOR_DisplaySetting &setting,
+                                            AnchorISystemWindow **window,
+                                            const bool stereoVisual,
+                                            const bool alphaBackground)
 {
-  eAnchorStatus success = ANCHOR_ERROR;
+  eAnchorStatus success = ANCHOR_FAILURE;
   ANCHOR_ASSERT(m_windowManager);
   if (m_displayManager)
   {
     if (!m_windowManager->getFullScreen())
     {
-      m_displayManager->getCurrentDisplaySetting(ANCHOR_DisplayManager::kMainDisplay,
+      m_displayManager->getCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                  m_preFullScreenSetting);
 
-      success = m_displayManager->setCurrentDisplaySetting(ANCHOR_DisplayManager::kMainDisplay, setting);
-      if (success == ANCHOR_ERROR)
+      success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay, setting);
+      if (success == ANCHOR_FAILURE)
       {
         success = createFullScreenWindow(
-          (ANCHOR_SystemWindow **)window, setting, stereoVisual, alphaBackground);
-        if (success == ANCHOR_ERROR)
+          (AnchorSystemWindow **)window, setting, stereoVisual, alphaBackground);
+        if (success == ANCHOR_FAILURE)
         {
           m_windowManager->beginFullScreen(*window, stereoVisual);
         }
         else
         {
-          m_displayManager->setCurrentDisplaySetting(ANCHOR_DisplayManager::kMainDisplay,
+          m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                      m_preFullScreenSetting);
         }
       }
     }
   }
-  if (success == ANCHOR_ERROR)
+  if (success == ANCHOR_FAILURE)
   {
-    TF_CODING_ERROR("ANCHOR_System::beginFullScreen(): could not enter full-screen mode\n");
+    TF_CODING_ERROR("AnchorSystem::beginFullScreen(): could not enter full-screen mode\n");
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_System::endFullScreen(void)
+eAnchorStatus AnchorSystem::endFullScreen(void)
 {
-  eAnchorStatus success = ANCHOR_ERROR;
+  eAnchorStatus success = ANCHOR_FAILURE;
   ANCHOR_ASSERT(m_windowManager);
   if (m_windowManager->getFullScreen())
   {
     success = m_windowManager->endFullScreen();
     ANCHOR_ASSERT(m_displayManager);
-    success = m_displayManager->setCurrentDisplaySetting(ANCHOR_DisplayManager::kMainDisplay,
+    success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                          m_preFullScreenSetting);
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-bool ANCHOR_System::getFullScreen(void)
+bool AnchorSystem::getFullScreen(void)
 {
   bool fullScreen;
   if (m_windowManager)
@@ -175,7 +175,7 @@ bool ANCHOR_System::getFullScreen(void)
   return fullScreen;
 }
 
-void ANCHOR_System::dispatchEvents()
+void AnchorSystem::dispatchEvents()
 {
   if (m_eventManager)
   {
@@ -183,12 +183,12 @@ void ANCHOR_System::dispatchEvents()
   }
 }
 
-bool ANCHOR_System::validWindow(ANCHOR_ISystemWindow *window)
+bool AnchorSystem::validWindow(AnchorISystemWindow *window)
 {
   return m_windowManager->getWindowFound(window);
 }
 
-eAnchorStatus ANCHOR_System::addEventConsumer(ANCHOR_IEventConsumer *consumer)
+eAnchorStatus AnchorSystem::addEventConsumer(AnchorIEventConsumer *consumer)
 {
   eAnchorStatus success;
   if (m_eventManager)
@@ -197,12 +197,12 @@ eAnchorStatus ANCHOR_System::addEventConsumer(ANCHOR_IEventConsumer *consumer)
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_System::removeEventConsumer(ANCHOR_IEventConsumer *consumer)
+eAnchorStatus AnchorSystem::removeEventConsumer(AnchorIEventConsumer *consumer)
 {
   eAnchorStatus success;
   if (m_eventManager)
@@ -211,12 +211,12 @@ eAnchorStatus ANCHOR_System::removeEventConsumer(ANCHOR_IEventConsumer *consumer
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_System::pushEvent(ANCHOR_IEvent *event)
+eAnchorStatus AnchorSystem::pushEvent(AnchorIEvent *event)
 {
   eAnchorStatus success;
   if (m_eventManager)
@@ -225,14 +225,14 @@ eAnchorStatus ANCHOR_System::pushEvent(ANCHOR_IEvent *event)
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_System::getModifierKeyState(eAnchorModifierKeyMask mask, bool &isDown) const
+eAnchorStatus AnchorSystem::getModifierKeyState(eAnchorModifierKeyMask mask, bool &isDown) const
 {
-  ANCHOR_ModifierKeys keys;
+  AnchorModifierKeys keys;
   // Get the state of all modifier keys
   eAnchorStatus success = getModifierKeys(keys);
   if (success)
@@ -243,9 +243,9 @@ eAnchorStatus ANCHOR_System::getModifierKeyState(eAnchorModifierKeyMask mask, bo
   return success;
 }
 
-eAnchorStatus ANCHOR_System::getButtonState(eAnchorButtonMask mask, bool &isDown) const
+eAnchorStatus AnchorSystem::getButtonState(eAnchorButtonMask mask, bool &isDown) const
 {
-  ANCHOR_Buttons buttons;
+  AnchorButtons buttons;
   // Get the state of all mouse buttons
   eAnchorStatus success = getButtons(buttons);
   if (success)
@@ -256,36 +256,36 @@ eAnchorStatus ANCHOR_System::getButtonState(eAnchorButtonMask mask, bool &isDown
   return success;
 }
 
-void ANCHOR_System::setTabletAPI(eAnchorTabletAPI api)
+void AnchorSystem::setTabletAPI(eAnchorTabletAPI api)
 {
   m_tabletAPI = api;
 }
 
-eAnchorTabletAPI ANCHOR_System::getTabletAPI(void)
+eAnchorTabletAPI AnchorSystem::getTabletAPI(void)
 {
   return m_tabletAPI;
 }
 
-ANCHOR_SystemHandle ANCHOR_CreateSystem()
+AnchorSystemHandle ANCHOR_CreateSystem()
 {
-  ANCHOR_ISystem::createSystem();
-  ANCHOR_ISystem *system = ANCHOR_ISystem::getSystem();
+  AnchorISystem::createSystem();
+  AnchorISystem *system = AnchorISystem::getSystem();
 
-  return (ANCHOR_SystemHandle)system;
+  return (AnchorSystemHandle)system;
 }
 
-// void ANCHOR_DestroySystem(ANCHOR_SystemHandle *system)
+// void ANCHOR_DestroySystem(AnchorSystemHandle *system)
 // {
 //   ANCHOR_clean_vulkan(system);
 // }
 
-bool ANCHOR_System::useNativePixel(void)
+bool AnchorSystem::useNativePixel(void)
 {
   m_nativePixel = true;
   return 1;
 }
 
-void ANCHOR_System::useWindowFocus(const bool use_focus)
+void AnchorSystem::useWindowFocus(const bool use_focus)
 {
   m_windowFocus = use_focus;
 }

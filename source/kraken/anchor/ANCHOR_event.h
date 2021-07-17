@@ -16,24 +16,24 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-#pragma once
 
 #include "ANCHOR_api.h"
 
 #include <wabi/base/tf/refPtr.h>
 
-class ANCHOR_IEvent
+class AnchorIEvent
 {
  public:
   /**
    * Destructor. */
-  virtual ~ANCHOR_IEvent()
+  virtual ~AnchorIEvent()
   {}
 
   /**
@@ -50,17 +50,17 @@ class ANCHOR_IEvent
    * Returns the window this event was generated on,
    * or NULL if it is a 'system' event.
    * @return The generating window. */
-  virtual ANCHOR_ISystemWindow *getWindow() = 0;
+  virtual AnchorISystemWindow *getWindow() = 0;
 
   /**
    * Returns the event data.
    * @return The event data. */
-  virtual ANCHOR_EventDataPtr getData() = 0;
+  virtual AnchorEventDataPtr getData() = 0;
 };
 
 /**
  * Base class for events received the operating system. */
-class ANCHOR_Event : public ANCHOR_IEvent
+class AnchorEvent : public AnchorIEvent
 {
  public:
   /**
@@ -68,7 +68,7 @@ class ANCHOR_Event : public ANCHOR_IEvent
    * @param msec: The time this event was generated.
    * @param type: The type of this event.
    * @param window: The generating window (or NULL if system event). */
-  ANCHOR_Event(AnchorU64 msec, eAnchorEventType type, ANCHOR_ISystemWindow *window)
+  AnchorEvent(AnchorU64 msec, eAnchorEventType type, AnchorISystemWindow *window)
     : m_type(type),
       m_time(msec),
       m_window(window),
@@ -95,7 +95,7 @@ class ANCHOR_Event : public ANCHOR_IEvent
    * Returns the window this event was generated on,
    * or NULL if it is a 'system' event.
    * @return The generating window. */
-  ANCHOR_ISystemWindow *getWindow()
+  AnchorISystemWindow *getWindow()
   {
     return m_window;
   }
@@ -103,7 +103,7 @@ class ANCHOR_Event : public ANCHOR_IEvent
   /**
    * Returns the event data.
    * @return The event data. */
-  ANCHOR_EventDataPtr getData()
+  AnchorEventDataPtr getData()
   {
     return m_data;
   }
@@ -117,15 +117,15 @@ class ANCHOR_Event : public ANCHOR_IEvent
   AnchorU64 m_time;
   /**
    * Pointer to the generating window. */
-  ANCHOR_ISystemWindow *m_window;
+  AnchorISystemWindow *m_window;
   /**
    * Pointer to the event data. */
-  ANCHOR_EventDataPtr m_data;
+  AnchorEventDataPtr m_data;
 };
 
 /**
  * Cursor event. */
-class ANCHOR_EventCursor : public ANCHOR_Event
+class AnchorEventCursor : public AnchorEvent
 {
  public:
   /**
@@ -135,13 +135,13 @@ class ANCHOR_EventCursor : public ANCHOR_Event
    * @param x: The x-coordinate of the location the cursor was at the time of the event.
    * @param y: The y-coordinate of the location the cursor was at the time of the event.
    * @param tablet: The tablet data associated with this event. */
-  ANCHOR_EventCursor(AnchorU64 msec,
-                     eAnchorEventType type,
-                     ANCHOR_ISystemWindow *window,
-                     AnchorS32 x,
-                     AnchorS32 y,
-                     const ANCHOR_TabletData &tablet)
-    : ANCHOR_Event(msec, type, window),
+  AnchorEventCursor(AnchorU64 msec,
+                    eAnchorEventType type,
+                    AnchorISystemWindow *window,
+                    AnchorS32 x,
+                    AnchorS32 y,
+                    const AnchorTabletData &tablet)
+    : AnchorEvent(msec, type, window),
       m_cursorEventData({x, y, tablet})
   {
     m_data = &m_cursorEventData;
@@ -149,12 +149,12 @@ class ANCHOR_EventCursor : public ANCHOR_Event
 
  protected:
   /** The x,y-coordinates of the cursor position. */
-  ANCHOR_EventCursorData m_cursorEventData;
+  AnchorEventCursorData m_cursorEventData;
 };
 
 /**
  * Mouse button event. */
-class ANCHOR_EventButton : public ANCHOR_Event
+class AnchorEventButton : public AnchorEvent
 {
  public:
   /**
@@ -164,12 +164,12 @@ class ANCHOR_EventButton : public ANCHOR_Event
    * @param window: The window of this event.
    * @param button: The state of the buttons were at the time of the event.
    * @param tablet: The tablet data associated with this event. */
-  ANCHOR_EventButton(AnchorU64 time,
-                     eAnchorEventType type,
-                     ANCHOR_ISystemWindow *window,
-                     eAnchorButtonMask button,
-                     const ANCHOR_TabletData &tablet)
-    : ANCHOR_Event(time, type, window),
+  AnchorEventButton(AnchorU64 time,
+                    eAnchorEventType type,
+                    AnchorISystemWindow *window,
+                    eAnchorButtonMask button,
+                    const AnchorTabletData &tablet)
+    : AnchorEvent(time, type, window),
       m_buttonEventData({button, tablet})
   {
     m_data = &m_buttonEventData;
@@ -177,14 +177,14 @@ class ANCHOR_EventButton : public ANCHOR_Event
 
  protected:
   /** The button event data. */
-  ANCHOR_EventButtonData m_buttonEventData;
+  AnchorEventButtonData m_buttonEventData;
 };
 
 /**
  * Mouse wheel event.
  * The displacement of the mouse wheel is counted in ticks.
  * A positive value means the wheel is turned away from the user. */
-class ANCHOR_EventWheel : public ANCHOR_Event
+class AnchorEventWheel : public AnchorEvent
 {
  public:
   /**
@@ -192,8 +192,8 @@ class ANCHOR_EventWheel : public ANCHOR_Event
    * @param msec: The time this event was generated.
    * @param window: The window of this event.
    * @param z: The displacement of the mouse wheel. */
-  ANCHOR_EventWheel(AnchorU64 msec, ANCHOR_ISystemWindow *window, AnchorS32 z)
-    : ANCHOR_Event(msec, ANCHOR_EventTypeWheel, window)
+  AnchorEventWheel(AnchorU64 msec, AnchorISystemWindow *window, AnchorS32 z)
+    : AnchorEvent(msec, AnchorEventTypeWheel, window)
   {
     m_wheelEventData.z = z;
     m_data = &m_wheelEventData;
@@ -201,12 +201,12 @@ class ANCHOR_EventWheel : public ANCHOR_Event
 
  protected:
   /** The z-displacement of the mouse wheel. */
-  ANCHOR_EventWheelData m_wheelEventData;
+  AnchorEventWheelData m_wheelEventData;
 };
 
 /**
  * Key event. */
-class ANCHOR_EventKey : public ANCHOR_Event
+class AnchorEventKey : public AnchorEvent
 {
  public:
   /**
@@ -214,12 +214,12 @@ class ANCHOR_EventKey : public ANCHOR_Event
    * @param msec: The time this event was generated.
    * @param type: The type of key event.
    * @param key: The key code of the key. */
-  ANCHOR_EventKey(AnchorU64 msec,
-                  eAnchorEventType type,
-                  ANCHOR_ISystemWindow *window,
-                  eAnchorKey key,
-                  bool is_repeat)
-    : ANCHOR_Event(msec, type, window)
+  AnchorEventKey(AnchorU64 msec,
+                 eAnchorEventType type,
+                 AnchorISystemWindow *window,
+                 eAnchorKey key,
+                 bool is_repeat)
+    : AnchorEvent(msec, type, window)
   {
     m_keyEventData.key = key;
     m_keyEventData.ascii = '\0';
@@ -234,14 +234,14 @@ class ANCHOR_EventKey : public ANCHOR_Event
    * @param type: The type of key event.
    * @param key: The key code of the key.
    * @param ascii: The ascii code for the key event. */
-  ANCHOR_EventKey(AnchorU64 msec,
-                  eAnchorEventType type,
-                  ANCHOR_ISystemWindow *window,
-                  eAnchorKey key,
-                  char ascii,
-                  const char utf8_buf[6],
-                  bool is_repeat)
-    : ANCHOR_Event(msec, type, window)
+  AnchorEventKey(AnchorU64 msec,
+                 eAnchorEventType type,
+                 AnchorISystemWindow *window,
+                 eAnchorKey key,
+                 char ascii,
+                 const char utf8_buf[6],
+                 bool is_repeat)
+    : AnchorEvent(msec, type, window)
   {
     m_keyEventData.key = key;
     m_keyEventData.ascii = ascii;
@@ -255,5 +255,5 @@ class ANCHOR_EventKey : public ANCHOR_Event
 
  protected:
   /** The key event data. */
-  ANCHOR_EventKeyData m_keyEventData;
+  AnchorEventKeyData m_keyEventData;
 };

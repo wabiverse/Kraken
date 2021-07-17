@@ -124,11 +124,13 @@ endif()
 #-----------------------------------------------------------------------------
 # Set default config options
 
-if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
-  add_definitions(-DTBB_USE_DEBUG=1)
-  add_definitions(-DTBB_USE_ASSERT=1)
-  add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
-  add_definitions(-DOSL_DEBUG=1)
+if(UNIX)
+  if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
+    add_definitions(-DTBB_USE_DEBUG=1)
+    add_definitions(-DTBB_USE_ASSERT=1)
+    add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
+    add_definitions(-DOSL_DEBUG=1)
+  endif()
 endif()
 
 # Hack, because CMAKE provided variables are not handed down from MSVC

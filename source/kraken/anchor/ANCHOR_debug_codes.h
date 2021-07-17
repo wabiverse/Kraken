@@ -16,9 +16,11 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -32,9 +34,8 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEBUG_CODES(
-    ANCHOR_SDL_VULKAN, 
-    ANCHOR_DISPLAY_MANAGER,
-    ANCHOR_WIN32
-);
+  ANCHOR_SDL_VULKAN,
+  ANCHOR_DISPLAY_MANAGER,
+  ANCHOR_WIN32);
 
 WABI_NAMESPACE_END

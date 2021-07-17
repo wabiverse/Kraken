@@ -128,7 +128,8 @@ int CREATOR_parse_args(int argc, const char **argv)
   if (convert_stage.size() > 2)
   {
     const std::filesystem::path fp = convert_stage;
-    if(std::filesystem::exists(fp)) {
+    if (std::filesystem::exists(fp))
+    {
       UNI_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
       exit(KRAKEN_SUCCESS);
     }

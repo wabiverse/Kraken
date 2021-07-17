@@ -66,7 +66,8 @@ enum eSpaceLinkFlag
   SPACE_FLAG_TYPE_WAS_ACTIVE = (1 << 1),
 };
 
-enum eFileSelectParamsFlag {
+enum eFileSelectParamsFlag
+{
   FILE_PARAMS_FLAG_UNUSED_1 = (1 << 0), /* cleared */
   FILE_RELPATH = (1 << 1),
   FILE_LINK = (1 << 2),

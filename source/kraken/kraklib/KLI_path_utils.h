@@ -36,7 +36,7 @@
 WABI_NAMESPACE_BEGIN
 
 #ifdef _WIN32
-#define MAXPATHLEN MAX_PATH
+#  define MAXPATHLEN MAX_PATH
 #endif /* _WIN32 */
 
 int KLI_access(const char *filename, int mode)

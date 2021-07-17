@@ -89,7 +89,8 @@ void kpy_intern_string_init(void)
 void kpy_intern_string_exit(void)
 {
   uint i = TfArraySize(kpy_intern_str_arr);
-  while (i--) {
+  while (i--)
+  {
     Py_DECREF(kpy_intern_str_arr[i]);
   }
 }

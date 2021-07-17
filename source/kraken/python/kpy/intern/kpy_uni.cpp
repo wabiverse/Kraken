@@ -88,10 +88,10 @@ static int kpy_class_call(kContext *C, ObjectUNI *ptr, void *func, UsdAttributeV
 
 static void kpy_class_free(void *pyob_ptr)
 {
-
 }
 
-struct KPy_TypesModule_State {
+struct KPy_TypesModule_State
+{
   /** `UNI_KrakenUNI`. */
   PointerUNI ptr;
   /** `UNI_KrakenUNI.objects`, exposed as `kpy.types` */
@@ -109,199 +109,199 @@ static PyObject *kpy_types_module_dir(PyObject *self)
 }
 
 PyTypeObject pyuni_struct_meta_idprop_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0) "kpy_object_meta_idprop", /* tp_name */
+  PyVarObject_HEAD_INIT(NULL, 0) "kpy_object_meta_idprop", /* tp_name */
 
-    /* NOTE! would be PyTypeObject, but subtypes of Type must be PyHeapTypeObject's */
-    sizeof(PyHeapTypeObject), /* tp_basicsize */
+  /* NOTE! would be PyTypeObject, but subtypes of Type must be PyHeapTypeObject's */
+  sizeof(PyHeapTypeObject), /* tp_basicsize */
 
-    0, /* tp_itemsize */
-    /* methods */
-    NULL, /* tp_dealloc */
-    0,    /* tp_vectorcall_offset */
-    NULL, /* getattrfunc tp_getattr; */
-    NULL, /* setattrfunc tp_setattr; */
-    NULL,
-    /* tp_compare */ /* deprecated in Python 3.0! */
-    NULL,            /* tp_repr */
+  0, /* tp_itemsize */
+  /* methods */
+  NULL, /* tp_dealloc */
+  0,    /* tp_vectorcall_offset */
+  NULL, /* getattrfunc tp_getattr; */
+  NULL, /* setattrfunc tp_setattr; */
+  NULL,
+  /* tp_compare */ /* deprecated in Python 3.0! */
+  NULL,            /* tp_repr */
 
-    /* Method suites for standard classes */
-    NULL, /* PyNumberMethods *tp_as_number; */
-    NULL, /* PySequenceMethods *tp_as_sequence; */
-    NULL, /* PyMappingMethods *tp_as_mapping; */
+  /* Method suites for standard classes */
+  NULL, /* PyNumberMethods *tp_as_number; */
+  NULL, /* PySequenceMethods *tp_as_sequence; */
+  NULL, /* PyMappingMethods *tp_as_mapping; */
 
-    /* More standard operations (here for binary compatibility) */
-    NULL,                                                        /* hashfunc tp_hash; */
-    NULL,                                                        /* ternaryfunc tp_call; */
-    NULL,                                                        /* reprfunc tp_str; */
-    NULL /* (getattrofunc) pyrna_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
+  /* More standard operations (here for binary compatibility) */
+  NULL,                                                        /* hashfunc tp_hash; */
+  NULL,                                                        /* ternaryfunc tp_call; */
+  NULL,                                                        /* reprfunc tp_str; */
+  NULL /* (getattrofunc) pyrna_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
 
-    NULL,// (setattrofunc)pyrna_struct_meta_idprop_setattro,             /* setattrofunc tp_setattro; */
-    
+  NULL,  // (setattrofunc)pyrna_struct_meta_idprop_setattro,             /* setattrofunc tp_setattro; */
 
-    /* Functions to access object as input/output buffer */
-    NULL, /* PyBufferProcs *tp_as_buffer; */
 
-    /*** Flags to define presence of optional/expanded features ***/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* long tp_flags; */
+  /* Functions to access object as input/output buffer */
+  NULL, /* PyBufferProcs *tp_as_buffer; */
 
-    NULL, /*  char *tp_doc;  Documentation string */
-    /*** Assigned meaning in release 2.0 ***/
-    /* call function for all accessible objects */
-    NULL, /* traverseproc tp_traverse; */
+  /*** Flags to define presence of optional/expanded features ***/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* long tp_flags; */
 
-    /* delete references to contained objects */
-    NULL, /* inquiry tp_clear; */
+  NULL, /*  char *tp_doc;  Documentation string */
+  /*** Assigned meaning in release 2.0 ***/
+  /* call function for all accessible objects */
+  NULL, /* traverseproc tp_traverse; */
 
-    /***  Assigned meaning in release 2.1 ***/
-    /*** rich comparisons ***/
-    NULL, /* richcmpfunc tp_richcompare; */
+  /* delete references to contained objects */
+  NULL, /* inquiry tp_clear; */
 
-    /***  weak reference enabler ***/
-    0, /* long tp_weaklistoffset; */
+  /***  Assigned meaning in release 2.1 ***/
+  /*** rich comparisons ***/
+  NULL, /* richcmpfunc tp_richcompare; */
 
-    /*** Added in release 2.2 ***/
-    /*   Iterators */
-    NULL, /* getiterfunc tp_iter; */
-    NULL, /* iternextfunc tp_iternext; */
+  /***  weak reference enabler ***/
+  0, /* long tp_weaklistoffset; */
 
-    /*** Attribute descriptor and subclassing stuff ***/
-    NULL, /* struct PyMethodDef *tp_methods; */
-    NULL, /* struct PyMemberDef *tp_members; */
-    NULL, /* struct PyGetSetDef *tp_getset; */
+  /*** Added in release 2.2 ***/
+  /*   Iterators */
+  NULL, /* getiterfunc tp_iter; */
+  NULL, /* iternextfunc tp_iternext; */
+
+  /*** Attribute descriptor and subclassing stuff ***/
+  NULL, /* struct PyMethodDef *tp_methods; */
+  NULL, /* struct PyMemberDef *tp_members; */
+  NULL, /* struct PyGetSetDef *tp_getset; */
 #if defined(_MSC_VER)
-    NULL, /* defer assignment */
+  NULL, /* defer assignment */
 #else
-    &PyType_Type, /* struct _typeobject *tp_base; */
+  &PyType_Type, /* struct _typeobject *tp_base; */
 #endif
-    NULL, /* PyObject *tp_dict; */
-    NULL, /* descrgetfunc tp_descr_get; */
-    NULL, /* descrsetfunc tp_descr_set; */
-    0,    /* long tp_dictoffset; */
-    NULL, /* initproc tp_init; */
-    NULL, /* allocfunc tp_alloc; */
-    NULL, /* newfunc tp_new; */
-    /*  Low-level free-memory routine */
-    NULL, /* freefunc tp_free; */
-    /* For PyObject_IS_GC */
-    NULL, /* inquiry tp_is_gc; */
-    NULL, /* PyObject *tp_bases; */
-    /* method resolution order */
-    NULL, /* PyObject *tp_mro; */
-    NULL, /* PyObject *tp_cache; */
-    NULL, /* PyObject *tp_subclasses; */
-    NULL, /* PyObject *tp_weaklist; */
-    NULL,
+  NULL, /* PyObject *tp_dict; */
+  NULL, /* descrgetfunc tp_descr_get; */
+  NULL, /* descrsetfunc tp_descr_set; */
+  0,    /* long tp_dictoffset; */
+  NULL, /* initproc tp_init; */
+  NULL, /* allocfunc tp_alloc; */
+  NULL, /* newfunc tp_new; */
+  /*  Low-level free-memory routine */
+  NULL, /* freefunc tp_free; */
+  /* For PyObject_IS_GC */
+  NULL, /* inquiry tp_is_gc; */
+  NULL, /* PyObject *tp_bases; */
+  /* method resolution order */
+  NULL, /* PyObject *tp_mro; */
+  NULL, /* PyObject *tp_cache; */
+  NULL, /* PyObject *tp_subclasses; */
+  NULL, /* PyObject *tp_weaklist; */
+  NULL,
 };
 
 PyTypeObject pyuni_object_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0) "kpy_object", /* tp_name */
-    sizeof(KPy_ObjectUNI),                       /* tp_basicsize */
-    0,                                           /* tp_itemsize */
-    /* methods */
-    NULL,//(destructor)pyuni_object_dealloc, /* tp_dealloc */
-    0,                                /* tp_vectorcall_offset */
-    NULL,                             /* getattrfunc tp_getattr; */
-    NULL,                             /* setattrfunc tp_setattr; */
-    NULL,
-    /* tp_compare */             /* DEPRECATED in Python 3.0! */
-    NULL,//(reprfunc)pyuni_object_repr, /* tp_repr */
+  PyVarObject_HEAD_INIT(NULL, 0) "kpy_object", /* tp_name */
+  sizeof(KPy_ObjectUNI),                       /* tp_basicsize */
+  0,                                           /* tp_itemsize */
+  /* methods */
+  NULL,  //(destructor)pyuni_object_dealloc, /* tp_dealloc */
+  0,     /* tp_vectorcall_offset */
+  NULL,  /* getattrfunc tp_getattr; */
+  NULL,  /* setattrfunc tp_setattr; */
+  NULL,
+  /* tp_compare */ /* DEPRECATED in Python 3.0! */
+  NULL,            //(reprfunc)pyuni_object_repr, /* tp_repr */
 
-    /* Method suites for standard classes */
+  /* Method suites for standard classes */
 
-    NULL,                      /* PyNumberMethods *tp_as_number; */
-    NULL,//&pyrna_struct_as_sequence, /* PySequenceMethods *tp_as_sequence; */
-    NULL,//&pyrna_struct_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
+  NULL,  /* PyNumberMethods *tp_as_number; */
+  NULL,  //&pyrna_struct_as_sequence, /* PySequenceMethods *tp_as_sequence; */
+  NULL,  //&pyrna_struct_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
 
-    /* More standard operations (here for binary compatibility) */
+  /* More standard operations (here for binary compatibility) */
 
-    NULL,//(hashfunc)pyuni_object_hash,         /* hashfunc tp_hash; */
-    NULL,                                /* ternaryfunc tp_call; */
-    NULL,//(reprfunc)pyuni_object_str,          /* reprfunc tp_str; */
-    NULL,//(getattrofunc)pyuni_object_getattro, /* getattrofunc tp_getattro; */
-    NULL,//(setattrofunc)pyuni_object_setattro, /* setattrofunc tp_setattro; */
+  NULL,  //(hashfunc)pyuni_object_hash,         /* hashfunc tp_hash; */
+  NULL,  /* ternaryfunc tp_call; */
+  NULL,  //(reprfunc)pyuni_object_str,          /* reprfunc tp_str; */
+  NULL,  //(getattrofunc)pyuni_object_getattro, /* getattrofunc tp_getattro; */
+  NULL,  //(setattrofunc)pyuni_object_setattro, /* setattrofunc tp_setattro; */
 
-    /* Functions to access object as input/output buffer */
-    NULL, /* PyBufferProcs *tp_as_buffer; */
+  /* Functions to access object as input/output buffer */
+  NULL, /* PyBufferProcs *tp_as_buffer; */
 
-    /*** Flags to define presence of optional/expanded features ***/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE
+  /*** Flags to define presence of optional/expanded features ***/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE
 #ifdef USE_PYRNA_STRUCT_REFERENCE
-        | Py_TPFLAGS_HAVE_GC
+    | Py_TPFLAGS_HAVE_GC
 #endif
-    , /* long tp_flags; */
+  , /* long tp_flags; */
 
-    NULL, /*  char *tp_doc;  Documentation string */
+  NULL, /*  char *tp_doc;  Documentation string */
 /*** Assigned meaning in release 2.0 ***/
 /* call function for all accessible objects */
 #ifdef USE_PYRNA_STRUCT_REFERENCE
-    NULL,//(traverseproc)pyuni_struct_traverse, /* traverseproc tp_traverse; */
+  NULL,  //(traverseproc)pyuni_struct_traverse, /* traverseproc tp_traverse; */
 
-    /* delete references to contained objects */
-    NULL,//(inquiry)pyuni_struct_clear, /* inquiry tp_clear; */
+  /* delete references to contained objects */
+  NULL,  //(inquiry)pyuni_struct_clear, /* inquiry tp_clear; */
 #else
-    NULL,         /* traverseproc tp_traverse; */
+  NULL,         /* traverseproc tp_traverse; */
 
-    /* delete references to contained objects */
-    NULL, /* inquiry tp_clear; */
+  /* delete references to contained objects */
+  NULL, /* inquiry tp_clear; */
 #endif /* !USE_PYRNA_STRUCT_REFERENCE */
 
-    /***  Assigned meaning in release 2.1 ***/
-    /*** rich comparisons ***/
-    NULL,//(richcmpfunc)pyrna_struct_richcmp, /* richcmpfunc tp_richcompare; */
+  /***  Assigned meaning in release 2.1 ***/
+  /*** rich comparisons ***/
+  NULL,  //(richcmpfunc)pyrna_struct_richcmp, /* richcmpfunc tp_richcompare; */
 
 /***  weak reference enabler ***/
 #ifdef USE_WEAKREFS
-    offsetof(KPy_ObjectUNI, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_ObjectUNI, in_weakreflist), /* long tp_weaklistoffset; */
 #else
-    0,
+  0,
 #endif
-    /*** Added in release 2.2 ***/
-    /*   Iterators */
-    NULL, /* getiterfunc tp_iter; */
-    NULL, /* iternextfunc tp_iternext; */
+  /*** Added in release 2.2 ***/
+  /*   Iterators */
+  NULL, /* getiterfunc tp_iter; */
+  NULL, /* iternextfunc tp_iternext; */
 
-    /*** Attribute descriptor and subclassing stuff ***/
-    NULL,//pyuni_object_methods,   /* struct PyMethodDef *tp_methods; */
-    NULL,                   /* struct PyMemberDef *tp_members; */
-    NULL,//pyuni_object_getseters, /* struct PyGetSetDef *tp_getset; */
-    NULL,                   /* struct _typeobject *tp_base; */
-    NULL,                   /* PyObject *tp_dict; */
-    NULL,                   /* descrgetfunc tp_descr_get; */
-    NULL,                   /* descrsetfunc tp_descr_set; */
-    0,                      /* long tp_dictoffset; */
-    NULL,                   /* initproc tp_init; */
-    NULL,                   /* allocfunc tp_alloc; */
-    NULL,//pyuni_object_new,       /* newfunc tp_new; */
-    /*  Low-level free-memory routine */
-    NULL, /* freefunc tp_free; */
-    /* For PyObject_IS_GC */
-    NULL, /* inquiry tp_is_gc; */
-    NULL, /* PyObject *tp_bases; */
-    /* method resolution order */
-    NULL, /* PyObject *tp_mro; */
-    NULL, /* PyObject *tp_cache; */
-    NULL, /* PyObject *tp_subclasses; */
-    NULL, /* PyObject *tp_weaklist; */
-    NULL,
+  /*** Attribute descriptor and subclassing stuff ***/
+  NULL,  //pyuni_object_methods,   /* struct PyMethodDef *tp_methods; */
+  NULL,  /* struct PyMemberDef *tp_members; */
+  NULL,  //pyuni_object_getseters, /* struct PyGetSetDef *tp_getset; */
+  NULL,  /* struct _typeobject *tp_base; */
+  NULL,  /* PyObject *tp_dict; */
+  NULL,  /* descrgetfunc tp_descr_get; */
+  NULL,  /* descrsetfunc tp_descr_set; */
+  0,     /* long tp_dictoffset; */
+  NULL,  /* initproc tp_init; */
+  NULL,  /* allocfunc tp_alloc; */
+  NULL,  //pyuni_object_new,       /* newfunc tp_new; */
+  /*  Low-level free-memory routine */
+  NULL, /* freefunc tp_free; */
+  /* For PyObject_IS_GC */
+  NULL, /* inquiry tp_is_gc; */
+  NULL, /* PyObject *tp_bases; */
+  /* method resolution order */
+  NULL, /* PyObject *tp_mro; */
+  NULL, /* PyObject *tp_cache; */
+  NULL, /* PyObject *tp_subclasses; */
+  NULL, /* PyObject *tp_weaklist; */
+  NULL,
 };
 
 static struct PyMethodDef kpy_types_module_methods[] = {
-    {"__getattr__", (PyCFunction)kpy_types_module_getattro, METH_O, NULL},
-    {"__dir__", (PyCFunction)kpy_types_module_dir, METH_NOARGS, NULL},
-    {NULL, NULL, 0, NULL},
+  {"__getattr__", (PyCFunction)kpy_types_module_getattro, METH_O, NULL},
+  {"__dir__", (PyCFunction)kpy_types_module_dir, METH_NOARGS, NULL},
+  {NULL, NULL, 0, NULL},
 };
 
 PyDoc_STRVAR(kpy_types_module_doc, "Access to internal Kraken types");
 static struct PyModuleDef kpy_types_module_def = {
-    PyModuleDef_HEAD_INIT,
-    "kpy.types",                          /* m_name */
-    kpy_types_module_doc,                 /* m_doc */
-    sizeof(struct KPy_TypesModule_State), /* m_size */
-    kpy_types_module_methods,             /* m_methods */
-    NULL,                                 /* m_reload */
-    NULL,                                 /* m_traverse */
-    NULL,                                 /* m_clear */
-    NULL,                                 /* m_free */
+  PyModuleDef_HEAD_INIT,
+  "kpy.types",                          /* m_name */
+  kpy_types_module_doc,                 /* m_doc */
+  sizeof(struct KPy_TypesModule_State), /* m_size */
+  kpy_types_module_methods,             /* m_methods */
+  NULL,                                 /* m_reload */
+  NULL,                                 /* m_traverse */
+  NULL,                                 /* m_clear */
+  NULL,                                 /* m_free */
 };
 
 /**
@@ -317,16 +317,17 @@ PyObject *KPY_uni_types(void)
   /* Internal base types we have no other accessors for. */
   {
     static PyTypeObject *pyuni_types[] = {
-        // &pyuni_object_meta_idprop_Type,
-        &pyuni_object_Type,
-        // &pyuni_prop_Type,
-        // &pyuni_prop_array_Type,
-        // &pyuni_prop_collection_Type,
-        // &pyuni_func_Type,
+      // &pyuni_object_meta_idprop_Type,
+      &pyuni_object_Type,
+      // &pyuni_prop_Type,
+      // &pyuni_prop_array_Type,
+      // &pyuni_prop_collection_Type,
+      // &pyuni_func_Type,
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
-    for (int i = 0; i < TfArraySize(pyuni_types); i += 1) {
+    for (int i = 0; i < TfArraySize(pyuni_types); i += 1)
+    {
       PyDict_SetItemString(submodule_dict, pyuni_types[i]->tp_name, (PyObject *)pyuni_types[i]);
     }
   }
@@ -340,20 +341,24 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
   ObjectUNI *uni;
 
   /* Unfortunately PyObject_GetAttrString won't look up this types tp_dict first :/ */
-  if (PyType_Check(self)) {
+  if (PyType_Check(self))
+  {
     py_uni = (KPy_ObjectUNI *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict, kpy_intern_str_kr_uni);
     Py_XINCREF(py_uni);
   }
 
-  if (parent) {
+  if (parent)
+  {
     /* be very careful with this since it will return a parent classes uni.
      * modifying this will do confusing stuff! */
-    if (py_uni == NULL) {
+    if (py_uni == NULL)
+    {
       py_uni = (KPy_ObjectUNI *)PyObject_GetAttr(self, kpy_intern_str_kr_uni);
     }
   }
 
-  if (py_uni == NULL) {
+  if (py_uni == NULL)
+  {
     PyErr_Format(PyExc_RuntimeError,
                  "%.200s, missing kr_uni attribute from '%.200s' instance (may not be registered)",
                  error_prefix,
@@ -361,7 +366,8 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
     return NULL;
   }
 
-  if (!KPy_ObjectUNI_Check(py_uni)) {
+  if (!KPy_ObjectUNI_Check(py_uni))
+  {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, kr_uni attribute wrong type '%.200s' on '%.200s'' instance",
                  error_prefix,
@@ -371,7 +377,8 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
     return NULL;
   }
 
-  if (py_uni->ptr.type != &UNI_Object) {
+  if (py_uni->ptr.type != &UNI_Object)
+  {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, kr_uni attribute not a UNI_Object, on '%.200s'' instance",
                  error_prefix,
@@ -380,7 +387,7 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
     return NULL;
   }
 
-  uni = (ObjectUNI*)py_uni->ptr.data;
+  uni = (ObjectUNI *)py_uni->ptr.data;
   Py_DECREF(py_uni);
 
   return uni;
@@ -405,7 +412,10 @@ PyDoc_STRVAR(pyuni_register_class_doc,
              "      If the class has a *register* class method it will be called\n"
              "      before registration.\n");
 PyMethodDef meth_kpy_register_class = {
-    "register_class", pyuni_register_class, METH_O, pyuni_register_class_doc};
+  "register_class",
+  pyuni_register_class,
+  METH_O,
+  pyuni_register_class_doc};
 static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class)
 {
   kContext *C = nullptr;
@@ -417,7 +427,8 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   PyObject *py_cls_meth;
   const char *error_prefix = "register_class(...):";
 
-  if (!PyType_Check(py_class)) {
+  if (!PyType_Check(py_class))
+  {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): "
                  "expected a class argument, not '%.200s'",
@@ -425,7 +436,8 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
     return NULL;
   }
 
-  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_uni)) {
+  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_uni))
+  {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): "
                  "already registered as a subclass '%.200s'",
@@ -433,7 +445,8 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
     return NULL;
   }
 
-  if (!pyuni_write_check()) {
+  if (!pyuni_write_check())
+  {
     PyErr_Format(PyExc_RuntimeError,
                  "register_class(...): "
                  "can't run in readonly state '%.200s'",
@@ -443,14 +456,16 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 
   /* Warning: gets parent classes uni, only for the register function. */
   uni = pyuni_object_as_uni(py_class, true, "register_class(...):");
-  if (uni == NULL) {
+  if (uni == NULL)
+  {
     return NULL;
   }
 
   /* Check that we have a register callback for this type. */
   reg = UNI_object_register(uni);
 
-  if (!reg) {
+  if (!reg)
+  {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): expected a subclass of a registerable "
                  "UNI type (%.200s does not support registration)",
@@ -474,7 +489,8 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
                 kpy_class_call,
                 kpy_class_free);
 
-  if (uni_new == NULL) {
+  if (uni_new == NULL)
+  {
     return NULL;
   }
 
@@ -483,24 +499,27 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 
   /* Old uni still references us, keep the check in case registering somehow can free it. */
   // if (UNI_struct_py_type_get(uni)) {
-    // UNI_struct_py_type_set(uni, NULL);
+  // UNI_struct_py_type_set(uni, NULL);
   // }
 
   // if (pyuni_deferred_register_class(uni_new, (PyTypeObject *)py_class) != 0) {
-    // return NULL;
+  // return NULL;
   // }
 
   /**
    * Call classed register method.
    * Note that zero falls through, no attribute, no error. */
-  switch (_PyObject_LookupAttr(py_class, kpy_intern_str_register, &py_cls_meth)) {
+  switch (_PyObject_LookupAttr(py_class, kpy_intern_str_register, &py_cls_meth))
+  {
     case 1: {
       PyObject *ret = PyObject_CallObject(py_cls_meth, NULL);
       Py_DECREF(py_cls_meth);
-      if (ret) {
+      if (ret)
+      {
         Py_DECREF(ret);
       }
-      else {
+      else
+      {
         return NULL;
       }
       break;
@@ -519,87 +538,87 @@ static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self);
 static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self);
 
 static PyTypeObject pyuni_prop_collection_iter_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0) "kpy_prop_collection_iter", /* tp_name */
-    sizeof(KPy_CollectionPropertyUNI),                     /* tp_basicsize */
-    0,                                                         /* tp_itemsize */
-    /* methods */
-    (destructor)pyuni_prop_collection_iter_dealloc, /* tp_dealloc */
-    0,                                              /* tp_vectorcall_offset */
-    NULL,                                           /* getattrfunc tp_getattr; */
-    NULL,                                           /* setattrfunc tp_setattr; */
-    NULL,
-    /* tp_compare */ /* DEPRECATED in Python 3.0! */
-    NULL,
-    /* subclassed */ /* tp_repr */
+  PyVarObject_HEAD_INIT(NULL, 0) "kpy_prop_collection_iter", /* tp_name */
+  sizeof(KPy_CollectionPropertyUNI),                         /* tp_basicsize */
+  0,                                                         /* tp_itemsize */
+  /* methods */
+  (destructor)pyuni_prop_collection_iter_dealloc, /* tp_dealloc */
+  0,                                              /* tp_vectorcall_offset */
+  NULL,                                           /* getattrfunc tp_getattr; */
+  NULL,                                           /* setattrfunc tp_setattr; */
+  NULL,
+  /* tp_compare */ /* DEPRECATED in Python 3.0! */
+  NULL,
+  /* subclassed */ /* tp_repr */
 
-    /* Method suites for standard classes */
+  /* Method suites for standard classes */
 
-    NULL, /* PyNumberMethods *tp_as_number; */
-    NULL, /* PySequenceMethods *tp_as_sequence; */
-    NULL, /* PyMappingMethods *tp_as_mapping; */
+  NULL, /* PyNumberMethods *tp_as_number; */
+  NULL, /* PySequenceMethods *tp_as_sequence; */
+  NULL, /* PyMappingMethods *tp_as_mapping; */
 
-    /* More standard operations (here for binary compatibility) */
+  /* More standard operations (here for binary compatibility) */
 
-    NULL, /* hashfunc tp_hash; */
-    NULL, /* ternaryfunc tp_call; */
-    NULL, /* reprfunc tp_str; */
+  NULL, /* hashfunc tp_hash; */
+  NULL, /* ternaryfunc tp_call; */
+  NULL, /* reprfunc tp_str; */
 
-    /* will only use these if this is a subtype of a py class */
-    PyObject_GenericGetAttr, /* getattrofunc tp_getattro; */
-    NULL,                    /* setattrofunc tp_setattro; */
+  /* will only use these if this is a subtype of a py class */
+  PyObject_GenericGetAttr, /* getattrofunc tp_getattro; */
+  NULL,                    /* setattrofunc tp_setattro; */
 
-    /* Functions to access object as input/output buffer */
-    NULL, /* PyBufferProcs *tp_as_buffer; */
+  /* Functions to access object as input/output buffer */
+  NULL, /* PyBufferProcs *tp_as_buffer; */
 
-    /*** Flags to define presence of optional/expanded features ***/
-    Py_TPFLAGS_DEFAULT, /* long tp_flags; */
+  /*** Flags to define presence of optional/expanded features ***/
+  Py_TPFLAGS_DEFAULT, /* long tp_flags; */
 
-    NULL, /*  char *tp_doc;  Documentation string */
-    /*** Assigned meaning in release 2.0 ***/
-    /* call function for all accessible objects */
-    NULL, /* traverseproc tp_traverse; */
+  NULL, /*  char *tp_doc;  Documentation string */
+  /*** Assigned meaning in release 2.0 ***/
+  /* call function for all accessible objects */
+  NULL, /* traverseproc tp_traverse; */
 
-    /* delete references to contained objects */
-    NULL, /* inquiry tp_clear; */
+  /* delete references to contained objects */
+  NULL, /* inquiry tp_clear; */
 
-    /***  Assigned meaning in release 2.1 ***/
-    /*** rich comparisons (subclassed) ***/
-    NULL, /* richcmpfunc tp_richcompare; */
+  /***  Assigned meaning in release 2.1 ***/
+  /*** rich comparisons (subclassed) ***/
+  NULL, /* richcmpfunc tp_richcompare; */
 
 /***  weak reference enabler ***/
 #  ifdef USE_WEAKREFS
-    offsetof(KPy_CollectionPropertyUNI, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_CollectionPropertyUNI, in_weakreflist), /* long tp_weaklistoffset; */
 #  else
-    0,
+  0,
 #  endif
-    /*** Added in release 2.2 ***/
-    /*   Iterators */
-    PyObject_SelfIter,                             /* getiterfunc tp_iter; */
-    (iternextfunc)pyuni_prop_collection_iter_next, /* iternextfunc tp_iternext; */
+  /*** Added in release 2.2 ***/
+  /*   Iterators */
+  PyObject_SelfIter,                             /* getiterfunc tp_iter; */
+  (iternextfunc)pyuni_prop_collection_iter_next, /* iternextfunc tp_iternext; */
 
-    /*** Attribute descriptor and subclassing stuff ***/
-    NULL, /* struct PyMethodDef *tp_methods; */
-    NULL, /* struct PyMemberDef *tp_members; */
-    NULL, /* struct PyGetSetDef *tp_getset; */
-    NULL, /* struct _typeobject *tp_base; */
-    NULL, /* PyObject *tp_dict; */
-    NULL, /* descrgetfunc tp_descr_get; */
-    NULL, /* descrsetfunc tp_descr_set; */
-    0,    /* long tp_dictoffset; */
-    NULL, /* initproc tp_init; */
-    NULL, /* allocfunc tp_alloc; */
-    NULL, /* newfunc tp_new; */
-    /*  Low-level free-memory routine */
-    NULL, /* freefunc tp_free; */
-    /* For PyObject_IS_GC */
-    NULL, /* inquiry tp_is_gc; */
-    NULL, /* PyObject *tp_bases; */
-    /* method resolution order */
-    NULL, /* PyObject *tp_mro; */
-    NULL, /* PyObject *tp_cache; */
-    NULL, /* PyObject *tp_subclasses; */
-    NULL, /* PyObject *tp_weaklist; */
-    NULL,
+  /*** Attribute descriptor and subclassing stuff ***/
+  NULL, /* struct PyMethodDef *tp_methods; */
+  NULL, /* struct PyMemberDef *tp_members; */
+  NULL, /* struct PyGetSetDef *tp_getset; */
+  NULL, /* struct _typeobject *tp_base; */
+  NULL, /* PyObject *tp_dict; */
+  NULL, /* descrgetfunc tp_descr_get; */
+  NULL, /* descrsetfunc tp_descr_set; */
+  0,    /* long tp_dictoffset; */
+  NULL, /* initproc tp_init; */
+  NULL, /* allocfunc tp_alloc; */
+  NULL, /* newfunc tp_new; */
+  /*  Low-level free-memory routine */
+  NULL, /* freefunc tp_free; */
+  /* For PyObject_IS_GC */
+  NULL, /* inquiry tp_is_gc; */
+  NULL, /* PyObject *tp_bases; */
+  /* method resolution order */
+  NULL, /* PyObject *tp_mro; */
+  NULL, /* PyObject *tp_cache; */
+  NULL, /* PyObject *tp_subclasses; */
+  NULL, /* PyObject *tp_weaklist; */
+  NULL,
 };
 
 static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerUNI *ptr, PropertyUNI *prop)
@@ -623,7 +642,8 @@ static PyObject *pyuni_prop_collection_iter(KPy_PropertyUNI *self)
 
 static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self)
 {
-  if (self->iter.empty()) {
+  if (self->iter.empty())
+  {
     PyErr_SetNone(PyExc_StopIteration);
     return NULL;
   }
@@ -631,8 +651,10 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self
   KPy_ObjectUNI *pyuni = (KPy_ObjectUNI *)pyuni_object_CreatePyObject(new ObjectUNI());
 
 #  ifdef USE_PYUNI_OBJECT_REFERENCE
-  if (pyuni) { /* Unlikely, but may fail. */
-    if ((PyObject *)pyuni != Py_None) {
+  if (pyuni)
+  { /* Unlikely, but may fail. */
+    if ((PyObject *)pyuni != Py_None)
+    {
       /* hold a reference to the iterator since it may have
        * allocated memory 'pyuni' needs. eg: introspecting dynamic enum's. */
       /* TODO: we could have an api call to know if this is
@@ -650,7 +672,8 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self
 static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self)
 {
 #  ifdef USE_WEAKREFS
-  if (self->in_weakreflist != NULL) {
+  if (self->in_weakreflist != NULL)
+  {
     PyObject_ClearWeakRefs((PyObject *)self);
   }
 #  endif
@@ -665,16 +688,17 @@ static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self)
 void KPY_uni_init(void)
 {
   /* For some reason MSVC complains of these. */
-// #if defined(_MSC_VER)
-//   pyuni_object_meta_idprop_Type.tp_base = &PyType_Type;
-// #endif
+  // #if defined(_MSC_VER)
+  //   pyuni_object_meta_idprop_Type.tp_base = &PyType_Type;
+  // #endif
 
   /* metaclass */
   // if (PyType_Ready(&pyuni_object_meta_idprop_Type) < 0) {
   //   return;
   // }
 
-  if (PyType_Ready(&pyuni_object_Type) < 0) {
+  if (PyType_Ready(&pyuni_object_Type) < 0)
+  {
     return;
   }
 
@@ -699,7 +723,8 @@ void KPY_uni_init(void)
   // }
 
 #ifdef USE_PYUNI_ITER
-  if (PyType_Ready(&pyuni_prop_collection_iter_Type) < 0) {
+  if (PyType_Ready(&pyuni_prop_collection_iter_Type) < 0)
+  {
     return;
   }
 #endif
@@ -714,10 +739,10 @@ PyDoc_STRVAR(pyuni_unregister_class_doc,
              "   If the class has an *unregister* class method it will be called\n"
              "   before unregistering.\n");
 PyMethodDef meth_kpy_unregister_class = {
-    "unregister_class",
-    pyuni_unregister_class,
-    METH_O,
-    pyuni_unregister_class_doc,
+  "unregister_class",
+  pyuni_unregister_class,
+  METH_O,
+  pyuni_unregister_class_doc,
 };
 static PyObject *pyuni_unregister_class(PyObject *UNUSED(self), PyObject *py_class)
 {
@@ -747,34 +772,34 @@ PyObject *KPY_uni_module(void)
 
 void pyuni_alloc_types(void)
 {
-// #ifdef DEBUG
-//   PyGILState_STATE gilstate;
+  // #ifdef DEBUG
+  //   PyGILState_STATE gilstate;
 
-//   PointerUNI ptr;
-//   PropertyUNI *prop;
+  //   PointerUNI ptr;
+  //   PropertyUNI *prop;
 
-//   gilstate = PyGILState_Ensure();
+  //   gilstate = PyGILState_Ensure();
 
-//   /* Avoid doing this lookup for every getattr. */
-//   UNI_kraken_uni_pointer_create(&ptr);
-//   prop = UNI_object_find_property(&ptr, "objects");
+  //   /* Avoid doing this lookup for every getattr. */
+  //   UNI_kraken_uni_pointer_create(&ptr);
+  //   prop = UNI_object_find_property(&ptr, "objects");
 
-//   UNI_PROP_BEGIN (&ptr, itemptr, prop) {
-//     PyObject *item = pyuni_object_Subtype(&itemptr);
-//     if (item == NULL) {
-//       if (PyErr_Occurred()) {
-//         PyErr_Print();
-//         PyErr_Clear();
-//       }
-//     }
-//     else {
-//       Py_DECREF(item);
-//     }
-//   }
-//   UNI_PROP_END;
+  //   UNI_PROP_BEGIN (&ptr, itemptr, prop) {
+  //     PyObject *item = pyuni_object_Subtype(&itemptr);
+  //     if (item == NULL) {
+  //       if (PyErr_Occurred()) {
+  //         PyErr_Print();
+  //         PyErr_Clear();
+  //       }
+  //     }
+  //     else {
+  //       Py_DECREF(item);
+  //     }
+  //   }
+  //   UNI_PROP_END;
 
-//   PyGILState_Release(gilstate);
-// #endif /* DEBUG */
+  //   PyGILState_Release(gilstate);
+  // #endif /* DEBUG */
 }
 
 /*-----------------------CreatePyObject---------------------------------*/
@@ -783,16 +808,19 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   KPy_ObjectUNI *pyuni = NULL;
 
   /* Note: don't rely on this to return None since NULL data with a valid type can often crash. */
-  if (ptr->data == NULL && ptr->type == NULL) { /* Operator RNA has NULL data. */
+  if (ptr->data == NULL && ptr->type == NULL)
+  { /* Operator RNA has NULL data. */
     Py_RETURN_NONE;
   }
 
   void **instance = ptr->data ? UNI_object_instance(ptr) : NULL;
-  if (instance && *instance) {
+  if (instance && *instance)
+  {
     pyuni = (KPy_ObjectUNI *)*instance;
 
     /* Refine may have changed types after the first instance was created. */
-    if (ptr->type == pyuni->ptr.type) {
+    if (ptr->type == pyuni->ptr.type)
+    {
       Py_INCREF(pyuni);
       return (PyObject *)pyuni;
     }
@@ -807,43 +835,45 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   }
 
   // {
-    // PyTypeObject *tp = (PyTypeObject *)pyuni_object_Subtype(ptr);
+  // PyTypeObject *tp = (PyTypeObject *)pyuni_object_Subtype(ptr);
 
-    // if (tp) {
-      // pyuni = (KPy_ObjectUNI *)tp->tp_alloc(tp, 0);
-// #ifdef USE_PYUNI_OBJECT_REFERENCE
-      /* #PyType_GenericAlloc will have set tracking.
+  // if (tp) {
+  // pyuni = (KPy_ObjectUNI *)tp->tp_alloc(tp, 0);
+  // #ifdef USE_PYUNI_OBJECT_REFERENCE
+  /* #PyType_GenericAlloc will have set tracking.
        * We only want tracking when `StructRNA.reference` has been set. */
-      // if (pyuni != NULL) {
-        // PyObject_GC_UnTrack(pyuni);
-      // }
-// #endif
-      // Py_DECREF(tp); /* srna owns, can't hold a reference. */
-    // }
-    // else {
-      // TF_MSG("could not make type '%s'", UNI_object_identifier(ptr->type));
+  // if (pyuni != NULL) {
+  // PyObject_GC_UnTrack(pyuni);
+  // }
+  // #endif
+  // Py_DECREF(tp); /* srna owns, can't hold a reference. */
+  // }
+  // else {
+  // TF_MSG("could not make type '%s'", UNI_object_identifier(ptr->type));
 
 #ifdef USE_PYUNI_OBJECT_REFERENCE
-      pyuni = (KPy_ObjectUNI *)PyObject_GC_New(KPy_ObjectUNI, &pyuni_object_Type);
+  pyuni = (KPy_ObjectUNI *)PyObject_GC_New(KPy_ObjectUNI, &pyuni_object_Type);
 #else
-      pyuni = (KPy_ObjectUNI *)PyObject_New(KPy_ObjectUNI, &pyuni_object_Type);
+  pyuni = (KPy_ObjectUNI *)PyObject_New(KPy_ObjectUNI, &pyuni_object_Type);
 #endif
 
-// #ifdef USE_WEAKREFS
-      // if (pyuni != NULL) {
-        // pyuni->in_weakreflist = NULL;
-      // }
-// #endif
-    // }
+  // #ifdef USE_WEAKREFS
+  // if (pyuni != NULL) {
+  // pyuni->in_weakreflist = NULL;
+  // }
+  // #endif
+  // }
   // }
 
-  if (pyuni == NULL) {
+  if (pyuni == NULL)
+  {
     PyErr_SetString(PyExc_MemoryError, "couldn't create kpy_object");
     return NULL;
   }
 
   /* Blender's instance owns a reference (to avoid Python freeing it). */
-  if (instance) {
+  if (instance)
+  {
     *instance = pyuni;
     Py_INCREF(pyuni);
   }
@@ -860,7 +890,8 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   // PyC_ObSpit("NewStructRNA: ", (PyObject *)pyuni);
 
 #ifdef USE_PYUNI_INVALIDATE_WEAKREF
-  if (ptr->owner_id) {
+  if (ptr->owner_id)
+  {
     id_weakref_pool_add(ptr->owner_id, (KPy_DummyPointerRNA *)pyuni);
   }
 #endif
@@ -879,13 +910,16 @@ static PyObject *pyuni_kr_owner_id_get(PyObject *UNUSED(self))
 static PyObject *pyuni_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
 {
   const char *name;
-  if (value == Py_None) {
+  if (value == Py_None)
+  {
     name = NULL;
   }
-  else if (PyUnicode_Check(value)) {
+  else if (PyUnicode_Check(value))
+  {
     name = PyUnicode_AsUTF8(value);
   }
-  else {
+  else
+  {
     PyErr_Format(PyExc_ValueError,
                  "owner_set(...): "
                  "expected None or a string, not '%.200s'",
@@ -897,16 +931,16 @@ static PyObject *pyuni_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
 }
 
 PyMethodDef meth_kpy_owner_id_get = {
-    "_kr_owner_id_get",
-    (PyCFunction)pyuni_kr_owner_id_get,
-    METH_NOARGS,
-    NULL,
+  "_kr_owner_id_get",
+  (PyCFunction)pyuni_kr_owner_id_get,
+  METH_NOARGS,
+  NULL,
 };
 PyMethodDef meth_kpy_owner_id_set = {
-    "_kr_owner_id_set",
-    (PyCFunction)pyuni_kr_owner_id_set,
-    METH_O,
-    NULL,
+  "_kr_owner_id_set",
+  (PyCFunction)pyuni_kr_owner_id_set,
+  METH_O,
+  NULL,
 };
 
 WABI_NAMESPACE_END

@@ -98,7 +98,8 @@ static void *ctx_wm_python_context_get(const kContext *C,
   TF_UNUSED(member_type);
 
   /* don't allow UI context access from non-main threads */
-  if (!KLI_thread_is_main()) {
+  if (!KLI_thread_is_main())
+  {
     return NULL;
   }
 
@@ -141,27 +142,27 @@ wmWindowManager *CTX_wm_manager(kContext *C)
 
 wmWindow *CTX_wm_window(kContext *C)
 {
-  return (wmWindow*)ctx_wm_python_context_get(C, "window", &UNI_Window, C->wm.window);
+  return (wmWindow *)ctx_wm_python_context_get(C, "window", &UNI_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(kContext *C)
 {
-  return (WorkSpace*)ctx_wm_python_context_get(C, "workspace", &UNI_WorkSpace, C->wm.workspace);
+  return (WorkSpace *)ctx_wm_python_context_get(C, "workspace", &UNI_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(kContext *C)
 {
-  return (kScreen*)ctx_wm_python_context_get(C, "screen", &UNI_Screen, C->wm.screen);
+  return (kScreen *)ctx_wm_python_context_get(C, "screen", &UNI_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(kContext *C)
 {
-  return (ScrArea*)ctx_wm_python_context_get(C, "area", &UNI_Area, C->wm.area);
+  return (ScrArea *)ctx_wm_python_context_get(C, "area", &UNI_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(kContext *C)
 {
-  return (ARegion*)ctx_wm_python_context_get(C, "region", &UNI_Region, C->wm.region);
+  return (ARegion *)ctx_wm_python_context_get(C, "region", &UNI_Region, C->wm.region);
 }
 
 Scene *CTX_data_scene(kContext *C)

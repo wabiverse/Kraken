@@ -37,7 +37,8 @@ void KLI_threadapi_init(void);
 
 int KLI_thread_is_main(void);
 
-enum {
+enum
+{
   LOCK_IMAGE = 0,
   LOCK_DRAW_IMAGE,
   LOCK_VIEWER,
@@ -54,13 +55,13 @@ typedef pthread_mutex_t ThreadMutex;
 
 
 #ifdef WITH_TBB
-  typedef uint32_t SpinLock;
+typedef uint32_t SpinLock;
 #elif defined(__APPLE__)
-  typedef ThreadMutex SpinLock;
+typedef ThreadMutex SpinLock;
 #elif defined(_MSC_VER)
-  typedef volatile unsigned int SpinLock;
+typedef volatile unsigned int SpinLock;
 #else
-  typedef pthread_spinlock_t SpinLock;
+typedef pthread_spinlock_t SpinLock;
 #endif
 
 

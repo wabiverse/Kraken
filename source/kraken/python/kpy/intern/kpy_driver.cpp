@@ -64,12 +64,14 @@ int kpy_pydriver_create_dict(void)
   PyObject *d, *mod;
 
   /* validate namespace for driver evaluation */
-  if (kpy_pydriver_Dict) {
+  if (kpy_pydriver_Dict)
+  {
     return -1;
   }
 
   d = PyDict_New();
-  if (d == NULL) {
+  if (d == NULL)
+  {
     return -1;
   }
 
@@ -79,7 +81,8 @@ int kpy_pydriver_create_dict(void)
   PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
 
   mod = PyImport_ImportModule("math");
-  if (mod) {
+  if (mod)
+  {
     PyDict_Merge(d, PyModule_GetDict(mod), 0); /* 0 - don't overwrite existing values */
     Py_DECREF(mod);
   }
@@ -89,17 +92,20 @@ int kpy_pydriver_create_dict(void)
 
   /* add kpy to global namespace */
   mod = PyImport_ImportModuleLevel("kpy", NULL, NULL, NULL, 0);
-  if (mod) {
+  if (mod)
+  {
     PyDict_SetItemString(kpy_pydriver_Dict, "kpy", mod);
     Py_DECREF(mod);
   }
 
   /* Add math utility functions. */
   mod = PyImport_ImportModuleLevel("kr_math", NULL, NULL, NULL, 0);
-  if (mod) {
+  if (mod)
+  {
     static const char *names[] = {"clamp", "lerp", "smoothstep", NULL};
 
-    for (const char **pname = names; *pname; ++pname) {
+    for (const char **pname = names; *pname; ++pname)
+    {
       PyObject *func = PyDict_GetItemString(PyModule_GetDict(mod), *pname);
       PyDict_SetItemString(kpy_pydriver_Dict, *pname, func);
     }
@@ -112,40 +118,44 @@ int kpy_pydriver_create_dict(void)
   {
     kpy_pydriver_Dict__whitelist = PyDict_New();
     const char *whitelist[] = {
-        /* builtins (basic) */
-        "all",
-        "any",
-        "len",
-        /* builtins (numeric) */
-        "max",
-        "min",
-        "pow",
-        "round",
-        "sum",
-        /* types */
-        "bool",
-        "float",
-        "int",
-        /* kr_math */
-        "clamp",
-        "lerp",
-        "smoothstep",
+      /* builtins (basic) */
+      "all",
+      "any",
+      "len",
+      /* builtins (numeric) */
+      "max",
+      "min",
+      "pow",
+      "round",
+      "sum",
+      /* types */
+      "bool",
+      "float",
+      "int",
+      /* kr_math */
+      "clamp",
+      "lerp",
+      "smoothstep",
 
-        NULL,
+      NULL,
     };
 
-    for (int i = 0; whitelist[i]; i++) {
+    for (int i = 0; whitelist[i]; i++)
+    {
       PyDict_SetItemString(kpy_pydriver_Dict__whitelist, whitelist[i], Py_None);
     }
 
     /* Add all of 'math' functions. */
-    if (mod_math != NULL) {
+    if (mod_math != NULL)
+    {
       PyObject *mod_math_dict = PyModule_GetDict(mod_math);
       PyObject *arg_key, *arg_value;
       Py_ssize_t arg_pos = 0;
-      while (PyDict_Next(mod_math_dict, &arg_pos, &arg_key, &arg_value)) {
+      while (PyDict_Next(mod_math_dict, &arg_pos, &arg_key, &arg_value))
+      {
         const char *arg_str = PyUnicode_AsUTF8(arg_key);
-        if (arg_str[0] && arg_str[1] != '_') {
+        if (arg_str[0] && arg_str[1] != '_')
+        {
           PyDict_SetItem(kpy_pydriver_Dict__whitelist, arg_key, Py_None);
         }
       }
@@ -158,7 +168,8 @@ int kpy_pydriver_create_dict(void)
 
 /* note, this function should do nothing most runs, only when changing frame */
 /* not thread safe but neither is python */
-struct DriverState {
+struct DriverState
+{
   float evaltime;
 
   /* borrowed reference to the 'self' in 'kpy_pydriver_Dict'

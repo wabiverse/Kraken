@@ -20,7 +20,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -31,18 +31,18 @@
 
 #ifdef _WIN32
 
-# define VK_USE_PLATFORM_WIN32_KHR
-# include <vulkan/vulkan.h>
+#  define VK_USE_PLATFORM_WIN32_KHR
+#  include <vulkan/vulkan.h>
 
-# include <wabi/imaging/hgiVulkan/vulkan.h>
-# include <wabi/imaging/hgiVulkan/capabilities.h>
+#  include <wabi/imaging/hgiVulkan/vulkan.h>
+#  include <wabi/imaging/hgiVulkan/capabilities.h>
 
-# define WIN32_LEAN_AND_MEAN
-# include <ole2.h>  // for drag-n-drop
-# include <shlobj.h>
-# include <windows.h>
+#  define WIN32_LEAN_AND_MEAN
+#  include <ole2.h>  // for drag-n-drop
+#  include <shlobj.h>
+#  include <windows.h>
 
-class ANCHOR_WindowWin32;
+class AnchorWindowWin32;
 
 enum eAnchorMouseCaptureEventWin32
 {
@@ -62,7 +62,7 @@ struct ANCHOR_PointerInfoWin32
   eAnchorButtonMask buttonMask;
   POINT pixelLocation;
   AnchorU64 time;
-  ANCHOR_TabletData tabletData;
+  AnchorTabletData tabletData;
 };
 
 ANCHOR_BACKEND_API bool ANCHOR_ImplWin32_Init(void *hwnd);
@@ -81,11 +81,11 @@ ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor); 
 ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd);  // HWND hwnd
 
 
-class ANCHOR_SystemWin32 : public ANCHOR_System
+class AnchorSystemWin32 : public AnchorSystem
 {
  public:
-  ANCHOR_SystemWin32();
-  ~ANCHOR_SystemWin32();
+  AnchorSystemWin32();
+  ~AnchorSystemWin32();
 
   /**
    * This method converts performance counter measurements into milliseconds since the start of the
@@ -108,9 +108,9 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 
   bool processEvents(bool waitForEvent);
 
-  eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
+  eAnchorStatus getModifierKeys(AnchorModifierKeys &keys) const;
 
-  eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
+  eAnchorStatus getButtons(AnchorButtons &buttons) const;
 
   AnchorU8 getNumDisplays() const;
 
@@ -123,7 +123,7 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @param type: The type of event to create.
    * @param window: The window receiving the event (the active window).
    * @return The event created. */
-  static ANCHOR_Event *processWindowEvent(eAnchorEventType type, ANCHOR_WindowWin32 *window);
+  static AnchorEvent *processWindowEvent(eAnchorEventType type, AnchorWindowWin32 *window);
 
   /**
    * Creates tablet events from pointer events.
@@ -132,7 +132,7 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @param wParam: The wParam from the wndproc.
    * @param lParam: The lParam from the wndproc.
    * @param eventhandled: True if the method handled the event. */
-  static void processPointerEvent(UINT type, ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventhandled);
+  static void processPointerEvent(UINT type, AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventhandled);
 
   /**
    * Creates tablet events from pointer events.
@@ -141,14 +141,14 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @param wParam: The wParam from the wndproc.
    * @param lParam: The lParam from the wndproc.
    * @param eventhandled: True if the method handled the event. */
-  static ANCHOR_EventCursor *processCursorEvent(ANCHOR_WindowWin32 *window);
+  static AnchorEventCursor *processCursorEvent(AnchorWindowWin32 *window);
 
   /**
    * Handles a mouse wheel event.
    * @param window: The window receiving the event (the active window).
    * @param wParam: The wParam from the wndproc.
    * @param lParam: The lParam from the wndproc. */
-  static void processWheelEvent(ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam);
+  static void processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam);
 
   /**
    * Handles minimum window size.
@@ -162,13 +162,13 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   /**
    * Returns the local state of the modifier keys (from the message queue).
    * @param keys: The state of the keys. */
-  inline void retrieveModifierKeys(ANCHOR_ModifierKeys &keys) const;
+  inline void retrieveModifierKeys(AnchorModifierKeys &keys) const;
 
   /**
    * Stores the state of the modifier keys locally.
    * For internal use only!
    * param keys The new state of the modifier keys. */
-  inline void storeModifierKeys(const ANCHOR_ModifierKeys &keys);
+  inline void storeModifierKeys(const AnchorModifierKeys &keys);
 
   /**
    * Check current key layout for AltGr. */
@@ -177,18 +177,18 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
  private:
   eAnchorStatus init();
 
-  ANCHOR_ISystemWindow *createWindow(const char *title,
-                                     const char *icon,
-                                     AnchorS32 left,
-                                     AnchorS32 top,
-                                     AnchorU32 width,
-                                     AnchorU32 height,
-                                     eAnchorWindowState state,
-                                     eAnchorDrawingContextType type,
-                                     int vkSettings,
-                                     const bool exclusive = false,
-                                     const bool is_dialog = false,
-                                     const ANCHOR_ISystemWindow *parentWindow = NULL);
+  AnchorISystemWindow *createWindow(const char *title,
+                                    const char *icon,
+                                    AnchorS32 left,
+                                    AnchorS32 top,
+                                    AnchorU32 width,
+                                    AnchorU32 height,
+                                    eAnchorWindowState state,
+                                    eAnchorDrawingContextType type,
+                                    int vkSettings,
+                                    const bool exclusive = false,
+                                    const bool is_dialog = false,
+                                    const AnchorISystemWindow *parentWindow = NULL);
 
   /**
    * Returns the current location of the cursor (location in screen coordinates)
@@ -216,9 +216,9 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @return current status (1 -visible, 0 - hidden) */
   int toggleConsole(int action);
 
-  static ANCHOR_EventKey *processKeyEvent(ANCHOR_WindowWin32 *window, RAWINPUT const &raw);
+  static AnchorEventKey *processKeyEvent(AnchorWindowWin32 *window, RAWINPUT const &raw);
 
-  static ANCHOR_Event *processWindowSizeEvent(ANCHOR_WindowWin32 *window);
+  static AnchorEvent *processWindowSizeEvent(AnchorWindowWin32 *window);
 
   /**
    * Creates mouse button event.
@@ -226,9 +226,9 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
    * @param window: The window receiving the event (the active window).
    * @param mask: The button mask of this event.
    * @return The event created. */
-  static ANCHOR_EventButton *processButtonEvent(eAnchorEventType type,
-                                                ANCHOR_WindowWin32 *window,
-                                                eAnchorButtonMask mask);
+  static AnchorEventButton *processButtonEvent(eAnchorEventType type,
+                                               AnchorWindowWin32 *window,
+                                               eAnchorButtonMask mask);
 
   /**
    * Converts raw WIN32 key codes from the wndproc to GHOST keys.
@@ -249,7 +249,7 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
   eAnchorKey processSpecialKey(short vKey, short scanCode) const;
 
   /** The current state of the modifier keys. */
-  ANCHOR_ModifierKeys m_modifierKeys;
+  AnchorModifierKeys m_modifierKeys;
   /** The virtual-key code (VKey) of the last press event. Used to detect repeat events. */
   unsigned short m_keycode_last_repeat_key;
   /** State variable set at initialization. */
@@ -275,17 +275,17 @@ class ANCHOR_SystemWin32 : public ANCHOR_System
 };
 
 
-inline void ANCHOR_SystemWin32::retrieveModifierKeys(ANCHOR_ModifierKeys &keys) const
+inline void AnchorSystemWin32::retrieveModifierKeys(AnchorModifierKeys &keys) const
 {
   keys = m_modifierKeys;
 }
 
-inline void ANCHOR_SystemWin32::storeModifierKeys(const ANCHOR_ModifierKeys &keys)
+inline void AnchorSystemWin32::storeModifierKeys(const AnchorModifierKeys &keys)
 {
   m_modifierKeys = keys;
 }
 
-inline void ANCHOR_SystemWin32::handleKeyboardChange(void)
+inline void AnchorSystemWin32::handleKeyboardChange(void)
 {
   m_keylayout = GetKeyboardLayout(0);  // get keylayout for current thread
   int i;
@@ -311,12 +311,12 @@ inline void ANCHOR_SystemWin32::handleKeyboardChange(void)
 
 /**
  * Manages system displays  (WIN32 implementation). */
-class ANCHOR_DisplayManagerWin32 : public ANCHOR_DisplayManager
+class AnchorDisplayManagerWin32 : public AnchorDisplayManager
 {
  public:
   /**
    * Constructor.*/
-  ANCHOR_DisplayManagerWin32(void);
+  AnchorDisplayManagerWin32(void);
 
   /**
    * Returns the number of display devices on this system.
@@ -359,10 +359,10 @@ class ANCHOR_DisplayManagerWin32 : public ANCHOR_DisplayManager
 };
 
 
-class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
+class AnchorWindowWin32 : public AnchorSystemWindow
 {
  private:
-  ANCHOR_SystemWin32 *m_system;
+  AnchorSystemWin32 *m_system;
 
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
@@ -372,7 +372,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   /** 
    * Most recent tablet data. */
-  ANCHOR_TabletData m_lastPointerTabletData;
+  AnchorTabletData m_lastPointerTabletData;
 
   /** 
    * HCURSOR structure of the custom cursor. */
@@ -405,6 +405,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   /**
    * Vulkan device objects. */
+  VkInstance m_instance;
   wabi::HgiVulkan *m_hgi;
   wabi::HgiVulkanInstance *m_vkinstance;
   wabi::HgiVulkanDevice *m_device;
@@ -412,20 +413,20 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   wabi::HgiVulkanPipelineCache *m_pipelineCache;
 
  public:
-  ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
-                     const char *title,
-                     const char *icon,
-                     AnchorS32 left,
-                     AnchorS32 top,
-                     AnchorU32 width,
-                     AnchorU32 height,
-                     eAnchorWindowState state,
-                     eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-                     bool alphaBackground = false,
-                     ANCHOR_WindowWin32 *parentWindow = 0,
-                     bool dialog = false);
+  AnchorWindowWin32(AnchorSystemWin32 *system,
+                    const char *title,
+                    const char *icon,
+                    AnchorS32 left,
+                    AnchorS32 top,
+                    AnchorU32 width,
+                    AnchorU32 height,
+                    eAnchorWindowState state,
+                    eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+                    bool alphaBackground = false,
+                    AnchorWindowWin32 *parentWindow = 0,
+                    bool dialog = false);
 
-  ~ANCHOR_WindowWin32();
+  ~AnchorWindowWin32();
 
   void adjustWindowRectForClosestMonitor(LPRECT win_rect,
                                          DWORD dwStyle,
@@ -441,7 +442,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * The dimensions are given in screen coordinates that are
    * relative to the upper-left corner of the screen.
    * @param bounds: The bounding rectangle of the window. */
-  void getWindowBounds(ANCHOR_Rect &bounds) const;
+  void getWindowBounds(AnchorRect &bounds) const;
 
   void SetupVulkan();
   void SetupVulkanWindow();
@@ -479,7 +480,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * @return The handle of the window. */
   HWND getHWND() const;
 
-  void getClientBounds(ANCHOR_Rect &bounds) const;
+  void getClientBounds(AnchorRect &bounds) const;
 
   /**
    * @param type: The type of rendering context create.
@@ -499,7 +500,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
    * and ANCHOR_FAILURE if releasing the handles will interfere with sharing */
   eAnchorStatus releaseNativeHandles();
 
-  void FrameRender(ImDrawData *draw_data);
+  void FrameRender(AnchorDrawData *draw_data);
   void FramePresent(void);
 
   /**
@@ -539,7 +540,7 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /**
    * Get the most recent Windows Pointer tablet data.
    * @return Most recent pointer tablet data. */
-  ANCHOR_TabletData getTabletData(void);
+  AnchorTabletData getTabletData(void);
 
   void lostMouseCapture(void);
 
@@ -560,12 +561,12 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
 
   eAnchorStatus beginFullScreen() const
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   eAnchorStatus endFullScreen() const
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   eAnchorStatus setProgressBar(float progress);
@@ -581,6 +582,14 @@ class ANCHOR_WindowWin32 : public ANCHOR_SystemWindow
   /** 
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
+};
+
+
+class VulkanSwapchain
+{
+
+ public:
+  void initSwapchain();
 };
 
 

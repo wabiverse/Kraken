@@ -18,18 +18,18 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
 #include "ANCHOR_buttons.h"
 
-ANCHOR_Buttons::ANCHOR_Buttons()
+AnchorButtons::AnchorButtons()
 {
   clear();
 }
 
-bool ANCHOR_Buttons::get(eAnchorButtonMask mask) const
+bool AnchorButtons::get(eAnchorButtonMask mask) const
 {
   switch (mask)
   {
@@ -44,7 +44,7 @@ bool ANCHOR_Buttons::get(eAnchorButtonMask mask) const
   }
 }
 
-void ANCHOR_Buttons::set(eAnchorButtonMask mask, bool down)
+void AnchorButtons::set(eAnchorButtonMask mask, bool down)
 {
   switch (mask)
   {
@@ -62,12 +62,12 @@ void ANCHOR_Buttons::set(eAnchorButtonMask mask, bool down)
   }
 }
 
-void ANCHOR_Buttons::clear()
+void AnchorButtons::clear()
 {
   m_ButtonLeft = false;
   m_ButtonMiddle = false;
   m_ButtonRight = false;
 }
 
-ANCHOR_Buttons::~ANCHOR_Buttons()
+AnchorButtons::~AnchorButtons()
 {}

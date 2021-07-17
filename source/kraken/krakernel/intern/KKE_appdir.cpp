@@ -64,7 +64,8 @@ static const char _str_null[] = "(null)";
 
 WABI_NAMESPACE_BEGIN
 
-struct AppDir {
+struct AppDir
+{
   /** Full path to program executable. */
   char program_filename[FILE_MAX];
   /** Full path to directory in which executable is located. */
@@ -117,7 +118,8 @@ const char *KKE_appdir_folder_default(void)
 #else  /* Windows */
   static char documentfolder[MAXPATHLEN];
 
-  if (KKE_appdir_folder_documents(documentfolder)) {
+  if (KKE_appdir_folder_documents(documentfolder))
+  {
     return documentfolder;
   }
 
@@ -148,7 +150,8 @@ bool KKE_appdir_folder_documents(char *dir)
   const char *documents_path = (const char *)ANCHOR_getUserSpecialDir(ANCHOR_UserSpecialDirDocuments);
 
   /* Usual case: Anchor gave us the documents path. We're done here. */
-  if (documents_path && KLI_is_dir(documents_path)) {
+  if (documents_path && KLI_is_dir(documents_path))
+  {
     KLI_strncpy(dir, documents_path, FILE_MAXDIR);
     return true;
   }
@@ -156,14 +159,16 @@ bool KKE_appdir_folder_documents(char *dir)
   /* Anchor couldn't give us a documents path, let's try if we can find it ourselves. */
 
   const char *home_path = KKE_appdir_folder_home();
-  if (!home_path || !KLI_is_dir(home_path)) {
+  if (!home_path || !KLI_is_dir(home_path))
+  {
     return false;
   }
 
   char try_documents_path[FILE_MAXDIR];
   /* Own attempt at getting a valid Documents path. */
   KLI_path_join(try_documents_path, sizeof(try_documents_path), home_path, N_("Documents"), NULL);
-  if (!KLI_is_dir(try_documents_path)) {
+  if (!KLI_is_dir(try_documents_path))
+  {
     return false;
   }
 
@@ -179,7 +184,8 @@ bool KKE_appdir_font_folder_default(char *dir)
 #ifdef WIN32
   wchar_t wpath[FILE_MAXDIR];
   success = SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0);
-  if (success) {
+  if (success)
+  {
     wcscat(wpath, L"\\");
     KLI_strncpy_wchar_as_utf8(dir, wpath, FILE_MAXDIR);
   }
@@ -229,12 +235,14 @@ static bool test_path(char *targetpath,
   /* Only the last argument should be NULL. */
   KLI_assert(!(folder_name == NULL && (subfolder_name != NULL)));
   KLI_path_join(targetpath, targetpath_len, path_base, folder_name, subfolder_name, NULL);
-  if (check_is_dir == false) {
+  if (check_is_dir == false)
+  {
     TF_MSG("using without test: '%s'", targetpath);
     return true;
   }
 
-  if (KLI_is_dir(targetpath)) {
+  if (KLI_is_dir(targetpath))
+  {
     TF_MSG("found '%s'", targetpath);
     return true;
   }
@@ -259,18 +267,21 @@ static bool test_env_path(char *path, const char *envvar, const bool check_is_di
   ASSERT_IS_INIT();
 
   const char *env_path = envvar ? KLI_getenv(envvar) : NULL;
-  if (!env_path) {
+  if (!env_path)
+  {
     return false;
   }
 
   KLI_strncpy(path, env_path, FILE_MAX);
 
-  if (check_is_dir == false) {
+  if (check_is_dir == false)
+  {
     TF_MSG("using env '%s' without test: '%s'", envvar, env_path);
     return true;
   }
 
-  if (KLI_is_dir(env_path)) {
+  if (KLI_is_dir(env_path))
+  {
     TF_MSG("env '%s' found: %s", envvar, env_path);
     return true;
   }
@@ -299,7 +310,8 @@ static bool get_path_environment_ex(char *targetpath,
 {
   char user_path[FILE_MAX];
 
-  if (test_env_path(user_path, envvar, check_is_dir)) {
+  if (test_env_path(user_path, envvar, check_is_dir))
+  {
     /* Note that `subfolder_name` may be NULL, in this case we use `user_path` as-is. */
     return test_path(targetpath, targetpath_len, check_is_dir, user_path, subfolder_name, NULL);
   }
@@ -338,10 +350,12 @@ static bool get_path_local_ex(char *targetpath,
          STR_OR_FALLBACK(folder_name),
          STR_OR_FALLBACK(subfolder_name));
 
-  if (folder_name) { /* `subfolder_name` may be NULL. */
+  if (folder_name)
+  { /* `subfolder_name` may be NULL. */
     KLI_path_join(relfolder, sizeof(relfolder), folder_name, subfolder_name, NULL);
   }
-  else {
+  else
+  {
     relfolder[0] = '\0';
   }
 
@@ -372,7 +386,7 @@ static bool get_path_local(char *targetpath,
   const int version = KRAKEN_VERSION;
   const bool check_is_dir = true;
   return get_path_local_ex(
-      targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
+    targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
 }
 
 /**
@@ -406,18 +420,21 @@ static bool get_path_user_ex(char *targetpath,
   const char *user_base_path;
 
   /* for portable install, user path is always local */
-  if (KKE_appdir_app_is_portable_install()) {
+  if (KKE_appdir_app_is_portable_install())
+  {
     return get_path_local_ex(
-        targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
+      targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
   }
   user_path[0] = '\0';
 
   user_base_path = (const char *)ANCHOR_getUserDir(version, CHARALL(G.main->kraken_version_decimal));
-  if (user_base_path) {
+  if (user_base_path)
+  {
     KLI_strncpy(user_path, user_base_path, FILE_MAX);
   }
 
-  if (!user_path[0]) {
+  if (!user_path[0])
+  {
     return false;
   }
 
@@ -428,7 +445,7 @@ static bool get_path_user_ex(char *targetpath,
 
   /* `subfolder_name` may be NULL. */
   return test_path(
-      targetpath, targetpath_len, check_is_dir, user_path, folder_name, subfolder_name);
+    targetpath, targetpath_len, check_is_dir, user_path, folder_name, subfolder_name);
 }
 static bool get_path_user(char *targetpath,
                           size_t targetpath_len,
@@ -438,7 +455,7 @@ static bool get_path_user(char *targetpath,
   const int version = KRAKEN_VERSION;
   const bool check_is_dir = true;
   return get_path_user_ex(
-      targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
+    targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
 }
 
 /**
@@ -461,20 +478,24 @@ static bool get_path_system_ex(char *targetpath,
   const char *system_base_path;
   char relfolder[FILE_MAX];
 
-  if (folder_name) { /* `subfolder_name` may be NULL. */
+  if (folder_name)
+  { /* `subfolder_name` may be NULL. */
     KLI_path_join(relfolder, sizeof(relfolder), folder_name, subfolder_name, NULL);
   }
-  else {
+  else
+  {
     relfolder[0] = '\0';
   }
 
   system_path[0] = '\0';
   system_base_path = (const char *)ANCHOR_getSystemDir(version, CHARALL(G.main->kraken_version_decimal));
-  if (system_base_path) {
+  if (system_base_path)
+  {
     KLI_strncpy(system_path, system_base_path, FILE_MAX);
   }
 
-  if (!system_path[0]) {
+  if (!system_path[0])
+  {
     return false;
   }
 
@@ -485,7 +506,7 @@ static bool get_path_system_ex(char *targetpath,
 
   /* Try `$KRAKENPATH/folder_name/subfolder_name`, `subfolder_name` may be NULL. */
   return test_path(
-      targetpath, targetpath_len, check_is_dir, system_path, folder_name, subfolder_name);
+    targetpath, targetpath_len, check_is_dir, system_path, folder_name, subfolder_name);
 }
 
 static bool get_path_system(char *targetpath,
@@ -496,7 +517,7 @@ static bool get_path_system(char *targetpath,
   const int version = KRAKEN_VERSION;
   const bool check_is_dir = true;
   return get_path_system_ex(
-      targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
+    targetpath, targetpath_len, folder_name, subfolder_name, version, check_is_dir);
 }
 
 /**
@@ -540,18 +561,21 @@ bool KKE_appdir_program_python_search(char *fullpath,
 
   {
     const char *python_bin_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, "bin");
-    if (python_bin_dir) {
+    if (python_bin_dir)
+    {
 
-      for (int i = 0; i < TfArraySize(python_names); i++) {
+      for (int i = 0; i < TfArraySize(python_names); i++)
+      {
         KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
 
         if (
 #ifdef _WIN32
-            KLI_path_program_extensions_add_win32(fullpath, fullpath_len)
+          KLI_path_program_extensions_add_win32(fullpath, fullpath_len)
 #else
-            KLI_exists(fullpath)
+          KLI_exists(fullpath)
 #endif
-        ) {
+        )
+        {
           is_found = true;
           break;
         }
@@ -559,16 +583,20 @@ bool KKE_appdir_program_python_search(char *fullpath,
     }
   }
 
-  if (is_found == false) {
-    for (int i = 0; i < TfArraySize(python_names); i++) {
-      if (KLI_path_program_search(fullpath, fullpath_len, python_names[i])) {
+  if (is_found == false)
+  {
+    for (int i = 0; i < TfArraySize(python_names); i++)
+    {
+      if (KLI_path_program_search(fullpath, fullpath_len, python_names[i]))
+      {
         is_found = true;
         break;
       }
     }
   }
 
-  if (is_found == false) {
+  if (is_found == false)
+  {
     *fullpath = '\0';
   }
 
@@ -580,93 +608,116 @@ bool KKE_appdir_folder_id_ex(const int folder_id,
                              char *path,
                              size_t path_len)
 {
-  switch (folder_id) {
+  switch (folder_id)
+  {
     case KRAKEN_DATAFILES: /* general case */
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES"))
+      {
         break;
       }
-      if (get_path_user(path, path_len, "datafiles", subfolder)) {
+      if (get_path_user(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_DATAFILES")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_DATAFILES"))
+      {
         break;
       }
-      if (get_path_local(path, path_len, "datafiles", subfolder)) {
+      if (get_path_local(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
-      if (get_path_system(path, path_len, "datafiles", subfolder)) {
+      if (get_path_system(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_USER_DATAFILES:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES"))
+      {
         break;
       }
-      if (get_path_user(path, path_len, "datafiles", subfolder)) {
+      if (get_path_user(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_SYSTEM_DATAFILES:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_DATAFILES")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_DATAFILES"))
+      {
         break;
       }
-      if (get_path_system(path, path_len, "datafiles", subfolder)) {
+      if (get_path_system(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
-      if (get_path_local(path, path_len, "datafiles", subfolder)) {
+      if (get_path_local(path, path_len, "datafiles", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_USER_AUTOSAVE:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_DATAFILES"))
+      {
         break;
       }
-      if (get_path_user(path, path_len, "autosave", subfolder)) {
+      if (get_path_user(path, path_len, "autosave", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_USER_CONFIG:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_CONFIG")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_CONFIG"))
+      {
         break;
       }
-      if (get_path_user(path, path_len, "config", subfolder)) {
+      if (get_path_user(path, path_len, "config", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_USER_SCRIPTS:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_SCRIPTS")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_USER_SCRIPTS"))
+      {
         break;
       }
-      if (get_path_user(path, path_len, "scripts", subfolder)) {
+      if (get_path_user(path, path_len, "scripts", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_SYSTEM_SCRIPTS:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_SCRIPTS")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_SCRIPTS"))
+      {
         break;
       }
-      if (get_path_system(path, path_len, "scripts", subfolder)) {
+      if (get_path_system(path, path_len, "scripts", subfolder))
+      {
         break;
       }
-      if (get_path_local(path, path_len, "scripts", subfolder)) {
+      if (get_path_local(path, path_len, "scripts", subfolder))
+      {
         break;
       }
       return false;
 
     case KRAKEN_SYSTEM_PYTHON:
-      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_PYTHON")) {
+      if (get_path_environment(path, path_len, subfolder, "KRAKEN_SYSTEM_PYTHON"))
+      {
         break;
       }
-      if (get_path_system(path, path_len, "python", subfolder)) {
+      if (get_path_system(path, path_len, "python", subfolder))
+      {
         break;
       }
-      if (get_path_local(path, path_len, "python", subfolder)) {
+      if (get_path_local(path, path_len, "python", subfolder))
+      {
         break;
       }
       return false;
@@ -682,7 +733,8 @@ bool KKE_appdir_folder_id_ex(const int folder_id,
 const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder)
 {
   static char path[FILE_MAX] = "";
-  if (KKE_appdir_folder_id_ex(folder_id, subfolder, path, sizeof(path))) {
+  if (KKE_appdir_folder_id_ex(folder_id, subfolder, path, sizeof(path)))
+  {
     return path;
   }
   return NULL;
@@ -697,31 +749,36 @@ const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *su
   static char path[FILE_MAX] = "";
   const bool check_is_dir = false;
 
-  switch (folder_id) {
+  switch (folder_id)
+  {
     case KRAKEN_USER_DATAFILES:
       if (get_path_environment_ex(
-              path, sizeof(path), subfolder, "KRAKEN_USER_DATAFILES", check_is_dir)) {
+            path, sizeof(path), subfolder, "KRAKEN_USER_DATAFILES", check_is_dir))
+      {
         break;
       }
       get_path_user_ex(path, sizeof(path), "datafiles", subfolder, version, check_is_dir);
       break;
     case KRAKEN_USER_CONFIG:
       if (get_path_environment_ex(
-              path, sizeof(path), subfolder, "KRAKEN_USER_CONFIG", check_is_dir)) {
+            path, sizeof(path), subfolder, "KRAKEN_USER_CONFIG", check_is_dir))
+      {
         break;
       }
       get_path_user_ex(path, sizeof(path), "config", subfolder, version, check_is_dir);
       break;
     case KRAKEN_USER_AUTOSAVE:
       if (get_path_environment_ex(
-              path, sizeof(path), subfolder, "KRAKEN_USER_AUTOSAVE", check_is_dir)) {
+            path, sizeof(path), subfolder, "KRAKEN_USER_AUTOSAVE", check_is_dir))
+      {
         break;
       }
       get_path_user_ex(path, sizeof(path), "autosave", subfolder, version, check_is_dir);
       break;
     case KRAKEN_USER_SCRIPTS:
       if (get_path_environment_ex(
-              path, sizeof(path), subfolder, "KRAKEN_USER_SCRIPTS", check_is_dir)) {
+            path, sizeof(path), subfolder, "KRAKEN_USER_SCRIPTS", check_is_dir))
+      {
         break;
       }
       get_path_user_ex(path, sizeof(path), "scripts", subfolder, version, check_is_dir);
@@ -731,7 +788,8 @@ const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *su
       break;
   }
 
-  if ('\0' == path[0]) {
+  if ('\0' == path[0])
+  {
     return NULL;
   }
   return path;
@@ -745,15 +803,18 @@ const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfold
   if ((folder_id != KRAKEN_USER_DATAFILES) &&
       (folder_id != KRAKEN_USER_CONFIG) &&
       (folder_id != KRAKEN_USER_SCRIPTS) &&
-      (folder_id != KRAKEN_USER_AUTOSAVE)) {
+      (folder_id != KRAKEN_USER_AUTOSAVE))
+  {
     return NULL;
   }
 
   path = KKE_appdir_folder_id(folder_id, subfolder);
 
-  if (!path) {
+  if (!path)
+  {
     path = KKE_appdir_folder_id_user_notest(folder_id, subfolder);
-    if (path) {
+    if (path)
+    {
       KLI_dir_create_recursive(path);
     }
   }
@@ -767,7 +828,8 @@ const char *KKE_appdir_folder_id_version(const int folder_id,
 {
   static char path[FILE_MAX] = "";
   bool ok;
-  switch (folder_id) {
+  switch (folder_id)
+  {
     case KRAKEN_RESOURCE_PATH_USER:
       ok = get_path_user_ex(path, sizeof(path), NULL, NULL, version, check_is_dir);
       break;
@@ -806,34 +868,40 @@ static void where_is_temp(char *tempdir, const size_t tempdir_len, const char *u
 
   tempdir[0] = '\0';
 
-  if (userdir && KLI_is_dir(userdir)) {
+  if (userdir && KLI_is_dir(userdir))
+  {
     KLI_strncpy(tempdir, userdir, tempdir_len);
   }
 
-  if (tempdir[0] == '\0') {
+  if (tempdir[0] == '\0')
+  {
     const char *env_vars[] = {
 #ifdef WIN32
-        "TEMP",
+      "TEMP",
 #else
-        /* Non standard (could be removed). */
-        "TMP",
-        /* Posix standard. */
-        "TMPDIR",
+      /* Non standard (could be removed). */
+      "TMP",
+      /* Posix standard. */
+      "TMPDIR",
 #endif
     };
-    for (int i = 0; i < TfArraySize(env_vars); i++) {
+    for (int i = 0; i < TfArraySize(env_vars); i++)
+    {
       const char *tmp = KLI_getenv(env_vars[i]);
-      if (tmp && (tmp[0] != '\0') && KLI_is_dir(tmp)) {
+      if (tmp && (tmp[0] != '\0') && KLI_is_dir(tmp))
+      {
         KLI_strncpy(tempdir, tmp, tempdir_len);
         break;
       }
     }
   }
 
-  if (tempdir[0] == '\0') {
+  if (tempdir[0] == '\0')
+  {
     KLI_strncpy(tempdir, "/tmp/", tempdir_len);
   }
-  else {
+  else
+  {
     /* add a trailing slash if needed */
     KLI_path_slash_ensure(tempdir);
   }
@@ -854,7 +922,8 @@ static void tempdir_session_create(char *tempdir_session,
    * #_mktemp_s also requires the last null character is included. */
   const int tempdir_session_len_required = tempdir_len + session_name_len + 1;
 
-  if (tempdir_session_len_required <= tempdir_session_len) {
+  if (tempdir_session_len_required <= tempdir_session_len)
+  {
     /* No need to use path joining utility as we know the last character of #tempdir is a slash. */
     KLI_strncpy(tempdir_session, CHARALL(STRCAT(tempdir, session_name)), tempdir_session_len);
 #ifdef WIN32
@@ -862,10 +931,12 @@ static void tempdir_session_create(char *tempdir_session,
 #else
     const bool needs_create = (mkdtemp(tempdir_session) == NULL);
 #endif
-    if (needs_create) {
+    if (needs_create)
+    {
       KLI_dir_create_recursive(tempdir_session);
     }
-    if (KLI_is_dir(tempdir_session)) {
+    if (KLI_is_dir(tempdir_session))
+    {
       KLI_path_slash_ensure(tempdir_session);
       /* Success. */
       return;
@@ -890,7 +961,7 @@ void KKE_tempdir_init(const char *userdir)
   KKE_tempdir_session_purge();
   /* Now that we have a valid temp dir, add system-generated unique sub-dir. */
   tempdir_session_create(
-      g_app.temp_dirname_session, sizeof(g_app.temp_dirname_session), g_app.temp_dirname_base);
+    g_app.temp_dirname_session, sizeof(g_app.temp_dirname_session), g_app.temp_dirname_base);
 }
 
 /**
@@ -914,7 +985,8 @@ const char *KKE_tempdir_base(void)
  */
 void KKE_tempdir_session_purge(void)
 {
-  if (g_app.temp_dirname_session[0] && KLI_is_dir(g_app.temp_dirname_session)) {
+  if (g_app.temp_dirname_session[0] && KLI_is_dir(g_app.temp_dirname_session))
+  {
     KLI_delete(g_app.temp_dirname_session, true, true);
   }
 }

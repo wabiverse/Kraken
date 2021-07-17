@@ -37,7 +37,7 @@ typedef unsigned int mode_t;
 #define FILELIST_DIRENTRY_DATE_LEN 16
 
 #ifndef PATH_MAX
-#define PATH_MAX 1024
+#  define PATH_MAX 1024
 #endif
 
 WABI_NAMESPACE_BEGIN
@@ -78,7 +78,8 @@ unsigned int KLI_filelist_dir_contents(const char *dirname, struct direntry **r_
 bool KLI_is_dir(const char *file);
 bool KLI_is_file(const char *path);
 
-struct direntry {
+struct direntry
+{
   mode_t type;
   const char *relname;
   const char *path;
@@ -93,7 +94,8 @@ struct direntry {
 #endif
 };
 
-struct dirlink {
+struct dirlink
+{
   struct dirlink *next, *prev;
   char *name;
 };

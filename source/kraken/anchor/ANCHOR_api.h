@@ -16,174 +16,106 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-// ANCHOR, v1.84 WIP
-// (headers)
+#include <float.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <string.h>
 
-// Help:
-// - Read FAQ at http://dearANCHOR.org/faq
-// - Newcomers, read 'Programmer guide' in ANCHOR.cpp for notes on how to setup ANCHOR in your
-// codebase.
-// - Call and read ANCHOR::ShowDemoWindow() in ANCHOR_demo.cpp. All applications in examples/ are
-// doing that. Read ANCHOR.cpp for details, links and comments.
+#include <wabi/base/gf/vec2f.h>
+#include <wabi/base/gf/vec2h.h>
+#include <wabi/base/gf/vec4f.h>
+#include <wabi/base/tf/refPtr.h>
+#include <wabi/base/tf/tf.h>
 
-// Resources:
-// - FAQ                   http://dearANCHOR.org/faq
-// - Homepage & latest     https://github.com/ocornut/ANCHOR
-// - Releases & changelog  https://github.com/ocornut/ANCHOR/releases
-// - Gallery               https://github.com/ocornut/ANCHOR/issues/3793 (please post your
-// screenshots/video there!)
-// - Wiki                  https://github.com/ocornut/ANCHOR/wiki (lots of good stuff there)
-// - Glossary              https://github.com/ocornut/ANCHOR/wiki/Glossary
-// - Issues & support      https://github.com/ocornut/ANCHOR/issues
-// - Discussions           https://github.com/ocornut/ANCHOR/discussions
+#include <wabi/imaging/hd/driver.h>
+#include <wabi/imaging/hd/engine.h>
 
-/*
+#include <wabi/usdImaging/usdApollo/engine.h>
 
-Index of this file:
-// [SECTION] Header mess
-// [SECTION] Forward declarations and basic types
-// [SECTION] ANCHOR end-user API functions
-// [SECTION] Flags & Enumerations
-// [SECTION] Helpers: Memory allocations macros, AnchorVector<>
-// [SECTION] ANCHOR_Style
-// [SECTION] ANCHOR_IO
-// [SECTION] Misc data structures (ANCHORInputTextCallbackData, ANCHOR_SizeCallbackData,
-ANCHORPayload, ANCHOR_TableSortSpecs, ANCHOR_TableColumnSortSpecs)
-// [SECTION] Helpers (ANCHOROnceUponAFrame, ANCHORTextFilter, ANCHORTextBuffer, ANCHORStorage,
-ANCHORListClipper, AnchorColor)
-// [SECTION] Drawing API (ImDrawCallback, ImDrawCmd, ImDrawIdx, ImDrawVert, ImDrawChannel,
-ImDrawListSplitter, ImDrawFlags, ImDrawListFlags, ImDrawList, ImDrawData)
-// [SECTION] Font API (AnchorFontConfig, AnchorFontGlyph, AnchorFontGlyphRangesBuilder,
-AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
-// [SECTION] Viewports (ANCHORViewportFlags, ANCHORViewport)
-// [SECTION] Obsolete functions and types
-
-*/
-
-#pragma once
-
-#ifdef ANCHOR_USER_CONFIG
-#  include ANCHOR_USER_CONFIG
-#endif
-
-#ifndef ANCHOR_DISABLE
-
-//-----------------------------------------------------------------------------
-// [SECTION] Header mess
-//-----------------------------------------------------------------------------
-
-// Includes
-#  include <float.h>   // FLT_MIN, FLT_MAX
-#  include <stdarg.h>  // va_list, va_start, va_end
-#  include <stddef.h>  // ptrdiff_t, NULL
-#  include <string.h>  // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
-
-#  include <wabi/base/gf/vec2f.h>
-#  include <wabi/base/gf/vec2h.h>
-#  include <wabi/base/gf/vec4f.h>
-#  include <wabi/base/tf/refPtr.h>
-#  include <wabi/base/tf/tf.h>
-
-#  include <wabi/imaging/hd/driver.h>
-#  include <wabi/imaging/hd/engine.h>
-
-#  include <wabi/usdImaging/usdApollo/engine.h>
-
-// Version
-// (Integer encoded as XYYZZ for use in #if preprocessor conditionals. Work in progress versions
-// typically starts at XYY99 then bounce up to XYY00, XYY01 etc. when release tagging happens)
-#  define ANCHOR_VERSION "1.84 WIP"
-#  define ANCHOR_VERSION_NUM 18302
-#  define ANCHOR_CHECKVERSION() \
-    ANCHOR::DebugCheckVersionAndDataLayout(ANCHOR_VERSION, \
-                                           sizeof(ANCHOR_IO), \
-                                           sizeof(ANCHOR_Style), \
-                                           sizeof(wabi::GfVec2f), \
-                                           sizeof(wabi::GfVec4f), \
-                                           sizeof(ImDrawVert), \
-                                           sizeof(ImDrawIdx))
-#  define ANCHOR_HAS_TABLE
+#define ANCHOR_HAS_TABLE
 
 // Define attributes of all API symbols declarations (e.g. for DLL under Windows)
 // ANCHOR_API is used for core ANCHOR functions, ANCHOR_BACKEND_API is used for the default backends
 // files (ANCHOR_impl_xxx.h) Using ANCHOR via a shared library is not recommended, because we don't
 // guarantee backward nor forward ABI compatibility (also function call overhead, as ANCHOR is a
 // call-heavy API)
-#  ifndef ANCHOR_API
-#    define ANCHOR_API
-#  endif
-#  ifndef ANCHOR_BACKEND_API
-#    define ANCHOR_BACKEND_API ANCHOR_API
-#  endif
+#ifndef ANCHOR_API
+#  define ANCHOR_API
+#endif
+#ifndef ANCHOR_BACKEND_API
+#  define ANCHOR_BACKEND_API ANCHOR_API
+#endif
 
 // Helper Macros
-#  ifndef ANCHOR_ASSERT
-#    include <assert.h>
-#    define ANCHOR_ASSERT(_EXPR) \
-      assert(_EXPR)  // You can override the default assert handler by editing ANCHOR_config.h
-#  endif
-#  define ANCHOR_ARRAYSIZE(_ARR) \
-    ((int)(sizeof(_ARR) / sizeof(*(_ARR))))  // Size of a static C-style array. Don't use on pointers!
-#  if (__cplusplus >= 201100) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201100)
-#    define ANCHOR_OFFSETOF(_TYPE, _MEMBER) \
-      offsetof(_TYPE, _MEMBER)  // Offset of _MEMBER within _TYPE. Standardized as offsetof() in C++11
-#  else
-#    define ANCHOR_OFFSETOF(_TYPE, _MEMBER) \
-      ((size_t) & (((_TYPE *)0)->_MEMBER))  // Offset of _MEMBER within _TYPE. Old style macro.
-#  endif
+#ifndef ANCHOR_ASSERT
+#  include <assert.h>
+#  define ANCHOR_ASSERT(_EXPR) \
+    assert(_EXPR)  // You can override the default assert handler by editing ANCHOR_config.h
+#endif
+#define ANCHOR_ARRAYSIZE(_ARR) \
+  ((int)(sizeof(_ARR) / sizeof(*(_ARR))))  // Size of a static C-style array. Don't use on pointers!
+#if (__cplusplus >= 201100) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201100)
+#  define ANCHOR_OFFSETOF(_TYPE, _MEMBER) \
+    offsetof(_TYPE, _MEMBER)  // Offset of _MEMBER within _TYPE. Standardized as offsetof() in C++11
+#else
+#  define ANCHOR_OFFSETOF(_TYPE, _MEMBER) \
+    ((size_t) & (((_TYPE *)0)->_MEMBER))  // Offset of _MEMBER within _TYPE. Old style macro.
+#endif
 
 // Helper Macros - ANCHOR_FMTARGS, ANCHOR_FMTLIST: Apply printf-style warnings to our formatting
 // functions.
-#  if !defined(ANCHOR_USE_STB_SPRINTF) && defined(__MINGW32__)
-#    define ANCHOR_FMTARGS(FMT) __attribute__((format(gnu_printf, FMT, FMT + 1)))
-#    define ANCHOR_FMTLIST(FMT) __attribute__((format(gnu_printf, FMT, 0)))
-#  elif !defined(ANCHOR_USE_STB_SPRINTF) && (defined(__clang__) || defined(__GNUC__))
-#    define ANCHOR_FMTARGS(FMT) __attribute__((format(printf, FMT, FMT + 1)))
-#    define ANCHOR_FMTLIST(FMT) __attribute__((format(printf, FMT, 0)))
-#  else
-#    define ANCHOR_FMTARGS(FMT)
-#    define ANCHOR_FMTLIST(FMT)
-#  endif
+#if !defined(ANCHOR_USE_STB_SPRINTF) && defined(__MINGW32__)
+#  define ANCHOR_FMTARGS(FMT) __attribute__((format(gnu_printf, FMT, FMT + 1)))
+#  define ANCHOR_FMTLIST(FMT) __attribute__((format(gnu_printf, FMT, 0)))
+#elif !defined(ANCHOR_USE_STB_SPRINTF) && (defined(__clang__) || defined(__GNUC__))
+#  define ANCHOR_FMTARGS(FMT) __attribute__((format(printf, FMT, FMT + 1)))
+#  define ANCHOR_FMTLIST(FMT) __attribute__((format(printf, FMT, 0)))
+#else
+#  define ANCHOR_FMTARGS(FMT)
+#  define ANCHOR_FMTLIST(FMT)
+#endif
 
 // Disable some of MSVC most aggressive Debug runtime checks in function header/footer (used in
 // some simple/low-level functions)
-#  if defined(_MSC_VER) && !defined(__clang__) && !defined(ANCHOR_DEBUG_PARANOID)
-#    define ANCHOR_MSVC_RUNTIME_CHECKS_OFF \
-      __pragma(runtime_checks("", off)) __pragma(check_stack(off)) __pragma(strict_gs_check(push, off))
-#    define ANCHOR_MSVC_RUNTIME_CHECKS_RESTORE \
-      __pragma(runtime_checks("", restore)) __pragma(check_stack()) __pragma(strict_gs_check(pop))
-#  else
-#    define ANCHOR_MSVC_RUNTIME_CHECKS_OFF
-#    define ANCHOR_MSVC_RUNTIME_CHECKS_RESTORE
-#  endif
+#if defined(_MSC_VER) && !defined(__clang__) && !defined(ANCHOR_DEBUG_PARANOID)
+#  define ANCHOR_MSVC_RUNTIME_CHECKS_OFF \
+    __pragma(runtime_checks("", off)) __pragma(check_stack(off)) __pragma(strict_gs_check(push, off))
+#  define ANCHOR_MSVC_RUNTIME_CHECKS_RESTORE \
+    __pragma(runtime_checks("", restore)) __pragma(check_stack()) __pragma(strict_gs_check(pop))
+#else
+#  define ANCHOR_MSVC_RUNTIME_CHECKS_OFF
+#  define ANCHOR_MSVC_RUNTIME_CHECKS_RESTORE
+#endif
 
 // Warnings
-#  ifdef _MSC_VER
-#    pragma warning(push)
-#    pragma warning(disable : 26495)  // [Static Analyzer] Variable 'XXX' is uninitialized. Always \
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable : 26495)  // [Static Analyzer] Variable 'XXX' is uninitialized. Always \
                                       // initialize a member variable (type.6).
+#endif
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wold-style-cast"
+#  if __has_warning("-Wzero-as-null-pointer-constant")
+#    pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
 #  endif
-#  if defined(__clang__)
-#    pragma clang diagnostic push
-#    pragma clang diagnostic ignored "-Wold-style-cast"
-#    if __has_warning("-Wzero-as-null-pointer-constant")
-#      pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
-#    endif
-#  elif defined(__GNUC__)
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored \
-      "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
-#    pragma GCC diagnostic ignored \
-      "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored \
+    "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
+#  pragma GCC diagnostic ignored \
+    "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
                            // of type 'xxxx' with no trivial copy-assignment; use assignment or \
                            // value-initialization instead
-#  endif
+#endif
 
 /**
  * -----------------------------------------------------------------------------
@@ -195,10 +127,8 @@ AnchorFontAtlasFlags, AnchorFontAtlas, AnchorFont)
 
 enum eAnchorStatus
 {
-  ANCHOR_ERROR = -1,
+  ANCHOR_FAILURE = 0,
   ANCHOR_SUCCESS,
-  ANCHOR_RUN,
-  ANCHOR_EVENT,
 };
 
 enum eAnchorButtonMask
@@ -233,40 +163,40 @@ enum eAnchorModifierKeyMask
 
 enum eAnchorEventType
 {
-  ANCHOR_EventTypeUnknown = 0,
+  AnchorEventTypeUnknown = 0,
 
-  ANCHOR_EventTypeCursorMove,  /// Mouse move event
-  ANCHOR_EventTypeButtonDown,  /// Mouse button event
-  ANCHOR_EventTypeButtonUp,    /// Mouse button event
-  ANCHOR_EventTypeWheel,       /// Mouse wheel event
-  ANCHOR_EventTypeTrackpad,    /// Trackpad event
+  AnchorEventTypeCursorMove,  /// Mouse move event
+  AnchorEventTypeButtonDown,  /// Mouse button event
+  AnchorEventTypeButtonUp,    /// Mouse button event
+  AnchorEventTypeWheel,       /// Mouse wheel event
+  AnchorEventTypeTrackpad,    /// Trackpad event
 
-  ANCHOR_EventTypeKeyDown,
-  ANCHOR_EventTypeKeyUp,
+  AnchorEventTypeKeyDown,
+  AnchorEventTypeKeyUp,
 
-  ANCHOR_EventTypeQuitRequest,
+  AnchorEventTypeQuitRequest,
 
-  ANCHOR_EventTypeWindowClose,
-  ANCHOR_EventTypeWindowActivate,
-  ANCHOR_EventTypeWindowDeactivate,
-  ANCHOR_EventTypeWindowUpdate,
-  ANCHOR_EventTypeWindowSize,
-  ANCHOR_EventTypeWindowMove,
-  ANCHOR_EventTypeWindowDPIHintChanged,
+  AnchorEventTypeWindowClose,
+  AnchorEventTypeWindowActivate,
+  AnchorEventTypeWindowDeactivate,
+  AnchorEventTypeWindowUpdate,
+  AnchorEventTypeWindowSize,
+  AnchorEventTypeWindowMove,
+  AnchorEventTypeWindowDPIHintChanged,
 
-  ANCHOR_EventTypeDraggingEntered,
-  ANCHOR_EventTypeDraggingUpdated,
-  ANCHOR_EventTypeDraggingExited,
-  ANCHOR_EventTypeDraggingDropDone,
+  AnchorEventTypeDraggingEntered,
+  AnchorEventTypeDraggingUpdated,
+  AnchorEventTypeDraggingExited,
+  AnchorEventTypeDraggingDropDone,
 
-  ANCHOR_EventTypeOpenMainFile,            // Needed for Cocoa to open double-clicked .usd(*) file at startup
-  ANCHOR_EventTypeNativeResolutionChange,  // Needed for Cocoa when window moves to other display
+  AnchorEventTypeOpenMainFile,            // Needed for Cocoa to open double-clicked .usd(*) file at startup
+  AnchorEventTypeNativeResolutionChange,  // Needed for Cocoa when window moves to other display
 
-  ANCHOR_EventTypeTimer,
+  AnchorEventTypeTimer,
 
-  ANCHOR_EventTypeImeCompositionStart,
-  ANCHOR_EventTypeImeComposition,
-  ANCHOR_EventTypeImeCompositionEnd,
+  AnchorEventTypeImeCompositionStart,
+  AnchorEventTypeImeComposition,
+  AnchorEventTypeImeCompositionEnd,
 
   ANCHOR_NumEventTypes
 };
@@ -295,17 +225,17 @@ enum eAnchorDrawingContextType
 
 enum eAnchorWindowState
 {
-  ANCHOR_WindowStateNormal = 0,
-  ANCHOR_WindowStateMaximized,
-  ANCHOR_WindowStateMinimized,
-  ANCHOR_WindowStateFullScreen,
-  ANCHOR_WindowStateEmbedded,
+  AnchorWindowStateNormal = 0,
+  AnchorWindowStateMaximized,
+  AnchorWindowStateMinimized,
+  AnchorWindowStateFullScreen,
+  AnchorWindowStateEmbedded,
 };
 
 enum eAnchorWindowOrder
 {
-  ANCHOR_WindowOrderTop = 0,
-  ANCHOR_WindowOrderBottom,
+  AnchorWindowOrderTop = 0,
+  AnchorWindowOrderBottom,
 };
 
 enum eAnchorStandardCursor
@@ -359,16 +289,16 @@ enum eAnchorStandardCursor
 
 enum eAnchorTabletMode
 {
-  ANCHOR_TabletModeNone = 0,
-  ANCHOR_TabletModeStylus,
-  ANCHOR_TabletModeEraser,
+  AnchorTabletModeNone = 0,
+  AnchorTabletModeStylus,
+  AnchorTabletModeEraser,
 };
 
 enum eAnchorTabletAPI
 {
-  ANCHOR_TabletAutomatic = 0,
-  ANCHOR_TabletNative,
-  ANCHOR_TabletWintab,
+  AnchorTabletAutomatic = 0,
+  AnchorTabletNative,
+  AnchorTabletWintab,
 };
 
 enum eAnchorGrabCursorMode
@@ -399,153 +329,153 @@ enum eAnchorAxisFlag
 
 enum eAnchorKey
 {
-  ANCHOR_KeyUnknown = -1,
-  ANCHOR_KeyBackSpace,
-  ANCHOR_KeyTab,
-  ANCHOR_KeyLinefeed,
-  ANCHOR_KeyClear,
-  ANCHOR_KeyEnter = 0x0D,
+  AnchorKeyUnknown = -1,
+  AnchorKeyBackSpace,
+  AnchorKeyTab,
+  AnchorKeyLinefeed,
+  AnchorKeyClear,
+  AnchorKeyEnter = 0x0D,
 
-  ANCHOR_KeyEsc = 0x1B,
-  ANCHOR_KeySpace = ' ',
-  ANCHOR_KeyQuote = 0x27,
-  ANCHOR_KeyComma = ',',
-  ANCHOR_KeyMinus = '-',
-  ANCHOR_KeyPlus = '+',
-  ANCHOR_KeyPeriod = '.',
-  ANCHOR_KeySlash = '/',
+  AnchorKeyEsc = 0x1B,
+  AnchorKeySpace = ' ',
+  AnchorKeyQuote = 0x27,
+  AnchorKeyComma = ',',
+  AnchorKeyMinus = '-',
+  AnchorKeyPlus = '+',
+  AnchorKeyPeriod = '.',
+  AnchorKeySlash = '/',
 
   /**
    * Number keys */
-  ANCHOR_Key0 = '0',
-  ANCHOR_Key1,
-  ANCHOR_Key2,
-  ANCHOR_Key3,
-  ANCHOR_Key4,
-  ANCHOR_Key5,
-  ANCHOR_Key6,
-  ANCHOR_Key7,
-  ANCHOR_Key8,
-  ANCHOR_Key9,
+  AnchorKey0 = '0',
+  AnchorKey1,
+  AnchorKey2,
+  AnchorKey3,
+  AnchorKey4,
+  AnchorKey5,
+  AnchorKey6,
+  AnchorKey7,
+  AnchorKey8,
+  AnchorKey9,
 
-  ANCHOR_KeySemicolon = ';',
-  ANCHOR_KeyEqual = '=',
+  AnchorKeySemicolon = ';',
+  AnchorKeyEqual = '=',
 
   /**
    * Character keys */
-  ANCHOR_KeyA = 'A',
-  ANCHOR_KeyB,
-  ANCHOR_KeyC,
-  ANCHOR_KeyD,
-  ANCHOR_KeyE,
-  ANCHOR_KeyF,
-  ANCHOR_KeyG,
-  ANCHOR_KeyH,
-  ANCHOR_KeyI,
-  ANCHOR_KeyJ,
-  ANCHOR_KeyK,
-  ANCHOR_KeyL,
-  ANCHOR_KeyM,
-  ANCHOR_KeyN,
-  ANCHOR_KeyO,
-  ANCHOR_KeyP,
-  ANCHOR_KeyQ,
-  ANCHOR_KeyR,
-  ANCHOR_KeyS,
-  ANCHOR_KeyT,
-  ANCHOR_KeyU,
-  ANCHOR_KeyV,
-  ANCHOR_KeyW,
-  ANCHOR_KeyX,
-  ANCHOR_KeyY,
-  ANCHOR_KeyZ,
+  AnchorKeyA = 'A',
+  AnchorKeyB,
+  AnchorKeyC,
+  AnchorKeyD,
+  AnchorKeyE,
+  AnchorKeyF,
+  AnchorKeyG,
+  AnchorKeyH,
+  AnchorKeyI,
+  AnchorKeyJ,
+  AnchorKeyK,
+  AnchorKeyL,
+  AnchorKeyM,
+  AnchorKeyN,
+  AnchorKeyO,
+  AnchorKeyP,
+  AnchorKeyQ,
+  AnchorKeyR,
+  AnchorKeyS,
+  AnchorKeyT,
+  AnchorKeyU,
+  AnchorKeyV,
+  AnchorKeyW,
+  AnchorKeyX,
+  AnchorKeyY,
+  AnchorKeyZ,
 
-  ANCHOR_KeyLeftBracket = '[',
-  ANCHOR_KeyRightBracket = ']',
-  ANCHOR_KeyBackslash = 0x5C,
-  ANCHOR_KeyAccentGrave = '`',
+  AnchorKeyLeftBracket = '[',
+  AnchorKeyRightBracket = ']',
+  AnchorKeyBackslash = 0x5C,
+  AnchorKeyAccentGrave = '`',
 
-  ANCHOR_KeyLeftShift = 0x100,
-  ANCHOR_KeyRightShift,
-  ANCHOR_KeyLeftControl,
-  ANCHOR_KeyRightControl,
-  ANCHOR_KeyLeftAlt,
-  ANCHOR_KeyRightAlt,
-  ANCHOR_KeyOS,      // Command key on Apple, Windows key(s) on Windows
-  ANCHOR_KeyGrLess,  // German PC only!
-  ANCHOR_KeyApp,     /* Also known as menu key. */
+  AnchorKeyLeftShift = 0x100,
+  AnchorKeyRightShift,
+  AnchorKeyLeftControl,
+  AnchorKeyRightControl,
+  AnchorKeyLeftAlt,
+  AnchorKeyRightAlt,
+  AnchorKeyOS,      // Command key on Apple, Windows key(s) on Windows
+  AnchorKeyGrLess,  // German PC only!
+  AnchorKeyApp,     /* Also known as menu key. */
 
-  ANCHOR_KeyCapsLock,
-  ANCHOR_KeyNumLock,
-  ANCHOR_KeyScrollLock,
+  AnchorKeyCapsLock,
+  AnchorKeyNumLock,
+  AnchorKeyScrollLock,
 
-  ANCHOR_KeyLeftArrow,
-  ANCHOR_KeyRightArrow,
-  ANCHOR_KeyUpArrow,
-  ANCHOR_KeyDownArrow,
+  AnchorKeyLeftArrow,
+  AnchorKeyRightArrow,
+  AnchorKeyUpArrow,
+  AnchorKeyDownArrow,
 
-  ANCHOR_KeyPrintScreen,
-  ANCHOR_KeyPause,
+  AnchorKeyPrintScreen,
+  AnchorKeyPause,
 
-  ANCHOR_KeyInsert,
-  ANCHOR_KeyDelete,
-  ANCHOR_KeyHome,
-  ANCHOR_KeyEnd,
-  ANCHOR_KeyUpPage,
-  ANCHOR_KeyDownPage,
+  AnchorKeyInsert,
+  AnchorKeyDelete,
+  AnchorKeyHome,
+  AnchorKeyEnd,
+  AnchorKeyUpPage,
+  AnchorKeyDownPage,
 
   /**
    * Numpad keys */
-  ANCHOR_KeyNumpad0,
-  ANCHOR_KeyNumpad1,
-  ANCHOR_KeyNumpad2,
-  ANCHOR_KeyNumpad3,
-  ANCHOR_KeyNumpad4,
-  ANCHOR_KeyNumpad5,
-  ANCHOR_KeyNumpad6,
-  ANCHOR_KeyNumpad7,
-  ANCHOR_KeyNumpad8,
-  ANCHOR_KeyNumpad9,
-  ANCHOR_KeyNumpadPeriod,
-  ANCHOR_KeyNumpadEnter,
-  ANCHOR_KeyNumpadPlus,
-  ANCHOR_KeyNumpadMinus,
-  ANCHOR_KeyNumpadAsterisk,
-  ANCHOR_KeyNumpadSlash,
+  AnchorKeyNumpad0,
+  AnchorKeyNumpad1,
+  AnchorKeyNumpad2,
+  AnchorKeyNumpad3,
+  AnchorKeyNumpad4,
+  AnchorKeyNumpad5,
+  AnchorKeyNumpad6,
+  AnchorKeyNumpad7,
+  AnchorKeyNumpad8,
+  AnchorKeyNumpad9,
+  AnchorKeyNumpadPeriod,
+  AnchorKeyNumpadEnter,
+  AnchorKeyNumpadPlus,
+  AnchorKeyNumpadMinus,
+  AnchorKeyNumpadAsterisk,
+  AnchorKeyNumpadSlash,
 
   /**
    * Function keys */
-  ANCHOR_KeyF1,
-  ANCHOR_KeyF2,
-  ANCHOR_KeyF3,
-  ANCHOR_KeyF4,
-  ANCHOR_KeyF5,
-  ANCHOR_KeyF6,
-  ANCHOR_KeyF7,
-  ANCHOR_KeyF8,
-  ANCHOR_KeyF9,
-  ANCHOR_KeyF10,
-  ANCHOR_KeyF11,
-  ANCHOR_KeyF12,
-  ANCHOR_KeyF13,
-  ANCHOR_KeyF14,
-  ANCHOR_KeyF15,
-  ANCHOR_KeyF16,
-  ANCHOR_KeyF17,
-  ANCHOR_KeyF18,
-  ANCHOR_KeyF19,
-  ANCHOR_KeyF20,
-  ANCHOR_KeyF21,
-  ANCHOR_KeyF22,
-  ANCHOR_KeyF23,
-  ANCHOR_KeyF24,
+  AnchorKeyF1,
+  AnchorKeyF2,
+  AnchorKeyF3,
+  AnchorKeyF4,
+  AnchorKeyF5,
+  AnchorKeyF6,
+  AnchorKeyF7,
+  AnchorKeyF8,
+  AnchorKeyF9,
+  AnchorKeyF10,
+  AnchorKeyF11,
+  AnchorKeyF12,
+  AnchorKeyF13,
+  AnchorKeyF14,
+  AnchorKeyF15,
+  AnchorKeyF16,
+  AnchorKeyF17,
+  AnchorKeyF18,
+  AnchorKeyF19,
+  AnchorKeyF20,
+  AnchorKeyF21,
+  AnchorKeyF22,
+  AnchorKeyF23,
+  AnchorKeyF24,
 
   /**
    * Multimedia keypad buttons */
-  ANCHOR_KeyMediaPlay,
-  ANCHOR_KeyMediaStop,
-  ANCHOR_KeyMediaFirst,
-  ANCHOR_KeyMediaLast
+  AnchorKeyMediaPlay,
+  AnchorKeyMediaStop,
+  AnchorKeyMediaFirst,
+  AnchorKeyMediaLast
 };
 
 enum eAnchorUserSpecialDirTypes
@@ -595,10 +525,10 @@ enum eAnchorVisibility
  * - Provides the main abstract API
  *   schema for the platform agnostic
  *   Anchor backend system.                                           */
-class ANCHOR_IEvent;         /** <- Anchor Events Interface.          */
-class ANCHOR_IEventConsumer; /** <- Anchor Event Consumers Interface. */
-class ANCHOR_ISystem;        /** <- Anchor System Backends Interface. */
-class ANCHOR_ISystemWindow;  /** <- Anchor System Windows Interface.  */
+class AnchorIEvent;         /** <- Anchor Events Interface.          */
+class AnchorIEventConsumer; /** <- Anchor Event Consumers Interface. */
+class AnchorISystem;        /** <- Anchor System Backends Interface. */
+class AnchorISystemWindow;  /** <- Anchor System Windows Interface.  */
 
 /**
  * Anchor System :: Platform Agnostic Implementation
@@ -606,18 +536,18 @@ class ANCHOR_ISystemWindow;  /** <- Anchor System Windows Interface.  */
  * - Provides the concrete classes which
  *   are to be inherited by the various
  *   platform specific backends.                           */
-class ANCHOR_Event;         /** <- Anchor Events.          */
-class ANCHOR_EventConsumer; /** <- Anchor Event Consumers. */
-class ANCHOR_System;        /** <- Anchor System Backends. */
-class ANCHOR_SystemWindow;  /** <- Anchor System Windows.  */
-class ANCHOR_Rect;          /** <- Anchor 2D Rect Type.    */
+class AnchorEvent;         /** <- Anchor Events.          */
+class AnchorEventConsumer; /** <- Anchor Event Consumers. */
+class AnchorSystem;        /** <- Anchor System Backends. */
+class AnchorSystemWindow;  /** <- Anchor System Windows.  */
+class AnchorRect;          /** <- Anchor 2D Rect Type.    */
 
 /**
  * Anchor System :: Event Types */
-class ANCHOR_EventButton;
-class ANCHOR_EventCursor;
-class ANCHOR_EventKey;
-class ANCHOR_EventWheel;
+class AnchorEventButton;
+class AnchorEventCursor;
+class AnchorEventKey;
+class AnchorEventWheel;
 
 /**
  * Anchor System :: Managers
@@ -626,24 +556,25 @@ class ANCHOR_EventWheel;
  *   define the event, display, as well
  *   as  the  window  management system.
  *   All, which power Anchor's backend.                        */
-class ANCHOR_DisplayManager; /** <- Anchor Display Management. */
-class ANCHOR_EventManager;   /** <- Anchor Event Management.   */
-class ANCHOR_WindowManager;  /** <- Anchor Window Management.  */
+class AnchorDisplayManager; /** <- Anchor Display Management. */
+class AnchorEventManager;   /** <- Anchor Event Management.   */
+class AnchorWindowManager;  /** <- Anchor Window Management.  */
 
-// Forward declarations
-struct ImDrawChannel;                 // Temporary storage to output draw commands out of order, used by
-                                      // ImDrawListSplitter and ImDrawList::ChannelsSplit()
-struct ImDrawCmd;                     // A single draw command within a parent ImDrawList (generally maps to 1 GPU
+/**
+ * Forward declarations */
+struct AnchorDrawChannel;             // Temporary storage to output draw commands out of order, used by
+                                      // AnchorDrawListSplitter and AnchorDrawList::ChannelsSplit()
+struct AnchorDrawCmd;                 // A single draw command within a parent AnchorDrawList (generally maps to 1 GPU
                                       // draw call, unless it is a callback)
-struct ImDrawData;                    // All draw command lists required to render the frame + pos/size coordinates
+struct AnchorDrawData;                // All draw command lists required to render the frame + pos/size coordinates
                                       // to use for the projection matrix.
-struct ImDrawList;                    // A single draw command list (generally one per window, conceptually you may
+struct AnchorDrawList;                // A single draw command list (generally one per window, conceptually you may
                                       // see this as a dynamic "mesh" builder)
-struct ImDrawListSharedData;          // Data shared among multiple draw lists (typically owned by parent
+struct AnchorDrawListSharedData;      // Data shared among multiple draw lists (typically owned by parent
                                       // ANCHOR context, but you may create one yourself)
-struct ImDrawListSplitter;            // Helper to split a draw list into different layers which can be drawn
+struct AnchorDrawListSplitter;        // Helper to split a draw list into different layers which can be drawn
                                       // into out of order, then flattened back.
-struct ImDrawVert;                    // A single vertex (pos + uv + col = 20 bytes by default. Override layout with
+struct AnchorDrawVert;                // A single vertex (pos + uv + col = 20 bytes by default. Override layout with
                                       // ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
 struct AnchorFont;                    // Runtime data for a single font within a parent AnchorFontAtlas
 struct AnchorFontAtlas;               // Runtime data for multiple fonts, bake multiple fonts into a single
@@ -655,113 +586,121 @@ struct AnchorFontGlyph;               // A single font glyph (code point + coord
 struct AnchorFontGlyphRangesBuilder;  // Helper to build glyph ranges from text/string data
 struct AnchorColor;                   // Helper functions to create a color that can be converted to either u32 or
                                       // float4 (*OBSOLETE* please avoid using)
-struct ANCHOR_Buttons;                // Stores the state of the mouse buttons. Buttons can be set using button masks.
-struct ANCHOR_ModifierKeys;           // Stores the state of modifier keys. Discriminates left and right modifiers.
-struct ANCHOR_Context;                // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
-struct ANCHOR_IO;                     // Main configuration and I/O between your application and ANCHOR
-struct ANCHORInputTextCallbackData;   // Shared state of InputText() when using custom
+struct AnchorButtons;                 // Stores the state of the mouse buttons. Buttons can be set using button masks.
+struct AnchorModifierKeys;            // Stores the state of modifier keys. Discriminates left and right modifiers.
+struct AnchorContext;                 // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
+struct AnchorIO;                      // Main configuration and I/O between your application and ANCHOR
+struct AnchorInputTextCallbackData;   // Shared state of InputText() when using custom
                                       // ANCHORInputTextCallback (rare/advanced use)
-struct ANCHORListClipper;             // Helper to manually clip large list of items
+struct AnchorListClipper;             // Helper to manually clip large list of items
 struct ANCHOROnceUponAFrame;          // Helper for running a block of code not more than once a frame,
                                       // used by ANCHOR_ONCE_UPON_A_FRAME macro
-struct ANCHORPayload;                 // User data payload for drag and drop operations
-struct ANCHOR_SizeCallbackData;       // Callback data when using SetNextWindowSizeConstraints()
+struct AnchorPayload;                 // User data payload for drag and drop operations
+struct AnchorSizeCallbackData;        // Callback data when using SetNextWindowSizeConstraints()
                                       // (rare/advanced use)
-struct ANCHORStorage;                 // Helper for key->value storage
-struct ANCHOR_Style;                  // Runtime data for styling/colors
-struct ANCHOR_TableSortSpecs;         // Sorting specifications for a table (often handling sort specs for
+struct AnchorStorage;                 // Helper for key->value storage
+struct AnchorStyle;                   // Runtime data for styling/colors
+struct AnchorTableSortSpecs;          // Sorting specifications for a table (often handling sort specs for
                                       // a single column, occasionally more)
-struct ANCHOR_TableColumnSortSpecs;   // Sorting specification for one column of a table
-struct ANCHORTextBuffer;              // Helper to hold and append into a text buffer (~string builder)
-struct ANCHORTextFilter;              // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
-struct ANCHORViewport;                // A Platform Window (always only one in 'master' branch), in the future
+struct AnchorTableColumnSortSpecs;    // Sorting specification for one column of a table
+struct AnchorTextBuffer;              // Helper to hold and append into a text buffer (~string builder)
+struct AnchorTextFilter;              // Helper to parse and apply text filters (e.g. "aaaaa[,bbbbb][,ccccc]")
+struct AnchorViewport;                // A Platform Window (always only one in 'master' branch), in the future
                                       // may represent Platform Monitor
 
 /**
  * ----- ANCHOR TYPES ----- */
 
-typedef int ANCHOR_Col;               /// Enum: A color identifier for styling
-typedef int ANCHOR_Cond;              /// Enum: A condition for many Set*() functions
-typedef int ANCHOR_DataType;          /// Enum: A primary data type
-typedef int ANCHOR_Dir;               /// Enum: A cardinal direction
-typedef int ANCHOR_Key;               /// Enum: A key identifier (ANCHOR-side enum)
-typedef int ANCHOR_NavInput;          /// Enum: An input identifier for navigation
-typedef int ANCHOR_MouseButton;       /// Enum: A mouse button
-typedef int ANCHOR_MouseCursor;       /// Enum: A mouse cursor identifier
-typedef int ANCHOR_SortDirection;     /// Enum: A sorting direction (ascending or descending)
-typedef int ANCHOR_StyleVar;          /// Enum: A variable identifier for styling
-typedef int ANCHOR_TableBgTarget;     /// Enum: A color target for TableSetBgColor()
-typedef int ImDrawFlags;              /// Flags: For ImDrawList functions
-typedef int ImDrawListFlags;          /// Flags: For ImDrawList instance
-typedef int AnchorFontAtlasFlags;     /// Flags: For AnchorFontAtlas build
-typedef int ANCHORBackendFlags;       /// Flags: For io.BackendFlags
-typedef int ANCHOR_ButtonFlags;       /// Flags: For InvisibleButton()
-typedef int ANCHOR_ColorEditFlags;    /// Flags: For ColorEdit4(), ColorPicker4() etc.
-typedef int ANCHORConfigFlags;        /// Flags: For io.ConfigFlags
-typedef int ANCHORComboFlags;         /// Flags: For BeginCombo()
-typedef int ANCHORDragDropFlags;      /// Flags: For BeginDragDropSource(), AcceptDragDropPayload()
-typedef int ANCHORFocusedFlags;       /// Flags: For IsWindowFocused()
-typedef int ANCHORHoveredFlags;       /// Flags: For IsItemHovered(), IsWindowHovered() etc.
-typedef int ANCHORInputTextFlags;     /// Flags: For InputText(), InputTextMultiline()
-typedef int ANCHOR_KeyModFlags;       /// Flags: For io.KeyMods (Ctrl/Shift/Alt/Super)
-typedef int ANCHORPopupFlags;         /// Flags: For OpenPopup(), IsPopupOpen()
-typedef int ANCHORSelectableFlags;    /// Flags: For Selectable()
-typedef int ANCHOR_SliderFlags;       /// Flags: For DragFloat(), DragInt(), SliderFloat()
-typedef int ANCHOR_TabBarFlags;       /// Flags: For BeginTabBar()
-typedef int ANCHOR_TabItemFlags;      /// Flags: For BeginTabItem()
-typedef int ANCHOR_TableFlags;        /// Flags: For BeginTable()
-typedef int ANCHOR_TableColumnFlags;  /// Flags: For TableSetupColumn()
-typedef int ANCHOR_TableRowFlags;     /// Flags: For TableNextRow()
-typedef int ANCHOR_TreeNodeFlags;     /// Flags: for TreeNode(), TreeNodeEx(), CollapsingHeader()
-typedef int ANCHORViewportFlags;      /// Flags: for ANCHORViewport
-typedef int ANCHOR_WindowFlags;       /// Flags: for Begin(), BeginChild()
+typedef int AnchorCol;               // Enum: A color identifier for styling
+typedef int AnchorCond;              // Enum: A condition for many Set*() functions
+typedef int AnchorDataType;          // Enum: A primary data type
+typedef int AnchorDir;               // Enum: A cardinal direction
+typedef int AnchorKey;               // Enum: A key identifier (ANCHOR-side enum)
+typedef int AnchorNavInput;          // Enum: An input identifier for navigation
+typedef int AnchorMouseButton;       // Enum: A mouse button
+typedef int AnchorMouseCursor;       // Enum: A mouse cursor identifier
+typedef int AnchorSortDirection;     // Enum: A sorting direction (ascending or descending)
+typedef int AnchorStyleVar;          // Enum: A variable identifier for styling
+typedef int AnchorTableBGTarget;     // Enum: A color target for TableSetBgColor()
+typedef int AnchorDrawFlags;         // Flags: For AnchorDrawList functions
+typedef int AnchorDrawListFlags;     // Flags: For AnchorDrawList instance
+typedef int AnchorFontAtlasFlags;    // Flags: For AnchorFontAtlas build
+typedef int AnchorBackendFlags;      // Flags: For io.BackendFlags
+typedef int AnchorButtonFlags;       // Flags: For InvisibleButton()
+typedef int AnchorColorEditFlags;    // Flags: For ColorEdit4(), ColorPicker4() etc.
+typedef int AnchorConfigFlags;       // Flags: For io.ConfigFlags
+typedef int AnchorComboFlags;        // Flags: For BeginCombo()
+typedef int AnchorDragDropFlags;     // Flags: For BeginDragDropSource(), AcceptDragDropPayload()
+typedef int AnchorFocusedFlags;      // Flags: For IsWindowFocused()
+typedef int AnchorHoveredFlags;      // Flags: For IsItemHovered(), IsWindowHovered() etc.
+typedef int AnchorInputTextFlags;    // Flags: For InputText(), InputTextMultiline()
+typedef int AnchorKeyModFlags;       // Flags: For io.KeyMods (Ctrl/Shift/Alt/Super)
+typedef int AnchorPopupFlags;        // Flags: For OpenPopup(), IsPopupOpen()
+typedef int AnchorSelectableFlags;   // Flags: For Selectable()
+typedef int AnchorSliderFlags;       // Flags: For DragFloat(), DragInt(), SliderFloat()
+typedef int AnchorTabBarFlags;       // Flags: For BeginTabBar()
+typedef int AnchorTabItemFlags;      // Flags: For BeginTabItem()
+typedef int AnchorTableFlags;        // Flags: For BeginTable()
+typedef int AnchorTableColumnFlags;  // Flags: For TableSetupColumn()
+typedef int AnchorTableRowFlags;     // Flags: For TableNextRow()
+typedef int AnchorTreeNodeFlags;     // Flags: for TreeNode(), TreeNodeEx(), CollapsingHeader()
+typedef int AnchorViewportFlags;     // Flags: for AnchorViewport
+typedef int AnchorWindowFlags;       // Flags: for Begin(), BeginChild()
 
 /**
  * AnchorTextureID
  * [configurable type: #define AnchorTextureID xxx'] */
-#  ifndef AnchorTextureID
+#ifndef AnchorTextureID
 /**
  * User data for rendering backend to identify a texture.
  * This is whatever you want it to be!*/
 typedef void *AnchorTextureID;
-#  endif
+#endif
 
 /**
  * For event handling with client applications,
  * in the case of kraken  --  ANCHOR_UserPtr is
  * assigned to the #kContext data structure. */
 typedef void *ANCHOR_UserPtr;
-typedef void *ANCHOR_EventDataPtr;
+typedef void *AnchorEventDataPtr;
 
 /**
  * A unique ID used by widgets, hashed from a stack of string. */
 typedef unsigned int ANCHOR_ID;
+
 /**
- * Callback function for ANCHOR::InputText() */
-typedef int (*ANCHORInputTextCallback)(ANCHORInputTextCallbackData *data);
+ * Callback function for
+ *  - ANCHOR::InputText() */
+typedef int (*ANCHORInputTextCallback)(AnchorInputTextCallbackData *data);
+
 /**
- * Callback function for ANCHOR::SetNextWindowSizeConstraints() */
-typedef void (*ANCHORSizeCallback)(ANCHOR_SizeCallbackData *data);
+ * Callback function for
+ *  - ANCHOR::SetNextWindowSizeConstraints() */
+typedef void (*ANCHORSizeCallback)(AnchorSizeCallbackData *data);
+
 /**
- * Function signature for ANCHOR::SetAllocatorFunctions() */
+ * Function signature for
+ * - ANCHOR::SetAllocatorFunctions() */
 typedef void *(*ANCHORMemAllocFunc)(size_t sz, void *user_data);
 /**
- * Function signature for ANCHOR::SetAllocatorFunctions() */
+ * Function signature for
+ *  - ANCHOR::SetAllocatorFunctions() */
 typedef void (*ANCHORMemFreeFunc)(void *ptr, void *user_data);
 
-// Character types
-// (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded
-// character used for keyboard input and display)
+/**
+ * Character types
+ * (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded
+ * character used for keyboard input and display). */
 typedef unsigned short AnchorWChar16;  // A single decoded U16 character/code point. We encode them
                                        // as multi bytes UTF-8 when used in strings.
 typedef unsigned int AnchorWChar32;    // A single decoded U32 character/code point. We encode them
                                        // as multi bytes UTF-8 when used in strings.
-#  ifdef ANCHOR_USE_WCHAR32            // AnchorWChar [configurable type: override in ANCHOR_config.h with \
+#ifdef ANCHOR_USE_WCHAR32              // AnchorWChar [configurable type: override in ANCHOR_config.h with \
                                        // '#define ANCHOR_USE_WCHAR32' to support Unicode planes 1-16]
 typedef AnchorWChar32 AnchorWChar;
-#  else
+#else
 typedef AnchorWChar16 AnchorWChar;
-#  endif
+#endif
 
 // Basic scalar data types
 typedef signed char AnchorS8;      // 8-bit signed integer
@@ -770,28 +709,28 @@ typedef signed short AnchorS16;    // 16-bit signed integer
 typedef unsigned short AnchorU16;  // 16-bit unsigned integer
 typedef signed int AnchorS32;      // 32-bit signed integer == int
 typedef unsigned int AnchorU32;    // 32-bit unsigned integer (often used to store packed colors)
-#  if defined(_MSC_VER) && !defined(__clang__)
+#if defined(_MSC_VER) && !defined(__clang__)
 typedef signed __int64 AnchorS64;    // 64-bit signed integer (pre and post C++11 with MSVC)
 typedef unsigned __int64 AnchorU64;  // 64-bit unsigned integer (pre and post C++11 with MSVC)
-#  elif (defined(__clang__) || defined(__GNUC__)) && (__cplusplus < 201100)
-#    include <stdint.h>
+#elif (defined(__clang__) || defined(__GNUC__)) && (__cplusplus < 201100)
+#  include <stdint.h>
 typedef int64_t AnchorS64;   // 64-bit signed integer (pre C++11)
 typedef uint64_t AnchorU64;  // 64-bit unsigned integer (pre C++11)
-#  else
+#else
 typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
 typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
-#  endif
+#endif
 
 /**
  * ----- ANCHOR STRUCTS ----- */
 
 /**
  * Platform agnostic handles to backends. */
-#  define ANCHOR_DECLARE_HANDLE(name) \
-    typedef struct name##__ \
-    { \
-      int unused; \
-    } * name
+#define ANCHOR_DECLARE_HANDLE(name) \
+  typedef struct name##__ \
+  { \
+    int unused; \
+  } * name
 
 /**
  * Anchor System :: Handles
@@ -801,11 +740,11 @@ typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
  *   pointers to -- as the client application
  *   maintains the lifetime of their own unique
  *   Anchor handles. */
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_EventConsumerHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemWindowHandle);
-ANCHOR_DECLARE_HANDLE(ANCHOR_RectangleHandle);
+ANCHOR_DECLARE_HANDLE(AnchorEventHandle);
+ANCHOR_DECLARE_HANDLE(AnchorEventConsumerHandle);
+ANCHOR_DECLARE_HANDLE(AnchorSystemHandle);
+ANCHOR_DECLARE_HANDLE(AnchorSystemWindowHandle);
+ANCHOR_DECLARE_HANDLE(AnchorRectangleHandle);
 
 struct ANCHOR_StringArray
 {
@@ -813,7 +752,7 @@ struct ANCHOR_StringArray
   AnchorU8 **strings;
 };
 
-struct ANCHOR_TabletData
+struct AnchorTabletData
 {
   /**
    * Whether the Tablet is
@@ -841,14 +780,14 @@ struct ANCHOR_TabletData
   float Ytilt;
 };
 
-static const ANCHOR_TabletData ANCHOR_TABLET_DATA_NONE = {
-  ANCHOR_TabletModeNone, /* No cursor in range */
-  1.0f,                  /* Pressure */
-  0.0f,                  /* Xtilt */
+static const AnchorTabletData ANCHOR_TABLET_DATA_NONE = {
+  AnchorTabletModeNone, /* No cursor in range */
+  1.0f,                 /* Pressure */
+  0.0f,                 /* Xtilt */
   0.0f,
 };
 
-struct ANCHOR_EventTrackpadData
+struct AnchorEventTrackpadData
 {
   /** The event subtype */
   eAnchorTrackpadEventSubtypes subtype;
@@ -873,10 +812,10 @@ struct Anchor_EventDragnDropData
   /** The dropped item type */
   eAnchorDragnDropTypes dataType;
   /** The "dropped content" */
-  ANCHOR_EventDataPtr data;
+  AnchorEventDataPtr data;
 };
 
-struct ANCHOR_EventCursorData
+struct AnchorEventCursorData
 {
   /**
    * The x-coordinate of the cursor position. */
@@ -886,27 +825,27 @@ struct ANCHOR_EventCursorData
   AnchorS32 y;
   /**
    * Associated tablet data. */
-  ANCHOR_TabletData tablet;
+  AnchorTabletData tablet;
 };
 
-struct ANCHOR_EventButtonData
+struct AnchorEventButtonData
 {
   /**
    * The mask of the mouse button. */
   eAnchorButtonMask button;
   /**
    * Associated tablet data. */
-  ANCHOR_TabletData tablet;
+  AnchorTabletData tablet;
 };
 
-struct ANCHOR_EventWheelData
+struct AnchorEventWheelData
 {
   /**
    * Displacement of a mouse wheel. */
   AnchorS32 z;
 };
 
-struct ANCHOR_EventKeyData
+struct AnchorEventKeyData
 {
   /**
    * The key code. */
@@ -958,18 +897,18 @@ namespace ANCHOR
  *    Memory Allocators" section of ANCHOR.cpp for details. */
 
 ANCHOR_API
-ANCHOR_Context *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
+AnchorContext *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
 
 /**
  * NULL = destroy current context */
 ANCHOR_API
-void DestroyContext(ANCHOR_Context *ctx = NULL);
+void DestroyContext(AnchorContext *ctx = NULL);
 
 ANCHOR_API
-ANCHOR_Context *GetCurrentContext();
+AnchorContext *GetCurrentContext();
 
 ANCHOR_API
-void SetCurrentContext(ANCHOR_Context *ctx);
+void SetCurrentContext(AnchorContext *ctx);
 
 /**
  * ⚓︎ Anchor :: Main -------------------- */
@@ -989,7 +928,7 @@ void SetCurrentContext(ANCHOR_Context *ctx);
  * @return Indication of the presence of events. */
 
 ANCHOR_API
-bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
+bool ProcessEvents(AnchorSystemHandle systemhandle, bool waitForEvent);
 
 /**
  * Dispatch Events
@@ -998,10 +937,10 @@ bool ProcessEvents(ANCHOR_SystemHandle systemhandle, bool waitForEvent);
  * sends them to the  event consumers.
  * @param systemhandle: The handle to the system. */
 ANCHOR_API
-void DispatchEvents(ANCHOR_SystemHandle systemhandle);
+void DispatchEvents(AnchorSystemHandle systemhandle);
 
 ANCHOR_API
-AnchorU64 GetMilliSeconds(ANCHOR_SystemHandle systemhandle);
+AnchorU64 GetMilliSeconds(AnchorSystemHandle systemhandle);
 
 /**
  * Event Type
@@ -1010,7 +949,7 @@ AnchorU64 GetMilliSeconds(ANCHOR_SystemHandle systemhandle);
  * for a given event handle.
  * @param eventhandle: The handle to the system. */
 ANCHOR_API
-eAnchorEventType GetEventType(ANCHOR_EventHandle eventhandle);
+eAnchorEventType GetEventType(AnchorEventHandle eventhandle);
 
 /**
  * Event Window
@@ -1019,25 +958,25 @@ eAnchorEventType GetEventType(ANCHOR_EventHandle eventhandle);
  * display quiet dialog in.
  * @param eventhandle: The handle to the system. */
 ANCHOR_API
-ANCHOR_SystemWindowHandle GetEventWindow(ANCHOR_EventHandle eventhandle);
+AnchorSystemWindowHandle GetEventWindow(AnchorEventHandle eventhandle);
 
 ANCHOR_API
-ANCHOR_EventDataPtr GetEventData(ANCHOR_EventHandle eventhandle);
+AnchorEventDataPtr GetEventData(AnchorEventHandle eventhandle);
 
 ANCHOR_API
-int ValidWindow(ANCHOR_SystemHandle systemhandle, ANCHOR_SystemWindowHandle windowhandle);
+int ValidWindow(AnchorSystemHandle systemhandle, AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-ANCHOR_UserPtr GetWindowUserData(ANCHOR_SystemWindowHandle windowhandle);
+ANCHOR_UserPtr GetWindowUserData(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-void SetWindowUserData(ANCHOR_SystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
+void SetWindowUserData(AnchorSystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
 
 ANCHOR_API
 int ToggleConsole(int action);
 
 ANCHOR_API
-AnchorU16 GetDPIHint(ANCHOR_SystemWindowHandle windowhandle);
+AnchorU16 GetDPIHint(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
 int UseNativePixels(void);
@@ -1046,10 +985,10 @@ ANCHOR_API
 void UseWindowFocus(int use_focus);
 
 ANCHOR_API
-float GetNativePixelSize(ANCHOR_SystemWindowHandle windowhandle);
+float GetNativePixelSize(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-void GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
+void GetMainDisplayDimensions(AnchorSystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
 
 /**
  * Initialize Anchor System Window.
@@ -1057,24 +996,24 @@ void GetMainDisplayDimensions(ANCHOR_SystemHandle systemhandle, AnchorU32 *width
  * @param systemhandle: Handle to backend system.
  * @return Indication of the presence of events. */
 ANCHOR_API
-ANCHOR_SystemWindowHandle CreateSystemWindow(ANCHOR_SystemHandle systemhandle,
-                                             ANCHOR_SystemWindowHandle parent_windowhandle,
-                                             const char *title,
-                                             const char *icon,
-                                             AnchorS32 left,
-                                             AnchorS32 top,
-                                             AnchorU32 width,
-                                             AnchorU32 height,
-                                             eAnchorWindowState state,
-                                             bool is_dialog,
-                                             eAnchorDrawingContextType type,
-                                             int vkSettings);
+AnchorSystemWindowHandle CreateSystemWindow(AnchorSystemHandle systemhandle,
+                                            AnchorSystemWindowHandle parent_windowhandle,
+                                            const char *title,
+                                            const char *icon,
+                                            AnchorS32 left,
+                                            AnchorS32 top,
+                                            AnchorU32 width,
+                                            AnchorU32 height,
+                                            eAnchorWindowState state,
+                                            bool is_dialog,
+                                            eAnchorDrawingContextType type,
+                                            int vkSettings);
 
 ANCHOR_API
-AnchorU8 GetNumDisplays(ANCHOR_SystemHandle systemhandle);
+AnchorU8 GetNumDisplays(AnchorSystemHandle systemhandle);
 
 ANCHOR_API
-void SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title);
+void SetTitle(AnchorSystemWindowHandle windowhandle, const char *title);
 
 /**
  * Preforms a swap on the swapchain.
@@ -1091,10 +1030,10 @@ void SetTitle(ANCHOR_SystemWindowHandle windowhandle, const char *title);
  * @param windowhandle: Handle to the window.
  * @return Indication of success. */
 ANCHOR_API
-eAnchorStatus SwapChain(ANCHOR_SystemWindowHandle windowhandle);
+eAnchorStatus SwapChain(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-eAnchorStatus ActivateWindowDrawingContext(ANCHOR_SystemWindowHandle windowhandle);
+eAnchorStatus ActivateWindowDrawingContext(AnchorSystemWindowHandle windowhandle);
 
 /**
  * Adds a given event consumer to anchor.
@@ -1108,41 +1047,41 @@ eAnchorStatus ActivateWindowDrawingContext(ANCHOR_SystemWindowHandle windowhandl
  * @param consumerhandle: The event consumer to add.
  * @return Indication of success. */
 ANCHOR_API
-eAnchorStatus AddEventConsumer(ANCHOR_SystemHandle systemhandle, ANCHOR_EventConsumerHandle consumerhandle);
+eAnchorStatus AddEventConsumer(AnchorSystemHandle systemhandle, AnchorEventConsumerHandle consumerhandle);
 
 ANCHOR_API
-eAnchorWindowState GetWindowState(ANCHOR_SystemWindowHandle windowhandle);
+eAnchorWindowState GetWindowState(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-eAnchorStatus SetWindowState(ANCHOR_SystemWindowHandle windowhandle, eAnchorWindowState state);
+eAnchorStatus SetWindowState(AnchorSystemWindowHandle windowhandle, eAnchorWindowState state);
 
 ANCHOR_API
-eAnchorStatus SetWindowOrder(ANCHOR_SystemWindowHandle windowhandle, eAnchorWindowOrder order);
+eAnchorStatus SetWindowOrder(AnchorSystemWindowHandle windowhandle, eAnchorWindowOrder order);
 
 ANCHOR_API
-int IsDialogWindow(ANCHOR_SystemWindowHandle windowhandle);
+int IsDialogWindow(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-void ClientToScreen(ANCHOR_SystemWindowHandle windowhandle,
+void ClientToScreen(AnchorSystemWindowHandle windowhandle,
                     AnchorS32 inX,
                     AnchorS32 inY,
                     AnchorS32 *outX,
                     AnchorS32 *outY);
 
 ANCHOR_API
-eAnchorStatus GetModifierKeyState(ANCHOR_SystemHandle systemhandle,
+eAnchorStatus GetModifierKeyState(AnchorSystemHandle systemhandle,
                                   eAnchorModifierKeyMask mask,
                                   int *isDown);
 
 ANCHOR_API
-void ScreenToClient(ANCHOR_SystemWindowHandle windowhandle,
+void ScreenToClient(AnchorSystemWindowHandle windowhandle,
                     AnchorS32 inX,
                     AnchorS32 inY,
                     AnchorS32 *outX,
                     AnchorS32 *outY);
 
 ANCHOR_API
-eAnchorStatus GetCursorPosition(ANCHOR_SystemHandle systemhandle,
+eAnchorStatus GetCursorPosition(AnchorSystemHandle systemhandle,
                                 AnchorS32 *x,
                                 AnchorS32 *y);
 
@@ -1167,34 +1106,34 @@ ANCHOR_API
 wabi::HdDriver &GetPixarDriver();
 
 ANCHOR_API
-char *GetTitle(ANCHOR_SystemWindowHandle windowhandle);
+char *GetTitle(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-eAnchorStatus SetClientSize(ANCHOR_SystemWindowHandle windowhandle,
+eAnchorStatus SetClientSize(AnchorSystemWindowHandle windowhandle,
                             AnchorU32 width,
                             AnchorU32 height);
 
 ANCHOR_API
-ANCHOR_RectangleHandle GetClientBounds(ANCHOR_SystemWindowHandle windowhandle);
+AnchorRectangleHandle GetClientBounds(AnchorSystemWindowHandle windowhandle);
 
 ANCHOR_API
-AnchorS32 GetHeightRectangle(ANCHOR_RectangleHandle rectanglehandle);
+AnchorS32 GetHeightRectangle(AnchorRectangleHandle rectanglehandle);
 
 ANCHOR_API
-AnchorS32 GetWidthRectangle(ANCHOR_RectangleHandle rectanglehandle);
+AnchorS32 GetWidthRectangle(AnchorRectangleHandle rectanglehandle);
 
 ANCHOR_API
-void GetRectangle(ANCHOR_RectangleHandle rectanglehandle,
+void GetRectangle(AnchorRectangleHandle rectanglehandle,
                   AnchorS32 *l,
                   AnchorS32 *t,
                   AnchorS32 *r,
                   AnchorS32 *b);
 
 ANCHOR_API
-void DisposeRectangle(ANCHOR_RectangleHandle rectanglehandle);
+void DisposeRectangle(AnchorRectangleHandle rectanglehandle);
 
 ANCHOR_API
-void GetAllDisplayDimensions(ANCHOR_SystemHandle systemhandle,
+void GetAllDisplayDimensions(AnchorSystemHandle systemhandle,
                              AnchorU32 *width,
                              AnchorU32 *height);
 
@@ -1230,7 +1169,7 @@ APOLLO_EnginePtr GetEngineApollo();
  *  - time
  *  - config options/flags */
 ANCHOR_API
-ANCHOR_IO &GetIO();
+AnchorIO &GetIO();
 
 /**
  * Access the Style structure (colors, sizes).
@@ -1240,7 +1179,7 @@ ANCHOR_IO &GetIO();
  *  - PushStyleVar()
  * to modify style mid-frame! */
 ANCHOR_API
-ANCHOR_Style &GetStyle();
+AnchorStyle &GetStyle();
 
 /**
  * Start a new ANCHOR frame.
@@ -1282,7 +1221,7 @@ void Render();
  * NewFrame(). This is what
  * you have to render. */
 ANCHOR_API
-ImDrawData *GetDrawData();
+AnchorDrawData *GetDrawData();
 
 /**
  * Diagnostic, Debug Window.
@@ -1314,11 +1253,11 @@ void ShowAboutWindow(bool *p_open = NULL);
 /**
  * Add style editor block (not a window).
  *
- * You can pass in a reference ANCHOR_Style
+ * You can pass in a reference AnchorStyle
  * structure to compare to, revert to and
  * save to (else it uses the default style) */
 ANCHOR_API
-void ShowStyleEditor(ANCHOR_Style *ref = NULL);
+void ShowStyleEditor(AnchorStyle *ref = NULL);
 
 /**
  * Add style selector block (not a window)
@@ -1362,7 +1301,7 @@ const char *GetVersion();
  * For all your digital content
  * creation needs. */
 ANCHOR_API
-void StyleColorsDefault(ANCHOR_Style *dst = NULL);
+void StyleColorsDefault(AnchorStyle *dst = NULL);
 
 /**
  * Dark Side.
@@ -1370,7 +1309,7 @@ void StyleColorsDefault(ANCHOR_Style *dst = NULL);
  * It's 2021 and everyone
  * needs a dark mode. */
 ANCHOR_API
-void StyleColorsDark(ANCHOR_Style *dst = NULL);
+void StyleColorsDark(AnchorStyle *dst = NULL);
 
 /**
  * Jedi.
@@ -1379,7 +1318,7 @@ void StyleColorsDark(ANCHOR_Style *dst = NULL);
  * and a custom, thicker
  * font */
 ANCHOR_API
-void StyleColorsLight(ANCHOR_Style *dst = NULL);
+void StyleColorsLight(AnchorStyle *dst = NULL);
 
 /**
  * ⚓︎ Anchor :: Windowing -------------------- */
@@ -1407,7 +1346,7 @@ void StyleColorsLight(ANCHOR_Style *dst = NULL);
  *  - Note that the bottom of window stack always contains a window
  *    called "Debug". */
 ANCHOR_API
-bool Begin(const char *name, bool *p_open = NULL, ANCHOR_WindowFlags flags = 0);
+bool Begin(const char *name, bool *p_open = NULL, AnchorWindowFlags flags = 0);
 
 ANCHOR_API
 void End();
@@ -1429,11 +1368,11 @@ void End();
 ANCHOR_API bool BeginChild(const char *str_id,
                            const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
                            bool border = false,
-                           ANCHOR_WindowFlags flags = 0);
+                           AnchorWindowFlags flags = 0);
 ANCHOR_API bool BeginChild(ANCHOR_ID id,
                            const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
                            bool border = false,
-                           ANCHOR_WindowFlags flags = 0);
+                           AnchorWindowFlags flags = 0);
 ANCHOR_API void EndChild();
 
 // Windows Utilities
@@ -1443,17 +1382,17 @@ ANCHOR_API bool IsWindowAppearing();
 ANCHOR_API bool IsWindowCollapsed();
 // is current window focused? or its root/child, depending on
 // flags. see flags for options.
-ANCHOR_API bool IsWindowFocused(ANCHORFocusedFlags flags = 0);
+ANCHOR_API bool IsWindowFocused(AnchorFocusedFlags flags = 0);
 
 // is current window hovered (and typically: not blocked by a popup/modal)? see flags
 // for options. NB: If you are trying to check whether your mouse should be dispatched
 // to ANCHOR or to your app, you should use the 'io.WantCaptureMouse' boolean for
 // that! Please read the FAQ!
-ANCHOR_API bool IsWindowHovered(ANCHORHoveredFlags flags = 0);
+ANCHOR_API bool IsWindowHovered(AnchorHoveredFlags flags = 0);
 
 // get draw list associated to the current window, to
 // append your own drawing primitives
-ANCHOR_API ImDrawList *GetWindowDrawList();
+ANCHOR_API AnchorDrawList *GetWindowDrawList();
 // get current window position in screen space (useful if
 // you want to do your own drawing via the DrawList API)
 ANCHOR_API wabi::GfVec2f GetWindowPos();
@@ -1467,13 +1406,13 @@ ANCHOR_API float GetWindowHeight();
 // Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
 ANCHOR_API void SetNextWindowPos(
   const wabi::GfVec2f &pos,
-  ANCHOR_Cond cond = 0,
+  AnchorCond cond = 0,
   const wabi::GfVec2f &pivot = wabi::GfVec2f(0,
                                              0));  // set next window position. call before Begin(). use
                                                    // pivot=(0.5f,0.5f) to center on given point, etc.
 ANCHOR_API void SetNextWindowSize(const wabi::GfVec2f &size,
-                                  ANCHOR_Cond cond = 0);  // set next window size. set axis to 0.0f to force
-                                                          // an auto-fit on this axis. call before Begin()
+                                  AnchorCond cond = 0);  // set next window size. set axis to 0.0f to force
+                                                         // an auto-fit on this axis. call before Begin()
 ANCHOR_API void SetNextWindowSizeConstraints(
   const wabi::GfVec2f &size_min,
   const wabi::GfVec2f &size_max,
@@ -1488,41 +1427,41 @@ ANCHOR_API void SetNextWindowContentSize(
              // WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
 ANCHOR_API void SetNextWindowCollapsed(
   bool collapsed,
-  ANCHOR_Cond cond = 0);               // set next window collapsed state. call before Begin()
+  AnchorCond cond = 0);                // set next window collapsed state. call before Begin()
 ANCHOR_API void SetNextWindowFocus();  // set next window to be focused / top-most. call before
                                        // Begin()
 ANCHOR_API void SetNextWindowBgAlpha(
   float alpha);  // set next window background color alpha. helper to easily override the Alpha
-                 // component of ANCHOR_Col_WindowBg/ChildBg/PopupBg. you may also use
-                 // ANCHOR_WindowFlags_NoBackground.
+                 // component of AnchorCol_WindowBg/ChildBg/PopupBg. you may also use
+                 // AnchorWindowFlags_NoBackground.
 ANCHOR_API void SetWindowPos(
   const wabi::GfVec2f &pos,
-  ANCHOR_Cond cond = 0);  // (not recommended) set current window position - call within Begin()/End().
-                          // prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
+  AnchorCond cond = 0);  // (not recommended) set current window position - call within Begin()/End().
+                         // prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
 ANCHOR_API void SetWindowSize(
   const wabi::GfVec2f &size,
-  ANCHOR_Cond cond = 0);  // (not recommended) set current window size - call within Begin()/End().
-                          // set to wabi::GfVec2f(0, 0) to force an auto-fit. prefer using
-                          // SetNextWindowSize(), as this may incur tearing and minor side-effects.
+  AnchorCond cond = 0);  // (not recommended) set current window size - call within Begin()/End().
+                         // set to wabi::GfVec2f(0, 0) to force an auto-fit. prefer using
+                         // SetNextWindowSize(), as this may incur tearing and minor side-effects.
 ANCHOR_API void SetWindowCollapsed(bool collapsed,
-                                   ANCHOR_Cond cond = 0);  // (not recommended) set current window collapsed
-                                                           // state. prefer using SetNextWindowCollapsed().
-ANCHOR_API void SetWindowFocus();                          // (not recommended) set current window to be focused /
-                                                           // top-most. prefer using SetNextWindowFocus().
+                                   AnchorCond cond = 0);  // (not recommended) set current window collapsed
+                                                          // state. prefer using SetNextWindowCollapsed().
+ANCHOR_API void SetWindowFocus();                         // (not recommended) set current window to be focused /
+                                                          // top-most. prefer using SetNextWindowFocus().
 ANCHOR_API void SetWindowFontScale(
   float scale);  // set font scale. Adjust IO.FontGlobalScale if you want to scale all windows.
                  // This is an old API! For correct scaling, prefer to reload font + rebuild
                  // AnchorFontAtlas + call style.ScaleAllSizes().
 ANCHOR_API void SetWindowPos(const char *name,
                              const wabi::GfVec2f &pos,
-                             ANCHOR_Cond cond = 0);  // set named window position.
+                             AnchorCond cond = 0);  // set named window position.
 ANCHOR_API void SetWindowSize(const char *name,
                               const wabi::GfVec2f &size,
-                              ANCHOR_Cond cond = 0);  // set named window size. set axis to 0.0f to
-                                                      // force an auto-fit on this axis.
+                              AnchorCond cond = 0);  // set named window size. set axis to 0.0f to
+                                                     // force an auto-fit on this axis.
 ANCHOR_API void SetWindowCollapsed(const char *name,
                                    bool collapsed,
-                                   ANCHOR_Cond cond = 0);  // set named window collapsed state
+                                   AnchorCond cond = 0);  // set named window collapsed state
 ANCHOR_API void SetWindowFocus(
   const char *name);  // set named window to be focused / top-most. use NULL to remove focus.
 
@@ -1573,15 +1512,15 @@ ANCHOR_API void SetScrollFromPosY(
 // Parameters stacks (shared)
 ANCHOR_API void PushFont(AnchorFont *font);  // use NULL as a shortcut to push default font
 ANCHOR_API void PopFont();
-ANCHOR_API void PushStyleColor(ANCHOR_Col idx,
+ANCHOR_API void PushStyleColor(AnchorCol idx,
                                AnchorU32 col);  // modify a style color. always use this if you
                                                 // modify the style after NewFrame().
-ANCHOR_API void PushStyleColor(ANCHOR_Col idx, const wabi::GfVec4f &col);
+ANCHOR_API void PushStyleColor(AnchorCol idx, const wabi::GfVec4f &col);
 ANCHOR_API void PopStyleColor(int count = 1);
-ANCHOR_API void PushStyleVar(ANCHOR_StyleVar idx,
+ANCHOR_API void PushStyleVar(AnchorStyleVar idx,
                              float val);  // modify a style float variable. always use this if you
                                           // modify the style after NewFrame().
-ANCHOR_API void PushStyleVar(ANCHOR_StyleVar idx,
+ANCHOR_API void PushStyleVar(AnchorStyleVar idx,
                              const wabi::GfVec2f &val);  // modify a style wabi::GfVec2f variable. always use
                                                          // this if you modify the style after NewFrame().
 ANCHOR_API void PopStyleVar(int count = 1);
@@ -1620,20 +1559,20 @@ ANCHOR_API AnchorFont *GetFont();                   // get current font
 ANCHOR_API float GetFontSize();                     // get current font size (= height in pixels) of current font with
                                                     // current scale applied
 ANCHOR_API wabi::GfVec2f GetFontTexUvWhitePixel();  // get UV coordinate for a while pixel, useful
-                                                    // to draw custom shapes via the ImDrawList API
+                                                    // to draw custom shapes via the AnchorDrawList API
 ANCHOR_API AnchorU32 GetColorU32(
-  ANCHOR_Col idx,
+  AnchorCol idx,
   float alpha_mul = 1.0f);  // retrieve given style color with style alpha applied and optional extra
-                            // alpha multiplier, packed as a 32-bit value suitable for ImDrawList
+                            // alpha multiplier, packed as a 32-bit value suitable for AnchorDrawList
 ANCHOR_API AnchorU32
 GetColorU32(const wabi::GfVec4f &col);            // retrieve given color with style alpha applied, packed as
-                                                  // a 32-bit value suitable for ImDrawList
+                                                  // a 32-bit value suitable for AnchorDrawList
 ANCHOR_API AnchorU32 GetColorU32(AnchorU32 col);  // retrieve given color with style alpha applied, packed as
-                                                  // a 32-bit value suitable for ImDrawList
+                                                  // a 32-bit value suitable for AnchorDrawList
 ANCHOR_API const wabi::GfVec4f &GetStyleColorVec4(
-  ANCHOR_Col idx);  // retrieve style color as stored in ANCHOR_Style structure. use to feed back
-                    // into PushStyleColor(), otherwise use GetColorU32() to get style color with
-                    // style alpha baked in.
+  AnchorCol idx);  // retrieve style color as stored in AnchorStyle structure. use to feed back
+                   // into PushStyleColor(), otherwise use GetColorU32() to get style color with
+                   // style alpha baked in.
 
 // Cursor / Layout
 // - By "cursor" we mean the current output position.
@@ -1645,7 +1584,7 @@ ANCHOR_API const wabi::GfVec4f &GetStyleColorVec4(
 // will aim to fix with future API:
 //    Window-local coordinates:   SameLine(), GetCursorPos(), SetCursorPos(), GetCursorStartPos(),
 //    GetContentRegionMax(), GetWindowContentRegion*(), PushTextWrapPos() Absolute coordinate:
-//    GetCursorScreenPos(), SetCursorScreenPos(), all ImDrawList:: functions.
+//    GetCursorScreenPos(), SetCursorScreenPos(), all AnchorDrawList:: functions.
 ANCHOR_API void Separator();  // separator, generally horizontal. inside a menu bar or in
                               // horizontal layout mode, this becomes a vertical separator.
 ANCHOR_API void SameLine(float offset_from_start_x = 0.0f,
@@ -1671,7 +1610,7 @@ ANCHOR_API float GetCursorPosX();                 //   (some functions are using
                                                   //   as: GetCursorPos, GetCursorStartPos, GetContentRegionMax,
                                                   //   GetWindowContentRegion* etc.
 ANCHOR_API float GetCursorPosY();                 //    other functions such as GetCursorScreenPos or everything
-                                                  //    in ImDrawList::
+                                                  //    in AnchorDrawList::
 ANCHOR_API void SetCursorPos(
   const wabi::GfVec2f &local_pos);  //    are using the main, absolute coordinate system.
 ANCHOR_API void SetCursorPosX(
@@ -1679,7 +1618,7 @@ ANCHOR_API void SetCursorPosX(
 ANCHOR_API void SetCursorPosY(float local_y);                  //
 ANCHOR_API wabi::GfVec2f GetCursorStartPos();                  // initial cursor position in window coordinates
 ANCHOR_API wabi::GfVec2f GetCursorScreenPos();                 // cursor position in absolute coordinates (useful
-                                                               // to work with ImDrawList API). generally top-left
+                                                               // to work with AnchorDrawList API). generally top-left
                                                                // == GetMainViewport()->Pos == (0,0) in single
                                                                // viewport mode, and bottom-right ==
                                                                // GetMainViewport()->Pos+Size == io.DisplaySize in
@@ -1716,7 +1655,7 @@ ANCHOR_API void PushID(int int_id);              // push integer into the ID sta
 ANCHOR_API void PopID();                         // pop from the ID stack.
 ANCHOR_API ANCHOR_ID
 GetID(const char *str_id);  // calculate unique ID (hash of whole ID stack + given parameter). e.g.
-                            // if you want to query into ANCHORStorage yourself
+                            // if you want to query into AnchorStorage yourself
 ANCHOR_API ANCHOR_ID GetID(const char *str_id_begin, const char *str_id_end);
 ANCHOR_API ANCHOR_ID GetID(const void *ptr_id);
 
@@ -1730,11 +1669,11 @@ ANCHOR_API void TextUnformatted(
 ANCHOR_API void Text(const char *fmt, ...) ANCHOR_FMTARGS(1);  // formatted text
 ANCHOR_API void TextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 ANCHOR_API void TextColored(const wabi::GfVec4f &col, const char *fmt, ...)
-  ANCHOR_FMTARGS(2);  // shortcut for PushStyleColor(ANCHOR_Col_Text, col); Text(fmt, ...); PopStyleColor();
+  ANCHOR_FMTARGS(2);  // shortcut for PushStyleColor(AnchorCol_Text, col); Text(fmt, ...); PopStyleColor();
 ANCHOR_API void TextColoredV(const wabi::GfVec4f &col, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
 ANCHOR_API void TextDisabled(const char *fmt, ...)
-  ANCHOR_FMTARGS(1);  // shortcut for PushStyleColor(ANCHOR_Col_Text,
-                      // style.Colors[ANCHOR_Col_TextDisabled]); Text(fmt, ...); PopStyleColor();
+  ANCHOR_FMTARGS(1);  // shortcut for PushStyleColor(AnchorCol_Text,
+                      // style.Colors[AnchorCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
 ANCHOR_API void TextDisabledV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 ANCHOR_API void TextWrapped(const char *fmt, ...)
   ANCHOR_FMTARGS(1);  // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that
@@ -1757,11 +1696,11 @@ ANCHOR_API bool SmallButton(
 ANCHOR_API bool InvisibleButton(
   const char *str_id,
   const wabi::GfVec2f &size,
-  ANCHOR_ButtonFlags flags =
+  AnchorButtonFlags flags =
     0);  // flexible button behavior without the visuals, frequently useful to build custom
          // behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
 ANCHOR_API bool ArrowButton(const char *str_id,
-                            ANCHOR_Dir dir);  // square button with an arrow shape
+                            AnchorDir dir);  // square button with an arrow shape
 ANCHOR_API void Image(AnchorTextureID user_texture_id,
                       const wabi::GfVec2f &size,
                       const wabi::GfVec2f &uv0 = wabi::GfVec2f(0, 0),
@@ -1798,7 +1737,7 @@ ANCHOR_API void Bullet();  // draw a small circle + keep the cursor on the same 
 // you want it, by creating e.g. Selectable() items.
 // - The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for
 // convenience purpose. This is analogous to how ListBox are created.
-ANCHOR_API bool BeginCombo(const char *label, const char *preview_value, ANCHORComboFlags flags = 0);
+ANCHOR_API bool BeginCombo(const char *label, const char *preview_value, AnchorComboFlags flags = 0);
 ANCHOR_API void EndCombo();  // only call EndCombo() if BeginCombo() returns true!
 ANCHOR_API bool Combo(const char *label,
                       int *current_item,
@@ -1838,8 +1777,8 @@ ANCHOR_API bool Combo(const char *label,
 // - We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the
 // same and it makes it easier to swap them.
 // - Legacy: Pre-1.78 there are DragXXX() function signatures that takes a final `float power=1.0f'
-// argument instead of the `ANCHOR_SliderFlags flags=0' argument.
-//   If you get a warning converting a float to ANCHOR_SliderFlags, read
+// argument instead of the `AnchorSliderFlags flags=0' argument.
+//   If you get a warning converting a float to AnchorSliderFlags, read
 //   https://github.com/ocornut/ANCHOR/issues/3361
 ANCHOR_API bool DragFloat(const char *label,
                           float *v,
@@ -1847,28 +1786,28 @@ ANCHOR_API bool DragFloat(const char *label,
                           float v_min = 0.0f,
                           float v_max = 0.0f,
                           const char *format = "%.3f",
-                          ANCHOR_SliderFlags flags = 0);  // If v_min >= v_max we have no bound
+                          AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
 ANCHOR_API bool DragFloat2(const char *label,
                            float v[2],
                            float v_speed = 1.0f,
                            float v_min = 0.0f,
                            float v_max = 0.0f,
                            const char *format = "%.3f",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragFloat3(const char *label,
                            float v[3],
                            float v_speed = 1.0f,
                            float v_min = 0.0f,
                            float v_max = 0.0f,
                            const char *format = "%.3f",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragFloat4(const char *label,
                            float v[4],
                            float v_speed = 1.0f,
                            float v_min = 0.0f,
                            float v_max = 0.0f,
                            const char *format = "%.3f",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragFloatRange2(const char *label,
                                 float *v_current_min,
                                 float *v_current_max,
@@ -1877,35 +1816,35 @@ ANCHOR_API bool DragFloatRange2(const char *label,
                                 float v_max = 0.0f,
                                 const char *format = "%.3f",
                                 const char *format_max = NULL,
-                                ANCHOR_SliderFlags flags = 0);
+                                AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragInt(const char *label,
                         int *v,
                         float v_speed = 1.0f,
                         int v_min = 0,
                         int v_max = 0,
                         const char *format = "%d",
-                        ANCHOR_SliderFlags flags = 0);  // If v_min >= v_max we have no bound
+                        AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
 ANCHOR_API bool DragInt2(const char *label,
                          int v[2],
                          float v_speed = 1.0f,
                          int v_min = 0,
                          int v_max = 0,
                          const char *format = "%d",
-                         ANCHOR_SliderFlags flags = 0);
+                         AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragInt3(const char *label,
                          int v[3],
                          float v_speed = 1.0f,
                          int v_min = 0,
                          int v_max = 0,
                          const char *format = "%d",
-                         ANCHOR_SliderFlags flags = 0);
+                         AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragInt4(const char *label,
                          int v[4],
                          float v_speed = 1.0f,
                          int v_min = 0,
                          int v_max = 0,
                          const char *format = "%d",
-                         ANCHOR_SliderFlags flags = 0);
+                         AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragIntRange2(const char *label,
                               int *v_current_min,
                               int *v_current_max,
@@ -1914,24 +1853,24 @@ ANCHOR_API bool DragIntRange2(const char *label,
                               int v_max = 0,
                               const char *format = "%d",
                               const char *format_max = NULL,
-                              ANCHOR_SliderFlags flags = 0);
+                              AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragScalar(const char *label,
-                           ANCHOR_DataType data_type,
+                           AnchorDataType data_type,
                            void *p_data,
                            float v_speed = 1.0f,
                            const void *p_min = NULL,
                            const void *p_max = NULL,
                            const char *format = NULL,
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool DragScalarN(const char *label,
-                            ANCHOR_DataType data_type,
+                            AnchorDataType data_type,
                             void *p_data,
                             int components,
                             float v_speed = 1.0f,
                             const void *p_min = NULL,
                             const void *p_max = NULL,
                             const char *format = NULL,
-                            ANCHOR_SliderFlags flags = 0);
+                            AnchorSliderFlags flags = 0);
 
 // Widgets: Regular Sliders
 // - CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped
@@ -1941,8 +1880,8 @@ ANCHOR_API bool DragScalarN(const char *label,
 // 1; etc.
 // - Format string may also be set to NULL or use the default format ("%f" or "%d").
 // - Legacy: Pre-1.78 there are SliderXXX() function signatures that takes a final `float
-// power=1.0f' argument instead of the `ANCHOR_SliderFlags flags=0' argument.
-//   If you get a warning converting a float to ANCHOR_SliderFlags, read
+// power=1.0f' argument instead of the `AnchorSliderFlags flags=0' argument.
+//   If you get a warning converting a float to AnchorSliderFlags, read
 //   https://github.com/ocornut/ANCHOR/issues/3361
 ANCHOR_API bool SliderFloat(
   const char *label,
@@ -1950,117 +1889,117 @@ ANCHOR_API bool SliderFloat(
   float v_min,
   float v_max,
   const char *format = "%.3f",
-  ANCHOR_SliderFlags flags = 0);  // adjust format to decorate the value with a prefix or a
-                                  // suffix for in-slider labels or unit display.
+  AnchorSliderFlags flags = 0);  // adjust format to decorate the value with a prefix or a
+                                 // suffix for in-slider labels or unit display.
 ANCHOR_API bool SliderFloat2(const char *label,
                              float v[2],
                              float v_min,
                              float v_max,
                              const char *format = "%.3f",
-                             ANCHOR_SliderFlags flags = 0);
+                             AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderFloat3(const char *label,
                              float v[3],
                              float v_min,
                              float v_max,
                              const char *format = "%.3f",
-                             ANCHOR_SliderFlags flags = 0);
+                             AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderFloat4(const char *label,
                              float v[4],
                              float v_min,
                              float v_max,
                              const char *format = "%.3f",
-                             ANCHOR_SliderFlags flags = 0);
+                             AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderAngle(const char *label,
                             float *v_rad,
                             float v_degrees_min = -360.0f,
                             float v_degrees_max = +360.0f,
                             const char *format = "%.0f deg",
-                            ANCHOR_SliderFlags flags = 0);
+                            AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderInt(const char *label,
                           int *v,
                           int v_min,
                           int v_max,
                           const char *format = "%d",
-                          ANCHOR_SliderFlags flags = 0);
+                          AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderInt2(const char *label,
                            int v[2],
                            int v_min,
                            int v_max,
                            const char *format = "%d",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderInt3(const char *label,
                            int v[3],
                            int v_min,
                            int v_max,
                            const char *format = "%d",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderInt4(const char *label,
                            int v[4],
                            int v_min,
                            int v_max,
                            const char *format = "%d",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderScalar(const char *label,
-                             ANCHOR_DataType data_type,
+                             AnchorDataType data_type,
                              void *p_data,
                              const void *p_min,
                              const void *p_max,
                              const char *format = NULL,
-                             ANCHOR_SliderFlags flags = 0);
+                             AnchorSliderFlags flags = 0);
 ANCHOR_API bool SliderScalarN(const char *label,
-                              ANCHOR_DataType data_type,
+                              AnchorDataType data_type,
                               void *p_data,
                               int components,
                               const void *p_min,
                               const void *p_max,
                               const char *format = NULL,
-                              ANCHOR_SliderFlags flags = 0);
+                              AnchorSliderFlags flags = 0);
 ANCHOR_API bool VSliderFloat(const char *label,
                              const wabi::GfVec2f &size,
                              float *v,
                              float v_min,
                              float v_max,
                              const char *format = "%.3f",
-                             ANCHOR_SliderFlags flags = 0);
+                             AnchorSliderFlags flags = 0);
 ANCHOR_API bool VSliderInt(const char *label,
                            const wabi::GfVec2f &size,
                            int *v,
                            int v_min,
                            int v_max,
                            const char *format = "%d",
-                           ANCHOR_SliderFlags flags = 0);
+                           AnchorSliderFlags flags = 0);
 ANCHOR_API bool VSliderScalar(const char *label,
                               const wabi::GfVec2f &size,
-                              ANCHOR_DataType data_type,
+                              AnchorDataType data_type,
                               void *p_data,
                               const void *p_min,
                               const void *p_max,
                               const char *format = NULL,
-                              ANCHOR_SliderFlags flags = 0);
+                              AnchorSliderFlags flags = 0);
 
 // Widgets: Input with Keyboard
 // - If you want to use InputText() with std::string or any custom dynamic string type, see
 // misc/cpp/ANCHOR_stdlib.h and comments in ANCHOR_demo.cpp.
-// - Most of the ANCHORInputTextFlags flags are only useful for InputText() and not for
+// - Most of the AnchorInputTextFlags flags are only useful for InputText() and not for
 // InputFloatX, InputIntX, InputDouble etc.
 ANCHOR_API bool InputText(const char *label,
                           char *buf,
                           size_t buf_size,
-                          ANCHORInputTextFlags flags = 0,
+                          AnchorInputTextFlags flags = 0,
                           ANCHORInputTextCallback callback = NULL,
                           void *user_data = NULL);
 ANCHOR_API bool InputTextMultiline(const char *label,
                                    char *buf,
                                    size_t buf_size,
                                    const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
-                                   ANCHORInputTextFlags flags = 0,
+                                   AnchorInputTextFlags flags = 0,
                                    ANCHORInputTextCallback callback = NULL,
                                    void *user_data = NULL);
 ANCHOR_API bool InputTextWithHint(const char *label,
                                   const char *hint,
                                   char *buf,
                                   size_t buf_size,
-                                  ANCHORInputTextFlags flags = 0,
+                                  AnchorInputTextFlags flags = 0,
                                   ANCHORInputTextCallback callback = NULL,
                                   void *user_data = NULL);
 ANCHOR_API bool InputFloat(const char *label,
@@ -2068,48 +2007,48 @@ ANCHOR_API bool InputFloat(const char *label,
                            float step = 0.0f,
                            float step_fast = 0.0f,
                            const char *format = "%.3f",
-                           ANCHORInputTextFlags flags = 0);
+                           AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputFloat2(const char *label,
                             float v[2],
                             const char *format = "%.3f",
-                            ANCHORInputTextFlags flags = 0);
+                            AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputFloat3(const char *label,
                             float v[3],
                             const char *format = "%.3f",
-                            ANCHORInputTextFlags flags = 0);
+                            AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputFloat4(const char *label,
                             float v[4],
                             const char *format = "%.3f",
-                            ANCHORInputTextFlags flags = 0);
+                            AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputInt(const char *label,
                          int *v,
                          int step = 1,
                          int step_fast = 100,
-                         ANCHORInputTextFlags flags = 0);
-ANCHOR_API bool InputInt2(const char *label, int v[2], ANCHORInputTextFlags flags = 0);
-ANCHOR_API bool InputInt3(const char *label, int v[3], ANCHORInputTextFlags flags = 0);
-ANCHOR_API bool InputInt4(const char *label, int v[4], ANCHORInputTextFlags flags = 0);
+                         AnchorInputTextFlags flags = 0);
+ANCHOR_API bool InputInt2(const char *label, int v[2], AnchorInputTextFlags flags = 0);
+ANCHOR_API bool InputInt3(const char *label, int v[3], AnchorInputTextFlags flags = 0);
+ANCHOR_API bool InputInt4(const char *label, int v[4], AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputDouble(const char *label,
                             double *v,
                             double step = 0.0,
                             double step_fast = 0.0,
                             const char *format = "%.6f",
-                            ANCHORInputTextFlags flags = 0);
+                            AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputScalar(const char *label,
-                            ANCHOR_DataType data_type,
+                            AnchorDataType data_type,
                             void *p_data,
                             const void *p_step = NULL,
                             const void *p_step_fast = NULL,
                             const char *format = NULL,
-                            ANCHORInputTextFlags flags = 0);
+                            AnchorInputTextFlags flags = 0);
 ANCHOR_API bool InputScalarN(const char *label,
-                             ANCHOR_DataType data_type,
+                             AnchorDataType data_type,
                              void *p_data,
                              int components,
                              const void *p_step = NULL,
                              const void *p_step_fast = NULL,
                              const char *format = NULL,
-                             ANCHORInputTextFlags flags = 0);
+                             AnchorInputTextFlags flags = 0);
 
 // Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can
 // be left-clicked to open a picker, and right-clicked to open an option menu.)
@@ -2117,24 +2056,24 @@ ANCHOR_API bool InputScalarN(const char *label,
 // syntax is just a way to document the number of elements that are expected to be accessible.
 // - You can pass the address of a first float element out of a contiguous structure, e.g.
 // &myvector[0]
-ANCHOR_API bool ColorEdit3(const char *label, float col[3], ANCHOR_ColorEditFlags flags = 0);
-ANCHOR_API bool ColorEdit4(const char *label, float col[4], ANCHOR_ColorEditFlags flags = 0);
-ANCHOR_API bool ColorPicker3(const char *label, float col[3], ANCHOR_ColorEditFlags flags = 0);
+ANCHOR_API bool ColorEdit3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
+ANCHOR_API bool ColorEdit4(const char *label, float col[4], AnchorColorEditFlags flags = 0);
+ANCHOR_API bool ColorPicker3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
 ANCHOR_API bool ColorPicker4(const char *label,
                              float col[4],
-                             ANCHOR_ColorEditFlags flags = 0,
+                             AnchorColorEditFlags flags = 0,
                              const float *ref_col = NULL);
 ANCHOR_API bool ColorButton(
   const char *desc_id,
   const wabi::GfVec4f &col,
-  ANCHOR_ColorEditFlags flags = 0,
+  AnchorColorEditFlags flags = 0,
   wabi::GfVec2f size =
     wabi::GfVec2f(0,
                   0));  // display a color square/button, hover for details, return true when pressed.
 ANCHOR_API void SetColorEditOptions(
-  ANCHOR_ColorEditFlags flags);  // initialize current options (generally on application startup) if you want
-                                 // to select a default format, picker type, etc. User will be able to change
-                                 // many settings, unless you pass the _NoOptions flag to your calls.
+  AnchorColorEditFlags flags);  // initialize current options (generally on application startup) if you want
+                                // to select a default format, picker type, etc. User will be able to change
+                                // many settings, unless you pass the _NoOptions flag to your calls.
 
 // Widgets: Trees
 // - TreeNode functions return true when the node is open, in which case you need to also call
@@ -2147,14 +2086,14 @@ ANCHOR_API bool TreeNode(const char *str_id, const char *fmt, ...)
 ANCHOR_API bool TreeNode(const void *ptr_id, const char *fmt, ...) ANCHOR_FMTARGS(2);  // "
 ANCHOR_API bool TreeNodeV(const char *str_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
 ANCHOR_API bool TreeNodeV(const void *ptr_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
-ANCHOR_API bool TreeNodeEx(const char *label, ANCHOR_TreeNodeFlags flags = 0);
-ANCHOR_API bool TreeNodeEx(const char *str_id, ANCHOR_TreeNodeFlags flags, const char *fmt, ...)
+ANCHOR_API bool TreeNodeEx(const char *label, AnchorTreeNodeFlags flags = 0);
+ANCHOR_API bool TreeNodeEx(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
   ANCHOR_FMTARGS(3);
-ANCHOR_API bool TreeNodeEx(const void *ptr_id, ANCHOR_TreeNodeFlags flags, const char *fmt, ...)
+ANCHOR_API bool TreeNodeEx(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
   ANCHOR_FMTARGS(3);
-ANCHOR_API bool TreeNodeExV(const char *str_id, ANCHOR_TreeNodeFlags flags, const char *fmt, va_list args)
+ANCHOR_API bool TreeNodeExV(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
   ANCHOR_FMTLIST(3);
-ANCHOR_API bool TreeNodeExV(const void *ptr_id, ANCHOR_TreeNodeFlags flags, const char *fmt, va_list args)
+ANCHOR_API bool TreeNodeExV(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
   ANCHOR_FMTLIST(3);
 ANCHOR_API void TreePush(
   const char *str_id);                                // ~ Indent()+PushId(). Already called by TreeNode() when returning true,
@@ -2167,17 +2106,17 @@ ANCHOR_API float GetTreeNodeToLabelSpacing();         // horizontal distance pre
                                                       // TreeNode
 ANCHOR_API bool CollapsingHeader(
   const char *label,
-  ANCHOR_TreeNodeFlags flags = 0);  // if returning 'true' the header is open. doesn't indent nor
-                                    // push on ID stack. user doesn't have to call TreePop().
+  AnchorTreeNodeFlags flags = 0);  // if returning 'true' the header is open. doesn't indent nor
+                                   // push on ID stack. user doesn't have to call TreePop().
 ANCHOR_API bool CollapsingHeader(
   const char *label,
   bool *p_visible,
-  ANCHOR_TreeNodeFlags flags =
+  AnchorTreeNodeFlags flags =
     0);  // when 'p_visible != NULL': if '*p_visible==true' display an additional small close
          // button on upper right of the header which will set the bool to false when clicked,
          // if '*p_visible==false' don't display the header.
 ANCHOR_API void SetNextItemOpen(bool is_open,
-                                ANCHOR_Cond cond = 0);  // set next TreeNode/CollapsingHeader open state.
+                                AnchorCond cond = 0);  // set next TreeNode/CollapsingHeader open state.
 
 // Widgets: Selectables
 // - A selectable highlights when hovered, and can display another color when selected.
@@ -2185,7 +2124,7 @@ ANCHOR_API void SetNextItemOpen(bool is_open,
 // is so a series of selected Selectable appear contiguous.
 ANCHOR_API bool Selectable(const char *label,
                            bool selected = false,
-                           ANCHORSelectableFlags flags = 0,
+                           AnchorSelectableFlags flags = 0,
                            const wabi::GfVec2f &size = wabi::GfVec2f(
                              0,
                              0));  // "bool selected" carry the selection state (read-only). Selectable()
@@ -2195,7 +2134,7 @@ ANCHOR_API bool Selectable(const char *label,
 ANCHOR_API bool Selectable(
   const char *label,
   bool *p_selected,
-  ANCHORSelectableFlags flags = 0,
+  AnchorSelectableFlags flags = 0,
   const wabi::GfVec2f &size = wabi::GfVec2f(0,
                                             0));  // "bool* p_selected" point to the selection
                                                   // state (read-write), as a convenient helper.
@@ -2275,14 +2214,14 @@ ANCHOR_API void Value(const char *prefix, unsigned int v);
 ANCHOR_API void Value(const char *prefix, float v, const char *float_format = NULL);
 
 // Widgets: Menus
-// - Use BeginMenuBar() on a window ANCHOR_WindowFlags_MenuBar to append to its menu bar.
+// - Use BeginMenuBar() on a window AnchorWindowFlags_MenuBar to append to its menu bar.
 // - Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it.
 // - Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same
 // identifier to append more items to it.
 // - Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by
 // ANCHOR at the moment.
 ANCHOR_API bool BeginMenuBar();      // append to menu-bar of current window (requires
-                                     // ANCHOR_WindowFlags_MenuBar flag set on parent window).
+                                     // AnchorWindowFlags_MenuBar flag set on parent window).
 ANCHOR_API void EndMenuBar();        // only call EndMenuBar() if BeginMenuBar() returns true!
 ANCHOR_API bool BeginMainMenuBar();  // create and append to a full screen menu-bar.
 ANCHOR_API void EndMainMenuBar();    // only call EndMainMenuBar() if BeginMainMenuBar() returns
@@ -2319,77 +2258,77 @@ ANCHOR_API void SetTooltipV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 //  we are used to with regular Begin*() calls.
 //  - The 3 properties above are related: we need to retain popup visibility state in the library
 //  because popups may be closed as any time.
-//  - You can bypass the hovering restriction by using ANCHORHoveredFlags_AllowWhenBlockedByPopup
+//  - You can bypass the hovering restriction by using AnchorHoveredFlags_AllowWhenBlockedByPopup
 //  when calling IsItemHovered() or IsWindowHovered().
 //  - IMPORTANT: Popup identifiers are relative to the current ID stack, so OpenPopup and
 //  BeginPopup generally needs to be at the same level of the stack.
 //    This is sometimes leading to confusing mistakes. May rework this in the future.
 // Popups: begin/end functions
 //  - BeginPopup(): query popup state, if open start appending into the window. Call EndPopup()
-//  afterwards. ANCHOR_WindowFlags are forwarded to the window.
+//  afterwards. AnchorWindowFlags are forwarded to the window.
 //  - BeginPopupModal(): block every interactions behind the window, cannot be closed by user, add
 //  a dimming background, has a title bar.
 ANCHOR_API bool BeginPopup(const char *str_id,
-                           ANCHOR_WindowFlags flags = 0);  // return true if the popup is open, and
-                                                           // you can start outputting to it.
+                           AnchorWindowFlags flags = 0);  // return true if the popup is open, and
+                                                          // you can start outputting to it.
 ANCHOR_API bool BeginPopupModal(
   const char *name,
   bool *p_open = NULL,
-  ANCHOR_WindowFlags flags = 0);  // return true if the modal is open, and you can start outputting to it.
-ANCHOR_API void EndPopup();       // only call EndPopup() if BeginPopupXXX() returns true!
+  AnchorWindowFlags flags = 0);  // return true if the modal is open, and you can start outputting to it.
+ANCHOR_API void EndPopup();      // only call EndPopup() if BeginPopupXXX() returns true!
 // Popups: open/close functions
-//  - OpenPopup(): set popup state to open. ANCHORPopupFlags are available for opening options.
+//  - OpenPopup(): set popup state to open. AnchorPopupFlags are available for opening options.
 //  - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
 //  - CloseCurrentPopup(): use inside the BeginPopup()/EndPopup() scope to close manually.
 //  - CloseCurrentPopup() is called by default by Selectable()/MenuItem() when activated (FIXME:
 //  need some options).
-//  - Use ANCHORPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one
+//  - Use AnchorPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one
 //  at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to
 //  OpenPopup().
 //  - Use IsWindowAppearing() after BeginPopup() to tell if a window just opened.
 ANCHOR_API void OpenPopup(
   const char *str_id,
-  ANCHORPopupFlags popup_flags = 0);  // call to mark popup as open (don't call every frame!).
+  AnchorPopupFlags popup_flags = 0);  // call to mark popup as open (don't call every frame!).
 ANCHOR_API void OpenPopup(
   ANCHOR_ID id,
-  ANCHORPopupFlags popup_flags = 0);  // id overload to facilitate calling from nested stacks
+  AnchorPopupFlags popup_flags = 0);  // id overload to facilitate calling from nested stacks
 ANCHOR_API void OpenPopupOnItemClick(
   const char *str_id = NULL,
-  ANCHORPopupFlags popup_flags = 1);  // helper to open popup when clicked on last item. Default to
-                                      // ANCHORPopupFlags_MouseButtonRight == 1. (note: actually triggers on
+  AnchorPopupFlags popup_flags = 1);  // helper to open popup when clicked on last item. Default to
+                                      // AnchorPopupFlags_MouseButtonRight == 1. (note: actually triggers on
                                       // the mouse _released_ event to be consistent with popup behaviors)
 ANCHOR_API void CloseCurrentPopup();  // manually close the popup we have begin-ed into.
 // Popups: open+begin combined functions helpers
 //  - Helpers to do OpenPopup+BeginPopup where the Open action is triggered by e.g. hovering an
 //  item and right-clicking.
 //  - They are convenient to easily create context menus, hence the name.
-//  - IMPORTANT: Notice that BeginPopupContextXXX takes ANCHORPopupFlags just like OpenPopup() and
-//  unlike BeginPopup(). For full consistency, we may add ANCHOR_WindowFlags to the
+//  - IMPORTANT: Notice that BeginPopupContextXXX takes AnchorPopupFlags just like OpenPopup() and
+//  unlike BeginPopup(). For full consistency, we may add AnchorWindowFlags to the
 //  BeginPopupContextXXX functions in the future.
-//  - IMPORTANT: we exceptionally default their flags to 1 (== ANCHORPopupFlags_MouseButtonRight)
+//  - IMPORTANT: we exceptionally default their flags to 1 (== AnchorPopupFlags_MouseButtonRight)
 //  for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you
-//  add other flags remember to re-add the ANCHORPopupFlags_MouseButtonRight.
+//  add other flags remember to re-add the AnchorPopupFlags_MouseButtonRight.
 ANCHOR_API bool BeginPopupContextItem(
   const char *str_id = NULL,
-  ANCHORPopupFlags popup_flags =
+  AnchorPopupFlags popup_flags =
     1);  // open+begin popup when clicked on last item. Use str_id==NULL to associate the popup
          // to previous item. If you want to use that on a non-interactive item such as Text()
          // you need to pass in an explicit ID here. read comments in .cpp!
 ANCHOR_API bool BeginPopupContextWindow(
   const char *str_id = NULL,
-  ANCHORPopupFlags popup_flags = 1);  // open+begin popup when clicked on current window.
+  AnchorPopupFlags popup_flags = 1);  // open+begin popup when clicked on current window.
 ANCHOR_API bool BeginPopupContextVoid(
   const char *str_id = NULL,
-  ANCHORPopupFlags popup_flags = 1);  // open+begin popup when clicked in void (where there are no windows).
+  AnchorPopupFlags popup_flags = 1);  // open+begin popup when clicked in void (where there are no windows).
 // Popups: query functions
 //  - IsPopupOpen(): return true if the popup is open at the current BeginPopup() level of the
 //  popup stack.
-//  - IsPopupOpen() with ANCHORPopupFlags_AnyPopupId: return true if any popup is open at the
+//  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId: return true if any popup is open at the
 //  current BeginPopup() level of the popup stack.
-//  - IsPopupOpen() with ANCHORPopupFlags_AnyPopupId + ANCHORPopupFlags_AnyPopupLevel: return true
+//  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId + AnchorPopupFlags_AnyPopupLevel: return true
 //  if any popup is open.
 ANCHOR_API bool IsPopupOpen(const char *str_id,
-                            ANCHORPopupFlags flags = 0);  // return true if the popup is open.
+                            AnchorPopupFlags flags = 0);  // return true if the popup is open.
 
 // Tables
 // [BETA API] API may evolve slightly! If you use this, please update to the next version when it
@@ -2397,7 +2336,7 @@ ANCHOR_API bool IsPopupOpen(const char *str_id,
 // - Full-featured replacement for old Columns API.
 // - See Demo->Tables for demo code.
 // - See top of ANCHOR_tables.cpp for general commentary.
-// - See ANCHOR_TableFlags_ and ANCHOR_TableColumnFlags_ enums for a description of available
+// - See AnchorTableFlags_ and AnchorTableColumnFlags_ enums for a description of available
 // flags. The typical call flow is:
 // - 1. Call BeginTable().
 // - 2. Optionally call TableSetupColumn() to submit column name/flags/defaults.
@@ -2427,11 +2366,11 @@ ANCHOR_API bool IsPopupOpen(const char *str_id,
 // - 5. Call EndTable()
 ANCHOR_API bool BeginTable(const char *str_id,
                            int column,
-                           ANCHOR_TableFlags flags = 0,
+                           AnchorTableFlags flags = 0,
                            const wabi::GfVec2f &outer_size = wabi::GfVec2f(0.0f, 0.0f),
                            float inner_width = 0.0f);
 ANCHOR_API void EndTable();  // only call EndTable() if BeginTable() returns true!
-ANCHOR_API void TableNextRow(ANCHOR_TableRowFlags row_flags = 0,
+ANCHOR_API void TableNextRow(AnchorTableRowFlags row_flags = 0,
                              float min_row_height = 0.0f);  // append into the first cell of a new row.
 ANCHOR_API bool TableNextColumn();                          // append into the next column (or first column of next row if
                                                             // currently in last column). Return true when column is
@@ -2445,13 +2384,13 @@ ANCHOR_API bool TableSetColumnIndex(
 // column.
 //   Headers are required to perform: reordering, sorting, and opening the context menu.
 //   The context menu can also be made available in columns body using
-//   ANCHOR_TableFlags_ContextMenuInBody.
+//   AnchorTableFlags_ContextMenuInBody.
 // - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only
 // useful in
 //   some advanced use cases (e.g. adding custom widgets in header row).
 // - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
 ANCHOR_API void TableSetupColumn(const char *label,
-                                 ANCHOR_TableColumnFlags flags = 0,
+                                 AnchorTableColumnFlags flags = 0,
                                  float init_width_or_weight = 0.0f,
                                  ANCHOR_ID user_id = 0);
 ANCHOR_API void TableSetupScrollFreeze(int cols,
@@ -2467,8 +2406,8 @@ ANCHOR_API void TableHeader(const char *label);    // submit one header cell man
 //   you may wastefully sort your data every frame!
 // - Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to
 // BeginTable().
-ANCHOR_API ANCHOR_TableSortSpecs *TableGetSortSpecs();  // get latest sort specs for the table
-                                                        // (NULL if not sorting).
+ANCHOR_API AnchorTableSortSpecs *TableGetSortSpecs();  // get latest sort specs for the table
+                                                       // (NULL if not sorting).
 // Tables: Miscellaneous functions
 // - Functions args 'int column_n' treat the default value of -1 as the same as passing the current
 // column index.
@@ -2478,18 +2417,18 @@ ANCHOR_API int TableGetRowIndex();     // return current row index.
 ANCHOR_API const char *TableGetColumnName(
   int column_n = -1);  // return "" if column didn't have a name declared by TableSetupColumn().
                        // Pass -1 to use current column.
-ANCHOR_API ANCHOR_TableColumnFlags TableGetColumnFlags(
+ANCHOR_API AnchorTableColumnFlags TableGetColumnFlags(
   int column_n = -1);  // return column flags so you can query their Enabled/Visible/Sorted/Hovered
                        // status flags. Pass -1 to use current column.
 ANCHOR_API void TableSetColumnEnabled(
   int column_n,
   bool v);  // change enabled/disabled state of a column, set to false to hide the column. Note
             // that end-user can use the context menu to change this themselves (right-click in
-            // headers, or right-click in columns body with ANCHOR_TableFlags_ContextMenuInBody)
-ANCHOR_API void TableSetBgColor(ANCHOR_TableBgTarget target,
+            // headers, or right-click in columns body with AnchorTableFlags_ContextMenuInBody)
+ANCHOR_API void TableSetBgColor(AnchorTableBGTarget target,
                                 AnchorU32 color,
                                 int column_n = -1);  // change the color of a cell, row, or column. See
-                                                     // ANCHOR_TableBgTarget_ flags for details.
+                                                     // AnchorTableBGTarget_ flags for details.
 
 // Legacy Columns API (2020: prefer using Tables!)
 // - You can also use SameLine(pos_x) to mimic simplified columns.
@@ -2513,17 +2452,17 @@ ANCHOR_API int GetColumnsCount();
 
 // Tab Bars, Tabs
 ANCHOR_API bool BeginTabBar(const char *str_id,
-                            ANCHOR_TabBarFlags flags = 0);  // create and append into a TabBar
-ANCHOR_API void EndTabBar();                                // only call EndTabBar() if BeginTabBar() returns true!
+                            AnchorTabBarFlags flags = 0);  // create and append into a TabBar
+ANCHOR_API void EndTabBar();                               // only call EndTabBar() if BeginTabBar() returns true!
 ANCHOR_API bool BeginTabItem(
   const char *label,
   bool *p_open = NULL,
-  ANCHOR_TabItemFlags flags = 0);  // create a Tab. Returns true if the Tab is selected.
-ANCHOR_API void EndTabItem();      // only call EndTabItem() if BeginTabItem() returns true!
+  AnchorTabItemFlags flags = 0);  // create a Tab. Returns true if the Tab is selected.
+ANCHOR_API void EndTabItem();     // only call EndTabItem() if BeginTabItem() returns true!
 ANCHOR_API bool TabItemButton(
   const char *label,
-  ANCHOR_TabItemFlags flags = 0);  // create a Tab behaving like a button. return true when
-                                   // clicked. cannot be selected in the tab bar.
+  AnchorTabItemFlags flags = 0);  // create a Tab behaving like a button. return true when
+                                  // clicked. cannot be selected in the tab bar.
 ANCHOR_API void SetTabItemClosed(
   const char *tab_or_docked_window_label);  // notify TabBar or Docking system of a closed tab/window
                                             // ahead (useful to reduce visual flicker on reorderable tab
@@ -2552,34 +2491,34 @@ ANCHOR_API void LogTextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 // preview tooltip (we currently display a fallback "..." tooltip, see #1725)
 // - An item can be both drag source and drop target.
 ANCHOR_API bool BeginDragDropSource(
-  ANCHORDragDropFlags flags = 0);  // call after submitting an item which may be dragged. when this return
+  AnchorDragDropFlags flags = 0);  // call after submitting an item which may be dragged. when this return
                                    // true, you can call SetDragDropPayload() + EndDragDropSource()
 ANCHOR_API bool SetDragDropPayload(
   const char *type,
   const void *data,
   size_t sz,
-  ANCHOR_Cond cond = 0);                // type is a user defined string of maximum 32 characters. Strings starting with
+  AnchorCond cond = 0);                 // type is a user defined string of maximum 32 characters. Strings starting with
                                         // '_' are reserved for ANCHOR internal types. Data is copied and held by ANCHOR.
 ANCHOR_API void EndDragDropSource();    // only call EndDragDropSource() if BeginDragDropSource()
                                         // returns true!
 ANCHOR_API bool BeginDragDropTarget();  // call after submitting an item that may receive a
                                         // payload. If this returns true, you can call
                                         // AcceptDragDropPayload() + EndDragDropTarget()
-ANCHOR_API const ANCHORPayload *AcceptDragDropPayload(
+ANCHOR_API const AnchorPayload *AcceptDragDropPayload(
   const char *type,
-  ANCHORDragDropFlags flags =
-    0);                                                // accept contents of a given type. If ANCHORDragDropFlags_AcceptBeforeDelivery is set
+  AnchorDragDropFlags flags =
+    0);                                                // accept contents of a given type. If AnchorDragDropFlags_AcceptBeforeDelivery is set
                                                        // you can peek into the payload before the mouse button is released.
 ANCHOR_API void EndDragDropTarget();                   // only call EndDragDropTarget() if BeginDragDropTarget()
                                                        // returns true!
-ANCHOR_API const ANCHORPayload *GetDragDropPayload();  // peek directly into the current payload
+ANCHOR_API const AnchorPayload *GetDragDropPayload();  // peek directly into the current payload
                                                        // from anywhere. may return NULL. use
-                                                       // ANCHORPayload::IsDataType() to test for
+                                                       // AnchorPayload::IsDataType() to test for
                                                        // the payload type.
 
 // Clipping
 // - Mouse hovering is affected by ANCHOR::PushClipRect() calls, unlike direct calls to
-// ImDrawList::PushClipRect() which are render only.
+// AnchorDrawList::PushClipRect() which are render only.
 ANCHOR_API void PushClipRect(const wabi::GfVec2f &clip_rect_min,
                              const wabi::GfVec2f &clip_rect_max,
                              bool intersect_with_current_clip_rect);
@@ -2598,15 +2537,15 @@ ANCHOR_API void SetKeyboardFocusHere(
 // - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of
 // those functions.
 ANCHOR_API bool IsItemHovered(
-  ANCHORHoveredFlags flags = 0);  // is the last item hovered? (and usable, aka not blocked by a
-                                  // popup, etc.). See ANCHORHoveredFlags for more options.
+  AnchorHoveredFlags flags = 0);  // is the last item hovered? (and usable, aka not blocked by a
+                                  // popup, etc.). See AnchorHoveredFlags for more options.
 ANCHOR_API bool IsItemActive();   // is the last item active? (e.g. button being held, text field
                                   // being edited. This will continuously return true while holding
                                   // mouse button on an item. Items that don't interact will always
                                   // return false)
 ANCHOR_API bool IsItemFocused();  // is the last item focused for keyboard/gamepad navigation?
 ANCHOR_API bool IsItemClicked(
-  ANCHOR_MouseButton mouse_button =
+  AnchorMouseButton mouse_button =
     0);                                        // is the last item hovered and mouse clicked on? (**)  ==
                                                // IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT
                                                // equivalent to the behavior of e.g. Button(). Read comments in function definition.
@@ -2648,7 +2587,7 @@ ANCHOR_API void SetItemAllowOverlap();         // allow last item to be overlapp
 // active viewports.
 // - In the future we will extend this concept further to also represent Platform Monitor and
 // support a "no main platform window" operation mode.
-ANCHOR_API ANCHORViewport *GetMainViewport();  // return primary/default viewport. This can never
+ANCHOR_API AnchorViewport *GetMainViewport();  // return primary/default viewport. This can never
                                                // be NULL.
 
 // Miscellaneous Utilities
@@ -2656,35 +2595,35 @@ ANCHOR_API bool IsRectVisible(const wabi::GfVec2f &size);  // test if rectangle 
                                                            // cursor position) is visible / not clipped.
 ANCHOR_API bool IsRectVisible(
   const wabi::GfVec2f &rect_min,
-  const wabi::GfVec2f &rect_max);                          // test if rectangle (in screen space) is visible / not
-                                                           // clipped. to perform coarse clipping on user's side.
-ANCHOR_API double GetTime();                               // get global ANCHOR time. incremented by io.DeltaTime every frame.
-ANCHOR_API int GetFrameCount();                            // get global ANCHOR frame count. incremented by 1 every frame.
-ANCHOR_API ImDrawList *GetBackgroundDrawList();            // this draw list will be the first rendering one.
-                                                           // Useful to quickly draw shapes/text behind
-                                                           // ANCHOR contents.
-ANCHOR_API ImDrawList *GetForegroundDrawList();            // this draw list will be the last rendered one.
-                                                           // Useful to quickly draw shapes/text over ANCHOR
-                                                           // contents.
-ANCHOR_API ImDrawListSharedData *GetDrawListSharedData();  // you may use this when creating your
-                                                           // own ImDrawList instances.
+  const wabi::GfVec2f &rect_max);                              // test if rectangle (in screen space) is visible / not
+                                                               // clipped. to perform coarse clipping on user's side.
+ANCHOR_API double GetTime();                                   // get global ANCHOR time. incremented by io.DeltaTime every frame.
+ANCHOR_API int GetFrameCount();                                // get global ANCHOR frame count. incremented by 1 every frame.
+ANCHOR_API AnchorDrawList *GetBackgroundDrawList();            // this draw list will be the first rendering one.
+                                                               // Useful to quickly draw shapes/text behind
+                                                               // ANCHOR contents.
+ANCHOR_API AnchorDrawList *GetForegroundDrawList();            // this draw list will be the last rendered one.
+                                                               // Useful to quickly draw shapes/text over ANCHOR
+                                                               // contents.
+ANCHOR_API AnchorDrawListSharedData *GetDrawListSharedData();  // you may use this when creating your
+                                                               // own AnchorDrawList instances.
 ANCHOR_API const char *GetStyleColorName(
-  ANCHOR_Col idx);  // get a string corresponding to the enum value (for display, saving, etc.).
+  AnchorCol idx);  // get a string corresponding to the enum value (for display, saving, etc.).
 ANCHOR_API void SetStateStorage(
-  ANCHORStorage *storage);  // replace current window storage with our own (if you want to
+  AnchorStorage *storage);  // replace current window storage with our own (if you want to
                             // manipulate it yourself, typically clear subsection of it)
-ANCHOR_API ANCHORStorage *GetStateStorage();
+ANCHOR_API AnchorStorage *GetStateStorage();
 ANCHOR_API void CalcListClipping(
   int items_count,
   float items_height,
   int *out_items_display_start,
   int *out_items_display_end);  // calculate coarse clipping for large list of evenly sized
-                                // items. Prefer using the ANCHORListClipper higher-level helper
+                                // items. Prefer using the AnchorListClipper higher-level helper
                                 // if you can.
 ANCHOR_API bool BeginChildFrame(
   ANCHOR_ID id,
   const wabi::GfVec2f &size,
-  ANCHOR_WindowFlags flags = 0);  // helper to create a child window / scrolling region that
+  AnchorWindowFlags flags = 0);   // helper to create a child window / scrolling region that
                                   // looks like a normal widget frame
 ANCHOR_API void EndChildFrame();  // always call EndChildFrame() regardless of BeginChildFrame()
                                   // return values (which indicates a collapsed/clipped window)
@@ -2704,10 +2643,10 @@ ANCHOR_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r, fl
 // Inputs Utilities: Keyboard
 // - For 'int user_key_index' you can use your own indices/enums according to how your
 // backend/engine stored them in io.KeysDown[].
-// - We don't know the meaning of those value. You can use GetKeyIndex() to map a ANCHOR_Key_ value
+// - We don't know the meaning of those value. You can use GetKeyIndex() to map a AnchorKey_ value
 // into the user index.
 ANCHOR_API int GetKeyIndex(
-  ANCHOR_Key ANCHOR_key);                       // map ANCHOR_Key_* values into user's key index. == io.KeyMap[key]
+  AnchorKey ANCHOR_key);                        // map AnchorKey_* values into user's key index. == io.KeyMap[key]
 ANCHOR_API bool IsKeyDown(int user_key_index);  // is key being held. == io.KeysDown[user_key_index].
 ANCHOR_API bool IsKeyPressed(int user_key_index,
                              bool repeat = true);   // was key pressed (went from !Down to Down)? if
@@ -2727,19 +2666,19 @@ ANCHOR_API void CaptureKeyboardFromApp(
             // NewFrame() call.
 
 // Inputs Utilities: Mouse
-// - To refer to a mouse button, you may use named enums in your code e.g. ANCHOR_MouseButton_Left,
-// ANCHOR_MouseButton_Right.
+// - To refer to a mouse button, you may use named enums in your code e.g. AnchorMouseButton_Left,
+// AnchorMouseButton_Right.
 // - You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle.
 // - Dragging operations are only reported after mouse has moved a certain distance away from the
 // initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
-ANCHOR_API bool IsMouseDown(ANCHOR_MouseButton button);  // is mouse button held?
-ANCHOR_API bool IsMouseClicked(ANCHOR_MouseButton button,
+ANCHOR_API bool IsMouseDown(AnchorMouseButton button);  // is mouse button held?
+ANCHOR_API bool IsMouseClicked(AnchorMouseButton button,
                                bool repeat = false);  // did mouse button clicked? (went from !Down to Down)
 ANCHOR_API bool IsMouseReleased(
-  ANCHOR_MouseButton button);  // did mouse button released? (went from Down to !Down)
+  AnchorMouseButton button);  // did mouse button released? (went from Down to !Down)
 ANCHOR_API bool IsMouseDoubleClicked(
-  ANCHOR_MouseButton button);  // did mouse button double-clicked? (note that a double-click will
-                               // also report IsMouseClicked() == true)
+  AnchorMouseButton button);  // did mouse button double-clicked? (note that a double-click will
+                              // also report IsMouseClicked() == true)
 ANCHOR_API bool IsMouseHoveringRect(
   const wabi::GfVec2f &r_min,
   const wabi::GfVec2f &r_max,
@@ -2757,21 +2696,21 @@ ANCHOR_API wabi::GfVec2f GetMousePosOnOpeningCurrentPopup();  // retrieve mouse 
                                                               // BeginPopup() into (helper to avoid
                                                               // user backing that value
                                                               // themselves)
-ANCHOR_API bool IsMouseDragging(ANCHOR_MouseButton button,
+ANCHOR_API bool IsMouseDragging(AnchorMouseButton button,
                                 float lock_threshold = -1.0f);  // is mouse dragging? (if lock_threshold <
                                                                 // -1.0f, uses io.MouseDraggingThreshold)
 ANCHOR_API wabi::GfVec2f GetMouseDragDelta(
-  ANCHOR_MouseButton button = 0,
-  float lock_threshold = -1.0f);                                     // return the delta from the initial clicking position while the mouse
-                                                                     // button is pressed or was just released. This is locked and return 0.0f
-                                                                     // until the mouse moves past a distance threshold at least once (if
-                                                                     // lock_threshold < -1.0f, uses io.MouseDraggingThreshold)
-ANCHOR_API void ResetMouseDragDelta(ANCHOR_MouseButton button = 0);  //
-ANCHOR_API ANCHOR_MouseCursor
-GetMouseCursor();                                                // get desired cursor type, reset in ANCHOR::NewFrame(), this is updated during
-                                                                 // the frame. valid before Render(). If you use software rendering by setting
-                                                                 // io.MouseDrawCursor ANCHOR will render those for you
-ANCHOR_API void SetMouseCursor(ANCHOR_MouseCursor cursor_type);  // set desired cursor type
+  AnchorMouseButton button = 0,
+  float lock_threshold = -1.0f);                                    // return the delta from the initial clicking position while the mouse
+                                                                    // button is pressed or was just released. This is locked and return 0.0f
+                                                                    // until the mouse moves past a distance threshold at least once (if
+                                                                    // lock_threshold < -1.0f, uses io.MouseDraggingThreshold)
+ANCHOR_API void ResetMouseDragDelta(AnchorMouseButton button = 0);  //
+ANCHOR_API AnchorMouseCursor
+GetMouseCursor();                                               // get desired cursor type, reset in ANCHOR::NewFrame(), this is updated during
+                                                                // the frame. valid before Render(). If you use software rendering by setting
+                                                                // io.MouseDrawCursor ANCHOR will render those for you
+ANCHOR_API void SetMouseCursor(AnchorMouseCursor cursor_type);  // set desired cursor type
 ANCHOR_API void CaptureMouseFromApp(
   bool want_capture_mouse_value =
     true);  // attention: misleading name! manually override io.WantCaptureMouse flag next
@@ -2839,159 +2778,159 @@ ANCHOR_API void MemFree(void *ptr);
 //-----------------------------------------------------------------------------
 
 // Flags for ANCHOR::Begin()
-enum ANCHOR_WindowFlags_
+enum AnchorWindowFlags_
 {
-  ANCHOR_WindowFlags_None = 0,
-  ANCHOR_WindowFlags_NoTitleBar = 1 << 0,  // Disable title-bar
-  ANCHOR_WindowFlags_NoResize = 1 << 1,    // Disable user resizing with the lower-right grip
-  ANCHOR_WindowFlags_NoMove = 1 << 2,      // Disable user moving the window
-  ANCHOR_WindowFlags_NoScrollbar =
+  AnchorWindowFlags_None = 0,
+  AnchorWindowFlags_NoTitleBar = 1 << 0,  // Disable title-bar
+  AnchorWindowFlags_NoResize = 1 << 1,    // Disable user resizing with the lower-right grip
+  AnchorWindowFlags_NoMove = 1 << 2,      // Disable user moving the window
+  AnchorWindowFlags_NoScrollbar =
     1 << 3,  // Disable scrollbars (window can still scroll with mouse or programmatically)
-  ANCHOR_WindowFlags_NoScrollWithMouse =
-    1 << 4,                                      // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel
-                                                 // will be forwarded to the parent unless NoScrollbar is also set.
-  ANCHOR_WindowFlags_NoCollapse = 1 << 5,        // Disable user collapsing window by double-clicking on it
-  ANCHOR_WindowFlags_AlwaysAutoResize = 1 << 6,  // Resize every window to its content every frame
-  ANCHOR_WindowFlags_NoBackground = 1 << 7,      // Disable drawing background color (WindowBg, etc.) and outside
-                                                 // border. Similar as using SetNextWindowBgAlpha(0.0f).
-  ANCHOR_WindowFlags_NoSavedSettings = 1 << 8,   // Never load/save settings in .ini file
-  ANCHOR_WindowFlags_NoMouseInputs = 1 << 9,     // Disable catching mouse, hovering test with pass through.
-  ANCHOR_WindowFlags_MenuBar = 1 << 10,          // Has a menu-bar
-  ANCHOR_WindowFlags_HorizontalScrollbar =
+  AnchorWindowFlags_NoScrollWithMouse =
+    1 << 4,                                     // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel
+                                                // will be forwarded to the parent unless NoScrollbar is also set.
+  AnchorWindowFlags_NoCollapse = 1 << 5,        // Disable user collapsing window by double-clicking on it
+  AnchorWindowFlags_AlwaysAutoResize = 1 << 6,  // Resize every window to its content every frame
+  AnchorWindowFlags_NoBackground = 1 << 7,      // Disable drawing background color (WindowBg, etc.) and outside
+                                                // border. Similar as using SetNextWindowBgAlpha(0.0f).
+  AnchorWindowFlags_NoSavedSettings = 1 << 8,   // Never load/save settings in .ini file
+  AnchorWindowFlags_NoMouseInputs = 1 << 9,     // Disable catching mouse, hovering test with pass through.
+  AnchorWindowFlags_MenuBar = 1 << 10,          // Has a menu-bar
+  AnchorWindowFlags_HorizontalScrollbar =
     1 << 11,  // Allow horizontal scrollbar to appear (off by default). You may use
               // SetNextWindowContentSize(wabi::GfVec2f(width,0.0f)); prior to calling Begin() to
               // specify width. Read code in ANCHOR_demo in the "Horizontal Scrolling" section.
-  ANCHOR_WindowFlags_NoFocusOnAppearing =
+  AnchorWindowFlags_NoFocusOnAppearing =
     1 << 12,  // Disable taking focus when transitioning from hidden to visible state
-  ANCHOR_WindowFlags_NoBringToFrontOnFocus =
+  AnchorWindowFlags_NoBringToFrontOnFocus =
     1 << 13,  // Disable bringing window to front when taking focus (e.g. clicking on it or
               // programmatically giving it focus)
-  ANCHOR_WindowFlags_AlwaysVerticalScrollbar =
+  AnchorWindowFlags_AlwaysVerticalScrollbar =
     1 << 14,  // Always show vertical scrollbar (even if ContentSize[1] < Size[1])
-  ANCHOR_WindowFlags_AlwaysHorizontalScrollbar =
+  AnchorWindowFlags_AlwaysHorizontalScrollbar =
     1 << 15,  // Always show horizontal scrollbar (even if ContentSize[0] < Size[0])
-  ANCHOR_WindowFlags_AlwaysUseWindowPadding =
-    1 << 16,                                 // Ensure child windows without border uses style.WindowPadding (ignored by default
-                                             // for non-bordered child windows, because more convenient)
-  ANCHOR_WindowFlags_NoNavInputs = 1 << 18,  // No gamepad/keyboard navigation within the window
-  ANCHOR_WindowFlags_NoNavFocus = 1 << 19,   // No focusing toward this window with gamepad/keyboard
-                                             // navigation (e.g. skipped by CTRL+TAB)
-  ANCHOR_WindowFlags_UnsavedDocument =
+  AnchorWindowFlags_AlwaysUseWindowPadding =
+    1 << 16,                                // Ensure child windows without border uses style.WindowPadding (ignored by default
+                                            // for non-bordered child windows, because more convenient)
+  AnchorWindowFlags_NoNavInputs = 1 << 18,  // No gamepad/keyboard navigation within the window
+  AnchorWindowFlags_NoNavFocus = 1 << 19,   // No focusing toward this window with gamepad/keyboard
+                                            // navigation (e.g. skipped by CTRL+TAB)
+  AnchorWindowFlags_UnsavedDocument =
     1 << 20,  // Append '*' to title without affecting the ID, as a convenience to avoid using
               // the ### operator. When used in a tab/docking context, tab is selected on closure
               // and closure is deferred by one frame to allow code to cancel the closure (with a
               // confirmation popup, etc.) without flicker.
-  ANCHOR_WindowFlags_NoNav = ANCHOR_WindowFlags_NoNavInputs | ANCHOR_WindowFlags_NoNavFocus,
-  ANCHOR_WindowFlags_NoDecoration = ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize |
-                                    ANCHOR_WindowFlags_NoScrollbar | ANCHOR_WindowFlags_NoCollapse,
-  ANCHOR_WindowFlags_NoInputs = ANCHOR_WindowFlags_NoMouseInputs | ANCHOR_WindowFlags_NoNavInputs |
-                                ANCHOR_WindowFlags_NoNavFocus,
+  AnchorWindowFlags_NoNav = AnchorWindowFlags_NoNavInputs | AnchorWindowFlags_NoNavFocus,
+  AnchorWindowFlags_NoDecoration = AnchorWindowFlags_NoTitleBar | AnchorWindowFlags_NoResize |
+                                   AnchorWindowFlags_NoScrollbar | AnchorWindowFlags_NoCollapse,
+  AnchorWindowFlags_NoInputs = AnchorWindowFlags_NoMouseInputs | AnchorWindowFlags_NoNavInputs |
+                               AnchorWindowFlags_NoNavFocus,
 
   // [Internal]
-  ANCHOR_WindowFlags_NavFlattened =
-    1 << 23,                                 // [BETA] Allow gamepad/keyboard navigation to cross over parent border to this
-                                             // child (only use on child that have no scrolling!)
-  ANCHOR_WindowFlags_ChildWindow = 1 << 24,  // Don't use! For internal use by BeginChild()
-  ANCHOR_WindowFlags_Tooltip = 1 << 25,      // Don't use! For internal use by BeginTooltip()
-  ANCHOR_WindowFlags_Popup = 1 << 26,        // Don't use! For internal use by BeginPopup()
-  ANCHOR_WindowFlags_Modal = 1 << 27,        // Don't use! For internal use by BeginPopupModal()
-  ANCHOR_WindowFlags_ChildMenu = 1 << 28     // Don't use! For internal use by BeginMenu()
+  AnchorWindowFlags_NavFlattened =
+    1 << 23,                                // [BETA] Allow gamepad/keyboard navigation to cross over parent border to this
+                                            // child (only use on child that have no scrolling!)
+  AnchorWindowFlags_ChildWindow = 1 << 24,  // Don't use! For internal use by BeginChild()
+  AnchorWindowFlags_Tooltip = 1 << 25,      // Don't use! For internal use by BeginTooltip()
+  AnchorWindowFlags_Popup = 1 << 26,        // Don't use! For internal use by BeginPopup()
+  AnchorWindowFlags_Modal = 1 << 27,        // Don't use! For internal use by BeginPopupModal()
+  AnchorWindowFlags_ChildMenu = 1 << 28     // Don't use! For internal use by BeginMenu()
 
   // [Obsolete]
-  // ANCHOR_WindowFlags_ResizeFromAnySide    = 1 << 17,  // --> Set
+  // AnchorWindowFlags_ResizeFromAnySide    = 1 << 17,  // --> Set
   // io.ConfigWindowsResizeFromEdges=true and make sure mouse cursors are supported by backend
-  // (io.BackendFlags & ANCHORBackendFlags_HasMouseCursors)
+  // (io.BackendFlags & AnchorBackendFlags_HasMouseCursors)
 };
 
 // Flags for ANCHOR::InputText()
-enum ANCHORInputTextFlags_
+enum AnchorInputTextFlags_
 {
-  ANCHORInputTextFlags_None = 0,
-  ANCHORInputTextFlags_CharsDecimal = 1 << 0,      // Allow 0123456789.+-*/
-  ANCHORInputTextFlags_CharsHexadecimal = 1 << 1,  // Allow 0123456789ABCDEFabcdef
-  ANCHORInputTextFlags_CharsUppercase = 1 << 2,    // Turn a.[2] into A..Z
-  ANCHORInputTextFlags_CharsNoBlank = 1 << 3,      // Filter out spaces, tabs
-  ANCHORInputTextFlags_AutoSelectAll = 1 << 4,     // Select entire text when first taking mouse focus
-  ANCHORInputTextFlags_EnterReturnsTrue =
+  AnchorInputTextFlags_None = 0,
+  AnchorInputTextFlags_CharsDecimal = 1 << 0,      // Allow 0123456789.+-*/
+  AnchorInputTextFlags_CharsHexadecimal = 1 << 1,  // Allow 0123456789ABCDEFabcdef
+  AnchorInputTextFlags_CharsUppercase = 1 << 2,    // Turn a.[2] into A..Z
+  AnchorInputTextFlags_CharsNoBlank = 1 << 3,      // Filter out spaces, tabs
+  AnchorInputTextFlags_AutoSelectAll = 1 << 4,     // Select entire text when first taking mouse focus
+  AnchorInputTextFlags_EnterReturnsTrue =
     1 << 5,                                          // Return 'true' when Enter is pressed (as opposed to every time the value was
                                                      // modified). Consider looking at the IsItemDeactivatedAfterEdit() function.
-  ANCHORInputTextFlags_CallbackCompletion = 1 << 6,  // Callback on pressing TAB (for completion handling)
-  ANCHORInputTextFlags_CallbackHistory = 1
+  AnchorInputTextFlags_CallbackCompletion = 1 << 6,  // Callback on pressing TAB (for completion handling)
+  AnchorInputTextFlags_CallbackHistory = 1
                                          << 7,   // Callback on pressing Up/Down arrows (for history handling)
-  ANCHORInputTextFlags_CallbackAlways = 1 << 8,  // Callback on each iteration. User code may query
+  AnchorInputTextFlags_CallbackAlways = 1 << 8,  // Callback on each iteration. User code may query
                                                  // cursor position, modify text buffer.
-  ANCHORInputTextFlags_CallbackCharFilter =
+  AnchorInputTextFlags_CallbackCharFilter =
     1 << 9,                                      // Callback on character inputs to replace or discard them. Modify 'EventChar' to
                                                  // replace or discard, or return 1 in callback to discard.
-  ANCHORInputTextFlags_AllowTabInput = 1 << 10,  // Pressing TAB input a '\t' character into the text field
-  ANCHORInputTextFlags_CtrlEnterForNewLine =
+  AnchorInputTextFlags_AllowTabInput = 1 << 10,  // Pressing TAB input a '\t' character into the text field
+  AnchorInputTextFlags_CtrlEnterForNewLine =
     1 << 11,                                          // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is
                                                       // opposite: unfocus with Ctrl+Enter, add line with Enter).
-  ANCHORInputTextFlags_NoHorizontalScroll = 1 << 12,  // Disable following the cursor horizontally
-  ANCHORInputTextFlags_AlwaysOverwrite = 1 << 13,     // Overwrite mode
-  ANCHORInputTextFlags_ReadOnly = 1 << 14,            // Read-only mode
-  ANCHORInputTextFlags_Password = 1 << 15,            // Password mode, display all characters as '*'
-  ANCHORInputTextFlags_NoUndoRedo =
+  AnchorInputTextFlags_NoHorizontalScroll = 1 << 12,  // Disable following the cursor horizontally
+  AnchorInputTextFlags_AlwaysOverwrite = 1 << 13,     // Overwrite mode
+  AnchorInputTextFlags_ReadOnly = 1 << 14,            // Read-only mode
+  AnchorInputTextFlags_Password = 1 << 15,            // Password mode, display all characters as '*'
+  AnchorInputTextFlags_NoUndoRedo =
     1 << 16,                                       // Disable undo/redo. Note that input text owns the text data while active, if you
                                                    // want to provide your own undo/redo stack you need e.g. to call ClearActiveID().
-  ANCHORInputTextFlags_CharsScientific = 1 << 17,  // Allow 0123456789.+-*/eE (Scientific notation input)
-  ANCHORInputTextFlags_CallbackResize =
+  AnchorInputTextFlags_CharsScientific = 1 << 17,  // Allow 0123456789.+-*/eE (Scientific notation input)
+  AnchorInputTextFlags_CallbackResize =
     1 << 18,                                   // Callback on buffer capacity changes request (beyond 'buf_size' parameter value),
                                                // allowing the string to grow. Notify when the string wants to be resized (for
                                                // string types which hold a cache of their Size). You will be provided a new
                                                // BufSize in the callback and NEED to honor it. (see misc/cpp/ANCHOR_stdlib.h for
                                                // an example of using this)
-  ANCHORInputTextFlags_CallbackEdit = 1 << 19  // Callback on any edit (note that InputText() already returns
+  AnchorInputTextFlags_CallbackEdit = 1 << 19  // Callback on any edit (note that InputText() already returns
                                                // true on edit, the callback is useful mainly to manipulate
                                                // the underlying buffer while focus is active)
 
 // Obsolete names (will be removed soon)
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
   ,
-  ANCHORInputTextFlags_AlwaysInsertMode =
-    ANCHORInputTextFlags_AlwaysOverwrite  // [renamed in 1.82] name was not matching behavior
-#  endif
+  AnchorInputTextFlags_AlwaysInsertMode =
+    AnchorInputTextFlags_AlwaysOverwrite  // [renamed in 1.82] name was not matching behavior
+#endif
 };
 
 // Flags for ANCHOR::TreeNodeEx(), ANCHOR::CollapsingHeader*()
-enum ANCHOR_TreeNodeFlags_
+enum AnchorTreeNodeFlags_
 {
-  ANCHOR_TreeNodeFlags_None = 0,
-  ANCHOR_TreeNodeFlags_Selected = 1 << 0,  // Draw as selected
-  ANCHOR_TreeNodeFlags_Framed = 1 << 1,    // Draw frame with background (e.g. for CollapsingHeader)
-  ANCHOR_TreeNodeFlags_AllowItemOverlap =
+  AnchorTreeNodeFlags_None = 0,
+  AnchorTreeNodeFlags_Selected = 1 << 0,  // Draw as selected
+  AnchorTreeNodeFlags_Framed = 1 << 1,    // Draw frame with background (e.g. for CollapsingHeader)
+  AnchorTreeNodeFlags_AllowItemOverlap =
     1 << 2,  // Hit testing to allow subsequent widgets to overlap this one
-  ANCHOR_TreeNodeFlags_NoTreePushOnOpen =
+  AnchorTreeNodeFlags_NoTreePushOnOpen =
     1 << 3,  // Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor
              // pushing on ID stack
-  ANCHOR_TreeNodeFlags_NoAutoOpenOnLog =
-    1 << 4,                                         // Don't automatically and temporarily open node when Logging is active (by default
-                                                    // logging will automatically open tree nodes)
-  ANCHOR_TreeNodeFlags_DefaultOpen = 1 << 5,        // Default node to be open
-  ANCHOR_TreeNodeFlags_OpenOnDoubleClick = 1 << 6,  // Need double-click to open node
-  ANCHOR_TreeNodeFlags_OpenOnArrow = 1 << 7,        // Only open when clicking on the arrow part. If
-                                                    // ANCHOR_TreeNodeFlags_OpenOnDoubleClick is also set,
-                                                    // single-click arrow or double-click all box to open.
-  ANCHOR_TreeNodeFlags_Leaf = 1 << 8,               // No collapsing, no arrow (use as a convenience for leaf nodes).
-  ANCHOR_TreeNodeFlags_Bullet = 1 << 9,             // Display a bullet instead of arrow
-  ANCHOR_TreeNodeFlags_FramePadding = 1 << 10,      // Use FramePadding (even for an unframed text node) to
-                                                    // vertically align text baseline to regular widget height.
-                                                    // Equivalent to calling AlignTextToFramePadding().
-  ANCHOR_TreeNodeFlags_SpanAvailWidth =
+  AnchorTreeNodeFlags_NoAutoOpenOnLog =
+    1 << 4,                                        // Don't automatically and temporarily open node when Logging is active (by default
+                                                   // logging will automatically open tree nodes)
+  AnchorTreeNodeFlags_DefaultOpen = 1 << 5,        // Default node to be open
+  AnchorTreeNodeFlags_OpenOnDoubleClick = 1 << 6,  // Need double-click to open node
+  AnchorTreeNodeFlags_OpenOnArrow = 1 << 7,        // Only open when clicking on the arrow part. If
+                                                   // AnchorTreeNodeFlags_OpenOnDoubleClick is also set,
+                                                   // single-click arrow or double-click all box to open.
+  AnchorTreeNodeFlags_Leaf = 1 << 8,               // No collapsing, no arrow (use as a convenience for leaf nodes).
+  AnchorTreeNodeFlags_Bullet = 1 << 9,             // Display a bullet instead of arrow
+  AnchorTreeNodeFlags_FramePadding = 1 << 10,      // Use FramePadding (even for an unframed text node) to
+                                                   // vertically align text baseline to regular widget height.
+                                                   // Equivalent to calling AlignTextToFramePadding().
+  AnchorTreeNodeFlags_SpanAvailWidth =
     1 << 11,  // Extend hit box to the right-most edge, even if not framed. This is not the
               // default in order to allow adding other items on the same line. In the future we
               // may refactor the hit system to be front-to-back, allowing natural overlaps and
               // then this can become the default.
-  ANCHOR_TreeNodeFlags_SpanFullWidth =
+  AnchorTreeNodeFlags_SpanFullWidth =
     1 << 12,  // Extend hit box to the left-most and right-most edges (bypass the indented area).
-  ANCHOR_TreeNodeFlags_NavLeftJumpsBackHere =
+  AnchorTreeNodeFlags_NavLeftJumpsBackHere =
     1 << 13,  // (WIP) Nav: left direction may move to this TreeNode() from any of its child
               // (items submitted between TreeNode and TreePop)
-  // ANCHOR_TreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll
+  // AnchorTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll
   // on TreePop() if node got just open and contents is not visible
-  ANCHOR_TreeNodeFlags_CollapsingHeader = ANCHOR_TreeNodeFlags_Framed |
-                                          ANCHOR_TreeNodeFlags_NoTreePushOnOpen |
-                                          ANCHOR_TreeNodeFlags_NoAutoOpenOnLog
+  AnchorTreeNodeFlags_CollapsingHeader = AnchorTreeNodeFlags_Framed |
+                                         AnchorTreeNodeFlags_NoTreePushOnOpen |
+                                         AnchorTreeNodeFlags_NoAutoOpenOnLog
 };
 
 // Flags for OpenPopup*(), BeginPopupContext*(), IsPopupOpen() functions.
@@ -2999,114 +2938,114 @@ enum ANCHOR_TreeNodeFlags_
 // need to treat
 //   small flags values as a mouse button index, so we encode the mouse button in the first few
 //   bits of the flags. It is therefore guaranteed to be legal to pass a mouse button index in
-//   ANCHORPopupFlags.
-// - For the same reason, we exceptionally default the ANCHORPopupFlags argument of
+//   AnchorPopupFlags.
+// - For the same reason, we exceptionally default the AnchorPopupFlags argument of
 // BeginPopupContextXXX functions to 1 instead of 0.
-//   IMPORTANT: because the default parameter is 1 (==ANCHORPopupFlags_MouseButtonRight), if you
+//   IMPORTANT: because the default parameter is 1 (==AnchorPopupFlags_MouseButtonRight), if you
 //   rely on the default parameter and want to another another flag, you need to pass in the
-//   ANCHORPopupFlags_MouseButtonRight flag.
+//   AnchorPopupFlags_MouseButtonRight flag.
 // - Multiple buttons currently cannot be combined/or-ed in those functions (we could allow it
 // later).
-enum ANCHORPopupFlags_
+enum AnchorPopupFlags_
 {
-  ANCHORPopupFlags_None = 0,
-  ANCHORPopupFlags_MouseButtonLeft = 0,   // For BeginPopupContext*(): open on Left Mouse release. Guaranteed
-                                          // to always be == 0 (same as ANCHOR_MouseButton_Left)
-  ANCHORPopupFlags_MouseButtonRight = 1,  // For BeginPopupContext*(): open on Right Mouse release.
-                                          // Guaranteed to always be == 1 (same as ANCHOR_MouseButton_Right)
-  ANCHORPopupFlags_MouseButtonMiddle =
+  AnchorPopupFlags_None = 0,
+  AnchorPopupFlags_MouseButtonLeft = 0,   // For BeginPopupContext*(): open on Left Mouse release. Guaranteed
+                                          // to always be == 0 (same as AnchorMouseButton_Left)
+  AnchorPopupFlags_MouseButtonRight = 1,  // For BeginPopupContext*(): open on Right Mouse release.
+                                          // Guaranteed to always be == 1 (same as AnchorMouseButton_Right)
+  AnchorPopupFlags_MouseButtonMiddle =
     2,  // For BeginPopupContext*(): open on Middle Mouse release. Guaranteed to always be == 2
-        // (same as ANCHOR_MouseButton_Middle)
-  ANCHORPopupFlags_MouseButtonMask_ = 0x1F,
-  ANCHORPopupFlags_MouseButtonDefault_ = 1,
-  ANCHORPopupFlags_NoOpenOverExistingPopup =
+        // (same as AnchorMouseButton_Middle)
+  AnchorPopupFlags_MouseButtonMask_ = 0x1F,
+  AnchorPopupFlags_MouseButtonDefault_ = 1,
+  AnchorPopupFlags_NoOpenOverExistingPopup =
     1 << 5,                                   // For OpenPopup*(), BeginPopupContext*(): don't open if there's already a popup at
                                               // the same level of the popup stack
-  ANCHORPopupFlags_NoOpenOverItems = 1 << 6,  // For BeginPopupContextWindow(): don't return true
+  AnchorPopupFlags_NoOpenOverItems = 1 << 6,  // For BeginPopupContextWindow(): don't return true
                                               // when hovering items, only when hovering empty space
-  ANCHORPopupFlags_AnyPopupId =
+  AnchorPopupFlags_AnyPopupId =
     1 << 7,                                 // For IsPopupOpen(): ignore the ANCHOR_ID parameter and test for any popup.
-  ANCHORPopupFlags_AnyPopupLevel = 1 << 8,  // For IsPopupOpen(): search/test at any level of the
+  AnchorPopupFlags_AnyPopupLevel = 1 << 8,  // For IsPopupOpen(): search/test at any level of the
                                             // popup stack (default test in the current level)
-  ANCHORPopupFlags_AnyPopup = ANCHORPopupFlags_AnyPopupId | ANCHORPopupFlags_AnyPopupLevel
+  AnchorPopupFlags_AnyPopup = AnchorPopupFlags_AnyPopupId | AnchorPopupFlags_AnyPopupLevel
 };
 
 // Flags for ANCHOR::Selectable()
-enum ANCHORSelectableFlags_
+enum AnchorSelectableFlags_
 {
-  ANCHORSelectableFlags_None = 0,
-  ANCHORSelectableFlags_DontClosePopups = 1 << 0,  // Clicking this don't close parent popup window
-  ANCHORSelectableFlags_SpanAllColumns =
+  AnchorSelectableFlags_None = 0,
+  AnchorSelectableFlags_DontClosePopups = 1 << 0,  // Clicking this don't close parent popup window
+  AnchorSelectableFlags_SpanAllColumns =
     1 << 1,                                         // Selectable frame can span all columns (text will still fit in current column)
-  ANCHORSelectableFlags_AllowDoubleClick = 1 << 2,  // Generate press events on double clicks too
-  ANCHORSelectableFlags_Disabled = 1 << 3,          // Cannot be selected, display grayed out text
-  ANCHORSelectableFlags_AllowItemOverlap =
+  AnchorSelectableFlags_AllowDoubleClick = 1 << 2,  // Generate press events on double clicks too
+  AnchorSelectableFlags_Disabled = 1 << 3,          // Cannot be selected, display grayed out text
+  AnchorSelectableFlags_AllowItemOverlap =
     1 << 4  // (WIP) Hit testing to allow subsequent widgets to overlap this one
 };
 
 // Flags for ANCHOR::BeginCombo()
-enum ANCHORComboFlags_
+enum AnchorComboFlags_
 {
-  ANCHORComboFlags_None = 0,
-  ANCHORComboFlags_PopupAlignLeft = 1 << 0,  // Align the popup toward the left by default
-  ANCHORComboFlags_HeightSmall =
+  AnchorComboFlags_None = 0,
+  AnchorComboFlags_PopupAlignLeft = 1 << 0,  // Align the popup toward the left by default
+  AnchorComboFlags_HeightSmall =
     1 << 1,                                 // Max ~4 items visible. Tip: If you want your combo popup to be a specific size you
                                             // can use SetNextWindowSizeConstraints() prior to calling BeginCombo()
-  ANCHORComboFlags_HeightRegular = 1 << 2,  // Max ~8 items visible (default)
-  ANCHORComboFlags_HeightLarge = 1 << 3,    // Max ~20 items visible
-  ANCHORComboFlags_HeightLargest = 1 << 4,  // As many fitting items as possible
-  ANCHORComboFlags_NoArrowButton = 1 << 5,  // Display on the preview box without the square arrow button
-  ANCHORComboFlags_NoPreview = 1 << 6,      // Display only a square arrow button
-  ANCHORComboFlags_HeightMask_ = ANCHORComboFlags_HeightSmall | ANCHORComboFlags_HeightRegular |
-                                 ANCHORComboFlags_HeightLarge | ANCHORComboFlags_HeightLargest
+  AnchorComboFlags_HeightRegular = 1 << 2,  // Max ~8 items visible (default)
+  AnchorComboFlags_HeightLarge = 1 << 3,    // Max ~20 items visible
+  AnchorComboFlags_HeightLargest = 1 << 4,  // As many fitting items as possible
+  AnchorComboFlags_NoArrowButton = 1 << 5,  // Display on the preview box without the square arrow button
+  AnchorComboFlags_NoPreview = 1 << 6,      // Display only a square arrow button
+  AnchorComboFlags_HeightMask_ = AnchorComboFlags_HeightSmall | AnchorComboFlags_HeightRegular |
+                                 AnchorComboFlags_HeightLarge | AnchorComboFlags_HeightLargest
 };
 
 // Flags for ANCHOR::BeginTabBar()
-enum ANCHOR_TabBarFlags_
+enum AnchorTabBarFlags_
 {
-  ANCHOR_TabBarFlags_None = 0,
-  ANCHOR_TabBarFlags_Reorderable = 1 << 0,         // Allow manually dragging tabs to re-order them + New
-                                                   // tabs are appended at the end of list
-  ANCHOR_TabBarFlags_AutoSelectNewTabs = 1 << 1,   // Automatically select new tabs when they appear
-  ANCHOR_TabBarFlags_TabListPopupButton = 1 << 2,  // Disable buttons to open the tab list popup
-  ANCHOR_TabBarFlags_NoCloseWithMiddleMouseButton =
+  AnchorTabBarFlags_None = 0,
+  AnchorTabBarFlags_Reorderable = 1 << 0,         // Allow manually dragging tabs to re-order them + New
+                                                  // tabs are appended at the end of list
+  AnchorTabBarFlags_AutoSelectNewTabs = 1 << 1,   // Automatically select new tabs when they appear
+  AnchorTabBarFlags_TabListPopupButton = 1 << 2,  // Disable buttons to open the tab list popup
+  AnchorTabBarFlags_NoCloseWithMiddleMouseButton =
     1 << 3,  // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
              // middle mouse button. You can still repro this behavior on user's side with if
              // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
-  ANCHOR_TabBarFlags_NoTabListScrollingButtons = 1
-                                                 << 4,  // Disable scrolling buttons (apply when fitting
-                                                        // policy is ANCHOR_TabBarFlags_FittingPolicyScroll)
-  ANCHOR_TabBarFlags_NoTooltip = 1 << 5,                // Disable tooltips when hovering a tab
-  ANCHOR_TabBarFlags_FittingPolicyResizeDown = 1 << 6,  // Resize tabs when they don't fit
-  ANCHOR_TabBarFlags_FittingPolicyScroll = 1 << 7,      // Add scroll buttons when tabs don't fit
-  ANCHOR_TabBarFlags_FittingPolicyMask_ = ANCHOR_TabBarFlags_FittingPolicyResizeDown |
-                                          ANCHOR_TabBarFlags_FittingPolicyScroll,
-  ANCHOR_TabBarFlags_FittingPolicyDefault_ = ANCHOR_TabBarFlags_FittingPolicyResizeDown
+  AnchorTabBarFlags_NoTabListScrollingButtons = 1
+                                                << 4,  // Disable scrolling buttons (apply when fitting
+                                                       // policy is AnchorTabBarFlags_FittingPolicyScroll)
+  AnchorTabBarFlags_NoTooltip = 1 << 5,                // Disable tooltips when hovering a tab
+  AnchorTabBarFlags_FittingPolicyResizeDown = 1 << 6,  // Resize tabs when they don't fit
+  AnchorTabBarFlags_FittingPolicyScroll = 1 << 7,      // Add scroll buttons when tabs don't fit
+  AnchorTabBarFlags_FittingPolicyMask_ = AnchorTabBarFlags_FittingPolicyResizeDown |
+                                         AnchorTabBarFlags_FittingPolicyScroll,
+  AnchorTabBarFlags_FittingPolicyDefault_ = AnchorTabBarFlags_FittingPolicyResizeDown
 };
 
 // Flags for ANCHOR::BeginTabItem()
-enum ANCHOR_TabItemFlags_
+enum AnchorTabItemFlags_
 {
-  ANCHOR_TabItemFlags_None = 0,
-  ANCHOR_TabItemFlags_UnsavedDocument =
-    1 << 0,                                  // Append '*' to title without affecting the ID, as a convenience to avoid using the
-                                             // ### operator. Also: tab is selected on closure and closure is deferred by one
-                                             // frame to allow code to undo it without flicker.
-  ANCHOR_TabItemFlags_SetSelected = 1 << 1,  // Trigger flag to programmatically make the tab
-                                             // selected when calling BeginTabItem()
-  ANCHOR_TabItemFlags_NoCloseWithMiddleMouseButton =
+  AnchorTabItemFlags_None = 0,
+  AnchorTabItemFlags_UnsavedDocument =
+    1 << 0,                                 // Append '*' to title without affecting the ID, as a convenience to avoid using the
+                                            // ### operator. Also: tab is selected on closure and closure is deferred by one
+                                            // frame to allow code to undo it without flicker.
+  AnchorTabItemFlags_SetSelected = 1 << 1,  // Trigger flag to programmatically make the tab
+                                            // selected when calling BeginTabItem()
+  AnchorTabItemFlags_NoCloseWithMiddleMouseButton =
     1 << 2,  // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
              // middle mouse button. You can still repro this behavior on user's side with if
              // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
-  ANCHOR_TabItemFlags_NoPushId =
-    1 << 3,                                // Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
-  ANCHOR_TabItemFlags_NoTooltip = 1 << 4,  // Disable tooltip for the given tab
-  ANCHOR_TabItemFlags_NoReorder =
-    1 << 5,                              // Disable reordering this tab or having another tab cross over this tab
-  ANCHOR_TabItemFlags_Leading = 1 << 6,  // Enforce the tab position to the left of the tab bar
-                                         // (after the tab list popup button)
-  ANCHOR_TabItemFlags_Trailing = 1 << 7  // Enforce the tab position to the right of the tab bar
-                                         // (before the scrolling buttons)
+  AnchorTabItemFlags_NoPushId =
+    1 << 3,                               // Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
+  AnchorTabItemFlags_NoTooltip = 1 << 4,  // Disable tooltip for the given tab
+  AnchorTabItemFlags_NoReorder =
+    1 << 5,                             // Disable reordering this tab or having another tab cross over this tab
+  AnchorTabItemFlags_Leading = 1 << 6,  // Enforce the tab position to the left of the tab bar
+                                        // (after the tab list popup button)
+  AnchorTabItemFlags_Trailing = 1 << 7  // Enforce the tab position to the right of the tab bar
+                                        // (before the scrolling buttons)
 };
 
 // Flags for ANCHOR::BeginTable()
@@ -3116,12 +3055,12 @@ enum ANCHOR_TabItemFlags_
 // expect.
 //   Read comments/demos carefully + experiment with live demos to get acquainted with them.
 // - The DEFAULT sizing policies are:
-//    - Default to ANCHOR_TableFlags_SizingFixedFit    if ScrollX is on, or if host window has
-//    ANCHOR_WindowFlags_AlwaysAutoResize.
-//    - Default to ANCHOR_TableFlags_SizingStretchSame if ScrollX is off.
+//    - Default to AnchorTableFlags_SizingFixedFit    if ScrollX is on, or if host window has
+//    AnchorWindowFlags_AlwaysAutoResize.
+//    - Default to AnchorTableFlags_SizingStretchSame if ScrollX is off.
 // - When ScrollX is off:
-//    - Table defaults to ANCHOR_TableFlags_SizingStretchSame -> all Columns defaults to
-//    ANCHOR_TableColumnFlags_WidthStretch with same weight.
+//    - Table defaults to AnchorTableFlags_SizingStretchSame -> all Columns defaults to
+//    AnchorTableColumnFlags_WidthStretch with same weight.
 //    - Columns sizing policy allowed: Stretch (default), Fixed/Auto.
 //    - Fixed Columns will generally obtain their requested width (unless the table cannot fit them
 //    all).
@@ -3131,8 +3070,8 @@ enum ANCHOR_TabItemFlags_
 //      by one or two TRAILING Stretch columns. (this is because the visible order of columns have
 //      subtle but necessary effects on how they react to manual resizing).
 // - When ScrollX is on:
-//    - Table defaults to ANCHOR_TableFlags_SizingFixedFit -> all Columns defaults to
-//    ANCHOR_TableColumnFlags_WidthFixed
+//    - Table defaults to AnchorTableFlags_SizingFixedFit -> all Columns defaults to
+//    AnchorTableColumnFlags_WidthFixed
 //    - Columns sizing policy allowed: Fixed/Auto mostly.
 //    - Fixed Columns can be enlarged as needed. Table will show an horizontal scrollbar if needed.
 //    - When using auto-resizing (non-resizable) fixed columns, querying the content width to use
@@ -3143,187 +3082,187 @@ enum ANCHOR_TabItemFlags_
 //      If you specify a value for 'inner_width' then effectively the scrolling space is known and
 //      Stretch or mixed Fixed/Stretch columns become meaningful again.
 // - Read on documentation at the top of ANCHOR_tables.cpp for details.
-enum ANCHOR_TableFlags_
+enum AnchorTableFlags_
 {
   // Features
-  ANCHOR_TableFlags_None = 0,
-  ANCHOR_TableFlags_Resizable = 1 << 0,  // Enable resizing columns.
-  ANCHOR_TableFlags_Reorderable =
-    1 << 1,                             // Enable reordering columns in header row (need calling TableSetupColumn() +
-                                        // TableHeadersRow() to display headers)
-  ANCHOR_TableFlags_Hideable = 1 << 2,  // Enable hiding/disabling columns in context menu.
-  ANCHOR_TableFlags_Sortable =
+  AnchorTableFlags_None = 0,
+  AnchorTableFlags_Resizable = 1 << 0,  // Enable resizing columns.
+  AnchorTableFlags_Reorderable =
+    1 << 1,                            // Enable reordering columns in header row (need calling TableSetupColumn() +
+                                       // TableHeadersRow() to display headers)
+  AnchorTableFlags_Hideable = 1 << 2,  // Enable hiding/disabling columns in context menu.
+  AnchorTableFlags_Sortable =
     1 << 3,  // Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see
-             // ANCHOR_TableFlags_SortMulti and ANCHOR_TableFlags_SortTristate.
-  ANCHOR_TableFlags_NoSavedSettings =
+             // AnchorTableFlags_SortMulti and AnchorTableFlags_SortTristate.
+  AnchorTableFlags_NoSavedSettings =
     1 << 4,  // Disable persisting columns order, width and sort settings in the .ini file.
-  ANCHOR_TableFlags_ContextMenuInBody =
+  AnchorTableFlags_ContextMenuInBody =
     1 << 5,  // Right-click on columns body/contents will display table context menu. By default
              // it is available in TableHeadersRow(). Decorations
-  ANCHOR_TableFlags_RowBg =
-    1 << 6,                                   // Set each RowBg color with ANCHOR_Col_TableRowBg or ANCHOR_Col_TableRowBgAlt
-                                              // (equivalent of calling TableSetBgColor with ANCHOR_TableBgFlags_RowBg0 on each
-                                              // row manually)
-  ANCHOR_TableFlags_BordersInnerH = 1 << 7,   // Draw horizontal borders between rows.
-  ANCHOR_TableFlags_BordersOuterH = 1 << 8,   // Draw horizontal borders at the top and bottom.
-  ANCHOR_TableFlags_BordersInnerV = 1 << 9,   // Draw vertical borders between columns.
-  ANCHOR_TableFlags_BordersOuterV = 1 << 10,  // Draw vertical borders on the left and right sides.
-  ANCHOR_TableFlags_BordersH = ANCHOR_TableFlags_BordersInnerH |
-                               ANCHOR_TableFlags_BordersOuterH,  // Draw horizontal borders.
-  ANCHOR_TableFlags_BordersV = ANCHOR_TableFlags_BordersInnerV |
-                               ANCHOR_TableFlags_BordersOuterV,  // Draw vertical borders.
-  ANCHOR_TableFlags_BordersInner = ANCHOR_TableFlags_BordersInnerV |
-                                   ANCHOR_TableFlags_BordersInnerH,  // Draw inner borders.
-  ANCHOR_TableFlags_BordersOuter = ANCHOR_TableFlags_BordersOuterV |
-                                   ANCHOR_TableFlags_BordersOuterH,  // Draw outer borders.
-  ANCHOR_TableFlags_Borders = ANCHOR_TableFlags_BordersInner |
-                              ANCHOR_TableFlags_BordersOuter,  // Draw all borders.
-  ANCHOR_TableFlags_NoBordersInBody =
+  AnchorTableFlags_RowBg =
+    1 << 6,                                  // Set each RowBg color with AnchorCol_TableRowBg or AnchorCol_TableRowBgAlt
+                                             // (equivalent of calling TableSetBgColor with AnchorTableBgFlags_RowBg0 on each
+                                             // row manually)
+  AnchorTableFlags_BordersInnerH = 1 << 7,   // Draw horizontal borders between rows.
+  AnchorTableFlags_BordersOuterH = 1 << 8,   // Draw horizontal borders at the top and bottom.
+  AnchorTableFlags_BordersInnerV = 1 << 9,   // Draw vertical borders between columns.
+  AnchorTableFlags_BordersOuterV = 1 << 10,  // Draw vertical borders on the left and right sides.
+  AnchorTableFlags_BordersH = AnchorTableFlags_BordersInnerH |
+                              AnchorTableFlags_BordersOuterH,  // Draw horizontal borders.
+  AnchorTableFlags_BordersV = AnchorTableFlags_BordersInnerV |
+                              AnchorTableFlags_BordersOuterV,  // Draw vertical borders.
+  AnchorTableFlags_BordersInner = AnchorTableFlags_BordersInnerV |
+                                  AnchorTableFlags_BordersInnerH,  // Draw inner borders.
+  AnchorTableFlags_BordersOuter = AnchorTableFlags_BordersOuterV |
+                                  AnchorTableFlags_BordersOuterH,  // Draw outer borders.
+  AnchorTableFlags_Borders = AnchorTableFlags_BordersInner |
+                             AnchorTableFlags_BordersOuter,  // Draw all borders.
+  AnchorTableFlags_NoBordersInBody =
     1 << 11,  // [ALPHA] Disable vertical borders in columns Body (borders will always appears in
               // Headers). -> May move to style
-  ANCHOR_TableFlags_NoBordersInBodyUntilResize =
+  AnchorTableFlags_NoBordersInBodyUntilResize =
     1 << 12,  // [ALPHA] Disable vertical borders in columns Body until hovered for resize
               // (borders will always appears in Headers). -> May move to style Sizing Policy
               // (read above for defaults)
-  ANCHOR_TableFlags_SizingFixedFit =
+  AnchorTableFlags_SizingFixedFit =
     1 << 13,  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable),
               // matching contents width.
-  ANCHOR_TableFlags_SizingFixedSame =
+  AnchorTableFlags_SizingFixedSame =
     2 << 13,  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable),
               // matching the maximum contents width of all columns. Implicitly enable
-              // ANCHOR_TableFlags_NoKeepColumnsVisible.
-  ANCHOR_TableFlags_SizingStretchProp =
+              // AnchorTableFlags_NoKeepColumnsVisible.
+  AnchorTableFlags_SizingStretchProp =
     3 << 13,  // Columns default to _WidthStretch with default weights proportional to each
               // columns contents widths.
-  ANCHOR_TableFlags_SizingStretchSame =
+  AnchorTableFlags_SizingStretchSame =
     4 << 13,  // Columns default to _WidthStretch with default weights all equal, unless
               // overridden by TableSetupColumn(). Sizing Extra Options
-  ANCHOR_TableFlags_NoHostExtendX =
+  AnchorTableFlags_NoHostExtendX =
     1 << 16,  // Make outer width auto-fit to columns, overriding outer_size[0] value. Only
               // available when ScrollX/ScrollY are disabled and Stretch columns are not used.
-  ANCHOR_TableFlags_NoHostExtendY =
+  AnchorTableFlags_NoHostExtendY =
     1 << 17,  // Make outer height stop exactly at outer_size[1] (prevent auto-extending table
               // past the limit). Only available when ScrollX/ScrollY are disabled. Data below
               // the limit will be clipped and not visible.
-  ANCHOR_TableFlags_NoKeepColumnsVisible =
+  AnchorTableFlags_NoKeepColumnsVisible =
     1 << 18,  // Disable keeping column always minimally visible when ScrollX is off and table
               // gets too small. Not recommended if columns are resizable.
-  ANCHOR_TableFlags_PreciseWidths =
+  AnchorTableFlags_PreciseWidths =
     1 << 19,  // Disable distributing remainder width to stretched columns (width allocation on a
               // 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag:
               // 33,33,33). With larger number of columns, resizing will appear to be less
               // smooth. Clipping
-  ANCHOR_TableFlags_NoClip =
-    1 << 20,                                // Disable clipping rectangle for every individual columns (reduce draw command
-                                            // count, items will be able to overflow into other columns). Generally
-                                            // incompatible with TableSetupScrollFreeze(). Padding
-  ANCHOR_TableFlags_PadOuterX = 1 << 21,    // Default if BordersOuterV is on. Enable outer-most
-                                            // padding. Generally desirable if you have headers.
-  ANCHOR_TableFlags_NoPadOuterX = 1 << 22,  // Default if BordersOuterV is off. Disable outer-most padding.
-  ANCHOR_TableFlags_NoPadInnerX =
+  AnchorTableFlags_NoClip =
+    1 << 20,                               // Disable clipping rectangle for every individual columns (reduce draw command
+                                           // count, items will be able to overflow into other columns). Generally
+                                           // incompatible with TableSetupScrollFreeze(). Padding
+  AnchorTableFlags_PadOuterX = 1 << 21,    // Default if BordersOuterV is on. Enable outer-most
+                                           // padding. Generally desirable if you have headers.
+  AnchorTableFlags_NoPadOuterX = 1 << 22,  // Default if BordersOuterV is off. Disable outer-most padding.
+  AnchorTableFlags_NoPadInnerX =
     1 << 23,  // Disable inner padding between columns (double inner padding if BordersOuterV is
               // on, single inner padding if BordersOuterV is off). Scrolling
-  ANCHOR_TableFlags_ScrollX =
+  AnchorTableFlags_ScrollX =
     1 << 24,  // Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to
               // specify the container size. Changes default sizing policy. Because this create a
               // child window, ScrollY is currently generally recommended when using ScrollX.
-  ANCHOR_TableFlags_ScrollY =
+  AnchorTableFlags_ScrollY =
     1 << 25,  // Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to
               // specify the container size. Sorting
-  ANCHOR_TableFlags_SortMulti =
+  AnchorTableFlags_SortMulti =
     1 << 26,  // Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs()
               // may return specs where (SpecsCount > 1).
-  ANCHOR_TableFlags_SortTristate =
+  AnchorTableFlags_SortTristate =
     1 << 27,  // Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs
               // where (SpecsCount == 0).
 
   // [Internal] Combinations and masks
-  ANCHOR_TableFlags_SizingMask_ = ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_SizingFixedSame |
-                                  ANCHOR_TableFlags_SizingStretchProp | ANCHOR_TableFlags_SizingStretchSame
+  AnchorTableFlags_SizingMask_ = AnchorTableFlags_SizingFixedFit | AnchorTableFlags_SizingFixedSame |
+                                 AnchorTableFlags_SizingStretchProp | AnchorTableFlags_SizingStretchSame
 
 // Obsolete names (will be removed soon)
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-//, ANCHOR_TableFlags_ColumnsWidthFixed = ANCHOR_TableFlags_SizingFixedFit,
-// ANCHOR_TableFlags_ColumnsWidthStretch = ANCHOR_TableFlags_SizingStretchSame   // WIP Tables
-// 2020/12 , ANCHOR_TableFlags_SizingPolicyFixed = ANCHOR_TableFlags_SizingFixedFit,
-// ANCHOR_TableFlags_SizingPolicyStretch = ANCHOR_TableFlags_SizingStretchSame   // WIP Tables
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+//, AnchorTableFlags_ColumnsWidthFixed = AnchorTableFlags_SizingFixedFit,
+// AnchorTableFlags_ColumnsWidthStretch = AnchorTableFlags_SizingStretchSame   // WIP Tables
+// 2020/12 , AnchorTableFlags_SizingPolicyFixed = AnchorTableFlags_SizingFixedFit,
+// AnchorTableFlags_SizingPolicyStretch = AnchorTableFlags_SizingStretchSame   // WIP Tables
 // 2021/01
-#  endif
+#endif
 };
 
 // Flags for ANCHOR::TableSetupColumn()
-enum ANCHOR_TableColumnFlags_
+enum AnchorTableColumnFlags_
 {
   // Input configuration flags
-  ANCHOR_TableColumnFlags_None = 0,
-  ANCHOR_TableColumnFlags_DefaultHide = 1 << 0,  // Default as a hidden/disabled column.
-  ANCHOR_TableColumnFlags_DefaultSort = 1 << 1,  // Default as a sorting column.
-  ANCHOR_TableColumnFlags_WidthStretch =
+  AnchorTableColumnFlags_None = 0,
+  AnchorTableColumnFlags_DefaultHide = 1 << 0,  // Default as a hidden/disabled column.
+  AnchorTableColumnFlags_DefaultSort = 1 << 1,  // Default as a sorting column.
+  AnchorTableColumnFlags_WidthStretch =
     1 << 2,  // Column will stretch. Preferable with horizontal scrolling disabled (default if
              // table sizing policy is _SizingStretchSame or _SizingStretchProp).
-  ANCHOR_TableColumnFlags_WidthFixed =
-    1 << 3,                                   // Column will not stretch. Preferable with horizontal scrolling enabled (default if
-                                              // table sizing policy is _SizingFixedFit and table is resizable).
-  ANCHOR_TableColumnFlags_NoResize = 1 << 4,  // Disable manual resizing.
-  ANCHOR_TableColumnFlags_NoReorder =
-    1 << 5,                                          // Disable manual reordering this column, this will also prevent other columns from
-                                                     // crossing over this column.
-  ANCHOR_TableColumnFlags_NoHide = 1 << 6,           // Disable ability to hide/disable this column.
-  ANCHOR_TableColumnFlags_NoClip = 1 << 7,           // Disable clipping for this column (all NoClip columns
-                                                     // will render in a same draw command).
-  ANCHOR_TableColumnFlags_NoSort = 1 << 8,           // Disable ability to sort on this field (even if
-                                                     // ANCHOR_TableFlags_Sortable is set on the table).
-  ANCHOR_TableColumnFlags_NoSortAscending = 1 << 9,  // Disable ability to sort in the ascending direction.
-  ANCHOR_TableColumnFlags_NoSortDescending = 1
-                                             << 10,  // Disable ability to sort in the descending direction.
-  ANCHOR_TableColumnFlags_NoHeaderWidth =
+  AnchorTableColumnFlags_WidthFixed =
+    1 << 3,                                  // Column will not stretch. Preferable with horizontal scrolling enabled (default if
+                                             // table sizing policy is _SizingFixedFit and table is resizable).
+  AnchorTableColumnFlags_NoResize = 1 << 4,  // Disable manual resizing.
+  AnchorTableColumnFlags_NoReorder =
+    1 << 5,                                         // Disable manual reordering this column, this will also prevent other columns from
+                                                    // crossing over this column.
+  AnchorTableColumnFlags_NoHide = 1 << 6,           // Disable ability to hide/disable this column.
+  AnchorTableColumnFlags_NoClip = 1 << 7,           // Disable clipping for this column (all NoClip columns
+                                                    // will render in a same draw command).
+  AnchorTableColumnFlags_NoSort = 1 << 8,           // Disable ability to sort on this field (even if
+                                                    // AnchorTableFlags_Sortable is set on the table).
+  AnchorTableColumnFlags_NoSortAscending = 1 << 9,  // Disable ability to sort in the ascending direction.
+  AnchorTableColumnFlags_NoSortDescending = 1
+                                            << 10,  // Disable ability to sort in the descending direction.
+  AnchorTableColumnFlags_NoHeaderWidth =
     1 << 11,  // Disable header text width contribution to automatic column width.
-  ANCHOR_TableColumnFlags_PreferSortAscending =
+  AnchorTableColumnFlags_PreferSortAscending =
     1 << 12,  // Make the initial sort direction Ascending when first sorting on this column
               // (default).
-  ANCHOR_TableColumnFlags_PreferSortDescending =
+  AnchorTableColumnFlags_PreferSortDescending =
     1 << 13,  // Make the initial sort direction Descending when first sorting on this column.
-  ANCHOR_TableColumnFlags_IndentEnable =
+  AnchorTableColumnFlags_IndentEnable =
     1 << 14,  // Use current Indent value when entering cell (default for column 0).
-  ANCHOR_TableColumnFlags_IndentDisable =
+  AnchorTableColumnFlags_IndentDisable =
     1 << 15,  // Ignore current Indent value when entering cell (default for columns > 0).
               // Indentation changes _within_ the cell will still be honored.
 
   // Output status flags, read-only via TableGetColumnFlags()
-  ANCHOR_TableColumnFlags_IsEnabled =
+  AnchorTableColumnFlags_IsEnabled =
     1 << 20,  // Status: is enabled == not hidden by user/api (referred to as "Hide" in
               // _DefaultHide and _NoHide) flags.
-  ANCHOR_TableColumnFlags_IsVisible =
-    1 << 21,                                    // Status: is visible == is enabled AND not clipped by scrolling.
-  ANCHOR_TableColumnFlags_IsSorted = 1 << 22,   // Status: is currently part of the sort specs
-  ANCHOR_TableColumnFlags_IsHovered = 1 << 23,  // Status: is hovered by mouse
+  AnchorTableColumnFlags_IsVisible =
+    1 << 21,                                   // Status: is visible == is enabled AND not clipped by scrolling.
+  AnchorTableColumnFlags_IsSorted = 1 << 22,   // Status: is currently part of the sort specs
+  AnchorTableColumnFlags_IsHovered = 1 << 23,  // Status: is hovered by mouse
 
   // [Internal] Combinations and masks
-  ANCHOR_TableColumnFlags_WidthMask_ = ANCHOR_TableColumnFlags_WidthStretch |
-                                       ANCHOR_TableColumnFlags_WidthFixed,
-  ANCHOR_TableColumnFlags_IndentMask_ = ANCHOR_TableColumnFlags_IndentEnable |
-                                        ANCHOR_TableColumnFlags_IndentDisable,
-  ANCHOR_TableColumnFlags_StatusMask_ = ANCHOR_TableColumnFlags_IsEnabled |
-                                        ANCHOR_TableColumnFlags_IsVisible |
-                                        ANCHOR_TableColumnFlags_IsSorted | ANCHOR_TableColumnFlags_IsHovered,
-  ANCHOR_TableColumnFlags_NoDirectResize_ =
+  AnchorTableColumnFlags_WidthMask_ = AnchorTableColumnFlags_WidthStretch |
+                                      AnchorTableColumnFlags_WidthFixed,
+  AnchorTableColumnFlags_IndentMask_ = AnchorTableColumnFlags_IndentEnable |
+                                       AnchorTableColumnFlags_IndentDisable,
+  AnchorTableColumnFlags_StatusMask_ = AnchorTableColumnFlags_IsEnabled |
+                                       AnchorTableColumnFlags_IsVisible |
+                                       AnchorTableColumnFlags_IsSorted | AnchorTableColumnFlags_IsHovered,
+  AnchorTableColumnFlags_NoDirectResize_ =
     1 << 30  // [Internal] Disable user resizing this column directly (it may however we resized
              // indirectly from its left edge)
 
 // Obsolete names (will be removed soon)
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-// ANCHOR_TableColumnFlags_WidthAuto           = ANCHOR_TableColumnFlags_WidthFixed
-// | ANCHOR_TableColumnFlags_NoResize, // Column will not stretch and keep resizing
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+// AnchorTableColumnFlags_WidthAuto           = AnchorTableColumnFlags_WidthFixed
+// | AnchorTableColumnFlags_NoResize, // Column will not stretch and keep resizing
 // based on submitted contents.
-#  endif
+#endif
 };
 
 // Flags for ANCHOR::TableNextRow()
-enum ANCHOR_TableRowFlags_
+enum AnchorTableRowFlags_
 {
-  ANCHOR_TableRowFlags_None = 0,
-  ANCHOR_TableRowFlags_Headers = 1 << 0  // Identify header row (set default background color + width of its
-                                         // contents accounted different for auto column width)
+  AnchorTableRowFlags_None = 0,
+  AnchorTableRowFlags_Headers = 1 << 0  // Identify header row (set default background color + width of its
+                                        // contents accounted different for auto column width)
 };
 
 // Enum for ANCHOR::TableSetBgColor()
@@ -3332,257 +3271,257 @@ enum ANCHOR_TableRowFlags_
 //  - Layer 1: draw with RowBg1 color if set, otherwise draw with ColumnBg1 if set.
 //  - Layer 2: draw with CellBg color if set.
 // The purpose of the two row/columns layers is to let you decide if a background color changes
-// should override or blend with the existing color. When using ANCHOR_TableFlags_RowBg on the
+// should override or blend with the existing color. When using AnchorTableFlags_RowBg on the
 // table, each row has the RowBg0 color automatically set for odd/even rows. If you set the color
 // of RowBg0 target, your color will override the existing RowBg0 color. If you set the color of
 // RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.
-enum ANCHOR_TableBgTarget_
+enum AnchorTableBGTarget_
 {
-  ANCHOR_TableBgTarget_None = 0,
-  ANCHOR_TableBgTarget_RowBg0 = 1,  // Set row background color 0 (generally used for background,
-                                    // automatically set when ANCHOR_TableFlags_RowBg is used)
-  ANCHOR_TableBgTarget_RowBg1 = 2,  // Set row background color 1 (generally used for selection marking)
-  ANCHOR_TableBgTarget_CellBg = 3   // Set cell background color (top-most color)
+  AnchorTableBGTarget_None = 0,
+  AnchorTableBGTarget_RowBg0 = 1,  // Set row background color 0 (generally used for background,
+                                   // automatically set when AnchorTableFlags_RowBg is used)
+  AnchorTableBGTarget_RowBg1 = 2,  // Set row background color 1 (generally used for selection marking)
+  AnchorTableBGTarget_CellBg = 3   // Set cell background color (top-most color)
 };
 
 // Flags for ANCHOR::IsWindowFocused()
-enum ANCHORFocusedFlags_
+enum AnchorFocusedFlags_
 {
-  ANCHORFocusedFlags_None = 0,
-  ANCHORFocusedFlags_ChildWindows =
+  AnchorFocusedFlags_None = 0,
+  AnchorFocusedFlags_ChildWindows =
     1 << 0,                                // IsWindowFocused(): Return true if any children of the window is focused
-  ANCHORFocusedFlags_RootWindow = 1 << 1,  // IsWindowFocused(): Test from root window (top most
+  AnchorFocusedFlags_RootWindow = 1 << 1,  // IsWindowFocused(): Test from root window (top most
                                            // parent of the current hierarchy)
-  ANCHORFocusedFlags_AnyWindow =
+  AnchorFocusedFlags_AnyWindow =
     1 << 2,  // IsWindowFocused(): Return true if any window is focused. Important: If you are
              // trying to tell how to dispatch your low-level inputs, do NOT use this. Use
              // 'io.WantCaptureMouse' instead! Please read the FAQ!
-  ANCHORFocusedFlags_RootAndChildWindows = ANCHORFocusedFlags_RootWindow | ANCHORFocusedFlags_ChildWindows
+  AnchorFocusedFlags_RootAndChildWindows = AnchorFocusedFlags_RootWindow | AnchorFocusedFlags_ChildWindows
 };
 
 // Flags for ANCHOR::IsItemHovered(), ANCHOR::IsWindowHovered()
 // Note: if you are trying to check whether your mouse should be dispatched to ANCHOR or to your
 // app, you should use 'io.WantCaptureMouse' instead! Please read the FAQ! Note: windows with the
-// ANCHOR_WindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.
-enum ANCHORHoveredFlags_
+// AnchorWindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.
+enum AnchorHoveredFlags_
 {
-  ANCHORHoveredFlags_None =
+  AnchorHoveredFlags_None =
     0,  // Return true if directly over the item/window, not obstructed by another window, not
         // obstructed by an active popup or modal blocking inputs under them.
-  ANCHORHoveredFlags_ChildWindows =
+  AnchorHoveredFlags_ChildWindows =
     1 << 0,                                // IsWindowHovered() only: Return true if any children of the window is hovered
-  ANCHORHoveredFlags_RootWindow = 1 << 1,  // IsWindowHovered() only: Test from root window (top
+  AnchorHoveredFlags_RootWindow = 1 << 1,  // IsWindowHovered() only: Test from root window (top
                                            // most parent of the current hierarchy)
-  ANCHORHoveredFlags_AnyWindow = 1 << 2,   // IsWindowHovered() only: Return true if any window is hovered
-  ANCHORHoveredFlags_AllowWhenBlockedByPopup =
+  AnchorHoveredFlags_AnyWindow = 1 << 2,   // IsWindowHovered() only: Return true if any window is hovered
+  AnchorHoveredFlags_AllowWhenBlockedByPopup =
     1 << 3,  // Return true even if a popup window is normally blocking access to this item/window
-  // ANCHORHoveredFlags_AllowWhenBlockedByModal     = 1 << 4,   // Return true even if a modal
+  // AnchorHoveredFlags_AllowWhenBlockedByModal     = 1 << 4,   // Return true even if a modal
   // popup window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
-  ANCHORHoveredFlags_AllowWhenBlockedByActiveItem =
+  AnchorHoveredFlags_AllowWhenBlockedByActiveItem =
     1 << 5,  // Return true even if an active item is blocking access to this item/window. Useful
              // for Drag and Drop patterns.
-  ANCHORHoveredFlags_AllowWhenOverlapped =
+  AnchorHoveredFlags_AllowWhenOverlapped =
     1 << 6,                                       // Return true even if the position is obstructed or overlapped by another window
-  ANCHORHoveredFlags_AllowWhenDisabled = 1 << 7,  // Return true even if the item is disabled
-  ANCHORHoveredFlags_RectOnly = ANCHORHoveredFlags_AllowWhenBlockedByPopup |
-                                ANCHORHoveredFlags_AllowWhenBlockedByActiveItem |
-                                ANCHORHoveredFlags_AllowWhenOverlapped,
-  ANCHORHoveredFlags_RootAndChildWindows = ANCHORHoveredFlags_RootWindow | ANCHORHoveredFlags_ChildWindows
+  AnchorHoveredFlags_AllowWhenDisabled = 1 << 7,  // Return true even if the item is disabled
+  AnchorHoveredFlags_RectOnly = AnchorHoveredFlags_AllowWhenBlockedByPopup |
+                                AnchorHoveredFlags_AllowWhenBlockedByActiveItem |
+                                AnchorHoveredFlags_AllowWhenOverlapped,
+  AnchorHoveredFlags_RootAndChildWindows = AnchorHoveredFlags_RootWindow | AnchorHoveredFlags_ChildWindows
 };
 
 // Flags for ANCHOR::BeginDragDropSource(), ANCHOR::AcceptDragDropPayload()
-enum ANCHORDragDropFlags_
+enum AnchorDragDropFlags_
 {
-  ANCHORDragDropFlags_None = 0,
+  AnchorDragDropFlags_None = 0,
   // BeginDragDropSource() flags
-  ANCHORDragDropFlags_SourceNoPreviewTooltip =
+  AnchorDragDropFlags_SourceNoPreviewTooltip =
     1 << 0,  // By default, a successful call to BeginDragDropSource opens a tooltip so you can
              // display a preview or description of the source contents. This flag disable this
              // behavior.
-  ANCHORDragDropFlags_SourceNoDisableHover =
+  AnchorDragDropFlags_SourceNoDisableHover =
     1 << 1,  // By default, when dragging we clear data so that IsItemHovered() will return
              // false, to avoid subsequent user code submitting tooltips. This flag disable this
              // behavior so you can still call IsItemHovered() on the source item.
-  ANCHORDragDropFlags_SourceNoHoldToOpenOthers =
+  AnchorDragDropFlags_SourceNoHoldToOpenOthers =
     1 << 2,  // Disable the behavior that allows to open tree nodes and collapsing header by
              // holding over them while dragging a source item.
-  ANCHORDragDropFlags_SourceAllowNullID =
+  AnchorDragDropFlags_SourceAllowNullID =
     1 << 3,  // Allow items such as Text(), Image() that have no unique identifier to be used as
              // drag source, by manufacturing a temporary identifier based on their
              // window-relative position. This is extremely unusual within the ANCHOR ecosystem
              // and so we made it explicit.
-  ANCHORDragDropFlags_SourceExtern =
+  AnchorDragDropFlags_SourceExtern =
     1 << 4,  // External source (from outside of ANCHOR), won't attempt to read current item/window
              // info. Will always return true. Only one Extern source can be active simultaneously.
-  ANCHORDragDropFlags_SourceAutoExpirePayload =
+  AnchorDragDropFlags_SourceAutoExpirePayload =
     1 << 5,  // Automatically expire the payload if the source cease to be submitted (otherwise
              // payloads are persisting while being dragged)
   // AcceptDragDropPayload() flags
-  ANCHORDragDropFlags_AcceptBeforeDelivery =
+  AnchorDragDropFlags_AcceptBeforeDelivery =
     1 << 10,  // AcceptDragDropPayload() will returns true even before the mouse button is
               // released. You can then call IsDelivery() to test if the payload needs to be
               // delivered.
-  ANCHORDragDropFlags_AcceptNoDrawDefaultRect =
+  AnchorDragDropFlags_AcceptNoDrawDefaultRect =
     1 << 11,  // Do not draw the default highlight rectangle when hovering over target.
-  ANCHORDragDropFlags_AcceptNoPreviewTooltip =
+  AnchorDragDropFlags_AcceptNoPreviewTooltip =
     1 << 12,  // Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.
-  ANCHORDragDropFlags_AcceptPeekOnly =
-    ANCHORDragDropFlags_AcceptBeforeDelivery |
-    ANCHORDragDropFlags_AcceptNoDrawDefaultRect  // For peeking ahead and inspecting the payload
+  AnchorDragDropFlags_AcceptPeekOnly =
+    AnchorDragDropFlags_AcceptBeforeDelivery |
+    AnchorDragDropFlags_AcceptNoDrawDefaultRect  // For peeking ahead and inspecting the payload
                                                  // before delivery.
 };
 
 // Standard Drag and Drop payload types. You can define you own payload types using short strings.
 // Types starting with '_' are defined by ANCHOR.
-#  define ANCHOR_PAYLOAD_TYPE_COLOR_3F \
-    "_COL3F"  // float[3]: Standard type for colors, without alpha. User code may use this type.
-#  define ANCHOR_PAYLOAD_TYPE_COLOR_4F \
-    "_COL4F"  // float[4]: Standard type for colors. User code may use this type.
+#define ANCHOR_PAYLOAD_TYPE_COLOR_3F \
+  "_COL3F"  // float[3]: Standard type for colors, without alpha. User code may use this type.
+#define ANCHOR_PAYLOAD_TYPE_COLOR_4F \
+  "_COL4F"  // float[4]: Standard type for colors. User code may use this type.
 
 // A primary data type
-enum ANCHOR_DataType_
+enum AnchorDataType_
 {
-  ANCHOR_DataType_S8,      // signed char / char (with sensible compilers)
-  ANCHOR_DataType_U8,      // unsigned char
-  ANCHOR_DataType_S16,     // short
-  ANCHOR_DataType_U16,     // unsigned short
-  ANCHOR_DataType_S32,     // int
-  ANCHOR_DataType_U32,     // unsigned int
-  ANCHOR_DataType_S64,     // long long / __int64
-  ANCHOR_DataType_U64,     // unsigned long long / unsigned __int64
-  ANCHOR_DataType_Float,   // float
-  ANCHOR_DataType_Double,  // double
-  ANCHOR_DataType_COUNT
+  AnchorDataType_S8,      // signed char / char (with sensible compilers)
+  AnchorDataType_U8,      // unsigned char
+  AnchorDataType_S16,     // short
+  AnchorDataType_U16,     // unsigned short
+  AnchorDataType_S32,     // int
+  AnchorDataType_U32,     // unsigned int
+  AnchorDataType_S64,     // long long / __int64
+  AnchorDataType_U64,     // unsigned long long / unsigned __int64
+  AnchorDataType_Float,   // float
+  AnchorDataType_Double,  // double
+  AnchorDataType_COUNT
 };
 
 // A cardinal direction
-enum ANCHOR_Dir_
+enum AnchorDir_
 {
-  ANCHOR_Dir_None = -1,
-  ANCHOR_Dir_Left = 0,
-  ANCHOR_Dir_Right = 1,
-  ANCHOR_Dir_Up = 2,
-  ANCHOR_Dir_Down = 3,
-  ANCHOR_Dir_COUNT
+  AnchorDir_None = -1,
+  AnchorDir_Left = 0,
+  AnchorDir_Right = 1,
+  AnchorDir_Up = 2,
+  AnchorDir_Down = 3,
+  AnchorDir_COUNT
 };
 
 // A sorting direction
-enum ANCHOR_SortDirection_
+enum AnchorSortDirection_
 {
-  ANCHOR_SortDirection_None = 0,
-  ANCHOR_SortDirection_Ascending = 1,  // Ascending = 0->9, A->Z etc.
-  ANCHOR_SortDirection_Descending = 2  // Descending = 9->0, Z->A etc.
+  AnchorSortDirection_None = 0,
+  AnchorSortDirection_Ascending = 1,  // Ascending = 0->9, A->Z etc.
+  AnchorSortDirection_Descending = 2  // Descending = 9->0, Z->A etc.
 };
 
-// User fill ANCHOR_IO.KeyMap[] array with indices into the ANCHOR_IO.KeysDown[512] array
-enum ANCHOR_Key_
+// User fill AnchorIO.KeyMap[] array with indices into the AnchorIO.KeysDown[512] array
+enum AnchorKey_
 {
-  ANCHOR_Key_Tab,
-  ANCHOR_Key_LeftArrow,
-  ANCHOR_Key_RightArrow,
-  ANCHOR_Key_UpArrow,
-  ANCHOR_Key_DownArrow,
-  ANCHOR_Key_PageUp,
-  ANCHOR_Key_PageDown,
-  ANCHOR_Key_Home,
-  ANCHOR_Key_End,
-  ANCHOR_Key_Insert,
-  ANCHOR_Key_Delete,
-  ANCHOR_Key_Backspace,
-  ANCHOR_Key_Space,
-  ANCHOR_Key_Enter,
-  ANCHOR_Key_Escape,
-  ANCHOR_Key_KeyPadEnter,
-  ANCHOR_Key_A,  // for text edit CTRL+A: select all
-  ANCHOR_Key_C,  // for text edit CTRL+C: copy
-  ANCHOR_Key_V,  // for text edit CTRL+V: paste
-  ANCHOR_Key_X,  // for text edit CTRL+X: cut
-  ANCHOR_Key_Y,  // for text edit CTRL+Y: redo
-  ANCHOR_Key_Z,  // for text edit CTRL+Z: undo
-  ANCHOR_Key_COUNT
+  AnchorKey_Tab,
+  AnchorKey_LeftArrow,
+  AnchorKey_RightArrow,
+  AnchorKey_UpArrow,
+  AnchorKey_DownArrow,
+  AnchorKey_PageUp,
+  AnchorKey_PageDown,
+  AnchorKey_Home,
+  AnchorKey_End,
+  AnchorKey_Insert,
+  AnchorKey_Delete,
+  AnchorKey_Backspace,
+  AnchorKey_Space,
+  AnchorKey_Enter,
+  AnchorKey_Escape,
+  AnchorKey_KeyPadEnter,
+  AnchorKey_A,  // for text edit CTRL+A: select all
+  AnchorKey_C,  // for text edit CTRL+C: copy
+  AnchorKey_V,  // for text edit CTRL+V: paste
+  AnchorKey_X,  // for text edit CTRL+X: cut
+  AnchorKey_Y,  // for text edit CTRL+Y: redo
+  AnchorKey_Z,  // for text edit CTRL+Z: undo
+  AnchorKey_COUNT
 };
 
 // To test io.KeyMods (which is a combination of individual fields io.KeyCtrl, io.KeyShift,
 // io.KeyAlt set by user/backend)
-enum ANCHOR_KeyModFlags_
+enum AnchorKeyModFlags_
 {
-  ANCHOR_KeyModFlags_None = 0,
-  ANCHOR_KeyModFlags_Ctrl = 1 << 0,
-  ANCHOR_KeyModFlags_Shift = 1 << 1,
-  ANCHOR_KeyModFlags_Alt = 1 << 2,
-  ANCHOR_KeyModFlags_Super = 1 << 3
+  AnchorKeyModFlags_None = 0,
+  AnchorKeyModFlags_Ctrl = 1 << 0,
+  AnchorKeyModFlags_Shift = 1 << 1,
+  AnchorKeyModFlags_Alt = 1 << 2,
+  AnchorKeyModFlags_Super = 1 << 3
 };
 
 // Gamepad/Keyboard navigation
-// Keyboard: Set io.ConfigFlags |= ANCHORConfigFlags_NavEnableKeyboard to enable. NewFrame() will
+// Keyboard: Set io.ConfigFlags |= AnchorConfigFlags_NavEnableKeyboard to enable. NewFrame() will
 // automatically fill io.NavInputs[] based on your io.KeysDown[] + io.KeyMap[] arrays. Gamepad: Set
-// io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad to enable. Backend: set
-// ANCHORBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note
+// io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad to enable. Backend: set
+// AnchorBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note
 // that io.NavInputs[] is cleared by EndFrame(). Read instructions in ANCHOR.cpp for more details.
 // Download PNG/PSD at http://dearANCHOR.org/controls_sheets.
-enum ANCHOR_NavInput_
+enum AnchorNavInput_
 {
   // Gamepad Mapping
-  ANCHOR_NavInput_Activate,     // activate / open / toggle / tweak value       // e.g. Cross  (PS4),
-                                // A (Xbox), A (Switch), Space (Keyboard)
-  ANCHOR_NavInput_Cancel,       // cancel / close / exit                        // e.g. Circle (PS4), B
-                                // (Xbox), B (Switch), Escape (Keyboard)
-  ANCHOR_NavInput_Input,        // text input / on-screen keyboard              // e.g. Triang.(PS4), Y
-                                // (Xbox), X (Switch), Return (Keyboard)
-  ANCHOR_NavInput_Menu,         // tap: toggle menu / hold: focus, move, resize // e.g. Square (PS4), X
-                                // (Xbox), Y (Switch), Alt (Keyboard)
-  ANCHOR_NavInput_DpadLeft,     // move / tweak / resize window (w/ PadMenu)    // e.g. D-pad
-                                // Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)
-  ANCHOR_NavInput_DpadRight,    //
-  ANCHOR_NavInput_DpadUp,       //
-  ANCHOR_NavInput_DpadDown,     //
-  ANCHOR_NavInput_LStickLeft,   // scroll / move window (w/ PadMenu)            // e.g. Left Analog
-                                // Stick Left/Right/Up/Down
-  ANCHOR_NavInput_LStickRight,  //
-  ANCHOR_NavInput_LStickUp,     //
-  ANCHOR_NavInput_LStickDown,   //
-  ANCHOR_NavInput_FocusPrev,    // next window (w/ PadMenu)                     // e.g. L1 or L2
-                                // (PS4), LB or LT (Xbox), L or ZL (Switch)
-  ANCHOR_NavInput_FocusNext,    // prev window (w/ PadMenu)                     // e.g. R1 or R2
-                                // (PS4), RB or RT (Xbox), R or ZL (Switch)
-  ANCHOR_NavInput_TweakSlow,    // slower tweaks                                // e.g. L1 or L2
-                                // (PS4), LB or LT (Xbox), L or ZL (Switch)
-  ANCHOR_NavInput_TweakFast,    // faster tweaks                                // e.g. R1 or R2
-                                // (PS4), RB or RT (Xbox), R or ZL (Switch)
+  AnchorNavInput_Activate,     // activate / open / toggle / tweak value       // e.g. Cross  (PS4),
+                               // A (Xbox), A (Switch), Space (Keyboard)
+  AnchorNavInput_Cancel,       // cancel / close / exit                        // e.g. Circle (PS4), B
+                               // (Xbox), B (Switch), Escape (Keyboard)
+  AnchorNavInput_Input,        // text input / on-screen keyboard              // e.g. Triang.(PS4), Y
+                               // (Xbox), X (Switch), Return (Keyboard)
+  AnchorNavInput_Menu,         // tap: toggle menu / hold: focus, move, resize // e.g. Square (PS4), X
+                               // (Xbox), Y (Switch), Alt (Keyboard)
+  AnchorNavInput_DpadLeft,     // move / tweak / resize window (w/ PadMenu)    // e.g. D-pad
+                               // Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)
+  AnchorNavInput_DpadRight,    //
+  AnchorNavInput_DpadUp,       //
+  AnchorNavInput_DpadDown,     //
+  AnchorNavInput_LStickLeft,   // scroll / move window (w/ PadMenu)            // e.g. Left Analog
+                               // Stick Left/Right/Up/Down
+  AnchorNavInput_LStickRight,  //
+  AnchorNavInput_LStickUp,     //
+  AnchorNavInput_LStickDown,   //
+  AnchorNavInput_FocusPrev,    // next window (w/ PadMenu)                     // e.g. L1 or L2
+                               // (PS4), LB or LT (Xbox), L or ZL (Switch)
+  AnchorNavInput_FocusNext,    // prev window (w/ PadMenu)                     // e.g. R1 or R2
+                               // (PS4), RB or RT (Xbox), R or ZL (Switch)
+  AnchorNavInput_TweakSlow,    // slower tweaks                                // e.g. L1 or L2
+                               // (PS4), LB or LT (Xbox), L or ZL (Switch)
+  AnchorNavInput_TweakFast,    // faster tweaks                                // e.g. R1 or R2
+                               // (PS4), RB or RT (Xbox), R or ZL (Switch)
 
   // [Internal] Don't use directly! This is used internally to differentiate keyboard from gamepad
   // inputs for behaviors that require to differentiate them. Keyboard behavior that have no
   // corresponding gamepad mapping (e.g. CTRL+TAB) will be directly reading from io.KeysDown[]
   // instead of io.NavInputs[].
-  ANCHOR_NavInput_KeyMenu_,   // toggle menu                                  // = io.KeyAlt
-  ANCHOR_NavInput_KeyLeft_,   // move left                                    // = Arrow keys
-  ANCHOR_NavInput_KeyRight_,  // move right
-  ANCHOR_NavInput_KeyUp_,     // move up
-  ANCHOR_NavInput_KeyDown_,   // move down
-  ANCHOR_NavInput_COUNT,
-  ANCHOR_NavInput_InternalStart_ = ANCHOR_NavInput_KeyMenu_
+  AnchorNavInput_KeyMenu_,   // toggle menu                                  // = io.KeyAlt
+  AnchorNavInput_KeyLeft_,   // move left                                    // = Arrow keys
+  AnchorNavInput_KeyRight_,  // move right
+  AnchorNavInput_KeyUp_,     // move up
+  AnchorNavInput_KeyDown_,   // move down
+  AnchorNavInput_COUNT,
+  AnchorNavInput_InternalStart_ = AnchorNavInput_KeyMenu_
 };
 
 // Configuration flags stored in io.ConfigFlags. Set by user/application.
-enum ANCHORConfigFlags_
+enum AnchorConfigFlags_
 {
-  ANCHORConfigFlags_None = 0,
-  ANCHORConfigFlags_NavEnableKeyboard = 1 << 0,  // Master keyboard navigation enable flag. NewFrame() will
+  AnchorConfigFlags_None = 0,
+  AnchorConfigFlags_NavEnableKeyboard = 1 << 0,  // Master keyboard navigation enable flag. NewFrame() will
                                                  // automatically fill io.NavInputs[] based on io.KeysDown[].
-  ANCHORConfigFlags_NavEnableGamepad = 1 << 1,   // Master gamepad navigation enable flag. This is mostly to
+  AnchorConfigFlags_NavEnableGamepad = 1 << 1,   // Master gamepad navigation enable flag. This is mostly to
                                                  // instruct your ANCHOR backend to fill io.NavInputs[].
-                                                 // Backend also needs to set ANCHORBackendFlags_HasGamepad.
-  ANCHORConfigFlags_NavEnableSetMousePos =
+                                                 // Backend also needs to set AnchorBackendFlags_HasGamepad.
+  AnchorConfigFlags_NavEnableSetMousePos =
     1 << 2,                                         // Instruct navigation to move the mouse cursor. May be useful on TV/console systems
                                                     // where moving a virtual mouse is awkward. Will update io.MousePos and set
                                                     // io.WantSetMousePos=true. If enabled you MUST honor io.WantSetMousePos requests in
                                                     // your backend, otherwise ANCHOR will react as if the mouse is jumping around back
                                                     // and forth.
-  ANCHORConfigFlags_NavNoCaptureKeyboard = 1 << 3,  // Instruct navigation to not set the
+  AnchorConfigFlags_NavNoCaptureKeyboard = 1 << 3,  // Instruct navigation to not set the
                                                     // io.WantCaptureKeyboard flag when io.NavActive is set.
-  ANCHORConfigFlags_NoMouse = 1 << 4,               // Instruct ANCHOR to clear mouse position/buttons in NewFrame(). This
+  AnchorConfigFlags_NoMouse = 1 << 4,               // Instruct ANCHOR to clear mouse position/buttons in NewFrame(). This
                                                     // allows ignoring the mouse information set by the backend.
-  ANCHORConfigFlags_NoMouseCursorChange =
+  AnchorConfigFlags_NoMouseCursorChange =
     1 << 5,  // Instruct backend to not alter mouse cursor shape and visibility. Use if the
              // backend cursor changes are interfering with yours and you don't want to use
              // SetMouseCursor() to change mouse cursor. You may want to honor requests from
@@ -3590,92 +3529,92 @@ enum ANCHORConfigFlags_
 
   // User storage (to allow your backend/engine to communicate to code that may be shared between
   // multiple projects. Those flags are not used by core ANCHOR)
-  ANCHORConfigFlags_IsSRGB = 1 << 20,        // Application is SRGB-aware.
-  ANCHORConfigFlags_IsTouchScreen = 1 << 21  // Application is using a touch screen instead of a mouse.
+  AnchorConfigFlags_IsSRGB = 1 << 20,        // Application is SRGB-aware.
+  AnchorConfigFlags_IsTouchScreen = 1 << 21  // Application is using a touch screen instead of a mouse.
 };
 
 // Backend capabilities flags stored in io.BackendFlags. Set by ANCHOR_impl_xxx or custom backend.
-enum ANCHORBackendFlags_
+enum AnchorBackendFlags_
 {
-  ANCHORBackendFlags_None = 0,
-  ANCHORBackendFlags_HasGamepad =
+  AnchorBackendFlags_None = 0,
+  AnchorBackendFlags_HasGamepad =
     1 << 0,                                     // Backend Platform supports gamepad and currently has one connected.
-  ANCHORBackendFlags_HasMouseCursors = 1 << 1,  // Backend Platform supports honoring GetMouseCursor() value
+  AnchorBackendFlags_HasMouseCursors = 1 << 1,  // Backend Platform supports honoring GetMouseCursor() value
                                                 // to change the OS cursor shape.
-  ANCHORBackendFlags_HasSetMousePos =
+  AnchorBackendFlags_HasSetMousePos =
     1 << 2,  // Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse
-             // position (only used if ANCHORConfigFlags_NavEnableSetMousePos is set).
-  ANCHORBackendFlags_RendererHasVtxOffset =
-    1 << 3  // Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large
+             // position (only used if AnchorConfigFlags_NavEnableSetMousePos is set).
+  AnchorBackendFlags_RendererHasVtxOffset =
+    1 << 3  // Backend Renderer supports AnchorDrawCmd::VtxOffset. This enables output of large
             // meshes (64K+ vertices) while still using 16-bit indices.
 };
 
 // Enumeration for PushStyleColor() / PopStyleColor()
-enum ANCHOR_Col_
+enum AnchorCol_
 {
-  ANCHOR_Col_Text,
-  ANCHOR_Col_TextDisabled,
-  ANCHOR_Col_WindowBg,  // Background of normal windows
-  ANCHOR_Col_ChildBg,   // Background of child windows
-  ANCHOR_Col_PopupBg,   // Background of popups, menus, tooltips windows
-  ANCHOR_Col_Border,
-  ANCHOR_Col_BorderShadow,
-  ANCHOR_Col_FrameBg,  // Background of checkbox, radio button, plot, slider, text input
-  ANCHOR_Col_FrameBgHovered,
-  ANCHOR_Col_FrameBgActive,
-  ANCHOR_Col_TitleBg,
-  ANCHOR_Col_TitleBgActive,
-  ANCHOR_Col_TitleBgCollapsed,
-  ANCHOR_Col_MenuBarBg,
-  ANCHOR_Col_ScrollbarBg,
-  ANCHOR_Col_ScrollbarGrab,
-  ANCHOR_Col_ScrollbarGrabHovered,
-  ANCHOR_Col_ScrollbarGrabActive,
-  ANCHOR_Col_CheckMark,
-  ANCHOR_Col_SliderGrab,
-  ANCHOR_Col_SliderGrabActive,
-  ANCHOR_Col_Button,
-  ANCHOR_Col_ButtonHovered,
-  ANCHOR_Col_ButtonActive,
-  ANCHOR_Col_Header,  // Header* colors are used for CollapsingHeader, TreeNode, Selectable,
-                      // MenuItem
-  ANCHOR_Col_HeaderHovered,
-  ANCHOR_Col_HeaderActive,
-  ANCHOR_Col_Separator,
-  ANCHOR_Col_SeparatorHovered,
-  ANCHOR_Col_SeparatorActive,
-  ANCHOR_Col_ResizeGrip,
-  ANCHOR_Col_ResizeGripHovered,
-  ANCHOR_Col_ResizeGripActive,
-  ANCHOR_Col_Tab,
-  ANCHOR_Col_TabHovered,
-  ANCHOR_Col_TabActive,
-  ANCHOR_Col_TabUnfocused,
-  ANCHOR_Col_TabUnfocusedActive,
-  ANCHOR_Col_PlotLines,
-  ANCHOR_Col_PlotLinesHovered,
-  ANCHOR_Col_PlotHistogram,
-  ANCHOR_Col_PlotHistogramHovered,
-  ANCHOR_Col_TableHeaderBg,      // Table header background
-  ANCHOR_Col_TableBorderStrong,  // Table outer and header borders (prefer using Alpha=1.0 here)
-  ANCHOR_Col_TableBorderLight,   // Table inner borders (prefer using Alpha=1.0 here)
-  ANCHOR_Col_TableRowBg,         // Table row background (even rows)
-  ANCHOR_Col_TableRowBgAlt,      // Table row background (odd rows)
-  ANCHOR_Col_TextSelectedBg,
-  ANCHOR_Col_DragDropTarget,
-  ANCHOR_Col_NavHighlight,           // Gamepad/keyboard: current highlighted item
-  ANCHOR_Col_NavWindowingHighlight,  // Highlight window when using CTRL+TAB
-  ANCHOR_Col_NavWindowingDimBg,      // Darken/colorize entire screen behind the CTRL+TAB window list,
-                                     // when active
-  ANCHOR_Col_ModalWindowDimBg,       // Darken/colorize entire screen behind a modal window, when one is
-                                     // active
-  ANCHOR_Col_COUNT
+  AnchorCol_Text,
+  AnchorCol_TextDisabled,
+  AnchorCol_WindowBg,  // Background of normal windows
+  AnchorCol_ChildBg,   // Background of child windows
+  AnchorCol_PopupBg,   // Background of popups, menus, tooltips windows
+  AnchorCol_Border,
+  AnchorCol_BorderShadow,
+  AnchorCol_FrameBg,  // Background of checkbox, radio button, plot, slider, text input
+  AnchorCol_FrameBgHovered,
+  AnchorCol_FrameBgActive,
+  AnchorCol_TitleBg,
+  AnchorCol_TitleBgActive,
+  AnchorCol_TitleBgCollapsed,
+  AnchorCol_MenuBarBg,
+  AnchorCol_ScrollbarBg,
+  AnchorCol_ScrollbarGrab,
+  AnchorCol_ScrollbarGrabHovered,
+  AnchorCol_ScrollbarGrabActive,
+  AnchorCol_CheckMark,
+  AnchorCol_SliderGrab,
+  AnchorCol_SliderGrabActive,
+  AnchorCol_Button,
+  AnchorCol_ButtonHovered,
+  AnchorCol_ButtonActive,
+  AnchorCol_Header,  // Header* colors are used for CollapsingHeader, TreeNode, Selectable,
+                     // MenuItem
+  AnchorCol_HeaderHovered,
+  AnchorCol_HeaderActive,
+  AnchorCol_Separator,
+  AnchorCol_SeparatorHovered,
+  AnchorCol_SeparatorActive,
+  AnchorCol_ResizeGrip,
+  AnchorCol_ResizeGripHovered,
+  AnchorCol_ResizeGripActive,
+  AnchorCol_Tab,
+  AnchorCol_TabHovered,
+  AnchorCol_TabActive,
+  AnchorCol_TabUnfocused,
+  AnchorCol_TabUnfocusedActive,
+  AnchorCol_PlotLines,
+  AnchorCol_PlotLinesHovered,
+  AnchorCol_PlotHistogram,
+  AnchorCol_PlotHistogramHovered,
+  AnchorCol_TableHeaderBg,      // Table header background
+  AnchorCol_TableBorderStrong,  // Table outer and header borders (prefer using Alpha=1.0 here)
+  AnchorCol_TableBorderLight,   // Table inner borders (prefer using Alpha=1.0 here)
+  AnchorCol_TableRowBg,         // Table row background (even rows)
+  AnchorCol_TableRowBgAlt,      // Table row background (odd rows)
+  AnchorCol_TextSelectedBg,
+  AnchorCol_DragDropTarget,
+  AnchorCol_NavHighlight,           // Gamepad/keyboard: current highlighted item
+  AnchorCol_NavWindowingHighlight,  // Highlight window when using CTRL+TAB
+  AnchorCol_NavWindowingDimBg,      // Darken/colorize entire screen behind the CTRL+TAB window list,
+                                    // when active
+  AnchorCol_ModalWindowDimBg,       // Darken/colorize entire screen behind a modal window, when one is
+                                    // active
+  AnchorCol_COUNT
 };
 
-// Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ANCHOR_Style structure.
-// - The enum only refers to fields of ANCHOR_Style which makes sense to be pushed/popped inside UI
+// Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the AnchorStyle structure.
+// - The enum only refers to fields of AnchorStyle which makes sense to be pushed/popped inside UI
 // code.
-//   During initialization or between frames, feel free to just poke into ANCHOR_Style directly.
+//   During initialization or between frames, feel free to just poke into AnchorStyle directly.
 // - Tip: Use your programming IDE navigation facilities on the names in the _second column_ below
 // to find the actual members and their description.
 //   In Visual Studio IDE: CTRL+comma ("Edit.NavigateTo") can follow symbols in comments, whereas
@@ -3683,208 +3622,208 @@ enum ANCHOR_Col_
 //   ("VAssistX.GoToImplementation") can also follow symbols in comments.
 // - When changing this enum, you need to update the associated internal table GStyleVarInfo[]
 // accordingly. This is where we link enum values to members offset/type.
-enum ANCHOR_StyleVar_
+enum AnchorStyleVar_
 {
-  // Enum name --------------------- // Member in ANCHOR_Style structure (see ANCHOR_Style for
+  // Enum name --------------------- // Member in AnchorStyle structure (see AnchorStyle for
   // descriptions)
-  ANCHOR_StyleVar_Alpha,                // float     Alpha
-  ANCHOR_StyleVar_WindowPadding,        // wabi::GfVec2f    WindowPadding
-  ANCHOR_StyleVar_WindowRounding,       // float     WindowRounding
-  ANCHOR_StyleVar_WindowBorderSize,     // float     WindowBorderSize
-  ANCHOR_StyleVar_WindowMinSize,        // wabi::GfVec2f    WindowMinSize
-  ANCHOR_StyleVar_WindowTitleAlign,     // wabi::GfVec2f    WindowTitleAlign
-  ANCHOR_StyleVar_ChildRounding,        // float     ChildRounding
-  ANCHOR_StyleVar_ChildBorderSize,      // float     ChildBorderSize
-  ANCHOR_StyleVar_PopupRounding,        // float     PopupRounding
-  ANCHOR_StyleVar_PopupBorderSize,      // float     PopupBorderSize
-  ANCHOR_StyleVar_FramePadding,         // wabi::GfVec2f    FramePadding
-  ANCHOR_StyleVar_FrameRounding,        // float     FrameRounding
-  ANCHOR_StyleVar_FrameBorderSize,      // float     FrameBorderSize
-  ANCHOR_StyleVar_ItemSpacing,          // wabi::GfVec2f    ItemSpacing
-  ANCHOR_StyleVar_ItemInnerSpacing,     // wabi::GfVec2f    ItemInnerSpacing
-  ANCHOR_StyleVar_IndentSpacing,        // float     IndentSpacing
-  ANCHOR_StyleVar_CellPadding,          // wabi::GfVec2f    CellPadding
-  ANCHOR_StyleVar_ScrollbarSize,        // float     ScrollbarSize
-  ANCHOR_StyleVar_ScrollbarRounding,    // float     ScrollbarRounding
-  ANCHOR_StyleVar_GrabMinSize,          // float     GrabMinSize
-  ANCHOR_StyleVar_GrabRounding,         // float     GrabRounding
-  ANCHOR_StyleVar_TabRounding,          // float     TabRounding
-  ANCHOR_StyleVar_ButtonTextAlign,      // wabi::GfVec2f    ButtonTextAlign
-  ANCHOR_StyleVar_SelectableTextAlign,  // wabi::GfVec2f    SelectableTextAlign
-  ANCHOR_StyleVar_COUNT
+  AnchorStyleVar_Alpha,                // float     Alpha
+  AnchorStyleVar_WindowPadding,        // wabi::GfVec2f    WindowPadding
+  AnchorStyleVar_WindowRounding,       // float     WindowRounding
+  AnchorStyleVar_WindowBorderSize,     // float     WindowBorderSize
+  AnchorStyleVar_WindowMinSize,        // wabi::GfVec2f    WindowMinSize
+  AnchorStyleVar_WindowTitleAlign,     // wabi::GfVec2f    WindowTitleAlign
+  AnchorStyleVar_ChildRounding,        // float     ChildRounding
+  AnchorStyleVar_ChildBorderSize,      // float     ChildBorderSize
+  AnchorStyleVar_PopupRounding,        // float     PopupRounding
+  AnchorStyleVar_PopupBorderSize,      // float     PopupBorderSize
+  AnchorStyleVar_FramePadding,         // wabi::GfVec2f    FramePadding
+  AnchorStyleVar_FrameRounding,        // float     FrameRounding
+  AnchorStyleVar_FrameBorderSize,      // float     FrameBorderSize
+  AnchorStyleVar_ItemSpacing,          // wabi::GfVec2f    ItemSpacing
+  AnchorStyleVar_ItemInnerSpacing,     // wabi::GfVec2f    ItemInnerSpacing
+  AnchorStyleVar_IndentSpacing,        // float     IndentSpacing
+  AnchorStyleVar_CellPadding,          // wabi::GfVec2f    CellPadding
+  AnchorStyleVar_ScrollbarSize,        // float     ScrollbarSize
+  AnchorStyleVar_ScrollbarRounding,    // float     ScrollbarRounding
+  AnchorStyleVar_GrabMinSize,          // float     GrabMinSize
+  AnchorStyleVar_GrabRounding,         // float     GrabRounding
+  AnchorStyleVar_TabRounding,          // float     TabRounding
+  AnchorStyleVar_ButtonTextAlign,      // wabi::GfVec2f    ButtonTextAlign
+  AnchorStyleVar_SelectableTextAlign,  // wabi::GfVec2f    SelectableTextAlign
+  AnchorStyleVar_COUNT
 };
 
 // Flags for InvisibleButton() [extended in ANCHOR_internal.h]
-enum ANCHOR_ButtonFlags_
+enum AnchorButtonFlags_
 {
-  ANCHOR_ButtonFlags_None = 0,
-  ANCHOR_ButtonFlags_MouseButtonLeft = 1 << 0,    // React on left mouse button (default)
-  ANCHOR_ButtonFlags_MouseButtonRight = 1 << 1,   // React on right mouse button
-  ANCHOR_ButtonFlags_MouseButtonMiddle = 1 << 2,  // React on center mouse button
+  AnchorButtonFlags_None = 0,
+  AnchorButtonFlags_MouseButtonLeft = 1 << 0,    // React on left mouse button (default)
+  AnchorButtonFlags_MouseButtonRight = 1 << 1,   // React on right mouse button
+  AnchorButtonFlags_MouseButtonMiddle = 1 << 2,  // React on center mouse button
 
   // [Internal]
-  ANCHOR_ButtonFlags_MouseButtonMask_ = ANCHOR_ButtonFlags_MouseButtonLeft |
-                                        ANCHOR_ButtonFlags_MouseButtonRight |
-                                        ANCHOR_ButtonFlags_MouseButtonMiddle,
-  ANCHOR_ButtonFlags_MouseButtonDefault_ = ANCHOR_ButtonFlags_MouseButtonLeft
+  AnchorButtonFlags_MouseButtonMask_ = AnchorButtonFlags_MouseButtonLeft |
+                                       AnchorButtonFlags_MouseButtonRight |
+                                       AnchorButtonFlags_MouseButtonMiddle,
+  AnchorButtonFlags_MouseButtonDefault_ = AnchorButtonFlags_MouseButtonLeft
 };
 
 // Flags for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
-enum ANCHOR_ColorEditFlags_
+enum AnchorColorEditFlags_
 {
-  ANCHOR_ColorEditFlags_None = 0,
-  ANCHOR_ColorEditFlags_NoAlpha =
+  AnchorColorEditFlags_None = 0,
+  AnchorColorEditFlags_NoAlpha =
     1 << 1,  //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will
              //              only read 3 components from the input pointer).
-  ANCHOR_ColorEditFlags_NoPicker =
-    1 << 2,                                  //              // ColorEdit: disable picker when clicking on color square.
-  ANCHOR_ColorEditFlags_NoOptions = 1 << 3,  //              // ColorEdit: disable toggling options menu when
-                                             //              right-clicking on inputs/small preview.
-  ANCHOR_ColorEditFlags_NoSmallPreview =
+  AnchorColorEditFlags_NoPicker =
+    1 << 2,                                 //              // ColorEdit: disable picker when clicking on color square.
+  AnchorColorEditFlags_NoOptions = 1 << 3,  //              // ColorEdit: disable toggling options menu when
+                                            //              right-clicking on inputs/small preview.
+  AnchorColorEditFlags_NoSmallPreview =
     1 << 4,  //              // ColorEdit, ColorPicker: disable color square preview next to the
              //              inputs. (e.g. to show only the inputs)
-  ANCHOR_ColorEditFlags_NoInputs =
-    1 << 5,                                  //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g.
-                                             //              to show only the small preview color square).
-  ANCHOR_ColorEditFlags_NoTooltip = 1 << 6,  //              // ColorEdit, ColorPicker, ColorButton: disable
-                                             //              tooltip when hovering the preview.
-  ANCHOR_ColorEditFlags_NoLabel =
+  AnchorColorEditFlags_NoInputs =
+    1 << 5,                                 //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g.
+                                            //              to show only the small preview color square).
+  AnchorColorEditFlags_NoTooltip = 1 << 6,  //              // ColorEdit, ColorPicker, ColorButton: disable
+                                            //              tooltip when hovering the preview.
+  AnchorColorEditFlags_NoLabel =
     1 << 7,  //              // ColorEdit, ColorPicker: disable display of inline text label (the
              //              label is still forwarded to the tooltip and picker).
-  ANCHOR_ColorEditFlags_NoSidePreview =
-    1 << 8,                                   //              // ColorPicker: disable bigger color preview on right side of the
-                                              //              picker, use small color square preview instead.
-  ANCHOR_ColorEditFlags_NoDragDrop = 1 << 9,  //              // ColorEdit: disable drag and drop target.
-                                              //              ColorButton: disable drag and drop source.
-  ANCHOR_ColorEditFlags_NoBorder =
+  AnchorColorEditFlags_NoSidePreview =
+    1 << 8,                                  //              // ColorPicker: disable bigger color preview on right side of the
+                                             //              picker, use small color square preview instead.
+  AnchorColorEditFlags_NoDragDrop = 1 << 9,  //              // ColorEdit: disable drag and drop target.
+                                             //              ColorButton: disable drag and drop source.
+  AnchorColorEditFlags_NoBorder =
     1 << 10,  //              // ColorButton: disable border (which is enforced by default)
 
   // User Options (right-click on widget to change some of them).
-  ANCHOR_ColorEditFlags_AlphaBar = 1 << 16,  //              // ColorEdit, ColorPicker: show
-                                             //              vertical alpha bar/gradient in picker.
-  ANCHOR_ColorEditFlags_AlphaPreview =
+  AnchorColorEditFlags_AlphaBar = 1 << 16,  //              // ColorEdit, ColorPicker: show
+                                            //              vertical alpha bar/gradient in picker.
+  AnchorColorEditFlags_AlphaPreview =
     1 << 17,  //              // ColorEdit, ColorPicker, ColorButton: display preview as a
               //              transparent color over a checkerboard, instead of opaque.
-  ANCHOR_ColorEditFlags_AlphaPreviewHalf =
-    1 << 18,                            //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half
-                                        //              checkerboard, instead of opaque.
-  ANCHOR_ColorEditFlags_HDR = 1 << 19,  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f
-                                        //              limits in RGBA edition (note: you probably want to
-                                        //              use ANCHOR_ColorEditFlags_Float flag as well).
-  ANCHOR_ColorEditFlags_DisplayRGB =
-    1 << 20,                                   // [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex.
-                                               // ColorPicker: select any combination using one or more of RGB/HSV/Hex.
-  ANCHOR_ColorEditFlags_DisplayHSV = 1 << 21,  // [Display]    // "
-  ANCHOR_ColorEditFlags_DisplayHex = 1 << 22,  // [Display]    // "
-  ANCHOR_ColorEditFlags_Uint8 = 1 << 23,       // [DataType]   // ColorEdit, ColorPicker, ColorButton:
-                                               // _display_ values formatted as 0..255.
-  ANCHOR_ColorEditFlags_Float =
+  AnchorColorEditFlags_AlphaPreviewHalf =
+    1 << 18,                           //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half
+                                       //              checkerboard, instead of opaque.
+  AnchorColorEditFlags_HDR = 1 << 19,  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f
+                                       //              limits in RGBA edition (note: you probably want to
+                                       //              use AnchorColorEditFlags_Float flag as well).
+  AnchorColorEditFlags_DisplayRGB =
+    1 << 20,                                  // [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex.
+                                              // ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+  AnchorColorEditFlags_DisplayHSV = 1 << 21,  // [Display]    // "
+  AnchorColorEditFlags_DisplayHex = 1 << 22,  // [Display]    // "
+  AnchorColorEditFlags_Uint8 = 1 << 23,       // [DataType]   // ColorEdit, ColorPicker, ColorButton:
+                                              // _display_ values formatted as 0..255.
+  AnchorColorEditFlags_Float =
     1 << 24,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as
               // 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
-  ANCHOR_ColorEditFlags_PickerHueBar =
+  AnchorColorEditFlags_PickerHueBar =
     1 << 25,  // [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
-  ANCHOR_ColorEditFlags_PickerHueWheel =
+  AnchorColorEditFlags_PickerHueWheel =
     1 << 26,  // [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
-  ANCHOR_ColorEditFlags_InputRGB =
+  AnchorColorEditFlags_InputRGB =
     1 << 27,  // [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
-  ANCHOR_ColorEditFlags_InputHSV =
+  AnchorColorEditFlags_InputHSV =
     1 << 28,  // [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 
   // Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is
   // that you probably don't want to override them in most of your calls. Let the user choose via
   // the option menu and/or call SetColorEditOptions() once during startup.
-  ANCHOR_ColorEditFlags__OptionsDefault = ANCHOR_ColorEditFlags_Uint8 | ANCHOR_ColorEditFlags_DisplayRGB |
-                                          ANCHOR_ColorEditFlags_InputRGB |
-                                          ANCHOR_ColorEditFlags_PickerHueBar,
+  AnchorColorEditFlags__OptionsDefault = AnchorColorEditFlags_Uint8 | AnchorColorEditFlags_DisplayRGB |
+                                         AnchorColorEditFlags_InputRGB |
+                                         AnchorColorEditFlags_PickerHueBar,
 
   // [Internal] Masks
-  ANCHOR_ColorEditFlags__DisplayMask = ANCHOR_ColorEditFlags_DisplayRGB | ANCHOR_ColorEditFlags_DisplayHSV |
-                                       ANCHOR_ColorEditFlags_DisplayHex,
-  ANCHOR_ColorEditFlags__DataTypeMask = ANCHOR_ColorEditFlags_Uint8 | ANCHOR_ColorEditFlags_Float,
-  ANCHOR_ColorEditFlags__PickerMask = ANCHOR_ColorEditFlags_PickerHueWheel |
-                                      ANCHOR_ColorEditFlags_PickerHueBar,
-  ANCHOR_ColorEditFlags__InputMask = ANCHOR_ColorEditFlags_InputRGB | ANCHOR_ColorEditFlags_InputHSV
+  AnchorColorEditFlags__DisplayMask = AnchorColorEditFlags_DisplayRGB | AnchorColorEditFlags_DisplayHSV |
+                                      AnchorColorEditFlags_DisplayHex,
+  AnchorColorEditFlags__DataTypeMask = AnchorColorEditFlags_Uint8 | AnchorColorEditFlags_Float,
+  AnchorColorEditFlags__PickerMask = AnchorColorEditFlags_PickerHueWheel |
+                                     AnchorColorEditFlags_PickerHueBar,
+  AnchorColorEditFlags__InputMask = AnchorColorEditFlags_InputRGB | AnchorColorEditFlags_InputHSV
 
 // Obsolete names (will be removed)
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
   ,
-  ANCHOR_ColorEditFlags_RGB = ANCHOR_ColorEditFlags_DisplayRGB,
-  ANCHOR_ColorEditFlags_HSV = ANCHOR_ColorEditFlags_DisplayHSV,
-  ANCHOR_ColorEditFlags_HEX = ANCHOR_ColorEditFlags_DisplayHex  // [renamed in 1.69]
-#  endif
+  AnchorColorEditFlags_RGB = AnchorColorEditFlags_DisplayRGB,
+  AnchorColorEditFlags_HSV = AnchorColorEditFlags_DisplayHSV,
+  AnchorColorEditFlags_HEX = AnchorColorEditFlags_DisplayHex  // [renamed in 1.69]
+#endif
 };
 
 // Flags for DragFloat(), DragInt(), SliderFloat(), SliderInt() etc.
 // We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the
 // same and it makes it easier to swap them.
-enum ANCHOR_SliderFlags_
+enum AnchorSliderFlags_
 {
-  ANCHOR_SliderFlags_None = 0,
-  ANCHOR_SliderFlags_AlwaysClamp = 1 << 4,  // Clamp value to min/max bounds when input manually with
-                                            // CTRL+Click. By default CTRL+Click allows going out of bounds.
-  ANCHOR_SliderFlags_Logarithmic = 1 << 5,  // Make the widget logarithmic (linear otherwise). Consider using
-                                            // ANCHOR_SliderFlags_NoRoundToFormat with this if using a
-                                            // format-string with small amount of digits.
-  ANCHOR_SliderFlags_NoRoundToFormat =
+  AnchorSliderFlags_None = 0,
+  AnchorSliderFlags_AlwaysClamp = 1 << 4,  // Clamp value to min/max bounds when input manually with
+                                           // CTRL+Click. By default CTRL+Click allows going out of bounds.
+  AnchorSliderFlags_Logarithmic = 1 << 5,  // Make the widget logarithmic (linear otherwise). Consider using
+                                           // AnchorSliderFlags_NoRoundToFormat with this if using a
+                                           // format-string with small amount of digits.
+  AnchorSliderFlags_NoRoundToFormat =
     1 << 6,  // Disable rounding underlying value to match precision of the display format string
              // (e.g. %.3f values are rounded to those 3 digits)
-  ANCHOR_SliderFlags_NoInput =
+  AnchorSliderFlags_NoInput =
     1 << 7,  // Disable CTRL+Click or Enter key allowing to input text directly into the widget
-  ANCHOR_SliderFlags_InvalidMask_ =
+  AnchorSliderFlags_InvalidMask_ =
     0x7000000F  // [Internal] We treat using those bits as being potentially a 'float power'
                 // argument from the previous API that has got miscast to this enum, and will
                 // trigger an assert if needed.
 
 // Obsolete names (will be removed)
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
   ,
-  ANCHOR_SliderFlags_ClampOnInput = ANCHOR_SliderFlags_AlwaysClamp  // [renamed in 1.79]
-#  endif
+  AnchorSliderFlags_ClampOnInput = AnchorSliderFlags_AlwaysClamp  // [renamed in 1.79]
+#endif
 };
 
 // Identify a mouse button.
 // Those values are guaranteed to be stable and we frequently use 0/1 directly. Named enums
 // provided for convenience.
-enum ANCHOR_MouseButton_
+enum AnchorMouseButton_
 {
-  ANCHOR_MouseButton_Left = 0,
-  ANCHOR_MouseButton_Right = 1,
-  ANCHOR_MouseButton_Middle = 2,
-  ANCHOR_MouseButton_COUNT = 5
+  AnchorMouseButton_Left = 0,
+  AnchorMouseButton_Right = 1,
+  AnchorMouseButton_Middle = 2,
+  AnchorMouseButton_COUNT = 5
 };
 
 // Enumeration for GetMouseCursor()
 // User code may request backend to display given cursor by calling SetMouseCursor(), which is why
 // we have some cursors that are marked unused here
-enum ANCHOR_MouseCursor_
+enum AnchorMouseCursor_
 {
-  ANCHOR_MouseCursor_None = -1,
-  ANCHOR_MouseCursor_Arrow = 0,
-  ANCHOR_MouseCursor_TextInput,   // When hovering over InputText, etc.
-  ANCHOR_MouseCursor_ResizeAll,   // (Unused by ANCHOR functions)
-  ANCHOR_MouseCursor_ResizeNS,    // When hovering over an horizontal border
-  ANCHOR_MouseCursor_ResizeEW,    // When hovering over a vertical border or a column
-  ANCHOR_MouseCursor_ResizeNESW,  // When hovering over the bottom-left corner of a window
-  ANCHOR_MouseCursor_ResizeNWSE,  // When hovering over the bottom-right corner of a window
-  ANCHOR_MouseCursor_Hand,        // (Unused by ANCHOR functions. Use for e.g. hyperlinks)
-  ANCHOR_MouseCursor_NotAllowed,  // When hovering something with disallowed interaction. Usually a
-                                  // crossed circle.
-  ANCHOR_MouseCursor_COUNT
+  AnchorMouseCursor_None = -1,
+  AnchorMouseCursor_Arrow = 0,
+  AnchorMouseCursor_TextInput,   // When hovering over InputText, etc.
+  AnchorMouseCursor_ResizeAll,   // (Unused by ANCHOR functions)
+  AnchorMouseCursor_ResizeNS,    // When hovering over an horizontal border
+  AnchorMouseCursor_ResizeEW,    // When hovering over a vertical border or a column
+  AnchorMouseCursor_ResizeNESW,  // When hovering over the bottom-left corner of a window
+  AnchorMouseCursor_ResizeNWSE,  // When hovering over the bottom-right corner of a window
+  AnchorMouseCursor_Hand,        // (Unused by ANCHOR functions. Use for e.g. hyperlinks)
+  AnchorMouseCursor_NotAllowed,  // When hovering something with disallowed interaction. Usually a
+                                 // crossed circle.
+  AnchorMouseCursor_COUNT
 };
 
 // Enumeration for ANCHOR::SetWindow***(), SetNextWindow***(), SetNextItem***() functions
 // Represent a condition.
 // Important: Treat as a regular enum! Do NOT combine multiple values using binary operators! All
-// the functions above treat 0 as a shortcut to ANCHOR_Cond_Always.
-enum ANCHOR_Cond_
+// the functions above treat 0 as a shortcut to AnchorCond_Always.
+enum AnchorCond_
 {
-  ANCHOR_Cond_None = 0,               // No condition (always set the variable), same as _Always
-  ANCHOR_Cond_Always = 1 << 0,        // No condition (always set the variable)
-  ANCHOR_Cond_Once = 1 << 1,          // Set the variable once per runtime session (only the first call will succeed)
-  ANCHOR_Cond_FirstUseEver = 1 << 2,  // Set the variable if the object/window has no persistently
-                                      // saved data (no entry in .ini file)
-  ANCHOR_Cond_Appearing = 1 << 3      // Set the variable if the object/window is appearing after being
-                                      // hidden/inactive (or the first time)
+  AnchorCond_None = 0,               // No condition (always set the variable), same as _Always
+  AnchorCond_Always = 1 << 0,        // No condition (always set the variable)
+  AnchorCond_Once = 1 << 1,          // Set the variable once per runtime session (only the first call will succeed)
+  AnchorCond_FirstUseEver = 1 << 2,  // Set the variable if the object/window has no persistently
+                                     // saved data (no entry in .ini file)
+  AnchorCond_Appearing = 1 << 3      // Set the variable if the object/window is appearing after being
+                                     // hidden/inactive (or the first time)
 };
 
 //-----------------------------------------------------------------------------
@@ -3907,10 +3846,10 @@ inline void *operator new(size_t, AnchorNewWrapper, void *ptr)
 }
 inline void operator delete(void *, AnchorNewWrapper, void *)
 {}  // This is only required so we can use the symmetrical new()
-#  define IM_ALLOC(_SIZE) ANCHOR::MemAlloc(_SIZE)
-#  define IM_FREE(_PTR) ANCHOR::MemFree(_PTR)
-#  define IM_PLACEMENT_NEW(_PTR) new (AnchorNewWrapper(), _PTR)
-#  define IM_NEW(_TYPE) new (AnchorNewWrapper(), ANCHOR::MemAlloc(sizeof(_TYPE))) _TYPE
+#define IM_ALLOC(_SIZE) ANCHOR::MemAlloc(_SIZE)
+#define IM_FREE(_PTR) ANCHOR::MemFree(_PTR)
+#define IM_PLACEMENT_NEW(_PTR) new (AnchorNewWrapper(), _PTR)
+#define IM_NEW(_TYPE) new (AnchorNewWrapper(), ANCHOR::MemAlloc(sizeof(_TYPE))) _TYPE
 template<typename T>
 void IM_DELETE(T *p)
 {
@@ -4223,14 +4162,14 @@ struct AnchorVector
 ANCHOR_MSVC_RUNTIME_CHECKS_RESTORE
 
 //-----------------------------------------------------------------------------
-// [SECTION] ANCHOR_Style
+// [SECTION] AnchorStyle
 //-----------------------------------------------------------------------------
 // You may modify the ANCHOR::GetStyle() main instance during initialization and before NewFrame().
-// During the frame, use ANCHOR::PushStyleVar(ANCHOR_StyleVar_XXXX)/PopStyleVar() to alter the main
-// style values, and ANCHOR::PushStyleColor(ANCHOR_Col_XXX)/PopStyleColor() for colors.
+// During the frame, use ANCHOR::PushStyleVar(AnchorStyleVar_XXXX)/PopStyleVar() to alter the main
+// style values, and ANCHOR::PushStyleColor(AnchorCol_XXX)/PopStyleColor() for colors.
 //-----------------------------------------------------------------------------
 
-struct ANCHOR_Style
+struct AnchorStyle
 {
   float Alpha;                           // Global alpha applies to everything in ANCHOR.
   wabi::GfVec2f WindowPadding;           // Padding within a window.
@@ -4243,8 +4182,8 @@ struct ANCHOR_Style
                                          // individual windows, use SetNextWindowSizeConstraints().
   wabi::GfVec2f WindowTitleAlign;        // Alignment for title bar text. Defaults to (0.0f,0.5f) for
                                          // left-aligned,vertically centered.
-  ANCHOR_Dir WindowMenuButtonPosition;   // Side of the collapsing/docking button in the title bar
-                                         // (None/Left/Right). Defaults to ANCHOR_Dir_Left.
+  AnchorDir WindowMenuButtonPosition;    // Side of the collapsing/docking button in the title bar
+                                         // (None/Left/Right). Defaults to AnchorDir_Left.
   float ChildRounding;                   // Radius of child window corners rounding. Set to 0.0f to have rectangular
                                          // windows.
   float ChildBorderSize;                 // Thickness of border around child windows. Generally set to 0.0f
@@ -4282,8 +4221,8 @@ struct ANCHOR_Style
   float TabMinWidthForCloseButton;       // Minimum width for close button to appears on an unselected
                                          // tab when hovered. Set to 0.0f to always show when hovering,
                                          // set to FLT_MAX to never show close button unless selected.
-  ANCHOR_Dir ColorButtonPosition;        // Side of the color button in the ColorEdit4 widget
-                                         // (left/right). Defaults to ANCHOR_Dir_Right.
+  AnchorDir ColorButtonPosition;         // Side of the color button in the ColorEdit4 widget
+                                         // (left/right). Defaults to AnchorDir_Right.
   wabi::GfVec2f ButtonTextAlign;         // Alignment of button text when button is larger than text.
                                          // Defaults to (0.5f, 0.5f) (centered).
   wabi::GfVec2f SelectableTextAlign;     // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left
@@ -4298,13 +4237,13 @@ struct ANCHOR_Style
   float MouseCursorScale;                // Scale software rendered mouse cursor (when io.MouseDrawCursor is
                                          // enabled). May be removed later.
   bool AntiAliasedLines;                 // Enable anti-aliased lines/borders. Disable if you are really tight on
-                                         // CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
+                                         // CPU/GPU. Latched at the beginning of the frame (copied to AnchorDrawList).
   bool AntiAliasedLinesUseTex;           // Enable anti-aliased lines/borders using textures where possible.
                                          // Require backend to render with bilinear filtering. Latched at
-                                         // the beginning of the frame (copied to ImDrawList).
+                                         // the beginning of the frame (copied to AnchorDrawList).
   bool AntiAliasedFill;                  // Enable anti-aliased edges around filled shapes (rounded rectangles,
                                          // circles, etc.). Disable if you are really tight on CPU/GPU. Latched at
-                                         // the beginning of the frame (copied to ImDrawList).
+                                         // the beginning of the frame (copied to AnchorDrawList).
   float CurveTessellationTol;            // Tessellation tolerance when using PathBezierCurveTo() without a
                                          // specific number of segments. Decrease for highly tessellated curves
                                          // (higher quality, more polygons), increase to reduce quality.
@@ -4312,14 +4251,14 @@ struct ANCHOR_Style
                                          // AddCircle()/AddCircleFilled() or drawing rounded corner
                                          // rectangles with no explicit segment count specified.
                                          // Decrease for higher quality but more geometry.
-  wabi::GfVec4f Colors[ANCHOR_Col_COUNT];
+  wabi::GfVec4f Colors[AnchorCol_COUNT];
 
-  ANCHOR_API ANCHOR_Style();
+  ANCHOR_API AnchorStyle();
   ANCHOR_API void ScaleAllSizes(float scale_factor);
 };
 
 //-----------------------------------------------------------------------------
-// [SECTION] ANCHOR_IO
+// [SECTION] AnchorIO
 //-----------------------------------------------------------------------------
 // Communicate most settings and inputs/outputs to ANCHOR using this structure.
 // Access via ANCHOR::GetIO(). Read 'Programmer guide' section in .cpp file for general usage.
@@ -4333,15 +4272,15 @@ enum eKrakenFonts
   FONT_SANFRANCISCO
 };
 
-struct ANCHOR_IO
+struct AnchorIO
 {
   //------------------------------------------------------------------
   // Configuration (fill once)                // Default value
   //------------------------------------------------------------------
 
-  ANCHORConfigFlags ConfigFlags;    // = 0              // See ANCHORConfigFlags_ enum. Set by
+  AnchorConfigFlags ConfigFlags;    // = 0              // See AnchorConfigFlags_ enum. Set by
                                     // user/application. Gamepad/keyboard navigation options, etc.
-  ANCHORBackendFlags BackendFlags;  // = 0              // See ANCHORBackendFlags_ enum. Set by
+  AnchorBackendFlags BackendFlags;  // = 0              // See AnchorBackendFlags_ enum. Set by
                                     // backend (ANCHOR_impl_xxx files or custom backend) to
                                     // communicate features supported by the backend.
   wabi::GfVec2f DisplaySize;        // <unset>          // Main display size, in pixels (generally ==
@@ -4358,7 +4297,7 @@ struct ANCHOR_IO
                                     // a double-click, in pixels.
   float MouseDragThreshold;         // = 6.0f           // Distance threshold before considering we are
                                     // dragging.
-  int KeyMap[ANCHOR_Key_COUNT];     // <unset>          // Map of indices into the KeysDown[512]
+  int KeyMap[AnchorKey_COUNT];      // <unset>          // Map of indices into the KeysDown[512]
                                     // entries array which represent your "native" keyboard state.
   float KeyRepeatDelay;             // = 0.250f         // When holding a key/button, time before it starts
                                     // repeating, in seconds (for buttons in Repeat mode, etc.).
@@ -4375,7 +4314,7 @@ struct ANCHOR_IO
                                           // Fonts->Fonts[0].
   wabi::GfVec2f DisplayFramebufferScale;  // = (1, 1)         // For retina display or other situations where
                                           // window coordinates are different from framebuffer coordinates.
-                                          // This generally ends up in ImDrawData::FramebufferScale.
+                                          // This generally ends up in AnchorDrawData::FramebufferScale.
 
   // Miscellaneous options
   bool MouseDrawCursor;                    // = false          // Request ANCHOR to draw a mouse cursor for you (if
@@ -4394,9 +4333,9 @@ struct ANCHOR_IO
                                            // moving). Not desirable on devices without a keyboard.
   bool ConfigWindowsResizeFromEdges;       // = true           // Enable resizing of windows from their
                                            // edges and from the lower-left corner. This requires
-                                           // (io.BackendFlags & ANCHORBackendFlags_HasMouseCursors)
+                                           // (io.BackendFlags & AnchorBackendFlags_HasMouseCursors)
                                            // because it needs mouse cursor feedback. (This used to be a
-                                           // per-window ANCHOR_WindowFlags_ResizeFromAnySide flag)
+                                           // per-window AnchorWindowFlags_ResizeFromAnySide flag)
   bool ConfigWindowsMoveFromTitleBarOnly;  // = false       // Enable allowing to move windows only
                                            // when clicking on their title bar. Does not apply to
                                            // windows without a title bar.
@@ -4436,25 +4375,25 @@ struct ANCHOR_IO
   // Input - Fill before calling NewFrame()
   //------------------------------------------------------------------
 
-  wabi::GfVec2f MousePos;                  // Mouse position, in pixels. Set to wabi::GfVec2f(-FLT_MAX, -FLT_MAX)
-                                           // if mouse is unavailable (on another screen, etc.)
-  bool MouseDown[5];                       // Mouse buttons: 0=left, 1=right, 2=middle + extras (ANCHOR_MouseButton_COUNT
-                                           // == 5). ANCHOR mostly uses left and right buttons. Others buttons allows us
-                                           // to track if the mouse is being used by your application + available to
-                                           // user as a convenience via IsMouse** API.
-  float MouseWheel;                        // Mouse wheel Vertical: 1 unit scrolls about 5 lines text.
-  float MouseWheelH;                       // Mouse wheel Horizontal. Most users don't have a mouse with an horizontal
-                                           // wheel, may not be filled by all backends.
-  bool KeyCtrl;                            // Keyboard modifier pressed: Control
-  bool KeyShift;                           // Keyboard modifier pressed: Shift
-  bool KeyAlt;                             // Keyboard modifier pressed: Alt
-  bool KeySuper;                           // Keyboard modifier pressed: Cmd/Super/Windows
-  bool KeysDown[512];                      // Keyboard keys that are pressed (ideally left in the "native" order your
-                                           // engine has access to keyboard keys, so you can use your own defines/enums
-                                           // for keys).
-  float NavInputs[ANCHOR_NavInput_COUNT];  // Gamepad inputs. Cleared back to zero by EndFrame().
-                                           // Keyboard keys will be auto-mapped and be written here
-                                           // by NewFrame().
+  wabi::GfVec2f MousePos;                 // Mouse position, in pixels. Set to wabi::GfVec2f(-FLT_MAX, -FLT_MAX)
+                                          // if mouse is unavailable (on another screen, etc.)
+  bool MouseDown[5];                      // Mouse buttons: 0=left, 1=right, 2=middle + extras (AnchorMouseButton_COUNT
+                                          // == 5). ANCHOR mostly uses left and right buttons. Others buttons allows us
+                                          // to track if the mouse is being used by your application + available to
+                                          // user as a convenience via IsMouse** API.
+  float MouseWheel;                       // Mouse wheel Vertical: 1 unit scrolls about 5 lines text.
+  float MouseWheelH;                      // Mouse wheel Horizontal. Most users don't have a mouse with an horizontal
+                                          // wheel, may not be filled by all backends.
+  bool KeyCtrl;                           // Keyboard modifier pressed: Control
+  bool KeyShift;                          // Keyboard modifier pressed: Shift
+  bool KeyAlt;                            // Keyboard modifier pressed: Alt
+  bool KeySuper;                          // Keyboard modifier pressed: Cmd/Super/Windows
+  bool KeysDown[512];                     // Keyboard keys that are pressed (ideally left in the "native" order your
+                                          // engine has access to keyboard keys, so you can use your own defines/enums
+                                          // for keys).
+  float NavInputs[AnchorNavInput_COUNT];  // Gamepad inputs. Cleared back to zero by EndFrame().
+                                          // Keyboard keys will be auto-mapped and be written here
+                                          // by NewFrame().
 
   // Functions
   ANCHOR_API void AddInputCharacter(unsigned int c);  // Queue new character input
@@ -4486,16 +4425,16 @@ struct ANCHOR_IO
                                  // InputText widget is active).
   bool WantSetMousePos;          // MousePos has been altered, backend should reposition mouse on next
                                  // frame. Rarely used! Set only when
-                                 // ANCHORConfigFlags_NavEnableSetMousePos flag is enabled.
+                                 // AnchorConfigFlags_NavEnableSetMousePos flag is enabled.
   bool WantSaveIniSettings;      // When manual .ini load/save is active (io.IniFilename == NULL), this
                                  // will be set to notify your application that you can call
                                  // SaveIniSettingsToMemory() and save yourself. Important: clear
                                  // io.WantSaveIniSettings yourself after saving!
   bool NavActive;                // Keyboard/Gamepad navigation is currently allowed (will handle
-                                 // ANCHOR_Key_NavXXX events) = a window is focused and it doesn't use the
-                                 // ANCHOR_WindowFlags_NoNavInputs flag.
+                                 // AnchorKey_NavXXX events) = a window is focused and it doesn't use the
+                                 // AnchorWindowFlags_NoNavInputs flag.
   bool NavVisible;               // Keyboard/Gamepad navigation is visible and allowed (will handle
-                                 // ANCHOR_Key_NavXXX events).
+                                 // AnchorKey_NavXXX events).
   float Framerate;               // Rough estimate of application framerate, in frame per second. Solely for
                                  // convenience. Rolling average estimation based on io.DeltaTime over 120 frames.
   int MetricsRenderVertices;     // Vertices output during last call to Render()
@@ -4514,7 +4453,7 @@ struct ANCHOR_IO
   // [Internal] ANCHOR will maintain those fields. Forward compatibility not guaranteed!
   //------------------------------------------------------------------
 
-  ANCHOR_KeyModFlags KeyMods;                // Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but
+  AnchorKeyModFlags KeyMods;                 // Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but
                                              // merged into flags), updated by NewFrame()
   wabi::GfVec2f MousePosPrev;                // Previous mouse position (note that MouseDelta is not necessary ==
                                              // MousePos-MousePosPrev, in case either position is invalid)
@@ -4535,15 +4474,15 @@ struct ANCHOR_IO
                                              // from the clicking point
   float KeysDownDuration[512];               // Duration the keyboard key has been down (0.0f == just pressed)
   float KeysDownDurationPrev[512];           // Previous duration the key has been down
-  float NavInputsDownDuration[ANCHOR_NavInput_COUNT];
-  float NavInputsDownDurationPrev[ANCHOR_NavInput_COUNT];
+  float NavInputsDownDuration[AnchorNavInput_COUNT];
+  float NavInputsDownDurationPrev[AnchorNavInput_COUNT];
   float PenPressure;                               // Touch/Pen pressure (0.0f to 1.0f, should be >0.0f only when MouseDown[0]
                                                    // == true). Helper storage currently unused by ANCHOR.
   AnchorWChar16 InputQueueSurrogate;               // For AddInputCharacterUTF16
   AnchorVector<AnchorWChar> InputQueueCharacters;  // Queue of _characters_ input (obtained by platform
                                                    // backend). Fill using AddInputCharacter() helper.
 
-  ANCHOR_API ANCHOR_IO();
+  ANCHOR_API AnchorIO();
 };
 
 //-----------------------------------------------------------------------------
@@ -4551,23 +4490,23 @@ struct ANCHOR_IO
 //-----------------------------------------------------------------------------
 
 // Shared state of InputText(), passed as an argument to your callback when a
-// ANCHORInputTextFlags_Callback* flag is used. The callback function should return 0 by default.
-// Callbacks (follow a flag name and see comments in ANCHORInputTextFlags_ declarations for more
+// AnchorInputTextFlags_Callback* flag is used. The callback function should return 0 by default.
+// Callbacks (follow a flag name and see comments in AnchorInputTextFlags_ declarations for more
 // details)
-// - ANCHORInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText()
+// - AnchorInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText()
 // already returns true on edit, the callback is useful mainly to manipulate the underlying buffer
 // while focus is active)
-// - ANCHORInputTextFlags_CallbackAlways:      Callback on each iteration
-// - ANCHORInputTextFlags_CallbackCompletion:  Callback on pressing TAB
-// - ANCHORInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows
-// - ANCHORInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard
+// - AnchorInputTextFlags_CallbackAlways:      Callback on each iteration
+// - AnchorInputTextFlags_CallbackCompletion:  Callback on pressing TAB
+// - AnchorInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows
+// - AnchorInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard
 // them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.
-// - ANCHORInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond
+// - AnchorInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond
 // 'buf_size' parameter value), allowing the string to grow.
-struct ANCHORInputTextCallbackData
+struct AnchorInputTextCallbackData
 {
-  ANCHORInputTextFlags EventFlag;  // One ANCHORInputTextFlags_Callback*    // Read-only
-  ANCHORInputTextFlags Flags;      // What user passed to InputText()      // Read-only
+  AnchorInputTextFlags EventFlag;  // One AnchorInputTextFlags_Callback*    // Read-only
+  AnchorInputTextFlags Flags;      // What user passed to InputText()      // Read-only
   void *UserData;                  // What user passed to InputText()      // Read-only
 
   // Arguments for the different callback events
@@ -4579,7 +4518,7 @@ struct ANCHORInputTextCallbackData
   AnchorWChar EventChar;  // Character input                      // Read-write   // [CharFilter]
                           // Replace character with another one, or set to zero to drop. return 1
                           // is equivalent to setting EventChar=0;
-  ANCHOR_Key EventKey;    // Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
+  AnchorKey EventKey;     // Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]
   char *Buf;              // Text buffer                          // Read-write   // [Resize] Can replace
                           // pointer / [Completion,History,Always] Only write to pointed data, don't replace
                           // the actual pointer!
@@ -4602,7 +4541,7 @@ struct ANCHORInputTextCallbackData
   // Helper functions for text manipulation.
   // Use those function to benefit from the CallbackResize behaviors. Calling those function reset
   // the selection.
-  ANCHOR_API ANCHORInputTextCallbackData();
+  ANCHOR_API AnchorInputTextCallbackData();
   ANCHOR_API void DeleteChars(int pos, int bytes_count);
   ANCHOR_API void InsertChars(int pos, const char *text, const char *text_end = NULL);
   void SelectAll()
@@ -4623,7 +4562,7 @@ struct ANCHORInputTextCallbackData
 // Resizing callback data to apply custom constraint. As enabled by SetNextWindowSizeConstraints().
 // Callback is called during the next Begin(). NB: For basic min/max size constraint on each axis
 // you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.
-struct ANCHOR_SizeCallbackData
+struct AnchorSizeCallbackData
 {
   void *UserData;             // Read-only.   What user passed to SetNextWindowSizeConstraints()
   wabi::GfVec2f Pos;          // Read-only.   Window position, for reference.
@@ -4633,7 +4572,7 @@ struct ANCHOR_SizeCallbackData
 };
 
 // Data payload for Drag and Drop operations: AcceptDragDropPayload(), GetDragDropPayload()
-struct ANCHORPayload
+struct AnchorPayload
 {
   // Members
   void *Data;    // Data (copied and owned by ANCHOR)
@@ -4649,7 +4588,7 @@ struct ANCHORPayload
   bool Delivery;             // Set when AcceptDragDropPayload() was called and mouse button is released over
                              // the target item.
 
-  ANCHORPayload()
+  AnchorPayload()
   {
     Clear();
   }
@@ -4677,17 +4616,17 @@ struct ANCHORPayload
 };
 
 // Sorting specification for one column of a table (sizeof == 12 bytes)
-struct ANCHOR_TableColumnSortSpecs
+struct AnchorTableColumnSortSpecs
 {
-  ANCHOR_ID ColumnUserID;                  // User id of the column (if specified by a TableSetupColumn() call)
-  AnchorS16 ColumnIndex;                   // Index of the column
-  AnchorS16 SortOrder;                     // Index within parent ANCHOR_TableSortSpecs (always stored in order starting
-                                           // from 0, tables sorted on a single criteria will always have a 0 here)
-  ANCHOR_SortDirection SortDirection : 8;  // ANCHOR_SortDirection_Ascending or
-                                           // ANCHOR_SortDirection_Descending (you can use this or SortSign,
-                                           // whichever is more convenient for your sort function)
+  ANCHOR_ID ColumnUserID;                 // User id of the column (if specified by a TableSetupColumn() call)
+  AnchorS16 ColumnIndex;                  // Index of the column
+  AnchorS16 SortOrder;                    // Index within parent AnchorTableSortSpecs (always stored in order starting
+                                          // from 0, tables sorted on a single criteria will always have a 0 here)
+  AnchorSortDirection SortDirection : 8;  // AnchorSortDirection_Ascending or
+                                          // AnchorSortDirection_Descending (you can use this or SortSign,
+                                          // whichever is more convenient for your sort function)
 
-  ANCHOR_TableColumnSortSpecs()
+  AnchorTableColumnSortSpecs()
   {
     memset(this, 0, sizeof(*this));
   }
@@ -4697,32 +4636,32 @@ struct ANCHOR_TableColumnSortSpecs
 // more) Obtained by calling TableGetSortSpecs(). When 'SpecsDirty == true' you can sort your data.
 // It will be true with sorting specs have changed since last call, or the first time. Make sure to
 // set 'SpecsDirty = false' after sorting, else you may wastefully sort your data every frame!
-struct ANCHOR_TableSortSpecs
+struct AnchorTableSortSpecs
 {
-  const ANCHOR_TableColumnSortSpecs *Specs;  // Pointer to sort spec array.
-  int SpecsCount;                            // Sort spec count. Most often 1. May be > 1 when ANCHOR_TableFlags_SortMulti is
-                                             // enabled. May be == 0 when ANCHOR_TableFlags_SortTristate is enabled.
-  bool SpecsDirty;                           // Set to true when specs have changed since last time! Use this to sort again,
-                                             // then clear the flag.
+  const AnchorTableColumnSortSpecs *Specs;  // Pointer to sort spec array.
+  int SpecsCount;                           // Sort spec count. Most often 1. May be > 1 when AnchorTableFlags_SortMulti is
+                                            // enabled. May be == 0 when AnchorTableFlags_SortTristate is enabled.
+  bool SpecsDirty;                          // Set to true when specs have changed since last time! Use this to sort again,
+                                            // then clear the flag.
 
-  ANCHOR_TableSortSpecs()
+  AnchorTableSortSpecs()
   {
     memset(this, 0, sizeof(*this));
   }
 };
 
 //-----------------------------------------------------------------------------
-// [SECTION] Helpers (ANCHOROnceUponAFrame, ANCHORTextFilter, ANCHORTextBuffer, ANCHORStorage,
-// ANCHORListClipper, AnchorColor)
+// [SECTION] Helpers (ANCHOROnceUponAFrame, AnchorTextFilter, AnchorTextBuffer, AnchorStorage,
+// AnchorListClipper, AnchorColor)
 //-----------------------------------------------------------------------------
 
 // Helper: Unicode defines
-#  define IM_UNICODE_CODEPOINT_INVALID 0xFFFD  // Invalid Unicode code point (standard value).
-#  ifdef ANCHOR_USE_WCHAR32
-#    define IM_UNICODE_CODEPOINT_MAX 0x10FFFF  // Maximum Unicode code point supported by this build.
-#  else
-#    define IM_UNICODE_CODEPOINT_MAX 0xFFFF  // Maximum Unicode code point supported by this build.
-#  endif
+#define IM_UNICODE_CODEPOINT_INVALID 0xFFFD  // Invalid Unicode code point (standard value).
+#ifdef ANCHOR_USE_WCHAR32
+#  define IM_UNICODE_CODEPOINT_MAX 0x10FFFF  // Maximum Unicode code point supported by this build.
+#else
+#  define IM_UNICODE_CODEPOINT_MAX 0xFFFF  // Maximum Unicode code point supported by this build.
+#endif
 
 // Helper: Execute a block of code at maximum once a frame. Convenient if you want to quickly
 // create an UI within deep-nested code that runs multiple times every frame. Usage: static
@@ -4745,9 +4684,9 @@ struct ANCHOROnceUponAFrame
 };
 
 // Helper: Parse and apply text filters. In format "aaaaa[,bbbb][,ccccc]"
-struct ANCHORTextFilter
+struct AnchorTextFilter
 {
-  ANCHOR_API ANCHORTextFilter(const char *default_filter = "");
+  ANCHOR_API AnchorTextFilter(const char *default_filter = "");
   ANCHOR_API bool Draw(const char *label = "Filter (inc,-exc)",
                        float width = 0.0f);  // Helper calling InputText+Build
   ANCHOR_API bool PassFilter(const char *text, const char *text_end = NULL) const;
@@ -4790,12 +4729,12 @@ struct ANCHORTextFilter
 
 // Helper: Growable text buffer for logging/accumulating text
 // (this could be called 'ANCHORTextBuilder' / 'ANCHORStringBuilder')
-struct ANCHORTextBuffer
+struct AnchorTextBuffer
 {
   AnchorVector<char> Buf;
   ANCHOR_API static char EmptyString[1];
 
-  ANCHORTextBuffer()
+  AnchorTextBuffer()
   {}
   inline char operator[](int i) const
   {
@@ -4846,10 +4785,10 @@ struct ANCHORTextBuffer
 // - You want to store custom debug data easily without adding or editing structures in your code
 // (probably not efficient, but convenient) Types are NOT stored, so it is up to you to make sure
 // your Key don't collide with different types.
-struct ANCHORStorage
+struct AnchorStorage
 {
   // [Internal]
-  struct ANCHORStoragePair
+  struct AnchorStoragePair
   {
     ANCHOR_ID key;
     union
@@ -4858,24 +4797,24 @@ struct ANCHORStorage
       float val_f;
       void *val_p;
     };
-    ANCHORStoragePair(ANCHOR_ID _key, int _val_i)
+    AnchorStoragePair(ANCHOR_ID _key, int _val_i)
     {
       key = _key;
       val_i = _val_i;
     }
-    ANCHORStoragePair(ANCHOR_ID _key, float _val_f)
+    AnchorStoragePair(ANCHOR_ID _key, float _val_f)
     {
       key = _key;
       val_f = _val_f;
     }
-    ANCHORStoragePair(ANCHOR_ID _key, void *_val_p)
+    AnchorStoragePair(ANCHOR_ID _key, void *_val_p)
     {
       key = _key;
       val_p = _val_p;
     }
   };
 
-  AnchorVector<ANCHORStoragePair> Data;
+  AnchorVector<AnchorStoragePair> Data;
 
   // - Get***() functions find pair, never add/allocate. Pairs are sorted so a query is O(log N)
   // - Set***() functions find pair, insertion on demand if missing.
@@ -4922,7 +4861,7 @@ struct ANCHORStorage
 // the non-visible items we have skipped. (ANCHOR already clip items based on their bounds but it
 // needs to measure text size to do so, whereas manual coarse clipping before submission makes this
 // cost and your own data fetching/submission cost almost null) Usage:
-//   ANCHORListClipper clipper;
+//   AnchorListClipper clipper;
 //   clipper.Begin(1000);         // We have 1000 elements, evenly spaced.
 //   while (clipper.Step())
 //       for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
@@ -4935,7 +4874,7 @@ struct ANCHORStorage
 // - Clipper calculate the actual range of elements to display based on the current clipping
 // rectangle, position the cursor before the first visible element.
 // - User code submit visible elements.
-struct ANCHORListClipper
+struct AnchorListClipper
 {
   int DisplayStart;
   int DisplayEnd;
@@ -4947,8 +4886,8 @@ struct ANCHORListClipper
   float ItemsHeight;
   float StartPosY;
 
-  ANCHOR_API ANCHORListClipper();
-  ANCHOR_API ~ANCHORListClipper();
+  ANCHOR_API AnchorListClipper();
+  ANCHOR_API ~AnchorListClipper();
 
   // items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor
   // won't be advanced in the final step) items_height: Use -1.0f to be calculated automatically on
@@ -4961,40 +4900,40 @@ struct ANCHORListClipper
   ANCHOR_API bool Step();                             // Call until it returns false. The DisplayStart/DisplayEnd fields will
                                                       // be set and you can process/draw those items.
 
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-  inline ANCHORListClipper(int items_count, float items_height = -1.0f)
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+  inline AnchorListClipper(int items_count, float items_height = -1.0f)
   {
     memset(this, 0, sizeof(*this));
     ItemsCount = -1;
     Begin(items_count, items_height);
   }  // [removed in 1.79]
-#  endif
+#endif
 };
 
 // Helpers macros to generate 32-bit encoded colors
-#  ifdef ANCHOR_USE_BGRA_PACKED_COLOR
-#    define ANCHOR_COL32_R_SHIFT 16
-#    define ANCHOR_COL32_G_SHIFT 8
-#    define ANCHOR_COL32_B_SHIFT 0
-#    define ANCHOR_COL32_A_SHIFT 24
-#    define ANCHOR_COL32_A_MASK 0xFF000000
-#  else
-#    define ANCHOR_COL32_R_SHIFT 0
-#    define ANCHOR_COL32_G_SHIFT 8
-#    define ANCHOR_COL32_B_SHIFT 16
-#    define ANCHOR_COL32_A_SHIFT 24
-#    define ANCHOR_COL32_A_MASK 0xFF000000
-#  endif
-#  define ANCHOR_COL32(R, G, B, A) \
-    (((AnchorU32)(A) << ANCHOR_COL32_A_SHIFT) | ((AnchorU32)(B) << ANCHOR_COL32_B_SHIFT) | \
-     ((AnchorU32)(G) << ANCHOR_COL32_G_SHIFT) | ((AnchorU32)(R) << ANCHOR_COL32_R_SHIFT))
-#  define ANCHOR_COL32_WHITE ANCHOR_COL32(255, 255, 255, 255)  // Opaque white = 0xFFFFFFFF
-#  define ANCHOR_COL32_BLACK ANCHOR_COL32(0, 0, 0, 255)        // Opaque black
-#  define ANCHOR_COL32_BLACK_TRANS ANCHOR_COL32(0, 0, 0, 0)    // Transparent black = 0x00000000
+#ifdef ANCHOR_USE_BGRA_PACKED_COLOR
+#  define ANCHOR_COL32_R_SHIFT 16
+#  define ANCHOR_COL32_G_SHIFT 8
+#  define ANCHOR_COL32_B_SHIFT 0
+#  define ANCHOR_COL32_A_SHIFT 24
+#  define ANCHOR_COL32_A_MASK 0xFF000000
+#else
+#  define ANCHOR_COL32_R_SHIFT 0
+#  define ANCHOR_COL32_G_SHIFT 8
+#  define ANCHOR_COL32_B_SHIFT 16
+#  define ANCHOR_COL32_A_SHIFT 24
+#  define ANCHOR_COL32_A_MASK 0xFF000000
+#endif
+#define ANCHOR_COL32(R, G, B, A) \
+  (((AnchorU32)(A) << ANCHOR_COL32_A_SHIFT) | ((AnchorU32)(B) << ANCHOR_COL32_B_SHIFT) | \
+   ((AnchorU32)(G) << ANCHOR_COL32_G_SHIFT) | ((AnchorU32)(R) << ANCHOR_COL32_R_SHIFT))
+#define ANCHOR_COL32_WHITE ANCHOR_COL32(255, 255, 255, 255)  // Opaque white = 0xFFFFFFFF
+#define ANCHOR_COL32_BLACK ANCHOR_COL32(0, 0, 0, 255)        // Opaque black
+#define ANCHOR_COL32_BLACK_TRANS ANCHOR_COL32(0, 0, 0, 0)    // Transparent black = 0x00000000
 
 // Helper: AnchorColor() implicitly converts colors to either AnchorU32 (packed 4x1 byte) or
 // wabi::GfVec4f (4x1 float) Prefer using ANCHOR_COL32() macros if you want a guaranteed
-// compile-time AnchorU32 for usage with ImDrawList API.
+// compile-time AnchorU32 for usage with AnchorDrawList API.
 // **Avoid storing AnchorColor! Store either u32 of wabi::GfVec4f. This is not a full-featured
 // color class. MAY OBSOLETE.
 // **None of the ANCHOR API are using AnchorColor directly but you can use it as a convenience to
@@ -5059,18 +4998,18 @@ struct AnchorColor
 };
 
 //-----------------------------------------------------------------------------
-// [SECTION] Drawing API (ImDrawCmd, ImDrawIdx, ImDrawVert, ImDrawChannel, ImDrawListSplitter,
-// ImDrawListFlags, ImDrawList, ImDrawData) Hold a series of drawing commands. The user provides a
-// renderer for ImDrawData which essentially contains an array of ImDrawList.
+// [SECTION] Drawing API (AnchorDrawCmd, AnchorDrawIdx, AnchorDrawVert, AnchorDrawChannel, AnchorDrawListSplitter,
+// AnchorDrawListFlags, AnchorDrawList, AnchorDrawData) Hold a series of drawing commands. The user provides a
+// renderer for AnchorDrawData which essentially contains an array of AnchorDrawList.
 //-----------------------------------------------------------------------------
 
 // The maximum line width to bake anti-aliased textures for. Build atlas with
 // AnchorFontAtlasFlags_NoBakedLines to disable baking.
-#  ifndef IM_DRAWLIST_TEX_LINES_WIDTH_MAX
-#    define IM_DRAWLIST_TEX_LINES_WIDTH_MAX (63)
-#  endif
+#ifndef ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX
+#  define ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX (63)
+#endif
 
-// ImDrawCallback: Draw callbacks for advanced uses [configurable type: override in
+// AnchorDrawCallback: Draw callbacks for advanced uses [configurable type: override in
 // ANCHOR_config.h] NB: You most likely do NOT need to use draw callbacks just to create your own
 // widget or customized UI rendering, you can poke into the draw list for that! Draw callback may
 // be useful for example to:
@@ -5079,11 +5018,11 @@ struct AnchorColor
 //  etc.
 // The expected behavior from your rendering function is 'if (cmd.UserCallback != NULL) {
 // cmd.UserCallback(parent_list, cmd); } else { RenderTriangles() }' If you want to override the
-// signature of ImDrawCallback, you can simply use e.g. '#define ImDrawCallback MyDrawCallback' (in
+// signature of AnchorDrawCallback, you can simply use e.g. '#define AnchorDrawCallback MyDrawCallback' (in
 // ANCHOR_config.h) + update rendering backend accordingly.
-#  ifndef ImDrawCallback
-typedef void (*ImDrawCallback)(const ImDrawList *parent_list, const ImDrawCmd *cmd);
-#  endif
+#ifndef AnchorDrawCallback
+typedef void (*AnchorDrawCallback)(const AnchorDrawList *parent_list, const AnchorDrawCmd *cmd);
+#endif
 
 // Special Draw callback value to request renderer backend to reset the graphics/render state.
 // The renderer backend needs to handle this special value, otherwise it will crash trying to call
@@ -5091,35 +5030,35 @@ typedef void (*ImDrawCallback)(const ImDrawList *parent_list, const ImDrawCmd *c
 // have altered the render state and you want it to be restored. It is not done by default because
 // they are many perfectly useful way of altering render state for ANCHOR contents (e.g. changing
 // shader/blending settings before an Image call).
-#  define ImDrawCallback_ResetRenderState (ImDrawCallback)(-1)
+#define AnchorDrawCallback_ResetRenderState (AnchorDrawCallback)(-1)
 
 // Typically, 1 command = 1 GPU draw call (unless command is a callback)
-// - VtxOffset/IdxOffset: When 'io.BackendFlags & ANCHORBackendFlags_RendererHasVtxOffset' is
+// - VtxOffset/IdxOffset: When 'io.BackendFlags & AnchorBackendFlags_RendererHasVtxOffset' is
 // enabled,
 //   those fields allow us to render meshes larger than 64K vertices while keeping 16-bit indices.
 //   Pre-1.71 backends will typically ignore the VtxOffset/IdxOffset fields.
 // - The ClipRect/TextureId/VtxOffset fields must be contiguous as we memcmp() them together (this
 // is asserted for).
-struct ImDrawCmd
+struct AnchorDrawCmd
 {
-  wabi::GfVec4f ClipRect;       // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to
-                                // get clipping rectangle in "viewport" coordinates
-  AnchorTextureID TextureId;    // 4-8  // User-provided texture ID. Set by user in
-                                // ImfontAtlas::SetTexID() for fonts or passed to Image*() functions.
-                                // Ignore if never using images or multiple fonts atlas.
-  unsigned int VtxOffset;       // 4    // Start offset in vertex buffer.
-                                // ANCHORBackendFlags_RendererHasVtxOffset: always 0, otherwise may be
-                                // >0 to support meshes larger than 64K vertices with 16-bit indices.
-  unsigned int IdxOffset;       // 4    // Start offset in index buffer. Always equal to sum of
-                                // ElemCount drawn so far.
-  unsigned int ElemCount;       // 4    // Number of indices (multiple of 3) to be rendered as
-                                // triangles. Vertices are stored in the callee ImDrawList's
-                                // vtx_buffer[] array, indices in idx_buffer[].
-  ImDrawCallback UserCallback;  // 4-8  // If != NULL, call the function instead of rendering the
-                                // vertices. clip_rect and texture_id will be set normally.
-  void *UserCallbackData;       // 4-8  // The draw callback code can access this.
+  wabi::GfVec4f ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract AnchorDrawData->DisplayPos to
+                                    // get clipping rectangle in "viewport" coordinates
+  AnchorTextureID TextureId;        // 4-8  // User-provided texture ID. Set by user in
+                                    // AnchorAtlas::SetTexID() for fonts or passed to Image*() functions.
+                                    // Ignore if never using images or multiple fonts atlas.
+  unsigned int VtxOffset;           // 4    // Start offset in vertex buffer.
+                                    // AnchorBackendFlags_RendererHasVtxOffset: always 0, otherwise may be
+                                    // >0 to support meshes larger than 64K vertices with 16-bit indices.
+  unsigned int IdxOffset;           // 4    // Start offset in index buffer. Always equal to sum of
+                                    // ElemCount drawn so far.
+  unsigned int ElemCount;           // 4    // Number of indices (multiple of 3) to be rendered as
+                                    // triangles. Vertices are stored in the callee AnchorDrawList's
+                                    // vtx_buffer[] array, indices in idx_buffer[].
+  AnchorDrawCallback UserCallback;  // 4-8  // If != NULL, call the function instead of rendering the
+                                    // vertices. clip_rect and texture_id will be set normally.
+  void *UserCallbackData;           // 4-8  // The draw callback code can access this.
 
-  ImDrawCmd()
+  AnchorDrawCmd()
   {
     memset(this, 0, sizeof(*this));
   }  // Also ensure our padding fields are zeroed
@@ -5134,22 +5073,22 @@ struct ImDrawCmd
 
 // Vertex index, default to 16-bit
 // To allow large meshes with 16-bit indices: set 'io.BackendFlags |=
-// ANCHORBackendFlags_RendererHasVtxOffset' and handle ImDrawCmd::VtxOffset in the renderer backend
-// (recommended). To use 32-bit indices: override with '#define ImDrawIdx unsigned int' in
+// AnchorBackendFlags_RendererHasVtxOffset' and handle AnchorDrawCmd::VtxOffset in the renderer backend
+// (recommended). To use 32-bit indices: override with '#define AnchorDrawIdx unsigned int' in
 // ANCHOR_config.h.
-#  ifndef ImDrawIdx
-typedef unsigned short ImDrawIdx;
-#  endif
+#ifndef AnchorDrawIdx
+typedef unsigned short AnchorDrawIdx;
+#endif
 
 // Vertex layout
-#  ifndef ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT
-struct ImDrawVert
+#ifndef ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT
+struct AnchorDrawVert
 {
   wabi::GfVec2f pos;
   wabi::GfVec2f uv;
   AnchorU32 col;
 };
-#  else
+#else
 // You can override the vertex format layout by defining ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in
 // ANCHOR_config.h The code expect wabi::GfVec2f pos (8 bytes), wabi::GfVec2f uv (8 bytes),
 // AnchorU32 col (4 bytes), but you can re-order them or add other fields as needed to simplify
@@ -5159,38 +5098,38 @@ struct ImDrawVert
 // DOESN'T CALL A CONSTRUCTOR SO ANY CUSTOM FIELD WILL BE UNINITIALIZED. IF YOU ADD EXTRA FIELDS
 // (SUCH AS A 'Z' COORDINATES) YOU WILL NEED TO CLEAR THEM DURING RENDER OR TO IGNORE THEM.
 ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT;
-#  endif
+#endif
 
-// [Internal] For use by ImDrawList
-struct ImDrawCmdHeader
+// [Internal] For use by AnchorDrawList
+struct AnchorDrawCmdHeader
 {
   wabi::GfVec4f ClipRect;
   AnchorTextureID TextureId;
   unsigned int VtxOffset;
 };
 
-// [Internal] For use by ImDrawListSplitter
-struct ImDrawChannel
+// [Internal] For use by AnchorDrawListSplitter
+struct AnchorDrawChannel
 {
-  AnchorVector<ImDrawCmd> _CmdBuffer;
-  AnchorVector<ImDrawIdx> _IdxBuffer;
+  AnchorVector<AnchorDrawCmd> _CmdBuffer;
+  AnchorVector<AnchorDrawIdx> _IdxBuffer;
 };
 
 // Split/Merge functions are used to split the draw list into different layers which can be drawn
 // into out of order. This is used by the Columns/Tables API, so items of each column can be
 // batched together in a same draw call.
-struct ImDrawListSplitter
+struct AnchorDrawListSplitter
 {
   int _Current;  // Current channel number (0)
   int _Count;    // Number of active channels (1+)
-  AnchorVector<ImDrawChannel>
+  AnchorVector<AnchorDrawChannel>
     _Channels;  // Draw channels (not resized down so _Count might be < Channels.Size)
 
-  inline ImDrawListSplitter()
+  inline AnchorDrawListSplitter()
   {
     memset(this, 0, sizeof(*this));
   }
-  inline ~ImDrawListSplitter()
+  inline ~AnchorDrawListSplitter()
   {
     ClearFreeMemory();
   }
@@ -5200,67 +5139,67 @@ struct ImDrawListSplitter
     _Count = 1;
   }  // Do not clear Channels[] so our allocations are reused next frame
   ANCHOR_API void ClearFreeMemory();
-  ANCHOR_API void Split(ImDrawList *draw_list, int count);
-  ANCHOR_API void Merge(ImDrawList *draw_list);
-  ANCHOR_API void SetCurrentChannel(ImDrawList *draw_list, int channel_idx);
+  ANCHOR_API void Split(AnchorDrawList *draw_list, int count);
+  ANCHOR_API void Merge(AnchorDrawList *draw_list);
+  ANCHOR_API void SetCurrentChannel(AnchorDrawList *draw_list, int channel_idx);
 };
 
-// Flags for ImDrawList functions
-// (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old
+// Flags for AnchorDrawList functions
+// (Legacy: bit 0 must always correspond to AnchorDrawFlags_Closed to be backward compatible with old
 // API using a bool. Bits 1..3 must be unused)
-enum ImDrawFlags_
+enum AnchorDrawFlags_
 {
-  ImDrawFlags_None = 0,
-  ImDrawFlags_Closed = 1 << 0,  // PathStroke(), AddPolyline(): specify that shape should be closed
-                                // (Important: this is always == 1 for legacy reason)
-  ImDrawFlags_RoundCornersTopLeft =
+  AnchorDrawFlags_None = 0,
+  AnchorDrawFlags_Closed = 1 << 0,  // PathStroke(), AddPolyline(): specify that shape should be closed
+                                    // (Important: this is always == 1 for legacy reason)
+  AnchorDrawFlags_RoundCornersTopLeft =
     1 << 4,  // AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only
              // (when rounding > 0.0f, we default to all corners). Was 0x01.
-  ImDrawFlags_RoundCornersTopRight =
+  AnchorDrawFlags_RoundCornersTopRight =
     1 << 5,  // AddRect(), AddRectFilled(), PathRect(): enable rounding top-right corner only
              // (when rounding > 0.0f, we default to all corners). Was 0x02.
-  ImDrawFlags_RoundCornersBottomLeft =
+  AnchorDrawFlags_RoundCornersBottomLeft =
     1 << 6,  // AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-left corner only
              // (when rounding > 0.0f, we default to all corners). Was 0x04.
-  ImDrawFlags_RoundCornersBottomRight =
+  AnchorDrawFlags_RoundCornersBottomRight =
     1 << 7,  // AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-right corner only
              // (when rounding > 0.0f, we default to all corners). Wax 0x08.
-  ImDrawFlags_RoundCornersNone =
+  AnchorDrawFlags_RoundCornersNone =
     1 << 8,  // AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when
              // rounding > 0.0f). This is NOT zero, NOT an implicit flag!
-  ImDrawFlags_RoundCornersTop = ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersTopRight,
-  ImDrawFlags_RoundCornersBottom = ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersBottomRight,
-  ImDrawFlags_RoundCornersLeft = ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft,
-  ImDrawFlags_RoundCornersRight = ImDrawFlags_RoundCornersBottomRight | ImDrawFlags_RoundCornersTopRight,
-  ImDrawFlags_RoundCornersAll = ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersTopRight |
-                                ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersBottomRight,
-  ImDrawFlags_RoundCornersDefault_ = ImDrawFlags_RoundCornersAll,  // Default to ALL corners if none of the
-                                                                   // _RoundCornersXX flags are specified.
-  ImDrawFlags_RoundCornersMask_ = ImDrawFlags_RoundCornersAll | ImDrawFlags_RoundCornersNone
+  AnchorDrawFlags_RoundCornersTop = AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersTopRight,
+  AnchorDrawFlags_RoundCornersBottom = AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersBottomRight,
+  AnchorDrawFlags_RoundCornersLeft = AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersTopLeft,
+  AnchorDrawFlags_RoundCornersRight = AnchorDrawFlags_RoundCornersBottomRight | AnchorDrawFlags_RoundCornersTopRight,
+  AnchorDrawFlags_RoundCornersAll = AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersTopRight |
+                                    AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersBottomRight,
+  AnchorDrawFlags_RoundCornersDefault_ = AnchorDrawFlags_RoundCornersAll,  // Default to ALL corners if none of the
+                                                                           // _RoundCornersXX flags are specified.
+  AnchorDrawFlags_RoundCornersMask_ = AnchorDrawFlags_RoundCornersAll | AnchorDrawFlags_RoundCornersNone
 };
 
-// Flags for ImDrawList instance. Those are set automatically by ANCHOR:: functions from ANCHOR_IO
+// Flags for AnchorDrawList instance. Those are set automatically by ANCHOR:: functions from AnchorIO
 // settings, and generally not manipulated directly. It is however possible to temporarily alter
-// flags between calls to ImDrawList:: functions.
-enum ImDrawListFlags_
+// flags between calls to AnchorDrawList:: functions.
+enum AnchorDrawListFlags_
 {
-  ImDrawListFlags_None = 0,
-  ImDrawListFlags_AntiAliasedLines =
+  AnchorDrawListFlags_None = 0,
+  AnchorDrawListFlags_AntiAliasedLines =
     1 << 0,  // Enable anti-aliased lines/borders (*2 the number of triangles for 1.0f wide line or
              // lines thin enough to be drawn using textures, otherwise *3 the number of triangles)
-  ImDrawListFlags_AntiAliasedLinesUseTex =
+  AnchorDrawListFlags_AntiAliasedLinesUseTex =
     1 << 1,  // Enable anti-aliased lines/borders using textures when possible. Require backend
              // to render with bilinear filtering.
-  ImDrawListFlags_AntiAliasedFill =
-    1 << 2,                                // Enable anti-aliased edge around filled shapes (rounded rectangles, circles).
-  ImDrawListFlags_AllowVtxOffset = 1 << 3  // Can emit 'VtxOffset > 0' to allow large meshes. Set when
-                                           // 'ANCHORBackendFlags_RendererHasVtxOffset' is enabled.
+  AnchorDrawListFlags_AntiAliasedFill =
+    1 << 2,                                    // Enable anti-aliased edge around filled shapes (rounded rectangles, circles).
+  AnchorDrawListFlags_AllowVtxOffset = 1 << 3  // Can emit 'VtxOffset > 0' to allow large meshes. Set when
+                                               // 'AnchorBackendFlags_RendererHasVtxOffset' is enabled.
 };
 
 // Draw command list
 // This is the low-level list of polygons that ANCHOR:: functions are filling. At the end of the
-// frame, all command lists are passed to your ANCHOR_IO::RenderDrawListFn function for rendering.
-// Each ANCHOR window contains its own ImDrawList. You can use ANCHOR::GetWindowDrawList() to
+// frame, all command lists are passed to your AnchorIO::RenderDrawListFn function for rendering.
+// Each ANCHOR window contains its own AnchorDrawList. You can use ANCHOR::GetWindowDrawList() to
 // access the current window draw list and draw custom primitives.
 // You can interleave normal ANCHOR:: calls and adding primitives to the current draw list.
 // In single viewport mode, top-left is == GetMainViewport()->Pos (generally 0,0), bottom-right is
@@ -5269,45 +5208,45 @@ enum ImDrawListFlags_
 // you may want to apply it to ClipRect as well!) Important: Primitives are always added to the
 // list and not culled (culling is done at higher-level by ANCHOR:: functions), if you use this API
 // a lot consider coarse culling your drawn objects.
-struct ImDrawList
+struct AnchorDrawList
 {
   // This is what you have to render
-  AnchorVector<ImDrawCmd> CmdBuffer;   // Draw commands. Typically 1 command = 1 GPU draw call,
-                                       // unless the command is a callback.
-  AnchorVector<ImDrawIdx> IdxBuffer;   // Index buffer. Each command consume ImDrawCmd::ElemCount of those
-  AnchorVector<ImDrawVert> VtxBuffer;  // Vertex buffer.
-  ImDrawListFlags Flags;               // Flags, you may poke into these to adjust anti-aliasing settings per-primitive.
+  AnchorVector<AnchorDrawCmd> CmdBuffer;   // Draw commands. Typically 1 command = 1 GPU draw call,
+                                           // unless the command is a callback.
+  AnchorVector<AnchorDrawIdx> IdxBuffer;   // Index buffer. Each command consume AnchorDrawCmd::ElemCount of those
+  AnchorVector<AnchorDrawVert> VtxBuffer;  // Vertex buffer.
+  AnchorDrawListFlags Flags;               // Flags, you may poke into these to adjust anti-aliasing settings per-primitive.
 
   // [Internal, used while building lists]
   unsigned int _VtxCurrentIdx;  // [Internal] generally == VtxBuffer.Size unless we are past 64K
                                 // vertices, in which case this gets reset to 0.
-  const ImDrawListSharedData
+  const AnchorDrawListSharedData
     *_Data;                                       // Pointer to shared draw data (you can use ANCHOR::GetDrawListSharedData() to get
                                                   // the one from current ANCHOR context)
   const char *_OwnerName;                         // Pointer to owner window's name for debugging
-  ImDrawVert *_VtxWritePtr;                       // [Internal] point within VtxBuffer.Data after each add command (to
+  AnchorDrawVert *_VtxWritePtr;                   // [Internal] point within VtxBuffer.Data after each add command (to
                                                   // avoid using the AnchorVector<> operators too much)
-  ImDrawIdx *_IdxWritePtr;                        // [Internal] point within IdxBuffer.Data after each add command (to
+  AnchorDrawIdx *_IdxWritePtr;                    // [Internal] point within IdxBuffer.Data after each add command (to
                                                   // avoid using the AnchorVector<> operators too much)
   AnchorVector<wabi::GfVec4f> _ClipRectStack;     // [Internal]
   AnchorVector<AnchorTextureID> _TextureIdStack;  // [Internal]
   AnchorVector<wabi::GfVec2f> _Path;              // [Internal] current path building
-  ImDrawCmdHeader _CmdHeader;                     // [Internal] template of active commands. Fields should match those
+  AnchorDrawCmdHeader _CmdHeader;                 // [Internal] template of active commands. Fields should match those
                                                   // of CmdBuffer.back().
-  ImDrawListSplitter _Splitter;                   // [Internal] for channels api (note: prefer using your own
-                                                  // persistent instance of ImDrawListSplitter!)
+  AnchorDrawListSplitter _Splitter;               // [Internal] for channels api (note: prefer using your own
+                                                  // persistent instance of AnchorDrawListSplitter!)
   float _FringeScale;                             // [Internal] anti-alias fringe is scaled by this value, this helps to keep
                                                   // things sharp while zooming at vertex buffer content
 
-  // If you want to create ImDrawList instances, pass them ANCHOR::GetDrawListSharedData() or
-  // create and use your own ImDrawListSharedData (so you can use ImDrawList without ANCHOR)
-  ImDrawList(const ImDrawListSharedData *shared_data)
+  // If you want to create AnchorDrawList instances, pass them ANCHOR::GetDrawListSharedData() or
+  // create and use your own AnchorDrawListSharedData (so you can use AnchorDrawList without ANCHOR)
+  AnchorDrawList(const AnchorDrawListSharedData *shared_data)
   {
     memset(this, 0, sizeof(*this));
     _Data = shared_data;
   }
 
-  ~ImDrawList()
+  ~AnchorDrawList()
   {
     _ClearFreeMemory();
   }
@@ -5350,14 +5289,14 @@ struct ImDrawList
                           const wabi::GfVec2f &p_max,
                           AnchorU32 col,
                           float rounding = 0.0f,
-                          ImDrawFlags flags = 0,
+                          AnchorDrawFlags flags = 0,
                           float thickness = 1.0f);  // a: upper-left, b: lower-right (== upper-left + size)
   ANCHOR_API void AddRectFilled(
     const wabi::GfVec2f &p_min,
     const wabi::GfVec2f &p_max,
     AnchorU32 col,
     float rounding = 0.0f,
-    ImDrawFlags flags = 0);  // a: upper-left, b: lower-right (== upper-left + size)
+    AnchorDrawFlags flags = 0);  // a: upper-left, b: lower-right (== upper-left + size)
   ANCHOR_API void AddRectFilledMultiColor(const wabi::GfVec2f &p_min,
                                           const wabi::GfVec2f &p_max,
                                           AnchorU32 col_upr_left,
@@ -5414,7 +5353,7 @@ struct ImDrawList
   ANCHOR_API void AddPolyline(const wabi::GfVec2f *points,
                               int num_points,
                               AnchorU32 col,
-                              ImDrawFlags flags,
+                              AnchorDrawFlags flags,
                               float thickness);
   ANCHOR_API void AddConvexPolyFilled(
     const wabi::GfVec2f *points,
@@ -5462,7 +5401,7 @@ struct ImDrawList
                                   const wabi::GfVec2f &uv_max,
                                   AnchorU32 col,
                                   float rounding,
-                                  ImDrawFlags flags = 0);
+                                  AnchorDrawFlags flags = 0);
 
   // Stateful path API, add points then finish with PathFillConvex() or PathStroke()
   inline void PathClear()
@@ -5483,7 +5422,7 @@ struct ImDrawList
     AddConvexPolyFilled(_Path.Data, _Path.Size, col);
     _Path.Size = 0;
   }  // Note: Anti-aliased filling requires points to be in clockwise order.
-  inline void PathStroke(AnchorU32 col, ImDrawFlags flags = 0, float thickness = 1.0f)
+  inline void PathStroke(AnchorU32 col, AnchorDrawFlags flags = 0, float thickness = 1.0f)
   {
     AddPolyline(_Path.Data, _Path.Size, col, flags, thickness);
     _Path.Size = 0;
@@ -5507,27 +5446,27 @@ struct ImDrawList
   ANCHOR_API void PathRect(const wabi::GfVec2f &rect_min,
                            const wabi::GfVec2f &rect_max,
                            float rounding = 0.0f,
-                           ImDrawFlags flags = 0);
+                           AnchorDrawFlags flags = 0);
 
   // Advanced
   ANCHOR_API void AddCallback(
-    ImDrawCallback callback,
-    void *callback_data);                      // Your rendering function must check for 'UserCallback' in ImDrawCmd
-                                               // and call the function instead of rendering triangles.
-  ANCHOR_API void AddDrawCmd();                // This is useful if you need to forcefully create a new draw call
-                                               // (to allow for dependent rendering / blending). Otherwise
-                                               // primitives are merged into the same draw-call as much as
-                                               // possible
-  ANCHOR_API ImDrawList *CloneOutput() const;  // Create a clone of the CmdBuffer/IdxBuffer/VtxBuffer.
+    AnchorDrawCallback callback,
+    void *callback_data);                          // Your rendering function must check for 'UserCallback' in AnchorDrawCmd
+                                                   // and call the function instead of rendering triangles.
+  ANCHOR_API void AddDrawCmd();                    // This is useful if you need to forcefully create a new draw call
+                                                   // (to allow for dependent rendering / blending). Otherwise
+                                                   // primitives are merged into the same draw-call as much as
+                                                   // possible
+  ANCHOR_API AnchorDrawList *CloneOutput() const;  // Create a clone of the CmdBuffer/IdxBuffer/VtxBuffer.
 
   // Advanced: Channels
   // - Use to split render into layers. By switching channels to can render out-of-order (e.g.
   // submit FG primitives before BG primitives)
   // - Use to minimize draw calls (e.g. if going back-and-forth between multiple clipping
   // rectangles, prefer to append into separate channels then merge at the end)
-  // - FIXME-OBSOLETE: This API shouldn't have been in ImDrawList in the first place!
-  //   Prefer using your own persistent instance of ImDrawListSplitter as you can stack them.
-  //   Using the ImDrawList::ChannelsXXXX you cannot stack a split over another.
+  // - FIXME-OBSOLETE: This API shouldn't have been in AnchorDrawList in the first place!
+  //   Prefer using your own persistent instance of AnchorDrawListSplitter as you can stack them.
+  //   Using the AnchorDrawList::ChannelsXXXX you cannot stack a split over another.
   inline void ChannelsSplit(int count)
   {
     _Splitter.Split(this, count);
@@ -5571,18 +5510,18 @@ struct ImDrawList
     _VtxWritePtr++;
     _VtxCurrentIdx++;
   }
-  inline void PrimWriteIdx(ImDrawIdx idx)
+  inline void PrimWriteIdx(AnchorDrawIdx idx)
   {
     *_IdxWritePtr = idx;
     _IdxWritePtr++;
   }
   inline void PrimVtx(const wabi::GfVec2f &pos, const wabi::GfVec2f &uv, AnchorU32 col)
   {
-    PrimWriteIdx((ImDrawIdx)_VtxCurrentIdx);
+    PrimWriteIdx((AnchorDrawIdx)_VtxCurrentIdx);
     PrimWriteVtx(pos, uv, col);
   }  // Write vertex with unique index
 
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
   inline void AddBezierCurve(const wabi::GfVec2f &p1,
                              const wabi::GfVec2f &p2,
                              const wabi::GfVec2f &p3,
@@ -5600,7 +5539,7 @@ struct ImDrawList
   {
     PathBezierCubicCurveTo(p2, p3, p4, num_segments);
   }
-#  endif
+#endif
 
   // [Internal helpers]
   ANCHOR_API void _ResetForNewFrame();
@@ -5625,15 +5564,15 @@ struct ImDrawList
 // All draw data to render a ANCHOR frame
 // (NB: the style and the naming convention here is a little inconsistent, we currently preserve
 // them for backward compatibility purpose, as this is one of the oldest structure exposed by the
-// library! Basically, ImDrawList == CmdList)
-struct ImDrawData
+// library! Basically, AnchorDrawList == CmdList)
+struct AnchorDrawData
 {
   bool Valid;                      // Only valid after Render() is called and before the next NewFrame() is called.
-  int CmdListsCount;               // Number of ImDrawList* to render
-  int TotalIdxCount;               // For convenience, sum of all ImDrawList's IdxBuffer.Size
-  int TotalVtxCount;               // For convenience, sum of all ImDrawList's VtxBuffer.Size
-  ImDrawList **CmdLists;           // Array of ImDrawList* to render. The ImDrawList are owned by
-                                   // ANCHOR_Context and only pointed to from here.
+  int CmdListsCount;               // Number of AnchorDrawList* to render
+  int TotalIdxCount;               // For convenience, sum of all AnchorDrawList's IdxBuffer.Size
+  int TotalVtxCount;               // For convenience, sum of all AnchorDrawList's VtxBuffer.Size
+  AnchorDrawList **CmdLists;       // Array of AnchorDrawList* to render. The AnchorDrawList are owned by
+                                   // AnchorContext and only pointed to from here.
   wabi::GfVec2f DisplayPos;        // Top-left position of the viewport to render (== top-left of the
                                    // orthogonal projection matrix to use) (== GetMainViewport()->Pos for
                                    // the main viewport, == (0.0) in most single-viewport applications)
@@ -5644,21 +5583,21 @@ struct ImDrawData
                                    // display, (2,2) on OSX with Retina display.
 
   // Functions
-  ImDrawData()
+  AnchorDrawData()
   {
     Clear();
   }
   void Clear()
   {
     memset(this, 0, sizeof(*this));
-  }                                     // The ImDrawList are owned by ANCHOR_Context!
+  }                                     // The AnchorDrawList are owned by AnchorContext!
   ANCHOR_API void DeIndexAllBuffers();  // Helper to convert all buffers from indexed to
                                         // non-indexed, in case you cannot render indexed. Note:
                                         // this is slow and most likely a waste of resources.
                                         // Always prefer indexed rendering!
   ANCHOR_API void ScaleClipRects(
     const wabi::GfVec2f
-      &fb_scale);  // Helper to scale the ClipRect field of each ImDrawCmd. Use if your final
+      &fb_scale);  // Helper to scale the ClipRect field of each AnchorDrawCmd. Use if your final
                    // output buffer is at a different scale than ANCHOR expects, or if there is
                    // a difference between your window resolution and framebuffer resolution.
 };
@@ -5966,7 +5905,7 @@ struct AnchorFontAtlas
   ANCHOR_API void CalcCustomRectUV(const AnchorFontAtlasCustomRect *rect,
                                    wabi::GfVec2f *out_uv_min,
                                    wabi::GfVec2f *out_uv_max) const;
-  ANCHOR_API bool GetMouseCursorTexData(ANCHOR_MouseCursor cursor,
+  ANCHOR_API bool GetMouseCursorTexData(AnchorMouseCursor cursor,
                                         wabi::GfVec2f *out_offset,
                                         wabi::GfVec2f *out_size,
                                         wabi::GfVec2f out_uv_border[2],
@@ -5978,7 +5917,7 @@ struct AnchorFontAtlas
 
   AnchorFontAtlasFlags Flags;  // Build flags (see AnchorFontAtlasFlags_)
   AnchorTextureID TexID;       // User data to refer to the texture once it has been uploaded to user's graphic
-                               // systems. It is passed back to you during rendering via the ImDrawCmd structure.
+                               // systems. It is passed back to you during rendering via the AnchorDrawCmd structure.
   int TexDesiredWidth;         // Texture width desired by user before Build(). Must be a power-of-two. If
                                // have many glyphs your graphics API have texture size restrictions you
                                // may want to increase texture width to decrease height.
@@ -6004,9 +5943,9 @@ struct AnchorFontAtlas
     Fonts;  // Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling
             // ANCHOR::NewFrame(), use ANCHOR::PushFont()/PopFont() to change the current font.
   AnchorVector<AnchorFontAtlasCustomRect>
-    CustomRects;                                                  // Rectangles for packing custom texture data into the atlas.
-  AnchorVector<AnchorFontConfig> ConfigData;                      // Configuration data
-  wabi::GfVec4f TexUvLines[IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1];  // UVs for baked anti-aliased lines
+    CustomRects;                                                      // Rectangles for packing custom texture data into the atlas.
+  AnchorVector<AnchorFontConfig> ConfigData;                          // Configuration data
+  wabi::GfVec4f TexUvLines[ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1];  // UVs for baked anti-aliased lines
 
   // [Internal] Font builder
   const AnchorFontBuilderIO
@@ -6020,10 +5959,10 @@ struct AnchorFontAtlas
   int PackIdMouseCursors;  // Custom texture rectangle ID for white pixel and mouse cursors
   int PackIdLines;         // Custom texture rectangle ID for baked anti-aliased lines
 
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
   typedef AnchorFontAtlasCustomRect CustomRect;             // OBSOLETED in 1.72+
   typedef AnchorFontGlyphRangesBuilder GlyphRangesBuilder;  // OBSOLETED in 1.67+
-#  endif
+#endif
 };
 
 // Font runtime data and rendering
@@ -6100,12 +6039,12 @@ struct AnchorFont
                                                const char *text,
                                                const char *text_end,
                                                float wrap_width) const;
-  ANCHOR_API void RenderChar(ImDrawList *draw_list,
+  ANCHOR_API void RenderChar(AnchorDrawList *draw_list,
                              float size,
                              wabi::GfVec2f pos,
                              AnchorU32 col,
                              AnchorWChar c) const;
-  ANCHOR_API void RenderText(ImDrawList *draw_list,
+  ANCHOR_API void RenderText(AnchorDrawList *draw_list,
                              float size,
                              wabi::GfVec2f pos,
                              AnchorU32 col,
@@ -6144,13 +6083,13 @@ struct AnchorFont
 // [SECTION] Viewports
 //-----------------------------------------------------------------------------
 
-// Flags stored in ANCHORViewport::Flags
-enum ANCHORViewportFlags_
+// Flags stored in AnchorViewport::Flags
+enum AnchorViewportFlags_
 {
-  ANCHORViewportFlags_None = 0,
-  ANCHORViewportFlags_IsPlatformWindow = 1 << 0,   // Represent a Platform Window
-  ANCHORViewportFlags_IsPlatformMonitor = 1 << 1,  // Represent a Platform Monitor (unused yet)
-  ANCHORViewportFlags_OwnedByApp = 1 << 2          // Platform Window: is created/managed by the
+  AnchorViewportFlags_None = 0,
+  AnchorViewportFlags_IsPlatformWindow = 1 << 0,   // Represent a Platform Window
+  AnchorViewportFlags_IsPlatformMonitor = 1 << 1,  // Represent a Platform Monitor (unused yet)
+  AnchorViewportFlags_OwnedByApp = 1 << 2          // Platform Window: is created/managed by the
                                                    // application (rather than a ANCHOR backend)
 };
 
@@ -6165,9 +6104,9 @@ enum ANCHORViewportFlags_
 //   - Work Area = entire viewport minus sections used by main menu bars (for platform windows), or
 //   by task bar (for platform monitor).
 //   - Windows are generally trying to stay within the Work Area of their host viewport.
-struct ANCHORViewport
+struct AnchorViewport
 {
-  ANCHORViewportFlags Flags;  // See ANCHORViewportFlags_
+  AnchorViewportFlags Flags;  // See AnchorViewportFlags_
   wabi::GfVec2f Pos;          // Main Area: Position of the viewport (ANCHOR coordinates are the same as OS
                               // desktop/native coordinates)
   wabi::GfVec2f Size;         // Main Area: Size of the viewport.
@@ -6176,7 +6115,7 @@ struct ANCHORViewport
   wabi::GfVec2f WorkSize;     // Work Area: Size of the viewport minus task bars, menu bars, status
                               // bars (<= Size)
 
-  ANCHORViewport()
+  AnchorViewport()
   {
     memset(this, 0, sizeof(*this));
   }
@@ -6199,7 +6138,7 @@ struct ANCHORViewport
 // ANCHOR_DISABLE_OBSOLETE_FUNCTIONS' in ANCHOR_config.h to stay ahead.
 //-----------------------------------------------------------------------------
 
-#  ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
 namespace ANCHOR
 {
 // OBSOLETED in 1.81 (from February 2021)
@@ -6216,16 +6155,13 @@ static inline void ListBoxFooter()
   EndListBox();
 }
 // OBSOLETED in 1.79 (from August 2020)
-static inline void OpenPopupContextItem(const char *str_id = NULL, ANCHOR_MouseButton mb = 1)
+static inline void OpenPopupContextItem(const char *str_id = NULL, AnchorMouseButton mb = 1)
 {
   OpenPopupOnItemClick(str_id, mb);
-}  // Bool return value removed. Use IsWindowAppearing() in BeginPopup() instead. Renamed in 1.77,
-   // renamed back in 1.79. Sorry!
-// OBSOLETED in 1.78 (from June 2020)
-// Old drag/sliders functions that took a 'float power = 1.0' argument instead of flags.
-// For shared code, you can version check at compile-time with `#if ANCHOR_VERSION_NUM >= 17704`.
+}
+
 ANCHOR_API bool DragScalar(const char *label,
-                           ANCHOR_DataType data_type,
+                           AnchorDataType data_type,
                            void *p_data,
                            float v_speed,
                            const void *p_min,
@@ -6233,7 +6169,7 @@ ANCHOR_API bool DragScalar(const char *label,
                            const char *format,
                            float power);
 ANCHOR_API bool DragScalarN(const char *label,
-                            ANCHOR_DataType data_type,
+                            AnchorDataType data_type,
                             void *p_data,
                             int components,
                             float v_speed,
@@ -6249,7 +6185,7 @@ static inline bool DragFloat(const char *label,
                              const char *format,
                              float power)
 {
-  return DragScalar(label, ANCHOR_DataType_Float, v, v_speed, &v_min, &v_max, format, power);
+  return DragScalar(label, AnchorDataType_Float, v, v_speed, &v_min, &v_max, format, power);
 }
 static inline bool DragFloat2(const char *label,
                               float v[2],
@@ -6259,7 +6195,7 @@ static inline bool DragFloat2(const char *label,
                               const char *format,
                               float power)
 {
-  return DragScalarN(label, ANCHOR_DataType_Float, v, 2, v_speed, &v_min, &v_max, format, power);
+  return DragScalarN(label, AnchorDataType_Float, v, 2, v_speed, &v_min, &v_max, format, power);
 }
 static inline bool DragFloat3(const char *label,
                               float v[3],
@@ -6269,7 +6205,7 @@ static inline bool DragFloat3(const char *label,
                               const char *format,
                               float power)
 {
-  return DragScalarN(label, ANCHOR_DataType_Float, v, 3, v_speed, &v_min, &v_max, format, power);
+  return DragScalarN(label, AnchorDataType_Float, v, 3, v_speed, &v_min, &v_max, format, power);
 }
 static inline bool DragFloat4(const char *label,
                               float v[4],
@@ -6279,17 +6215,17 @@ static inline bool DragFloat4(const char *label,
                               const char *format,
                               float power)
 {
-  return DragScalarN(label, ANCHOR_DataType_Float, v, 4, v_speed, &v_min, &v_max, format, power);
+  return DragScalarN(label, AnchorDataType_Float, v, 4, v_speed, &v_min, &v_max, format, power);
 }
 ANCHOR_API bool SliderScalar(const char *label,
-                             ANCHOR_DataType data_type,
+                             AnchorDataType data_type,
                              void *p_data,
                              const void *p_min,
                              const void *p_max,
                              const char *format,
                              float power);
 ANCHOR_API bool SliderScalarN(const char *label,
-                              ANCHOR_DataType data_type,
+                              AnchorDataType data_type,
                               void *p_data,
                               int components,
                               const void *p_min,
@@ -6303,7 +6239,7 @@ static inline bool SliderFloat(const char *label,
                                const char *format,
                                float power)
 {
-  return SliderScalar(label, ANCHOR_DataType_Float, v, &v_min, &v_max, format, power);
+  return SliderScalar(label, AnchorDataType_Float, v, &v_min, &v_max, format, power);
 }
 static inline bool SliderFloat2(const char *label,
                                 float v[2],
@@ -6312,7 +6248,7 @@ static inline bool SliderFloat2(const char *label,
                                 const char *format,
                                 float power)
 {
-  return SliderScalarN(label, ANCHOR_DataType_Float, v, 2, &v_min, &v_max, format, power);
+  return SliderScalarN(label, AnchorDataType_Float, v, 2, &v_min, &v_max, format, power);
 }
 static inline bool SliderFloat3(const char *label,
                                 float v[3],
@@ -6321,7 +6257,7 @@ static inline bool SliderFloat3(const char *label,
                                 const char *format,
                                 float power)
 {
-  return SliderScalarN(label, ANCHOR_DataType_Float, v, 3, &v_min, &v_max, format, power);
+  return SliderScalarN(label, AnchorDataType_Float, v, 3, &v_min, &v_max, format, power);
 }
 static inline bool SliderFloat4(const char *label,
                                 float v[4],
@@ -6330,12 +6266,12 @@ static inline bool SliderFloat4(const char *label,
                                 const char *format,
                                 float power)
 {
-  return SliderScalarN(label, ANCHOR_DataType_Float, v, 4, &v_min, &v_max, format, power);
+  return SliderScalarN(label, AnchorDataType_Float, v, 4, &v_min, &v_max, format, power);
 }
 // OBSOLETED in 1.77 (from June 2020)
-static inline bool BeginPopupContextWindow(const char *str_id, ANCHOR_MouseButton mb, bool over_items)
+static inline bool BeginPopupContextWindow(const char *str_id, AnchorMouseButton mb, bool over_items)
 {
-  return BeginPopupContextWindow(str_id, mb | (over_items ? 0 : ANCHORPopupFlags_NoOpenOverItems));
+  return BeginPopupContextWindow(str_id, mb | (over_items ? 0 : AnchorPopupFlags_NoOpenOverItems));
 }
 // OBSOLETED in 1.72 (from April 2019)
 static inline void TreeAdvanceToLabelPos()
@@ -6343,7 +6279,7 @@ static inline void TreeAdvanceToLabelPos()
   SetCursorPosX(GetCursorPosX() + GetTreeNodeToLabelSpacing());
 }
 // OBSOLETED in 1.71 (from June 2019)
-static inline void SetNextTreeNodeOpen(bool open, ANCHOR_Cond cond = 0)
+static inline void SetNextTreeNodeOpen(bool open, AnchorCond cond = 0)
 {
   SetNextItemOpen(open, cond);
 }
@@ -6353,7 +6289,7 @@ static inline float GetContentRegionAvailWidth()
   return GetContentRegionAvail()[0];
 }
 // OBSOLETED in 1.69 (from Mar 2019)
-static inline ImDrawList *GetOverlayDrawList()
+static inline AnchorDrawList *GetOverlayDrawList()
 {
   return GetForegroundDrawList();
 }
@@ -6361,37 +6297,35 @@ static inline ImDrawList *GetOverlayDrawList()
 
 // OBSOLETED in 1.82 (from Mars 2021): flags for AddRect(), AddRectFilled(), AddImageRounded(),
 // PathRect()
-typedef ImDrawFlags ImDrawCornerFlags;
-enum ImDrawCornerFlags_
+typedef AnchorDrawFlags AnchorDrawCornerFlags;
+enum AnchorDrawCornerFlags_
 {
-  ImDrawCornerFlags_None =
-    ImDrawFlags_RoundCornersNone,                                    // Was == 0 prior to 1.82, this is now ==
-                                                                     // ImDrawFlags_RoundCornersNone which is != 0 and not implicit
-  ImDrawCornerFlags_TopLeft = ImDrawFlags_RoundCornersTopLeft,       // Was == 0x01 (1 << 0) prior to 1.82. Order
-                                                                     // matches ImDrawFlags_NoRoundCorner* flag
-                                                                     // (we exploit this internally).
-  ImDrawCornerFlags_TopRight = ImDrawFlags_RoundCornersTopRight,     // Was == 0x02 (1 << 1) prior to 1.82.
-  ImDrawCornerFlags_BotLeft = ImDrawFlags_RoundCornersBottomLeft,    // Was == 0x04 (1 << 2) prior to 1.82.
-  ImDrawCornerFlags_BotRight = ImDrawFlags_RoundCornersBottomRight,  // Was == 0x08 (1 << 3) prior to 1.82.
-  ImDrawCornerFlags_All = ImDrawFlags_RoundCornersAll,               // Was == 0x0F prior to 1.82
-  ImDrawCornerFlags_Top = ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_TopRight,
-  ImDrawCornerFlags_Bot = ImDrawCornerFlags_BotLeft | ImDrawCornerFlags_BotRight,
-  ImDrawCornerFlags_Left = ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_BotLeft,
-  ImDrawCornerFlags_Right = ImDrawCornerFlags_TopRight | ImDrawCornerFlags_BotRight
+  AnchorDrawCornerFlags_None =
+    AnchorDrawFlags_RoundCornersNone,                                        // Was == 0 prior to 1.82, this is now ==
+                                                                             // AnchorDrawFlags_RoundCornersNone which is != 0 and not implicit
+  AnchorDrawCornerFlags_TopLeft = AnchorDrawFlags_RoundCornersTopLeft,       // Was == 0x01 (1 << 0) prior to 1.82. Order
+                                                                             // matches AnchorDrawFlags_NoRoundCorner* flag
+                                                                             // (we exploit this internally).
+  AnchorDrawCornerFlags_TopRight = AnchorDrawFlags_RoundCornersTopRight,     // Was == 0x02 (1 << 1) prior to 1.82.
+  AnchorDrawCornerFlags_BotLeft = AnchorDrawFlags_RoundCornersBottomLeft,    // Was == 0x04 (1 << 2) prior to 1.82.
+  AnchorDrawCornerFlags_BotRight = AnchorDrawFlags_RoundCornersBottomRight,  // Was == 0x08 (1 << 3) prior to 1.82.
+  AnchorDrawCornerFlags_All = AnchorDrawFlags_RoundCornersAll,               // Was == 0x0F prior to 1.82
+  AnchorDrawCornerFlags_Top = AnchorDrawCornerFlags_TopLeft | AnchorDrawCornerFlags_TopRight,
+  AnchorDrawCornerFlags_Bot = AnchorDrawCornerFlags_BotLeft | AnchorDrawCornerFlags_BotRight,
+  AnchorDrawCornerFlags_Left = AnchorDrawCornerFlags_TopLeft | AnchorDrawCornerFlags_BotLeft,
+  AnchorDrawCornerFlags_Right = AnchorDrawCornerFlags_TopRight | AnchorDrawCornerFlags_BotRight
 };
 
-#  endif  // #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#endif  // #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
 
 //-----------------------------------------------------------------------------
 
-#  if defined(__clang__)
-#    pragma clang diagnostic pop
-#  elif defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#  endif
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 
-#  ifdef _MSC_VER
-#    pragma warning(pop)
-#  endif
-
-#endif  // #ifndef ANCHOR_DISABLE
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif

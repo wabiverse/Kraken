@@ -18,7 +18,7 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -42,19 +42,19 @@ struct SDL_Window;
 typedef union SDL_Event SDL_Event;
 
 /** SDL Window Forward -> */
-class ANCHOR_WindowSDL;
+class AnchorWindowSDL;
 
-class ANCHOR_SystemSDL : public ANCHOR_System
+class AnchorSystemSDL : public AnchorSystem
 {
  public:
-  ANCHOR_SystemSDL();
-  ~ANCHOR_SystemSDL();
+  AnchorSystemSDL();
+  ~AnchorSystemSDL();
 
   bool processEvents(bool waitForEvent);
 
-  eAnchorStatus getModifierKeys(ANCHOR_ModifierKeys &keys) const;
+  eAnchorStatus getModifierKeys(AnchorModifierKeys &keys) const;
 
-  eAnchorStatus getButtons(ANCHOR_Buttons &buttons) const;
+  eAnchorStatus getButtons(AnchorButtons &buttons) const;
 
   void getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const;
 
@@ -71,20 +71,20 @@ class ANCHOR_SystemSDL : public ANCHOR_System
  private:
   eAnchorStatus init();
 
-  ANCHOR_ISystemWindow *createWindow(const char *title,
-                                     const char *icon,
-                                     AnchorS32 left,
-                                     AnchorS32 top,
-                                     AnchorU32 width,
-                                     AnchorU32 height,
-                                     eAnchorWindowState state,
-                                     eAnchorDrawingContextType type,
-                                     int vkSettings,
-                                     const bool exclusive = false,
-                                     const bool is_dialog = false,
-                                     const ANCHOR_ISystemWindow *parentWindow = NULL);
+  AnchorISystemWindow *createWindow(const char *title,
+                                    const char *icon,
+                                    AnchorS32 left,
+                                    AnchorS32 top,
+                                    AnchorU32 width,
+                                    AnchorU32 height,
+                                    eAnchorWindowState state,
+                                    eAnchorDrawingContextType type,
+                                    int vkSettings,
+                                    const bool exclusive = false,
+                                    const bool is_dialog = false,
+                                    const AnchorISystemWindow *parentWindow = NULL);
 
-  ANCHOR_WindowSDL *findAnchorWindow(SDL_Window *sdl_win);
+  AnchorWindowSDL *findAnchorWindow(SDL_Window *sdl_win);
 
   bool generateWindowExposeEvents();
 
@@ -93,14 +93,14 @@ class ANCHOR_SystemSDL : public ANCHOR_System
   eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
 
   /** The vector of windows that need to be updated. */
-  // TODO std::vector<ANCHOR_WindowSDL *> m_dirty_windows;
-  ANCHOR_WindowSDL *m_sdl_window;
+  // TODO std::vector<AnchorWindowSDL *> m_dirty_windows;
+  AnchorWindowSDL *m_sdl_window;
 };
 
-class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager
+class AnchorDisplayManagerSDL : public AnchorDisplayManager
 {
  public:
-  ANCHOR_DisplayManagerSDL(ANCHOR_SystemSDL *system);
+  AnchorDisplayManagerSDL(AnchorSystemSDL *system);
 
   eAnchorStatus getNumDisplays(AnchorU8 &numDisplays) const;
 
@@ -115,14 +115,14 @@ class ANCHOR_DisplayManagerSDL : public ANCHOR_DisplayManager
   eAnchorStatus setCurrentDisplaySetting(AnchorU8 display, const ANCHOR_DisplaySetting &setting);
 
  private:
-  ANCHOR_SystemSDL *m_system;
+  AnchorSystemSDL *m_system;
   SDL_DisplayMode m_mode;
 };
 
-class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
+class AnchorWindowSDL : public AnchorSystemWindow
 {
  private:
-  ANCHOR_SystemSDL *m_system;
+  AnchorSystemSDL *m_system;
   bool m_valid_setup;
   bool m_invalid_window;
 
@@ -132,20 +132,20 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
  public:
-  ANCHOR_WindowSDL(ANCHOR_SystemSDL *system,
-                   const char *title,
-                   const char *icon,
-                   AnchorS32 left,
-                   AnchorS32 top,
-                   AnchorU32 width,
-                   AnchorU32 height,
-                   eAnchorWindowState state,
-                   eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
-                   const bool stereoVisual = false,
-                   const bool exclusive = false,
-                   const ANCHOR_ISystemWindow *parentWindow = NULL);
+  AnchorWindowSDL(AnchorSystemSDL *system,
+                  const char *title,
+                  const char *icon,
+                  AnchorS32 left,
+                  AnchorS32 top,
+                  AnchorU32 width,
+                  AnchorU32 height,
+                  eAnchorWindowState state,
+                  eAnchorDrawingContextType type = ANCHOR_DrawingContextTypeNone,
+                  const bool stereoVisual = false,
+                  const bool exclusive = false,
+                  const AnchorISystemWindow *parentWindow = NULL);
 
-  ~ANCHOR_WindowSDL();
+  ~AnchorWindowSDL();
 
   std::string getTitle() const;
 
@@ -167,7 +167,7 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
 
   bool getValid() const;
 
-  void getClientBounds(ANCHOR_Rect &bounds) const;
+  void getClientBounds(AnchorRect &bounds) const;
 
  protected:
   /**
@@ -207,12 +207,12 @@ class ANCHOR_WindowSDL : public ANCHOR_SystemWindow
 
   eAnchorStatus beginFullScreen() const
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   eAnchorStatus endFullScreen() const
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   AnchorU16 getDPIHint();

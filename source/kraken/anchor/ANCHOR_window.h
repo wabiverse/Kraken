@@ -16,23 +16,23 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
-#include "ANCHOR_Rect.h"
+#include "ANCHOR_rect.h"
 
-class ANCHOR_ISystemWindow
+class AnchorISystemWindow
 {
  public:
   /**
    * Destructor. */
-  virtual ~ANCHOR_ISystemWindow()
+  virtual ~AnchorISystemWindow()
   {}
 
   /**
@@ -152,7 +152,7 @@ class ANCHOR_ISystemWindow
    * Returns the client rectangle dimensions.
    * The left and top members of the rectangle are always zero.
    * @param bounds: The bounding rectangle of the client area of the window. */
-  virtual void getClientBounds(ANCHOR_Rect &bounds) const = 0;
+  virtual void getClientBounds(AnchorRect &bounds) const = 0;
 
   /**
    * Returns the recommended DPI for this window.
@@ -168,7 +168,7 @@ class ANCHOR_ISystemWindow
    * Returns the window rectangle dimensions.
    * These are screen coordinates.
    * @param bounds: The bounding rectangle of the window. */
-  virtual void getWindowBounds(ANCHOR_Rect &bounds) const = 0;
+  virtual void getWindowBounds(AnchorRect &bounds) const = 0;
 
   /**
    * Returns the visibility state of the cursor.
@@ -180,7 +180,7 @@ class ANCHOR_ISystemWindow
 /* ----------------------------------------------------------------------------------------- */
 
 
-class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
+class AnchorSystemWindow : public AnchorISystemWindow
 {
  public:
   /**
@@ -193,13 +193,13 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
    * @param type: The type of drawing context installed in this window.
    * @param stereoVisual: Stereo visual for quad buffered stereo.
    * @param exclusive: Use to show the window ontop and ignore others (used full-screen). */
-  ANCHOR_SystemWindow(AnchorU32 width,
-                      AnchorU32 height,
-                      eAnchorWindowState state,
-                      const bool wantStereoVisual = false,
-                      const bool exclusive = false);
+  AnchorSystemWindow(AnchorU32 width,
+                     AnchorU32 height,
+                     eAnchorWindowState state,
+                     const bool wantStereoVisual = false,
+                     const bool exclusive = false);
 
-  virtual ~ANCHOR_SystemWindow();
+  virtual ~AnchorSystemWindow();
 
   /**
    * Returns indication as to whether the window is valid.
@@ -219,7 +219,7 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
     return false;
   }
 
-  eAnchorStatus getCursorGrabBounds(ANCHOR_Rect &bounds);
+  eAnchorStatus getCursorGrabBounds(AnchorRect &bounds);
 
   /**
    * Returns the visibility state of the cursor.
@@ -315,7 +315,7 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   eAnchorAxisFlag m_cursorGrabAxis;
 
   /** Wrap the cursor within this region. */
-  ANCHOR_Rect m_cursorGrabBounds;
+  AnchorRect m_cursorGrabBounds;
 
   /** Accumulated offset from m_cursorGrabInitPos. */
   AnchorS32 m_cursorGrabAccumPos[2];
@@ -347,34 +347,34 @@ class ANCHOR_SystemWindow : public ANCHOR_ISystemWindow
   float m_nativePixelSize;
 };
 
-inline bool ANCHOR_SystemWindow::getCursorVisibility() const
+inline bool AnchorSystemWindow::getCursorVisibility() const
 {
   return m_cursorVisible;
 }
 
-inline void ANCHOR_SystemWindow::getCursorGrabAccum(AnchorS32 &x, AnchorS32 &y) const
+inline void AnchorSystemWindow::getCursorGrabAccum(AnchorS32 &x, AnchorS32 &y) const
 {
   x = m_cursorGrabAccumPos[0];
   y = m_cursorGrabAccumPos[1];
 }
 
-inline eAnchorAxisFlag ANCHOR_SystemWindow::getCursorGrabAxis() const
+inline eAnchorAxisFlag AnchorSystemWindow::getCursorGrabAxis() const
 {
   return m_cursorGrabAxis;
 }
 
-inline bool ANCHOR_SystemWindow::getCursorGrabModeIsWarp() const
+inline bool AnchorSystemWindow::getCursorGrabModeIsWarp() const
 {
   return (m_cursorGrab == ANCHOR_GrabWrap) || (m_cursorGrab == ANCHOR_GrabHide);
 }
 
-inline void ANCHOR_SystemWindow::setCursorGrabAccum(AnchorS32 x, AnchorS32 y)
+inline void AnchorSystemWindow::setCursorGrabAccum(AnchorS32 x, AnchorS32 y)
 {
   m_cursorGrabAccumPos[0] = x;
   m_cursorGrabAccumPos[1] = y;
 }
 
-inline eAnchorStandardCursor ANCHOR_SystemWindow::getCursorShape() const
+inline eAnchorStandardCursor AnchorSystemWindow::getCursorShape() const
 {
   return m_cursorShape;
 }

@@ -31,14 +31,15 @@
 #define NUMAAPI_VERSION_MAJOR 1
 #define NUMAAPI_VERSION_MINOR 0
 
-enum NUMAAPI_Result {
-  NUMAAPI_SUCCESS       = 0,
+enum NUMAAPI_Result
+{
+  NUMAAPI_SUCCESS = 0,
   // NUMA is not available on this platform.
   NUMAAPI_NOT_AVAILABLE = 1,
   // Generic error, no real details are available,
-  NUMAAPI_ERROR         = 2,
+  NUMAAPI_ERROR = 2,
   // Error installing atexit() handlers.
-  NUMAAPI_ERROR_ATEXIT  = 3,
+  NUMAAPI_ERROR_ATEXIT = 3,
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ enum NUMAAPI_Result {
 NUMAAPI_Result numaAPI_Initialize(void);
 
 // Get string representation of NUMAPIResult.
-const char* numaAPI_ResultAsString(NUMAAPI_Result result);
+const char *numaAPI_ResultAsString(NUMAAPI_Result result);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Topology query.
@@ -99,15 +100,15 @@ bool numaAPI_RunThreadOnNode(int node);
 // Memory management.
 
 // Allocate memory on a given node,
-void* numaAPI_AllocateOnNode(size_t size, int node);
+void *numaAPI_AllocateOnNode(size_t size, int node);
 
 // Allocate memory in the local memory, closest to the current node.
-void* numaAPI_AllocateLocal(size_t size);
+void *numaAPI_AllocateLocal(size_t size);
 
 // Frees size bytes of memory starting at start.
 //
 // TODO(sergey): Consider making it regular free() semantic.
-void numaAPI_Free(void* start, size_t size);
+void numaAPI_Free(void *start, size_t size);
 
 // Initially is based on Chromium's build_config.h, with tweaks and extensions
 // needed for this project.
@@ -262,7 +263,7 @@ void numaAPI_Free(void* start, size_t size);
 // For access to standard POSIXish features use OS_POSIX instead of a
 // more specific macro.
 #if OS_AIX || OS_ANDROID || OS_ASMJS || OS_FREEBSD || OS_LINUX || OS_MACOSX || \
-    OS_NACL || OS_NETBSD || OS_OPENBSD || OS_QNX || OS_SOLARIS
+  OS_NACL || OS_NETBSD || OS_OPENBSD || OS_QNX || OS_SOLARIS
 #  define OS_POSIX 1
 #else
 #  define OS_POSIX 0
@@ -317,7 +318,7 @@ void numaAPI_Free(void* start, size_t size);
 // particular case, that warning might be helpful to catch errors elsewhere.
 
 // C++11 check.
-#if ((defined(__cplusplus) && (__cplusplus > 199711L)) ||                      \
+#if ((defined(__cplusplus) && (__cplusplus > 199711L)) || \
      (defined(_MSC_VER) && (_MSC_VER >= 1800)))
 #  define COMPILER_SUPPORTS_CXX11 1
 #else

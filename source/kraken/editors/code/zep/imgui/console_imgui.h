@@ -67,8 +67,8 @@ struct ZepConsole : Zep::IZepComponent
 
     if (!ANCHOR::Begin(title,
                        p_open,
-                       ANCHOR_WindowFlags_NoTitleBar | ANCHOR_WindowFlags_NoResize |
-                         ANCHOR_WindowFlags_NoScrollbar))
+                       AnchorWindowFlags_NoTitleBar | AnchorWindowFlags_NoResize |
+                         AnchorWindowFlags_NoScrollbar))
     {
       ANCHOR::PopStyleVar(1);
       ANCHOR::PopStyleColor(1);

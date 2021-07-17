@@ -61,13 +61,13 @@ void PIL_sleep_ms(int ms)
   usleep(ms * 1000);
 }
 
-void KLI_pretty_time(time_t t, char* r_time)
+void KLI_pretty_time(time_t t, char *r_time)
 {
   char buffer[UNI_MAX_TIME];
 
   std::tm *ptm = std::localtime(&t);
 
   std::strftime(buffer, UNI_MAX_TIME, "%A, %B %d, %Y %I:%M:%S %p", ptm);
-  
+
   KLI_strncpy(r_time, buffer, UNI_MAX_TIME);
 }

@@ -43,12 +43,12 @@ typedef int (*ObjectCallbackFunc)(struct kContext *C,
                                   UsdAttributeVector list);
 typedef void (*ObjectFreeFunc)(void *data);
 typedef struct ObjectUNI *(*ObjectRegisterFunc)(struct Main *kmain,
-                                                     struct ReportList *reports,
-                                                     void *data,
-                                                     const char *identifier,
-                                                     ObjectValidateFunc validate,
-                                                     ObjectCallbackFunc call,
-                                                     ObjectFreeFunc free);
+                                                struct ReportList *reports,
+                                                void *data,
+                                                const char *identifier,
+                                                ObjectValidateFunc validate,
+                                                ObjectCallbackFunc call,
+                                                ObjectFreeFunc free);
 typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct ObjectUNI *type);
 typedef void **(*ObjectInstanceFunc)(struct ObjectUNI *ptr);
 
@@ -57,8 +57,9 @@ typedef void **(*ObjectInstanceFunc)(struct ObjectUNI *ptr);
  *
  * Root UNI data structure that lists all prim types. */
 
-struct KrakenUNI {
-  std::vector<struct ObjectUNI*> objects;
+struct KrakenUNI
+{
+  std::vector<struct ObjectUNI *> objects;
 };
 
 WABI_NAMESPACE_END

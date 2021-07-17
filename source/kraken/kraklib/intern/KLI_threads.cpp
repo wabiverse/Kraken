@@ -72,7 +72,8 @@ static int num_threads_override = 0;
 void KLI_threadapi_init(void)
 {
   mainid = pthread_self();
-  if (numaAPI_Initialize() == NUMAAPI_SUCCESS) {
+  if (numaAPI_Initialize() == NUMAAPI_SUCCESS)
+  {
     is_numa_available = true;
   }
 }

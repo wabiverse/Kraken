@@ -18,179 +18,93 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-// ANCHOR, v1.84 WIP
-// (demo code)
-
-/*
-
-Index of this file:
-
-// [SECTION] Forward Declarations, Helpers
-// [SECTION] Demo Window / ShowDemoWindow()
-// - sub section: ShowDemoWindowWidgets()
-// - sub section: ShowDemoWindowLayout()
-// - sub section: ShowDemoWindowPopups()
-// - sub section: ShowDemoWindowTables()
-// - sub section: ShowDemoWindowMisc()
-// [SECTION] About Window / ShowAboutWindow()
-// [SECTION] Style Editor / ShowStyleEditor()
-// [SECTION] Example App: Main Menu Bar / ShowExampleAppMainMenuBar()
-// [SECTION] Example App: Debug Console / ShowExampleAppConsole()
-// [SECTION] Example App: Debug Log / ShowExampleAppLog()
-// [SECTION] Example App: Simple Layout / ShowExampleAppLayout()
-// [SECTION] Example App: Property Editor / ShowExampleAppPropertyEditor()
-// [SECTION] Example App: Long Text / ShowExampleAppLongText()
-// [SECTION] Example App: Auto Resize / ShowExampleAppAutoResize()
-// [SECTION] Example App: Constrained Resize / ShowExampleAppConstrainedResize()
-// [SECTION] Example App: Simple overlay / ShowExampleAppSimpleOverlay()
-// [SECTION] Example App: Fullscreen window / ShowExampleAppFullscreen()
-// [SECTION] Example App: Manipulating window titles / ShowExampleAppWindowTitles()
-// [SECTION] Example App: Custom Rendering using ImDrawList API / ShowExampleAppCustomRendering()
-// [SECTION] Example App: Documents Handling / ShowExampleAppDocuments()
-
-*/
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include "ANCHOR_api.h"
-#ifndef ANCHOR_DISABLE
 
 // System includes
-#  include <ctype.h>                         // toupper
-#  include <limits.h>                        // INT_MIN, INT_MAX
-#  include <math.h>                          // sqrtf, powf, cosf, sinf, floorf, ceilf
-#  include <stdio.h>                         // vsnprintf, sscanf, printf
-#  include <stdlib.h>                        // NULL, malloc, free, atoi
-#  if defined(_MSC_VER) && _MSC_VER <= 1500  // MSVC 2008 or earlier
-#    include <stddef.h>                      // intptr_t
-#  else
-#    include <stdint.h>  // intptr_t
-#  endif
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#if defined(_MSC_VER) && _MSC_VER <= 1500
+#  include <stddef.h>
+#else
+#  include <stdint.h>
+#endif
 
 // Visual Studio warnings
-#  ifdef _MSC_VER
-#    pragma warning(disable : 4996)   // 'This function or variable may be unsafe': strcpy, strdup, \
-                                      // sprintf, vsnprintf, sscanf, fopen
-#    pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator \
-                                      // 'xxx' on a 4 byte value and then casting the result to a 8 \
-                                      // byte value. Cast the value to the wider type before \
-                                      // calling operator 'xxx' to avoid overflow(io.2).
-#  endif
+#ifdef _MSC_VER
+#  pragma warning(disable : 4996)
+#  pragma warning(disable : 26451)
+#endif
 
 // Clang/GCC warnings with -Weverything
-#  if defined(__clang__)
-#    if __has_warning("-Wunknown-warning-option")
-#      pragma clang diagnostic ignored \
-        "-Wunknown-warning-option"  // warning: unknown warning group 'xxx' // not all warnings \
-                                    // are known by all Clang versions and they tend to be \
-                                    // rename-happy.. so ignoring warnings triggers new warnings \
-                                    // on some configuration. Great!
-#    endif
-#    pragma clang diagnostic ignored "-Wunknown-pragmas"  // warning: unknown warning group 'xxx'
-#    pragma clang diagnostic ignored "-Wold-style-cast"   // warning: use of old-style cast // yes, \
-                                                          // they are more terse.
-#    pragma clang diagnostic ignored \
-      "-Wdeprecated-declarations"  // warning: 'xx' is deprecated: The POSIX name for this..   // \
-                                   // for strdup used in demo code (so user can copy & paste the \
-                                   // code)
-#    pragma clang diagnostic ignored \
-      "-Wint-to-void-pointer-cast"                        // warning: cast to 'void *' from smaller integer type
-#    pragma clang diagnostic ignored "-Wformat-security"  // warning: format string is not a string literal
-#    pragma clang diagnostic ignored \
-      "-Wexit-time-destructors"                         // warning: declaration requires an exit-time destructor \
-                                                        // // exit-time destruction order is undefined. if \
-                                                        // MemFree() leads to users code that has been disabled \
-                                                        // before exit it might cause problems. ANCHOR coding \
-                                                        // style welcomes static/globals.
-#    pragma clang diagnostic ignored "-Wunused-macros"  // warning: macro is not used // we define \
-                                                        // snprintf/vsnprintf on Windows so they \
-                                                        // are available, but not always used.
-#    pragma clang diagnostic ignored \
-      "-Wzero-as-null-pointer-constant"  // warning: zero as null pointer constant // some \
-                                         // standard header variations use #define NULL 0
-#    pragma clang diagnostic ignored \
-      "-Wdouble-promotion"                                  // warning: implicit conversion from 'float' to 'double' when passing \
-                                                            // argument to function  // using printf() is a misery with this as \
-                                                            // C++ va_arg ellipsis changes float to double.
-#    pragma clang diagnostic ignored "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
-#    pragma clang diagnostic ignored \
-      "-Wimplicit-int-float-conversion"  // warning: implicit conversion from 'xxx' to 'float' \
-                                         // may lose precision
-#  elif defined(__GNUC__)
-#    pragma GCC diagnostic ignored \
-      "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
-#    pragma GCC diagnostic ignored \
-      "-Wint-to-pointer-cast"                            // warning: cast to pointer from integer of different size
-#    pragma GCC diagnostic ignored "-Wformat-security"   // warning: format string is not a string \
-                                                         // literal (potentially insecure)
-#    pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to \
-                                                         // 'double' when passing argument to function
-#    pragma GCC diagnostic ignored \
-      "-Wconversion"  // warning: conversion to 'xxxx' from 'xxxx' may alter its value
-#    pragma GCC diagnostic ignored \
-      "-Wmisleading-indentation"  // [__GNUC__ >= 6] warning: this 'if' clause does not guard \
-                                  // this statement      // GCC 6.0+ only. See #883 on GitHub.
+#if defined(__clang__)
+#  if __has_warning("-Wunknown-warning-option")
+#    pragma clang diagnostic ignored "-Wunknown-warning-option"
 #  endif
+#  pragma clang diagnostic ignored "-Wunknown-pragmas"
+#  pragma clang diagnostic ignored "-Wold-style-cast"
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#  pragma clang diagnostic ignored "-Wint-to-void-pointer-cast"
+#  pragma clang diagnostic ignored "-Wformat-security"
+#  pragma clang diagnostic ignored "-Wexit-time-destructors"
+#  pragma clang diagnostic ignored "-Wunused-macros"
+#  pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#  pragma clang diagnostic ignored "-Wdouble-promotion"
+#  pragma clang diagnostic ignored "-Wreserved-id-macro"
+#  pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic ignored "-Wpragmas"
+#  pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+#  pragma GCC diagnostic ignored "-Wformat-security"
+#  pragma GCC diagnostic ignored "-Wdouble-promotion"
+#  pragma GCC diagnostic ignored "-Wconversion"
+#  pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif
 
-// Play it nice with Windows users (Update: May 2018, Notepad now supports Unix-style carriage
-// returns!)
-#  ifdef _WIN32
-#    define IM_NEWLINE "\r\n"
-#  else
-#    define IM_NEWLINE "\n"
-#  endif
+#ifdef _WIN32
+#  define IM_NEWLINE "\r\n"
+#else
+#  define IM_NEWLINE "\n"
+#endif
 
-// Helpers
-#  if defined(_MSC_VER) && !defined(snprintf)
-#    define snprintf _snprintf
-#  endif
-#  if defined(_MSC_VER) && !defined(vsnprintf)
-#    define vsnprintf _vsnprintf
-#  endif
+#if defined(_MSC_VER) && !defined(snprintf)
+#  define snprintf _snprintf
+#endif
+#if defined(_MSC_VER) && !defined(vsnprintf)
+#  define vsnprintf _vsnprintf
+#endif
 
-// Format specifiers, printing 64-bit hasn't been decently standardized...
-// In a real application you should be using PRId64 and PRIu64 from <inttypes.h> (non-windows) and
-// on Windows define them yourself.
+#ifdef _MSC_VER
+#  define IM_PRId64 "I64d"
+#  define IM_PRIu64 "I64u"
+#else
+#  define IM_PRId64 "lld"
+#  define IM_PRIu64 "llu"
+#endif
+
+#define ANCHOR_MIN(A, B) (((A) < (B)) ? (A) : (B))
+#define ANCHOR_MAX(A, B) (((A) >= (B)) ? (A) : (B))
+#define ANCHOR_CLAMP(V, MN, MX) ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
+
+#ifndef ANCHOR_CDECL
 #  ifdef _MSC_VER
-#    define IM_PRId64 "I64d"
-#    define IM_PRIu64 "I64u"
+#    define ANCHOR_CDECL __cdecl
 #  else
-#    define IM_PRId64 "lld"
-#    define IM_PRIu64 "llu"
+#    define ANCHOR_CDECL
 #  endif
-
-// Helpers macros
-// We normally try to not use many helpers in ANCHOR_demo.cpp in order to make code easier to copy
-// and paste, but making an exception here as those are largely simplifying code... In other ANCHOR
-// sources we can use nicer internal functions from ANCHOR_internal.h (ImMin/AnchorMax) but not in
-// the demo.
-#  define IM_MIN(A, B) (((A) < (B)) ? (A) : (B))
-#  define IM_MAX(A, B) (((A) >= (B)) ? (A) : (B))
-#  define IM_CLAMP(V, MN, MX) ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
-
-// Enforce cdecl calling convention for functions called by the standard library, in case
-// compilation settings changed the default to e.g. __vectorcall
-#  ifndef ANCHOR_CDECL
-#    ifdef _MSC_VER
-#      define ANCHOR_CDECL __cdecl
-#    else
-#      define ANCHOR_CDECL
-#    endif
-#  endif
+#endif
 
 WABI_NAMESPACE_USING
-
-//-----------------------------------------------------------------------------
-// [SECTION] Forward Declarations, Helpers
-//-----------------------------------------------------------------------------
-
-#  if !defined(ANCHOR_DISABLE_DEMO_WINDOWS)
 
 // Forward Declarations
 static void ShowExampleAppDocuments(bool *p_open);
@@ -227,7 +141,7 @@ static void HelpMarker(const char *desc)
 // Helper to display basic user controls.
 void ANCHOR::ShowUserGuide()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR::BulletText("Double-click on title bar to collapse window.");
   ANCHOR::BulletText(
     "Click and drag on lower corner to resize window\n"
@@ -361,35 +275,35 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
   static bool no_background = false;
   static bool no_bring_to_front = false;
 
-  ANCHOR_WindowFlags window_flags = 0;
+  AnchorWindowFlags window_flags = 0;
   if (no_titlebar)
-    window_flags |= ANCHOR_WindowFlags_NoTitleBar;
+    window_flags |= AnchorWindowFlags_NoTitleBar;
   if (no_scrollbar)
-    window_flags |= ANCHOR_WindowFlags_NoScrollbar;
+    window_flags |= AnchorWindowFlags_NoScrollbar;
   if (!no_menu)
-    window_flags |= ANCHOR_WindowFlags_MenuBar;
+    window_flags |= AnchorWindowFlags_MenuBar;
   if (no_move)
-    window_flags |= ANCHOR_WindowFlags_NoMove;
+    window_flags |= AnchorWindowFlags_NoMove;
   if (no_resize)
-    window_flags |= ANCHOR_WindowFlags_NoResize;
+    window_flags |= AnchorWindowFlags_NoResize;
   if (no_collapse)
-    window_flags |= ANCHOR_WindowFlags_NoCollapse;
+    window_flags |= AnchorWindowFlags_NoCollapse;
   if (no_nav)
-    window_flags |= ANCHOR_WindowFlags_NoNav;
+    window_flags |= AnchorWindowFlags_NoNav;
   if (no_background)
-    window_flags |= ANCHOR_WindowFlags_NoBackground;
+    window_flags |= AnchorWindowFlags_NoBackground;
   if (no_bring_to_front)
-    window_flags |= ANCHOR_WindowFlags_NoBringToFrontOnFocus;
+    window_flags |= AnchorWindowFlags_NoBringToFrontOnFocus;
   if (no_close)
     p_open = NULL;  // Don't pass our bool* to Begin
 
   // We specify a default position/size in case there's no data in the .ini file.
   // We only do it to make the demo applications a little more welcoming, but typically this isn't
   // required.
-  const ANCHORViewport *main_viewport = ANCHOR::GetMainViewport();
+  const AnchorViewport *main_viewport = ANCHOR::GetMainViewport();
   ANCHOR::SetNextWindowPos(GfVec2f(main_viewport->WorkPos[0] + 650, main_viewport->WorkPos[1] + 20),
-                           ANCHOR_Cond_FirstUseEver);
-  ANCHOR::SetNextWindowSize(GfVec2f(550, 680), ANCHOR_Cond_FirstUseEver);
+                           AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(GfVec2f(550, 680), AnchorCond_FirstUseEver);
 
   // Main body of the Demo window starts here.
   if (!ANCHOR::Begin("Kraken on Vulkan", p_open, window_flags))
@@ -472,28 +386,28 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
 
   if (ANCHOR::CollapsingHeader("Configuration"))
   {
-    ANCHOR_IO &io = ANCHOR::GetIO();
+    AnchorIO &io = ANCHOR::GetIO();
 
     if (ANCHOR::TreeNode("Configuration##2"))
     {
       ANCHOR::CheckboxFlags(
-        "io.ConfigFlags: NavEnableKeyboard", &io.ConfigFlags, ANCHORConfigFlags_NavEnableKeyboard);
+        "io.ConfigFlags: NavEnableKeyboard", &io.ConfigFlags, AnchorConfigFlags_NavEnableKeyboard);
       ANCHOR::SameLine();
       HelpMarker("Enable keyboard controls.");
       ANCHOR::CheckboxFlags(
-        "io.ConfigFlags: NavEnableGamepad", &io.ConfigFlags, ANCHORConfigFlags_NavEnableGamepad);
+        "io.ConfigFlags: NavEnableGamepad", &io.ConfigFlags, AnchorConfigFlags_NavEnableGamepad);
       ANCHOR::SameLine();
       HelpMarker(
         "Enable gamepad controls. Require backend to set io.BackendFlags |= "
-        "ANCHORBackendFlags_HasGamepad.\n\nRead instructions in ANCHOR.cpp for details.");
+        "AnchorBackendFlags_HasGamepad.\n\nRead instructions in ANCHOR.cpp for details.");
       ANCHOR::CheckboxFlags(
-        "io.ConfigFlags: NavEnableSetMousePos", &io.ConfigFlags, ANCHORConfigFlags_NavEnableSetMousePos);
+        "io.ConfigFlags: NavEnableSetMousePos", &io.ConfigFlags, AnchorConfigFlags_NavEnableSetMousePos);
       ANCHOR::SameLine();
       HelpMarker(
         "Instruct navigation to move the mouse cursor. See comment for "
-        "ANCHORConfigFlags_NavEnableSetMousePos.");
-      ANCHOR::CheckboxFlags("io.ConfigFlags: NoMouse", &io.ConfigFlags, ANCHORConfigFlags_NoMouse);
-      if (io.ConfigFlags & ANCHORConfigFlags_NoMouse)
+        "AnchorConfigFlags_NavEnableSetMousePos.");
+      ANCHOR::CheckboxFlags("io.ConfigFlags: NoMouse", &io.ConfigFlags, AnchorConfigFlags_NoMouse);
+      if (io.ConfigFlags & AnchorConfigFlags_NoMouse)
       {
         // The "NoMouse" option can get us stuck with a disabled mouse! Let's provide an
         // alternative way to fix it:
@@ -502,11 +416,11 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
           ANCHOR::SameLine();
           ANCHOR::Text("<<PRESS SPACE TO DISABLE>>");
         }
-        if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Space)))
-          io.ConfigFlags &= ~ANCHORConfigFlags_NoMouse;
+        if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Space)))
+          io.ConfigFlags &= ~AnchorConfigFlags_NoMouse;
       }
       ANCHOR::CheckboxFlags(
-        "io.ConfigFlags: NoMouseCursorChange", &io.ConfigFlags, ANCHORConfigFlags_NoMouseCursorChange);
+        "io.ConfigFlags: NoMouseCursorChange", &io.ConfigFlags, AnchorConfigFlags_NoMouseCursorChange);
       ANCHOR::SameLine();
       HelpMarker("Instruct backend to not alter mouse cursor shape and visibility.");
       ANCHOR::Checkbox("io.ConfigInputTextCursorBlink", &io.ConfigInputTextCursorBlink);
@@ -521,7 +435,7 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
       ANCHOR::SameLine();
       HelpMarker(
         "Enable resizing of windows from their edges and from the lower-left corner.\nThis "
-        "requires (io.BackendFlags & ANCHORBackendFlags_HasMouseCursors) because it needs mouse "
+        "requires (io.BackendFlags & AnchorBackendFlags_HasMouseCursors) because it needs mouse "
         "cursor feedback.");
       ANCHOR::Checkbox("io.ConfigWindowsMoveFromTitleBarOnly", &io.ConfigWindowsMoveFromTitleBarOnly);
       ANCHOR::Checkbox("io.MouseDrawCursor", &io.MouseDrawCursor);
@@ -546,14 +460,14 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
         "backend.");
 
       // Make a local copy to avoid modifying actual backend flags.
-      ANCHORBackendFlags backend_flags = io.BackendFlags;
-      ANCHOR::CheckboxFlags("io.BackendFlags: HasGamepad", &backend_flags, ANCHORBackendFlags_HasGamepad);
+      AnchorBackendFlags backend_flags = io.BackendFlags;
+      ANCHOR::CheckboxFlags("io.BackendFlags: HasGamepad", &backend_flags, AnchorBackendFlags_HasGamepad);
       ANCHOR::CheckboxFlags(
-        "io.BackendFlags: HasMouseCursors", &backend_flags, ANCHORBackendFlags_HasMouseCursors);
+        "io.BackendFlags: HasMouseCursors", &backend_flags, AnchorBackendFlags_HasMouseCursors);
       ANCHOR::CheckboxFlags(
-        "io.BackendFlags: HasSetMousePos", &backend_flags, ANCHORBackendFlags_HasSetMousePos);
+        "io.BackendFlags: HasSetMousePos", &backend_flags, AnchorBackendFlags_HasSetMousePos);
       ANCHOR::CheckboxFlags(
-        "io.BackendFlags: RendererHasVtxOffset", &backend_flags, ANCHORBackendFlags_RendererHasVtxOffset);
+        "io.BackendFlags: RendererHasVtxOffset", &backend_flags, AnchorBackendFlags_RendererHasVtxOffset);
       ANCHOR::TreePop();
       ANCHOR::Separator();
     }
@@ -663,9 +577,9 @@ static void ShowDemoWindowWidgets()
       if (i > 0)
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
-      ANCHOR::PushStyleColor(ANCHOR_Col_Button, AnchorColor::HSV(i / 7.0f, 0.6f, 0.6f).Value);
-      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, AnchorColor::HSV(i / 7.0f, 0.7f, 0.7f).Value);
-      ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, AnchorColor::HSV(i / 7.0f, 0.8f, 0.8f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_Button, AnchorColor::HSV(i / 7.0f, 0.6f, 0.6f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_ButtonHovered, AnchorColor::HSV(i / 7.0f, 0.7f, 0.7f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_ButtonActive, AnchorColor::HSV(i / 7.0f, 0.8f, 0.8f).Value);
       ANCHOR::Button("Click");
       ANCHOR::PopStyleColor(3);
       ANCHOR::PopID();
@@ -682,12 +596,12 @@ static void ShowDemoWindowWidgets()
     static int counter = 0;
     float spacing = ANCHOR::GetStyle().ItemInnerSpacing[0];
     ANCHOR::PushButtonRepeat(true);
-    if (ANCHOR::ArrowButton("##left", ANCHOR_Dir_Left))
+    if (ANCHOR::ArrowButton("##left", AnchorDir_Left))
     {
       counter--;
     }
     ANCHOR::SameLine(0.0f, spacing);
-    if (ANCHOR::ArrowButton("##right", ANCHOR_Dir_Right))
+    if (ANCHOR::ArrowButton("##right", AnchorDir_Right))
     {
       counter++;
     }
@@ -745,7 +659,7 @@ static void ShowDemoWindowWidgets()
         "CTRL+Z,CTRL+Y undo/redo.\n"
         "ESCAPE to revert.\n\n"
         "PROGRAMMER:\n"
-        "You can use the ANCHORInputTextFlags_CallbackResize facility if you need to wire "
+        "You can use the AnchorInputTextFlags_CallbackResize facility if you need to wire "
         "InputText() "
         "to a dynamic string type. See misc/cpp/ANCHOR_stdlib.h for an example (this is not "
         "demonstrated "
@@ -788,7 +702,7 @@ static void ShowDemoWindowWidgets()
         "Hold SHIFT/ALT for faster/slower edit.\n"
         "Double-click or CTRL+click to input value.");
 
-      ANCHOR::DragInt("drag int 0..100", &i2, 1, 0, 100, "%d%%", ANCHOR_SliderFlags_AlwaysClamp);
+      ANCHOR::DragInt("drag int 0..100", &i2, 1, 0, 100, "%d%%", AnchorSliderFlags_AlwaysClamp);
 
       static float f1 = 1.00f, f2 = 0.0067f;
       ANCHOR::DragFloat("drag float", &f1, 0.005f);
@@ -803,7 +717,7 @@ static void ShowDemoWindowWidgets()
 
       static float f1 = 0.123f, f2 = 0.0f;
       ANCHOR::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
-      ANCHOR::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ANCHOR_SliderFlags_Logarithmic);
+      ANCHOR::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", AnchorSliderFlags_Logarithmic);
 
       static float angle = 0.0f;
       ANCHOR::SliderAngle("slider angle", &angle);
@@ -874,10 +788,10 @@ static void ShowDemoWindowWidgets()
       for (int i = 0; i < 5; i++)
       {
         // Use SetNextItemOpen() so set the default state of a node to be open. We could
-        // also use TreeNodeEx() with the ANCHOR_TreeNodeFlags_DefaultOpen flag to achieve the same
+        // also use TreeNodeEx() with the AnchorTreeNodeFlags_DefaultOpen flag to achieve the same
         // thing!
         if (i == 0)
-          ANCHOR::SetNextItemOpen(true, ANCHOR_Cond_Once);
+          ANCHOR::SetNextItemOpen(true, AnchorCond_Once);
 
         if (ANCHOR::TreeNode((void *)(intptr_t)i, "Child %d", i))
         {
@@ -897,23 +811,23 @@ static void ShowDemoWindowWidgets()
       HelpMarker(
         "This is a more typical looking tree with selectable nodes.\n"
         "Click to select, CTRL+Click to toggle, click on arrows or double-click to open.");
-      static ANCHOR_TreeNodeFlags base_flags = ANCHOR_TreeNodeFlags_OpenOnArrow |
-                                               ANCHOR_TreeNodeFlags_OpenOnDoubleClick |
-                                               ANCHOR_TreeNodeFlags_SpanAvailWidth;
+      static AnchorTreeNodeFlags base_flags = AnchorTreeNodeFlags_OpenOnArrow |
+                                              AnchorTreeNodeFlags_OpenOnDoubleClick |
+                                              AnchorTreeNodeFlags_SpanAvailWidth;
       static bool align_label_with_current_x_position = false;
       static bool test_drag_and_drop = false;
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TreeNodeFlags_OpenOnArrow", &base_flags, ANCHOR_TreeNodeFlags_OpenOnArrow);
+        "AnchorTreeNodeFlags_OpenOnArrow", &base_flags, AnchorTreeNodeFlags_OpenOnArrow);
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TreeNodeFlags_OpenOnDoubleClick", &base_flags, ANCHOR_TreeNodeFlags_OpenOnDoubleClick);
+        "AnchorTreeNodeFlags_OpenOnDoubleClick", &base_flags, AnchorTreeNodeFlags_OpenOnDoubleClick);
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TreeNodeFlags_SpanAvailWidth", &base_flags, ANCHOR_TreeNodeFlags_SpanAvailWidth);
+        "AnchorTreeNodeFlags_SpanAvailWidth", &base_flags, AnchorTreeNodeFlags_SpanAvailWidth);
       ANCHOR::SameLine();
       HelpMarker(
         "Extend hit area to all available width instead of allowing more items to be laid out "
         "after the node.");
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TreeNodeFlags_SpanFullWidth", &base_flags, ANCHOR_TreeNodeFlags_SpanFullWidth);
+        "AnchorTreeNodeFlags_SpanFullWidth", &base_flags, AnchorTreeNodeFlags_SpanFullWidth);
       ANCHOR::Checkbox("Align label with current X position", &align_label_with_current_x_position);
       ANCHOR::Checkbox("Test tree node as drag source", &test_drag_and_drop);
       ANCHOR::Text("Hello!");
@@ -932,10 +846,10 @@ static void ShowDemoWindowWidgets()
       {
         // Disable the default "open on single-click behavior" + set Selected flag according to our
         // selection.
-        ANCHOR_TreeNodeFlags node_flags = base_flags;
+        AnchorTreeNodeFlags node_flags = base_flags;
         const bool is_selected = (selection_mask & (1 << i)) != 0;
         if (is_selected)
-          node_flags |= ANCHOR_TreeNodeFlags_Selected;
+          node_flags |= AnchorTreeNodeFlags_Selected;
         if (i < 3)
         {
           // Items 0..2 are Tree Node
@@ -960,8 +874,8 @@ static void ShowDemoWindowWidgets()
           // The only reason we use TreeNode at all is to allow selection of the leaf. Otherwise we
           // can use BulletText() or advance the cursor by GetTreeNodeToLabelSpacing() and call
           // Text().
-          node_flags |= ANCHOR_TreeNodeFlags_Leaf |
-                        ANCHOR_TreeNodeFlags_NoTreePushOnOpen;  // ANCHOR_TreeNodeFlags_Bullet
+          node_flags |= AnchorTreeNodeFlags_Leaf |
+                        AnchorTreeNodeFlags_NoTreePushOnOpen;  // AnchorTreeNodeFlags_Bullet
           ANCHOR::TreeNodeEx((void *)(intptr_t)i, node_flags, "Selectable Leaf %d", i);
           if (ANCHOR::IsItemClicked())
             node_clicked = i;
@@ -995,7 +909,7 @@ static void ShowDemoWindowWidgets()
   {
     static bool closable_group = true;
     ANCHOR::Checkbox("Show 2nd header", &closable_group);
-    if (ANCHOR::CollapsingHeader("Header", ANCHOR_TreeNodeFlags_None))
+    if (ANCHOR::CollapsingHeader("Header", AnchorTreeNodeFlags_None))
     {
       ANCHOR::Text("IsItemHovered: %d", ANCHOR::IsItemHovered());
       for (int i = 0; i < 5; i++)
@@ -1008,7 +922,7 @@ static void ShowDemoWindowWidgets()
         ANCHOR::Text("More content %d", i);
     }
     /*
-    if (ANCHOR::CollapsingHeader("Header with a bullet", ANCHOR_TreeNodeFlags_Bullet))
+    if (ANCHOR::CollapsingHeader("Header with a bullet", AnchorTreeNodeFlags_Bullet))
         ANCHOR::Text("IsItemHovered: %d", ANCHOR::IsItemHovered());
     */
     ANCHOR::TreePop();
@@ -1039,7 +953,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::TextColored(GfVec4f(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
       ANCHOR::TextDisabled("Disabled");
       ANCHOR::SameLine();
-      HelpMarker("The TextDisabled color is stored in ANCHOR_Style.");
+      HelpMarker("The TextDisabled color is stored in AnchorStyle.");
       ANCHOR::TreePop();
     }
 
@@ -1056,7 +970,7 @@ static void ShowDemoWindowWidgets()
       static float wrap_width = 200.0f;
       ANCHOR::SliderFloat("Wrap width", &wrap_width, -20, 600, "%.0f");
 
-      ImDrawList *draw_list = ANCHOR::GetWindowDrawList();
+      AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
       for (int n = 0; n < 2; n++)
       {
         ANCHOR::Text("Test paragraph %d:", n);
@@ -1120,7 +1034,7 @@ static void ShowDemoWindowWidgets()
 
   if (ANCHOR::TreeNode("Images"))
   {
-    ANCHOR_IO &io = ANCHOR::GetIO();
+    AnchorIO &io = ANCHOR::GetIO();
     ANCHOR::TextWrapped(
       "Below we are displaying the font texture (which is the only texture we have access to in "
       "this demo). "
@@ -1130,7 +1044,7 @@ static void ShowDemoWindowWidgets()
 
     // Below we are displaying the font texture because it is the only texture we have access to
     // inside the demo! Remember that AnchorTextureID is just storage for whatever you want it to
-    // be. It is essentially a value that will be passed to the rendering backend via the ImDrawCmd
+    // be. It is essentially a value that will be passed to the rendering backend via the AnchorDrawCmd
     // structure. If you use one of the default ANCHOR_impl_XXXX.cpp rendering backend, they all
     // have comments at the top of their respective source file to specify what they expect to be
     // stored in AnchorTextureID, for example:
@@ -1143,7 +1057,7 @@ static void ShowDemoWindowWidgets()
     // - You can use ShowMetricsWindow() to inspect the draw data that are being passed to your
     // renderer,
     //   it will help you debug issues if you are confused about it.
-    // - Consider using the lower-level ImDrawList::AddImage() API, via
+    // - Consider using the lower-level AnchorDrawList::AddImage() API, via
     // ANCHOR::GetWindowDrawList()->AddImage().
     // - Read https://github.com/ocornut/ANCHOR/blob/master/docs/FAQ.md
     // - Read https://github.com/ocornut/ANCHOR/wiki/Image-Loading-and-Displaying-Examples
@@ -1215,14 +1129,14 @@ static void ShowDemoWindowWidgets()
   if (ANCHOR::TreeNode("Combo"))
   {
     // Expose flags as checkbox for the demo
-    static ANCHORComboFlags flags = 0;
-    ANCHOR::CheckboxFlags("ANCHORComboFlags_PopupAlignLeft", &flags, ANCHORComboFlags_PopupAlignLeft);
+    static AnchorComboFlags flags = 0;
+    ANCHOR::CheckboxFlags("AnchorComboFlags_PopupAlignLeft", &flags, AnchorComboFlags_PopupAlignLeft);
     ANCHOR::SameLine();
     HelpMarker("Only makes a difference if the popup is larger than the combo");
-    if (ANCHOR::CheckboxFlags("ANCHORComboFlags_NoArrowButton", &flags, ANCHORComboFlags_NoArrowButton))
-      flags &= ~ANCHORComboFlags_NoPreview;  // Clear the other flag, as we cannot combine both
-    if (ANCHOR::CheckboxFlags("ANCHORComboFlags_NoPreview", &flags, ANCHORComboFlags_NoPreview))
-      flags &= ~ANCHORComboFlags_NoArrowButton;  // Clear the other flag, as we cannot combine both
+    if (ANCHOR::CheckboxFlags("AnchorComboFlags_NoArrowButton", &flags, AnchorComboFlags_NoArrowButton))
+      flags &= ~AnchorComboFlags_NoPreview;  // Clear the other flag, as we cannot combine both
+    if (ANCHOR::CheckboxFlags("AnchorComboFlags_NoPreview", &flags, AnchorComboFlags_NoPreview))
+      flags &= ~AnchorComboFlags_NoArrowButton;  // Clear the other flag, as we cannot combine both
 
     // Using the generic BeginCombo() API, you have full control over how to display the combo
     // contents. (your selection data could be an index, a pointer to the object, an id for the
@@ -1355,7 +1269,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::Text("3. I am not selectable");
       ANCHOR::Selectable("4. I am selectable", &selection[3]);
       if (ANCHOR::Selectable(
-            "5. I am double clickable", selection[4], ANCHORSelectableFlags_AllowDoubleClick))
+            "5. I am double clickable", selection[4], AnchorSelectableFlags_AllowDoubleClick))
         if (ANCHOR::IsMouseDoubleClicked(0))
           selection[4] = !selection[4];
       ANCHOR::TreePop();
@@ -1409,7 +1323,7 @@ static void ShowDemoWindowWidgets()
     {
       static bool selected[10] = {};
 
-      if (ANCHOR::BeginTable("split1", 3, ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_NoSavedSettings))
+      if (ANCHOR::BeginTable("split1", 3, AnchorTableFlags_Resizable | AnchorTableFlags_NoSavedSettings))
       {
         for (int i = 0; i < 10; i++)
         {
@@ -1421,7 +1335,7 @@ static void ShowDemoWindowWidgets()
         ANCHOR::EndTable();
       }
       ANCHOR::Separator();
-      if (ANCHOR::BeginTable("split2", 3, ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_NoSavedSettings))
+      if (ANCHOR::BeginTable("split2", 3, AnchorTableFlags_Resizable | AnchorTableFlags_NoSavedSettings))
       {
         for (int i = 0; i < 10; i++)
         {
@@ -1429,7 +1343,7 @@ static void ShowDemoWindowWidgets()
           sprintf(label, "Item %d", i);
           ANCHOR::TableNextRow();
           ANCHOR::TableNextColumn();
-          ANCHOR::Selectable(label, &selected[i], ANCHORSelectableFlags_SpanAllColumns);
+          ANCHOR::Selectable(label, &selected[i], AnchorSelectableFlags_SpanAllColumns);
           ANCHOR::TableNextColumn();
           ANCHOR::Text("Some other contents");
           ANCHOR::TableNextColumn();
@@ -1448,7 +1362,7 @@ static void ShowDemoWindowWidgets()
       const bool winning_state = memchr(selected, 0, sizeof(selected)) ==
                                  NULL;  // If all cells are selected...
       if (winning_state)
-        ANCHOR::PushStyleVar(ANCHOR_StyleVar_SelectableTextAlign,
+        ANCHOR::PushStyleVar(AnchorStyleVar_SelectableTextAlign,
                              GfVec2f(0.5f + 0.5f * cosf(time * 2.0f), 0.5f + 0.5f * sinf(time * 3.0f)));
 
       for (int y = 0; y < 4; y++)
@@ -1503,8 +1417,8 @@ static void ShowDemoWindowWidgets()
           sprintf(name, "(%.1f,%.1f)", alignment[0], alignment[1]);
           if (x > 0)
             ANCHOR::SameLine();
-          ANCHOR::PushStyleVar(ANCHOR_StyleVar_SelectableTextAlign, alignment);
-          ANCHOR::Selectable(name, &selected[3 * y + x], ANCHORSelectableFlags_None, GfVec2f(80, 80));
+          ANCHOR::PushStyleVar(AnchorStyleVar_SelectableTextAlign, alignment);
+          ANCHOR::Selectable(name, &selected[3 * y + x], AnchorSelectableFlags_None, GfVec2f(80, 80));
           ANCHOR::PopStyleVar();
         }
       }
@@ -1521,7 +1435,7 @@ static void ShowDemoWindowWidgets()
     if (ANCHOR::TreeNode("Multi-line Text Input"))
     {
       // Note: we are using a fixed-sized buffer for simplicity here. See
-      // ANCHORInputTextFlags_CallbackResize and the code in misc/cpp/ANCHOR_stdlib.h for how to
+      // AnchorInputTextFlags_CallbackResize and the code in misc/cpp/ANCHOR_stdlib.h for how to
       // setup InputText() for dynamically resizing strings.
       static char text[1024 * 16] =
         "/*\n"
@@ -1535,17 +1449,17 @@ static void ShowDemoWindowWidgets()
         "label:\n"
         "\tlock cmpxchg8b eax\n";
 
-      static ANCHORInputTextFlags flags = ANCHORInputTextFlags_AllowTabInput;
+      static AnchorInputTextFlags flags = AnchorInputTextFlags_AllowTabInput;
       HelpMarker(
-        "You can use the ANCHORInputTextFlags_CallbackResize facility if you need to wire "
+        "You can use the AnchorInputTextFlags_CallbackResize facility if you need to wire "
         "InputTextMultiline() to a dynamic string type. See misc/cpp/ANCHOR_stdlib.h for an "
         "example. (This is not demonstrated in ANCHOR_demo.cpp because we don't want to include "
         "<string> in here)");
-      ANCHOR::CheckboxFlags("ANCHORInputTextFlags_ReadOnly", &flags, ANCHORInputTextFlags_ReadOnly);
+      ANCHOR::CheckboxFlags("AnchorInputTextFlags_ReadOnly", &flags, AnchorInputTextFlags_ReadOnly);
       ANCHOR::CheckboxFlags(
-        "ANCHORInputTextFlags_AllowTabInput", &flags, ANCHORInputTextFlags_AllowTabInput);
+        "AnchorInputTextFlags_AllowTabInput", &flags, AnchorInputTextFlags_AllowTabInput);
       ANCHOR::CheckboxFlags(
-        "ANCHORInputTextFlags_CtrlEnterForNewLine", &flags, ANCHORInputTextFlags_CtrlEnterForNewLine);
+        "AnchorInputTextFlags_CtrlEnterForNewLine", &flags, AnchorInputTextFlags_CtrlEnterForNewLine);
       ANCHOR::InputTextMultiline("##source",
                                  text,
                                  ANCHOR_ARRAYSIZE(text),
@@ -1559,7 +1473,7 @@ static void ShowDemoWindowWidgets()
       struct TextFilters
       {
         // Return 0 (pass) if the character is 'i' or 'm' or 'g' or 'u' or 'i'
-        static int FilterANCHORLetters(ANCHORInputTextCallbackData *data)
+        static int FilterANCHORLetters(AnchorInputTextCallbackData *data)
         {
           if (data->EventChar < 256 && strchr("ANCHOR", (char)data->EventChar))
             return 0;
@@ -1570,21 +1484,21 @@ static void ShowDemoWindowWidgets()
       static char buf1[64] = "";
       ANCHOR::InputText("default", buf1, 64);
       static char buf2[64] = "";
-      ANCHOR::InputText("decimal", buf2, 64, ANCHORInputTextFlags_CharsDecimal);
+      ANCHOR::InputText("decimal", buf2, 64, AnchorInputTextFlags_CharsDecimal);
       static char buf3[64] = "";
       ANCHOR::InputText("hexadecimal",
                         buf3,
                         64,
-                        ANCHORInputTextFlags_CharsHexadecimal | ANCHORInputTextFlags_CharsUppercase);
+                        AnchorInputTextFlags_CharsHexadecimal | AnchorInputTextFlags_CharsUppercase);
       static char buf4[64] = "";
-      ANCHOR::InputText("uppercase", buf4, 64, ANCHORInputTextFlags_CharsUppercase);
+      ANCHOR::InputText("uppercase", buf4, 64, AnchorInputTextFlags_CharsUppercase);
       static char buf5[64] = "";
-      ANCHOR::InputText("no blank", buf5, 64, ANCHORInputTextFlags_CharsNoBlank);
+      ANCHOR::InputText("no blank", buf5, 64, AnchorInputTextFlags_CharsNoBlank);
       static char buf6[64] = "";
       ANCHOR::InputText("\"ANCHOR\" letters",
                         buf6,
                         64,
-                        ANCHORInputTextFlags_CallbackCharFilter,
+                        AnchorInputTextFlags_CallbackCharFilter,
                         TextFilters::FilterANCHORLetters);
       ANCHOR::TreePop();
     }
@@ -1592,14 +1506,14 @@ static void ShowDemoWindowWidgets()
     if (ANCHOR::TreeNode("Password Input"))
     {
       static char password[64] = "password123";
-      ANCHOR::InputText("password", password, ANCHOR_ARRAYSIZE(password), ANCHORInputTextFlags_Password);
+      ANCHOR::InputText("password", password, ANCHOR_ARRAYSIZE(password), AnchorInputTextFlags_Password);
       ANCHOR::SameLine();
       HelpMarker("Display all characters as '*'.\nDisable clipboard cut and copy.\nDisable logging.\n");
       ANCHOR::InputTextWithHint("password (w/ hint)",
                                 "<password>",
                                 password,
                                 ANCHOR_ARRAYSIZE(password),
-                                ANCHORInputTextFlags_Password);
+                                AnchorInputTextFlags_Password);
       ANCHOR::InputText("password (clear)", password, ANCHOR_ARRAYSIZE(password));
       ANCHOR::TreePop();
     }
@@ -1608,28 +1522,28 @@ static void ShowDemoWindowWidgets()
     {
       struct Funcs
       {
-        static int MyCallback(ANCHORInputTextCallbackData *data)
+        static int MyCallback(AnchorInputTextCallbackData *data)
         {
-          if (data->EventFlag == ANCHORInputTextFlags_CallbackCompletion)
+          if (data->EventFlag == AnchorInputTextFlags_CallbackCompletion)
           {
             data->InsertChars(data->CursorPos, "..");
           }
-          else if (data->EventFlag == ANCHORInputTextFlags_CallbackHistory)
+          else if (data->EventFlag == AnchorInputTextFlags_CallbackHistory)
           {
-            if (data->EventKey == ANCHOR_Key_UpArrow)
+            if (data->EventKey == AnchorKey_UpArrow)
             {
               data->DeleteChars(0, data->BufTextLen);
               data->InsertChars(0, "Pressed Up!");
               data->SelectAll();
             }
-            else if (data->EventKey == ANCHOR_Key_DownArrow)
+            else if (data->EventKey == AnchorKey_DownArrow)
             {
               data->DeleteChars(0, data->BufTextLen);
               data->InsertChars(0, "Pressed Down!");
               data->SelectAll();
             }
           }
-          else if (data->EventFlag == ANCHORInputTextFlags_CallbackEdit)
+          else if (data->EventFlag == AnchorInputTextFlags_CallbackEdit)
           {
             // Toggle casing of first character
             char c = data->Buf[0];
@@ -1645,14 +1559,14 @@ static void ShowDemoWindowWidgets()
         }
       };
       static char buf1[64];
-      ANCHOR::InputText("Completion", buf1, 64, ANCHORInputTextFlags_CallbackCompletion, Funcs::MyCallback);
+      ANCHOR::InputText("Completion", buf1, 64, AnchorInputTextFlags_CallbackCompletion, Funcs::MyCallback);
       ANCHOR::SameLine();
       HelpMarker(
         "Here we append \"..\" each time Tab is pressed. See 'Examples>Console' for a more "
         "meaningful demonstration of using this callback.");
 
       static char buf2[64];
-      ANCHOR::InputText("History", buf2, 64, ANCHORInputTextFlags_CallbackHistory, Funcs::MyCallback);
+      ANCHOR::InputText("History", buf2, 64, AnchorInputTextFlags_CallbackHistory, Funcs::MyCallback);
       ANCHOR::SameLine();
       HelpMarker(
         "Here we replace and select text each time Up/Down are pressed. See 'Examples>Console' "
@@ -1661,7 +1575,7 @@ static void ShowDemoWindowWidgets()
       static char buf3[64];
       static int edit_count = 0;
       ANCHOR::InputText(
-        "Edit", buf3, 64, ANCHORInputTextFlags_CallbackEdit, Funcs::MyCallback, (void *)&edit_count);
+        "Edit", buf3, 64, AnchorInputTextFlags_CallbackEdit, Funcs::MyCallback, (void *)&edit_count);
       ANCHOR::SameLine();
       HelpMarker("Here we toggle the casing of the first character on every edits + count edits.");
       ANCHOR::SameLine();
@@ -1673,18 +1587,18 @@ static void ShowDemoWindowWidgets()
     if (ANCHOR::TreeNode("Resize Callback"))
     {
       // To wire InputText() with std::string or any other custom string type,
-      // you can use the ANCHORInputTextFlags_CallbackResize flag + create a custom
+      // you can use the AnchorInputTextFlags_CallbackResize flag + create a custom
       // ANCHOR::InputText() wrapper using your preferred type. See misc/cpp/ANCHOR_stdlib.h for an
       // implementation of this using std::string.
       HelpMarker(
-        "Using ANCHORInputTextFlags_CallbackResize to wire your custom string type to "
+        "Using AnchorInputTextFlags_CallbackResize to wire your custom string type to "
         "InputText().\n\n"
         "See misc/cpp/ANCHOR_stdlib.h for an implementation of this for std::string.");
       struct Funcs
       {
-        static int MyResizeCallback(ANCHORInputTextCallbackData *data)
+        static int MyResizeCallback(AnchorInputTextCallbackData *data)
         {
-          if (data->EventFlag == ANCHORInputTextFlags_CallbackResize)
+          if (data->EventFlag == AnchorInputTextFlags_CallbackResize)
           {
             AnchorVector<char> *my_str = (AnchorVector<char> *)data->UserData;
             ANCHOR_ASSERT(my_str->begin() == data->Buf);
@@ -1701,14 +1615,14 @@ static void ShowDemoWindowWidgets()
         static bool MyInputTextMultiline(const char *label,
                                          AnchorVector<char> *my_str,
                                          const GfVec2f &size = GfVec2f(0, 0),
-                                         ANCHORInputTextFlags flags = 0)
+                                         AnchorInputTextFlags flags = 0)
         {
-          ANCHOR_ASSERT((flags & ANCHORInputTextFlags_CallbackResize) == 0);
+          ANCHOR_ASSERT((flags & AnchorInputTextFlags_CallbackResize) == 0);
           return ANCHOR::InputTextMultiline(label,
                                             my_str->begin(),
                                             (size_t)my_str->size(),
                                             size,
-                                            flags | ANCHORInputTextFlags_CallbackResize,
+                                            flags | AnchorInputTextFlags_CallbackResize,
                                             Funcs::MyResizeCallback,
                                             (void *)my_str);
         }
@@ -1734,7 +1648,7 @@ static void ShowDemoWindowWidgets()
   {
     if (ANCHOR::TreeNode("Basic"))
     {
-      ANCHOR_TabBarFlags tab_bar_flags = ANCHOR_TabBarFlags_None;
+      AnchorTabBarFlags tab_bar_flags = AnchorTabBarFlags_None;
       if (ANCHOR::BeginTabBar("MyTabBar", tab_bar_flags))
       {
         if (ANCHOR::BeginTabItem("Avocado"))
@@ -1762,27 +1676,27 @@ static void ShowDemoWindowWidgets()
     {
       // Expose a couple of the available flags. In most cases you may just call BeginTabBar() with
       // no flags (0).
-      static ANCHOR_TabBarFlags tab_bar_flags = ANCHOR_TabBarFlags_Reorderable;
+      static AnchorTabBarFlags tab_bar_flags = AnchorTabBarFlags_Reorderable;
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TabBarFlags_Reorderable", &tab_bar_flags, ANCHOR_TabBarFlags_Reorderable);
+        "AnchorTabBarFlags_Reorderable", &tab_bar_flags, AnchorTabBarFlags_Reorderable);
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TabBarFlags_AutoSelectNewTabs", &tab_bar_flags, ANCHOR_TabBarFlags_AutoSelectNewTabs);
+        "AnchorTabBarFlags_AutoSelectNewTabs", &tab_bar_flags, AnchorTabBarFlags_AutoSelectNewTabs);
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TabBarFlags_TabListPopupButton", &tab_bar_flags, ANCHOR_TabBarFlags_TabListPopupButton);
-      ANCHOR::CheckboxFlags("ANCHOR_TabBarFlags_NoCloseWithMiddleMouseButton",
+        "AnchorTabBarFlags_TabListPopupButton", &tab_bar_flags, AnchorTabBarFlags_TabListPopupButton);
+      ANCHOR::CheckboxFlags("AnchorTabBarFlags_NoCloseWithMiddleMouseButton",
                             &tab_bar_flags,
-                            ANCHOR_TabBarFlags_NoCloseWithMiddleMouseButton);
-      if ((tab_bar_flags & ANCHOR_TabBarFlags_FittingPolicyMask_) == 0)
-        tab_bar_flags |= ANCHOR_TabBarFlags_FittingPolicyDefault_;
-      if (ANCHOR::CheckboxFlags("ANCHOR_TabBarFlags_FittingPolicyResizeDown",
+                            AnchorTabBarFlags_NoCloseWithMiddleMouseButton);
+      if ((tab_bar_flags & AnchorTabBarFlags_FittingPolicyMask_) == 0)
+        tab_bar_flags |= AnchorTabBarFlags_FittingPolicyDefault_;
+      if (ANCHOR::CheckboxFlags("AnchorTabBarFlags_FittingPolicyResizeDown",
                                 &tab_bar_flags,
-                                ANCHOR_TabBarFlags_FittingPolicyResizeDown))
-        tab_bar_flags &= ~(ANCHOR_TabBarFlags_FittingPolicyMask_ ^
-                           ANCHOR_TabBarFlags_FittingPolicyResizeDown);
-      if (ANCHOR::CheckboxFlags("ANCHOR_TabBarFlags_FittingPolicyScroll",
+                                AnchorTabBarFlags_FittingPolicyResizeDown))
+        tab_bar_flags &= ~(AnchorTabBarFlags_FittingPolicyMask_ ^
+                           AnchorTabBarFlags_FittingPolicyResizeDown);
+      if (ANCHOR::CheckboxFlags("AnchorTabBarFlags_FittingPolicyScroll",
                                 &tab_bar_flags,
-                                ANCHOR_TabBarFlags_FittingPolicyScroll))
-        tab_bar_flags &= ~(ANCHOR_TabBarFlags_FittingPolicyMask_ ^ ANCHOR_TabBarFlags_FittingPolicyScroll);
+                                AnchorTabBarFlags_FittingPolicyScroll))
+        tab_bar_flags &= ~(AnchorTabBarFlags_FittingPolicyMask_ ^ AnchorTabBarFlags_FittingPolicyScroll);
 
       // Tab Bar
       const char *names[4] = {"Artichoke", "Beetroot", "Celery", "Daikon"};
@@ -1801,7 +1715,7 @@ static void ShowDemoWindowWidgets()
       if (ANCHOR::BeginTabBar("MyTabBar", tab_bar_flags))
       {
         for (int n = 0; n < ANCHOR_ARRAYSIZE(opened); n++)
-          if (opened[n] && ANCHOR::BeginTabItem(names[n], &opened[n], ANCHOR_TabItemFlags_None))
+          if (opened[n] && ANCHOR::BeginTabItem(names[n], &opened[n], AnchorTabItemFlags_None))
           {
             ANCHOR::Text("This is the %s tab!", names[n]);
             if (n & 1)
@@ -1833,26 +1747,26 @@ static void ShowDemoWindowWidgets()
 
       // Expose some other flags which are useful to showcase how they interact with
       // Leading/Trailing tabs
-      static ANCHOR_TabBarFlags tab_bar_flags = ANCHOR_TabBarFlags_AutoSelectNewTabs |
-                                                ANCHOR_TabBarFlags_Reorderable |
-                                                ANCHOR_TabBarFlags_FittingPolicyResizeDown;
+      static AnchorTabBarFlags tab_bar_flags = AnchorTabBarFlags_AutoSelectNewTabs |
+                                               AnchorTabBarFlags_Reorderable |
+                                               AnchorTabBarFlags_FittingPolicyResizeDown;
       ANCHOR::CheckboxFlags(
-        "ANCHOR_TabBarFlags_TabListPopupButton", &tab_bar_flags, ANCHOR_TabBarFlags_TabListPopupButton);
-      if (ANCHOR::CheckboxFlags("ANCHOR_TabBarFlags_FittingPolicyResizeDown",
+        "AnchorTabBarFlags_TabListPopupButton", &tab_bar_flags, AnchorTabBarFlags_TabListPopupButton);
+      if (ANCHOR::CheckboxFlags("AnchorTabBarFlags_FittingPolicyResizeDown",
                                 &tab_bar_flags,
-                                ANCHOR_TabBarFlags_FittingPolicyResizeDown))
-        tab_bar_flags &= ~(ANCHOR_TabBarFlags_FittingPolicyMask_ ^
-                           ANCHOR_TabBarFlags_FittingPolicyResizeDown);
-      if (ANCHOR::CheckboxFlags("ANCHOR_TabBarFlags_FittingPolicyScroll",
+                                AnchorTabBarFlags_FittingPolicyResizeDown))
+        tab_bar_flags &= ~(AnchorTabBarFlags_FittingPolicyMask_ ^
+                           AnchorTabBarFlags_FittingPolicyResizeDown);
+      if (ANCHOR::CheckboxFlags("AnchorTabBarFlags_FittingPolicyScroll",
                                 &tab_bar_flags,
-                                ANCHOR_TabBarFlags_FittingPolicyScroll))
-        tab_bar_flags &= ~(ANCHOR_TabBarFlags_FittingPolicyMask_ ^ ANCHOR_TabBarFlags_FittingPolicyScroll);
+                                AnchorTabBarFlags_FittingPolicyScroll))
+        tab_bar_flags &= ~(AnchorTabBarFlags_FittingPolicyMask_ ^ AnchorTabBarFlags_FittingPolicyScroll);
 
       if (ANCHOR::BeginTabBar("MyTabBar", tab_bar_flags))
       {
         // Demo a Leading TabItemButton(): click the "?" button to open a menu
         if (show_leading_button)
-          if (ANCHOR::TabItemButton("?", ANCHOR_TabItemFlags_Leading | ANCHOR_TabItemFlags_NoTooltip))
+          if (ANCHOR::TabItemButton("?", AnchorTabItemFlags_Leading | AnchorTabItemFlags_NoTooltip))
             ANCHOR::OpenPopup("MyHelpMenu");
         if (ANCHOR::BeginPopup("MyHelpMenu"))
         {
@@ -1862,9 +1776,9 @@ static void ShowDemoWindowWidgets()
 
         // Demo Trailing Tabs: click the "+" button to add a new tab (in your app you may want to
         // use a font icon instead of the "+") Note that we submit it before the regular tabs, but
-        // because of the ANCHOR_TabItemFlags_Trailing flag it will always appear at the end.
+        // because of the AnchorTabItemFlags_Trailing flag it will always appear at the end.
         if (show_trailing_button)
-          if (ANCHOR::TabItemButton("+", ANCHOR_TabItemFlags_Trailing | ANCHOR_TabItemFlags_NoTooltip))
+          if (ANCHOR::TabItemButton("+", AnchorTabItemFlags_Trailing | AnchorTabItemFlags_NoTooltip))
             active_tabs.push_back(next_tab_id++);  // Add new tab
 
         // Submit our regular tabs
@@ -1873,7 +1787,7 @@ static void ShowDemoWindowWidgets()
           bool open = true;
           char name[16];
           snprintf(name, ANCHOR_ARRAYSIZE(name), "%04d", active_tabs[n]);
-          if (ANCHOR::BeginTabItem(name, &open, ANCHOR_TabItemFlags_None))
+          if (ANCHOR::BeginTabItem(name, &open, AnchorTabItemFlags_None))
           {
             ANCHOR::Text("This is the %s tab!", name);
             ANCHOR::EndTabItem();
@@ -1984,7 +1898,7 @@ static void ShowDemoWindowWidgets()
     ANCHOR::SameLine(0.0f, ANCHOR::GetStyle().ItemInnerSpacing[0]);
     ANCHOR::Text("Progress Bar");
 
-    float progress_saturated = IM_CLAMP(progress, 0.0f, 1.0f);
+    float progress_saturated = ANCHOR_CLAMP(progress, 0.0f, 1.0f);
     char buf[32];
     sprintf(buf, "%d/%d", (int)(progress_saturated * 1753), 1753);
     ANCHOR::ProgressBar(progress, GfVec2f(0.f, 0.f), buf);
@@ -2009,12 +1923,12 @@ static void ShowDemoWindowWidgets()
     ANCHOR::Checkbox("With HDR", &hdr);
     ANCHOR::SameLine();
     HelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
-    ANCHOR_ColorEditFlags misc_flags = (hdr ? ANCHOR_ColorEditFlags_HDR : 0) |
-                                       (drag_and_drop ? 0 : ANCHOR_ColorEditFlags_NoDragDrop) |
-                                       (alpha_half_preview ?
-                                          ANCHOR_ColorEditFlags_AlphaPreviewHalf :
-                                          (alpha_preview ? ANCHOR_ColorEditFlags_AlphaPreview : 0)) |
-                                       (options_menu ? 0 : ANCHOR_ColorEditFlags_NoOptions);
+    AnchorColorEditFlags misc_flags = (hdr ? AnchorColorEditFlags_HDR : 0) |
+                                      (drag_and_drop ? 0 : AnchorColorEditFlags_NoDragDrop) |
+                                      (alpha_half_preview ?
+                                         AnchorColorEditFlags_AlphaPreviewHalf :
+                                         (alpha_preview ? AnchorColorEditFlags_AlphaPreview : 0)) |
+                                      (options_menu ? 0 : AnchorColorEditFlags_NoOptions);
 
     ANCHOR::Text("Color widget:");
     ANCHOR::SameLine();
@@ -2024,21 +1938,21 @@ static void ShowDemoWindowWidgets()
     ANCHOR::ColorEdit3("MyColor##1", (float *)&color, misc_flags);
 
     ANCHOR::Text("Color widget HSV with Alpha:");
-    ANCHOR::ColorEdit4("MyColor##2", (float *)&color, ANCHOR_ColorEditFlags_DisplayHSV | misc_flags);
+    ANCHOR::ColorEdit4("MyColor##2", (float *)&color, AnchorColorEditFlags_DisplayHSV | misc_flags);
 
     ANCHOR::Text("Color widget with Float Display:");
-    ANCHOR::ColorEdit4("MyColor##2f", (float *)&color, ANCHOR_ColorEditFlags_Float | misc_flags);
+    ANCHOR::ColorEdit4("MyColor##2f", (float *)&color, AnchorColorEditFlags_Float | misc_flags);
 
     ANCHOR::Text("Color button with Picker:");
     ANCHOR::SameLine();
     HelpMarker(
-      "With the ANCHOR_ColorEditFlags_NoInputs flag you can hide all the slider/text inputs.\n"
-      "With the ANCHOR_ColorEditFlags_NoLabel flag you can pass a non-empty label which will "
+      "With the AnchorColorEditFlags_NoInputs flag you can hide all the slider/text inputs.\n"
+      "With the AnchorColorEditFlags_NoLabel flag you can pass a non-empty label which will "
       "only "
       "be used for the tooltip and picker popup.");
     ANCHOR::ColorEdit4("MyColor##3",
                        (float *)&color,
-                       ANCHOR_ColorEditFlags_NoInputs | ANCHOR_ColorEditFlags_NoLabel | misc_flags);
+                       AnchorColorEditFlags_NoInputs | AnchorColorEditFlags_NoLabel | misc_flags);
 
     ANCHOR::Text("Color button with Custom Picker Popup:");
 
@@ -2071,20 +1985,20 @@ static void ShowDemoWindowWidgets()
       ANCHOR::Separator();
       ANCHOR::ColorPicker4("##picker",
                            (float *)&color,
-                           misc_flags | ANCHOR_ColorEditFlags_NoSidePreview |
-                             ANCHOR_ColorEditFlags_NoSmallPreview);
+                           misc_flags | AnchorColorEditFlags_NoSidePreview |
+                             AnchorColorEditFlags_NoSmallPreview);
       ANCHOR::SameLine();
 
       ANCHOR::BeginGroup();  // Lock X position
       ANCHOR::Text("Current");
       ANCHOR::ColorButton("##current",
                           color,
-                          ANCHOR_ColorEditFlags_NoPicker | ANCHOR_ColorEditFlags_AlphaPreviewHalf,
+                          AnchorColorEditFlags_NoPicker | AnchorColorEditFlags_AlphaPreviewHalf,
                           GfVec2f(60, 40));
       ANCHOR::Text("Previous");
       if (ANCHOR::ColorButton("##previous",
                               backup_color,
-                              ANCHOR_ColorEditFlags_NoPicker | ANCHOR_ColorEditFlags_AlphaPreviewHalf,
+                              AnchorColorEditFlags_NoPicker | AnchorColorEditFlags_AlphaPreviewHalf,
                               GfVec2f(60, 40)))
         color = backup_color;
       ANCHOR::Separator();
@@ -2095,9 +2009,9 @@ static void ShowDemoWindowWidgets()
         if ((n % 8) != 0)
           ANCHOR::SameLine(0.0f, ANCHOR::GetStyle().ItemSpacing[1]);
 
-        ANCHOR_ColorEditFlags palette_button_flags = ANCHOR_ColorEditFlags_NoAlpha |
-                                                     ANCHOR_ColorEditFlags_NoPicker |
-                                                     ANCHOR_ColorEditFlags_NoTooltip;
+        AnchorColorEditFlags palette_button_flags = AnchorColorEditFlags_NoAlpha |
+                                                    AnchorColorEditFlags_NoPicker |
+                                                    AnchorColorEditFlags_NoTooltip;
         if (ANCHOR::ColorButton("##palette", saved_palette[n], palette_button_flags, GfVec2f(20, 20)))
           color = GfVec4f(saved_palette[n][0],
                           saved_palette[n][1],
@@ -2105,12 +2019,12 @@ static void ShowDemoWindowWidgets()
                           color[3]);  // Preserve alpha!
 
         // Allow user to drop colors into each palette entry. Note that ColorButton() is already a
-        // drag source by default, unless specifying the ANCHOR_ColorEditFlags_NoDragDrop flag.
+        // drag source by default, unless specifying the AnchorColorEditFlags_NoDragDrop flag.
         if (ANCHOR::BeginDragDropTarget())
         {
-          if (const ANCHORPayload *payload = ANCHOR::AcceptDragDropPayload(ANCHOR_PAYLOAD_TYPE_COLOR_3F))
+          if (const AnchorPayload *payload = ANCHOR::AcceptDragDropPayload(ANCHOR_PAYLOAD_TYPE_COLOR_3F))
             memcpy((float *)&saved_palette[n], payload->Data, sizeof(float) * 3);
-          if (const ANCHORPayload *payload = ANCHOR::AcceptDragDropPayload(ANCHOR_PAYLOAD_TYPE_COLOR_4F))
+          if (const AnchorPayload *payload = ANCHOR::AcceptDragDropPayload(ANCHOR_PAYLOAD_TYPE_COLOR_4F))
             memcpy((float *)&saved_palette[n], payload->Data, sizeof(float) * 4);
           ANCHOR::EndDragDropTarget();
         }
@@ -2123,10 +2037,10 @@ static void ShowDemoWindowWidgets()
 
     ANCHOR::Text("Color button only:");
     static bool no_border = false;
-    ANCHOR::Checkbox("ANCHOR_ColorEditFlags_NoBorder", &no_border);
+    ANCHOR::Checkbox("AnchorColorEditFlags_NoBorder", &no_border);
     ANCHOR::ColorButton("MyColor##3c",
                         *(GfVec4f *)&color,
-                        misc_flags | (no_border ? ANCHOR_ColorEditFlags_NoBorder : 0),
+                        misc_flags | (no_border ? AnchorColorEditFlags_NoBorder : 0),
                         GfVec2f(80, 80));
 
     ANCHOR::Text("Color picker:");
@@ -2147,7 +2061,7 @@ static void ShowDemoWindowWidgets()
       if (ref_color)
       {
         ANCHOR::SameLine();
-        ANCHOR::ColorEdit4("##RefColor", &ref_color_v[0], ANCHOR_ColorEditFlags_NoInputs | misc_flags);
+        ANCHOR::ColorEdit4("##RefColor", &ref_color_v[0], AnchorColorEditFlags_NoInputs | misc_flags);
       }
     }
     ANCHOR::Combo("Display Mode", &display_mode, "Auto/Current\0None\0RGB Only\0HSV Only\0Hex Only\0");
@@ -2161,26 +2075,26 @@ static void ShowDemoWindowWidgets()
     ANCHOR::Combo("Picker Mode", &picker_mode, "Auto/Current\0Hue bar + SV rect\0Hue wheel + SV triangle\0");
     ANCHOR::SameLine();
     HelpMarker("User can right-click the picker to change mode.");
-    ANCHOR_ColorEditFlags flags = misc_flags;
+    AnchorColorEditFlags flags = misc_flags;
     if (!alpha)
-      flags |= ANCHOR_ColorEditFlags_NoAlpha;  // This is by default if you call ColorPicker3()
-                                               // instead of ColorPicker4()
+      flags |= AnchorColorEditFlags_NoAlpha;  // This is by default if you call ColorPicker3()
+                                              // instead of ColorPicker4()
     if (alpha_bar)
-      flags |= ANCHOR_ColorEditFlags_AlphaBar;
+      flags |= AnchorColorEditFlags_AlphaBar;
     if (!side_preview)
-      flags |= ANCHOR_ColorEditFlags_NoSidePreview;
+      flags |= AnchorColorEditFlags_NoSidePreview;
     if (picker_mode == 1)
-      flags |= ANCHOR_ColorEditFlags_PickerHueBar;
+      flags |= AnchorColorEditFlags_PickerHueBar;
     if (picker_mode == 2)
-      flags |= ANCHOR_ColorEditFlags_PickerHueWheel;
+      flags |= AnchorColorEditFlags_PickerHueWheel;
     if (display_mode == 1)
-      flags |= ANCHOR_ColorEditFlags_NoInputs;  // Disable all RGB/HSV/Hex displays
+      flags |= AnchorColorEditFlags_NoInputs;  // Disable all RGB/HSV/Hex displays
     if (display_mode == 2)
-      flags |= ANCHOR_ColorEditFlags_DisplayRGB;  // Override display mode
+      flags |= AnchorColorEditFlags_DisplayRGB;  // Override display mode
     if (display_mode == 3)
-      flags |= ANCHOR_ColorEditFlags_DisplayHSV;
+      flags |= AnchorColorEditFlags_DisplayHSV;
     if (display_mode == 4)
-      flags |= ANCHOR_ColorEditFlags_DisplayHex;
+      flags |= AnchorColorEditFlags_DisplayHex;
     ANCHOR::ColorPicker4("MyColor##4", (float *)&color, flags, ref_color ? &ref_color_v[0] : NULL);
 
     ANCHOR::Text("Set defaults in code:");
@@ -2193,11 +2107,11 @@ static void ShowDemoWindowWidgets()
       "to avoid"
       "encouraging you to persistently save values that aren't forward-compatible.");
     if (ANCHOR::Button("Default: Uint8 + HSV + Hue Bar"))
-      ANCHOR::SetColorEditOptions(ANCHOR_ColorEditFlags_Uint8 | ANCHOR_ColorEditFlags_DisplayHSV |
-                                  ANCHOR_ColorEditFlags_PickerHueBar);
+      ANCHOR::SetColorEditOptions(AnchorColorEditFlags_Uint8 | AnchorColorEditFlags_DisplayHSV |
+                                  AnchorColorEditFlags_PickerHueBar);
     if (ANCHOR::Button("Default: Float + HDR + Hue Wheel"))
-      ANCHOR::SetColorEditOptions(ANCHOR_ColorEditFlags_Float | ANCHOR_ColorEditFlags_HDR |
-                                  ANCHOR_ColorEditFlags_PickerHueWheel);
+      ANCHOR::SetColorEditOptions(AnchorColorEditFlags_Float | AnchorColorEditFlags_HDR |
+                                  AnchorColorEditFlags_PickerHueWheel);
 
     // HSV encoded support (to avoid RGB<>HSV round trips and singularities when S==0 or V==0)
     static GfVec4f color_hsv(0.23f, 1.0f, 1.0f, 1.0f);  // Stored as HSV!
@@ -2206,7 +2120,7 @@ static void ShowDemoWindowWidgets()
     ANCHOR::SameLine();
     HelpMarker(
       "By default, colors are given to ColorEdit and ColorPicker in RGB, but "
-      "ANCHOR_ColorEditFlags_InputHSV"
+      "AnchorColorEditFlags_InputHSV"
       "allows you to store colors as HSV and pass them to ColorEdit and ColorPicker as HSV. "
       "This comes with the"
       "added benefit that you can manipulate hue values with the picker even when saturation or "
@@ -2214,12 +2128,12 @@ static void ShowDemoWindowWidgets()
     ANCHOR::Text("Color widget with InputHSV:");
     ANCHOR::ColorEdit4("HSV shown as RGB##1",
                        (float *)&color_hsv,
-                       ANCHOR_ColorEditFlags_DisplayRGB | ANCHOR_ColorEditFlags_InputHSV |
-                         ANCHOR_ColorEditFlags_Float);
+                       AnchorColorEditFlags_DisplayRGB | AnchorColorEditFlags_InputHSV |
+                         AnchorColorEditFlags_Float);
     ANCHOR::ColorEdit4("HSV shown as HSV##1",
                        (float *)&color_hsv,
-                       ANCHOR_ColorEditFlags_DisplayHSV | ANCHOR_ColorEditFlags_InputHSV |
-                         ANCHOR_ColorEditFlags_Float);
+                       AnchorColorEditFlags_DisplayHSV | AnchorColorEditFlags_InputHSV |
+                         AnchorColorEditFlags_Float);
     ANCHOR::DragFloat4("Raw HSV values", (float *)&color_hsv, 0.01f, 0.0f, 1.0f);
 
     ANCHOR::TreePop();
@@ -2229,19 +2143,19 @@ static void ShowDemoWindowWidgets()
   {
     // Demonstrate using advanced flags for DragXXX and SliderXXX functions. Note that the flags
     // are the same!
-    static ANCHOR_SliderFlags flags = ANCHOR_SliderFlags_None;
-    ANCHOR::CheckboxFlags("ANCHOR_SliderFlags_AlwaysClamp", &flags, ANCHOR_SliderFlags_AlwaysClamp);
+    static AnchorSliderFlags flags = AnchorSliderFlags_None;
+    ANCHOR::CheckboxFlags("AnchorSliderFlags_AlwaysClamp", &flags, AnchorSliderFlags_AlwaysClamp);
     ANCHOR::SameLine();
     HelpMarker("Always clamp value to min/max bounds (if any) when input manually with CTRL+Click.");
-    ANCHOR::CheckboxFlags("ANCHOR_SliderFlags_Logarithmic", &flags, ANCHOR_SliderFlags_Logarithmic);
+    ANCHOR::CheckboxFlags("AnchorSliderFlags_Logarithmic", &flags, AnchorSliderFlags_Logarithmic);
     ANCHOR::SameLine();
     HelpMarker("Enable logarithmic editing (more precision for small values).");
-    ANCHOR::CheckboxFlags("ANCHOR_SliderFlags_NoRoundToFormat", &flags, ANCHOR_SliderFlags_NoRoundToFormat);
+    ANCHOR::CheckboxFlags("AnchorSliderFlags_NoRoundToFormat", &flags, AnchorSliderFlags_NoRoundToFormat);
     ANCHOR::SameLine();
     HelpMarker(
       "Disable rounding underlying value to match precision of the format string (e.g. %.3f "
       "values are rounded to those 3 digits).");
-    ANCHOR::CheckboxFlags("ANCHOR_SliderFlags_NoInput", &flags, ANCHOR_SliderFlags_NoInput);
+    ANCHOR::CheckboxFlags("AnchorSliderFlags_NoInput", &flags, AnchorSliderFlags_NoInput);
     ANCHOR::SameLine();
     HelpMarker("Disable CTRL+Click or Enter key allowing to input text directly into the widget.");
 
@@ -2277,7 +2191,7 @@ static void ShowDemoWindowWidgets()
                             100.0f,
                             "Min: %.1f %%",
                             "Max: %.1f %%",
-                            ANCHOR_SliderFlags_AlwaysClamp);
+                            AnchorSliderFlags_AlwaysClamp);
     ANCHOR::DragIntRange2("range int", &begin_i, &end_i, 5, 0, 1000, "Min: %d units", "Max: %d units");
     ANCHOR::DragIntRange2(
       "range int (no bounds)", &begin_i, &end_i, 5, 0, 0, "Min: %d units", "Max: %d units");
@@ -2290,7 +2204,7 @@ static void ShowDemoWindowWidgets()
 // - signed/unsigned
 // - 8/16/32/64-bits
 // - integer/float/double
-// To avoid polluting the public API with all possible combinations, we use the ANCHOR_DataType
+// To avoid polluting the public API with all possible combinations, we use the AnchorDataType
 // enum to pass the type, and passing all arguments by pointer. This is the reason the test code
 // below creates local variables to hold "zero" "one" etc. for each types. In practice, if you
 // frequently use a given type that is not covered by the normal API entry points, you can wrap it
@@ -2299,17 +2213,17 @@ static void ShowDemoWindowWidgets()
 //   bool MySliderU64(const char *label, u64* value, u64 min = 0, u64 max = 0, const char* format =
 //   "%lld")
 //   {
-//      return SliderScalar(label, ANCHOR_DataType_U64, value, &min, &max, format);
+//      return SliderScalar(label, AnchorDataType_U64, value, &min, &max, format);
 //   }
 
 // Setup limits (as helper variables so we can take their address, as explained above)
 // Note: SliderScalar() functions have a maximum usable range of half the natural type maximum,
 // hence the /2.
-#    ifndef LLONG_MIN
+#ifndef LLONG_MIN
     AnchorS64 LLONG_MIN = -9223372036854775807LL - 1;
     AnchorS64 LLONG_MAX = 9223372036854775807LL;
     AnchorU64 ULLONG_MAX = (2ULL * 9223372036854775807LL + 1);
-#    endif
+#endif
     const char s8_zero = 0, s8_one = 1, s8_fifty = 50, s8_min = -128, s8_max = 127;
     const AnchorU8 u8_zero = 0, u8_one = 1, u8_fifty = 50, u8_min = 0, u8_max = 255;
     const short s16_zero = 0, s16_one = 1, s16_fifty = 50, s16_min = -32768, s16_max = 32767;
@@ -2347,156 +2261,156 @@ static void ShowDemoWindowWidgets()
       "interaction.\n"
       "You can override the clamping limits by using CTRL+Click to input a value.");
     ANCHOR::DragScalar("drag s8",
-                       ANCHOR_DataType_S8,
+                       AnchorDataType_S8,
                        &s8_v,
                        drag_speed,
                        drag_clamp ? &s8_zero : NULL,
                        drag_clamp ? &s8_fifty : NULL);
     ANCHOR::DragScalar("drag u8",
-                       ANCHOR_DataType_U8,
+                       AnchorDataType_U8,
                        &u8_v,
                        drag_speed,
                        drag_clamp ? &u8_zero : NULL,
                        drag_clamp ? &u8_fifty : NULL,
                        "%u ms");
     ANCHOR::DragScalar("drag s16",
-                       ANCHOR_DataType_S16,
+                       AnchorDataType_S16,
                        &s16_v,
                        drag_speed,
                        drag_clamp ? &s16_zero : NULL,
                        drag_clamp ? &s16_fifty : NULL);
     ANCHOR::DragScalar("drag u16",
-                       ANCHOR_DataType_U16,
+                       AnchorDataType_U16,
                        &u16_v,
                        drag_speed,
                        drag_clamp ? &u16_zero : NULL,
                        drag_clamp ? &u16_fifty : NULL,
                        "%u ms");
     ANCHOR::DragScalar("drag s32",
-                       ANCHOR_DataType_S32,
+                       AnchorDataType_S32,
                        &s32_v,
                        drag_speed,
                        drag_clamp ? &s32_zero : NULL,
                        drag_clamp ? &s32_fifty : NULL);
     ANCHOR::DragScalar("drag u32",
-                       ANCHOR_DataType_U32,
+                       AnchorDataType_U32,
                        &u32_v,
                        drag_speed,
                        drag_clamp ? &u32_zero : NULL,
                        drag_clamp ? &u32_fifty : NULL,
                        "%u ms");
     ANCHOR::DragScalar("drag s64",
-                       ANCHOR_DataType_S64,
+                       AnchorDataType_S64,
                        &s64_v,
                        drag_speed,
                        drag_clamp ? &s64_zero : NULL,
                        drag_clamp ? &s64_fifty : NULL);
     ANCHOR::DragScalar("drag u64",
-                       ANCHOR_DataType_U64,
+                       AnchorDataType_U64,
                        &u64_v,
                        drag_speed,
                        drag_clamp ? &u64_zero : NULL,
                        drag_clamp ? &u64_fifty : NULL);
-    ANCHOR::DragScalar("drag float", ANCHOR_DataType_Float, &f32_v, 0.005f, &f32_zero, &f32_one, "%f");
+    ANCHOR::DragScalar("drag float", AnchorDataType_Float, &f32_v, 0.005f, &f32_zero, &f32_one, "%f");
     ANCHOR::DragScalar("drag float log",
-                       ANCHOR_DataType_Float,
+                       AnchorDataType_Float,
                        &f32_v,
                        0.005f,
                        &f32_zero,
                        &f32_one,
                        "%f",
-                       ANCHOR_SliderFlags_Logarithmic);
+                       AnchorSliderFlags_Logarithmic);
     ANCHOR::DragScalar(
-      "drag double", ANCHOR_DataType_Double, &f64_v, 0.0005f, &f64_zero, NULL, "%.10f grams");
+      "drag double", AnchorDataType_Double, &f64_v, 0.0005f, &f64_zero, NULL, "%.10f grams");
     ANCHOR::DragScalar("drag double log",
-                       ANCHOR_DataType_Double,
+                       AnchorDataType_Double,
                        &f64_v,
                        0.0005f,
                        &f64_zero,
                        &f64_one,
                        "0 < %.10f < 1",
-                       ANCHOR_SliderFlags_Logarithmic);
+                       AnchorSliderFlags_Logarithmic);
 
     ANCHOR::Text("Sliders");
-    ANCHOR::SliderScalar("slider s8 full", ANCHOR_DataType_S8, &s8_v, &s8_min, &s8_max, "%d");
-    ANCHOR::SliderScalar("slider u8 full", ANCHOR_DataType_U8, &u8_v, &u8_min, &u8_max, "%u");
-    ANCHOR::SliderScalar("slider s16 full", ANCHOR_DataType_S16, &s16_v, &s16_min, &s16_max, "%d");
-    ANCHOR::SliderScalar("slider u16 full", ANCHOR_DataType_U16, &u16_v, &u16_min, &u16_max, "%u");
-    ANCHOR::SliderScalar("slider s32 low", ANCHOR_DataType_S32, &s32_v, &s32_zero, &s32_fifty, "%d");
-    ANCHOR::SliderScalar("slider s32 high", ANCHOR_DataType_S32, &s32_v, &s32_hi_a, &s32_hi_b, "%d");
-    ANCHOR::SliderScalar("slider s32 full", ANCHOR_DataType_S32, &s32_v, &s32_min, &s32_max, "%d");
-    ANCHOR::SliderScalar("slider u32 low", ANCHOR_DataType_U32, &u32_v, &u32_zero, &u32_fifty, "%u");
-    ANCHOR::SliderScalar("slider u32 high", ANCHOR_DataType_U32, &u32_v, &u32_hi_a, &u32_hi_b, "%u");
-    ANCHOR::SliderScalar("slider u32 full", ANCHOR_DataType_U32, &u32_v, &u32_min, &u32_max, "%u");
+    ANCHOR::SliderScalar("slider s8 full", AnchorDataType_S8, &s8_v, &s8_min, &s8_max, "%d");
+    ANCHOR::SliderScalar("slider u8 full", AnchorDataType_U8, &u8_v, &u8_min, &u8_max, "%u");
+    ANCHOR::SliderScalar("slider s16 full", AnchorDataType_S16, &s16_v, &s16_min, &s16_max, "%d");
+    ANCHOR::SliderScalar("slider u16 full", AnchorDataType_U16, &u16_v, &u16_min, &u16_max, "%u");
+    ANCHOR::SliderScalar("slider s32 low", AnchorDataType_S32, &s32_v, &s32_zero, &s32_fifty, "%d");
+    ANCHOR::SliderScalar("slider s32 high", AnchorDataType_S32, &s32_v, &s32_hi_a, &s32_hi_b, "%d");
+    ANCHOR::SliderScalar("slider s32 full", AnchorDataType_S32, &s32_v, &s32_min, &s32_max, "%d");
+    ANCHOR::SliderScalar("slider u32 low", AnchorDataType_U32, &u32_v, &u32_zero, &u32_fifty, "%u");
+    ANCHOR::SliderScalar("slider u32 high", AnchorDataType_U32, &u32_v, &u32_hi_a, &u32_hi_b, "%u");
+    ANCHOR::SliderScalar("slider u32 full", AnchorDataType_U32, &u32_v, &u32_min, &u32_max, "%u");
     ANCHOR::SliderScalar(
-      "slider s64 low", ANCHOR_DataType_S64, &s64_v, &s64_zero, &s64_fifty, "%" IM_PRId64);
+      "slider s64 low", AnchorDataType_S64, &s64_v, &s64_zero, &s64_fifty, "%" IM_PRId64);
     ANCHOR::SliderScalar(
-      "slider s64 high", ANCHOR_DataType_S64, &s64_v, &s64_hi_a, &s64_hi_b, "%" IM_PRId64);
-    ANCHOR::SliderScalar("slider s64 full", ANCHOR_DataType_S64, &s64_v, &s64_min, &s64_max, "%" IM_PRId64);
+      "slider s64 high", AnchorDataType_S64, &s64_v, &s64_hi_a, &s64_hi_b, "%" IM_PRId64);
+    ANCHOR::SliderScalar("slider s64 full", AnchorDataType_S64, &s64_v, &s64_min, &s64_max, "%" IM_PRId64);
     ANCHOR::SliderScalar(
-      "slider u64 low", ANCHOR_DataType_U64, &u64_v, &u64_zero, &u64_fifty, "%" IM_PRIu64 " ms");
+      "slider u64 low", AnchorDataType_U64, &u64_v, &u64_zero, &u64_fifty, "%" IM_PRIu64 " ms");
     ANCHOR::SliderScalar(
-      "slider u64 high", ANCHOR_DataType_U64, &u64_v, &u64_hi_a, &u64_hi_b, "%" IM_PRIu64 " ms");
+      "slider u64 high", AnchorDataType_U64, &u64_v, &u64_hi_a, &u64_hi_b, "%" IM_PRIu64 " ms");
     ANCHOR::SliderScalar(
-      "slider u64 full", ANCHOR_DataType_U64, &u64_v, &u64_min, &u64_max, "%" IM_PRIu64 " ms");
-    ANCHOR::SliderScalar("slider float low", ANCHOR_DataType_Float, &f32_v, &f32_zero, &f32_one);
+      "slider u64 full", AnchorDataType_U64, &u64_v, &u64_min, &u64_max, "%" IM_PRIu64 " ms");
+    ANCHOR::SliderScalar("slider float low", AnchorDataType_Float, &f32_v, &f32_zero, &f32_one);
     ANCHOR::SliderScalar("slider float low log",
-                         ANCHOR_DataType_Float,
+                         AnchorDataType_Float,
                          &f32_v,
                          &f32_zero,
                          &f32_one,
                          "%.10f",
-                         ANCHOR_SliderFlags_Logarithmic);
-    ANCHOR::SliderScalar("slider float high", ANCHOR_DataType_Float, &f32_v, &f32_lo_a, &f32_hi_a, "%e");
+                         AnchorSliderFlags_Logarithmic);
+    ANCHOR::SliderScalar("slider float high", AnchorDataType_Float, &f32_v, &f32_lo_a, &f32_hi_a, "%e");
     ANCHOR::SliderScalar(
-      "slider double low", ANCHOR_DataType_Double, &f64_v, &f64_zero, &f64_one, "%.10f grams");
+      "slider double low", AnchorDataType_Double, &f64_v, &f64_zero, &f64_one, "%.10f grams");
     ANCHOR::SliderScalar("slider double low log",
-                         ANCHOR_DataType_Double,
+                         AnchorDataType_Double,
                          &f64_v,
                          &f64_zero,
                          &f64_one,
                          "%.10f",
-                         ANCHOR_SliderFlags_Logarithmic);
+                         AnchorSliderFlags_Logarithmic);
     ANCHOR::SliderScalar(
-      "slider double high", ANCHOR_DataType_Double, &f64_v, &f64_lo_a, &f64_hi_a, "%e grams");
+      "slider double high", AnchorDataType_Double, &f64_v, &f64_lo_a, &f64_hi_a, "%e grams");
 
     ANCHOR::Text("Sliders (reverse)");
-    ANCHOR::SliderScalar("slider s8 reverse", ANCHOR_DataType_S8, &s8_v, &s8_max, &s8_min, "%d");
-    ANCHOR::SliderScalar("slider u8 reverse", ANCHOR_DataType_U8, &u8_v, &u8_max, &u8_min, "%u");
-    ANCHOR::SliderScalar("slider s32 reverse", ANCHOR_DataType_S32, &s32_v, &s32_fifty, &s32_zero, "%d");
-    ANCHOR::SliderScalar("slider u32 reverse", ANCHOR_DataType_U32, &u32_v, &u32_fifty, &u32_zero, "%u");
+    ANCHOR::SliderScalar("slider s8 reverse", AnchorDataType_S8, &s8_v, &s8_max, &s8_min, "%d");
+    ANCHOR::SliderScalar("slider u8 reverse", AnchorDataType_U8, &u8_v, &u8_max, &u8_min, "%u");
+    ANCHOR::SliderScalar("slider s32 reverse", AnchorDataType_S32, &s32_v, &s32_fifty, &s32_zero, "%d");
+    ANCHOR::SliderScalar("slider u32 reverse", AnchorDataType_U32, &u32_v, &u32_fifty, &u32_zero, "%u");
     ANCHOR::SliderScalar(
-      "slider s64 reverse", ANCHOR_DataType_S64, &s64_v, &s64_fifty, &s64_zero, "%" IM_PRId64);
+      "slider s64 reverse", AnchorDataType_S64, &s64_v, &s64_fifty, &s64_zero, "%" IM_PRId64);
     ANCHOR::SliderScalar(
-      "slider u64 reverse", ANCHOR_DataType_U64, &u64_v, &u64_fifty, &u64_zero, "%" IM_PRIu64 " ms");
+      "slider u64 reverse", AnchorDataType_U64, &u64_v, &u64_fifty, &u64_zero, "%" IM_PRIu64 " ms");
 
     static bool inputs_step = true;
     ANCHOR::Text("Inputs");
     ANCHOR::Checkbox("Show step buttons", &inputs_step);
-    ANCHOR::InputScalar("input s8", ANCHOR_DataType_S8, &s8_v, inputs_step ? &s8_one : NULL, NULL, "%d");
-    ANCHOR::InputScalar("input u8", ANCHOR_DataType_U8, &u8_v, inputs_step ? &u8_one : NULL, NULL, "%u");
-    ANCHOR::InputScalar("input s16", ANCHOR_DataType_S16, &s16_v, inputs_step ? &s16_one : NULL, NULL, "%d");
-    ANCHOR::InputScalar("input u16", ANCHOR_DataType_U16, &u16_v, inputs_step ? &u16_one : NULL, NULL, "%u");
-    ANCHOR::InputScalar("input s32", ANCHOR_DataType_S32, &s32_v, inputs_step ? &s32_one : NULL, NULL, "%d");
+    ANCHOR::InputScalar("input s8", AnchorDataType_S8, &s8_v, inputs_step ? &s8_one : NULL, NULL, "%d");
+    ANCHOR::InputScalar("input u8", AnchorDataType_U8, &u8_v, inputs_step ? &u8_one : NULL, NULL, "%u");
+    ANCHOR::InputScalar("input s16", AnchorDataType_S16, &s16_v, inputs_step ? &s16_one : NULL, NULL, "%d");
+    ANCHOR::InputScalar("input u16", AnchorDataType_U16, &u16_v, inputs_step ? &u16_one : NULL, NULL, "%u");
+    ANCHOR::InputScalar("input s32", AnchorDataType_S32, &s32_v, inputs_step ? &s32_one : NULL, NULL, "%d");
     ANCHOR::InputScalar("input s32 hex",
-                        ANCHOR_DataType_S32,
+                        AnchorDataType_S32,
                         &s32_v,
                         inputs_step ? &s32_one : NULL,
                         NULL,
                         "%08X",
-                        ANCHORInputTextFlags_CharsHexadecimal);
-    ANCHOR::InputScalar("input u32", ANCHOR_DataType_U32, &u32_v, inputs_step ? &u32_one : NULL, NULL, "%u");
+                        AnchorInputTextFlags_CharsHexadecimal);
+    ANCHOR::InputScalar("input u32", AnchorDataType_U32, &u32_v, inputs_step ? &u32_one : NULL, NULL, "%u");
     ANCHOR::InputScalar("input u32 hex",
-                        ANCHOR_DataType_U32,
+                        AnchorDataType_U32,
                         &u32_v,
                         inputs_step ? &u32_one : NULL,
                         NULL,
                         "%08X",
-                        ANCHORInputTextFlags_CharsHexadecimal);
-    ANCHOR::InputScalar("input s64", ANCHOR_DataType_S64, &s64_v, inputs_step ? &s64_one : NULL);
-    ANCHOR::InputScalar("input u64", ANCHOR_DataType_U64, &u64_v, inputs_step ? &u64_one : NULL);
-    ANCHOR::InputScalar("input float", ANCHOR_DataType_Float, &f32_v, inputs_step ? &f32_one : NULL);
-    ANCHOR::InputScalar("input double", ANCHOR_DataType_Double, &f64_v, inputs_step ? &f64_one : NULL);
+                        AnchorInputTextFlags_CharsHexadecimal);
+    ANCHOR::InputScalar("input s64", AnchorDataType_S64, &s64_v, inputs_step ? &s64_one : NULL);
+    ANCHOR::InputScalar("input u64", AnchorDataType_U64, &u64_v, inputs_step ? &u64_one : NULL);
+    ANCHOR::InputScalar("input float", AnchorDataType_Float, &f32_v, inputs_step ? &f32_one : NULL);
+    ANCHOR::InputScalar("input double", AnchorDataType_Double, &f64_v, inputs_step ? &f64_one : NULL);
 
     ANCHOR::TreePop();
   }
@@ -2535,7 +2449,7 @@ static void ShowDemoWindowWidgets()
   if (ANCHOR::TreeNode("Vertical Sliders"))
   {
     const float spacing = 4;
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(spacing, spacing));
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(spacing, spacing));
 
     static int int_value = 0;
     ANCHOR::VSliderInt("##int", GfVec2f(18, 160), &int_value, 0, 5);
@@ -2548,10 +2462,10 @@ static void ShowDemoWindowWidgets()
       if (i > 0)
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBg, AnchorColor::HSV(i / 7.0f, 0.5f, 0.5f).Value);
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgHovered, AnchorColor::HSV(i / 7.0f, 0.6f, 0.5f).Value);
-      ANCHOR::PushStyleColor(ANCHOR_Col_FrameBgActive, AnchorColor::HSV(i / 7.0f, 0.7f, 0.5f).Value);
-      ANCHOR::PushStyleColor(ANCHOR_Col_SliderGrab, AnchorColor::HSV(i / 7.0f, 0.9f, 0.9f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_FrameBg, AnchorColor::HSV(i / 7.0f, 0.5f, 0.5f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_FrameBgHovered, AnchorColor::HSV(i / 7.0f, 0.6f, 0.5f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_FrameBgActive, AnchorColor::HSV(i / 7.0f, 0.7f, 0.5f).Value);
+      ANCHOR::PushStyleColor(AnchorCol_SliderGrab, AnchorColor::HSV(i / 7.0f, 0.9f, 0.9f).Value);
       ANCHOR::VSliderFloat("##v", GfVec2f(18, 160), &values[i], 0.0f, 1.0f, "");
       if (ANCHOR::IsItemActive() || ANCHOR::IsItemHovered())
         ANCHOR::SetTooltip("%.3f", values[i]);
@@ -2589,7 +2503,7 @@ static void ShowDemoWindowWidgets()
       if (i > 0)
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_GrabMinSize, 40);
+      ANCHOR::PushStyleVar(AnchorStyleVar_GrabMinSize, 40);
       ANCHOR::VSliderFloat("##v", GfVec2f(40, 160), &values[i], 0.0f, 1.0f, "%.2f\nsec");
       ANCHOR::PopStyleVar();
       ANCHOR::PopID();
@@ -2648,7 +2562,7 @@ static void ShowDemoWindowWidgets()
         ANCHOR::Button(names[n], GfVec2f(60, 60));
 
         // Our buttons are both drag sources and drag targets here!
-        if (ANCHOR::BeginDragDropSource(ANCHORDragDropFlags_None))
+        if (ANCHOR::BeginDragDropSource(AnchorDragDropFlags_None))
         {
           // Set payload to carry the index of our item (could be anything)
           ANCHOR::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
@@ -2671,7 +2585,7 @@ static void ShowDemoWindowWidgets()
         }
         if (ANCHOR::BeginDragDropTarget())
         {
-          if (const ANCHORPayload *payload = ANCHOR::AcceptDragDropPayload("DND_DEMO_CELL"))
+          if (const AnchorPayload *payload = ANCHOR::AcceptDragDropPayload("DND_DEMO_CELL"))
           {
             ANCHOR_ASSERT(payload->DataSize == sizeof(int));
             int payload_n = *(const int *)payload->Data;
@@ -2799,7 +2713,7 @@ static void ShowDemoWindowWidgets()
     if (item_type == 9)
     {
       ret = ANCHOR::MenuItem("ITEM: MenuItem");
-    }  // Testing menu item (they use ANCHOR_ButtonFlags_PressedOnRelease button policy)
+    }  // Testing menu item (they use AnchorButtonFlags_PressedOnRelease button policy)
     if (item_type == 10)
     {
       ret = ANCHOR::TreeNode("ITEM: TreeNode");
@@ -2808,10 +2722,10 @@ static void ShowDemoWindowWidgets()
     }  // Testing tree node
     if (item_type == 11)
     {
-      ret = ANCHOR::TreeNodeEx("ITEM: TreeNode w/ ANCHOR_TreeNodeFlags_OpenOnDoubleClick",
-                               ANCHOR_TreeNodeFlags_OpenOnDoubleClick |
-                                 ANCHOR_TreeNodeFlags_NoTreePushOnOpen);
-    }  // Testing tree node with ANCHOR_ButtonFlags_PressedOnDoubleClick button policy.
+      ret = ANCHOR::TreeNodeEx("ITEM: TreeNode w/ AnchorTreeNodeFlags_OpenOnDoubleClick",
+                               AnchorTreeNodeFlags_OpenOnDoubleClick |
+                                 AnchorTreeNodeFlags_NoTreePushOnOpen);
+    }  // Testing tree node with AnchorButtonFlags_PressedOnDoubleClick button policy.
     if (item_type == 12)
     {
       const char *items[] = {"Apple", "Banana", "Cherry", "Kiwi"};
@@ -2827,7 +2741,7 @@ static void ShowDemoWindowWidgets()
     }
 
     // Display the values of IsItemHovered() and other common item state functions.
-    // Note that the ANCHORHoveredFlags_XXX flags can be combined.
+    // Note that the AnchorHoveredFlags_XXX flags can be combined.
     // Because BulletText is an item itself and that would affect the output of IsItemXXX
     // functions, we query every state in a single call to avoid storing them and to simplify the
     // code.
@@ -2853,10 +2767,10 @@ static void ShowDemoWindowWidgets()
       ret,
       ANCHOR::IsItemFocused(),
       ANCHOR::IsItemHovered(),
-      ANCHOR::IsItemHovered(ANCHORHoveredFlags_AllowWhenBlockedByPopup),
-      ANCHOR::IsItemHovered(ANCHORHoveredFlags_AllowWhenBlockedByActiveItem),
-      ANCHOR::IsItemHovered(ANCHORHoveredFlags_AllowWhenOverlapped),
-      ANCHOR::IsItemHovered(ANCHORHoveredFlags_RectOnly),
+      ANCHOR::IsItemHovered(AnchorHoveredFlags_AllowWhenBlockedByPopup),
+      ANCHOR::IsItemHovered(AnchorHoveredFlags_AllowWhenBlockedByActiveItem),
+      ANCHOR::IsItemHovered(AnchorHoveredFlags_AllowWhenOverlapped),
+      ANCHOR::IsItemHovered(AnchorHoveredFlags_RectOnly),
       ANCHOR::IsItemActive(),
       ANCHOR::IsItemEdited(),
       ANCHOR::IsItemActivated(),
@@ -2879,7 +2793,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::BeginChild("outer_child", GfVec2f(0, ANCHOR::GetFontSize() * 20.0f), true);
 
     // Testing IsWindowFocused() function with its various flags.
-    // Note that the ANCHORFocusedFlags_XXX flags can be combined.
+    // Note that the AnchorFocusedFlags_XXX flags can be combined.
     ANCHOR::BulletText(
       "IsWindowFocused() = %d\n"
       "IsWindowFocused(_ChildWindows) = %d\n"
@@ -2887,13 +2801,13 @@ static void ShowDemoWindowWidgets()
       "IsWindowFocused(_RootWindow) = %d\n"
       "IsWindowFocused(_AnyWindow) = %d\n",
       ANCHOR::IsWindowFocused(),
-      ANCHOR::IsWindowFocused(ANCHORFocusedFlags_ChildWindows),
-      ANCHOR::IsWindowFocused(ANCHORFocusedFlags_ChildWindows | ANCHORFocusedFlags_RootWindow),
-      ANCHOR::IsWindowFocused(ANCHORFocusedFlags_RootWindow),
-      ANCHOR::IsWindowFocused(ANCHORFocusedFlags_AnyWindow));
+      ANCHOR::IsWindowFocused(AnchorFocusedFlags_ChildWindows),
+      ANCHOR::IsWindowFocused(AnchorFocusedFlags_ChildWindows | AnchorFocusedFlags_RootWindow),
+      ANCHOR::IsWindowFocused(AnchorFocusedFlags_RootWindow),
+      ANCHOR::IsWindowFocused(AnchorFocusedFlags_AnyWindow));
 
     // Testing IsWindowHovered() function with its various flags.
-    // Note that the ANCHORHoveredFlags_XXX flags can be combined.
+    // Note that the AnchorHoveredFlags_XXX flags can be combined.
     ANCHOR::BulletText(
       "IsWindowHovered() = %d\n"
       "IsWindowHovered(_AllowWhenBlockedByPopup) = %d\n"
@@ -2904,13 +2818,13 @@ static void ShowDemoWindowWidgets()
       "IsWindowHovered(_RootWindow) = %d\n"
       "IsWindowHovered(_AnyWindow) = %d\n",
       ANCHOR::IsWindowHovered(),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_AllowWhenBlockedByPopup),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_AllowWhenBlockedByActiveItem),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_ChildWindows),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_ChildWindows | ANCHORHoveredFlags_RootWindow),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_ChildWindows | ANCHORHoveredFlags_AllowWhenBlockedByPopup),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_RootWindow),
-      ANCHOR::IsWindowHovered(ANCHORHoveredFlags_AnyWindow));
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_AllowWhenBlockedByPopup),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_AllowWhenBlockedByActiveItem),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_ChildWindows),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_ChildWindows | AnchorHoveredFlags_RootWindow),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_ChildWindows | AnchorHoveredFlags_AllowWhenBlockedByPopup),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_RootWindow),
+      ANCHOR::IsWindowHovered(AnchorHoveredFlags_AnyWindow));
 
     ANCHOR::BeginChild("child", GfVec2f(0, 50), true);
     ANCHOR::Text("This is another child window for testing the _ChildWindows flag.");
@@ -2919,7 +2833,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::EndChild();
 
     static char unused_str[] = "This widget is only here to be able to tab-out of the widgets above.";
-    ANCHOR::InputText("unused", unused_str, ANCHOR_ARRAYSIZE(unused_str), ANCHORInputTextFlags_ReadOnly);
+    ANCHOR::InputText("unused", unused_str, ANCHOR_ARRAYSIZE(unused_str), AnchorInputTextFlags_ReadOnly);
 
     // Calling IsItemHovered() after begin returns the hovered status of the title bar.
     // This is useful in particular if you want to create a context menu associated to the title
@@ -2966,9 +2880,9 @@ static void ShowDemoWindowLayout()
 
     // Child 1: no border, enable horizontal scrollbar
     {
-      ANCHOR_WindowFlags window_flags = ANCHOR_WindowFlags_HorizontalScrollbar;
+      AnchorWindowFlags window_flags = AnchorWindowFlags_HorizontalScrollbar;
       if (disable_mouse_wheel)
-        window_flags |= ANCHOR_WindowFlags_NoScrollWithMouse;
+        window_flags |= AnchorWindowFlags_NoScrollWithMouse;
       ANCHOR::BeginChild(
         "ChildL", GfVec2f(ANCHOR::GetWindowContentRegionWidth() * 0.5f, 260), false, window_flags);
       for (int i = 0; i < 100; i++)
@@ -2980,12 +2894,12 @@ static void ShowDemoWindowLayout()
 
     // Child 2: rounded border
     {
-      ANCHOR_WindowFlags window_flags = ANCHOR_WindowFlags_None;
+      AnchorWindowFlags window_flags = AnchorWindowFlags_None;
       if (disable_mouse_wheel)
-        window_flags |= ANCHOR_WindowFlags_NoScrollWithMouse;
+        window_flags |= AnchorWindowFlags_NoScrollWithMouse;
       if (!disable_menu)
-        window_flags |= ANCHOR_WindowFlags_MenuBar;
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_ChildRounding, 5.0f);
+        window_flags |= AnchorWindowFlags_MenuBar;
+      ANCHOR::PushStyleVar(AnchorStyleVar_ChildRounding, 5.0f);
       ANCHOR::BeginChild("ChildR", GfVec2f(0, 260), true, window_flags);
       if (!disable_menu && ANCHOR::BeginMenuBar())
       {
@@ -2996,7 +2910,7 @@ static void ShowDemoWindowLayout()
         }
         ANCHOR::EndMenuBar();
       }
-      if (ANCHOR::BeginTable("split", 2, ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_NoSavedSettings))
+      if (ANCHOR::BeginTable("split", 2, AnchorTableFlags_Resizable | AnchorTableFlags_NoSavedSettings))
       {
         for (int i = 0; i < 100; i++)
         {
@@ -3014,7 +2928,7 @@ static void ShowDemoWindowLayout()
     ANCHOR::Separator();
 
     // Demonstrate a few extra things
-    // - Changing ANCHOR_Col_ChildBg (which is transparent black in default styles)
+    // - Changing AnchorCol_ChildBg (which is transparent black in default styles)
     // - Using SetCursorPos() to position child window (the child window is an item from the POV of
     // parent window)
     //   You can also call SetNextWindowPos() to position the child window. The parent window will
@@ -3029,8 +2943,8 @@ static void ShowDemoWindowLayout()
       ANCHOR::DragInt("Offset X", &offset_x, 1.0f, -1000, 1000);
 
       ANCHOR::SetCursorPosX(ANCHOR::GetCursorPosX() + (float)offset_x);
-      ANCHOR::PushStyleColor(ANCHOR_Col_ChildBg, ANCHOR_COL32(255, 0, 0, 100));
-      ANCHOR::BeginChild("Red", GfVec2f(200, 100), true, ANCHOR_WindowFlags_None);
+      ANCHOR::PushStyleColor(AnchorCol_ChildBg, ANCHOR_COL32(255, 0, 0, 100));
+      ANCHOR::BeginChild("Red", GfVec2f(200, 100), true, AnchorWindowFlags_None);
       for (int n = 0; n < 50; n++)
         ANCHOR::Text("Some test %d", n);
       ANCHOR::EndChild();
@@ -3223,7 +3137,7 @@ static void ShowDemoWindowLayout()
     // (we should eventually provide this as an automatic layout feature, but for now you can do it
     // manually)
     ANCHOR::Text("Manually wrapping:");
-    ANCHOR_Style &style = ANCHOR::GetStyle();
+    AnchorStyle &style = ANCHOR::GetStyle();
     int buttons_count = 20;
     float window_visible_x2 = ANCHOR::GetWindowPos()[0] + ANCHOR::GetWindowContentRegionMax()[0];
     for (int n = 0; n < buttons_count; n++)
@@ -3464,7 +3378,7 @@ static void ShowDemoWindowLayout()
     if (scroll_to_off || scroll_to_pos)
       enable_track = false;
 
-    ANCHOR_Style &style = ANCHOR::GetStyle();
+    AnchorStyle &style = ANCHOR::GetStyle();
     float child_w = (ANCHOR::GetContentRegionAvail()[0] - 4 * style.ItemSpacing[0]) / 5;
     if (child_w < 1.0f)
       child_w = 1.0f;
@@ -3477,7 +3391,7 @@ static void ShowDemoWindowLayout()
       const char *names[] = {"Top", "25%", "Center", "75%", "Bottom"};
       ANCHOR::TextUnformatted(names[i]);
 
-      const ANCHOR_WindowFlags child_flags = enable_extra_decorations ? ANCHOR_WindowFlags_MenuBar : 0;
+      const AnchorWindowFlags child_flags = enable_extra_decorations ? AnchorWindowFlags_MenuBar : 0;
       const ANCHOR_ID child_id = ANCHOR::GetID((void *)(intptr_t)i);
       const bool child_is_visible = ANCHOR::BeginChild(
         child_id, GfVec2f(child_w, 200.0f), true, child_flags);
@@ -3524,10 +3438,10 @@ static void ShowDemoWindowLayout()
     for (int i = 0; i < 5; i++)
     {
       float child_height = ANCHOR::GetTextLineHeight() + style.ScrollbarSize + style.WindowPadding[1] * 2.0f;
-      ANCHOR_WindowFlags child_flags = ANCHOR_WindowFlags_HorizontalScrollbar |
-                                       (enable_extra_decorations ?
-                                          ANCHOR_WindowFlags_AlwaysVerticalScrollbar :
-                                          0);
+      AnchorWindowFlags child_flags = AnchorWindowFlags_HorizontalScrollbar |
+                                      (enable_extra_decorations ?
+                                         AnchorWindowFlags_AlwaysVerticalScrollbar :
+                                         0);
       ANCHOR_ID child_id = ANCHOR::GetID((void *)(intptr_t)i);
       bool child_is_visible = ANCHOR::BeginChild(child_id, GfVec2f(-100, child_height), true, child_flags);
       if (scroll_to_off)
@@ -3564,22 +3478,22 @@ static void ShowDemoWindowLayout()
     // Miscellaneous Horizontal Scrolling Demo
     HelpMarker(
       "Horizontal scrolling for a window is enabled via the "
-      "ANCHOR_WindowFlags_HorizontalScrollbar flag.\n\n"
+      "AnchorWindowFlags_HorizontalScrollbar flag.\n\n"
       "You may want to also explicitly specify content width by using "
       "SetNextWindowContentWidth() before Begin().");
     static int lines = 7;
     ANCHOR::SliderInt("Lines", &lines, 1, 15);
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_FrameRounding, 3.0f);
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding, GfVec2f(2.0f, 1.0f));
+    ANCHOR::PushStyleVar(AnchorStyleVar_FrameRounding, 3.0f);
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2.0f, 1.0f));
     GfVec2f scrolling_child_size = GfVec2f(0, ANCHOR::GetFrameHeightWithSpacing() * 7 + 30);
-    ANCHOR::BeginChild("scrolling", scrolling_child_size, true, ANCHOR_WindowFlags_HorizontalScrollbar);
+    ANCHOR::BeginChild("scrolling", scrolling_child_size, true, AnchorWindowFlags_HorizontalScrollbar);
     for (int line = 0; line < lines; line++)
     {
       // Display random stuff. For the sake of this trivial demo we are using basic Button() +
       // SameLine() If you want to create your own time line for a real application you may be
       // better off manipulating the cursor position yourself, aka using
       // SetCursorPos/SetCursorScreenPos to position the widgets yourself. You may also want to use
-      // the lower-level ImDrawList API.
+      // the lower-level AnchorDrawList API.
       int num_buttons = 10 + ((line & 1) ? line * 9 : line * 3);
       for (int n = 0; n < num_buttons; n++)
       {
@@ -3590,9 +3504,9 @@ static void ShowDemoWindowLayout()
         sprintf(num_buf, "%d", n);
         const char *label = (!(n % 15)) ? "FizzBuzz" : (!(n % 3)) ? "Fizz" : (!(n % 5)) ? "Buzz" : num_buf;
         float hue = n * 0.05f;
-        ANCHOR::PushStyleColor(ANCHOR_Col_Button, AnchorColor::HSV(hue, 0.6f, 0.6f).Value);
-        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonHovered, AnchorColor::HSV(hue, 0.7f, 0.7f).Value);
-        ANCHOR::PushStyleColor(ANCHOR_Col_ButtonActive, AnchorColor::HSV(hue, 0.8f, 0.8f).Value);
+        ANCHOR::PushStyleColor(AnchorCol_Button, AnchorColor::HSV(hue, 0.6f, 0.6f).Value);
+        ANCHOR::PushStyleColor(AnchorCol_ButtonHovered, AnchorColor::HSV(hue, 0.7f, 0.7f).Value);
+        ANCHOR::PushStyleColor(AnchorCol_ButtonActive, AnchorColor::HSV(hue, 0.8f, 0.8f).Value);
         ANCHOR::Button(label, GfVec2f(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
         ANCHOR::PopStyleColor(3);
         ANCHOR::PopID();
@@ -3643,9 +3557,9 @@ static void ShowDemoWindowLayout()
         ANCHOR::SetNextWindowContentSize(GfVec2f(contents_size_x, 0.0f));
       ANCHOR::Begin("Horizontal contents size demo window",
                     &show_horizontal_contents_size_demo_window,
-                    show_h_scrollbar ? ANCHOR_WindowFlags_HorizontalScrollbar : 0);
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(2, 0));
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding, GfVec2f(2, 0));
+                    show_h_scrollbar ? AnchorWindowFlags_HorizontalScrollbar : 0);
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(2, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2, 0));
       HelpMarker(
         "Test of different widgets react and impact the work rectangle growing when horizontal "
         "scrolling is enabled.\n\nUse 'Metrics->Tools->Show windows rectangles' to visualize "
@@ -3704,7 +3618,7 @@ static void ShowDemoWindowLayout()
       if (show_columns)
       {
         ANCHOR::Text("Tables:");
-        if (ANCHOR::BeginTable("table", 4, ANCHOR_TableFlags_Borders))
+        if (ANCHOR::BeginTable("table", 4, AnchorTableFlags_Borders))
         {
           for (int n = 0; n < 4; n++)
           {
@@ -3768,7 +3682,7 @@ static void ShowDemoWindowLayout()
       ANCHOR::BeginGroup();  // Lock X position
 
       ANCHOR::InvisibleButton("##empty", size);
-      if (ANCHOR::IsItemActive() && ANCHOR::IsMouseDragging(ANCHOR_MouseButton_Left))
+      if (ANCHOR::IsItemActive() && ANCHOR::IsMouseDragging(AnchorMouseButton_Left))
       {
         offset[0] += ANCHOR::GetIO().MouseDelta[0];
         offset[1] += ANCHOR::GetIO().MouseDelta[1];
@@ -3777,14 +3691,14 @@ static void ShowDemoWindowLayout()
       const GfVec2f p1 = ANCHOR::GetItemRectMax();
       const char *text_str = "Line 1 hello\nLine 2 clip me!";
       const GfVec2f text_pos = GfVec2f(p0[0] + offset[0], p0[1] + offset[1]);
-      ImDrawList *draw_list = ANCHOR::GetWindowDrawList();
+      AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
 
       switch (n)
       {
         case 0:
           HelpMarker(
             "Using ANCHOR::PushClipRect():\n"
-            "Will alter ANCHOR hit-testing logic + ImDrawList rendering.\n"
+            "Will alter ANCHOR hit-testing logic + AnchorDrawList rendering.\n"
             "(use this if you want your clipping rectangle to affect interactions)");
           ANCHOR::PushClipRect(p0, p1, true);
           draw_list->AddRectFilled(p0, p1, ANCHOR_COL32(90, 90, 120, 255));
@@ -3793,9 +3707,9 @@ static void ShowDemoWindowLayout()
           break;
         case 1:
           HelpMarker(
-            "Using ImDrawList::PushClipRect():\n"
-            "Will alter ImDrawList rendering only.\n"
-            "(use this as a shortcut if you are only using ImDrawList calls)");
+            "Using AnchorDrawList::PushClipRect():\n"
+            "Will alter AnchorDrawList rendering only.\n"
+            "(use this as a shortcut if you are only using AnchorDrawList calls)");
           draw_list->PushClipRect(p0, p1, true);
           draw_list->AddRectFilled(p0, p1, ANCHOR_COL32(90, 90, 120, 255));
           draw_list->AddText(text_pos, ANCHOR_COL32_WHITE, text_str);
@@ -3803,8 +3717,8 @@ static void ShowDemoWindowLayout()
           break;
         case 2:
           HelpMarker(
-            "Using ImDrawList::AddText() with a fine ClipRect:\n"
-            "Will alter only this specific ImDrawList::AddText() rendering.\n"
+            "Using AnchorDrawList::AddText() with a fine ClipRect:\n"
+            "Will alter only this specific AnchorDrawList::AddText() rendering.\n"
             "(this is often used internally to avoid altering the clipping rectangle and "
             "minimize draw calls)");
           GfVec4f clip_rect(
@@ -3840,7 +3754,7 @@ static void ShowDemoWindowPopups()
   // programmer as
   //   we are used to with regular Begin() calls. User can manipulate the visibility state by
   //   calling OpenPopup().
-  // (*) One can use IsItemHovered(ANCHORHoveredFlags_AllowWhenBlockedByPopup) to bypass it and
+  // (*) One can use IsItemHovered(AnchorHoveredFlags_AllowWhenBlockedByPopup) to bypass it and
   // detect hovering even
   //     when normally blocked by a popup.
   // Those three properties are connected. The library needs to hold their visibility state BECAUSE
@@ -3947,7 +3861,7 @@ static void ShowDemoWindowPopups()
     // doing:
     //     if (id == 0)
     //         id = GetItemID(); // Use last item id
-    //     if (IsItemHovered() && IsMouseReleased(ANCHOR_MouseButton_Right))
+    //     if (IsItemHovered() && IsMouseReleased(AnchorMouseButton_Right))
     //         OpenPopup(id);
     //     return BeginPopup(id);
     // For advanced advanced uses you may want to replicate and customize this code.
@@ -3997,7 +3911,7 @@ static void ShowDemoWindowPopups()
       // Here we make it that right-clicking this other text element opens the same popup as above.
       // The popup itself will be submitted by the code above.
       ANCHOR::Text("(2) Or right-click this text");
-      ANCHOR::OpenPopupOnItemClick("my popup", ANCHORPopupFlags_MouseButtonRight);
+      ANCHOR::OpenPopupOnItemClick("my popup", AnchorPopupFlags_MouseButtonRight);
 
       // Back to square one: manually open the same popup.
       if (ANCHOR::Button("(3) Or click this button"))
@@ -4042,9 +3956,9 @@ static void ShowDemoWindowPopups()
 
     // Always center this window when appearing
     GfVec2f center = ANCHOR::GetMainViewport()->GetCenter();
-    ANCHOR::SetNextWindowPos(center, ANCHOR_Cond_Appearing, GfVec2f(0.5f, 0.5f));
+    ANCHOR::SetNextWindowPos(center, AnchorCond_Appearing, GfVec2f(0.5f, 0.5f));
 
-    if (ANCHOR::BeginPopupModal("Delete?", NULL, ANCHOR_WindowFlags_AlwaysAutoResize))
+    if (ANCHOR::BeginPopupModal("Delete?", NULL, AnchorWindowFlags_AlwaysAutoResize))
     {
       ANCHOR::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
       ANCHOR::Separator();
@@ -4053,7 +3967,7 @@ static void ShowDemoWindowPopups()
       // ANCHOR::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
 
       static bool dont_ask_me_next_time = false;
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding, GfVec2f(0, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
       ANCHOR::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
       ANCHOR::PopStyleVar();
 
@@ -4072,7 +3986,7 @@ static void ShowDemoWindowPopups()
 
     if (ANCHOR::Button("Stacked modals.."))
       ANCHOR::OpenPopup("Stacked 1");
-    if (ANCHOR::BeginPopupModal("Stacked 1", NULL, ANCHOR_WindowFlags_MenuBar))
+    if (ANCHOR::BeginPopupModal("Stacked 1", NULL, AnchorWindowFlags_MenuBar))
     {
       if (ANCHOR::BeginMenuBar())
       {
@@ -4086,7 +4000,7 @@ static void ShowDemoWindowPopups()
         ANCHOR::EndMenuBar();
       }
       ANCHOR::Text(
-        "Hello from Stacked The First\nUsing style.Colors[ANCHOR_Col_ModalWindowDimBg] behind "
+        "Hello from Stacked The First\nUsing style.Colors[AnchorCol_ModalWindowDimBg] behind "
         "it.");
 
       // Testing behavior of widgets stacking their own regular popups over the modal.
@@ -4150,9 +4064,9 @@ static void ShowDemoWindowPopups()
 namespace
 {
 // We are passing our own identifier to TableSetupColumn() to facilitate identifying columns in the
-// sorting code. This identifier will be passed down into ANCHOR_TableSortSpec::ColumnUserID. But
+// sorting code. This identifier will be passed down into AnchorTableSortSpec::ColumnUserID. But
 // it is possible to omit the user id parameter of TableSetupColumn() and just use the column index
-// instead! (ANCHOR_TableSortSpec::ColumnIndex) If you don't use sorting, you will generally never
+// instead! (AnchorTableSortSpec::ColumnIndex) If you don't use sorting, you will generally never
 // care about giving column an ID!
 enum MyItemColumnID
 {
@@ -4177,7 +4091,7 @@ struct MyItem
   // sorting/comparing functions directly and not use a global. We could technically call
   // ANCHOR::TableGetSortSpecs() in CompareWithSortSpecs(), but considering that this function is
   // called very often by the sorting algorithm it would be a little wasteful.
-  static const ANCHOR_TableSortSpecs *s_current_sort_specs;
+  static const AnchorTableSortSpecs *s_current_sort_specs;
 
   // Compare function to be used by qsort()
   static int ANCHOR_CDECL CompareWithSortSpecs(const void *lhs, const void *rhs)
@@ -4189,7 +4103,7 @@ struct MyItem
       // Here we identify columns using the ColumnUserID value that we ourselves passed to
       // TableSetupColumn() We could also choose to identify columns based on their index
       // (sort_spec->ColumnIndex), which is simpler!
-      const ANCHOR_TableColumnSortSpecs *sort_spec = &s_current_sort_specs->Specs[n];
+      const AnchorTableColumnSortSpecs *sort_spec = &s_current_sort_specs->Specs[n];
       int delta = 0;
       switch (sort_spec->ColumnUserID)
       {
@@ -4210,9 +4124,9 @@ struct MyItem
           break;
       }
       if (delta > 0)
-        return (sort_spec->SortDirection == ANCHOR_SortDirection_Ascending) ? +1 : -1;
+        return (sort_spec->SortDirection == AnchorSortDirection_Ascending) ? +1 : -1;
       if (delta < 0)
-        return (sort_spec->SortDirection == ANCHOR_SortDirection_Ascending) ? -1 : +1;
+        return (sort_spec->SortDirection == AnchorSortDirection_Ascending) ? -1 : +1;
     }
 
     // qsort() is instable so always return a way to differenciate items.
@@ -4221,16 +4135,16 @@ struct MyItem
     return (a->ID - b->ID);
   }
 };
-const ANCHOR_TableSortSpecs *MyItem::s_current_sort_specs = NULL;
+const AnchorTableSortSpecs *MyItem::s_current_sort_specs = NULL;
 }  // namespace
 
 // Make the UI compact because there are so many fields
 static void PushStyleCompact()
 {
-  ANCHOR_Style &style = ANCHOR::GetStyle();
-  ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding,
+  AnchorStyle &style = ANCHOR::GetStyle();
+  ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding,
                        GfVec2f(style.FramePadding[0], (float)(int)(style.FramePadding[1] * 0.60f)));
-  ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing,
+  ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing,
                        GfVec2f(style.ItemSpacing[0], (float)(int)(style.ItemSpacing[1] * 0.60f)));
 }
 
@@ -4240,46 +4154,46 @@ static void PopStyleCompact()
 }
 
 // Show a combo box with a choice of sizing policies
-static void EditTableSizingFlags(ANCHOR_TableFlags *p_flags)
+static void EditTableSizingFlags(AnchorTableFlags *p_flags)
 {
   struct EnumDesc
   {
-    ANCHOR_TableFlags Value;
+    AnchorTableFlags Value;
     const char *Name;
     const char *Tooltip;
   };
   static const EnumDesc policies[] = {
-    {ANCHOR_TableFlags_None,
+    {AnchorTableFlags_None,
      "Default",
-     "Use default sizing policy:\n- ANCHOR_TableFlags_SizingFixedFit if ScrollX is on or if "
-     "host window has ANCHOR_WindowFlags_AlwaysAutoResize.\n- "
-     "ANCHOR_TableFlags_SizingStretchSame otherwise."},
-    {ANCHOR_TableFlags_SizingFixedFit,
-     "ANCHOR_TableFlags_SizingFixedFit",
+     "Use default sizing policy:\n- AnchorTableFlags_SizingFixedFit if ScrollX is on or if "
+     "host window has AnchorWindowFlags_AlwaysAutoResize.\n- "
+     "AnchorTableFlags_SizingStretchSame otherwise."},
+    {AnchorTableFlags_SizingFixedFit,
+     "AnchorTableFlags_SizingFixedFit",
      "Columns default to _WidthFixed (if resizable) or _WidthAuto (if not resizable), matching "
      "contents width."},
-    {ANCHOR_TableFlags_SizingFixedSame,
-     "ANCHOR_TableFlags_SizingFixedSame",
+    {AnchorTableFlags_SizingFixedSame,
+     "AnchorTableFlags_SizingFixedSame",
      "Columns are all the same width, matching the maximum contents width.\nImplicitly disable "
-     "ANCHOR_TableFlags_Resizable and enable ANCHOR_TableFlags_NoKeepColumnsVisible."},
-    {ANCHOR_TableFlags_SizingStretchProp,
-     "ANCHOR_TableFlags_SizingStretchProp",
+     "AnchorTableFlags_Resizable and enable AnchorTableFlags_NoKeepColumnsVisible."},
+    {AnchorTableFlags_SizingStretchProp,
+     "AnchorTableFlags_SizingStretchProp",
      "Columns default to _WidthStretch with weights proportional to their widths."},
-    {ANCHOR_TableFlags_SizingStretchSame,
-     "ANCHOR_TableFlags_SizingStretchSame",
+    {AnchorTableFlags_SizingStretchSame,
+     "AnchorTableFlags_SizingStretchSame",
      "Columns default to _WidthStretch with same weights."}};
   int idx;
   for (idx = 0; idx < ANCHOR_ARRAYSIZE(policies); idx++)
-    if (policies[idx].Value == (*p_flags & ANCHOR_TableFlags_SizingMask_))
+    if (policies[idx].Value == (*p_flags & AnchorTableFlags_SizingMask_))
       break;
   const char *preview_text = (idx < ANCHOR_ARRAYSIZE(policies)) ?
-                               policies[idx].Name + (idx > 0 ? strlen("ANCHOR_TableFlags") : 0) :
+                               policies[idx].Name + (idx > 0 ? strlen("AnchorTableFlags") : 0) :
                                "";
   if (ANCHOR::BeginCombo("Sizing Policy", preview_text))
   {
     for (int n = 0; n < ANCHOR_ARRAYSIZE(policies); n++)
       if (ANCHOR::Selectable(policies[n].Name, idx == n))
-        *p_flags = (*p_flags & ~ANCHOR_TableFlags_SizingMask_) | policies[n].Value;
+        *p_flags = (*p_flags & ~AnchorTableFlags_SizingMask_) | policies[n].Value;
     ANCHOR::EndCombo();
   }
   ANCHOR::SameLine();
@@ -4301,43 +4215,43 @@ static void EditTableSizingFlags(ANCHOR_TableFlags *p_flags)
   }
 }
 
-static void EditTableColumnsFlags(ANCHOR_TableColumnFlags *p_flags)
+static void EditTableColumnsFlags(AnchorTableColumnFlags *p_flags)
 {
-  ANCHOR::CheckboxFlags("_DefaultHide", p_flags, ANCHOR_TableColumnFlags_DefaultHide);
-  ANCHOR::CheckboxFlags("_DefaultSort", p_flags, ANCHOR_TableColumnFlags_DefaultSort);
-  if (ANCHOR::CheckboxFlags("_WidthStretch", p_flags, ANCHOR_TableColumnFlags_WidthStretch))
-    *p_flags &= ~(ANCHOR_TableColumnFlags_WidthMask_ ^ ANCHOR_TableColumnFlags_WidthStretch);
-  if (ANCHOR::CheckboxFlags("_WidthFixed", p_flags, ANCHOR_TableColumnFlags_WidthFixed))
-    *p_flags &= ~(ANCHOR_TableColumnFlags_WidthMask_ ^ ANCHOR_TableColumnFlags_WidthFixed);
-  ANCHOR::CheckboxFlags("_NoResize", p_flags, ANCHOR_TableColumnFlags_NoResize);
-  ANCHOR::CheckboxFlags("_NoReorder", p_flags, ANCHOR_TableColumnFlags_NoReorder);
-  ANCHOR::CheckboxFlags("_NoHide", p_flags, ANCHOR_TableColumnFlags_NoHide);
-  ANCHOR::CheckboxFlags("_NoClip", p_flags, ANCHOR_TableColumnFlags_NoClip);
-  ANCHOR::CheckboxFlags("_NoSort", p_flags, ANCHOR_TableColumnFlags_NoSort);
-  ANCHOR::CheckboxFlags("_NoSortAscending", p_flags, ANCHOR_TableColumnFlags_NoSortAscending);
-  ANCHOR::CheckboxFlags("_NoSortDescending", p_flags, ANCHOR_TableColumnFlags_NoSortDescending);
-  ANCHOR::CheckboxFlags("_NoHeaderWidth", p_flags, ANCHOR_TableColumnFlags_NoHeaderWidth);
-  ANCHOR::CheckboxFlags("_PreferSortAscending", p_flags, ANCHOR_TableColumnFlags_PreferSortAscending);
-  ANCHOR::CheckboxFlags("_PreferSortDescending", p_flags, ANCHOR_TableColumnFlags_PreferSortDescending);
-  ANCHOR::CheckboxFlags("_IndentEnable", p_flags, ANCHOR_TableColumnFlags_IndentEnable);
+  ANCHOR::CheckboxFlags("_DefaultHide", p_flags, AnchorTableColumnFlags_DefaultHide);
+  ANCHOR::CheckboxFlags("_DefaultSort", p_flags, AnchorTableColumnFlags_DefaultSort);
+  if (ANCHOR::CheckboxFlags("_WidthStretch", p_flags, AnchorTableColumnFlags_WidthStretch))
+    *p_flags &= ~(AnchorTableColumnFlags_WidthMask_ ^ AnchorTableColumnFlags_WidthStretch);
+  if (ANCHOR::CheckboxFlags("_WidthFixed", p_flags, AnchorTableColumnFlags_WidthFixed))
+    *p_flags &= ~(AnchorTableColumnFlags_WidthMask_ ^ AnchorTableColumnFlags_WidthFixed);
+  ANCHOR::CheckboxFlags("_NoResize", p_flags, AnchorTableColumnFlags_NoResize);
+  ANCHOR::CheckboxFlags("_NoReorder", p_flags, AnchorTableColumnFlags_NoReorder);
+  ANCHOR::CheckboxFlags("_NoHide", p_flags, AnchorTableColumnFlags_NoHide);
+  ANCHOR::CheckboxFlags("_NoClip", p_flags, AnchorTableColumnFlags_NoClip);
+  ANCHOR::CheckboxFlags("_NoSort", p_flags, AnchorTableColumnFlags_NoSort);
+  ANCHOR::CheckboxFlags("_NoSortAscending", p_flags, AnchorTableColumnFlags_NoSortAscending);
+  ANCHOR::CheckboxFlags("_NoSortDescending", p_flags, AnchorTableColumnFlags_NoSortDescending);
+  ANCHOR::CheckboxFlags("_NoHeaderWidth", p_flags, AnchorTableColumnFlags_NoHeaderWidth);
+  ANCHOR::CheckboxFlags("_PreferSortAscending", p_flags, AnchorTableColumnFlags_PreferSortAscending);
+  ANCHOR::CheckboxFlags("_PreferSortDescending", p_flags, AnchorTableColumnFlags_PreferSortDescending);
+  ANCHOR::CheckboxFlags("_IndentEnable", p_flags, AnchorTableColumnFlags_IndentEnable);
   ANCHOR::SameLine();
   HelpMarker("Default for column 0");
-  ANCHOR::CheckboxFlags("_IndentDisable", p_flags, ANCHOR_TableColumnFlags_IndentDisable);
+  ANCHOR::CheckboxFlags("_IndentDisable", p_flags, AnchorTableColumnFlags_IndentDisable);
   ANCHOR::SameLine();
   HelpMarker("Default for column >0");
 }
 
-static void ShowTableColumnsStatusFlags(ANCHOR_TableColumnFlags flags)
+static void ShowTableColumnsStatusFlags(AnchorTableColumnFlags flags)
 {
-  ANCHOR::CheckboxFlags("_IsEnabled", &flags, ANCHOR_TableColumnFlags_IsEnabled);
-  ANCHOR::CheckboxFlags("_IsVisible", &flags, ANCHOR_TableColumnFlags_IsVisible);
-  ANCHOR::CheckboxFlags("_IsSorted", &flags, ANCHOR_TableColumnFlags_IsSorted);
-  ANCHOR::CheckboxFlags("_IsHovered", &flags, ANCHOR_TableColumnFlags_IsHovered);
+  ANCHOR::CheckboxFlags("_IsEnabled", &flags, AnchorTableColumnFlags_IsEnabled);
+  ANCHOR::CheckboxFlags("_IsVisible", &flags, AnchorTableColumnFlags_IsVisible);
+  ANCHOR::CheckboxFlags("_IsSorted", &flags, AnchorTableColumnFlags_IsSorted);
+  ANCHOR::CheckboxFlags("_IsHovered", &flags, AnchorTableColumnFlags_IsHovered);
 }
 
 static void ShowDemoWindowTables()
 {
-  // ANCHOR::SetNextItemOpen(true, ANCHOR_Cond_Once);
+  // ANCHOR::SetNextItemOpen(true, AnchorCond_Once);
   if (!ANCHOR::CollapsingHeader("Tables & Columns"))
     return;
 
@@ -4362,19 +4276,19 @@ static void ShowDemoWindowTables()
   HelpMarker("Disable the indenting of tree nodes so demo tables can use the full window width.");
   ANCHOR::Separator();
   if (disable_indent)
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_IndentSpacing, 0.0f);
+    ANCHOR::PushStyleVar(AnchorStyleVar_IndentSpacing, 0.0f);
 
   // About Styling of tables
   // Most settings are configured on a per-table basis via the flags passed to BeginTable() and
   // TableSetupColumns APIs. There are however a few settings that a shared and part of the
-  // ANCHOR_Style structure:
+  // AnchorStyle structure:
   //   style.CellPadding                          // Padding within each cell
-  //   style.Colors[ANCHOR_Col_TableHeaderBg]       // Table header background
-  //   style.Colors[ANCHOR_Col_TableBorderStrong]   // Table outer and header borders
-  //   style.Colors[ANCHOR_Col_TableBorderLight]    // Table inner borders
-  //   style.Colors[ANCHOR_Col_TableRowBg]          // Table row background when
-  //   ANCHOR_TableFlags_RowBg is enabled (even rows) style.Colors[ANCHOR_Col_TableRowBgAlt] //
-  //   Table row background when ANCHOR_TableFlags_RowBg is enabled (odds rows)
+  //   style.Colors[AnchorCol_TableHeaderBg]       // Table header background
+  //   style.Colors[AnchorCol_TableBorderStrong]   // Table outer and header borders
+  //   style.Colors[AnchorCol_TableBorderLight]    // Table inner borders
+  //   style.Colors[AnchorCol_TableRowBg]          // Table row background when
+  //   AnchorTableFlags_RowBg is enabled (even rows) style.Colors[AnchorCol_TableRowBgAlt] //
+  //   Table row background when AnchorTableFlags_RowBg is enabled (odds rows)
 
   // Demos
   if (open_action != -1)
@@ -4451,34 +4365,34 @@ static void ShowDemoWindowTables()
       CT_Text,
       CT_FillButton
     };
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_RowBg;
+    static AnchorTableFlags flags = AnchorTableFlags_Borders | AnchorTableFlags_RowBg;
     static bool display_headers = false;
     static int contents_type = CT_Text;
 
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_RowBg", &flags, ANCHOR_TableFlags_RowBg);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Borders", &flags, ANCHOR_TableFlags_Borders);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_RowBg", &flags, AnchorTableFlags_RowBg);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Borders", &flags, AnchorTableFlags_Borders);
     ANCHOR::SameLine();
     HelpMarker(
-      "ANCHOR_TableFlags_Borders\n = ANCHOR_TableFlags_BordersInnerV\n | "
-      "ANCHOR_TableFlags_BordersOuterV\n | ANCHOR_TableFlags_BordersInnerV\n | "
-      "ANCHOR_TableFlags_BordersOuterH");
+      "AnchorTableFlags_Borders\n = AnchorTableFlags_BordersInnerV\n | "
+      "AnchorTableFlags_BordersOuterV\n | AnchorTableFlags_BordersInnerV\n | "
+      "AnchorTableFlags_BordersOuterH");
     ANCHOR::Indent();
 
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersH", &flags, ANCHOR_TableFlags_BordersH);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersH", &flags, AnchorTableFlags_BordersH);
     ANCHOR::Indent();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterH", &flags, ANCHOR_TableFlags_BordersOuterH);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerH", &flags, ANCHOR_TableFlags_BordersInnerH);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterH", &flags, AnchorTableFlags_BordersOuterH);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerH", &flags, AnchorTableFlags_BordersInnerH);
     ANCHOR::Unindent();
 
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersV", &flags, ANCHOR_TableFlags_BordersV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersV", &flags, AnchorTableFlags_BordersV);
     ANCHOR::Indent();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterV", &flags, ANCHOR_TableFlags_BordersOuterV);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerV", &flags, ANCHOR_TableFlags_BordersInnerV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterV", &flags, AnchorTableFlags_BordersOuterV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerV", &flags, AnchorTableFlags_BordersInnerV);
     ANCHOR::Unindent();
 
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuter", &flags, ANCHOR_TableFlags_BordersOuter);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInner", &flags, ANCHOR_TableFlags_BordersInner);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuter", &flags, AnchorTableFlags_BordersOuter);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInner", &flags, AnchorTableFlags_BordersInner);
     ANCHOR::Unindent();
 
     ANCHOR::AlignTextToFramePadding();
@@ -4488,7 +4402,7 @@ static void ShowDemoWindowTables()
     ANCHOR::SameLine();
     ANCHOR::RadioButton("FillButton", &contents_type, CT_FillButton);
     ANCHOR::Checkbox("Display headers", &display_headers);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoBordersInBody", &flags, ANCHOR_TableFlags_NoBordersInBody);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoBordersInBody", &flags, AnchorTableFlags_NoBordersInBody);
     ANCHOR::SameLine();
     HelpMarker("Disable vertical borders in columns Body (borders will always appears in Headers");
     PopStyleCompact();
@@ -4531,12 +4445,12 @@ static void ShowDemoWindowTables()
   {
     // By default, if we don't enable ScrollX the sizing policy for each columns is "Stretch"
     // Each columns maintain a sizing weight, and they will occupy all available width.
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_SizingStretchSame | ANCHOR_TableFlags_Resizable |
-                                     ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersV |
-                                     ANCHOR_TableFlags_ContextMenuInBody;
+    static AnchorTableFlags flags = AnchorTableFlags_SizingStretchSame | AnchorTableFlags_Resizable |
+                                    AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
+                                    AnchorTableFlags_ContextMenuInBody;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags, ANCHOR_TableFlags_Resizable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersV", &flags, ANCHOR_TableFlags_BordersV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags, AnchorTableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersV", &flags, AnchorTableFlags_BordersV);
     ANCHOR::SameLine();
     HelpMarker(
       "Using the _Resizable flag automatically enables the _BordersInnerV flag as well, this is "
@@ -4563,7 +4477,7 @@ static void ShowDemoWindowTables()
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Resizable, fixed"))
   {
-    // Here we use ANCHOR_TableFlags_SizingFixedFit (even though _ScrollX is not set)
+    // Here we use AnchorTableFlags_SizingFixedFit (even though _ScrollX is not set)
     // So columns will adopt the "Fixed" policy and will maintain a fixed width regardless of the
     // whole available width (unless table is small) If there is not enough available width to fit
     // all columns, they will however be resized down.
@@ -4575,10 +4489,10 @@ static void ShowDemoWindowTables()
       "scrolling.\n\n"
       "Double-click a column border to auto-fit the column to its contents.");
     PushStyleCompact();
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_Resizable |
-                                     ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersV |
-                                     ANCHOR_TableFlags_ContextMenuInBody;
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendX", &flags, ANCHOR_TableFlags_NoHostExtendX);
+    static AnchorTableFlags flags = AnchorTableFlags_SizingFixedFit | AnchorTableFlags_Resizable |
+                                    AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
+                                    AnchorTableFlags_ContextMenuInBody;
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendX", &flags, AnchorTableFlags_NoHostExtendX);
     PopStyleCompact();
 
     if (ANCHOR::BeginTable("table1", 3, flags))
@@ -4605,15 +4519,15 @@ static void ShowDemoWindowTables()
       "Using TableSetupColumn() to alter resizing policy on a per-column basis.\n\n"
       "When combining Fixed and Stretch columns, generally you only want one, maybe two "
       "trailing columns to use _WidthStretch.");
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_Resizable |
-                                     ANCHOR_TableFlags_Reorderable | ANCHOR_TableFlags_Hideable;
+    static AnchorTableFlags flags = AnchorTableFlags_SizingFixedFit | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_Borders | AnchorTableFlags_Resizable |
+                                    AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable;
 
     if (ANCHOR::BeginTable("table1", 3, flags))
     {
-      ANCHOR::TableSetupColumn("AAA", ANCHOR_TableColumnFlags_WidthFixed);
-      ANCHOR::TableSetupColumn("BBB", ANCHOR_TableColumnFlags_WidthFixed);
-      ANCHOR::TableSetupColumn("CCC", ANCHOR_TableColumnFlags_WidthStretch);
+      ANCHOR::TableSetupColumn("AAA", AnchorTableColumnFlags_WidthFixed);
+      ANCHOR::TableSetupColumn("BBB", AnchorTableColumnFlags_WidthFixed);
+      ANCHOR::TableSetupColumn("CCC", AnchorTableColumnFlags_WidthStretch);
       ANCHOR::TableHeadersRow();
       for (int row = 0; row < 5; row++)
       {
@@ -4628,14 +4542,14 @@ static void ShowDemoWindowTables()
     }
     if (ANCHOR::BeginTable("table2", 6, flags))
     {
-      ANCHOR::TableSetupColumn("AAA", ANCHOR_TableColumnFlags_WidthFixed);
-      ANCHOR::TableSetupColumn("BBB", ANCHOR_TableColumnFlags_WidthFixed);
+      ANCHOR::TableSetupColumn("AAA", AnchorTableColumnFlags_WidthFixed);
+      ANCHOR::TableSetupColumn("BBB", AnchorTableColumnFlags_WidthFixed);
       ANCHOR::TableSetupColumn("CCC",
-                               ANCHOR_TableColumnFlags_WidthFixed | ANCHOR_TableColumnFlags_DefaultHide);
-      ANCHOR::TableSetupColumn("DDD", ANCHOR_TableColumnFlags_WidthStretch);
-      ANCHOR::TableSetupColumn("EEE", ANCHOR_TableColumnFlags_WidthStretch);
+                               AnchorTableColumnFlags_WidthFixed | AnchorTableColumnFlags_DefaultHide);
+      ANCHOR::TableSetupColumn("DDD", AnchorTableColumnFlags_WidthStretch);
+      ANCHOR::TableSetupColumn("EEE", AnchorTableColumnFlags_WidthStretch);
       ANCHOR::TableSetupColumn("FFF",
-                               ANCHOR_TableColumnFlags_WidthStretch | ANCHOR_TableColumnFlags_DefaultHide);
+                               AnchorTableColumnFlags_WidthStretch | AnchorTableColumnFlags_DefaultHide);
       ANCHOR::TableHeadersRow();
       for (int row = 0; row < 5; row++)
       {
@@ -4658,16 +4572,16 @@ static void ShowDemoWindowTables()
     HelpMarker(
       "Click and drag column headers to reorder columns.\n\n"
       "Right-click on a header to open a context menu.");
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                     ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_BordersOuter |
-                                     ANCHOR_TableFlags_BordersV;
+    static AnchorTableFlags flags = AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                    AnchorTableFlags_Hideable | AnchorTableFlags_BordersOuter |
+                                    AnchorTableFlags_BordersV;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags, ANCHOR_TableFlags_Resizable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Reorderable", &flags, ANCHOR_TableFlags_Reorderable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Hideable", &flags, ANCHOR_TableFlags_Hideable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoBordersInBody", &flags, ANCHOR_TableFlags_NoBordersInBody);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags, AnchorTableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Reorderable", &flags, AnchorTableFlags_Reorderable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Hideable", &flags, AnchorTableFlags_Hideable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoBordersInBody", &flags, AnchorTableFlags_NoBordersInBody);
     ANCHOR::CheckboxFlags(
-      "ANCHOR_TableFlags_NoBordersInBodyUntilResize", &flags, ANCHOR_TableFlags_NoBordersInBodyUntilResize);
+      "AnchorTableFlags_NoBordersInBodyUntilResize", &flags, AnchorTableFlags_NoBordersInBodyUntilResize);
     ANCHOR::SameLine();
     HelpMarker(
       "Disable vertical borders in columns Body until hovered for resize (borders will always "
@@ -4697,7 +4611,7 @@ static void ShowDemoWindowTables()
 
     // Use outer_size[0] == 0.0f instead of default to make the table as tight as possible (only
     // valid when no scrolling and no stretch column)
-    if (ANCHOR::BeginTable("table2", 3, flags | ANCHOR_TableFlags_SizingFixedFit, GfVec2f(0.0f, 0.0f)))
+    if (ANCHOR::BeginTable("table2", 3, flags | AnchorTableFlags_SizingFixedFit, GfVec2f(0.0f, 0.0f)))
     {
       ANCHOR::TableSetupColumn("One");
       ANCHOR::TableSetupColumn("Two");
@@ -4736,21 +4650,21 @@ static void ShowDemoWindowTables()
       "In this demo we don't show horizontal borders to emphasis how they don't affect default "
       "horizontal padding.");
 
-    static ANCHOR_TableFlags flags1 = ANCHOR_TableFlags_BordersV;
+    static AnchorTableFlags flags1 = AnchorTableFlags_BordersV;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_PadOuterX", &flags1, ANCHOR_TableFlags_PadOuterX);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_PadOuterX", &flags1, AnchorTableFlags_PadOuterX);
     ANCHOR::SameLine();
-    HelpMarker("Enable outer-most padding (default if ANCHOR_TableFlags_BordersOuterV is set)");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoPadOuterX", &flags1, ANCHOR_TableFlags_NoPadOuterX);
+    HelpMarker("Enable outer-most padding (default if AnchorTableFlags_BordersOuterV is set)");
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoPadOuterX", &flags1, AnchorTableFlags_NoPadOuterX);
     ANCHOR::SameLine();
-    HelpMarker("Disable outer-most padding (default if ANCHOR_TableFlags_BordersOuterV is not set)");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoPadInnerX", &flags1, ANCHOR_TableFlags_NoPadInnerX);
+    HelpMarker("Disable outer-most padding (default if AnchorTableFlags_BordersOuterV is not set)");
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoPadInnerX", &flags1, AnchorTableFlags_NoPadInnerX);
     ANCHOR::SameLine();
     HelpMarker(
       "Disable inner padding between columns (double inner padding if BordersOuterV is on, "
       "single inner padding if BordersOuterV is off)");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterV", &flags1, ANCHOR_TableFlags_BordersOuterV);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerV", &flags1, ANCHOR_TableFlags_BordersInnerV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterV", &flags1, AnchorTableFlags_BordersOuterV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerV", &flags1, AnchorTableFlags_BordersInnerV);
     static bool show_headers = false;
     ANCHOR::Checkbox("show_headers", &show_headers);
     PopStyleCompact();
@@ -4781,8 +4695,8 @@ static void ShowDemoWindowTables()
             sprintf(buf, "Hello %d,%d", column, row);
             ANCHOR::Button(buf, GfVec2f(-FLT_MIN, 0.0f));
           }
-          // if (ANCHOR::TableGetColumnFlags() & ANCHOR_TableColumnFlags_IsHovered)
-          //    ANCHOR::TableSetBgColor(ANCHOR_TableBgTarget_CellBg, ANCHOR_COL32(0, 100, 0, 255));
+          // if (ANCHOR::TableGetColumnFlags() & AnchorTableColumnFlags_IsHovered)
+          //    ANCHOR::TableSetBgColor(AnchorTableBGTarget_CellBg, ANCHOR_COL32(0, 100, 0, 255));
         }
       }
       ANCHOR::EndTable();
@@ -4791,29 +4705,29 @@ static void ShowDemoWindowTables()
     // Second example: set style.CellPadding to (0.0) or a custom value.
     // FIXME-TABLE: Vertical border effectively not displayed the same way as horizontal one...
     HelpMarker("Setting style.CellPadding to (0,0) or a custom value.");
-    static ANCHOR_TableFlags flags2 = ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_RowBg;
+    static AnchorTableFlags flags2 = AnchorTableFlags_Borders | AnchorTableFlags_RowBg;
     static GfVec2f cell_padding(0.0f, 0.0f);
     static bool show_widget_frame_bg = true;
 
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Borders", &flags2, ANCHOR_TableFlags_Borders);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersH", &flags2, ANCHOR_TableFlags_BordersH);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersV", &flags2, ANCHOR_TableFlags_BordersV);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInner", &flags2, ANCHOR_TableFlags_BordersInner);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuter", &flags2, ANCHOR_TableFlags_BordersOuter);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_RowBg", &flags2, ANCHOR_TableFlags_RowBg);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags2, ANCHOR_TableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Borders", &flags2, AnchorTableFlags_Borders);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersH", &flags2, AnchorTableFlags_BordersH);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersV", &flags2, AnchorTableFlags_BordersV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInner", &flags2, AnchorTableFlags_BordersInner);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuter", &flags2, AnchorTableFlags_BordersOuter);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_RowBg", &flags2, AnchorTableFlags_RowBg);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags2, AnchorTableFlags_Resizable);
     ANCHOR::Checkbox("show_widget_frame_bg", &show_widget_frame_bg);
     ANCHOR::SliderFloat2("CellPadding", &cell_padding[0], 0.0f, 10.0f, "%.0f");
     PopStyleCompact();
 
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_CellPadding, cell_padding);
+    ANCHOR::PushStyleVar(AnchorStyleVar_CellPadding, cell_padding);
     if (ANCHOR::BeginTable("table_padding_2", 3, flags2))
     {
       static char text_bufs[3 * 5][16];  // Mini text storage for 3x5 cells
       static bool init = true;
       if (!show_widget_frame_bg)
-        ANCHOR::PushStyleColor(ANCHOR_Col_FrameBg, 0);
+        ANCHOR::PushStyleColor(AnchorCol_FrameBg, 0);
       for (int cell = 0; cell < 3 * 5; cell++)
       {
         ANCHOR::TableNextColumn();
@@ -4838,17 +4752,17 @@ static void ShowDemoWindowTables()
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Sizing policies"))
   {
-    static ANCHOR_TableFlags flags1 = ANCHOR_TableFlags_BordersV | ANCHOR_TableFlags_BordersOuterH |
-                                      ANCHOR_TableFlags_RowBg | ANCHOR_TableFlags_ContextMenuInBody;
+    static AnchorTableFlags flags1 = AnchorTableFlags_BordersV | AnchorTableFlags_BordersOuterH |
+                                     AnchorTableFlags_RowBg | AnchorTableFlags_ContextMenuInBody;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags1, ANCHOR_TableFlags_Resizable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendX", &flags1, ANCHOR_TableFlags_NoHostExtendX);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags1, AnchorTableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendX", &flags1, AnchorTableFlags_NoHostExtendX);
     PopStyleCompact();
 
-    static ANCHOR_TableFlags sizing_policy_flags[4] = {ANCHOR_TableFlags_SizingFixedFit,
-                                                       ANCHOR_TableFlags_SizingFixedSame,
-                                                       ANCHOR_TableFlags_SizingStretchProp,
-                                                       ANCHOR_TableFlags_SizingStretchSame};
+    static AnchorTableFlags sizing_policy_flags[4] = {AnchorTableFlags_SizingFixedFit,
+                                                      AnchorTableFlags_SizingFixedSame,
+                                                      AnchorTableFlags_SizingStretchProp,
+                                                      AnchorTableFlags_SizingStretchSame};
     for (int table_n = 0; table_n < 4; table_n++)
     {
       ANCHOR::PushID(table_n);
@@ -4905,8 +4819,8 @@ static void ShowDemoWindowTables()
       CT_FillButton,
       CT_InputText
     };
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_ScrollY | ANCHOR_TableFlags_Borders |
-                                     ANCHOR_TableFlags_RowBg | ANCHOR_TableFlags_Resizable;
+    static AnchorTableFlags flags = AnchorTableFlags_ScrollY | AnchorTableFlags_Borders |
+                                    AnchorTableFlags_RowBg | AnchorTableFlags_Resizable;
     static int contents_type = CT_ShowWidth;
     static int column_count = 3;
 
@@ -4924,17 +4838,17 @@ static void ShowDemoWindowTables()
         "loop where contents width can feed into auto-column width can feed into contents "
         "width.");
     }
-    ANCHOR::DragInt("Columns", &column_count, 0.1f, 1, 64, "%d", ANCHOR_SliderFlags_AlwaysClamp);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags, ANCHOR_TableFlags_Resizable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_PreciseWidths", &flags, ANCHOR_TableFlags_PreciseWidths);
+    ANCHOR::DragInt("Columns", &column_count, 0.1f, 1, 64, "%d", AnchorSliderFlags_AlwaysClamp);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags, AnchorTableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_PreciseWidths", &flags, AnchorTableFlags_PreciseWidths);
     ANCHOR::SameLine();
     HelpMarker(
       "Disable distributing remainder width to stretched columns (width allocation on a "
       "100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). "
       "With larger number of columns, resizing will appear to be less smooth.");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollX", &flags, ANCHOR_TableFlags_ScrollX);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollY", &flags, ANCHOR_TableFlags_ScrollY);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoClip", &flags, ANCHOR_TableFlags_NoClip);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollX", &flags, AnchorTableFlags_ScrollX);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollY", &flags, AnchorTableFlags_ScrollY);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoClip", &flags, AnchorTableFlags_NoClip);
     ANCHOR::PopItemWidth();
     ANCHOR::PopID();
     PopStyleCompact();
@@ -4987,15 +4901,15 @@ static void ShowDemoWindowTables()
   {
     HelpMarker(
       "Here we activate ScrollY, which will create a child window container to allow hosting "
-      "scrollable contents.\n\nWe also demonstrate using ANCHORListClipper to virtualize the "
+      "scrollable contents.\n\nWe also demonstrate using AnchorListClipper to virtualize the "
       "submission of many items.");
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_ScrollY | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersV |
-                                     ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                     ANCHOR_TableFlags_Hideable;
+    static AnchorTableFlags flags = AnchorTableFlags_ScrollY | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
+                                    AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                    AnchorTableFlags_Hideable;
 
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollY", &flags, ANCHOR_TableFlags_ScrollY);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollY", &flags, AnchorTableFlags_ScrollY);
     PopStyleCompact();
 
     // When using ScrollX or ScrollY we need to specify a size for our table container!
@@ -5004,13 +4918,13 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table_scrolly", 3, flags, outer_size))
     {
       ANCHOR::TableSetupScrollFreeze(0, 1);  // Make top row always visible
-      ANCHOR::TableSetupColumn("One", ANCHOR_TableColumnFlags_None);
-      ANCHOR::TableSetupColumn("Two", ANCHOR_TableColumnFlags_None);
-      ANCHOR::TableSetupColumn("Three", ANCHOR_TableColumnFlags_None);
+      ANCHOR::TableSetupColumn("One", AnchorTableColumnFlags_None);
+      ANCHOR::TableSetupColumn("Two", AnchorTableColumnFlags_None);
+      ANCHOR::TableSetupColumn("Three", AnchorTableColumnFlags_None);
       ANCHOR::TableHeadersRow();
 
       // Demonstrate using clipper for large vertical lists
-      ANCHORListClipper clipper;
+      AnchorListClipper clipper;
       clipper.Begin(1000);
       while (clipper.Step())
       {
@@ -5035,28 +4949,28 @@ static void ShowDemoWindowTables()
   {
     HelpMarker(
       "When ScrollX is enabled, the default sizing policy becomes "
-      "ANCHOR_TableFlags_SizingFixedFit, "
+      "AnchorTableFlags_SizingFixedFit, "
       "as automatically stretching columns doesn't make much sense with horizontal "
       "scrolling.\n\n"
       "Also note that as of the current version, you will almost always want to enable ScrollY "
       "along with ScrollX,"
       "because the container window won't automatically extend vertically to fix contents (this "
       "may be improved in future versions).");
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_ScrollX | ANCHOR_TableFlags_ScrollY |
-                                     ANCHOR_TableFlags_RowBg | ANCHOR_TableFlags_BordersOuter |
-                                     ANCHOR_TableFlags_BordersV | ANCHOR_TableFlags_Resizable |
-                                     ANCHOR_TableFlags_Reorderable | ANCHOR_TableFlags_Hideable;
+    static AnchorTableFlags flags = AnchorTableFlags_ScrollX | AnchorTableFlags_ScrollY |
+                                    AnchorTableFlags_RowBg | AnchorTableFlags_BordersOuter |
+                                    AnchorTableFlags_BordersV | AnchorTableFlags_Resizable |
+                                    AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable;
     static int freeze_cols = 1;
     static int freeze_rows = 1;
 
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags, ANCHOR_TableFlags_Resizable);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollX", &flags, ANCHOR_TableFlags_ScrollX);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollY", &flags, ANCHOR_TableFlags_ScrollY);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags, AnchorTableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollX", &flags, AnchorTableFlags_ScrollX);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollY", &flags, AnchorTableFlags_ScrollY);
     ANCHOR::SetNextItemWidth(ANCHOR::GetFrameHeight());
-    ANCHOR::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ANCHOR_SliderFlags_NoInput);
+    ANCHOR::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, AnchorSliderFlags_NoInput);
     ANCHOR::SetNextItemWidth(ANCHOR::GetFrameHeight());
-    ANCHOR::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ANCHOR_SliderFlags_NoInput);
+    ANCHOR::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, AnchorSliderFlags_NoInput);
     PopStyleCompact();
 
     // When using ScrollX or ScrollY we need to specify a size for our table container!
@@ -5066,8 +4980,8 @@ static void ShowDemoWindowTables()
     {
       ANCHOR::TableSetupScrollFreeze(freeze_cols, freeze_rows);
       ANCHOR::TableSetupColumn("Line #",
-                               ANCHOR_TableColumnFlags_NoHide);  // Make the first column not hideable to
-                                                                 // match our use of TableSetupScrollFreeze()
+                               AnchorTableColumnFlags_NoHide);  // Make the first column not hideable to
+                                                                // match our use of TableSetupScrollFreeze()
       ANCHOR::TableSetupColumn("One");
       ANCHOR::TableSetupColumn("Two");
       ANCHOR::TableSetupColumn("Three");
@@ -5107,14 +5021,14 @@ static void ShowDemoWindowTables()
       "table!\n"
       "Without an explicit value, inner_width is == outer_size[0] and therefore using Stretch "
       "columns + ScrollX together doesn't make sense.");
-    static ANCHOR_TableFlags flags2 = ANCHOR_TableFlags_SizingStretchSame | ANCHOR_TableFlags_ScrollX |
-                                      ANCHOR_TableFlags_ScrollY | ANCHOR_TableFlags_BordersOuter |
-                                      ANCHOR_TableFlags_RowBg | ANCHOR_TableFlags_ContextMenuInBody;
+    static AnchorTableFlags flags2 = AnchorTableFlags_SizingStretchSame | AnchorTableFlags_ScrollX |
+                                     AnchorTableFlags_ScrollY | AnchorTableFlags_BordersOuter |
+                                     AnchorTableFlags_RowBg | AnchorTableFlags_ContextMenuInBody;
     static float inner_width = 1000.0f;
     PushStyleCompact();
     ANCHOR::PushID("flags3");
     ANCHOR::PushItemWidth(TEXT_BASE_WIDTH * 30);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollX", &flags2, ANCHOR_TableFlags_ScrollX);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollX", &flags2, AnchorTableFlags_ScrollX);
     ANCHOR::DragFloat("inner_width", &inner_width, 1.0f, 0.0f, FLT_MAX, "%.1f");
     ANCHOR::PopItemWidth();
     ANCHOR::PopID();
@@ -5139,13 +5053,13 @@ static void ShowDemoWindowTables()
     // example!
     const int column_count = 3;
     const char *column_names[column_count] = {"One", "Two", "Three"};
-    static ANCHOR_TableColumnFlags column_flags[column_count] = {ANCHOR_TableColumnFlags_DefaultSort,
-                                                                 ANCHOR_TableColumnFlags_None,
-                                                                 ANCHOR_TableColumnFlags_DefaultHide};
-    static ANCHOR_TableColumnFlags column_flags_out[column_count] = {
+    static AnchorTableColumnFlags column_flags[column_count] = {AnchorTableColumnFlags_DefaultSort,
+                                                                AnchorTableColumnFlags_None,
+                                                                AnchorTableColumnFlags_DefaultHide};
+    static AnchorTableColumnFlags column_flags_out[column_count] = {
       0, 0, 0};  // Output from TableGetColumnFlags()
 
-    if (ANCHOR::BeginTable("table_columns_flags_checkboxes", column_count, ANCHOR_TableFlags_None))
+    if (ANCHOR::BeginTable("table_columns_flags_checkboxes", column_count, AnchorTableFlags_None))
     {
       PushStyleCompact();
       for (int column = 0; column < column_count; column++)
@@ -5170,12 +5084,12 @@ static void ShowDemoWindowTables()
     // Create the real table we care about for the example!
     // We use a scrolling table to be able to showcase the difference between the _IsEnabled and
     // _IsVisible flags above, otherwise in a non-scrolling table columns are always visible
-    // (unless using ANCHOR_TableFlags_NoKeepColumnsVisible + resizing the parent window down)
-    const ANCHOR_TableFlags flags = ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_ScrollX |
-                                    ANCHOR_TableFlags_ScrollY | ANCHOR_TableFlags_RowBg |
-                                    ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersV |
-                                    ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                    ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_Sortable;
+    // (unless using AnchorTableFlags_NoKeepColumnsVisible + resizing the parent window down)
+    const AnchorTableFlags flags = AnchorTableFlags_SizingFixedFit | AnchorTableFlags_ScrollX |
+                                   AnchorTableFlags_ScrollY | AnchorTableFlags_RowBg |
+                                   AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
+                                   AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                   AnchorTableFlags_Hideable | AnchorTableFlags_Sortable;
     GfVec2f outer_size = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 9);
     if (ANCHOR::BeginTable("table_columns_flags", column_count, flags, outer_size))
     {
@@ -5209,20 +5123,20 @@ static void ShowDemoWindowTables()
   {
     HelpMarker("Using TableSetupColumn() to setup default width.");
 
-    static ANCHOR_TableFlags flags1 = ANCHOR_TableFlags_Borders |
-                                      ANCHOR_TableFlags_NoBordersInBodyUntilResize;
+    static AnchorTableFlags flags1 = AnchorTableFlags_Borders |
+                                     AnchorTableFlags_NoBordersInBodyUntilResize;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags1, ANCHOR_TableFlags_Resizable);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags1, AnchorTableFlags_Resizable);
     ANCHOR::CheckboxFlags(
-      "ANCHOR_TableFlags_NoBordersInBodyUntilResize", &flags1, ANCHOR_TableFlags_NoBordersInBodyUntilResize);
+      "AnchorTableFlags_NoBordersInBodyUntilResize", &flags1, AnchorTableFlags_NoBordersInBodyUntilResize);
     PopStyleCompact();
     if (ANCHOR::BeginTable("table1", 3, flags1))
     {
-      // We could also set ANCHOR_TableFlags_SizingFixedFit on the table and all columns will
-      // default to ANCHOR_TableColumnFlags_WidthFixed.
-      ANCHOR::TableSetupColumn("one", ANCHOR_TableColumnFlags_WidthFixed, 100.0f);  // Default to 100.0f
-      ANCHOR::TableSetupColumn("two", ANCHOR_TableColumnFlags_WidthFixed, 200.0f);  // Default to 200.0f
-      ANCHOR::TableSetupColumn("three", ANCHOR_TableColumnFlags_WidthFixed);        // Default to auto
+      // We could also set AnchorTableFlags_SizingFixedFit on the table and all columns will
+      // default to AnchorTableColumnFlags_WidthFixed.
+      ANCHOR::TableSetupColumn("one", AnchorTableColumnFlags_WidthFixed, 100.0f);  // Default to 100.0f
+      ANCHOR::TableSetupColumn("two", AnchorTableColumnFlags_WidthFixed, 200.0f);  // Default to 200.0f
+      ANCHOR::TableSetupColumn("three", AnchorTableColumnFlags_WidthFixed);        // Default to auto
       ANCHOR::TableHeadersRow();
       for (int row = 0; row < 4; row++)
       {
@@ -5244,21 +5158,21 @@ static void ShowDemoWindowTables()
       "set, fixed columns with set width may still be shrunk down if there's not enough space "
       "in the host.");
 
-    static ANCHOR_TableFlags flags2 = ANCHOR_TableFlags_None;
+    static AnchorTableFlags flags2 = AnchorTableFlags_None;
     PushStyleCompact();
     ANCHOR::CheckboxFlags(
-      "ANCHOR_TableFlags_NoKeepColumnsVisible", &flags2, ANCHOR_TableFlags_NoKeepColumnsVisible);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerV", &flags2, ANCHOR_TableFlags_BordersInnerV);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterV", &flags2, ANCHOR_TableFlags_BordersOuterV);
+      "AnchorTableFlags_NoKeepColumnsVisible", &flags2, AnchorTableFlags_NoKeepColumnsVisible);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerV", &flags2, AnchorTableFlags_BordersInnerV);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterV", &flags2, AnchorTableFlags_BordersOuterV);
     PopStyleCompact();
     if (ANCHOR::BeginTable("table2", 4, flags2))
     {
-      // We could also set ANCHOR_TableFlags_SizingFixedFit on the table and all columns will
-      // default to ANCHOR_TableColumnFlags_WidthFixed.
-      ANCHOR::TableSetupColumn("", ANCHOR_TableColumnFlags_WidthFixed, 100.0f);
-      ANCHOR::TableSetupColumn("", ANCHOR_TableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
-      ANCHOR::TableSetupColumn("", ANCHOR_TableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 30.0f);
-      ANCHOR::TableSetupColumn("", ANCHOR_TableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
+      // We could also set AnchorTableFlags_SizingFixedFit on the table and all columns will
+      // default to AnchorTableColumnFlags_WidthFixed.
+      ANCHOR::TableSetupColumn("", AnchorTableColumnFlags_WidthFixed, 100.0f);
+      ANCHOR::TableSetupColumn("", AnchorTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
+      ANCHOR::TableSetupColumn("", AnchorTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 30.0f);
+      ANCHOR::TableSetupColumn("", AnchorTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
       for (int row = 0; row < 5; row++)
       {
         ANCHOR::TableNextRow();
@@ -5284,8 +5198,8 @@ static void ShowDemoWindowTables()
 
     if (ANCHOR::BeginTable("table_nested1",
                            2,
-                           ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_Resizable |
-                             ANCHOR_TableFlags_Reorderable | ANCHOR_TableFlags_Hideable))
+                           AnchorTableFlags_Borders | AnchorTableFlags_Resizable |
+                             AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable))
     {
       ANCHOR::TableSetupColumn("A0");
       ANCHOR::TableSetupColumn("A1");
@@ -5297,19 +5211,19 @@ static void ShowDemoWindowTables()
         float rows_height = TEXT_BASE_HEIGHT * 2;
         if (ANCHOR::BeginTable("table_nested2",
                                2,
-                               ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_Resizable |
-                                 ANCHOR_TableFlags_Reorderable | ANCHOR_TableFlags_Hideable))
+                               AnchorTableFlags_Borders | AnchorTableFlags_Resizable |
+                                 AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable))
         {
           ANCHOR::TableSetupColumn("B0");
           ANCHOR::TableSetupColumn("B1");
           ANCHOR::TableHeadersRow();
 
-          ANCHOR::TableNextRow(ANCHOR_TableRowFlags_None, rows_height);
+          ANCHOR::TableNextRow(AnchorTableRowFlags_None, rows_height);
           ANCHOR::TableNextColumn();
           ANCHOR::Text("B0 Row 0");
           ANCHOR::TableNextColumn();
           ANCHOR::Text("B1 Row 0");
-          ANCHOR::TableNextRow(ANCHOR_TableRowFlags_None, rows_height);
+          ANCHOR::TableNextRow(AnchorTableRowFlags_None, rows_height);
           ANCHOR::TableNextColumn();
           ANCHOR::Text("B0 Row 1");
           ANCHOR::TableNextColumn();
@@ -5339,12 +5253,12 @@ static void ShowDemoWindowTables()
       "always be >= 'style.CellPadding[1] * 2.0f'.\n\nWe cannot honor a _maximum_ row height as "
       "that would requires a unique clipping rectangle per row.");
     if (ANCHOR::BeginTable(
-          "table_row_height", 1, ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersInnerV))
+          "table_row_height", 1, AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersInnerV))
     {
       for (int row = 0; row < 10; row++)
       {
         float min_row_height = (float)(int)(TEXT_BASE_HEIGHT * 0.30f * row);
-        ANCHOR::TableNextRow(ANCHOR_TableRowFlags_None, min_row_height);
+        ANCHOR::TableNextRow(AnchorTableRowFlags_None, min_row_height);
         ANCHOR::TableNextColumn();
         ANCHOR::Text("min_row_height = %.2f", min_row_height);
       }
@@ -5357,19 +5271,19 @@ static void ShowDemoWindowTables()
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Outer size"))
   {
-    // Showcasing use of ANCHOR_TableFlags_NoHostExtendX and ANCHOR_TableFlags_NoHostExtendY
+    // Showcasing use of AnchorTableFlags_NoHostExtendX and AnchorTableFlags_NoHostExtendY
     // Important to that note how the two flags have slightly different behaviors!
     ANCHOR::Text("Using NoHostExtendX and NoHostExtendY:");
     PushStyleCompact();
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_Resizable |
-                                     ANCHOR_TableFlags_ContextMenuInBody | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_NoHostExtendX;
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendX", &flags, ANCHOR_TableFlags_NoHostExtendX);
+    static AnchorTableFlags flags = AnchorTableFlags_Borders | AnchorTableFlags_Resizable |
+                                    AnchorTableFlags_ContextMenuInBody | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_SizingFixedFit | AnchorTableFlags_NoHostExtendX;
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendX", &flags, AnchorTableFlags_NoHostExtendX);
     ANCHOR::SameLine();
     HelpMarker(
       "Make outer width auto-fit to columns, overriding outer_size[0] value.\n\nOnly available "
       "when ScrollX/ScrollY are disabled and Stretch columns are not used.");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendY", &flags, ANCHOR_TableFlags_NoHostExtendY);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendY", &flags, AnchorTableFlags_NoHostExtendY);
     ANCHOR::SameLine();
     HelpMarker(
       "Make outer height stop exactly at outer_size[1] (prevent auto-extending table past the "
@@ -5399,7 +5313,7 @@ static void ShowDemoWindowTables()
     ANCHOR::Text("Using explicit size:");
     if (ANCHOR::BeginTable("table2",
                            3,
-                           ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_RowBg,
+                           AnchorTableFlags_Borders | AnchorTableFlags_RowBg,
                            GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f)))
     {
       for (int row = 0; row < 5; row++)
@@ -5416,7 +5330,7 @@ static void ShowDemoWindowTables()
     ANCHOR::SameLine();
     if (ANCHOR::BeginTable("table3",
                            3,
-                           ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_RowBg,
+                           AnchorTableFlags_Borders | AnchorTableFlags_RowBg,
                            GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f)))
     {
       for (int row = 0; row < 3; row++)
@@ -5438,17 +5352,17 @@ static void ShowDemoWindowTables()
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Background color"))
   {
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_RowBg;
+    static AnchorTableFlags flags = AnchorTableFlags_RowBg;
     static int row_bg_type = 1;
     static int row_bg_target = 1;
     static int cell_bg_type = 1;
 
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Borders", &flags, ANCHOR_TableFlags_Borders);
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_RowBg", &flags, ANCHOR_TableFlags_RowBg);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_Borders", &flags, AnchorTableFlags_Borders);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_RowBg", &flags, AnchorTableFlags_RowBg);
     ANCHOR::SameLine();
     HelpMarker(
-      "ANCHOR_TableFlags_RowBg automatically sets RowBg0 to alternative colors pulled from the "
+      "AnchorTableFlags_RowBg automatically sets RowBg0 to alternative colors pulled from the "
       "Style.");
     ANCHOR::Combo("row bg type", (int *)&row_bg_type, "None\0Red\0Gradient\0");
     ANCHOR::Combo("row bg target", (int *)&row_bg_target, "RowBg0\0RowBg1\0");
@@ -5471,15 +5385,15 @@ static void ShowDemoWindowTables()
         ANCHOR::TableNextRow();
 
         // Demonstrate setting a row background color with
-        // 'ANCHOR::TableSetBgColor(ANCHOR_TableBgTarget_RowBgX, ...)' We use a transparent color
+        // 'ANCHOR::TableSetBgColor(AnchorTableBGTarget_RowBgX, ...)' We use a transparent color
         // so we can see the one behind in case our target is RowBg1 and RowBg0 was already
-        // targeted by the ANCHOR_TableFlags_RowBg flag.
+        // targeted by the AnchorTableFlags_RowBg flag.
         if (row_bg_type != 0)
         {
           AnchorU32 row_bg_color = ANCHOR::GetColorU32(
             row_bg_type == 1 ? GfVec4f(0.7f, 0.3f, 0.3f, 0.65f) :
                                GfVec4f(0.2f + row * 0.1f, 0.2f, 0.2f, 0.65f));  // Flat or Gradient?
-          ANCHOR::TableSetBgColor(ANCHOR_TableBgTarget_RowBg0 + row_bg_target, row_bg_color);
+          ANCHOR::TableSetBgColor(AnchorTableBGTarget_RowBg0 + row_bg_target, row_bg_color);
         }
 
         // Fill cells
@@ -5490,13 +5404,13 @@ static void ShowDemoWindowTables()
 
           // Change background of Cells B1->C2
           // Demonstrate setting a cell background color with
-          // 'ANCHOR::TableSetBgColor(ANCHOR_TableBgTarget_CellBg, ...)' (the CellBg color will be
+          // 'ANCHOR::TableSetBgColor(AnchorTableBGTarget_CellBg, ...)' (the CellBg color will be
           // blended over the RowBg and ColumnBg colors) We can also pass a column number as a
           // third parameter to TableSetBgColor() and do this outside the column loop.
           if (row >= 1 && row <= 2 && column >= 1 && column <= 2 && cell_bg_type == 1)
           {
             AnchorU32 cell_bg_color = ANCHOR::GetColorU32(GfVec4f(0.3f, 0.3f, 0.7f, 0.65f));
-            ANCHOR::TableSetBgColor(ANCHOR_TableBgTarget_CellBg, cell_bg_color);
+            ANCHOR::TableSetBgColor(AnchorTableBGTarget_CellBg, cell_bg_color);
           }
         }
       }
@@ -5509,17 +5423,17 @@ static void ShowDemoWindowTables()
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Tree view"))
   {
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_BordersV | ANCHOR_TableFlags_BordersOuterH |
-                                     ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_NoBordersInBody;
+    static AnchorTableFlags flags = AnchorTableFlags_BordersV | AnchorTableFlags_BordersOuterH |
+                                    AnchorTableFlags_Resizable | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_NoBordersInBody;
 
     if (ANCHOR::BeginTable("3ways", 3, flags))
     {
       // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed
       // when ScrollX is On
-      ANCHOR::TableSetupColumn("Name", ANCHOR_TableColumnFlags_NoHide);
-      ANCHOR::TableSetupColumn("Size", ANCHOR_TableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
-      ANCHOR::TableSetupColumn("Type", ANCHOR_TableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
+      ANCHOR::TableSetupColumn("Name", AnchorTableColumnFlags_NoHide);
+      ANCHOR::TableSetupColumn("Size", AnchorTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
+      ANCHOR::TableSetupColumn("Type", AnchorTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
       ANCHOR::TableHeadersRow();
 
       // Simple storage to output a dummy file-system.
@@ -5537,7 +5451,7 @@ static void ShowDemoWindowTables()
           const bool is_folder = (node->ChildCount > 0);
           if (is_folder)
           {
-            bool open = ANCHOR::TreeNodeEx(node->Name, ANCHOR_TreeNodeFlags_SpanFullWidth);
+            bool open = ANCHOR::TreeNodeEx(node->Name, AnchorTreeNodeFlags_SpanFullWidth);
             ANCHOR::TableNextColumn();
             ANCHOR::TextDisabled("--");
             ANCHOR::TableNextColumn();
@@ -5552,8 +5466,8 @@ static void ShowDemoWindowTables()
           else
           {
             ANCHOR::TreeNodeEx(node->Name,
-                               ANCHOR_TreeNodeFlags_Leaf | ANCHOR_TreeNodeFlags_Bullet |
-                                 ANCHOR_TreeNodeFlags_NoTreePushOnOpen | ANCHOR_TreeNodeFlags_SpanFullWidth);
+                               AnchorTreeNodeFlags_Leaf | AnchorTreeNodeFlags_Bullet |
+                                 AnchorTreeNodeFlags_NoTreePushOnOpen | AnchorTreeNodeFlags_SpanFullWidth);
             ANCHOR::TableNextColumn();
             ANCHOR::Text("%d", node->Size);
             ANCHOR::TableNextColumn();
@@ -5588,7 +5502,7 @@ static void ShowDemoWindowTables()
       "Showcase using PushItemWidth() and how it is preserved on a per-column basis.\n\n"
       "Note that on auto-resizing non-resizable fixed columns, querying the content width for "
       "e.g. right-alignment doesn't make sense.");
-    if (ANCHOR::BeginTable("table_item_width", 3, ANCHOR_TableFlags_Borders))
+    if (ANCHOR::BeginTable("table_item_width", 3, AnchorTableFlags_Borders))
     {
       ANCHOR::TableSetupColumn("small");
       ANCHOR::TableSetupColumn("half");
@@ -5634,8 +5548,8 @@ static void ShowDemoWindowTables()
     const int COLUMNS_COUNT = 3;
     if (ANCHOR::BeginTable("table_custom_headers",
                            COLUMNS_COUNT,
-                           ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_Reorderable |
-                             ANCHOR_TableFlags_Hideable))
+                           AnchorTableFlags_Borders | AnchorTableFlags_Reorderable |
+                             AnchorTableFlags_Hideable))
     {
       ANCHOR::TableSetupColumn("Apricot");
       ANCHOR::TableSetupColumn("Banana");
@@ -5647,14 +5561,14 @@ static void ShowDemoWindowTables()
       static bool column_selected[3] = {};
 
       // Instead of calling TableHeadersRow() we'll submit custom headers ourselves
-      ANCHOR::TableNextRow(ANCHOR_TableRowFlags_Headers);
+      ANCHOR::TableNextRow(AnchorTableRowFlags_Headers);
       for (int column = 0; column < COLUMNS_COUNT; column++)
       {
         ANCHOR::TableSetColumnIndex(column);
         const char *column_name = ANCHOR::TableGetColumnName(
           column);  // Retrieve name passed to TableSetupColumn()
         ANCHOR::PushID(column);
-        ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding, GfVec2f(0, 0));
+        ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
         ANCHOR::Checkbox("##checkall", &column_selected[column]);
         ANCHOR::PopStyleVar();
         ANCHOR::SameLine(0.0f, ANCHOR::GetStyle().ItemInnerSpacing[0]);
@@ -5686,21 +5600,21 @@ static void ShowDemoWindowTables()
   {
     HelpMarker(
       "By default, right-clicking over a TableHeadersRow()/TableHeader() line will open the "
-      "default context-menu.\nUsing ANCHOR_TableFlags_ContextMenuInBody we also allow "
+      "default context-menu.\nUsing AnchorTableFlags_ContextMenuInBody we also allow "
       "right-clicking over columns body.");
-    static ANCHOR_TableFlags flags1 = ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                      ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_Borders |
-                                      ANCHOR_TableFlags_ContextMenuInBody;
+    static AnchorTableFlags flags1 = AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                     AnchorTableFlags_Hideable | AnchorTableFlags_Borders |
+                                     AnchorTableFlags_ContextMenuInBody;
 
     PushStyleCompact();
     ANCHOR::CheckboxFlags(
-      "ANCHOR_TableFlags_ContextMenuInBody", &flags1, ANCHOR_TableFlags_ContextMenuInBody);
+      "AnchorTableFlags_ContextMenuInBody", &flags1, AnchorTableFlags_ContextMenuInBody);
     PopStyleCompact();
 
     // Context Menus: first example
     // [1.1] Right-click on the TableHeadersRow() line to open the default table context menu.
     // [1.2] Right-click in columns also open the default table context menu (if
-    // ANCHOR_TableFlags_ContextMenuInBody is set)
+    // AnchorTableFlags_ContextMenuInBody is set)
     const int COLUMNS_COUNT = 3;
     if (ANCHOR::BeginTable("table_context_menu", COLUMNS_COUNT, flags1))
     {
@@ -5731,9 +5645,9 @@ static void ShowDemoWindowTables()
     HelpMarker(
       "Demonstrate mixing table context menu (over header), item context button (over button) "
       "and custom per-colum context menu (over column body).");
-    ANCHOR_TableFlags flags2 = ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_SizingFixedFit |
-                               ANCHOR_TableFlags_Reorderable | ANCHOR_TableFlags_Hideable |
-                               ANCHOR_TableFlags_Borders;
+    AnchorTableFlags flags2 = AnchorTableFlags_Resizable | AnchorTableFlags_SizingFixedFit |
+                              AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable |
+                              AnchorTableFlags_Borders;
     if (ANCHOR::BeginTable("table_context_menu_2", COLUMNS_COUNT, flags2))
     {
       ANCHOR::TableSetupColumn("One");
@@ -5768,13 +5682,13 @@ static void ShowDemoWindowTables()
 
       // [2.3] Right-click anywhere in columns to open another custom popup
       // (instead of testing for !IsAnyItemHovered() we could also call OpenPopup() with
-      // ANCHORPopupFlags_NoOpenOverExistingPopup to manage popup priority as the popups triggers,
+      // AnchorPopupFlags_NoOpenOverExistingPopup to manage popup priority as the popups triggers,
       // here "are we hovering a column" are overlapping)
       int hovered_column = -1;
       for (int column = 0; column < COLUMNS_COUNT + 1; column++)
       {
         ANCHOR::PushID(column);
-        if (ANCHOR::TableGetColumnFlags(column) & ANCHOR_TableColumnFlags_IsHovered)
+        if (ANCHOR::TableGetColumnFlags(column) & AnchorTableColumnFlags_IsHovered)
           hovered_column = column;
         if (hovered_column == column && !ANCHOR::IsAnyItemHovered() && ANCHOR::IsMouseReleased(1))
           ANCHOR::OpenPopup("MyPopup");
@@ -5809,13 +5723,13 @@ static void ShowDemoWindowTables()
     {
       char buf[32];
       sprintf(buf, "Synced Table %d", n);
-      bool open = ANCHOR::CollapsingHeader(buf, ANCHOR_TreeNodeFlags_DefaultOpen);
+      bool open = ANCHOR::CollapsingHeader(buf, AnchorTreeNodeFlags_DefaultOpen);
       if (open &&
           ANCHOR::BeginTable("Table",
                              3,
-                             ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                               ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_Borders |
-                               ANCHOR_TableFlags_SizingFixedFit | ANCHOR_TableFlags_NoSavedSettings))
+                             AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                               AnchorTableFlags_Hideable | AnchorTableFlags_Borders |
+                               AnchorTableFlags_SizingFixedFit | AnchorTableFlags_NoSavedSettings))
       {
         ANCHOR::TableSetupColumn("One");
         ANCHOR::TableSetupColumn("Two");
@@ -5871,18 +5785,18 @@ static void ShowDemoWindowTables()
     }
 
     // Options
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                     ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_Sortable |
-                                     ANCHOR_TableFlags_SortMulti | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_BordersV |
-                                     ANCHOR_TableFlags_NoBordersInBody | ANCHOR_TableFlags_ScrollY;
+    static AnchorTableFlags flags = AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                    AnchorTableFlags_Hideable | AnchorTableFlags_Sortable |
+                                    AnchorTableFlags_SortMulti | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
+                                    AnchorTableFlags_NoBordersInBody | AnchorTableFlags_ScrollY;
     PushStyleCompact();
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_SortMulti", &flags, ANCHOR_TableFlags_SortMulti);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_SortMulti", &flags, AnchorTableFlags_SortMulti);
     ANCHOR::SameLine();
     HelpMarker(
       "When sorting is enabled: hold shift when clicking headers to sort on multiple column. "
       "TableGetSortSpecs() may return specs where (SpecsCount > 1).");
-    ANCHOR::CheckboxFlags("ANCHOR_TableFlags_SortTristate", &flags, ANCHOR_TableFlags_SortTristate);
+    ANCHOR::CheckboxFlags("AnchorTableFlags_SortTristate", &flags, AnchorTableFlags_SortTristate);
     ANCHOR::SameLine();
     HelpMarker(
       "When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() "
@@ -5896,30 +5810,30 @@ static void ShowDemoWindowTables()
       // stored in the sort specifications. This is so our sort function can identify a column
       // given our own identifier. We could also identify them based on their index! Demonstrate
       // using a mixture of flags among available sort-related flags:
-      // - ANCHOR_TableColumnFlags_DefaultSort
-      // - ANCHOR_TableColumnFlags_NoSort / ANCHOR_TableColumnFlags_NoSortAscending /
-      // ANCHOR_TableColumnFlags_NoSortDescending
-      // - ANCHOR_TableColumnFlags_PreferSortAscending /
-      // ANCHOR_TableColumnFlags_PreferSortDescending
+      // - AnchorTableColumnFlags_DefaultSort
+      // - AnchorTableColumnFlags_NoSort / AnchorTableColumnFlags_NoSortAscending /
+      // AnchorTableColumnFlags_NoSortDescending
+      // - AnchorTableColumnFlags_PreferSortAscending /
+      // AnchorTableColumnFlags_PreferSortDescending
       ANCHOR::TableSetupColumn("ID",
-                               ANCHOR_TableColumnFlags_DefaultSort | ANCHOR_TableColumnFlags_WidthFixed,
+                               AnchorTableColumnFlags_DefaultSort | AnchorTableColumnFlags_WidthFixed,
                                0.0f,
                                MyItemColumnID_ID);
-      ANCHOR::TableSetupColumn("Name", ANCHOR_TableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
+      ANCHOR::TableSetupColumn("Name", AnchorTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
       ANCHOR::TableSetupColumn("Action",
-                               ANCHOR_TableColumnFlags_NoSort | ANCHOR_TableColumnFlags_WidthFixed,
+                               AnchorTableColumnFlags_NoSort | AnchorTableColumnFlags_WidthFixed,
                                0.0f,
                                MyItemColumnID_Action);
       ANCHOR::TableSetupColumn("Quantity",
-                               ANCHOR_TableColumnFlags_PreferSortDescending |
-                                 ANCHOR_TableColumnFlags_WidthStretch,
+                               AnchorTableColumnFlags_PreferSortDescending |
+                                 AnchorTableColumnFlags_WidthStretch,
                                0.0f,
                                MyItemColumnID_Quantity);
       ANCHOR::TableSetupScrollFreeze(0, 1);  // Make row always visible
       ANCHOR::TableHeadersRow();
 
       // Sort our data if sort specs have been changed!
-      if (ANCHOR_TableSortSpecs *sorts_specs = ANCHOR::TableGetSortSpecs())
+      if (AnchorTableSortSpecs *sorts_specs = ANCHOR::TableGetSortSpecs())
         if (sorts_specs->SpecsDirty)
         {
           MyItem::s_current_sort_specs = sorts_specs;  // Store in variable accessible by the sort function.
@@ -5930,7 +5844,7 @@ static void ShowDemoWindowTables()
         }
 
       // Demonstrate using clipper for large vertical lists
-      ANCHORListClipper clipper;
+      AnchorListClipper clipper;
       clipper.Begin(items.Size);
       while (clipper.Step())
         for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
@@ -5958,17 +5872,17 @@ static void ShowDemoWindowTables()
   // For specific flags and settings refer to the corresponding section for more detailed
   // explanation. This section is mostly useful to experiment with combining certain flags or
   // settings with each others.
-  // ANCHOR::SetNextItemOpen(true, ANCHOR_Cond_Once); // [DEBUG]
+  // ANCHOR::SetNextItemOpen(true, AnchorCond_Once); // [DEBUG]
   if (open_action != -1)
     ANCHOR::SetNextItemOpen(open_action != 0);
   if (ANCHOR::TreeNode("Advanced"))
   {
-    static ANCHOR_TableFlags flags = ANCHOR_TableFlags_Resizable | ANCHOR_TableFlags_Reorderable |
-                                     ANCHOR_TableFlags_Hideable | ANCHOR_TableFlags_Sortable |
-                                     ANCHOR_TableFlags_SortMulti | ANCHOR_TableFlags_RowBg |
-                                     ANCHOR_TableFlags_Borders | ANCHOR_TableFlags_NoBordersInBody |
-                                     ANCHOR_TableFlags_ScrollX | ANCHOR_TableFlags_ScrollY |
-                                     ANCHOR_TableFlags_SizingFixedFit;
+    static AnchorTableFlags flags = AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
+                                    AnchorTableFlags_Hideable | AnchorTableFlags_Sortable |
+                                    AnchorTableFlags_SortMulti | AnchorTableFlags_RowBg |
+                                    AnchorTableFlags_Borders | AnchorTableFlags_NoBordersInBody |
+                                    AnchorTableFlags_ScrollX | AnchorTableFlags_ScrollY |
+                                    AnchorTableFlags_SizingFixedFit;
 
     enum ContentsType
     {
@@ -5991,8 +5905,8 @@ static void ShowDemoWindowTables()
     static bool outer_size_enabled = true;
     static bool show_headers = true;
     static bool show_wrapped_text = false;
-    // static ANCHORTextFilter filter;
-    // ANCHOR::SetNextItemOpen(true, ANCHOR_Cond_Once); // FIXME-TABLE: Enabling this results in
+    // static AnchorTextFilter filter;
+    // ANCHOR::SetNextItemOpen(true, AnchorCond_Once); // FIXME-TABLE: Enabling this results in
     // initial clipped first pass on table which tend to affects column sizing
     if (ANCHOR::TreeNode("Options"))
     {
@@ -6000,35 +5914,35 @@ static void ShowDemoWindowTables()
       PushStyleCompact();
       ANCHOR::PushItemWidth(TEXT_BASE_WIDTH * 28.0f);
 
-      if (ANCHOR::TreeNodeEx("Features:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Features:", AnchorTreeNodeFlags_DefaultOpen))
       {
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Resizable", &flags, ANCHOR_TableFlags_Resizable);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Reorderable", &flags, ANCHOR_TableFlags_Reorderable);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Hideable", &flags, ANCHOR_TableFlags_Hideable);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_Sortable", &flags, ANCHOR_TableFlags_Sortable);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_Resizable", &flags, AnchorTableFlags_Resizable);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_Reorderable", &flags, AnchorTableFlags_Reorderable);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_Hideable", &flags, AnchorTableFlags_Hideable);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_Sortable", &flags, AnchorTableFlags_Sortable);
         ANCHOR::CheckboxFlags(
-          "ANCHOR_TableFlags_NoSavedSettings", &flags, ANCHOR_TableFlags_NoSavedSettings);
+          "AnchorTableFlags_NoSavedSettings", &flags, AnchorTableFlags_NoSavedSettings);
         ANCHOR::CheckboxFlags(
-          "ANCHOR_TableFlags_ContextMenuInBody", &flags, ANCHOR_TableFlags_ContextMenuInBody);
+          "AnchorTableFlags_ContextMenuInBody", &flags, AnchorTableFlags_ContextMenuInBody);
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Decorations:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Decorations:", AnchorTreeNodeFlags_DefaultOpen))
       {
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_RowBg", &flags, ANCHOR_TableFlags_RowBg);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersV", &flags, ANCHOR_TableFlags_BordersV);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterV", &flags, ANCHOR_TableFlags_BordersOuterV);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerV", &flags, ANCHOR_TableFlags_BordersInnerV);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersH", &flags, ANCHOR_TableFlags_BordersH);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersOuterH", &flags, ANCHOR_TableFlags_BordersOuterH);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_BordersInnerH", &flags, ANCHOR_TableFlags_BordersInnerH);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_RowBg", &flags, AnchorTableFlags_RowBg);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersV", &flags, AnchorTableFlags_BordersV);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterV", &flags, AnchorTableFlags_BordersOuterV);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerV", &flags, AnchorTableFlags_BordersInnerV);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersH", &flags, AnchorTableFlags_BordersH);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersOuterH", &flags, AnchorTableFlags_BordersOuterH);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_BordersInnerH", &flags, AnchorTableFlags_BordersInnerH);
         ANCHOR::CheckboxFlags(
-          "ANCHOR_TableFlags_NoBordersInBody", &flags, ANCHOR_TableFlags_NoBordersInBody);
+          "AnchorTableFlags_NoBordersInBody", &flags, AnchorTableFlags_NoBordersInBody);
         ANCHOR::SameLine();
         HelpMarker("Disable vertical borders in columns Body (borders will always appears in Headers");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoBordersInBodyUntilResize",
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoBordersInBodyUntilResize",
                               &flags,
-                              ANCHOR_TableFlags_NoBordersInBodyUntilResize);
+                              AnchorTableFlags_NoBordersInBodyUntilResize);
         ANCHOR::SameLine();
         HelpMarker(
           "Disable vertical borders in columns Body until hovered for resize (borders will "
@@ -6036,35 +5950,35 @@ static void ShowDemoWindowTables()
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Sizing:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Sizing:", AnchorTreeNodeFlags_DefaultOpen))
       {
         EditTableSizingFlags(&flags);
         ANCHOR::SameLine();
         HelpMarker(
           "In the Advanced demo we override the policy of each column so those table-wide "
           "settings have less effect that typical.");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendX", &flags, ANCHOR_TableFlags_NoHostExtendX);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendX", &flags, AnchorTableFlags_NoHostExtendX);
         ANCHOR::SameLine();
         HelpMarker(
           "Make outer width auto-fit to columns, overriding outer_size[0] value.\n\nOnly "
           "available when ScrollX/ScrollY are disabled and Stretch columns are not used.");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoHostExtendY", &flags, ANCHOR_TableFlags_NoHostExtendY);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoHostExtendY", &flags, AnchorTableFlags_NoHostExtendY);
         ANCHOR::SameLine();
         HelpMarker(
           "Make outer height stop exactly at outer_size[1] (prevent auto-extending table past "
           "the limit).\n\nOnly available when ScrollX/ScrollY are disabled. Data below the "
           "limit will be clipped and not visible.");
         ANCHOR::CheckboxFlags(
-          "ANCHOR_TableFlags_NoKeepColumnsVisible", &flags, ANCHOR_TableFlags_NoKeepColumnsVisible);
+          "AnchorTableFlags_NoKeepColumnsVisible", &flags, AnchorTableFlags_NoKeepColumnsVisible);
         ANCHOR::SameLine();
         HelpMarker("Only available if ScrollX is disabled.");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_PreciseWidths", &flags, ANCHOR_TableFlags_PreciseWidths);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_PreciseWidths", &flags, AnchorTableFlags_PreciseWidths);
         ANCHOR::SameLine();
         HelpMarker(
           "Disable distributing remainder width to stretched columns (width allocation on a "
           "100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: "
           "33,33,33). With larger number of columns, resizing will appear to be less smooth.");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoClip", &flags, ANCHOR_TableFlags_NoClip);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoClip", &flags, AnchorTableFlags_NoClip);
         ANCHOR::SameLine();
         HelpMarker(
           "Disable clipping rectangle for every individual columns (reduce draw command count, "
@@ -6073,35 +5987,35 @@ static void ShowDemoWindowTables()
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Padding:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Padding:", AnchorTreeNodeFlags_DefaultOpen))
       {
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_PadOuterX", &flags, ANCHOR_TableFlags_PadOuterX);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoPadOuterX", &flags, ANCHOR_TableFlags_NoPadOuterX);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_NoPadInnerX", &flags, ANCHOR_TableFlags_NoPadInnerX);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_PadOuterX", &flags, AnchorTableFlags_PadOuterX);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoPadOuterX", &flags, AnchorTableFlags_NoPadOuterX);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_NoPadInnerX", &flags, AnchorTableFlags_NoPadInnerX);
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Scrolling:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Scrolling:", AnchorTreeNodeFlags_DefaultOpen))
       {
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollX", &flags, ANCHOR_TableFlags_ScrollX);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollX", &flags, AnchorTableFlags_ScrollX);
         ANCHOR::SameLine();
         ANCHOR::SetNextItemWidth(ANCHOR::GetFrameHeight());
-        ANCHOR::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ANCHOR_SliderFlags_NoInput);
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_ScrollY", &flags, ANCHOR_TableFlags_ScrollY);
+        ANCHOR::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, AnchorSliderFlags_NoInput);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_ScrollY", &flags, AnchorTableFlags_ScrollY);
         ANCHOR::SameLine();
         ANCHOR::SetNextItemWidth(ANCHOR::GetFrameHeight());
-        ANCHOR::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ANCHOR_SliderFlags_NoInput);
+        ANCHOR::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, AnchorSliderFlags_NoInput);
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Sorting:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Sorting:", AnchorTreeNodeFlags_DefaultOpen))
       {
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_SortMulti", &flags, ANCHOR_TableFlags_SortMulti);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_SortMulti", &flags, AnchorTableFlags_SortMulti);
         ANCHOR::SameLine();
         HelpMarker(
           "When sorting is enabled: hold shift when clicking headers to sort on multiple "
           "column. TableGetSortSpecs() may return specs where (SpecsCount > 1).");
-        ANCHOR::CheckboxFlags("ANCHOR_TableFlags_SortTristate", &flags, ANCHOR_TableFlags_SortTristate);
+        ANCHOR::CheckboxFlags("AnchorTableFlags_SortTristate", &flags, AnchorTableFlags_SortTristate);
         ANCHOR::SameLine();
         HelpMarker(
           "When sorting is enabled: allow no sorting, disable default sorting. "
@@ -6109,7 +6023,7 @@ static void ShowDemoWindowTables()
         ANCHOR::TreePop();
       }
 
-      if (ANCHOR::TreeNodeEx("Other:", ANCHOR_TreeNodeFlags_DefaultOpen))
+      if (ANCHOR::TreeNodeEx("Other:", AnchorTreeNodeFlags_DefaultOpen))
       {
         ANCHOR::Checkbox("show_headers", &show_headers);
         ANCHOR::Checkbox("show_wrapped_text", &show_wrapped_text);
@@ -6169,13 +6083,13 @@ static void ShowDemoWindowTables()
       }
     }
 
-    const ImDrawList *parent_draw_list = ANCHOR::GetWindowDrawList();
+    const AnchorDrawList *parent_draw_list = ANCHOR::GetWindowDrawList();
     const int parent_draw_list_draw_cmd_count = parent_draw_list->CmdBuffer.Size;
-    GfVec2f table_scroll_cur, table_scroll_max;  // For debug display
-    const ImDrawList *table_draw_list = NULL;    // "
+    GfVec2f table_scroll_cur, table_scroll_max;    // For debug display
+    const AnchorDrawList *table_draw_list = NULL;  // "
 
     // Submit table
-    const float inner_width_to_use = (flags & ANCHOR_TableFlags_ScrollX) ? inner_width_with_scroll : 0.0f;
+    const float inner_width_to_use = (flags & AnchorTableFlags_ScrollX) ? inner_width_with_scroll : 0.0f;
     if (ANCHOR::BeginTable("table_advanced",
                            6,
                            flags,
@@ -6187,28 +6101,28 @@ static void ShowDemoWindowTables()
       // stored in the sort specifications. This is so our sort function can identify a column
       // given our own identifier. We could also identify them based on their index!
       ANCHOR::TableSetupColumn("ID",
-                               ANCHOR_TableColumnFlags_DefaultSort | ANCHOR_TableColumnFlags_WidthFixed |
-                                 ANCHOR_TableColumnFlags_NoHide,
+                               AnchorTableColumnFlags_DefaultSort | AnchorTableColumnFlags_WidthFixed |
+                                 AnchorTableColumnFlags_NoHide,
                                0.0f,
                                MyItemColumnID_ID);
-      ANCHOR::TableSetupColumn("Name", ANCHOR_TableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
+      ANCHOR::TableSetupColumn("Name", AnchorTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
       ANCHOR::TableSetupColumn("Action",
-                               ANCHOR_TableColumnFlags_NoSort | ANCHOR_TableColumnFlags_WidthFixed,
+                               AnchorTableColumnFlags_NoSort | AnchorTableColumnFlags_WidthFixed,
                                0.0f,
                                MyItemColumnID_Action);
       ANCHOR::TableSetupColumn(
-        "Quantity", ANCHOR_TableColumnFlags_PreferSortDescending, 0.0f, MyItemColumnID_Quantity);
+        "Quantity", AnchorTableColumnFlags_PreferSortDescending, 0.0f, MyItemColumnID_Quantity);
       ANCHOR::TableSetupColumn(
         "Description",
-        (flags & ANCHOR_TableFlags_NoHostExtendX) ? 0 : ANCHOR_TableColumnFlags_WidthStretch,
+        (flags & AnchorTableFlags_NoHostExtendX) ? 0 : AnchorTableColumnFlags_WidthStretch,
         0.0f,
         MyItemColumnID_Description);
       ANCHOR::TableSetupColumn("Hidden",
-                               ANCHOR_TableColumnFlags_DefaultHide | ANCHOR_TableColumnFlags_NoSort);
+                               AnchorTableColumnFlags_DefaultHide | AnchorTableColumnFlags_NoSort);
       ANCHOR::TableSetupScrollFreeze(freeze_cols, freeze_rows);
 
       // Sort our data if sort specs have been changed!
-      ANCHOR_TableSortSpecs *sorts_specs = ANCHOR::TableGetSortSpecs();
+      AnchorTableSortSpecs *sorts_specs = ANCHOR::TableGetSortSpecs();
       if (sorts_specs && sorts_specs->SpecsDirty)
         items_need_sort = true;
       if (sorts_specs && items_need_sort && items.Size > 1)
@@ -6224,7 +6138,7 @@ static void ShowDemoWindowTables()
       // we will use this to trigger sorting when we know the data of this column has been
       // modified.
       const bool sorts_specs_using_quantity = (ANCHOR::TableGetColumnFlags(3) &
-                                               ANCHOR_TableColumnFlags_IsSorted) != 0;
+                                               AnchorTableColumnFlags_IsSorted) != 0;
 
       // Show headers
       if (show_headers)
@@ -6233,18 +6147,18 @@ static void ShowDemoWindowTables()
       // Show data
       // FIXME-TABLE FIXME-NAV: How we can get decent up/down even though we have the buttons here?
       ANCHOR::PushButtonRepeat(true);
-#    if 1
+#if 1
       // Demonstrate using clipper for large vertical lists
-      ANCHORListClipper clipper;
+      AnchorListClipper clipper;
       clipper.Begin(items.Size);
       while (clipper.Step())
       {
         for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
-#    else
+#else
       // Without clipper
       {
         for (int row_n = 0; row_n < items.Size; row_n++)
-#    endif
+#endif
         {
           MyItem *item = &items[row_n];
           // if (!filter.PassFilter(item->Name))
@@ -6252,7 +6166,7 @@ static void ShowDemoWindowTables()
 
           const bool item_is_selected = selection.contains(item->ID);
           ANCHOR::PushID(item->ID);
-          ANCHOR::TableNextRow(ANCHOR_TableRowFlags_None, row_min_height);
+          ANCHOR::TableNextRow(AnchorTableRowFlags_None, row_min_height);
 
           // For the demo purpose we can select among different type of items submitted in the
           // first column
@@ -6269,10 +6183,10 @@ static void ShowDemoWindowTables()
             ANCHOR::Button(label, GfVec2f(-FLT_MIN, 0.0f));
           else if (contents_type == CT_Selectable || contents_type == CT_SelectableSpanRow)
           {
-            ANCHORSelectableFlags selectable_flags = (contents_type == CT_SelectableSpanRow) ?
-                                                       ANCHORSelectableFlags_SpanAllColumns |
-                                                         ANCHORSelectableFlags_AllowItemOverlap :
-                                                       ANCHORSelectableFlags_None;
+            AnchorSelectableFlags selectable_flags = (contents_type == CT_SelectableSpanRow) ?
+                                                       AnchorSelectableFlags_SpanAllColumns |
+                                                         AnchorSelectableFlags_AllowItemOverlap :
+                                                       AnchorSelectableFlags_None;
             if (ANCHOR::Selectable(label, item_is_selected, selectable_flags, GfVec2f(0, row_min_height)))
             {
               if (ANCHOR::GetIO().KeyCtrl)
@@ -6419,7 +6333,7 @@ static void ShowDemoWindowColumns()
     {
       char label[32];
       sprintf(label, "%04d", i);
-      if (ANCHOR::Selectable(label, selected == i, ANCHORSelectableFlags_SpanAllColumns))
+      if (ANCHOR::Selectable(label, selected == i, AnchorSelectableFlags_SpanAllColumns))
         selected = i;
       bool hovered = ANCHOR::IsItemHovered();
       ANCHOR::NextColumn();
@@ -6531,12 +6445,12 @@ static void ShowDemoWindowColumns()
   {
     ANCHOR::SetNextWindowContentSize(GfVec2f(1500.0f, 0.0f));
     GfVec2f child_size = GfVec2f(0, ANCHOR::GetFontSize() * 20.0f);
-    ANCHOR::BeginChild("##ScrollingRegion", child_size, false, ANCHOR_WindowFlags_HorizontalScrollbar);
+    ANCHOR::BeginChild("##ScrollingRegion", child_size, false, AnchorWindowFlags_HorizontalScrollbar);
     ANCHOR::Columns(10);
 
     // Also demonstrate using clipper for large vertical lists
     int ITEMS_COUNT = 2000;
-    ANCHORListClipper clipper;
+    AnchorListClipper clipper;
     clipper.Begin(ITEMS_COUNT);
     while (clipper.Step())
     {
@@ -6597,7 +6511,7 @@ static void ShowDemoWindowMisc()
   {
     // Helper class to easy setup a text filter.
     // You may want to implement a more feature-full filtering scheme in your own application.
-    static ANCHORTextFilter filter;
+    static AnchorTextFilter filter;
     ANCHOR::Text(
       "Filter usage:\n"
       "  \"\"         display all lines\n"
@@ -6614,9 +6528,9 @@ static void ShowDemoWindowMisc()
 
   if (ANCHOR::CollapsingHeader("Inputs, Navigation & Focus"))
   {
-    ANCHOR_IO &io = ANCHOR::GetIO();
+    AnchorIO &io = ANCHOR::GetIO();
 
-    // Display ANCHOR_IO output flags
+    // Display AnchorIO output flags
     ANCHOR::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
     ANCHOR::Text("WantCaptureKeyboard: %d", io.WantCaptureKeyboard);
     ANCHOR::Text("WantTextInput: %d", io.WantTextInput);
@@ -6822,7 +6736,7 @@ static void ShowDemoWindowMisc()
         ANCHOR::GetForegroundDrawList()->AddLine(
           io.MouseClickedPos[0],
           io.MousePos,
-          ANCHOR::GetColorU32(ANCHOR_Col_Button),
+          ANCHOR::GetColorU32(AnchorCol_Button),
           4.0f);  // Draw a line between the button and the mouse cursor
 
       // Drag operations gets "unlocked" when the mouse has moved past a certain threshold
@@ -6850,9 +6764,9 @@ static void ShowDemoWindowMisc()
                                            "ResizeNWSE",
                                            "Hand",
                                            "NotAllowed"};
-      ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(mouse_cursors_names) == ANCHOR_MouseCursor_COUNT);
+      ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(mouse_cursors_names) == AnchorMouseCursor_COUNT);
 
-      ANCHOR_MouseCursor current = ANCHOR::GetMouseCursor();
+      AnchorMouseCursor current = ANCHOR::GetMouseCursor();
       ANCHOR::Text("Current mouse cursor = %d: %s", current, mouse_cursors_names[current]);
       ANCHOR::Text("Hover to see mouse cursors:");
       ANCHOR::SameLine();
@@ -6862,7 +6776,7 @@ static void ShowDemoWindowMisc()
         "If software cursor rendering (io.MouseDrawCursor) is set ANCHOR will draw the right "
         "cursor for you, "
         "otherwise your backend needs to handle it.");
-      for (int i = 0; i < ANCHOR_MouseCursor_COUNT; i++)
+      for (int i = 0; i < AnchorMouseCursor_COUNT; i++)
       {
         char label[32];
         sprintf(label, "Mouse cursor %d: %s", i, mouse_cursors_names[i]);
@@ -6883,7 +6797,7 @@ static void ShowDemoWindowMisc()
 
 void ANCHOR::ShowAboutWindow(bool *p_open)
 {
-  if (!ANCHOR::Begin("About ANCHOR", p_open, ANCHOR_WindowFlags_AlwaysAutoResize))
+  if (!ANCHOR::Begin("About ANCHOR", p_open, AnchorWindowFlags_AlwaysAutoResize))
   {
     ANCHOR::End();
     return;
@@ -6897,12 +6811,12 @@ void ANCHOR::ShowAboutWindow(bool *p_open)
   ANCHOR::Checkbox("Config/Build Information", &show_config_info);
   if (show_config_info)
   {
-    ANCHOR_IO &io = ANCHOR::GetIO();
-    ANCHOR_Style &style = ANCHOR::GetStyle();
+    AnchorIO &io = ANCHOR::GetIO();
+    AnchorStyle &style = ANCHOR::GetStyle();
 
     bool copy_to_clipboard = ANCHOR::Button("Copy to clipboard");
     GfVec2f child_size = GfVec2f(0, ANCHOR::GetTextLineHeightWithSpacing() * 18);
-    ANCHOR::BeginChildFrame(ANCHOR::GetID("cfg_infos"), child_size, ANCHOR_WindowFlags_NoMove);
+    ANCHOR::BeginChildFrame(ANCHOR::GetID("cfg_infos"), child_size, AnchorWindowFlags_NoMove);
     if (copy_to_clipboard)
     {
       ANCHOR::LogToClipboard();
@@ -6912,86 +6826,86 @@ void ANCHOR::ShowAboutWindow(bool *p_open)
 
     ANCHOR::Text("ANCHOR %s (%d)", ANCHOR_VERSION, ANCHOR_VERSION_NUM);
     ANCHOR::Separator();
-    ANCHOR::Text("sizeof(size_t): %d, sizeof(ImDrawIdx): %d, sizeof(ImDrawVert): %d",
+    ANCHOR::Text("sizeof(size_t): %d, sizeof(AnchorDrawIdx): %d, sizeof(AnchorDrawVert): %d",
                  (int)sizeof(size_t),
-                 (int)sizeof(ImDrawIdx),
-                 (int)sizeof(ImDrawVert));
+                 (int)sizeof(AnchorDrawIdx),
+                 (int)sizeof(AnchorDrawVert));
     ANCHOR::Text("define: __cplusplus=%d", (int)__cplusplus);
-#    ifdef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
+#ifdef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_OBSOLETE_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_WIN32_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_WIN32_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_WIN32_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_DEFAULT_FORMAT_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_DEFAULT_FORMAT_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_DEFAULT_FORMAT_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_DEFAULT_MATH_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_DEFAULT_MATH_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_DEFAULT_MATH_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_DEFAULT_FILE_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_DEFAULT_FILE_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_DEFAULT_FILE_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_FILE_FUNCTIONS
+#endif
+#ifdef ANCHOR_DISABLE_FILE_FUNCTIONS
     ANCHOR::Text("define: ANCHOR_DISABLE_FILE_FUNCTIONS");
-#    endif
-#    ifdef ANCHOR_DISABLE_DEFAULT_ALLOCATORS
+#endif
+#ifdef ANCHOR_DISABLE_DEFAULT_ALLOCATORS
     ANCHOR::Text("define: ANCHOR_DISABLE_DEFAULT_ALLOCATORS");
-#    endif
-#    ifdef ANCHOR_USE_BGRA_PACKED_COLOR
+#endif
+#ifdef ANCHOR_USE_BGRA_PACKED_COLOR
     ANCHOR::Text("define: ANCHOR_USE_BGRA_PACKED_COLOR");
-#    endif
-#    ifdef _WIN32
+#endif
+#ifdef _WIN32
     ANCHOR::Text("define: _WIN32");
-#    endif
-#    ifdef _WIN64
+#endif
+#ifdef _WIN64
     ANCHOR::Text("define: _WIN64");
-#    endif
-#    ifdef __linux__
+#endif
+#ifdef __linux__
     ANCHOR::Text("define: __linux__");
-#    endif
-#    ifdef __APPLE__
+#endif
+#ifdef __APPLE__
     ANCHOR::Text("define: __APPLE__");
-#    endif
-#    ifdef _MSC_VER
+#endif
+#ifdef _MSC_VER
     ANCHOR::Text("define: _MSC_VER=%d", _MSC_VER);
-#    endif
-#    ifdef _MSVC_LANG
+#endif
+#ifdef _MSVC_LANG
     ANCHOR::Text("define: _MSVC_LANG=%d", (int)_MSVC_LANG);
-#    endif
-#    ifdef __MINGW32__
+#endif
+#ifdef __MINGW32__
     ANCHOR::Text("define: __MINGW32__");
-#    endif
-#    ifdef __MINGW64__
+#endif
+#ifdef __MINGW64__
     ANCHOR::Text("define: __MINGW64__");
-#    endif
-#    ifdef __GNUC__
+#endif
+#ifdef __GNUC__
     ANCHOR::Text("define: __GNUC__=%d", (int)__GNUC__);
-#    endif
-#    ifdef __clang_version__
+#endif
+#ifdef __clang_version__
     ANCHOR::Text("define: __clang_version__=%s", __clang_version__);
-#    endif
+#endif
     ANCHOR::Separator();
     ANCHOR::Text("io.BackendPlatformName: %s", io.BackendPlatformName ? io.BackendPlatformName : "NULL");
     ANCHOR::Text("io.BackendRendererName: %s", io.BackendRendererName ? io.BackendRendererName : "NULL");
     ANCHOR::Text("io.ConfigFlags: 0x%08X", io.ConfigFlags);
-    if (io.ConfigFlags & ANCHORConfigFlags_NavEnableKeyboard)
+    if (io.ConfigFlags & AnchorConfigFlags_NavEnableKeyboard)
       ANCHOR::Text(" NavEnableKeyboard");
-    if (io.ConfigFlags & ANCHORConfigFlags_NavEnableGamepad)
+    if (io.ConfigFlags & AnchorConfigFlags_NavEnableGamepad)
       ANCHOR::Text(" NavEnableGamepad");
-    if (io.ConfigFlags & ANCHORConfigFlags_NavEnableSetMousePos)
+    if (io.ConfigFlags & AnchorConfigFlags_NavEnableSetMousePos)
       ANCHOR::Text(" NavEnableSetMousePos");
-    if (io.ConfigFlags & ANCHORConfigFlags_NavNoCaptureKeyboard)
+    if (io.ConfigFlags & AnchorConfigFlags_NavNoCaptureKeyboard)
       ANCHOR::Text(" NavNoCaptureKeyboard");
-    if (io.ConfigFlags & ANCHORConfigFlags_NoMouse)
+    if (io.ConfigFlags & AnchorConfigFlags_NoMouse)
       ANCHOR::Text(" NoMouse");
-    if (io.ConfigFlags & ANCHORConfigFlags_NoMouseCursorChange)
+    if (io.ConfigFlags & AnchorConfigFlags_NoMouseCursorChange)
       ANCHOR::Text(" NoMouseCursorChange");
     if (io.MouseDrawCursor)
       ANCHOR::Text("io.MouseDrawCursor");
@@ -7006,13 +6920,13 @@ void ANCHOR::ShowAboutWindow(bool *p_open)
     if (io.ConfigMemoryCompactTimer >= 0.0f)
       ANCHOR::Text("io.ConfigMemoryCompactTimer = %.1f", io.ConfigMemoryCompactTimer);
     ANCHOR::Text("io.BackendFlags: 0x%08X", io.BackendFlags);
-    if (io.BackendFlags & ANCHORBackendFlags_HasGamepad)
+    if (io.BackendFlags & AnchorBackendFlags_HasGamepad)
       ANCHOR::Text(" HasGamepad");
-    if (io.BackendFlags & ANCHORBackendFlags_HasMouseCursors)
+    if (io.BackendFlags & AnchorBackendFlags_HasMouseCursors)
       ANCHOR::Text(" HasMouseCursors");
-    if (io.BackendFlags & ANCHORBackendFlags_HasSetMousePos)
+    if (io.BackendFlags & AnchorBackendFlags_HasSetMousePos)
       ANCHOR::Text(" HasSetMousePos");
-    if (io.BackendFlags & ANCHORBackendFlags_RendererHasVtxOffset)
+    if (io.BackendFlags & AnchorBackendFlags_RendererHasVtxOffset)
       ANCHOR::Text(" RendererHasVtxOffset");
     ANCHOR::Separator();
     ANCHOR::Text("io.Fonts: %d fonts, Flags: 0x%08X, TexSize: %d,%d",
@@ -7060,7 +6974,7 @@ ANCHOR_API void ShowFontAtlas(AnchorFontAtlas *atlas);
 // Here we use the regular BeginCombo()/EndCombo() api which is more the more flexible one.
 void ANCHOR::ShowFontSelector(const char *label)
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   AnchorFont *font_current = ANCHOR::GetFont();
   if (ANCHOR::BeginCombo(label, font_current->GetDebugName()))
   {
@@ -7108,12 +7022,12 @@ bool ANCHOR::ShowStyleSelector(const char *label)
   return false;
 }
 
-void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
+void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
 {
-  // You can pass in a reference ANCHOR_Style structure to compare to, revert to and save to
+  // You can pass in a reference AnchorStyle structure to compare to, revert to and save to
   // (without a reference style pointer, we will use one compared locally as a reference)
-  ANCHOR_Style &style = ANCHOR::GetStyle();
-  static ANCHOR_Style ref_saved_style;
+  AnchorStyle &style = ANCHOR::GetStyle();
+  static AnchorStyle ref_saved_style;
 
   // Default to using internal storage as reference
   static bool init = true;
@@ -7170,7 +7084,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
 
   ANCHOR::Separator();
 
-  if (ANCHOR::BeginTabBar("##tabs", ANCHOR_TabBarFlags_None))
+  if (ANCHOR::BeginTabBar("##tabs", AnchorTabBarFlags_None))
   {
     if (ANCHOR::BeginTabItem("Sizes"))
     {
@@ -7233,12 +7147,12 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
         else
           ANCHOR::LogToTTY();
         ANCHOR::LogText("GfVec4f* colors = ANCHOR::GetStyle().Colors;" IM_NEWLINE);
-        for (int i = 0; i < ANCHOR_Col_COUNT; i++)
+        for (int i = 0; i < AnchorCol_COUNT; i++)
         {
           const GfVec4f &col = style.Colors[i];
           const char *name = ANCHOR::GetStyleColorName(i);
           if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(GfVec4f)) != 0)
-            ANCHOR::LogText("colors[ANCHOR_Col_%s]%*s= GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" IM_NEWLINE,
+            ANCHOR::LogText("colors[AnchorCol_%s]%*s= GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" IM_NEWLINE,
                             name,
                             23 - (int)strlen(name),
                             "",
@@ -7255,23 +7169,23 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
       ANCHOR::SameLine();
       ANCHOR::Checkbox("Only Modified Colors", &output_only_modified);
 
-      static ANCHORTextFilter filter;
+      static AnchorTextFilter filter;
       filter.Draw("Filter colors", ANCHOR::GetFontSize() * 16);
 
-      static ANCHOR_ColorEditFlags alpha_flags = 0;
-      if (ANCHOR::RadioButton("Opaque", alpha_flags == ANCHOR_ColorEditFlags_None))
+      static AnchorColorEditFlags alpha_flags = 0;
+      if (ANCHOR::RadioButton("Opaque", alpha_flags == AnchorColorEditFlags_None))
       {
-        alpha_flags = ANCHOR_ColorEditFlags_None;
+        alpha_flags = AnchorColorEditFlags_None;
       }
       ANCHOR::SameLine();
-      if (ANCHOR::RadioButton("Alpha", alpha_flags == ANCHOR_ColorEditFlags_AlphaPreview))
+      if (ANCHOR::RadioButton("Alpha", alpha_flags == AnchorColorEditFlags_AlphaPreview))
       {
-        alpha_flags = ANCHOR_ColorEditFlags_AlphaPreview;
+        alpha_flags = AnchorColorEditFlags_AlphaPreview;
       }
       ANCHOR::SameLine();
-      if (ANCHOR::RadioButton("Both", alpha_flags == ANCHOR_ColorEditFlags_AlphaPreviewHalf))
+      if (ANCHOR::RadioButton("Both", alpha_flags == AnchorColorEditFlags_AlphaPreviewHalf))
       {
-        alpha_flags = ANCHOR_ColorEditFlags_AlphaPreviewHalf;
+        alpha_flags = AnchorColorEditFlags_AlphaPreviewHalf;
       }
       ANCHOR::SameLine();
       HelpMarker(
@@ -7282,17 +7196,17 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
       ANCHOR::BeginChild("##colors",
                          GfVec2f(0, 0),
                          true,
-                         ANCHOR_WindowFlags_AlwaysVerticalScrollbar |
-                           ANCHOR_WindowFlags_AlwaysHorizontalScrollbar | ANCHOR_WindowFlags_NavFlattened);
+                         AnchorWindowFlags_AlwaysVerticalScrollbar |
+                           AnchorWindowFlags_AlwaysHorizontalScrollbar | AnchorWindowFlags_NavFlattened);
       ANCHOR::PushItemWidth(-160);
-      for (int i = 0; i < ANCHOR_Col_COUNT; i++)
+      for (int i = 0; i < AnchorCol_COUNT; i++)
       {
         const char *name = ANCHOR::GetStyleColorName(i);
         if (!filter.PassFilter(name))
           continue;
         ANCHOR::PushID(i);
         ANCHOR::ColorEdit4(
-          "##color", (float *)&style.Colors[i], ANCHOR_ColorEditFlags_AlphaBar | alpha_flags);
+          "##color", (float *)&style.Colors[i], AnchorColorEditFlags_AlphaBar | alpha_flags);
         if (memcmp(&style.Colors[i], &ref->Colors[i], sizeof(GfVec4f)) != 0)
         {
           // Tips: in a real user application, you may want to merge and use an icon font into the
@@ -7321,7 +7235,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
 
     if (ANCHOR::BeginTabItem("Fonts"))
     {
-      ANCHOR_IO &io = ANCHOR::GetIO();
+      AnchorIO &io = ANCHOR::GetIO();
       AnchorFontAtlas *atlas = io.Fonts;
       HelpMarker("Read FAQ and docs/FONTS.md for details on font loading.");
       ANCHOR::ShowFontAtlas(atlas);
@@ -7335,7 +7249,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
         "Those are old settings provided for convenience.\n"
         "However, the _correct_ way of scaling your UI is currently to reload your font at the "
         "designed size, "
-        "rebuild the font atlas, and call style.ScaleAllSizes() on a reference ANCHOR_Style "
+        "rebuild the font atlas, and call style.ScaleAllSizes() on a reference AnchorStyle "
         "structure.\n"
         "Using those settings here will give you poor quality results.");
       static float window_scale = 1.0f;
@@ -7346,7 +7260,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
                             MIN_SCALE,
                             MAX_SCALE,
                             "%.2f",
-                            ANCHOR_SliderFlags_AlwaysClamp))  // Scale only this window
+                            AnchorSliderFlags_AlwaysClamp))  // Scale only this window
         ANCHOR::SetWindowFontScale(window_scale);
       ANCHOR::DragFloat("global scale",
                         &io.FontGlobalScale,
@@ -7354,7 +7268,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
                         MIN_SCALE,
                         MAX_SCALE,
                         "%.2f",
-                        ANCHOR_SliderFlags_AlwaysClamp);  // Scale everything
+                        AnchorSliderFlags_AlwaysClamp);  // Scale everything
       ANCHOR::PopItemWidth();
 
       ANCHOR::EndTabItem();
@@ -7389,14 +7303,14 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
                         0.10f,
                         5.0f,
                         "%.2f",
-                        ANCHOR_SliderFlags_AlwaysClamp);
+                        AnchorSliderFlags_AlwaysClamp);
       if (ANCHOR::IsItemActive())
       {
         ANCHOR::SetNextWindowPos(ANCHOR::GetCursorScreenPos());
         ANCHOR::BeginTooltip();
         ANCHOR::TextUnformatted("(R = radius, N = number of segments)");
         ANCHOR::Spacing();
-        ImDrawList *draw_list = ANCHOR::GetWindowDrawList();
+        AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
         const float min_widget_width = ANCHOR::CalcTextSize("N: MMM\nR: MMM")[0];
         for (int n = 0; n < 8; n++)
         {
@@ -7408,19 +7322,19 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
 
           ANCHOR::Text("R: %.f\nN: %d", rad, draw_list->_CalcCircleAutoSegmentCount(rad));
 
-          const float canvas_width = IM_MAX(min_widget_width, rad * 2.0f);
+          const float canvas_width = ANCHOR_MAX(min_widget_width, rad * 2.0f);
           const float offset_x = floorf(canvas_width * 0.5f);
           const float offset_y = floorf(RAD_MAX);
 
           const GfVec2f p1 = ANCHOR::GetCursorScreenPos();
           draw_list->AddCircle(
-            GfVec2f(p1[0] + offset_x, p1[1] + offset_y), rad, ANCHOR::GetColorU32(ANCHOR_Col_Text));
+            GfVec2f(p1[0] + offset_x, p1[1] + offset_y), rad, ANCHOR::GetColorU32(AnchorCol_Text));
           ANCHOR::Dummy(GfVec2f(canvas_width, RAD_MAX * 2));
 
           /*
           const GfVec2f p2 = ANCHOR::GetCursorScreenPos();
           draw_list->AddCircleFilled(GfVec2f(p2[0] + offset_x, p2[1] + offset_y), rad,
-          ANCHOR::GetColorU32(ANCHOR_Col_Text)); ANCHOR::Dummy(GfVec2f(canvas_width, RAD_MAX * 2));
+          ANCHOR::GetColorU32(AnchorCol_Text)); ANCHOR::Dummy(GfVec2f(canvas_width, RAD_MAX * 2));
           */
 
           ANCHOR::EndGroup();
@@ -7461,7 +7375,7 @@ void ANCHOR::ShowStyleEditor(ANCHOR_Style *ref)
 
 // Demonstrate creating a "main" fullscreen menu bar and populating it.
 // Note the difference between BeginMainMenuBar() and BeginMenuBar():
-// - BeginMenuBar() = menu-bar inside current window (which needs the ANCHOR_WindowFlags_MenuBar
+// - BeginMenuBar() = menu-bar inside current window (which needs the AnchorWindowFlags_MenuBar
 // flag!)
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport +
 // call BeginMenuBar() into it.
@@ -7554,12 +7468,12 @@ static void ShowExampleMenuFile()
   if (ANCHOR::BeginMenu("Colors"))
   {
     float sz = ANCHOR::GetTextLineHeight();
-    for (int i = 0; i < ANCHOR_Col_COUNT; i++)
+    for (int i = 0; i < AnchorCol_COUNT; i++)
     {
-      const char *name = ANCHOR::GetStyleColorName((ANCHOR_Col)i);
+      const char *name = ANCHOR::GetStyleColorName((AnchorCol)i);
       GfVec2f p = ANCHOR::GetCursorScreenPos();
       ANCHOR::GetWindowDrawList()->AddRectFilled(
-        p, GfVec2f(p[0] + sz, p[1] + sz), ANCHOR::GetColorU32((ANCHOR_Col)i));
+        p, GfVec2f(p[0] + sz, p[1] + sz), ANCHOR::GetColorU32((AnchorCol)i));
       ANCHOR::Dummy(GfVec2f(sz, sz));
       ANCHOR::SameLine();
       ANCHOR::MenuItem(name);
@@ -7604,7 +7518,7 @@ struct ExampleAppConsole
   AnchorVector<const char *> Commands;
   AnchorVector<char *> History;
   int HistoryPos;  // -1: new line, 0..History.Size-1 browsing history.
-  ANCHORTextFilter Filter;
+  AnchorTextFilter Filter;
   bool AutoScroll;
   bool ScrollToBottom;
 
@@ -7690,7 +7604,7 @@ struct ExampleAppConsole
 
   void Draw(const char *title, bool *p_open)
   {
-    ANCHOR::SetNextWindowSize(GfVec2f(520, 600), ANCHOR_Cond_FirstUseEver);
+    ANCHOR::SetNextWindowSize(GfVec2f(520, 600), AnchorCond_FirstUseEver);
     if (!ANCHOR::Begin(title, p_open))
     {
       ANCHOR::End();
@@ -7759,7 +7673,7 @@ struct ExampleAppConsole
     ANCHOR::BeginChild("ScrollingRegion",
                        GfVec2f(0, -footer_height_to_reserve),
                        false,
-                       ANCHOR_WindowFlags_HorizontalScrollbar);
+                       AnchorWindowFlags_HorizontalScrollbar);
     if (ANCHOR::BeginPopupContextWindow())
     {
       if (ANCHOR::Selectable("Clear"))
@@ -7775,7 +7689,7 @@ struct ExampleAppConsole
     // the clipper we can replace your standard loop:
     //      for (int i = 0; i < Items.Size; i++)
     //   With:
-    //      ANCHORListClipper clipper;
+    //      AnchorListClipper clipper;
     //      clipper.Begin(Items.Size);
     //      while (clipper.Step())
     //         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
@@ -7792,7 +7706,7 @@ struct ExampleAppConsole
     // list.
     // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your
     // items.
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(4, 1));  // Tighten spacing
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(4, 1));  // Tighten spacing
     if (copy_to_clipboard)
       ANCHOR::LogToClipboard();
     for (int i = 0; i < Items.Size; i++)
@@ -7816,7 +7730,7 @@ struct ExampleAppConsole
         has_color = true;
       }
       if (has_color)
-        ANCHOR::PushStyleColor(ANCHOR_Col_Text, color);
+        ANCHOR::PushStyleColor(AnchorCol_Text, color);
       ANCHOR::TextUnformatted(item);
       if (has_color)
         ANCHOR::PopStyleColor();
@@ -7834,9 +7748,9 @@ struct ExampleAppConsole
 
     // Command-line
     bool reclaim_focus = false;
-    ANCHORInputTextFlags input_text_flags = ANCHORInputTextFlags_EnterReturnsTrue |
-                                            ANCHORInputTextFlags_CallbackCompletion |
-                                            ANCHORInputTextFlags_CallbackHistory;
+    AnchorInputTextFlags input_text_flags = AnchorInputTextFlags_EnterReturnsTrue |
+                                            AnchorInputTextFlags_CallbackCompletion |
+                                            AnchorInputTextFlags_CallbackHistory;
     if (ANCHOR::InputText("Input",
                           InputBuf,
                           ANCHOR_ARRAYSIZE(InputBuf),
@@ -7903,19 +7817,19 @@ struct ExampleAppConsole
   }
 
   // In C++11 you'd be better off using lambdas for this sort of forwarding callbacks
-  static int TextEditCallbackStub(ANCHORInputTextCallbackData *data)
+  static int TextEditCallbackStub(AnchorInputTextCallbackData *data)
   {
     ExampleAppConsole *console = (ExampleAppConsole *)data->UserData;
     return console->TextEditCallback(data);
   }
 
-  int TextEditCallback(ANCHORInputTextCallbackData *data)
+  int TextEditCallback(AnchorInputTextCallbackData *data)
   {
     // AddLog("cursor: %d, selection: %d-%d", data->CursorPos, data->SelectionStart,
     // data->SelectionEnd);
     switch (data->EventFlag)
     {
-      case ANCHORInputTextFlags_CallbackCompletion: {
+      case AnchorInputTextFlags_CallbackCompletion: {
         // Example of TEXT COMPLETION
 
         // Locate beginning of current word
@@ -7982,17 +7896,17 @@ struct ExampleAppConsole
 
         break;
       }
-      case ANCHORInputTextFlags_CallbackHistory: {
+      case AnchorInputTextFlags_CallbackHistory: {
         // Example of HISTORY
         const int prev_history_pos = HistoryPos;
-        if (data->EventKey == ANCHOR_Key_UpArrow)
+        if (data->EventKey == AnchorKey_UpArrow)
         {
           if (HistoryPos == -1)
             HistoryPos = History.Size - 1;
           else if (HistoryPos > 0)
             HistoryPos--;
         }
-        else if (data->EventKey == ANCHOR_Key_DownArrow)
+        else if (data->EventKey == AnchorKey_DownArrow)
         {
           if (HistoryPos != -1)
             if (++HistoryPos >= History.Size)
@@ -8029,8 +7943,8 @@ static void ShowExampleAppConsole(bool *p_open)
 //  my_log.Draw("title");
 struct ExampleAppLog
 {
-  ANCHORTextBuffer Buf;
-  ANCHORTextFilter Filter;
+  AnchorTextBuffer Buf;
+  AnchorTextFilter Filter;
   AnchorVector<int> LineOffsets;  // Index to lines offset. We maintain this with AddLog() calls.
   bool AutoScroll;                // Keep scrolling if already at the bottom.
 
@@ -8085,14 +7999,14 @@ struct ExampleAppLog
     Filter.Draw("Filter", -100.0f);
 
     ANCHOR::Separator();
-    ANCHOR::BeginChild("scrolling", GfVec2f(0, 0), false, ANCHOR_WindowFlags_HorizontalScrollbar);
+    ANCHOR::BeginChild("scrolling", GfVec2f(0, 0), false, AnchorWindowFlags_HorizontalScrollbar);
 
     if (clear)
       Clear();
     if (copy)
       ANCHOR::LogToClipboard();
 
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(0, 0));
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
     const char *buf = Buf.begin();
     const char *buf_end = Buf.end();
     if (Filter.IsActive())
@@ -8119,7 +8033,7 @@ struct ExampleAppLog
       // fast-forward to skip non-visible lines. Here we instead demonstrate using the clipper to
       // only process lines that are within the visible area. If you have tens of thousands of
       // items and their processing cost is non-negligible, coarse clipping them on your side is
-      // recommended. Using ANCHORListClipper requires
+      // recommended. Using AnchorListClipper requires
       // - A) random access into your data
       // - B) items all being the  same height,
       // both of which we can handle since we an array pointing to the beginning of each line of
@@ -8127,7 +8041,7 @@ struct ExampleAppLog
       // the data to display anymore, which is why we don't use the clipper. Storing or skimming
       // through the search result would make it possible (and would be recommended if you want to
       // search through tens of thousands of entries).
-      ANCHORListClipper clipper;
+      AnchorListClipper clipper;
       clipper.Begin(LineOffsets.Size);
       while (clipper.Step())
       {
@@ -8159,7 +8073,7 @@ static void ShowExampleAppLog(bool *p_open)
   // For the demo: add a debug button _BEFORE_ the normal log window contents
   // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to
   // the _same_ window. Most of the contents of the window will be added by the log.Draw() call.
-  ANCHOR::SetNextWindowSize(GfVec2f(500, 400), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(GfVec2f(500, 400), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Example: Log", p_open);
   if (ANCHOR::SmallButton("[Debug] Add 5 entries"))
   {
@@ -8198,8 +8112,8 @@ static void ShowExampleAppLog(bool *p_open)
 // Demonstrate create a window with multiple child windows.
 static void ShowExampleAppLayout(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(500, 440), ANCHOR_Cond_FirstUseEver);
-  if (ANCHOR::Begin("Example: Simple layout", p_open, ANCHOR_WindowFlags_MenuBar))
+  ANCHOR::SetNextWindowSize(GfVec2f(500, 440), AnchorCond_FirstUseEver);
+  if (ANCHOR::Begin("Example: Simple layout", p_open, AnchorWindowFlags_MenuBar))
   {
     if (ANCHOR::BeginMenuBar())
     {
@@ -8234,7 +8148,7 @@ static void ShowExampleAppLayout(bool *p_open)
         "item view", GfVec2f(0, -ANCHOR::GetFrameHeightWithSpacing()));  // Leave room for 1 line below us
       ANCHOR::Text("MyObject: %d", selected);
       ANCHOR::Separator();
-      if (ANCHOR::BeginTabBar("##Tabs", ANCHOR_TabBarFlags_None))
+      if (ANCHOR::BeginTabBar("##Tabs", AnchorTabBarFlags_None))
       {
         if (ANCHOR::BeginTabItem("Description"))
         {
@@ -8299,8 +8213,8 @@ static void ShowPlaceholderObject(const char *prefix, int uid)
         ANCHOR::TableNextRow();
         ANCHOR::TableSetColumnIndex(0);
         ANCHOR::AlignTextToFramePadding();
-        ANCHOR_TreeNodeFlags flags = ANCHOR_TreeNodeFlags_Leaf | ANCHOR_TreeNodeFlags_NoTreePushOnOpen |
-                                     ANCHOR_TreeNodeFlags_Bullet;
+        AnchorTreeNodeFlags flags = AnchorTreeNodeFlags_Leaf | AnchorTreeNodeFlags_NoTreePushOnOpen |
+                                    AnchorTreeNodeFlags_Bullet;
         ANCHOR::TreeNodeEx("Field", flags, "Field_%d", i);
 
         ANCHOR::TableSetColumnIndex(1);
@@ -8321,7 +8235,7 @@ static void ShowPlaceholderObject(const char *prefix, int uid)
 // Demonstrate create a simple property editor.
 static void ShowExampleAppPropertyEditor(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(430, 450), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(GfVec2f(430, 450), AnchorCond_FirstUseEver);
   if (!ANCHOR::Begin("Example: Property editor", p_open))
   {
     ANCHOR::End();
@@ -8334,8 +8248,8 @@ static void ShowExampleAppPropertyEditor(bool *p_open)
     "Remember that in many simple cases, you can use ANCHOR::SameLine(xxx) to position\n"
     "your cursor horizontally instead of using the Columns() API.");
 
-  ANCHOR::PushStyleVar(ANCHOR_StyleVar_FramePadding, GfVec2f(2, 2));
-  if (ANCHOR::BeginTable("split", 2, ANCHOR_TableFlags_BordersOuter | ANCHOR_TableFlags_Resizable))
+  ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2, 2));
+  if (ANCHOR::BeginTable("split", 2, AnchorTableFlags_BordersOuter | AnchorTableFlags_Resizable))
   {
     // Iterate placeholder objects (all the same data)
     for (int obj_i = 0; obj_i < 4; obj_i++)
@@ -8356,7 +8270,7 @@ static void ShowExampleAppPropertyEditor(bool *p_open)
 // Demonstrate/test rendering huge amount of text, and the incidence of clipping.
 static void ShowExampleAppLongText(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(520, 600), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(GfVec2f(520, 600), AnchorCond_FirstUseEver);
   if (!ANCHOR::Begin("Example: Long text display", p_open))
   {
     ANCHOR::End();
@@ -8364,7 +8278,7 @@ static void ShowExampleAppLongText(bool *p_open)
   }
 
   static int test_type = 0;
-  static ANCHORTextBuffer log;
+  static AnchorTextBuffer log;
   static int lines = 0;
   ANCHOR::Text("Printing unusually long amount of text.");
   ANCHOR::Combo("Test type",
@@ -8394,9 +8308,9 @@ static void ShowExampleAppLongText(bool *p_open)
       break;
     case 1: {
       // Multiple calls to Text(), manually coarsely clipped - demonstrate how to use the
-      // ANCHORListClipper helper.
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(0, 0));
-      ANCHORListClipper clipper;
+      // AnchorListClipper helper.
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
+      AnchorListClipper clipper;
       clipper.Begin(lines);
       while (clipper.Step())
         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
@@ -8406,7 +8320,7 @@ static void ShowExampleAppLongText(bool *p_open)
     }
     case 2:
       // Multiple calls to Text(), not clipped (slow)
-      ANCHOR::PushStyleVar(ANCHOR_StyleVar_ItemSpacing, GfVec2f(0, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
       for (int i = 0; i < lines; i++)
         ANCHOR::Text("%i The quick brown fox jumps over the lazy dog", i);
       ANCHOR::PopStyleVar();
@@ -8423,7 +8337,7 @@ static void ShowExampleAppLongText(bool *p_open)
 // Demonstrate creating a window which gets auto-resized according to its content.
 static void ShowExampleAppAutoResize(bool *p_open)
 {
-  if (!ANCHOR::Begin("Example: Auto-resizing window", p_open, ANCHOR_WindowFlags_AlwaysAutoResize))
+  if (!ANCHOR::Begin("Example: Auto-resizing window", p_open, AnchorWindowFlags_AlwaysAutoResize))
   {
     ANCHOR::End();
     return;
@@ -8450,11 +8364,11 @@ static void ShowExampleAppConstrainedResize(bool *p_open)
   struct CustomConstraints
   {
     // Helper functions to demonstrate programmatic constraints
-    static void Square(ANCHOR_SizeCallbackData *data)
+    static void Square(AnchorSizeCallbackData *data)
     {
-      data->DesiredSize[0] = data->DesiredSize[1] = IM_MAX(data->DesiredSize[0], data->DesiredSize[1]);
+      data->DesiredSize[0] = data->DesiredSize[1] = ANCHOR_MAX(data->DesiredSize[0], data->DesiredSize[1]);
     }
-    static void Step(ANCHOR_SizeCallbackData *data)
+    static void Step(AnchorSizeCallbackData *data)
     {
       float step = (float)(int)(intptr_t)data->UserData;
       data->DesiredSize = GfVec2f((int)(data->DesiredSize[0] / step + 0.5f) * step,
@@ -8495,7 +8409,7 @@ static void ShowExampleAppConstrainedResize(bool *p_open)
                                          CustomConstraints::Step,
                                          (void *)(intptr_t)100);  // Fixed Step
 
-  ANCHOR_WindowFlags flags = auto_resize ? ANCHOR_WindowFlags_AlwaysAutoResize : 0;
+  AnchorWindowFlags flags = auto_resize ? AnchorWindowFlags_AlwaysAutoResize : 0;
   if (ANCHOR::Begin("Example: Constrained Resize", p_open, flags))
   {
     if (ANCHOR::Button("200x200"))
@@ -8533,13 +8447,13 @@ static void ShowExampleAppSimpleOverlay(bool *p_open)
 {
   const float PAD = 10.0f;
   static int corner = 0;
-  ANCHOR_IO &io = ANCHOR::GetIO();
-  ANCHOR_WindowFlags window_flags = ANCHOR_WindowFlags_NoDecoration | ANCHOR_WindowFlags_AlwaysAutoResize |
-                                    ANCHOR_WindowFlags_NoSavedSettings |
-                                    ANCHOR_WindowFlags_NoFocusOnAppearing | ANCHOR_WindowFlags_NoNav;
+  AnchorIO &io = ANCHOR::GetIO();
+  AnchorWindowFlags window_flags = AnchorWindowFlags_NoDecoration | AnchorWindowFlags_AlwaysAutoResize |
+                                   AnchorWindowFlags_NoSavedSettings |
+                                   AnchorWindowFlags_NoFocusOnAppearing | AnchorWindowFlags_NoNav;
   if (corner != -1)
   {
-    const ANCHORViewport *viewport = ANCHOR::GetMainViewport();
+    const AnchorViewport *viewport = ANCHOR::GetMainViewport();
     GfVec2f work_pos = viewport->WorkPos;  // Use work area to avoid menu-bar/task-bar, if any!
     GfVec2f work_size = viewport->WorkSize;
     GfVec2f window_pos, window_pos_pivot;
@@ -8547,8 +8461,8 @@ static void ShowExampleAppSimpleOverlay(bool *p_open)
     window_pos[1] = (corner & 2) ? (work_pos[1] + work_size[1] - PAD) : (work_pos[1] + PAD);
     window_pos_pivot[0] = (corner & 1) ? 1.0f : 0.0f;
     window_pos_pivot[1] = (corner & 2) ? 1.0f : 0.0f;
-    ANCHOR::SetNextWindowPos(window_pos, ANCHOR_Cond_Always, window_pos_pivot);
-    window_flags |= ANCHOR_WindowFlags_NoMove;
+    ANCHOR::SetNextWindowPos(window_pos, AnchorCond_Always, window_pos_pivot);
+    window_flags |= AnchorWindowFlags_NoMove;
   }
   ANCHOR::SetNextWindowBgAlpha(0.35f);  // Transparent background
   if (ANCHOR::Begin("Example: Simple overlay", p_open, window_flags))
@@ -8590,12 +8504,12 @@ static void ShowExampleAppSimpleOverlay(bool *p_open)
 static void ShowExampleAppFullscreen(bool *p_open)
 {
   static bool use_work_area = true;
-  static ANCHOR_WindowFlags flags = ANCHOR_WindowFlags_NoDecoration | ANCHOR_WindowFlags_NoMove |
-                                    ANCHOR_WindowFlags_NoResize | ANCHOR_WindowFlags_NoSavedSettings;
+  static AnchorWindowFlags flags = AnchorWindowFlags_NoDecoration | AnchorWindowFlags_NoMove |
+                                   AnchorWindowFlags_NoResize | AnchorWindowFlags_NoSavedSettings;
 
   // We demonstrate using the full viewport area or the work area (without menu-bars, task-bars
   // etc.) Based on your use case you may want one of the other.
-  const ANCHORViewport *viewport = ANCHOR::GetMainViewport();
+  const AnchorViewport *viewport = ANCHOR::GetMainViewport();
   ANCHOR::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
   ANCHOR::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
 
@@ -8608,12 +8522,12 @@ static void ShowExampleAppFullscreen(bool *p_open)
       "main menu bars, task bars etc.\n\nEnable the main-menu bar in Examples menu to see the "
       "difference.");
 
-    ANCHOR::CheckboxFlags("ANCHOR_WindowFlags_NoBackground", &flags, ANCHOR_WindowFlags_NoBackground);
-    ANCHOR::CheckboxFlags("ANCHOR_WindowFlags_NoDecoration", &flags, ANCHOR_WindowFlags_NoDecoration);
+    ANCHOR::CheckboxFlags("AnchorWindowFlags_NoBackground", &flags, AnchorWindowFlags_NoBackground);
+    ANCHOR::CheckboxFlags("AnchorWindowFlags_NoDecoration", &flags, AnchorWindowFlags_NoDecoration);
     ANCHOR::Indent();
-    ANCHOR::CheckboxFlags("ANCHOR_WindowFlags_NoTitleBar", &flags, ANCHOR_WindowFlags_NoTitleBar);
-    ANCHOR::CheckboxFlags("ANCHOR_WindowFlags_NoCollapse", &flags, ANCHOR_WindowFlags_NoCollapse);
-    ANCHOR::CheckboxFlags("ANCHOR_WindowFlags_NoScrollbar", &flags, ANCHOR_WindowFlags_NoScrollbar);
+    ANCHOR::CheckboxFlags("AnchorWindowFlags_NoTitleBar", &flags, AnchorWindowFlags_NoTitleBar);
+    ANCHOR::CheckboxFlags("AnchorWindowFlags_NoCollapse", &flags, AnchorWindowFlags_NoCollapse);
+    ANCHOR::CheckboxFlags("AnchorWindowFlags_NoScrollbar", &flags, AnchorWindowFlags_NoScrollbar);
     ANCHOR::Unindent();
 
     if (p_open && ANCHOR::Button("Close this window"))
@@ -8631,19 +8545,19 @@ static void ShowExampleAppFullscreen(bool *p_open)
 // Read FAQ section "How can I have multiple widgets with the same label?" for details.
 static void ShowExampleAppWindowTitles(bool *)
 {
-  const ANCHORViewport *viewport = ANCHOR::GetMainViewport();
+  const AnchorViewport *viewport = ANCHOR::GetMainViewport();
   const GfVec2f base_pos = viewport->Pos;
 
   // By default, Windows are uniquely identified by their title.
   // You can use the "##" and "###" markers to manipulate the display/ID.
 
   // Using "##" to display same title but have unique identifier.
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 100), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 100), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Same title as another window##1");
   ANCHOR::Text("This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
   ANCHOR::End();
 
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 200), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 200), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Same title as another window##2");
   ANCHOR::Text("This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
   ANCHOR::End();
@@ -8654,17 +8568,17 @@ static void ShowExampleAppWindowTitles(bool *)
           "Animated title %c %d###AnimatedTitle",
           "|/-\\"[(int)(ANCHOR::GetTime() / 0.25f) & 3],
           ANCHOR::GetFrameCount());
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 300), ANCHOR_Cond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 300), AnchorCond_FirstUseEver);
   ANCHOR::Begin(buf);
   ANCHOR::Text("This window has a changing title.");
   ANCHOR::End();
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] Example App: Custom Rendering using ImDrawList API / ShowExampleAppCustomRendering()
+// [SECTION] Example App: Custom Rendering using AnchorDrawList API / ShowExampleAppCustomRendering()
 //-----------------------------------------------------------------------------
 
-// Demonstrate using the low-level ImDrawList to draw custom shapes.
+// Demonstrate using the low-level AnchorDrawList to draw custom shapes.
 static void ShowExampleAppCustomRendering(bool *p_open)
 {
   if (!ANCHOR::Begin("Example: Custom rendering", p_open))
@@ -8684,7 +8598,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
     if (ANCHOR::BeginTabItem("Primitives"))
     {
       ANCHOR::PushItemWidth(-ANCHOR::GetFontSize() * 15);
-      ImDrawList *draw_list = ANCHOR::GetWindowDrawList();
+      AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
 
       // Draw gradients
       // (note that those are currently exacerbating our sRGB/Linear issues)
@@ -8735,8 +8649,8 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       const GfVec2f p = ANCHOR::GetCursorScreenPos();
       const AnchorU32 col = AnchorColor(colf);
       const float spacing = 10.0f;
-      const ImDrawFlags corners_tl_br = ImDrawFlags_RoundCornersTopLeft |
-                                        ImDrawFlags_RoundCornersBottomRight;
+      const AnchorDrawFlags corners_tl_br = AnchorDrawFlags_RoundCornersTopLeft |
+                                            AnchorDrawFlags_RoundCornersBottomRight;
       const float rounding = sz / 5.0f;
       const int circle_segments = circle_segments_override ? circle_segments_override_v : 0;
       const int curve_segments = curve_segments_override ? curve_segments_override_v : 0;
@@ -8750,9 +8664,9 @@ static void ShowExampleAppCustomRendering(bool *p_open)
         x += sz + spacing;  // N-gon
         draw_list->AddCircle(GfVec2f(x + sz * 0.5f, y + sz * 0.5f), sz * 0.5f, col, circle_segments, th);
         x += sz + spacing;  // Circle
-        draw_list->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, 0.0f, ImDrawFlags_None, th);
+        draw_list->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, 0.0f, AnchorDrawFlags_None, th);
         x += sz + spacing;  // Square
-        draw_list->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, rounding, ImDrawFlags_None, th);
+        draw_list->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, rounding, AnchorDrawFlags_None, th);
         x += sz + spacing;  // Square with all rounded corners
         draw_list->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, rounding, corners_tl_br, th);
         x += sz + spacing;  // Square with two rounded corners
@@ -8833,16 +8747,16 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       // own scrolling. Here we demonstrate that this can be replaced by simple offsetting + custom
       // drawing + PushClipRect/PopClipRect() calls. To use a child window instead we could use,
       // e.g:
-      //      ANCHOR::PushStyleVar(ANCHOR_StyleVar_WindowPadding, GfVec2f(0, 0));      // Disable
-      //      padding ANCHOR::PushStyleColor(ANCHOR_Col_ChildBg, ANCHOR_COL32(50, 50, 50, 255)); //
+      //      ANCHOR::PushStyleVar(AnchorStyleVar_WindowPadding, GfVec2f(0, 0));      // Disable
+      //      padding ANCHOR::PushStyleColor(AnchorCol_ChildBg, ANCHOR_COL32(50, 50, 50, 255)); //
       //      Set a background color ANCHOR::BeginChild("canvas", GfVec2f(0.0f, 0.0f), true,
-      //      ANCHOR_WindowFlags_NoMove); ANCHOR::PopStyleColor(); ANCHOR::PopStyleVar();
+      //      AnchorWindowFlags_NoMove); ANCHOR::PopStyleColor(); ANCHOR::PopStyleVar();
       //      [...]
       //      ANCHOR::EndChild();
 
       // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2)
       // allows us to use IsItemHovered()/IsItemActive()
-      GfVec2f canvas_p0 = ANCHOR::GetCursorScreenPos();     // ImDrawList API uses screen coordinates!
+      GfVec2f canvas_p0 = ANCHOR::GetCursorScreenPos();     // AnchorDrawList API uses screen coordinates!
       GfVec2f canvas_sz = ANCHOR::GetContentRegionAvail();  // Resize canvas to what's available
       if (canvas_sz[0] < 50.0f)
         canvas_sz[0] = 50.0f;
@@ -8851,14 +8765,14 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       GfVec2f canvas_p1 = GfVec2f(canvas_p0[0] + canvas_sz[0], canvas_p0[1] + canvas_sz[1]);
 
       // Draw border and background color
-      ANCHOR_IO &io = ANCHOR::GetIO();
-      ImDrawList *draw_list = ANCHOR::GetWindowDrawList();
+      AnchorIO &io = ANCHOR::GetIO();
+      AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
       draw_list->AddRectFilled(canvas_p0, canvas_p1, ANCHOR_COL32(50, 50, 50, 255));
       draw_list->AddRect(canvas_p0, canvas_p1, ANCHOR_COL32(255, 255, 255, 255));
 
       // This will catch our interactions
       ANCHOR::InvisibleButton(
-        "canvas", canvas_sz, ANCHOR_ButtonFlags_MouseButtonLeft | ANCHOR_ButtonFlags_MouseButtonRight);
+        "canvas", canvas_sz, AnchorButtonFlags_MouseButtonLeft | AnchorButtonFlags_MouseButtonRight);
       const bool is_hovered = ANCHOR::IsItemHovered();  // Hovered
       const bool is_active = ANCHOR::IsItemActive();    // Held
       const GfVec2f origin(canvas_p0[0] + scrolling[0],
@@ -8866,7 +8780,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       const GfVec2f mouse_pos_in_canvas(io.MousePos[0] - origin[0], io.MousePos[1] - origin[1]);
 
       // Add first and second point
-      if (is_hovered && !adding_line && ANCHOR::IsMouseClicked(ANCHOR_MouseButton_Left))
+      if (is_hovered && !adding_line && ANCHOR::IsMouseClicked(AnchorMouseButton_Left))
       {
         points.push_back(mouse_pos_in_canvas);
         points.push_back(mouse_pos_in_canvas);
@@ -8875,7 +8789,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       if (adding_line)
       {
         points.back() = mouse_pos_in_canvas;
-        if (!ANCHOR::IsMouseDown(ANCHOR_MouseButton_Left))
+        if (!ANCHOR::IsMouseDown(AnchorMouseButton_Left))
           adding_line = false;
       }
 
@@ -8883,15 +8797,15 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       // You may decide to make that threshold dynamic based on whether the mouse is hovering
       // something etc.
       const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-      if (is_active && ANCHOR::IsMouseDragging(ANCHOR_MouseButton_Right, mouse_threshold_for_pan))
+      if (is_active && ANCHOR::IsMouseDragging(AnchorMouseButton_Right, mouse_threshold_for_pan))
       {
         scrolling[0] += io.MouseDelta[0];
         scrolling[1] += io.MouseDelta[1];
       }
 
       // Context menu (under default mouse threshold)
-      GfVec2f drag_delta = ANCHOR::GetMouseDragDelta(ANCHOR_MouseButton_Right);
-      if (opt_enable_context_menu && ANCHOR::IsMouseReleased(ANCHOR_MouseButton_Right) &&
+      GfVec2f drag_delta = ANCHOR::GetMouseDragDelta(AnchorMouseButton_Right);
+      if (opt_enable_context_menu && ANCHOR::IsMouseReleased(AnchorMouseButton_Right) &&
           drag_delta[0] == 0.0f && drag_delta[1] == 0.0f)
         ANCHOR::OpenPopupOnItemClick("context");
       if (ANCHOR::BeginPopup("context"))
@@ -9008,7 +8922,7 @@ struct MyDocument
   {
     ANCHOR::PushID(doc);
     ANCHOR::Text("Document \"%s\"", doc->Name);
-    ANCHOR::PushStyleColor(ANCHOR_Col_Text, doc->Color);
+    ANCHOR::PushStyleColor(AnchorCol_Text, doc->Color);
     ANCHOR::TextWrapped(
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "
       "incididunt ut labore et dolore magna aliqua.");
@@ -9063,7 +8977,7 @@ struct ExampleAppDocuments
 // the tab bar will report no selected tab during the frame. This will effectively give the
 // impression of a flicker for one frame. We call SetTabItemClosed() to manually notify the Tab Bar
 // or Docking system of removed tabs to avoid this glitch. Note that this completely optional, and
-// only affect tab bars with the ANCHOR_TabBarFlags_Reorderable flag.
+// only affect tab bars with the AnchorTabBarFlags_Reorderable flag.
 static void NotifyOfDocumentsClosedElsewhere(ExampleAppDocuments &app)
 {
   for (int doc_n = 0; doc_n < app.Documents.Size; doc_n++)
@@ -9081,9 +8995,9 @@ void ShowExampleAppDocuments(bool *p_open)
 
   // Options
   static bool opt_reorderable = true;
-  static ANCHOR_TabBarFlags opt_fitting_flags = ANCHOR_TabBarFlags_FittingPolicyDefault_;
+  static AnchorTabBarFlags opt_fitting_flags = AnchorTabBarFlags_FittingPolicyDefault_;
 
-  bool window_contents_visible = ANCHOR::Begin("Example: Documents", p_open, ANCHOR_WindowFlags_MenuBar);
+  bool window_contents_visible = ANCHOR::Begin("Example: Documents", p_open, AnchorWindowFlags_MenuBar);
   if (!window_contents_visible)
   {
     ANCHOR::End();
@@ -9138,8 +9052,8 @@ void ShowExampleAppDocuments(bool *p_open)
 
   // Submit Tab Bar and Tabs
   {
-    ANCHOR_TabBarFlags tab_bar_flags = (opt_fitting_flags) |
-                                       (opt_reorderable ? ANCHOR_TabBarFlags_Reorderable : 0);
+    AnchorTabBarFlags tab_bar_flags = (opt_fitting_flags) |
+                                      (opt_reorderable ? AnchorTabBarFlags_Reorderable : 0);
     if (ANCHOR::BeginTabBar("##tabs", tab_bar_flags))
     {
       if (opt_reorderable)
@@ -9158,7 +9072,7 @@ void ShowExampleAppDocuments(bool *p_open)
         if (!doc->Open)
           continue;
 
-        ANCHOR_TabItemFlags tab_flags = (doc->Dirty ? ANCHOR_TabItemFlags_UnsavedDocument : 0);
+        AnchorTabItemFlags tab_flags = (doc->Dirty ? AnchorTabItemFlags_UnsavedDocument : 0);
         bool visible = ANCHOR::BeginTabItem(doc->Name, &doc->Open, tab_flags);
 
         // Cancel attempt to close when unsaved add to save queue so we can display a popup.
@@ -9215,7 +9129,7 @@ void ShowExampleAppDocuments(bool *p_open)
     {
       if (!ANCHOR::IsPopupOpen("Save?"))
         ANCHOR::OpenPopup("Save?");
-      if (ANCHOR::BeginPopupModal("Save?", NULL, ANCHOR_WindowFlags_AlwaysAutoResize))
+      if (ANCHOR::BeginPopupModal("Save?", NULL, AnchorWindowFlags_AlwaysAutoResize))
       {
         ANCHOR::Text("Save change to the following items?");
         float item_height = ANCHOR::GetTextLineHeightWithSpacing();
@@ -9261,18 +9175,11 @@ void ShowExampleAppDocuments(bool *p_open)
   ANCHOR::End();
 }
 
-// End of Demo code
-#  else
-
 void ANCHOR::ShowAboutWindow(bool *)
 {}
 void ANCHOR::ShowDemoWindow(bool *)
 {}
 void ANCHOR::ShowUserGuide()
 {}
-void ANCHOR::ShowStyleEditor(ANCHOR_Style *)
+void ANCHOR::ShowStyleEditor(AnchorStyle *)
 {}
-
-#  endif
-
-#endif  // #ifndef ANCHOR_DISABLE

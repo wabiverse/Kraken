@@ -39,7 +39,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
   /* Get the path to the currently running executable (kraken-launcher.exe) */
 
   DWORD nSize = GetModuleFileName(NULL, path, MAX_PATH);
-  if (!nSize) {
+  if (!nSize)
+  {
     return -1;
   }
 
@@ -48,17 +49,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
    * to the rule: "If the buffer is too small to hold the module name, the function returns nSize.
    * The last error code remains ERROR_SUCCESS." - source: MSDN. */
 
-  if (GetLastError() == ERROR_SUCCESS && nSize == MAX_PATH) {
+  if (GetLastError() == ERROR_SUCCESS && nSize == MAX_PATH)
+  {
     return -1;
   }
 
   /* Remove the filename (kraken-launcher.exe) from path. */
-  if (PathCchRemoveFileSpec(path, MAX_PATH) != S_OK) {
+  if (PathCchRemoveFileSpec(path, MAX_PATH) != S_OK)
+  {
     return -1;
   }
 
   /* Add kraken.exe to path, resulting in the full path to the kraken executable. */
-  if (PathCchCombine(path, MAX_PATH, path, L"kraken.exe") != S_OK) {
+  if (PathCchCombine(path, MAX_PATH, path, L"kraken.exe") != S_OK)
+  {
     return -1;
   }
 
@@ -68,7 +72,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                             1;                   /* Zero terminator */
   size_t required_size_bytes = required_size_chars * sizeof(wchar_t);
   wchar_t *buffer = (wchar_t *)malloc(required_size_bytes);
-  if (!buffer) {
+  if (!buffer)
+  {
     return -1;
   }
 
@@ -79,15 +84,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                        STRSAFE_NULL_ON_FAILURE,
                        L"\"%s\" %s",
                        path,
-                       pCmdLine) != S_OK) {
+                       pCmdLine) != S_OK)
+  {
     free(buffer);
     return -1;
   }
 
   BOOL success = CreateProcess(
-      path, buffer, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &siStartInfo, &procInfo);
+    path, buffer, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &siStartInfo, &procInfo);
 
-  if (success) {
+  if (success)
+  {
     /* Handles in PROCESS_INFORMATION must be closed with CloseHandle when they are no longer
      * needed - MSDN. Closing the handles will NOT terminate the thread/process that we just
      * started. */

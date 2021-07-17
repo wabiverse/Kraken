@@ -16,9 +16,11 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
@@ -26,7 +28,7 @@
 
 #include "ANCHOR_api.h"
 
-class ANCHOR_ISystemPaths
+class AnchorISystemPaths
 {
  public:
   /**
@@ -42,21 +44,21 @@ class ANCHOR_ISystemPaths
   /**
    * Returns a pointer to the one and only system (nil if it hasn't been created).
    * @return A pointer to the system. */
-  static ANCHOR_ISystemPaths *get();
+  static AnchorISystemPaths *get();
 
  protected:
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member.
    */
-  ANCHOR_ISystemPaths()
+  AnchorISystemPaths()
   {}
 
   /**
    * Destructor.
    * Protected default constructor to force use of static dispose member.
    */
-  virtual ~ANCHOR_ISystemPaths()
+  virtual ~AnchorISystemPaths()
   {}
 
  public:
@@ -89,24 +91,24 @@ class ANCHOR_ISystemPaths
  private:
   /**
    * The one and only system paths */
-  static ANCHOR_ISystemPaths *m_systemPaths;
+  static AnchorISystemPaths *m_systemPaths;
 };
 
-class ANCHOR_SystemPaths : public ANCHOR_ISystemPaths
+class AnchorSystemPaths : public AnchorISystemPaths
 {
  protected:
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member.
    */
-  ANCHOR_SystemPaths()
+  AnchorSystemPaths()
   {}
 
   /**
    * Destructor.
    * Protected default constructor to force use of static dispose member.
    */
-  virtual ~ANCHOR_SystemPaths()
+  virtual ~AnchorSystemPaths()
   {}
 
  public:
@@ -137,18 +139,18 @@ class ANCHOR_SystemPaths : public ANCHOR_ISystemPaths
 };
 
 #if defined(__linux__)
-class ANCHOR_SystemPathsUnix : public ANCHOR_SystemPaths
+class AnchorSystemPathsUnix : public AnchorSystemPaths
 {
  public:
   /**
    * Constructor
-   * this class should only be instantiated by ANCHOR_ISystem. */
-  ANCHOR_SystemPathsUnix();
+   * this class should only be instantiated by AnchorISystem. */
+  AnchorSystemPathsUnix();
 
   /**
    * Destructor.
    */
-  ~ANCHOR_SystemPathsUnix();
+  ~AnchorSystemPathsUnix();
 
   /**
    * Determine the base dir in which shared resources are located. It will first try to use
@@ -183,21 +185,21 @@ class ANCHOR_SystemPathsUnix : public ANCHOR_SystemPaths
 };
 #elif defined(WIN32)
 /**
- * WIN32 Implementation of ANCHOR_SystemPaths class.
- * \see ANCHOR_SystemPaths.
+ * WIN32 Implementation of AnchorSystemPaths class.
+ * \see AnchorSystemPaths.
  */
-class ANCHOR_SystemPathsWin32 : public ANCHOR_SystemPaths
+class AnchorSystemPathsWin32 : public AnchorSystemPaths
 {
  public:
   /**
    * Constructor.
    */
-  ANCHOR_SystemPathsWin32();
+  AnchorSystemPathsWin32();
 
   /**
    * Destructor.
    */
-  ~ANCHOR_SystemPathsWin32();
+  ~AnchorSystemPathsWin32();
 
   /**
    * Determine the base dir in which shared resources are located. It will first try to use
@@ -231,18 +233,18 @@ class ANCHOR_SystemPathsWin32 : public ANCHOR_SystemPaths
   void addToSystemRecentFiles(const char *filename) const;
 };
 #elif defined(__APPLE__)
-class ANCHOR_SystemPathsCocoa : public ANCHOR_SystemPaths
+class AnchorSystemPathsCocoa : public AnchorSystemPaths
 {
  public:
   /**
    * Constructor.
    */
-  ANCHOR_SystemPathsCocoa();
+  AnchorSystemPathsCocoa();
 
   /**
    * Destructor.
    */
-  ~ANCHOR_SystemPathsCocoa();
+  ~AnchorSystemPathsCocoa();
 
   /**
    * Determine the base dir in which shared resources are located. It will first try to use
@@ -277,7 +279,7 @@ class ANCHOR_SystemPathsCocoa : public ANCHOR_SystemPaths
 };
 #endif
 
-ANCHOR_DECLARE_HANDLE(ANCHOR_SystemPathsHandle);
+ANCHOR_DECLARE_HANDLE(AnchorSystemPathsHandle);
 
 /**
  * Creates the one and only instance of the system path access.

@@ -16,100 +16,35 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-// [ANCHOR]
-// This is a slightly modified version of stb_rect_pack.h 1.00.
-// Those changes would need to be pushed into nothings/stb:
-// - Added STBRP__CDECL
-// Grep for [ANCHOR] to find the changes.
+#define STB_RECT_PACK_VERSION 1
 
-// stb_rect_pack.h - v1.00 - public domain - rectangle packing
-// Sean Barrett 2014
-//
-// Useful for e.g. packing rectangular textures into an atlas.
-// Does not do rotation.
-//
-// Not necessarily the awesomest packing method, but better than
-// the totally naive one in stb_truetype (which is primarily what
-// this is meant to replace).
-//
-// Has only had a few tests run, may have issues.
-//
-// More docs to come.
-//
-// No memory allocations; uses qsort() and assert() from stdlib.
-// Can override those by defining STBRP_SORT and STBRP_ASSERT.
-//
-// This library currently uses the Skyline Bottom-Left algorithm.
-//
-// Please note: better rectangle packers are welcome! Please
-// implement them to the same API, but with a different init
-// function.
-//
-// Credits
-//
-//  Library
-//    Sean Barrett
-//  Minor features
-//    Martins Mozeiko
-//    github:IntellectualKitty
-//
-//  Bugfixes / warning fixes
-//    Jeremy Jaussaud
-//    Fabian Giesen
-//
-// Version history:
-//
-//     1.00  (2019-02-25)  avoid small space waste; gracefully fail too-wide rectangles
-//     0.99  (2019-02-07)  warning fixes
-//     0.11  (2017-03-03)  return packing success/fail result
-//     0.10  (2016-10-25)  remove cast-away-const to avoid warnings
-//     0.09  (2016-08-27)  fix compiler warnings
-//     0.08  (2015-09-13)  really fix bug with empty rects (w=0 or h=0)
-//     0.07  (2015-09-13)  fix bug with empty rects (w=0 or h=0)
-//     0.06  (2015-04-15)  added STBRP_SORT to allow replacing qsort
-//     0.05:  added STBRP_ASSERT to allow replacing assert
-//     0.04:  fixed minor bug in STBRP_LARGE_RECTS support
-//     0.01:  initial release
-//
-// LICENSE
-//
-//   See end of file for license information.
+#ifdef STBRP_STATIC
+#  define STBRP_DEF static
+#else
+#  define STBRP_DEF extern
+#endif
 
-//////////////////////////////////////////////////////////////////////////////
-//
-//       INCLUDE SECTION
-//
-
-#ifndef STB_INCLUDE_STB_RECT_PACK_H
-#  define STB_INCLUDE_STB_RECT_PACK_H
-
-#  define STB_RECT_PACK_VERSION 1
-
-#  ifdef STBRP_STATIC
-#    define STBRP_DEF static
-#  else
-#    define STBRP_DEF extern
-#  endif
-
-#  ifdef __cplusplus
+#ifdef __cplusplus
 extern "C" {
-#  endif
+#endif
 
 typedef struct stbrp_context stbrp_context;
 typedef struct stbrp_node stbrp_node;
 typedef struct stbrp_rect stbrp_rect;
 
-#  ifdef STBRP_LARGE_RECTS
+#ifdef STBRP_LARGE_RECTS
 typedef int stbrp_coord;
-#  else
+#else
 typedef unsigned short stbrp_coord;
-#  endif
+#endif
 
 STBRP_DEF int stbrp_pack_rects(stbrp_context *context, stbrp_rect *rects, int num_rects);
 // Assign packed locations to rectangles. The rectangles are of type
@@ -216,9 +151,9 @@ struct stbrp_context
   stbrp_node extra[2];  // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'
 };
 
-#  ifdef __cplusplus
+#ifdef __cplusplus
 }
-#  endif
+#endif
 
 #endif
 
@@ -661,7 +596,6 @@ STBRP_DEF int stbrp_pack_rects(stbrp_context *context, stbrp_rect *rects, int nu
   // return the all_rects_packed status
   return all_rects_packed;
 }
-#endif
 
 /*
 ------------------------------------------------------------------------------

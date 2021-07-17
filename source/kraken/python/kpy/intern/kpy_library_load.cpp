@@ -46,10 +46,11 @@ WABI_NAMESPACE_BEGIN
 
 #define INDEX_ID_MAX 41
 
-struct KPy_Library {
+struct KPy_Library
+{
   PyObject_HEAD /* Required Python macro. */
-  /* Collection iterator specific parts. */
-  char relpath[FILE_MAX];
+    /* Collection iterator specific parts. */
+    char relpath[FILE_MAX];
   char abspath[FILE_MAX]; /* absolute path */
   int flag;
   PyObject *dict;
@@ -65,10 +66,10 @@ static PyObject *kpy_lib_exit(KPy_Library *self, PyObject *args);
 static PyObject *kpy_lib_dir(KPy_Library *self);
 
 static PyMethodDef kpy_lib_methods[] = {
-    {"__enter__", (PyCFunction)kpy_lib_enter, METH_NOARGS},
-    {"__exit__", (PyCFunction)kpy_lib_exit, METH_VARARGS},
-    {"__dir__", (PyCFunction)kpy_lib_dir, METH_NOARGS},
-    {NULL} /* sentinel */
+  {"__enter__", (PyCFunction)kpy_lib_enter, METH_NOARGS},
+  {"__exit__", (PyCFunction)kpy_lib_exit, METH_VARARGS},
+  {"__dir__", (PyCFunction)kpy_lib_dir, METH_NOARGS},
+  {NULL} /* sentinel */
 };
 
 static void kpy_lib_dealloc(KPy_Library *self)
@@ -78,99 +79,99 @@ static void kpy_lib_dealloc(KPy_Library *self)
 }
 
 static PyTypeObject kpy_lib_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0) "kpy_lib", /* tp_name */
-    sizeof(KPy_Library),                      /* tp_basicsize */
-    0,                                        /* tp_itemsize */
-    /* methods */
-    (destructor)kpy_lib_dealloc, /* tp_dealloc */
-    0,                           /* tp_vectorcall_offset */
-    NULL,                        /* getattrfunc tp_getattr; */
-    NULL,                        /* setattrfunc tp_setattr; */
-    NULL,
-    /* tp_compare */ /* DEPRECATED in python 3.0! */
-    NULL,            /* tp_repr */
+  PyVarObject_HEAD_INIT(NULL, 0) "kpy_lib", /* tp_name */
+  sizeof(KPy_Library),                      /* tp_basicsize */
+  0,                                        /* tp_itemsize */
+  /* methods */
+  (destructor)kpy_lib_dealloc, /* tp_dealloc */
+  0,                           /* tp_vectorcall_offset */
+  NULL,                        /* getattrfunc tp_getattr; */
+  NULL,                        /* setattrfunc tp_setattr; */
+  NULL,
+  /* tp_compare */ /* DEPRECATED in python 3.0! */
+  NULL,            /* tp_repr */
 
-    /* Method suites for standard classes */
+  /* Method suites for standard classes */
 
-    NULL, /* PyNumberMethods *tp_as_number; */
-    NULL, /* PySequenceMethods *tp_as_sequence; */
-    NULL, /* PyMappingMethods *tp_as_mapping; */
+  NULL, /* PyNumberMethods *tp_as_number; */
+  NULL, /* PySequenceMethods *tp_as_sequence; */
+  NULL, /* PyMappingMethods *tp_as_mapping; */
 
-    /* More standard operations (here for binary compatibility) */
+  /* More standard operations (here for binary compatibility) */
 
-    NULL, /* hashfunc tp_hash; */
-    NULL, /* ternaryfunc tp_call; */
-    NULL, /* reprfunc tp_str; */
+  NULL, /* hashfunc tp_hash; */
+  NULL, /* ternaryfunc tp_call; */
+  NULL, /* reprfunc tp_str; */
 
-    /* will only use these if this is a subtype of a py class */
-    PyObject_GenericGetAttr, /* getattrofunc tp_getattro; */
-    NULL,                    /* setattrofunc tp_setattro; */
+  /* will only use these if this is a subtype of a py class */
+  PyObject_GenericGetAttr, /* getattrofunc tp_getattro; */
+  NULL,                    /* setattrofunc tp_setattro; */
 
-    /* Functions to access object as input/output buffer */
-    NULL, /* PyBufferProcs *tp_as_buffer; */
+  /* Functions to access object as input/output buffer */
+  NULL, /* PyBufferProcs *tp_as_buffer; */
 
-    /*** Flags to define presence of optional/expanded features ***/
-    Py_TPFLAGS_DEFAULT, /* long tp_flags; */
+  /*** Flags to define presence of optional/expanded features ***/
+  Py_TPFLAGS_DEFAULT, /* long tp_flags; */
 
-    NULL, /*  char *tp_doc;  Documentation string */
-    /*** Assigned meaning in release 2.0 ***/
-    /* call function for all accessible objects */
-    NULL, /* traverseproc tp_traverse; */
+  NULL, /*  char *tp_doc;  Documentation string */
+  /*** Assigned meaning in release 2.0 ***/
+  /* call function for all accessible objects */
+  NULL, /* traverseproc tp_traverse; */
 
-    /* delete references to contained objects */
-    NULL, /* inquiry tp_clear; */
+  /* delete references to contained objects */
+  NULL, /* inquiry tp_clear; */
 
-    /***  Assigned meaning in release 2.1 ***/
-    /*** rich comparisons (subclassed) ***/
-    NULL, /* richcmpfunc tp_richcompare; */
+  /***  Assigned meaning in release 2.1 ***/
+  /*** rich comparisons (subclassed) ***/
+  NULL, /* richcmpfunc tp_richcompare; */
 
-    /***  weak reference enabler ***/
-    0,
-    /*** Added in release 2.2 ***/
-    /*   Iterators */
-    NULL, /* getiterfunc tp_iter; */
-    NULL, /* iternextfunc tp_iternext; */
+  /***  weak reference enabler ***/
+  0,
+  /*** Added in release 2.2 ***/
+  /*   Iterators */
+  NULL, /* getiterfunc tp_iter; */
+  NULL, /* iternextfunc tp_iternext; */
 
-    /*** Attribute descriptor and subclassing stuff ***/
-    kpy_lib_methods,             /* struct PyMethodDef *tp_methods; */
-    NULL,                        /* struct PyMemberDef *tp_members; */
-    NULL,                        /* struct PyGetSetDef *tp_getset; */
-    NULL,                        /* struct _typeobject *tp_base; */
-    NULL,                        /* PyObject *tp_dict; */
-    NULL,                        /* descrgetfunc tp_descr_get; */
-    NULL,                        /* descrsetfunc tp_descr_set; */
-    offsetof(KPy_Library, dict), /* long tp_dictoffset; */
-    NULL,                        /* initproc tp_init; */
-    NULL,                        /* allocfunc tp_alloc; */
-    NULL,                        /* newfunc tp_new; */
-    /*  Low-level free-memory routine */
-    NULL, /* freefunc tp_free; */
-    /* For PyObject_IS_GC */
-    NULL, /* inquiry tp_is_gc; */
-    NULL, /* PyObject *tp_bases; */
-    /* method resolution order */
-    NULL, /* PyObject *tp_mro; */
-    NULL, /* PyObject *tp_cache; */
-    NULL, /* PyObject *tp_subclasses; */
-    NULL, /* PyObject *tp_weaklist; */
-    NULL,
+  /*** Attribute descriptor and subclassing stuff ***/
+  kpy_lib_methods,             /* struct PyMethodDef *tp_methods; */
+  NULL,                        /* struct PyMemberDef *tp_members; */
+  NULL,                        /* struct PyGetSetDef *tp_getset; */
+  NULL,                        /* struct _typeobject *tp_base; */
+  NULL,                        /* PyObject *tp_dict; */
+  NULL,                        /* descrgetfunc tp_descr_get; */
+  NULL,                        /* descrsetfunc tp_descr_set; */
+  offsetof(KPy_Library, dict), /* long tp_dictoffset; */
+  NULL,                        /* initproc tp_init; */
+  NULL,                        /* allocfunc tp_alloc; */
+  NULL,                        /* newfunc tp_new; */
+  /*  Low-level free-memory routine */
+  NULL, /* freefunc tp_free; */
+  /* For PyObject_IS_GC */
+  NULL, /* inquiry tp_is_gc; */
+  NULL, /* PyObject *tp_bases; */
+  /* method resolution order */
+  NULL, /* PyObject *tp_mro; */
+  NULL, /* PyObject *tp_cache; */
+  NULL, /* PyObject *tp_subclasses; */
+  NULL, /* PyObject *tp_weaklist; */
+  NULL,
 };
 
 PyDoc_STRVAR(
-    kpy_lib_load_doc,
-    ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
-    "\n"
-    "   Returns a context manager which exposes 2 library objects on entering.\n"
-    "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
-    "\n"
-    "   :arg filepath: The path to a blend file.\n"
-    "   :type filepath: string\n"
-    "   :arg link: When False reference to the original file is lost.\n"
-    "   :type link: bool\n"
-    "   :arg relative: When True the path is stored relative to the open blend file.\n"
-    "   :type relative: bool\n"
-    "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
-    "   :type assets_only: bool\n");
+  kpy_lib_load_doc,
+  ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
+  "\n"
+  "   Returns a context manager which exposes 2 library objects on entering.\n"
+  "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
+  "\n"
+  "   :arg filepath: The path to a blend file.\n"
+  "   :type filepath: string\n"
+  "   :arg link: When False reference to the original file is lost.\n"
+  "   :type link: bool\n"
+  "   :arg relative: When True the path is stored relative to the open blend file.\n"
+  "   :type relative: bool\n"
+  "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
+  "   :type assets_only: bool\n");
 static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
@@ -190,7 +191,8 @@ static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *k
                                         PyC_ParseBool,
                                         &is_rel,
                                         PyC_ParseBool,
-                                        &use_assets_only)) {
+                                        &use_assets_only))
+  {
     return NULL;
   }
 
@@ -198,7 +200,7 @@ static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *k
 
   KLI_strncpy(ret->relpath, filename, sizeof(ret->relpath));
   KLI_strncpy(ret->abspath, filename, sizeof(ret->abspath));
-//   KLI_path_abs(ret->abspath, KKE_main_pixarfile_path(kmain));
+  //   KLI_path_abs(ret->abspath, KKE_main_pixarfile_path(kmain));
 
   ret->kmain = kmain;
   ret->kmain_is_temp = (kmain != kmain_base);
@@ -218,40 +220,40 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
   PyObject *from_dict = _PyDict_NewPresized(INDEX_ID_MAX);
   ReportList reports;
 
-//   KKE_reports_init(&reports, RPT_STORE);
-//   PixarFileReadReport kr_reports = {.reports = &reports};
+  //   KKE_reports_init(&reports, RPT_STORE);
+  //   PixarFileReadReport kr_reports = {.reports = &reports};
 
-//   int i = 0, code;
-//   while ((code = KKE_idtype_idcode_iter_step(&i))) {
-//     if (KKE_idtype_idcode_is_linkable(code)) {
-//       const char *name_plural = BKE_idtype_idcode_to_name_plural(code);
-//       PyObject *str = PyUnicode_FromString(name_plural);
-//       PyObject *item;
+  //   int i = 0, code;
+  //   while ((code = KKE_idtype_idcode_iter_step(&i))) {
+  //     if (KKE_idtype_idcode_is_linkable(code)) {
+  //       const char *name_plural = BKE_idtype_idcode_to_name_plural(code);
+  //       PyObject *str = PyUnicode_FromString(name_plural);
+  //       PyObject *item;
 
-//       PyDict_SetItem(self->dict, str, item = PyList_New(0));
-//       Py_DECREF(item);
-//       PyDict_SetItem(from_dict, str, item = _kpy_names(self, code));
-//       Py_DECREF(item);
+  //       PyDict_SetItem(self->dict, str, item = PyList_New(0));
+  //       Py_DECREF(item);
+  //       PyDict_SetItem(from_dict, str, item = _kpy_names(self, code));
+  //       Py_DECREF(item);
 
-//       Py_DECREF(str);
-//     }
-//   }
+  //       Py_DECREF(str);
+  //     }
+  //   }
 
   /* create a dummy */
   self_from = PyObject_New(KPy_Library, &kpy_lib_Type);
   KLI_strncpy(self_from->relpath, self->relpath, sizeof(self_from->relpath));
   KLI_strncpy(self_from->abspath, self->abspath, sizeof(self_from->abspath));
 
-//   self_from->blo_handle = NULL;
+  //   self_from->blo_handle = NULL;
   self_from->flag = 0;
   self_from->dict = from_dict; /* owns the dict */
 
   /* return pair */
   ret = PyTuple_New(2);
-//   PyTuple_SET_ITEMS(ret, (PyObject *)self_from, (PyObject *)self);
+  //   PyTuple_SET_ITEMS(ret, (PyObject *)self_from, (PyObject *)self);
   Py_INCREF(self);
 
-//   KKE_reports_clear(&reports);
+  //   KKE_reports_clear(&reports);
 
   return ret;
 }
@@ -267,15 +269,16 @@ static PyObject *kpy_lib_dir(KPy_Library *self)
 }
 
 PyMethodDef KPY_library_load_method_def = {
-    "load",
-    (PyCFunction)kpy_lib_load,
-    METH_VARARGS | METH_KEYWORDS,
-    kpy_lib_load_doc,
+  "load",
+  (PyCFunction)kpy_lib_load,
+  METH_VARARGS | METH_KEYWORDS,
+  kpy_lib_load_doc,
 };
 
 int KPY_library_load_type_ready(void)
 {
-  if (PyType_Ready(&kpy_lib_Type) < 0) {
+  if (PyType_Ready(&kpy_lib_Type) < 0)
+  {
     return -1;
   }
 

@@ -16,26 +16,26 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
-
-#pragma once
 
 #include "ANCHOR_api.h"
 
 /**
  * This struct stores the state of the mouse buttons.
  * Buttons can be set using button masks. */
-struct ANCHOR_Buttons
+struct AnchorButtons
 {
   /**
    * Constructor. */
-  ANCHOR_Buttons();
+  AnchorButtons();
 
-  ~ANCHOR_Buttons();
+  ~AnchorButtons();
 
   /**
    * Returns the state of a single button.

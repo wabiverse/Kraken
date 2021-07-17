@@ -16,17 +16,17 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
 
-class ANCHOR_DisplayManager
+class AnchorDisplayManager
 {
  public:
   enum
@@ -35,11 +35,11 @@ class ANCHOR_DisplayManager
   };
   /**
    * Constructor. */
-  ANCHOR_DisplayManager(void);
+  AnchorDisplayManager(void);
 
   /**
    * Destructor. */
-  virtual ~ANCHOR_DisplayManager(void);
+  virtual ~AnchorDisplayManager(void);
 
   /**
    * Initializes the list with devices and settings.

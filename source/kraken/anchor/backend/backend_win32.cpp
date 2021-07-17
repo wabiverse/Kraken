@@ -18,27 +18,18 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
-
-/**
- * Workaround min max hell
- * Keeping NOMINMAX defined, 
- * using the same Windows Min 
- * Max, but prefixed with win
- * as to not conflict with std:: */
 #define winmax(a, b) (((a) > (b)) ? (a) : (b))
 #define winmin(a, b) (((a) < (b)) ? (a) : (b))
 
-# define VK_USE_PLATFORM_WIN32_KHR
-
-# include <vulkan/vulkan.h>
+#define VK_USE_PLATFORM_WIN32_KHR
+#include <vulkan/vulkan.h>
 
 #include "ANCHOR_BACKEND_vulkan.h"
-#include "ANCHOR_BACKEND_win32.h"
-#include "ANCHOR_Rect.h"
+#include "ANCHOR_rect.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_buttons.h"
 #include "ANCHOR_debug_codes.h"
@@ -63,11 +54,14 @@
 #include <wabi/imaging/hgiVulkan/capabilities.h>
 
 #define VMA_IMPLEMENTATION
-# include <wabi/imaging/hgiVulkan/vk_mem_alloc.h>
+#include <wabi/imaging/hgiVulkan/vk_mem_alloc.h>
 #undef VMA_IMPLEMENTATION
 
 #ifndef _WIN32_IE
-#  define _WIN32_IE 0x0501 /* shipped before XP, so doesn't impose additional requirements */
+/**
+ * shipped before XP, so doesn't
+ * impose addnl requirements. */
+#  define _WIN32_IE 0x0501
 #endif
 
 #include <Dwmapi.h>
@@ -86,8 +80,10 @@
 #include <windowsx.h>
 
 #ifndef GET_POINTERID_WPARAM
+/**
+ * GET_POINTERID_WPARAM */
 #  define GET_POINTERID_WPARAM(wParam) (LOWORD(wParam))
-#endif  // GET_POINTERID_WPARAM
+#endif
 
 #include <tchar.h>
 #include <winnt.h>
@@ -95,10 +91,8 @@
 #include <cstdio>
 #include <cstring>
 
-// Configuration flags to add in your imconfig.h file:
-//#define ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD              // Disable gamepad support. This was meaningful before <1.81 but we now load XInput dynamically so the option is now less relevant.
-
-// Using XInput for gamepad (will load DLL dynamically)
+/**
+ * Using XInput for gamepad (will load DLL dynamically) */
 #ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
 #  include <xinput.h>
 typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES *);
@@ -107,27 +101,19 @@ typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
 
 WABI_NAMESPACE_USING
 
-/* clang-format off */
-
 /**
  * HYDRA RENDERING PARAMS. */
 static UsdApolloRenderParams g_HDPARAMS_Apollo;
 
-/**
- * ANCHOR VULKAN GLOBALS. */
-static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
-
-static ANCHOR_VulkanGPU_Surface  g_MainWindowData;
-static bool                      g_SwapChainRebuild = false;
-
-/* clang-format on */
+static ANCHOR_VulkanGPU_Surface g_MainWindowData;
+static bool g_SwapChainRebuild = false;
 
 struct ANCHOR_ImplWin32_Data
 {
   HWND hWnd;
   INT64 Time;
   INT64 TicksPerSecond;
-  ANCHOR_MouseCursor LastMouseCursor;
+  AnchorMouseCursor LastMouseCursor;
   bool HasGamepad;
   bool WantUpdateHasGamepad;
 
@@ -143,19 +129,30 @@ struct ANCHOR_ImplWin32_Data
   }
 };
 
-// Backend data stored in io.BackendPlatformUserData to allow support for multiple ANCHOR contexts
-// It is STRONGLY preferred that you use docking branch with multi-viewports (== single ANCHOR context + multiple windows) instead of multiple ANCHOR contexts.
-// FIXME: multi-context support is not well tested and probably dysfunctional in this backend.
-// FIXME: some shared resources (mouse cursor shape, gamepad) are mishandled when using multi-context.
+/**
+ * Backend data stored in io.BackendPlatformUserData
+ * to allow support for multiple ANCHOR contexts It
+ * is STRONGLY preferred that you use docking branch
+ * with multi-viewports (== single ANCHOR context +
+ * multiple windows) instead of multiple ANCHOR
+ * contexts.
+ * 
+ * - FIXME: multi-context support is not well
+ *          tested and probably dysfunctional
+ *          in this backend.
+ * - FIXME: some shared resources (mouse cursor
+ *          shape, gamepad) are mishandled when
+ *          using multi-context. */
 static ANCHOR_ImplWin32_Data *ANCHOR_ImplWin32_GetBackendData()
 {
   return ANCHOR::GetCurrentContext() ? (ANCHOR_ImplWin32_Data *)ANCHOR::GetIO().BackendPlatformUserData : NULL;
 }
 
-// Functions
+/**
+ * Functions */
 bool ANCHOR_ImplWin32_Init(void *hwnd)
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ASSERT(io.BackendPlatformUserData == NULL && "Already initialized a platform backend!");
 
   INT64 perf_frequency, perf_counter;
@@ -164,56 +161,70 @@ bool ANCHOR_ImplWin32_Init(void *hwnd)
   if (!::QueryPerformanceCounter((LARGE_INTEGER *)&perf_counter))
     return false;
 
-  // Setup backend capabilities flags
+  /**
+   * Setup backend capabilities flags.
+   *
+   * - We can honor GetMouseCursor() values (optional).
+   * - We can honor io.WantSetMousePos requests (optional,
+   *   rarely used) */
   ANCHOR_ImplWin32_Data *bd = IM_NEW(ANCHOR_ImplWin32_Data)();
   io.BackendPlatformUserData = (void *)bd;
   io.BackendPlatformName = "imgui_impl_win32";
-  io.BackendFlags |= ANCHORBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
-  io.BackendFlags |= ANCHORBackendFlags_HasSetMousePos;   // We can honor io.WantSetMousePos requests (optional, rarely used)
+  io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
+  io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;
 
   bd->hWnd = (HWND)hwnd;
   bd->WantUpdateHasGamepad = true;
   bd->TicksPerSecond = perf_frequency;
   bd->Time = perf_counter;
-  bd->LastMouseCursor = ANCHOR_MouseCursor_COUNT;
+  bd->LastMouseCursor = AnchorMouseCursor_COUNT;
 
   io.ImeWindowHandle = hwnd;
 
-  // Keyboard mapping. ANCHOR will use those indices to peek into the io.KeysDown[] array that we will update during the application lifetime.
-  io.KeyMap[ANCHOR_Key_Tab] = VK_TAB;
-  io.KeyMap[ANCHOR_Key_LeftArrow] = VK_LEFT;
-  io.KeyMap[ANCHOR_Key_RightArrow] = VK_RIGHT;
-  io.KeyMap[ANCHOR_Key_UpArrow] = VK_UP;
-  io.KeyMap[ANCHOR_Key_DownArrow] = VK_DOWN;
-  io.KeyMap[ANCHOR_Key_PageUp] = VK_PRIOR;
-  io.KeyMap[ANCHOR_Key_PageDown] = VK_NEXT;
-  io.KeyMap[ANCHOR_Key_Home] = VK_HOME;
-  io.KeyMap[ANCHOR_Key_End] = VK_END;
-  io.KeyMap[ANCHOR_Key_Insert] = VK_INSERT;
-  io.KeyMap[ANCHOR_Key_Delete] = VK_DELETE;
-  io.KeyMap[ANCHOR_Key_Backspace] = VK_BACK;
-  io.KeyMap[ANCHOR_Key_Space] = VK_SPACE;
-  io.KeyMap[ANCHOR_Key_Enter] = VK_RETURN;
-  io.KeyMap[ANCHOR_Key_Escape] = VK_ESCAPE;
-  io.KeyMap[ANCHOR_Key_KeyPadEnter] = VK_RETURN;
-  io.KeyMap[ANCHOR_Key_A] = 'A';
-  io.KeyMap[ANCHOR_Key_C] = 'C';
-  io.KeyMap[ANCHOR_Key_V] = 'V';
-  io.KeyMap[ANCHOR_Key_X] = 'X';
-  io.KeyMap[ANCHOR_Key_Y] = 'Y';
-  io.KeyMap[ANCHOR_Key_Z] = 'Z';
+  /**
+   * Keyboard mapping. ANCHOR will use those
+   * indices to peek into the io.KeysDown[]
+   * array that we will update during the
+   * application lifetime. */
+  io.KeyMap[AnchorKey_Tab] = VK_TAB;
+  io.KeyMap[AnchorKey_LeftArrow] = VK_LEFT;
+  io.KeyMap[AnchorKey_RightArrow] = VK_RIGHT;
+  io.KeyMap[AnchorKey_UpArrow] = VK_UP;
+  io.KeyMap[AnchorKey_DownArrow] = VK_DOWN;
+  io.KeyMap[AnchorKey_PageUp] = VK_PRIOR;
+  io.KeyMap[AnchorKey_PageDown] = VK_NEXT;
+  io.KeyMap[AnchorKey_Home] = VK_HOME;
+  io.KeyMap[AnchorKey_End] = VK_END;
+  io.KeyMap[AnchorKey_Insert] = VK_INSERT;
+  io.KeyMap[AnchorKey_Delete] = VK_DELETE;
+  io.KeyMap[AnchorKey_Backspace] = VK_BACK;
+  io.KeyMap[AnchorKey_Space] = VK_SPACE;
+  io.KeyMap[AnchorKey_Enter] = VK_RETURN;
+  io.KeyMap[AnchorKey_Escape] = VK_ESCAPE;
+  io.KeyMap[AnchorKey_KeyPadEnter] = VK_RETURN;
+  io.KeyMap[AnchorKey_A] = 'A';
+  io.KeyMap[AnchorKey_C] = 'C';
+  io.KeyMap[AnchorKey_V] = 'V';
+  io.KeyMap[AnchorKey_X] = 'X';
+  io.KeyMap[AnchorKey_Y] = 'Y';
+  io.KeyMap[AnchorKey_Z] = 'Z';
 
-  // Dynamically load XInput library
-#ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
-  const char *xinput_dll_names[] =
-    {
-      "xinput1_4.dll",    // Windows 8+
-      "xinput1_3.dll",    // DirectX SDK
-      "xinput9_1_0.dll",  // Windows Vista, Windows 7
-      "xinput1_2.dll",    // DirectX SDK
-      "xinput1_1.dll"     // DirectX SDK
-    };
+  /**
+   * Dynamically load XInput library */
+  const char *xinput_dll_names[] = {
+    /* Windows 8+ */
+    "xinput1_4.dll",
+    /* DirectX SDK */
+    "xinput1_3.dll",
+    /* Windows Vista, Windows 7 */
+    "xinput9_1_0.dll",
+    /* DirectX SDK */
+    "xinput1_2.dll",
+    /* DirectX SDK */
+    "xinput1_1.dll"};
+
   for (int n = 0; n < ANCHOR_ARRAYSIZE(xinput_dll_names); n++)
+  {
     if (HMODULE dll = ::LoadLibraryA(xinput_dll_names[n]))
     {
       bd->XInputDLL = dll;
@@ -221,21 +232,17 @@ bool ANCHOR_ImplWin32_Init(void *hwnd)
       bd->XInputGetState = (PFN_XInputGetState)::GetProcAddress(dll, "XInputGetState");
       break;
     }
-#endif  // ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
-
+  }
   return true;
 }
 
 void ANCHOR_ImplWin32_Shutdown()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
 
-  // Unload XInput library
-#ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
   if (bd->XInputDLL)
     ::FreeLibrary(bd->XInputDLL);
-#endif  // ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
 
   io.BackendPlatformName = NULL;
   io.BackendPlatformUserData = NULL;
@@ -244,47 +251,51 @@ void ANCHOR_ImplWin32_Shutdown()
 
 static bool ANCHOR_ImplWin32_UpdateMouseCursor()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
-  if (io.ConfigFlags & ANCHORConfigFlags_NoMouseCursorChange)
+  AnchorIO &io = ANCHOR::GetIO();
+  if (io.ConfigFlags & AnchorConfigFlags_NoMouseCursorChange)
     return false;
 
-  ANCHOR_MouseCursor imgui_cursor = ANCHOR::GetMouseCursor();
-  if (imgui_cursor == ANCHOR_MouseCursor_None || io.MouseDrawCursor)
+  AnchorMouseCursor imgui_cursor = ANCHOR::GetMouseCursor();
+  if (imgui_cursor == AnchorMouseCursor_None || io.MouseDrawCursor)
   {
-    // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+    /** 
+     * Hide OS mouse cursor if
+     * anchor is drawing it or
+     * if it wants no cursor. */
     ::SetCursor(NULL);
   }
   else
   {
-    // Show OS mouse cursor
+    /**
+     * Show OS mouse cursor */
     LPTSTR win32_cursor = IDC_ARROW;
     switch (imgui_cursor)
     {
-      case ANCHOR_MouseCursor_Arrow:
+      case AnchorMouseCursor_Arrow:
         win32_cursor = IDC_ARROW;
         break;
-      case ANCHOR_MouseCursor_TextInput:
+      case AnchorMouseCursor_TextInput:
         win32_cursor = IDC_IBEAM;
         break;
-      case ANCHOR_MouseCursor_ResizeAll:
+      case AnchorMouseCursor_ResizeAll:
         win32_cursor = IDC_SIZEALL;
         break;
-      case ANCHOR_MouseCursor_ResizeEW:
+      case AnchorMouseCursor_ResizeEW:
         win32_cursor = IDC_SIZEWE;
         break;
-      case ANCHOR_MouseCursor_ResizeNS:
+      case AnchorMouseCursor_ResizeNS:
         win32_cursor = IDC_SIZENS;
         break;
-      case ANCHOR_MouseCursor_ResizeNESW:
+      case AnchorMouseCursor_ResizeNESW:
         win32_cursor = IDC_SIZENESW;
         break;
-      case ANCHOR_MouseCursor_ResizeNWSE:
+      case AnchorMouseCursor_ResizeNWSE:
         win32_cursor = IDC_SIZENWSE;
         break;
-      case ANCHOR_MouseCursor_Hand:
+      case AnchorMouseCursor_Hand:
         win32_cursor = IDC_HAND;
         break;
-      case ANCHOR_MouseCursor_NotAllowed:
+      case AnchorMouseCursor_NotAllowed:
         win32_cursor = IDC_NO;
         break;
     }
@@ -295,11 +306,14 @@ static bool ANCHOR_ImplWin32_UpdateMouseCursor()
 
 static void ANCHOR_ImplWin32_UpdateMousePos()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
   ANCHOR_ASSERT(bd->hWnd != 0);
 
-  // Set OS mouse position if requested (rarely used, only when ANCHORConfigFlags_NavEnableSetMousePos is enabled by user)
+  /**
+   * Set OS mouse position if requested
+   * (rarely used, only when SetMousePos
+   * is enabled by user). */
   if (io.WantSetMousePos)
   {
     POINT pos = {(int)io.MousePos[0], (int)io.MousePos[1]};
@@ -307,7 +321,8 @@ static void ANCHOR_ImplWin32_UpdateMousePos()
       ::SetCursorPos(pos.x, pos.y);
   }
 
-  // Set mouse position
+  /**
+   * Set mouse position. */
   io.MousePos = wabi::GfVec2f(-FLT_MAX, -FLT_MAX);
   POINT pos;
   if (HWND active_window = ::GetForegroundWindow())
@@ -316,18 +331,24 @@ static void ANCHOR_ImplWin32_UpdateMousePos()
         io.MousePos = wabi::GfVec2f((float)pos.x, (float)pos.y);
 }
 
-// Gamepad navigation mapping
+/**
+ * Gamepad navigation mapping */
 static void ANCHOR_ImplWin32_UpdateGamepads()
 {
 #ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
   memset(io.NavInputs, 0, sizeof(io.NavInputs));
-  if ((io.ConfigFlags & ANCHORConfigFlags_NavEnableGamepad) == 0)
+  if ((io.ConfigFlags & AnchorConfigFlags_NavEnableGamepad) == 0)
     return;
 
-  // Calling XInputGetState() every frame on disconnected gamepads is unfortunately too slow.
-  // Instead we refresh gamepad availability by calling XInputGetCapabilities() _only_ after receiving WM_DEVICECHANGE.
+  /**
+   * Calling XInputGetState() every frame on
+   * disconnected gamepads is unfortunately
+   * too slow. Instead we refresh gamepad
+   * availability by calling the function
+   * XInputGetCapabilities() _only_ after
+   * receiving WM_DEVICECHANGE. */
   if (bd->WantUpdateHasGamepad)
   {
     XINPUT_CAPABILITIES caps;
@@ -335,12 +356,12 @@ static void ANCHOR_ImplWin32_UpdateGamepads()
     bd->WantUpdateHasGamepad = false;
   }
 
-  io.BackendFlags &= ~ANCHORBackendFlags_HasGamepad;
+  io.BackendFlags &= ~AnchorBackendFlags_HasGamepad;
   XINPUT_STATE xinput_state;
   if (bd->HasGamepad && bd->XInputGetState && bd->XInputGetState(0, &xinput_state) == ERROR_SUCCESS)
   {
     const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
-    io.BackendFlags |= ANCHORBackendFlags_HasGamepad;
+    io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 
 #  define MAP_BUTTON(NAV_NO, BUTTON_ENUM) \
     { \
@@ -354,68 +375,107 @@ static void ANCHOR_ImplWin32_UpdateGamepads()
       if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
         io.NavInputs[NAV_NO] = vn; \
     }
-    MAP_BUTTON(ANCHOR_NavInput_Activate, XINPUT_GAMEPAD_A);                // Cross / A
-    MAP_BUTTON(ANCHOR_NavInput_Cancel, XINPUT_GAMEPAD_B);                  // Circle / B
-    MAP_BUTTON(ANCHOR_NavInput_Menu, XINPUT_GAMEPAD_X);                    // Square / X
-    MAP_BUTTON(ANCHOR_NavInput_Input, XINPUT_GAMEPAD_Y);                   // Triangle / Y
-    MAP_BUTTON(ANCHOR_NavInput_DpadLeft, XINPUT_GAMEPAD_DPAD_LEFT);        // D-Pad Left
-    MAP_BUTTON(ANCHOR_NavInput_DpadRight, XINPUT_GAMEPAD_DPAD_RIGHT);      // D-Pad Right
-    MAP_BUTTON(ANCHOR_NavInput_DpadUp, XINPUT_GAMEPAD_DPAD_UP);            // D-Pad Up
-    MAP_BUTTON(ANCHOR_NavInput_DpadDown, XINPUT_GAMEPAD_DPAD_DOWN);        // D-Pad Down
-    MAP_BUTTON(ANCHOR_NavInput_FocusPrev, XINPUT_GAMEPAD_LEFT_SHOULDER);   // L1 / LB
-    MAP_BUTTON(ANCHOR_NavInput_FocusNext, XINPUT_GAMEPAD_RIGHT_SHOULDER);  // R1 / RB
-    MAP_BUTTON(ANCHOR_NavInput_TweakSlow, XINPUT_GAMEPAD_LEFT_SHOULDER);   // L1 / LB
-    MAP_BUTTON(ANCHOR_NavInput_TweakFast, XINPUT_GAMEPAD_RIGHT_SHOULDER);  // R1 / RB
-    MAP_ANALOG(ANCHOR_NavInput_LStickLeft, gamepad.sThumbLX, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32768);
-    MAP_ANALOG(ANCHOR_NavInput_LStickRight, gamepad.sThumbLX, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-    MAP_ANALOG(ANCHOR_NavInput_LStickUp, gamepad.sThumbLY, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-    MAP_ANALOG(ANCHOR_NavInput_LStickDown, gamepad.sThumbLY, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
+
+
+    /**
+     * Cross / A */
+    MAP_BUTTON(AnchorNavInput_Activate, XINPUT_GAMEPAD_A);
+    /**
+     * Circle / B */
+    MAP_BUTTON(AnchorNavInput_Cancel, XINPUT_GAMEPAD_B);
+    /**
+     * Square / X */
+    MAP_BUTTON(AnchorNavInput_Menu, XINPUT_GAMEPAD_X);
+    /**
+     * Triangle / Y */
+    MAP_BUTTON(AnchorNavInput_Input, XINPUT_GAMEPAD_Y);
+    /**
+     * D-Pad Left */
+    MAP_BUTTON(AnchorNavInput_DpadLeft, XINPUT_GAMEPAD_DPAD_LEFT);
+    /**
+     * D-Pad Right */
+    MAP_BUTTON(AnchorNavInput_DpadRight, XINPUT_GAMEPAD_DPAD_RIGHT);
+    /**
+     * D-Pad Up */
+    MAP_BUTTON(AnchorNavInput_DpadUp, XINPUT_GAMEPAD_DPAD_UP);
+    /**
+     * D-Pad Down */
+    MAP_BUTTON(AnchorNavInput_DpadDown, XINPUT_GAMEPAD_DPAD_DOWN);
+    /**
+     * L1 / LB */
+    MAP_BUTTON(AnchorNavInput_FocusPrev, XINPUT_GAMEPAD_LEFT_SHOULDER);
+    /**
+     * R1 / RB */
+    MAP_BUTTON(AnchorNavInput_FocusNext, XINPUT_GAMEPAD_RIGHT_SHOULDER);
+    /**
+     * L1 / LB */
+    MAP_BUTTON(AnchorNavInput_TweakSlow, XINPUT_GAMEPAD_LEFT_SHOULDER);
+    /**
+     * R1 / RB */
+    MAP_BUTTON(AnchorNavInput_TweakFast, XINPUT_GAMEPAD_RIGHT_SHOULDER);
+    MAP_ANALOG(AnchorNavInput_LStickLeft, gamepad.sThumbLX, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32768);
+    MAP_ANALOG(AnchorNavInput_LStickRight, gamepad.sThumbLX, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
+    MAP_ANALOG(AnchorNavInput_LStickUp, gamepad.sThumbLY, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
+    MAP_ANALOG(AnchorNavInput_LStickDown, gamepad.sThumbLY, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
 #  undef MAP_BUTTON
 #  undef MAP_ANALOG
   }
-#endif  // #ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
+#endif
 }
 
 void ANCHOR_ImplWin32_NewFrame()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
   ANCHOR_ASSERT(bd != NULL && "Did you call ANCHOR_ImplWin32_Init()?");
 
-  // Setup display size (every frame to accommodate for window resizing)
+  /**
+   * Setup display size (every frame
+   * 0to accommodate for window resizing) */
   RECT rect = {0, 0, 0, 0};
   ::GetClientRect(bd->hWnd, &rect);
   io.DisplaySize = wabi::GfVec2f((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 
-  // Setup time step
+  /**
+   * Setup time step */
   INT64 current_time = 0;
   ::QueryPerformanceCounter((LARGE_INTEGER *)&current_time);
   io.DeltaTime = (float)(current_time - bd->Time) / bd->TicksPerSecond;
   bd->Time = current_time;
 
-  // Read keyboard modifiers inputs
+  /**
+   * Read keyboard modifiers inputs
+   * 
+   * filled by the WndProc handler below:
+   *  -  io.KeysDown[], 
+   *  -  io.MousePos,
+   *  -  io.MouseDown[],
+   *  -  io.MouseWheel: */
   io.KeyCtrl = (::GetKeyState(VK_CONTROL) & 0x8000) != 0;
   io.KeyShift = (::GetKeyState(VK_SHIFT) & 0x8000) != 0;
   io.KeyAlt = (::GetKeyState(VK_MENU) & 0x8000) != 0;
   io.KeySuper = false;
-  // io.KeysDown[], io.MousePos, io.MouseDown[], io.MouseWheel: filled by the WndProc handler below.
 
-  // Update OS mouse position
+  /**
+   * Update OS mouse position */
   ANCHOR_ImplWin32_UpdateMousePos();
 
-  // Update OS mouse cursor with the cursor requested by imgui
-  ANCHOR_MouseCursor mouse_cursor = io.MouseDrawCursor ? ANCHOR_MouseCursor_None : ANCHOR::GetMouseCursor();
+  /**
+   * Update OS mouse cursor with the cursor requested by imgui */
+  AnchorMouseCursor mouse_cursor = io.MouseDrawCursor ? AnchorMouseCursor_None : ANCHOR::GetMouseCursor();
   if (bd->LastMouseCursor != mouse_cursor)
   {
     bd->LastMouseCursor = mouse_cursor;
     ANCHOR_ImplWin32_UpdateMouseCursor();
   }
 
-  // Update game controllers (if enabled and available)
+  /**
+   * Update game controllers (if enabled and available) */
   ANCHOR_ImplWin32_UpdateGamepads();
 }
 
-// Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions.
+/**
+ * Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions. */
 #ifndef WM_MOUSEHWHEEL
 #  define WM_MOUSEHWHEEL 0x020E
 #endif
@@ -423,24 +483,13 @@ void ANCHOR_ImplWin32_NewFrame()
 #  define DBT_DEVNODES_CHANGED 0x0007
 #endif
 
-// Win32 message handler (process Win32 mouse/keyboard inputs, etc.)
-// Call from your application's message handler.
-// When implementing your own backend, you can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if ANCHOR wants to use your inputs.
-// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-// Generally you may always pass all inputs to ANCHOR, and hide them from your application based on those two flags.
-// PS: In this Win32 handler, we use the capture API (GetCapture/SetCapture/ReleaseCapture) to be able to read mouse coordinates when dragging mouse outside of our window bounds.
-// PS: We treat DBLCLK messages as regular mouse down messages, so this code will work on windows classes that have the CS_DBLCLKS flag set. Our own example app code doesn't set this flag.
-#if 0
-// Copy this line into your .cpp file to forward declare the function.
-extern ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
+
 ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   if (ANCHOR::GetCurrentContext() == NULL)
     return 0;
 
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
 
   switch (msg)
@@ -711,13 +760,13 @@ void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd)
 // --------------------------------------------------------------------------------------------------------
 
 
-ANCHOR_DisplayManagerWin32::ANCHOR_DisplayManagerWin32(void)
+AnchorDisplayManagerWin32::AnchorDisplayManagerWin32(void)
 {}
 
-eAnchorStatus ANCHOR_DisplayManagerWin32::getNumDisplays(AnchorU8 &numDisplays) const
+eAnchorStatus AnchorDisplayManagerWin32::getNumDisplays(AnchorU8 &numDisplays) const
 {
   numDisplays = ::GetSystemMetrics(SM_CMONITORS);
-  return numDisplays > 0 ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+  return numDisplays > 0 ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
 }
 
 static BOOL get_dd(DWORD d, DISPLAY_DEVICE *dd)
@@ -732,12 +781,12 @@ static BOOL get_dd(DWORD d, DISPLAY_DEVICE *dd)
  * EnumDisplaySettings with iModeNum set to a non-zero value, the function returns
  * the information that was cached the last time the function was called with iModeNum
  * set to zero. */
-eAnchorStatus ANCHOR_DisplayManagerWin32::getNumDisplaySettings(AnchorU8 display,
-                                                                AnchorS32 &numSettings) const
+eAnchorStatus AnchorDisplayManagerWin32::getNumDisplaySettings(AnchorU8 display,
+                                                               AnchorS32 &numSettings) const
 {
   DISPLAY_DEVICE display_device;
   if (!get_dd(display, &display_device))
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
 
   numSettings = 0;
   DEVMODE dm;
@@ -748,13 +797,13 @@ eAnchorStatus ANCHOR_DisplayManagerWin32::getNumDisplaySettings(AnchorU8 display
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerWin32::getDisplaySetting(AnchorU8 display,
-                                                            AnchorS32 index,
-                                                            ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerWin32::getDisplaySetting(AnchorU8 display,
+                                                           AnchorS32 index,
+                                                           ANCHOR_DisplaySetting &setting) const
 {
   DISPLAY_DEVICE display_device;
   if (!get_dd(display, &display_device))
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
 
   eAnchorStatus success;
   DEVMODE dm;
@@ -781,23 +830,23 @@ eAnchorStatus ANCHOR_DisplayManagerWin32::getDisplaySetting(AnchorU8 display,
   }
   else
   {
-    success = ANCHOR_ERROR;
+    success = ANCHOR_FAILURE;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_DisplayManagerWin32::getCurrentDisplaySetting(AnchorU8 display,
-                                                                   ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerWin32::getCurrentDisplaySetting(AnchorU8 display,
+                                                                  ANCHOR_DisplaySetting &setting) const
 {
   return getDisplaySetting(display, ENUM_CURRENT_SETTINGS, setting);
 }
 
-eAnchorStatus ANCHOR_DisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 display,
-                                                                   const ANCHOR_DisplaySetting &setting)
+eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 display,
+                                                                  const ANCHOR_DisplaySetting &setting)
 {
   DISPLAY_DEVICE display_device;
   if (!get_dd(display, &display_device))
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
 
   ANCHOR_DisplaySetting match;
   findMatch(display, setting, match);
@@ -822,7 +871,7 @@ eAnchorStatus ANCHOR_DisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 disp
    * dm.dmDriverExtra = 0; */
 
   LONG status = ::ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
-  return status == DISP_CHANGE_SUCCESSFUL ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+  return status == DISP_CHANGE_SUCCESSFUL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -896,13 +945,13 @@ static void initRawInput()
 
 typedef BOOL(WINAPI *ANCHOR_WIN32_EnableNonClientDpiScaling)(HWND);
 
-ANCHOR_SystemWin32::ANCHOR_SystemWin32()
+AnchorSystemWin32::AnchorSystemWin32()
   : m_hasPerformanceCounter(false),
     m_freq(0),
     m_start(0),
     m_lfstart(0)
 {
-  m_displayManager = new ANCHOR_DisplayManagerWin32();
+  m_displayManager = new AnchorDisplayManagerWin32();
   ANCHOR_ASSERT(m_displayManager);
   m_displayManager->initialize();
 
@@ -925,7 +974,7 @@ ANCHOR_SystemWin32::ANCHOR_SystemWin32()
   OleInitialize(0);
 }
 
-ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
+AnchorSystemWin32::~AnchorSystemWin32()
 {
   /**
    * Shutdown COM. */
@@ -933,7 +982,7 @@ ANCHOR_SystemWin32::~ANCHOR_SystemWin32()
   toggleConsole(1);
 }
 
-bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
+bool AnchorSystemWin32::processEvents(bool waitForEvent)
 {
   MSG msg;
   bool hasEventHandled = false;
@@ -973,8 +1022,8 @@ bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
 
   if (g_SwapChainRebuild)
   {
-    ANCHOR_Rect winrect;
-    ANCHOR_WindowWin32 *window = (ANCHOR_WindowWin32*)m_windowManager->getActiveWindow();
+    AnchorRect winrect;
+    AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
     window->getWindowBounds(winrect);
     if (winrect.getWidth() > 0 && winrect.getHeight() > 0)
     {
@@ -1005,7 +1054,7 @@ bool ANCHOR_SystemWin32::processEvents(bool waitForEvent)
   return hasEventHandled;
 }
 
-eAnchorStatus ANCHOR_SystemWin32::getModifierKeys(ANCHOR_ModifierKeys &keys) const
+eAnchorStatus AnchorSystemWin32::getModifierKeys(AnchorModifierKeys &keys) const
 {
   bool down = HIBYTE(::GetKeyState(VK_LSHIFT)) != 0;
   keys.set(ANCHOR_ModifierKeyLeftShift, down);
@@ -1031,7 +1080,7 @@ eAnchorStatus ANCHOR_SystemWin32::getModifierKeys(ANCHOR_ModifierKeys &keys) con
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_SystemWin32::getButtons(ANCHOR_Buttons &buttons) const
+eAnchorStatus AnchorSystemWin32::getButtons(AnchorButtons &buttons) const
 {
   /**
    * Check for swapped buttons (left-handed mouse buttons)
@@ -1050,7 +1099,7 @@ eAnchorStatus ANCHOR_SystemWin32::getButtons(ANCHOR_Buttons &buttons) const
   return ANCHOR_SUCCESS;
 }
 
-AnchorU8 ANCHOR_SystemWin32::getNumDisplays() const
+AnchorU8 AnchorSystemWin32::getNumDisplays() const
 {
   ANCHOR_ASSERT(m_displayManager);
   AnchorU8 numDisplays;
@@ -1058,21 +1107,21 @@ AnchorU8 ANCHOR_SystemWin32::getNumDisplays() const
   return numDisplays;
 }
 
-void ANCHOR_SystemWin32::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+void AnchorSystemWin32::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
 {
   width = ::GetSystemMetrics(SM_CXSCREEN);
   height = ::GetSystemMetrics(SM_CYSCREEN);
 }
 
-void ANCHOR_SystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+void AnchorSystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
 {
   width = ::GetSystemMetrics(SM_CXVIRTUALSCREEN);
   height = ::GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
-eAnchorStatus ANCHOR_SystemWin32::init()
+eAnchorStatus AnchorSystemWin32::init()
 {
-  eAnchorStatus success = ANCHOR_System::init();
+  eAnchorStatus success = AnchorSystem::init();
   InitCommonControls();
 
   /* Disable scaling on high DPI displays on Vista */
@@ -1085,21 +1134,24 @@ eAnchorStatus ANCHOR_SystemWin32::init()
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
   if (m_hasPerformanceCounter)
   {
-    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32))
+    {
       TF_SUCCESS_MSG("Anchor -- High Frequency Performance Timer available");
     }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
   }
   else
   {
-    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32))
+    {
       TF_WARN("Anchor -- High Frequency Performance Timer not available");
     }
   }
 
   if (success == ANCHOR_SUCCESS)
   {
-    WNDCLASSW wc = {0};
+    WNDCLASSEX wc = {0};
+    wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = s_wndProc;
     wc.cbClsExtra = 0;
@@ -1114,46 +1166,48 @@ eAnchorStatus ANCHOR_SystemWin32::init()
     wc.hCursor = ::LoadCursor(0, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
     wc.lpszMenuName = 0;
-    wc.lpszClassName = L"ANCHOR_WindowClass";
+    wc.lpszClassName = "AnchorWindowClass";
+    wc.hIconSm = ::LoadIcon(wc.hInstance, "APPICON");
 
     // Use RegisterClassEx for setting small icon
-    if (::RegisterClassW(&wc) == 0)
+    if (::RegisterClassEx(&wc) == 0)
     {
-      success = ANCHOR_ERROR;
+      success = ANCHOR_FAILURE;
     }
   }
 
   return success;
 }
 
-ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
-                                                       const char *icon,
-                                                       AnchorS32 left,
-                                                       AnchorS32 top,
-                                                       AnchorU32 width,
-                                                       AnchorU32 height,
-                                                       eAnchorWindowState state,
-                                                       eAnchorDrawingContextType type,
-                                                       int vkSettings,
-                                                       const bool exclusive,
-                                                       const bool is_dialog,
-                                                       const ANCHOR_ISystemWindow *parentWindow)
+AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
+                                                     const char *icon,
+                                                     AnchorS32 left,
+                                                     AnchorS32 top,
+                                                     AnchorU32 width,
+                                                     AnchorU32 height,
+                                                     eAnchorWindowState state,
+                                                     eAnchorDrawingContextType type,
+                                                     int vkSettings,
+                                                     const bool exclusive,
+                                                     const bool is_dialog,
+                                                     const AnchorISystemWindow *parentWindow)
 {
-  ANCHOR_WindowWin32 *window = new ANCHOR_WindowWin32(this,
-                                                      title,
-                                                      icon,
-                                                      left,
-                                                      top,
-                                                      width,
-                                                      height,
-                                                      state,
-                                                      type,
-                                                      true,
-                                                      (ANCHOR_WindowWin32 *)parentWindow,
-                                                      is_dialog);
+  AnchorWindowWin32 *window = new AnchorWindowWin32(this,
+                                                    title,
+                                                    icon,
+                                                    left,
+                                                    top,
+                                                    width,
+                                                    height,
+                                                    state,
+                                                    type,
+                                                    false,
+                                                    (AnchorWindowWin32 *)parentWindow,
+                                                    is_dialog);
 
   if (window->getValid())
   {
+
     /**
      * Store the pointer to the window. */
     m_windowManager->addWindow(window);
@@ -1161,7 +1215,8 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
   }
   else
   {
-    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32))
+    {
       TF_ERROR_MSG("Window invalid");
     }
     delete window;
@@ -1171,7 +1226,7 @@ ANCHOR_ISystemWindow *ANCHOR_SystemWin32::createWindow(const char *title,
   return window;
 }
 
-eAnchorStatus ANCHOR_SystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
+eAnchorStatus AnchorSystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const
 {
   POINT point;
   if (::GetCursorPos(&point))
@@ -1180,17 +1235,17 @@ eAnchorStatus ANCHOR_SystemWin32::getCursorPosition(AnchorS32 &x, AnchorS32 &y) 
     y = point.y;
     return ANCHOR_SUCCESS;
   }
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_SystemWin32::setCursorPosition(AnchorS32 x, AnchorS32 y)
+eAnchorStatus AnchorSystemWin32::setCursorPosition(AnchorS32 x, AnchorS32 y)
 {
   if (!::GetActiveWindow())
-    return ANCHOR_ERROR;
-  return ::SetCursorPos(x, y) == TRUE ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
+  return ::SetCursorPos(x, y) == TRUE ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
 }
 
-void ANCHOR_SystemWin32::processMinMaxInfo(MINMAXINFO *minmax)
+void AnchorSystemWin32::processMinMaxInfo(MINMAXINFO *minmax)
 {
   minmax->ptMinTrackSize.x = 320;
   minmax->ptMinTrackSize.y = 240;
@@ -1266,7 +1321,7 @@ static bool isStartedFromCommandPrompt()
   return false;
 }
 
-int ANCHOR_SystemWin32::toggleConsole(int action)
+int AnchorSystemWin32::toggleConsole(int action)
 {
   HWND wnd = GetConsoleWindow();
 
@@ -1306,15 +1361,21 @@ int ANCHOR_SystemWin32::toggleConsole(int action)
   return m_consoleStatus;
 }
 
-LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  ANCHOR_Event *event = NULL;
+  if (ANCHOR::GetCurrentContext() == NULL)
+    return 0;
+
+  AnchorIO &io = ANCHOR::GetIO();
+  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
+
+  AnchorEvent *event = NULL;
   bool eventHandled = false;
 
   LRESULT lResult = 0;
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 #ifdef WITH_INPUT_IME
-  ANCHOR_EventManager *eventManager = system->getEventManager();
+  AnchorEventManager *eventManager = system->getEventManager();
 #endif
   ANCHOR_ASSERT(system);
 
@@ -1337,7 +1398,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
       }
     }
 
-    ANCHOR_WindowWin32 *window = (ANCHOR_WindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+    AnchorWindowWin32 *window = (AnchorWindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
     if (window)
     {
       switch (msg)
@@ -1366,8 +1427,9 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
               event = processKeyEvent(window, raw);
               if (!event)
               {
-                if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
-                  TF_WARN("ANCHOR_SystemWin32::wndProc: key event ");
+                if (TfDebug::IsEnabled(ANCHOR_WIN32))
+                {
+                  TF_WARN("AnchorSystemWin32::wndProc: key event ");
                   TF_WARN(std::to_string(msg));
                   TF_WARN(" key ignored");
                 }
@@ -1400,10 +1462,10 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           ANCHOR_ImeWin32 *ime = window->getImeInput();
           eventHandled = true;
           /* remove input event before start comp event, avoid redundant input */
-          eventManager->removeTypeEvents(ANCHOR_EventTypeKeyDown, window);
+          eventManager->removeTypeEvents(AnchorEventTypeKeyDown, window);
           ime->CreateImeWindow(hwnd);
           ime->ResetComposition(hwnd);
-          event = processImeEvent(ANCHOR_EventTypeImeCompositionStart, window, &ime->eventImeData);
+          event = processImeEvent(AnchorEventTypeImeCompositionStart, window, &ime->eventImeData);
           break;
         }
         case WM_IME_COMPOSITION: {
@@ -1414,19 +1476,19 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           if (ime->eventImeData.result_len)
           {
             /* remove redundant IME event */
-            eventManager->removeTypeEvents(ANCHOR_EventTypeImeComposition, window);
+            eventManager->removeTypeEvents(AnchorEventTypeImeComposition, window);
           }
-          event = processImeEvent(ANCHOR_EventTypeImeComposition, window, &ime->eventImeData);
+          event = processImeEvent(AnchorEventTypeImeComposition, window, &ime->eventImeData);
           break;
         }
         case WM_IME_ENDCOMPOSITION: {
           ANCHOR_ImeWin32 *ime = window->getImeInput();
           eventHandled = true;
           /* remove input event after end comp event, avoid redundant input */
-          eventManager->removeTypeEvents(ANCHOR_EventTypeKeyDown, window);
+          eventManager->removeTypeEvents(AnchorEventTypeKeyDown, window);
           ime->ResetComposition(hwnd);
           ime->DestroyImeWindow(hwnd);
-          event = processImeEvent(ANCHOR_EventTypeImeCompositionEnd, window, &ime->eventImeData);
+          event = processImeEvent(AnchorEventTypeImeCompositionEnd, window, &ime->eventImeData);
           break;
         }
 #endif /* WITH_INPUT_IME */
@@ -1563,7 +1625,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           {
             wt->processInfoChange(lParam);
 
-            if (window->usingTabletAPI(ANCHOR_TabletWintab))
+            if (window->usingTabletAPI(AnchorTabletWintab))
             {
               window->resetPointerPenInfo();
             }
@@ -1606,41 +1668,41 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
         // Mouse events, processed
         ////////////////////////////////////////////////////////////////////////
         case WM_LBUTTONDOWN:
-          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
+          event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
           break;
         case WM_MBUTTONDOWN:
-          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
+          event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
           break;
         case WM_RBUTTONDOWN:
-          event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
+          event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
           break;
         case WM_XBUTTONDOWN:
           if ((short)HIWORD(wParam) == XBUTTON1)
           {
-            event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
+            event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
           }
           else if ((short)HIWORD(wParam) == XBUTTON2)
           {
-            event = processButtonEvent(ANCHOR_EventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
+            event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
           }
           break;
         case WM_LBUTTONUP:
-          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
+          event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
           break;
         case WM_MBUTTONUP:
-          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
+          event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
           break;
         case WM_RBUTTONUP:
-          event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
+          event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
           break;
         case WM_XBUTTONUP:
           if ((short)HIWORD(wParam) == XBUTTON1)
           {
-            event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
+            event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
           }
           else if ((short)HIWORD(wParam) == XBUTTON2)
           {
-            event = processButtonEvent(ANCHOR_EventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
+            event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
           }
           break;
         case WM_MOUSEMOVE:
@@ -1700,7 +1762,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           break;
         case WM_MOUSELEAVE: {
           window->m_mousePresent = false;
-          if (window->getTabletData().Active == ANCHOR_TabletModeNone)
+          if (window->getTabletData().Active == AnchorTabletModeNone)
           {
             processCursorEvent(window);
           }
@@ -1739,7 +1801,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           {
             ShowWindow(hwnd, SW_RESTORE);
           }
-          event = processWindowEvent(ANCHOR_EventTypeWindowClose, window);
+          event = processWindowEvent(AnchorEventTypeWindowClose, window);
           break;
         case WM_ACTIVATE:
           /* The WM_ACTIVATE message is sent to both the window being activated and the window
@@ -1749,13 +1811,13 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
            * If the windows use different input queues, the message is sent asynchronously,
            * so the window is activated immediately. */
           {
-            ANCHOR_ModifierKeys modifiers;
+            AnchorModifierKeys modifiers;
             modifiers.clear();
             system->storeModifierKeys(modifiers);
             system->m_wheelDeltaAccum = 0;
             system->m_keycode_last_repeat_key = 0;
-            event = processWindowEvent(LOWORD(wParam) ? ANCHOR_EventTypeWindowActivate :
-                                                        ANCHOR_EventTypeWindowDeactivate,
+            event = processWindowEvent(LOWORD(wParam) ? AnchorEventTypeWindowActivate :
+                                                        AnchorEventTypeWindowDeactivate,
                                        window);
             /* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
              * will not be dispatched to OUR active window if we minimize one of OUR windows. */
@@ -1787,7 +1849,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
            */
           if (!window->m_inLiveResize)
           {
-            event = processWindowEvent(ANCHOR_EventTypeWindowUpdate, window);
+            event = processWindowEvent(AnchorEventTypeWindowUpdate, window);
             ::ValidateRect(hwnd, NULL);
           }
           else
@@ -1833,12 +1895,12 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
           /* See #WM_SIZE comment. */
           if (window->m_inLiveResize)
           {
-            system->pushEvent(processWindowEvent(ANCHOR_EventTypeWindowMove, window));
+            system->pushEvent(processWindowEvent(AnchorEventTypeWindowMove, window));
             system->dispatchEvents();
           }
           else
           {
-            event = processWindowEvent(ANCHOR_EventTypeWindowMove, window);
+            event = processWindowEvent(AnchorEventTypeWindowMove, window);
           }
 
           break;
@@ -1853,7 +1915,7 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
             RECT *const suggestedWindowRect = (RECT *)lParam;
 
             // Push DPI change event first
-            system->pushEvent(processWindowEvent(ANCHOR_EventTypeWindowDPIHintChanged, window));
+            system->pushEvent(processWindowEvent(AnchorEventTypeWindowDPIHintChanged, window));
             system->dispatchEvents();
             eventHandled = true;
 
@@ -1990,203 +2052,203 @@ LRESULT WINAPI ANCHOR_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam,
   return lResult;
 }
 
-eAnchorKey ANCHOR_SystemWin32::convertKey(short vKey, short scanCode, short extend) const
+eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short extend) const
 {
   eAnchorKey key;
 
   if ((vKey >= '0') && (vKey <= '9'))
   {
     // VK_0 thru VK_9 are the same as ASCII '0' thru '9' (0x30 - 0x39)
-    key = (eAnchorKey)(vKey - '0' + ANCHOR_Key0);
+    key = (eAnchorKey)(vKey - '0' + AnchorKey0);
   }
   else if ((vKey >= 'A') && (vKey <= 'Z'))
   {
     // VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A)
-    key = (eAnchorKey)(vKey - 'A' + ANCHOR_KeyA);
+    key = (eAnchorKey)(vKey - 'A' + AnchorKeyA);
   }
   else if ((vKey >= VK_F1) && (vKey <= VK_F24))
   {
-    key = (eAnchorKey)(vKey - VK_F1 + ANCHOR_KeyF1);
+    key = (eAnchorKey)(vKey - VK_F1 + AnchorKeyF1);
   }
   else
   {
     switch (vKey)
     {
       case VK_RETURN:
-        key = (extend) ? ANCHOR_KeyNumpadEnter : ANCHOR_KeyEnter;
+        key = (extend) ? AnchorKeyNumpadEnter : AnchorKeyEnter;
         break;
 
       case VK_BACK:
-        key = ANCHOR_KeyBackSpace;
+        key = AnchorKeyBackSpace;
         break;
       case VK_TAB:
-        key = ANCHOR_KeyTab;
+        key = AnchorKeyTab;
         break;
       case VK_ESCAPE:
-        key = ANCHOR_KeyEsc;
+        key = AnchorKeyEsc;
         break;
       case VK_SPACE:
-        key = ANCHOR_KeySpace;
+        key = AnchorKeySpace;
         break;
 
       case VK_INSERT:
       case VK_NUMPAD0:
-        key = (extend) ? ANCHOR_KeyInsert : ANCHOR_KeyNumpad0;
+        key = (extend) ? AnchorKeyInsert : AnchorKeyNumpad0;
         break;
       case VK_END:
       case VK_NUMPAD1:
-        key = (extend) ? ANCHOR_KeyEnd : ANCHOR_KeyNumpad1;
+        key = (extend) ? AnchorKeyEnd : AnchorKeyNumpad1;
         break;
       case VK_DOWN:
       case VK_NUMPAD2:
-        key = (extend) ? ANCHOR_KeyDownArrow : ANCHOR_KeyNumpad2;
+        key = (extend) ? AnchorKeyDownArrow : AnchorKeyNumpad2;
         break;
       case VK_NEXT:
       case VK_NUMPAD3:
-        key = (extend) ? ANCHOR_KeyDownPage : ANCHOR_KeyNumpad3;
+        key = (extend) ? AnchorKeyDownPage : AnchorKeyNumpad3;
         break;
       case VK_LEFT:
       case VK_NUMPAD4:
-        key = (extend) ? ANCHOR_KeyLeftArrow : ANCHOR_KeyNumpad4;
+        key = (extend) ? AnchorKeyLeftArrow : AnchorKeyNumpad4;
         break;
       case VK_CLEAR:
       case VK_NUMPAD5:
-        key = (extend) ? ANCHOR_KeyUnknown : ANCHOR_KeyNumpad5;
+        key = (extend) ? AnchorKeyUnknown : AnchorKeyNumpad5;
         break;
       case VK_RIGHT:
       case VK_NUMPAD6:
-        key = (extend) ? ANCHOR_KeyRightArrow : ANCHOR_KeyNumpad6;
+        key = (extend) ? AnchorKeyRightArrow : AnchorKeyNumpad6;
         break;
       case VK_HOME:
       case VK_NUMPAD7:
-        key = (extend) ? ANCHOR_KeyHome : ANCHOR_KeyNumpad7;
+        key = (extend) ? AnchorKeyHome : AnchorKeyNumpad7;
         break;
       case VK_UP:
       case VK_NUMPAD8:
-        key = (extend) ? ANCHOR_KeyUpArrow : ANCHOR_KeyNumpad8;
+        key = (extend) ? AnchorKeyUpArrow : AnchorKeyNumpad8;
         break;
       case VK_PRIOR:
       case VK_NUMPAD9:
-        key = (extend) ? ANCHOR_KeyUpPage : ANCHOR_KeyNumpad9;
+        key = (extend) ? AnchorKeyUpPage : AnchorKeyNumpad9;
         break;
       case VK_DECIMAL:
       case VK_DELETE:
-        key = (extend) ? ANCHOR_KeyDelete : ANCHOR_KeyNumpadPeriod;
+        key = (extend) ? AnchorKeyDelete : AnchorKeyNumpadPeriod;
         break;
 
       case VK_SNAPSHOT:
-        key = ANCHOR_KeyPrintScreen;
+        key = AnchorKeyPrintScreen;
         break;
       case VK_PAUSE:
-        key = ANCHOR_KeyPause;
+        key = AnchorKeyPause;
         break;
       case VK_MULTIPLY:
-        key = ANCHOR_KeyNumpadAsterisk;
+        key = AnchorKeyNumpadAsterisk;
         break;
       case VK_SUBTRACT:
-        key = ANCHOR_KeyNumpadMinus;
+        key = AnchorKeyNumpadMinus;
         break;
       case VK_DIVIDE:
-        key = ANCHOR_KeyNumpadSlash;
+        key = AnchorKeyNumpadSlash;
         break;
       case VK_ADD:
-        key = ANCHOR_KeyNumpadPlus;
+        key = AnchorKeyNumpadPlus;
         break;
 
       case VK_SEMICOLON:
-        key = ANCHOR_KeySemicolon;
+        key = AnchorKeySemicolon;
         break;
       case VK_EQUALS:
-        key = ANCHOR_KeyEqual;
+        key = AnchorKeyEqual;
         break;
       case VK_COMMA:
-        key = ANCHOR_KeyComma;
+        key = AnchorKeyComma;
         break;
       case VK_MINUS:
-        key = ANCHOR_KeyMinus;
+        key = AnchorKeyMinus;
         break;
       case VK_PERIOD:
-        key = ANCHOR_KeyPeriod;
+        key = AnchorKeyPeriod;
         break;
       case VK_SLASH:
-        key = ANCHOR_KeySlash;
+        key = AnchorKeySlash;
         break;
       case VK_BACK_QUOTE:
-        key = ANCHOR_KeyAccentGrave;
+        key = AnchorKeyAccentGrave;
         break;
       case VK_OPEN_BRACKET:
-        key = ANCHOR_KeyLeftBracket;
+        key = AnchorKeyLeftBracket;
         break;
       case VK_BACK_SLASH:
-        key = ANCHOR_KeyBackslash;
+        key = AnchorKeyBackslash;
         break;
       case VK_CLOSE_BRACKET:
-        key = ANCHOR_KeyRightBracket;
+        key = AnchorKeyRightBracket;
         break;
       case VK_QUOTE:
-        key = ANCHOR_KeyQuote;
+        key = AnchorKeyQuote;
         break;
       case VK_GR_LESS:
-        key = ANCHOR_KeyGrLess;
+        key = AnchorKeyGrLess;
         break;
 
       case VK_SHIFT:
         /* Check single shift presses */
         if (scanCode == 0x36)
         {
-          key = ANCHOR_KeyRightShift;
+          key = AnchorKeyRightShift;
         }
         else if (scanCode == 0x2a)
         {
-          key = ANCHOR_KeyLeftShift;
+          key = AnchorKeyLeftShift;
         }
         else
         {
           /* Must be a combination SHIFT (Left or Right) + a Key
            * Ignore this as the next message will contain
            * the desired "Key" */
-          key = ANCHOR_KeyUnknown;
+          key = AnchorKeyUnknown;
         }
         break;
       case VK_CONTROL:
-        key = (extend) ? ANCHOR_KeyRightControl : ANCHOR_KeyLeftControl;
+        key = (extend) ? AnchorKeyRightControl : AnchorKeyLeftControl;
         break;
       case VK_MENU:
-        key = (extend) ? ANCHOR_KeyRightAlt : ANCHOR_KeyLeftAlt;
+        key = (extend) ? AnchorKeyRightAlt : AnchorKeyLeftAlt;
         break;
       case VK_LWIN:
       case VK_RWIN:
-        key = ANCHOR_KeyOS;
+        key = AnchorKeyOS;
         break;
       case VK_APPS:
-        key = ANCHOR_KeyApp;
+        key = AnchorKeyApp;
         break;
       case VK_NUMLOCK:
-        key = ANCHOR_KeyNumLock;
+        key = AnchorKeyNumLock;
         break;
       case VK_SCROLL:
-        key = ANCHOR_KeyScrollLock;
+        key = AnchorKeyScrollLock;
         break;
       case VK_CAPITAL:
-        key = ANCHOR_KeyCapsLock;
+        key = AnchorKeyCapsLock;
         break;
       case VK_OEM_8:
-        key = ((ANCHOR_SystemWin32 *)getSystem())->processSpecialKey(vKey, scanCode);
+        key = ((AnchorSystemWin32 *)getSystem())->processSpecialKey(vKey, scanCode);
         break;
       case VK_MEDIA_PLAY_PAUSE:
-        key = ANCHOR_KeyMediaPlay;
+        key = AnchorKeyMediaPlay;
         break;
       case VK_MEDIA_STOP:
-        key = ANCHOR_KeyMediaStop;
+        key = AnchorKeyMediaStop;
         break;
       case VK_MEDIA_PREV_TRACK:
-        key = ANCHOR_KeyMediaFirst;
+        key = AnchorKeyMediaFirst;
         break;
       case VK_MEDIA_NEXT_TRACK:
-        key = ANCHOR_KeyMediaLast;
+        key = AnchorKeyMediaLast;
         break;
       default:
-        key = ANCHOR_KeyUnknown;
+        key = AnchorKeyUnknown;
         break;
     }
   }
@@ -2194,18 +2256,18 @@ eAnchorKey ANCHOR_SystemWin32::convertKey(short vKey, short scanCode, short exte
   return key;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
-                                                 WPARAM wParam,
-                                                 LPARAM lParam)
+eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
+                                                WPARAM wParam,
+                                                LPARAM lParam)
 {
   AnchorS32 pointerId = GET_POINTERID_WPARAM(wParam);
   AnchorS32 isPrimary = IS_POINTER_PRIMARY_WPARAM(wParam);
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)ANCHOR_System::getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)AnchorSystem::getSystem();
   AnchorU32 outCount = 0;
 
   if (!(GetPointerPenInfoHistory(pointerId, &outCount, NULL)))
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   std::vector<POINTER_PEN_INFO> pointerPenInfo(outCount);
@@ -2213,7 +2275,7 @@ eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoW
 
   if (!(GetPointerPenInfoHistory(pointerId, &outCount, pointerPenInfo.data())))
   {
-    return ANCHOR_ERROR;
+    return ANCHOR_FAILURE;
   }
 
   for (AnchorU32 i = 0; i < outCount; i++)
@@ -2250,7 +2312,7 @@ eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoW
     }
 
     outPointerInfo[i].pixelLocation = pointerApiInfo.ptPixelLocation;
-    outPointerInfo[i].tabletData.Active = ANCHOR_TabletModeStylus;
+    outPointerInfo[i].tabletData.Active = AnchorTabletModeStylus;
     outPointerInfo[i].tabletData.Pressure = 1.0f;
     outPointerInfo[i].tabletData.Xtilt = 0.0f;
     outPointerInfo[i].tabletData.Ytilt = 0.0f;
@@ -2263,7 +2325,7 @@ eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoW
 
     if (pointerPenInfo[i].penFlags & PEN_FLAG_ERASER)
     {
-      outPointerInfo[i].tabletData.Active = ANCHOR_TabletModeEraser;
+      outPointerInfo[i].tabletData.Active = AnchorTabletModeEraser;
     }
 
     if (pointerPenInfo[i].penMask & PEN_MASK_TILT_X)
@@ -2287,40 +2349,40 @@ eAnchorStatus ANCHOR_WindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoW
 
 /**
  * @note this function can be extended to include other exotic cases as they arise. */
-eAnchorKey ANCHOR_SystemWin32::processSpecialKey(short vKey, short scanCode) const
+eAnchorKey AnchorSystemWin32::processSpecialKey(short vKey, short scanCode) const
 {
-  eAnchorKey key = ANCHOR_KeyUnknown;
+  eAnchorKey key = AnchorKeyUnknown;
   switch (PRIMARYLANGID(m_langId))
   {
     case LANG_FRENCH:
       if (vKey == VK_OEM_8)
-        key = ANCHOR_KeyF13;  // oem key; used purely for shortcuts .
+        key = AnchorKeyF13;  // oem key; used purely for shortcuts .
       break;
     case LANG_ENGLISH:
       if (SUBLANGID(m_langId) == SUBLANG_ENGLISH_UK && vKey == VK_OEM_8)  // "`¬"
-        key = ANCHOR_KeyAccentGrave;
+        key = AnchorKeyAccentGrave;
       break;
   }
 
   return key;
 }
 
-ANCHOR_Event *ANCHOR_SystemWin32::processWindowEvent(eAnchorEventType type,
-                                                     ANCHOR_WindowWin32 *window)
+AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
+                                                   AnchorWindowWin32 *window)
 {
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
-  if (type == ANCHOR_EventTypeWindowActivate)
+  if (type == AnchorEventTypeWindowActivate)
   {
     system->getWindowManager()->setActiveWindow(window);
   }
 
-  return new ANCHOR_Event(ANCHOR::GetTime(), type, window);
+  return new AnchorEvent(ANCHOR::GetTime(), type, window);
 }
 
-void ANCHOR_SystemWin32::processWheelEvent(ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam)
+void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam)
 {
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
   int acc = system->m_wheelDeltaAccum;
   int delta = GET_WHEEL_DELTA_WPARAM(wParam);
@@ -2336,21 +2398,21 @@ void ANCHOR_SystemWin32::processWheelEvent(ANCHOR_WindowWin32 *window, WPARAM wP
 
   while (acc >= WHEEL_DELTA)
   {
-    system->pushEvent(new ANCHOR_EventWheel(ANCHOR::GetTime(), window, direction));
+    system->pushEvent(new AnchorEventWheel(ANCHOR::GetTime(), window, direction));
     acc -= WHEEL_DELTA;
   }
   system->m_wheelDeltaAccum = acc * direction;
 }
 
-void ANCHOR_SystemWin32::processPointerEvent(UINT type, ANCHOR_WindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
+void AnchorSystemWin32::processPointerEvent(UINT type, AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
 {
   /* Pointer events might fire when changing windows for a device which is set to use Wintab,
    * even when Wintab is left enabled but set to the bottom of Wintab overlap order. */
-  // if (!window->usingTabletAPI(ANCHOR_TabletWinPointer)) {
+  // if (!window->usingTabletAPI(AnchorTabletWinPointer)) {
   //   return;
   // }
 
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
   std::vector<ANCHOR_PointerInfoWin32> pointerInfo;
 
   if (window->getPointerInfo(pointerInfo, wParam, lParam) != ANCHOR_SUCCESS)
@@ -2365,30 +2427,30 @@ void ANCHOR_SystemWin32::processPointerEvent(UINT type, ANCHOR_WindowWin32 *wind
        * Only contiguous move events are coalesced. */
       for (AnchorU32 i = pointerInfo.size(); i-- > 0;)
       {
-        system->pushEvent(new ANCHOR_EventCursor(pointerInfo[i].time,
-                                                 ANCHOR_EventTypeCursorMove,
-                                                 window,
-                                                 pointerInfo[i].pixelLocation.x,
-                                                 pointerInfo[i].pixelLocation.y,
-                                                 pointerInfo[i].tabletData));
+        system->pushEvent(new AnchorEventCursor(pointerInfo[i].time,
+                                                AnchorEventTypeCursorMove,
+                                                window,
+                                                pointerInfo[i].pixelLocation.x,
+                                                pointerInfo[i].pixelLocation.y,
+                                                pointerInfo[i].tabletData));
       }
 
       /* Leave event unhandled so that system cursor is moved. */
 
       break;
     case WM_POINTERDOWN:
-      /* Move cursor to point of contact because ANCHOR_EventButton does not include position. */
-      system->pushEvent(new ANCHOR_EventCursor(pointerInfo[0].time,
-                                               ANCHOR_EventTypeCursorMove,
-                                               window,
-                                               pointerInfo[0].pixelLocation.x,
-                                               pointerInfo[0].pixelLocation.y,
-                                               pointerInfo[0].tabletData));
-      system->pushEvent(new ANCHOR_EventButton(pointerInfo[0].time,
-                                               ANCHOR_EventTypeButtonDown,
-                                               window,
-                                               pointerInfo[0].buttonMask,
-                                               pointerInfo[0].tabletData));
+      /* Move cursor to point of contact because AnchorEventButton does not include position. */
+      system->pushEvent(new AnchorEventCursor(pointerInfo[0].time,
+                                              AnchorEventTypeCursorMove,
+                                              window,
+                                              pointerInfo[0].pixelLocation.x,
+                                              pointerInfo[0].pixelLocation.y,
+                                              pointerInfo[0].tabletData));
+      system->pushEvent(new AnchorEventButton(pointerInfo[0].time,
+                                              AnchorEventTypeButtonDown,
+                                              window,
+                                              pointerInfo[0].buttonMask,
+                                              pointerInfo[0].tabletData));
       window->updateMouseCapture(MousePressed);
 
       /* Mark event handled so that mouse button events are not generated. */
@@ -2396,11 +2458,11 @@ void ANCHOR_SystemWin32::processPointerEvent(UINT type, ANCHOR_WindowWin32 *wind
 
       break;
     case WM_POINTERUP:
-      system->pushEvent(new ANCHOR_EventButton(pointerInfo[0].time,
-                                               ANCHOR_EventTypeButtonUp,
-                                               window,
-                                               pointerInfo[0].buttonMask,
-                                               pointerInfo[0].tabletData));
+      system->pushEvent(new AnchorEventButton(pointerInfo[0].time,
+                                              AnchorEventTypeButtonUp,
+                                              window,
+                                              pointerInfo[0].buttonMask,
+                                              pointerInfo[0].tabletData));
       window->updateMouseCapture(MouseReleased);
 
       /* Mark event handled so that mouse button events are not generated. */
@@ -2412,12 +2474,12 @@ void ANCHOR_SystemWin32::processPointerEvent(UINT type, ANCHOR_WindowWin32 *wind
   }
 }
 
-ANCHOR_EventCursor *ANCHOR_SystemWin32::processCursorEvent(ANCHOR_WindowWin32 *window)
+AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *window)
 {
   AnchorS32 x_screen, y_screen;
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
-  if (window->getTabletData().Active != ANCHOR_TabletModeNone)
+  if (window->getTabletData().Active != AnchorTabletModeNone)
   {
     /* While pen devices are in range, cursor movement is handled by tablet input processing. */
     return NULL;
@@ -2430,10 +2492,10 @@ ANCHOR_EventCursor *ANCHOR_SystemWin32::processCursorEvent(ANCHOR_WindowWin32 *w
     AnchorS32 x_new = x_screen;
     AnchorS32 y_new = y_screen;
     AnchorS32 x_accum, y_accum;
-    ANCHOR_Rect bounds;
+    AnchorRect bounds;
 
     /* Fallback to window bounds. */
-    if (window->getCursorGrabBounds(bounds) == ANCHOR_ERROR)
+    if (window->getCursorGrabBounds(bounds) == ANCHOR_FAILURE)
     {
       window->getClientBounds(bounds);
     }
@@ -2452,56 +2514,56 @@ ANCHOR_EventCursor *ANCHOR_SystemWin32::processCursorEvent(ANCHOR_WindowWin32 *w
     }
     else
     {
-      return new ANCHOR_EventCursor(ANCHOR::GetTime(),
-                                    ANCHOR_EventTypeCursorMove,
-                                    window,
-                                    x_screen + x_accum,
-                                    y_screen + y_accum,
-                                    ANCHOR_TABLET_DATA_NONE);
+      return new AnchorEventCursor(ANCHOR::GetTime(),
+                                   AnchorEventTypeCursorMove,
+                                   window,
+                                   x_screen + x_accum,
+                                   y_screen + y_accum,
+                                   ANCHOR_TABLET_DATA_NONE);
     }
   }
   else
   {
-    return new ANCHOR_EventCursor(ANCHOR::GetTime(),
-                                  ANCHOR_EventTypeCursorMove,
-                                  window,
-                                  x_screen,
-                                  y_screen,
-                                  ANCHOR_TABLET_DATA_NONE);
+    return new AnchorEventCursor(ANCHOR::GetTime(),
+                                 AnchorEventTypeCursorMove,
+                                 window,
+                                 x_screen,
+                                 y_screen,
+                                 ANCHOR_TABLET_DATA_NONE);
   }
   return NULL;
 }
 
-ANCHOR_EventButton *ANCHOR_SystemWin32::processButtonEvent(eAnchorEventType type,
-                                                           ANCHOR_WindowWin32 *window,
-                                                           eAnchorButtonMask mask)
+AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
+                                                         AnchorWindowWin32 *window,
+                                                         eAnchorButtonMask mask)
 {
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
-  ANCHOR_TabletData td = window->getTabletData();
+  AnchorTabletData td = window->getTabletData();
 
   /* Move mouse to button event position. */
-  if (window->getTabletData().Active != ANCHOR_TabletModeNone)
+  if (window->getTabletData().Active != AnchorTabletModeNone)
   {
     /* Tablet should be handling in between mouse moves, only move to event position. */
     DWORD msgPos = ::GetMessagePos();
     int msgPosX = GET_X_LPARAM(msgPos);
     int msgPosY = GET_Y_LPARAM(msgPos);
-    system->pushEvent(new ANCHOR_EventCursor(
-      ::GetMessageTime(), ANCHOR_EventTypeCursorMove, window, msgPosX, msgPosY, td));
+    system->pushEvent(new AnchorEventCursor(
+      ::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX, msgPosY, td));
   }
 
-  window->updateMouseCapture(type == ANCHOR_EventTypeButtonDown ? MousePressed : MouseReleased);
-  return new ANCHOR_EventButton(ANCHOR::GetTime(), type, window, mask, td);
+  window->updateMouseCapture(type == AnchorEventTypeButtonDown ? MousePressed : MouseReleased);
+  return new AnchorEventButton(ANCHOR::GetTime(), type, window, mask, td);
 }
 
-eAnchorKey ANCHOR_SystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, bool *r_is_repeated_modifier)
+eAnchorKey AnchorSystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, bool *r_is_repeated_modifier)
 {
   bool is_repeated_modifier = false;
 
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
-  eAnchorKey key = ANCHOR_KeyUnknown;
-  ANCHOR_ModifierKeys modifiers;
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
+  eAnchorKey key = AnchorKeyUnknown;
+  AnchorModifierKeys modifiers;
   system->retrieveModifierKeys(modifiers);
 
   // RI_KEY_BREAK doesn't work for sticky keys release, so we also
@@ -2514,38 +2576,38 @@ eAnchorKey ANCHOR_SystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, boo
                          (raw.data.keyboard.Flags & (RI_KEY_E1 | RI_KEY_E0)));
 
   // extra handling of modifier keys: don't send repeats out from ANCHOR
-  if (key >= ANCHOR_KeyLeftShift && key <= ANCHOR_KeyRightAlt)
+  if (key >= AnchorKeyLeftShift && key <= AnchorKeyRightAlt)
   {
     bool changed = false;
     eAnchorModifierKeyMask modifier;
     switch (key)
     {
-      case ANCHOR_KeyLeftShift: {
+      case AnchorKeyLeftShift: {
         changed = (modifiers.get(ANCHOR_ModifierKeyLeftShift) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyLeftShift;
         break;
       }
-      case ANCHOR_KeyRightShift: {
+      case AnchorKeyRightShift: {
         changed = (modifiers.get(ANCHOR_ModifierKeyRightShift) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyRightShift;
         break;
       }
-      case ANCHOR_KeyLeftControl: {
+      case AnchorKeyLeftControl: {
         changed = (modifiers.get(ANCHOR_ModifierKeyLeftControl) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyLeftControl;
         break;
       }
-      case ANCHOR_KeyRightControl: {
+      case AnchorKeyRightControl: {
         changed = (modifiers.get(ANCHOR_ModifierKeyRightControl) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyRightControl;
         break;
       }
-      case ANCHOR_KeyLeftAlt: {
+      case AnchorKeyLeftAlt: {
         changed = (modifiers.get(ANCHOR_ModifierKeyLeftAlt) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyLeftAlt;
         break;
       }
-      case ANCHOR_KeyRightAlt: {
+      case AnchorKeyRightAlt: {
         changed = (modifiers.get(ANCHOR_ModifierKeyRightAlt) != *r_keyDown);
         modifier = ANCHOR_ModifierKeyRightAlt;
         break;
@@ -2569,11 +2631,11 @@ eAnchorKey ANCHOR_SystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, boo
   return key;
 }
 
-ANCHOR_Event *ANCHOR_SystemWin32::processWindowSizeEvent(ANCHOR_WindowWin32 *window)
+AnchorEvent *AnchorSystemWin32::processWindowSizeEvent(AnchorWindowWin32 *window)
 {
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
-  ANCHOR_Event *sizeEvent = new ANCHOR_Event(
-    ANCHOR::GetTime(), ANCHOR_EventTypeWindowSize, window);
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
+  AnchorEvent *sizeEvent = new AnchorEvent(
+    ANCHOR::GetTime(), AnchorEventTypeWindowSize, window);
 
   /* We get WM_SIZE before we fully init. Do not dispatch before we are continuously resizing. */
   if (window->m_inLiveResize)
@@ -2588,15 +2650,15 @@ ANCHOR_Event *ANCHOR_SystemWin32::processWindowSizeEvent(ANCHOR_WindowWin32 *win
   }
 }
 
-ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window, RAWINPUT const &raw)
+AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, RAWINPUT const &raw)
 {
   bool keyDown = false;
   bool is_repeated_modifier = false;
-  ANCHOR_SystemWin32 *system = (ANCHOR_SystemWin32 *)getSystem();
+  AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
   eAnchorKey key = system->hardKey(raw, &keyDown, &is_repeated_modifier);
-  ANCHOR_EventKey *event;
+  AnchorEventKey *event;
 
-  /* We used to check `if (key != ANCHOR_KeyUnknown)`, but since the message
+  /* We used to check `if (key != AnchorKeyUnknown)`, but since the message
    * values `WM_SYSKEYUP`, `WM_KEYUP` and `WM_CHAR` are ignored, we capture
    * those events here as well. */
   if (!is_repeated_modifier)
@@ -2666,13 +2728,13 @@ ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window,
       ascii = utf8_char[0] & 0x80 ? '?' : utf8_char[0];
     }
 
-    event = new ANCHOR_EventKey(ANCHOR::GetTime(),
-                                keyDown ? ANCHOR_EventTypeKeyDown : ANCHOR_EventTypeKeyUp,
-                                window,
-                                key,
-                                ascii,
-                                utf8_char,
-                                is_repeat);
+    event = new AnchorEventKey(ANCHOR::GetTime(),
+                               keyDown ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+                               window,
+                               key,
+                               ascii,
+                               utf8_char,
+                               is_repeat);
   }
   else
   {
@@ -2682,7 +2744,7 @@ ANCHOR_EventKey *ANCHOR_SystemWin32::processKeyEvent(ANCHOR_WindowWin32 *window,
   return event;
 }
 
-AnchorU64 ANCHOR_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
+AnchorU64 AnchorSystemWin32::performanceCounterToMillis(__int64 perf_ticks) const
 {
   // Calculate the time passed since system initialization.
   __int64 delta = (perf_ticks - m_start) * 1000;
@@ -2691,15 +2753,16 @@ AnchorU64 ANCHOR_SystemWin32::performanceCounterToMillis(__int64 perf_ticks) con
   return t;
 }
 
-AnchorU64 ANCHOR_SystemWin32::tickCountToMillis(__int64 ticks) const
+AnchorU64 AnchorSystemWin32::tickCountToMillis(__int64 ticks) const
 {
   return ticks - m_lfstart;
 }
 
-AnchorU64 ANCHOR_SystemWin32::getMilliSeconds() const
+AnchorU64 AnchorSystemWin32::getMilliSeconds() const
 {
   // Hardware does not support high resolution timers. We will use GetTickCount instead then.
-  if (!m_hasPerformanceCounter) {
+  if (!m_hasPerformanceCounter)
+  {
     return tickCountToMillis(::GetTickCount());
   }
 
@@ -2712,27 +2775,27 @@ AnchorU64 ANCHOR_SystemWin32::getMilliSeconds() const
 
 //---------------------------------------------------------------------------------------------------------
 
-const wchar_t *ANCHOR_WindowWin32::s_windowClassName = L"ANCHOR_WindowClass";
-const int ANCHOR_WindowWin32::s_maxTitleLength = 128;
+const wchar_t *AnchorWindowWin32::s_windowClassName = L"AnchorWindowClass";
+const int AnchorWindowWin32::s_maxTitleLength = 128;
 
 /* force NVidia Optimus to use dedicated graphics */
 extern "C" {
 __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
-ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
-                                       const char *title,
-                                       const char *icon,
-                                       AnchorS32 left,
-                                       AnchorS32 top,
-                                       AnchorU32 width,
-                                       AnchorU32 height,
-                                       eAnchorWindowState state,
-                                       eAnchorDrawingContextType type,
-                                       bool alphaBackground,
-                                       ANCHOR_WindowWin32 *parentWindow,
-                                       bool dialog)
-  : ANCHOR_SystemWindow(width, height, state, false, false),
+AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
+                                     const char *title,
+                                     const char *icon,
+                                     AnchorS32 left,
+                                     AnchorS32 top,
+                                     AnchorU32 width,
+                                     AnchorU32 height,
+                                     eAnchorWindowState state,
+                                     eAnchorDrawingContextType type,
+                                     bool alphaBackground,
+                                     AnchorWindowWin32 *parentWindow,
+                                     bool dialog)
+  : AnchorSystemWindow(width, height, state, false, false),
     m_mousePresent(false),
     m_inLiveResize(false),
     m_system(system),
@@ -2745,20 +2808,21 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     m_customCursor(0),
     m_wantAlphaBackground(alphaBackground),
     m_lastPointerTabletData(ANCHOR_TABLET_DATA_NONE),
-    m_normal_state(ANCHOR_WindowStateNormal),
+    m_normal_state(AnchorWindowStateNormal),
     m_user32(::LoadLibrary("user32.dll")),
     m_parentWindowHwnd(parentWindow ? parentWindow->m_hWnd : HWND_DESKTOP),
     m_hgi(nullptr),
     m_vkinstance(nullptr),
     m_device(nullptr),
     m_commandQueue(nullptr),
-    m_pipelineCache(nullptr)
+    m_pipelineCache(nullptr),
+    m_instance(nullptr)
 {
   DWORD style = parentWindow ?
                   WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
                   WS_OVERLAPPEDWINDOW;
 
-  if (state == ANCHOR_WindowStateFullScreen)
+  if (state == AnchorWindowStateFullScreen)
   {
     style |= WS_MAXIMIZE;
   }
@@ -2818,13 +2882,13 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
   int nCmdShow;
   switch (state)
   {
-    case ANCHOR_WindowStateMaximized:
+    case AnchorWindowStateMaximized:
       nCmdShow = SW_SHOWMAXIMIZED;
       break;
-    case ANCHOR_WindowStateMinimized:
+    case AnchorWindowStateMinimized:
       nCmdShow = (m_system->m_windowFocus) ? SW_SHOWMINIMIZED : SW_SHOWMINNOACTIVE;
       break;
-    case ANCHOR_WindowStateNormal:
+    case AnchorWindowStateNormal:
     default:
       nCmdShow = (m_system->m_windowFocus) ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE;
       break;
@@ -2854,8 +2918,8 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
   ::UpdateWindow(m_hWnd);
 
   /* Initialize Wintab. */
-  // if (system->getTabletAPI() != ANCHOR_TabletWinPointer) {
-  // loadWintab(ANCHOR_WindowStateMinimized != state);
+  // if (system->getTabletAPI() != AnchorTabletWinPointer) {
+  // loadWintab(AnchorWindowStateMinimized != state);
   // }
 
   /* Allow the showing of a progress bar on the taskbar. */
@@ -2863,9 +2927,10 @@ ANCHOR_WindowWin32::ANCHOR_WindowWin32(ANCHOR_SystemWin32 *system,
     CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
 }
 
-ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
+AnchorWindowWin32::~AnchorWindowWin32()
 {
-  if (m_Bar) {
+  if (m_Bar)
+  {
     m_Bar->SetProgressState(m_hWnd, TBPF_NOPROGRESS);
     m_Bar->Release();
     m_Bar = NULL;
@@ -2873,27 +2938,33 @@ ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
 
   // closeWintab();
 
-  if (m_user32) {
+  if (m_user32)
+  {
     FreeLibrary(m_user32);
     m_user32 = NULL;
   }
 
-  if (m_customCursor) {
+  if (m_customCursor)
+  {
     DestroyCursor(m_customCursor);
     m_customCursor = NULL;
   }
 
-  if (m_hWnd != NULL && m_hDC != NULL && releaseNativeHandles()) {
+  if (m_hWnd != NULL && m_hDC != NULL && releaseNativeHandles())
+  {
     ::ReleaseDC(m_hWnd, m_hDC);
     m_hDC = NULL;
   }
 
-  if (m_hWnd) {
+  if (m_hWnd)
+  {
     /* If this window is referenced by others as parent, clear that relation or windows will free
      * the handle while we still reference it. */
-    for (ANCHOR_ISystemWindow *iter_win : m_system->getWindowManager()->getWindows()) {
-      ANCHOR_WindowWin32 *iter_winwin = (ANCHOR_WindowWin32 *)iter_win;
-      if (iter_winwin->m_parentWindowHwnd == m_hWnd) {
+    for (AnchorISystemWindow *iter_win : m_system->getWindowManager()->getWindows())
+    {
+      AnchorWindowWin32 *iter_winwin = (AnchorWindowWin32 *)iter_win;
+      if (iter_winwin->m_parentWindowHwnd == m_hWnd)
+      {
         ::SetWindowLongPtr(iter_winwin->m_hWnd, GWLP_HWNDPARENT, NULL);
         iter_winwin->m_parentWindowHwnd = 0;
       }
@@ -2912,7 +2983,7 @@ ANCHOR_WindowWin32::~ANCHOR_WindowWin32()
   }
 }
 
-eAnchorStatus ANCHOR_WindowWin32::releaseNativeHandles()
+eAnchorStatus AnchorWindowWin32::releaseNativeHandles()
 {
   m_hWnd = NULL;
   m_hDC = NULL;
@@ -2920,9 +2991,9 @@ eAnchorStatus ANCHOR_WindowWin32::releaseNativeHandles()
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
-                                                           DWORD dwStyle,
-                                                           DWORD dwExStyle)
+void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
+                                                          DWORD dwStyle,
+                                                          DWORD dwExStyle)
 {
   /* Get Details of the closest monitor. */
   HMONITOR hmonitor = MonitorFromRect(win_rect, MONITOR_DEFAULTTONEAREST);
@@ -2964,24 +3035,24 @@ void ANCHOR_WindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
   win_rect->top = winmax(monitor.rcWork.top, win_rect->top);
 }
 
-bool ANCHOR_WindowWin32::getValid() const
+bool AnchorWindowWin32::getValid() const
 {
-  return ANCHOR_SystemWindow::getValid() && m_hWnd != 0 && m_hDC != 0;
+  return AnchorSystemWindow::getValid() && m_hWnd != 0 && m_hDC != 0;
 }
 
-HWND ANCHOR_WindowWin32::getHWND() const
+HWND AnchorWindowWin32::getHWND() const
 {
   return m_hWnd;
 }
 
-void ANCHOR_WindowWin32::resetPointerPenInfo()
+void AnchorWindowWin32::resetPointerPenInfo()
 {
   m_lastPointerTabletData = ANCHOR_TABLET_DATA_NONE;
 }
 
-ANCHOR_TabletData ANCHOR_WindowWin32::getTabletData()
+AnchorTabletData AnchorWindowWin32::getTabletData()
 {
-  // if (usingTabletAPI(ANCHOR_TabletWintab)) {
+  // if (usingTabletAPI(AnchorTabletWintab)) {
   //   return m_wintab ? m_wintab->getLastTabletData() : ANCHOR_TABLET_DATA_NONE;
   // }
   // else {
@@ -2989,7 +3060,7 @@ ANCHOR_TabletData ANCHOR_WindowWin32::getTabletData()
   // }
 }
 
-void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
+void AnchorWindowWin32::getClientBounds(AnchorRect &bounds) const
 {
   RECT rect;
   POINT coord;
@@ -3020,14 +3091,14 @@ void ANCHOR_WindowWin32::getClientBounds(ANCHOR_Rect &bounds) const
   }
 }
 
-void ANCHOR_WindowWin32::setTitle(const char *title)
+void AnchorWindowWin32::setTitle(const char *title)
 {
   wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
   ::SetWindowTextW(m_hWnd, (wchar_t *)title_16);
   free(title_16);
 }
 
-std::string ANCHOR_WindowWin32::getTitle() const
+std::string AnchorWindowWin32::getTitle() const
 {
   std::wstring wtitle(::GetWindowTextLengthW(m_hWnd) + 1, L'\0');
   ::GetWindowTextW(m_hWnd, &wtitle[0], wtitle.capacity());
@@ -3038,10 +3109,10 @@ std::string ANCHOR_WindowWin32::getTitle() const
   return title;
 }
 
-void ANCHOR_WindowWin32::setIcon(const char *icon)
+void AnchorWindowWin32::setIcon(const char *icon)
 {}
 
-void ANCHOR_WindowWin32::getWindowBounds(ANCHOR_Rect &bounds) const
+void AnchorWindowWin32::getWindowBounds(AnchorRect &bounds) const
 {
   RECT rect;
   ::GetWindowRect(m_hWnd, &rect);
@@ -3053,25 +3124,50 @@ void ANCHOR_WindowWin32::getWindowBounds(ANCHOR_Rect &bounds) const
 
 static void check_vk_result(VkResult err)
 {
-  if (err == 0)
-    return;
-  TF_CODING_ERROR("[vulkan] Error: VkResult = %d\n", err);
-  if (err < 0)
-    abort();
+  if (err == VK_ERROR_INCOMPATIBLE_DRIVER)
+  {
+
+    TF_ERROR_MSG(
+      "Cannot find a compatible Vulkan installable client"
+      "driver (ICD). Please make sure your driver supports"
+      "Vulkan before continuing. The vulkan call which has"
+      "issued a crash was:  vkCreateInstance()");
+
+    fflush(stdout);
+    exit(ANCHOR_FAILURE);
+  }
+  else if (err != VK_SUCCESS)
+  {
+
+    TF_ERROR_MSG(
+      "The call to vkCreateInstance failed. Please make"
+      "sure you have a Vulkan installable client driver"
+      "(ICD) before continuing.");
+
+    fflush(stdout);
+    exit(ANCHOR_FAILURE);
+  }
 }
 
-void ANCHOR_WindowWin32::SetupVulkan()
+void AnchorWindowWin32::SetupVulkan()
 {
-  VkApplicationInfo app_info = {VK_STRUCTURE_TYPE_APPLICATION_INFO};
-  app_info.apiVersion = VK_API_VERSION_1_2;
+  VkApplicationInfo app_info = {};
+  app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+  app_info.pNext = NULL;
+  app_info.pApplicationName = "Kraken";
+  app_info.pEngineName = "Pixar Hydra";
+  app_info.apiVersion = VK_MAKE_VERSION(1, 2, 182);
 
-  VkInstanceCreateInfo create_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
+  VkInstanceCreateInfo create_info = {};
+  create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+  create_info.pNext = NULL;
+  create_info.flags = 0;
   create_info.pApplicationInfo = &app_info;
 
   /**
    * ------------------------------------------- Setup VULKAN extensions ----- */
 
-  std::vector<const char *> instance_exts {
+  std::vector<const char *> instance_exts{
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
     VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
@@ -3090,69 +3186,242 @@ void ANCHOR_WindowWin32::SetupVulkan()
   create_info.ppEnabledExtensionNames = instance_exts.data();
   create_info.enabledExtensionCount = (uint32_t)instance_exts.size();
 
+  AnchorRect winrect;
+  getWindowBounds(winrect);
+
   /**
    * ------------------------------------------- Create Vulkan Instance ----- */
 
   VkResult err;
-  VkInstance instance;
-  err = vkCreateInstance(&create_info, HgiVulkanAllocator(), &instance);
-  m_hgi = new HgiVulkan(m_vkinstance = new HgiVulkanInstance(instance));
+  err = vkCreateInstance(&create_info, HgiVulkanAllocator(), &m_instance);
+  m_hgi = new HgiVulkan(m_vkinstance = new HgiVulkanInstance(m_instance));
   check_vk_result(err);
+
+  VkSurfaceKHR surface;
+
+  VkWin32SurfaceCreateInfoKHR surface_create_info = {};
+  surface_create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+  surface_create_info.pNext = NULL;
+  surface_create_info.flags = 0;
+  surface_create_info.hinstance = GetModuleHandle(0);
+  surface_create_info.hwnd = m_hWnd;
+
+  err = vkCreateWin32SurfaceKHR(m_instance, &surface_create_info, HgiVulkanAllocator(), &surface);
+  ANCHOR_ASSERT(err == VK_SUCCESS);
+
+  m_vulkan_context = new ANCHOR_VulkanGPU_Surface();
+  m_vulkan_context->Surface = surface;
 
   /**
    * Pixar Device */
   m_device = m_hgi->GetPrimaryDevice();
 
+  uint32_t queueCount = 0;
+  vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(), &queueCount, NULL);
+  assert(queueCount >= 1);
+
+  std::vector<VkQueueFamilyProperties> queueProperties(queueCount);
+  vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(), &queueCount, queueProperties.data());
+
+  uint32_t queueIndex;
+
+  std::vector<VkBool32> supportsPresenting(queueCount);
+  for (uint32_t i = 0; i < queueCount; i++)
+  {
+    vkGetPhysicalDeviceSurfaceSupportKHR(m_device->GetVulkanPhysicalDevice(), i, surface, &supportsPresenting[i]);
+
+    if ((queueProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
+    {
+      if (supportsPresenting[i] == VK_TRUE)
+      {
+        queueIndex = i;
+        break;
+      }
+    }
+  }
+  assert(queueIndex != UINT32_MAX);
+
   /**
-   * Command Queue */
+   * Select Surface Format. */
+  uint32_t formatCount = 0;
+  err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(), surface, &formatCount, NULL);
+  assert(err == VK_SUCCESS);
+  assert(formatCount >= 1);
+
+  std::vector<VkSurfaceFormatKHR> surfaceFormats(formatCount);
+  err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(),
+                                             surface,
+                                             &formatCount,
+                                             surfaceFormats.data());
+  assert(err == VK_SUCCESS);
+
+  VkFormat colorFormat;
+  VkColorSpaceKHR colorSpace;
+
+  if (formatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED)
+  {
+    colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+  }
+  else
+  {
+    colorFormat = surfaceFormats[0].format;
+  }
+
+  colorSpace = surfaceFormats[0].colorSpace;
+
+
+  m_vulkan_context->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(m_device->GetVulkanPhysicalDevice(),
+                                                                           m_vulkan_context->Surface,
+                                                                           &colorFormat,
+                                                                           formatCount,
+                                                                           colorSpace);
+
+  VkSurfaceCapabilitiesKHR caps = {};
+  VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetVulkanPhysicalDevice(), surface, &caps);
+  assert(result == VK_SUCCESS);
+
+  VkExtent2D swapchainExtent = {};
+
+  AnchorRect rectBounds;
+  getWindowBounds(rectBounds);
+  if (caps.currentExtent.width == -1 || caps.currentExtent.height == -1)
+  {
+    swapchainExtent.width = rectBounds.getWidth();
+    swapchainExtent.height = rectBounds.getHeight();
+  }
+  else
+  {
+    swapchainExtent = caps.currentExtent;
+  }
+
+  uint32_t presentModeCount = 0;
+  result = vkGetPhysicalDeviceSurfacePresentModesKHR(m_device->GetVulkanPhysicalDevice(),
+                                                     surface,
+                                                     &presentModeCount,
+                                                     NULL);
+  assert(result == VK_SUCCESS);
+  assert(presentModeCount >= 1);
+
+  std::vector<VkPresentModeKHR> presentModes(presentModeCount);
+  result = vkGetPhysicalDeviceSurfacePresentModesKHR(m_device->GetVulkanPhysicalDevice(),
+                                                     surface,
+                                                     &presentModeCount,
+                                                     presentModes.data());
+
+  assert(result == VK_SUCCESS);
+
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+  for (uint32_t i = 0; i < presentModeCount; i++)
+  {
+    if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
+    {
+      presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+      break;
+    }
+    if (presentModes[i] == VK_PRESENT_MODE_IMMEDIATE_KHR)
+      presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+  }
+
+  assert(caps.maxImageCount >= 1);
+  uint32_t imageCount = caps.minImageCount + 1;
+  if (imageCount > caps.maxImageCount)
+  {
+    imageCount = caps.maxImageCount;
+  }
+
+  m_vulkan_context->PresentMode = presentMode;
+  VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+  swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  swapchainCreateInfo.surface = surface;
+  swapchainCreateInfo.minImageCount = imageCount;
+  swapchainCreateInfo.imageFormat = colorFormat;
+  swapchainCreateInfo.imageColorSpace = colorSpace;
+  swapchainCreateInfo.imageExtent = {swapchainExtent.width, swapchainExtent.height};
+  swapchainCreateInfo.imageArrayLayers = 1;
+  swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  swapchainCreateInfo.queueFamilyIndexCount = 1;
+  swapchainCreateInfo.pQueueFamilyIndices = {0};
+  swapchainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  swapchainCreateInfo.presentMode = presentMode;
+
+  if (TfDebug::IsEnabled(ANCHOR_WIN32))
+  {
+    TF_SUCCESS_MSG("Anchor -- Rendering at maximum possible frames per second.");
+    TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
+  }
+
+  VkSwapchainKHR swapchain;
+  result = vkCreateSwapchainKHR(m_device->GetVulkanDevice(), &swapchainCreateInfo, NULL, &swapchain);
+  assert(result == VK_SUCCESS);
+
+  result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(), swapchain, &imageCount, NULL);
+  assert(result == VK_SUCCESS);
+  assert(imageCount > 0);
+
+  struct SwapChainBuffer
+  {
+    VkImage image;
+    VkImageView view;
+    VkFramebuffer frameBuffer;
+  };
+
+  // /**
+  //  * Create Descriptor Pool. */
+  // {
+
+  //   /* clang-format off */
+
+  //   VkDescriptorPoolSize pool_sizes[] = {
+  //     {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
+  //     {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
+  //     {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
+  //     {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
+  //     {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
+  //     {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
+  //   };
+
+  //   /* clang-format on */
+
+  //   VkDescriptorPoolCreateInfo pool_info = {};
+  //   pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  //   pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+  //   pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
+  //   pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
+  //   pool_info.pPoolSizes = pool_sizes;
+  //   err = vkCreateDescriptorPool(m_device->GetVulkanDevice(),
+  //                                &pool_info,
+  //                                HgiVulkanAllocator(),
+  //                                &g_DescriptorPool);
+  //   check_vk_result(err);
+  // }
+
+  /**
+   * Create SwapChain, RenderPass, Framebuffer, etc. */
+  ANCHOR_ASSERT(getMinImageCount() >= 2);
+  ANCHOR_ImplVulkanH_CreateOrResizeWindow(m_instance,
+                                          m_device->GetVulkanPhysicalDevice(),
+                                          m_device->GetVulkanDevice(),
+                                          m_vulkan_context,
+                                          m_device->GetGfxQueueFamilyIndex(),
+                                          HgiVulkanAllocator(),
+                                          winrect.getWidth(),
+                                          winrect.getHeight(),
+                                          getMinImageCount());
 
   m_commandQueue = m_hgi->GetPrimaryDevice()->GetCommandQueue();
-
-  /**
-   * Pipeline cache */
-
   m_pipelineCache = m_hgi->GetPrimaryDevice()->GetPipelineCache();
-
-
-  /**
-   * Create Descriptor Pool. */
-  {
-
-    /* clang-format off */
-
-    VkDescriptorPoolSize pool_sizes[] = {
-      {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
-      {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
-      {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
-      {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
-      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
-    };
-
-    /* clang-format on */
-
-    VkDescriptorPoolCreateInfo pool_info = {};
-    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
-    pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
-    pool_info.pPoolSizes = pool_sizes;
-    err = vkCreateDescriptorPool(m_device->GetVulkanDevice(),
-                                 &pool_info,
-                                 HgiVulkanAllocator(),
-                                 &g_DescriptorPool);
-    check_vk_result(err);
-  }
 }
 
 static void SetFont()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   io.Fonts->AddFontDefault();
 
   /* Gotham Font. */
@@ -3168,126 +3437,17 @@ static void SetFont()
   io.FontDefault = io.Fonts->AddFontFromFileTTF(CHARALL(sf_path), 14.0f);
 }
 
-void ANCHOR_WindowWin32::SetupVulkanWindow()
+void AnchorWindowWin32::SetupVulkanWindow()
 {
-  ANCHOR_Rect winrect;
-  getWindowBounds(winrect);
-
-  m_vulkan_context = new ANCHOR_VulkanGPU_Surface();
-
-  {
-    VkWin32SurfaceCreateInfoKHR createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.hwnd = m_hWnd;
-    createInfo.hinstance = GetModuleHandle(0);
-
-    VkSurfaceKHR surface;
-    if (vkCreateWin32SurfaceKHR(m_vkinstance->GetVulkanInstance(), &createInfo, HgiVulkanAllocator(), &surface) != VK_SUCCESS) {
-      throw std::runtime_error("CRITICAL: Failed to create window surface!");
-    }
-
-    m_vulkan_context->Surface = surface;
-  }
-
-  /**
-   * Check for WSI support. */
-  VkBool32 res;
-  vkGetPhysicalDeviceSurfaceSupportKHR(m_device->GetVulkanPhysicalDevice(), 
-                                       m_device->GetGfxQueueFamilyIndex(), 
-                                       m_vulkan_context->Surface,
-                                       &res);
-  if (res != VK_TRUE)
-  {
-    fprintf(stderr, "Error no WSI support on physical device 0\n");
-    exit(-1);
-  }
-
-  /**
-   * Select Surface Format. */
-  /* clang-format off */
-  const VkFormat requestSurfaceImageFormat[] = {
-    VK_FORMAT_B8G8R8A8_UNORM,
-    VK_FORMAT_R8G8B8A8_UNORM,
-    VK_FORMAT_B8G8R8_UNORM,
-    VK_FORMAT_R8G8B8_UNORM
-  };
-  /* clang-format on */
-  const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-
-  m_vulkan_context->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(
-    m_device->GetVulkanPhysicalDevice(),
-    m_vulkan_context->Surface,
-    requestSurfaceImageFormat,
-    (size_t)ANCHOR_ARRAYSIZE(requestSurfaceImageFormat),
-    requestSurfaceColorSpace);
-
-  /**
-   * Render at maximum possible FPS. */
-  if (HgiVulkanIsMaxFPSEnabled())
-  {
-    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
-      TF_SUCCESS_MSG("Anchor -- Rendering at maximum possible frames per second.");
-    }
-
-    /* clang-format off */
-    VkPresentModeKHR present_modes[] = {
-      /** Removes screen tearing. */
-      VK_PRESENT_MODE_MAILBOX_KHR,
-      /** Present frames immediately. */
-      VK_PRESENT_MODE_IMMEDIATE_KHR,
-      /** Required for presentation. */
-      VK_PRESENT_MODE_FIFO_KHR
-    };
-    /* clang-format on */
-
-    m_vulkan_context->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(m_device->GetVulkanPhysicalDevice(), 
-                                                                         m_vulkan_context->Surface, 
-                                                                         &present_modes[0], 
-                                                                         ANCHOR_ARRAYSIZE(present_modes));
-  }
-  else
-  { /** Throttled FPS ~75FPS */
-
-    if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
-      TF_WARN("Anchor -- Throttled maximum frames per second.");
-    }
-
-    /* clang-format off */
-    VkPresentModeKHR present_modes[] = {
-      /** Required for presentation. */
-      VK_PRESENT_MODE_FIFO_KHR
-    };
-    /* clang-format on */
-
-    m_vulkan_context->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-      m_device->GetVulkanPhysicalDevice(), m_vulkan_context->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
-  }
-
-  if(TfDebug::IsEnabled(ANCHOR_WIN32)) {
-    TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
-  }
-
-  /**
-   * Create SwapChain, RenderPass, Framebuffer, etc. */
-  ANCHOR_ASSERT(getMinImageCount() >= 2);
-  ANCHOR_ImplVulkanH_CreateOrResizeWindow(m_vkinstance->GetVulkanInstance(),
-                                          m_device->GetVulkanPhysicalDevice(),
-                                          m_device->GetVulkanDevice(),
-                                          m_vulkan_context,
-                                          m_device->GetGfxQueueFamilyIndex(),
-                                          HgiVulkanAllocator(),
-                                          winrect.getWidth(),
-                                          winrect.getHeight(),
-                                          getMinImageCount());
 }
 
-void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
+void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 {
   if (type == ANCHOR_DrawingContextTypeVulkan)
-  { 
+  {
     /**
      * Create Vulkan Instance. */
-    SetupVulkan();  
+    SetupVulkan();
 
     /**
      * Create Vulkan Surface. */
@@ -3302,9 +3462,9 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     /**
      * Setup Keyboard & Gamepad controls. */
 
-    ANCHOR_IO &io = ANCHOR::GetIO();
-    io.ConfigFlags |= ANCHORConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ANCHORConfigFlags_NavEnableGamepad;
+    AnchorIO &io = ANCHOR::GetIO();
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad;
 
     /**
      * Setup Default Kraken theme.
@@ -3323,19 +3483,20 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
      * Setup Platform/Renderer backends. */
 
     ANCHOR_ImplWin32_Init(m_hWnd);
-    ANCHOR_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance                   = m_vkinstance->GetVulkanInstance();
-    init_info.PhysicalDevice             = m_device->GetVulkanPhysicalDevice();
-    init_info.Device                     = m_device->GetVulkanDevice();
-    init_info.QueueFamily                = m_device->GetGfxQueueFamilyIndex();
-    init_info.Queue                      = m_commandQueue->GetVulkanGraphicsQueue();
-    init_info.PipelineCache              = m_pipelineCache->GetVulkanPipelineCache();
-    init_info.DescriptorPool             = g_DescriptorPool;
-    init_info.Allocator                  = HgiVulkanAllocator();
-    init_info.MinImageCount              = getMinImageCount();
-    init_info.ImageCount                 = m_vulkan_context->ImageCount;
-    init_info.CheckVkResultFn            = check_vk_result;
-    ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
+
+    // ANCHOR_ImplVulkan_InitInfo init_info = {};
+    // init_info.Instance                   = m_instance;
+    // init_info.PhysicalDevice             = m_device->GetVulkanPhysicalDevice();
+    // init_info.Device                     = m_device->GetVulkanDevice();
+    // init_info.QueueFamily                = m_device->GetGfxQueueFamilyIndex();
+    // init_info.Queue                      = m_commandQueue->GetVulkanGraphicsQueue();
+    // init_info.PipelineCache              = m_pipelineCache->GetVulkanPipelineCache();
+    // init_info.DescriptorPool             = g_DescriptorPool;
+    // init_info.Allocator                  = HgiVulkanAllocator();
+    // init_info.MinImageCount              = getMinImageCount();
+    // init_info.ImageCount                 = m_vulkan_context->ImageCount;
+    // init_info.CheckVkResultFn            = check_vk_result;
+    // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
 
 
     /* clang-format on */
@@ -3357,9 +3518,7 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     ANCHOR::GetPixarDriver().driver = driver.driver;
 
 
-
     SetFont();
-
 
 
     /**
@@ -3399,26 +3558,26 @@ void ANCHOR_WindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
       /**
        * Destroy the objects used for font texture upload. */
-      
+
       m_device->WaitForIdle();
       ANCHOR_ImplVulkan_DestroyFontUploadObjects();
     }
   }
 }
 
-eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
+eAnchorStatus AnchorWindowWin32::activateDrawingContext()
 {
-  ANCHOR_IO &io = ANCHOR::GetIO();
+  AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ASSERT(io.Fonts->IsBuilt() &&
                 "Font atlas not built! It is generally built by the renderer backend. Missing "
                 "call to renderer _NewFrame() function? e.g. ANCHOR_ImplOpenGL3_NewFrame().");
-  
+
   /**
    * Setup display size (every frame to accommodate for window resizing). */
 
-  ANCHOR_Rect rect;
+  AnchorRect rect;
   getWindowBounds(rect);
-  if(getState() == ANCHOR_WindowStateMinimized)
+  if (getState() == AnchorWindowStateMinimized)
     rect.set(0, 0, 0, 0);
   io.DisplaySize = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
   if (rect.getWidth() > 0 && rect.getHeight() > 0)
@@ -3432,22 +3591,22 @@ eAnchorStatus ANCHOR_WindowWin32::activateDrawingContext()
   return ANCHOR_SUCCESS;
 }
 
-bool ANCHOR_WindowWin32::isDialog() const
+bool AnchorWindowWin32::isDialog() const
 {
   return m_isDialog;
 }
 
-void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
+void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 {
   VkResult err;
 
   VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(), 
-                              m_vulkan_context->Swapchain, 
-                              UINT64_MAX, 
-                              image_acquired_semaphore, 
-                              VK_NULL_HANDLE, 
+  err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
+                              m_vulkan_context->Swapchain,
+                              UINT64_MAX,
+                              image_acquired_semaphore,
+                              VK_NULL_HANDLE,
                               &m_vulkan_context->FrameIndex);
   if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
   {
@@ -3496,7 +3655,7 @@ void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
 
   /**
    * Submit command buffer. */
-  
+
   vkCmdEndRenderPass(fd->CommandBuffer);
   {
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -3517,9 +3676,10 @@ void ANCHOR_WindowWin32::FrameRender(ImDrawData *draw_data)
   }
 }
 
-void ANCHOR_WindowWin32::FramePresent()
+void AnchorWindowWin32::FramePresent()
 {
-  if (g_SwapChainRebuild) {
+  if (g_SwapChainRebuild)
+  {
     return;
   }
   VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
@@ -3542,10 +3702,10 @@ void ANCHOR_WindowWin32::FramePresent()
   m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
+eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
   ANCHOR::Render();
-  ImDrawData *draw_data = ANCHOR::GetDrawData();
+  AnchorDrawData *draw_data = ANCHOR::GetDrawData();
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
   if (!is_minimized)
   {
@@ -3559,10 +3719,10 @@ eAnchorStatus ANCHOR_WindowWin32::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
-                                        AnchorS32 inY,
-                                        AnchorS32 &outX,
-                                        AnchorS32 &outY) const
+void AnchorWindowWin32::screenToClient(AnchorS32 inX,
+                                       AnchorS32 inY,
+                                       AnchorS32 &outX,
+                                       AnchorS32 &outY) const
 {
   POINT point = {inX, inY};
   ::ScreenToClient(m_hWnd, &point);
@@ -3570,10 +3730,10 @@ void ANCHOR_WindowWin32::screenToClient(AnchorS32 inX,
   outY = point.y;
 }
 
-void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
-                                        AnchorS32 inY,
-                                        AnchorS32 &outX,
-                                        AnchorS32 &outY) const
+void AnchorWindowWin32::clientToScreen(AnchorS32 inX,
+                                       AnchorS32 inY,
+                                       AnchorS32 &outX,
+                                       AnchorS32 &outY) const
 {
   POINT point = {inX, inY};
   ::ClientToScreen(m_hWnd, &point);
@@ -3581,39 +3741,44 @@ void ANCHOR_WindowWin32::clientToScreen(AnchorS32 inX,
   outY = point.y;
 }
 
-int ANCHOR_WindowWin32::getMinImageCount()
+int AnchorWindowWin32::getMinImageCount()
 {
   return ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(m_vulkan_context->PresentMode);
 }
 
-eAnchorStatus ANCHOR_WindowWin32::setOrder(eAnchorWindowOrder order)
+eAnchorStatus AnchorWindowWin32::setOrder(eAnchorWindowOrder order)
 {
   HWND hWndInsertAfter, hWndToRaise;
 
-  if (order == ANCHOR_WindowOrderBottom) {
+  if (order == AnchorWindowOrderBottom)
+  {
     hWndInsertAfter = HWND_BOTTOM;
     hWndToRaise = ::GetWindow(m_hWnd, GW_HWNDNEXT); /* the window to raise */
   }
-  else {
-    if (getState() == ANCHOR_WindowStateMinimized) {
-      setState(ANCHOR_WindowStateNormal);
+  else
+  {
+    if (getState() == AnchorWindowStateMinimized)
+    {
+      setState(AnchorWindowStateNormal);
     }
     hWndInsertAfter = HWND_TOP;
     hWndToRaise = NULL;
   }
 
-  if (::SetWindowPos(m_hWnd, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE) {
-    return ANCHOR_ERROR;
+  if (::SetWindowPos(m_hWnd, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE)
+  {
+    return ANCHOR_FAILURE;
   }
 
   if (hWndToRaise &&
-      ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE) {
-    return ANCHOR_ERROR;
+      ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE)
+  {
+    return ANCHOR_FAILURE;
   }
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::lostMouseCapture()
+void AnchorWindowWin32::lostMouseCapture()
 {
   if (m_hasMouseCaptured)
   {
@@ -3623,7 +3788,7 @@ void ANCHOR_WindowWin32::lostMouseCapture()
   }
 }
 
-void ANCHOR_WindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
+void AnchorWindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
 {
   switch (event)
   {
@@ -3654,7 +3819,7 @@ void ANCHOR_WindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
   }
 }
 
-HCURSOR ANCHOR_WindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
+HCURSOR AnchorWindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
 {
   // Convert ANCHOR cursor to Windows OEM cursor
   HANDLE cursor = NULL;
@@ -3784,7 +3949,7 @@ HCURSOR ANCHOR_WindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
   return (HCURSOR)cursor;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::setWindowCursorShape(eAnchorStandardCursor cursorShape)
+eAnchorStatus AnchorWindowWin32::setWindowCursorShape(eAnchorStandardCursor cursorShape)
 {
   if (::GetForegroundWindow() == m_hWnd)
   {
@@ -3794,7 +3959,7 @@ eAnchorStatus ANCHOR_WindowWin32::setWindowCursorShape(eAnchorStandardCursor cur
   return ANCHOR_SUCCESS;
 }
 
-void ANCHOR_WindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) const
+void AnchorWindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) const
 {
   if (!visible)
   {
@@ -3815,26 +3980,28 @@ void ANCHOR_WindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) c
   ::SetCursor(cursor);
 }
 
-eAnchorStatus ANCHOR_WindowWin32::setClientSize(AnchorU32 width, AnchorU32 height)
+eAnchorStatus AnchorWindowWin32::setClientSize(AnchorU32 width, AnchorU32 height)
 {
   eAnchorStatus success;
-  ANCHOR_Rect cBnds, wBnds;
+  AnchorRect cBnds, wBnds;
   getClientBounds(cBnds);
-  if ((cBnds.getWidth() != (AnchorS32)width) || (cBnds.getHeight() != (AnchorS32)height)) {
+  if ((cBnds.getWidth() != (AnchorS32)width) || (cBnds.getHeight() != (AnchorS32)height))
+  {
     getWindowBounds(wBnds);
     int cx = wBnds.getWidth() + width - cBnds.getWidth();
     int cy = wBnds.getHeight() + height - cBnds.getHeight();
     success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ?
-                  ANCHOR_SUCCESS :
-                  ANCHOR_ERROR;
+                ANCHOR_SUCCESS :
+                ANCHOR_FAILURE;
   }
-  else {
+  else
+  {
     success = ANCHOR_SUCCESS;
   }
   return success;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
+eAnchorStatus AnchorWindowWin32::setState(eAnchorWindowState state)
 {
   eAnchorWindowState curstate = getState();
   LONG_PTR style = GetWindowLongPtr(m_hWnd, GWL_STYLE) | WS_CAPTION;
@@ -3842,15 +4009,17 @@ eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
   wp.length = sizeof(WINDOWPLACEMENT);
   ::GetWindowPlacement(m_hWnd, &wp);
 
-  switch (state) {
-    case ANCHOR_WindowStateMinimized:
+  switch (state)
+  {
+    case AnchorWindowStateMinimized:
       wp.showCmd = SW_MINIMIZE;
       break;
-    case ANCHOR_WindowStateMaximized:
+    case AnchorWindowStateMaximized:
       wp.showCmd = SW_SHOWMAXIMIZED;
       break;
-    case ANCHOR_WindowStateFullScreen:
-      if (curstate != state && curstate != ANCHOR_WindowStateMinimized) {
+    case AnchorWindowStateFullScreen:
+      if (curstate != state && curstate != AnchorWindowStateMinimized)
+      {
         m_normal_state = curstate;
       }
       wp.showCmd = SW_SHOWMAXIMIZED;
@@ -3858,14 +4027,16 @@ eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
       wp.ptMaxPosition.y = 0;
       style &= ~(WS_CAPTION | WS_MAXIMIZE);
       break;
-    case ANCHOR_WindowStateNormal:
+    case AnchorWindowStateNormal:
     default:
-      if (curstate == ANCHOR_WindowStateFullScreen &&
-          m_normal_state == ANCHOR_WindowStateMaximized) {
+      if (curstate == AnchorWindowStateFullScreen &&
+          m_normal_state == AnchorWindowStateMaximized)
+      {
         wp.showCmd = SW_SHOWMAXIMIZED;
-        m_normal_state = ANCHOR_WindowStateNormal;
+        m_normal_state = AnchorWindowStateNormal;
       }
-      else {
+      else
+      {
         wp.showCmd = SW_SHOWNORMAL;
       }
       break;
@@ -3873,44 +4044,48 @@ eAnchorStatus ANCHOR_WindowWin32::setState(eAnchorWindowState state)
   ::SetWindowLongPtr(m_hWnd, GWL_STYLE, style);
   /* SetWindowLongPtr Docs: frame changes not visible until SetWindowPos with SWP_FRAMECHANGED. */
   ::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-  return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+  return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
 }
 
-eAnchorWindowState ANCHOR_WindowWin32::getState() const
+eAnchorWindowState AnchorWindowWin32::getState() const
 {
-  if (::IsIconic(m_hWnd)) {
-    return ANCHOR_WindowStateMinimized;
+  if (::IsIconic(m_hWnd))
+  {
+    return AnchorWindowStateMinimized;
   }
-  else if (::IsZoomed(m_hWnd)) {
+  else if (::IsZoomed(m_hWnd))
+  {
     LONG_PTR result = ::GetWindowLongPtr(m_hWnd, GWL_STYLE);
-    return (result & WS_CAPTION) ? ANCHOR_WindowStateMaximized : ANCHOR_WindowStateFullScreen;
+    return (result & WS_CAPTION) ? AnchorWindowStateMaximized : AnchorWindowStateFullScreen;
   }
-  return ANCHOR_WindowStateNormal;
+  return AnchorWindowStateNormal;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::setProgressBar(float progress)
+eAnchorStatus AnchorWindowWin32::setProgressBar(float progress)
 {
   /* #SetProgressValue sets state to #TBPF_NORMAL automatically. */
   if (m_Bar && S_OK == m_Bar->SetProgressValue(m_hWnd, 10000 * progress, 10000))
     return ANCHOR_SUCCESS;
 
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-eAnchorStatus ANCHOR_WindowWin32::endProgressBar()
+eAnchorStatus AnchorWindowWin32::endProgressBar()
 {
   if (m_Bar && S_OK == m_Bar->SetProgressState(m_hWnd, TBPF_NOPROGRESS))
     return ANCHOR_SUCCESS;
 
-  return ANCHOR_ERROR;
+  return ANCHOR_FAILURE;
 }
 
-AnchorU16 ANCHOR_WindowWin32::getDPIHint()
+AnchorU16 AnchorWindowWin32::getDPIHint()
 {
-  if (m_user32) {
+  if (m_user32)
+  {
     ANCHOR_WIN32_GetDpiForWindow fpGetDpiForWindow = (ANCHOR_WIN32_GetDpiForWindow)::GetProcAddress(m_user32, "GetDpiForWindow");
 
-    if (fpGetDpiForWindow) {
+    if (fpGetDpiForWindow)
+    {
       return fpGetDpiForWindow(this->m_hWnd);
     }
   }

@@ -18,20 +18,20 @@
 
 /**
  * @file
- * Anchor.
+ * ⚓︎ Anchor.
  * Bare Metal.
  */
 
 #include "ANCHOR_window.h"
-#include "ANCHOR_Rect.h"
+#include "ANCHOR_rect.h"
 
 #include <assert.h>
 
-ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
-                                         AnchorU32 height,
-                                         eAnchorWindowState state,
-                                         const bool wantStereoVisual,
-                                         const bool /*exclusive*/)
+AnchorSystemWindow::AnchorSystemWindow(AnchorU32 width,
+                                       AnchorU32 height,
+                                       eAnchorWindowState state,
+                                       const bool wantStereoVisual,
+                                       const bool /*exclusive*/)
   : m_drawingContextType(ANCHOR_DrawingContextTypeNone),
     m_cursorVisible(true),
     m_cursorGrab(ANCHOR_GrabDisable),
@@ -48,7 +48,7 @@ ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
 
   m_nativePixelSize = 1.0f;
 
-  m_fullScreen = state == ANCHOR_WindowStateFullScreen;
+  m_fullScreen = state == AnchorWindowStateFullScreen;
   if (m_fullScreen)
   {
     m_fullScreenWidth = width;
@@ -56,17 +56,17 @@ ANCHOR_SystemWindow::ANCHOR_SystemWindow(AnchorU32 width,
   }
 }
 
-ANCHOR_SystemWindow::~ANCHOR_SystemWindow()
+AnchorSystemWindow::~AnchorSystemWindow()
 {
   ANCHOR::SetCurrentContext(NULL);
 }
 
-void *ANCHOR_SystemWindow::getOSWindow() const
+void *AnchorSystemWindow::getOSWindow() const
 {
   return NULL;
 }
 
-eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
+eAnchorStatus AnchorSystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
 {
   if (type != m_drawingContextType)
   {
@@ -85,7 +85,7 @@ eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextTy
       m_drawingContextType = ANCHOR_DrawingContextTypeNone;
     }
 
-    return (type == m_drawingContextType) ? ANCHOR_SUCCESS : ANCHOR_ERROR;
+    return (type == m_drawingContextType) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
   }
   else
   {
@@ -93,30 +93,30 @@ eAnchorStatus ANCHOR_SystemWindow::setDrawingContextType(eAnchorDrawingContextTy
   }
 }
 
-eAnchorStatus ANCHOR_SystemWindow::swapBuffers()
+eAnchorStatus AnchorSystemWindow::swapBuffers()
 {
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_SystemWindow::activateDrawingContext()
+eAnchorStatus AnchorSystemWindow::activateDrawingContext()
 {
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_SystemWindow::setModifiedState(bool isUnsavedChanges)
+eAnchorStatus AnchorSystemWindow::setModifiedState(bool isUnsavedChanges)
 {
   m_isUnsavedChanges = isUnsavedChanges;
 
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus ANCHOR_SystemWindow::getCursorGrabBounds(ANCHOR_Rect &bounds)
+eAnchorStatus AnchorSystemWindow::getCursorGrabBounds(AnchorRect &bounds)
 {
   bounds = m_cursorGrabBounds;
-  return (bounds.m_l == -1 && bounds.m_r == -1) ? ANCHOR_ERROR : ANCHOR_SUCCESS;
+  return (bounds.m_l == -1 && bounds.m_r == -1) ? ANCHOR_FAILURE : ANCHOR_SUCCESS;
 }
 
-bool ANCHOR_SystemWindow::getModifiedState()
+bool AnchorSystemWindow::getModifiedState()
 {
   return m_isUnsavedChanges;
 }
