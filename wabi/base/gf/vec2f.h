@@ -258,6 +258,18 @@ class GfVec2f
     return *this * (1.0 / s);
   }
 
+  GfVec2f operator/=(GfVec2f const &v)
+  {
+      _data[0] /= v[0];
+      _data[1] /= v[1];
+      return *this;
+  }
+
+  GfVec2f operator/(GfVec2f const &v)
+  {
+    return GfVec2f(_data[0] / v[0], _data[1] / v[1]);
+  }
+
   /// See GfDot().
   float operator*(GfVec2f const &v) const
   {

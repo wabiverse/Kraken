@@ -491,15 +491,19 @@ void wrapVec2f()
     .def(self != self)
     .def(self += self)
     .def(self -= self)
+    .def(self /= self)
+
     .def(self *= double())
     .def(self * double())
     .def(double() * self)
     .def(self /= float())
     .def(self / float())
+
     .def(-self)
     .def(self + self)
     .def(self - self)
     .def(self * self)
+    .def(self / self)
     .def(str(self))
 
 #if PY_MAJOR_VERSION == 2
