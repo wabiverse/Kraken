@@ -6790,11 +6790,6 @@ static void ShowDemoWindowMisc()
   }
 }
 
-//-----------------------------------------------------------------------------
-// [SECTION] About Window / ShowAboutWindow()
-// Access from ANCHOR Demo -> Tools -> About
-//-----------------------------------------------------------------------------
-
 void ANCHOR::ShowAboutWindow(bool *p_open)
 {
   if (!ANCHOR::Begin("About ANCHOR", p_open, AnchorWindowFlags_AlwaysAutoResize))
@@ -9174,12 +9169,3 @@ void ShowExampleAppDocuments(bool *p_open)
 
   ANCHOR::End();
 }
-
-void ANCHOR::ShowAboutWindow(bool *)
-{}
-void ANCHOR::ShowDemoWindow(bool *)
-{}
-void ANCHOR::ShowUserGuide()
-{}
-void ANCHOR::ShowStyleEditor(AnchorStyle *)
-{}

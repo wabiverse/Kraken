@@ -24,6 +24,8 @@
  * Bare Metal.
  */
 
+#include "ANCHOR_version.h"
+
 #include <float.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -40,13 +42,6 @@
 
 #include <wabi/usdImaging/usdApollo/engine.h>
 
-#define ANCHOR_HAS_TABLE
-
-// Define attributes of all API symbols declarations (e.g. for DLL under Windows)
-// ANCHOR_API is used for core ANCHOR functions, ANCHOR_BACKEND_API is used for the default backends
-// files (ANCHOR_impl_xxx.h) Using ANCHOR via a shared library is not recommended, because we don't
-// guarantee backward nor forward ABI compatibility (also function call overhead, as ANCHOR is a
-// call-heavy API)
 #ifndef ANCHOR_API
 #  define ANCHOR_API
 #endif
@@ -98,8 +93,7 @@
 // Warnings
 #ifdef _MSC_VER
 #  pragma warning(push)
-#  pragma warning(disable : 26495)  // [Static Analyzer] Variable 'XXX' is uninitialized. Always \
-                                      // initialize a member variable (type.6).
+#  pragma warning(disable : 26495)
 #endif
 #if defined(__clang__)
 #  pragma clang diagnostic push
@@ -109,12 +103,8 @@
 #  endif
 #elif defined(__GNUC__)
 #  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored \
-    "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
-#  pragma GCC diagnostic ignored \
-    "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
-                           // of type 'xxxx' with no trivial copy-assignment; use assignment or \
-                           // value-initialization instead
+#  pragma GCC diagnostic ignored "-Wpragmas"
+#  pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
 
 /**
@@ -695,8 +685,7 @@ typedef unsigned short AnchorWChar16;  // A single decoded U16 character/code po
                                        // as multi bytes UTF-8 when used in strings.
 typedef unsigned int AnchorWChar32;    // A single decoded U32 character/code point. We encode them
                                        // as multi bytes UTF-8 when used in strings.
-#ifdef ANCHOR_USE_WCHAR32              // AnchorWChar [configurable type: override in ANCHOR_config.h with \
-                                       // '#define ANCHOR_USE_WCHAR32' to support Unicode planes 1-16]
+#ifdef ANCHOR_USE_WCHAR32              // AnchorWChar [configurable type: override in ANCHOR_config.h with
 typedef AnchorWChar32 AnchorWChar;
 #else
 typedef AnchorWChar16 AnchorWChar;

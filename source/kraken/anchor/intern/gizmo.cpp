@@ -26,8 +26,8 @@
 #ifndef ANCHOR_DEFINE_MATH_OPERATORS
 #define ANCHOR_DEFINE_MATH_OPERATORS
 #endif
-#include "imgui_internal.h"
-#include "Anchorzmo.h"
+#include "ANCHOR_internal.h"
+#include "ANCHOR_gizmo.h"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include <malloc.h>
@@ -37,10 +37,9 @@
 #define _freea(x)
 #endif
 
-// includes patches for multiview from
-// https://github.com/CedricGuillemet/Anchorzmo/issues/15
+WABI_NAMESPACE_USING
 
-namespace Anchorzmo
+namespace AnchorGizmo
 {
    static const float ZPI = 3.14159265358979323846f;
    static const float RAD2DEG = (180.f / ZPI);
@@ -185,8 +184,8 @@ namespace Anchorzmo
    }
 
    template <typename T> T Clamp(T x, T y, T z) { return ((x < y) ? y : ((x > z) ? z : x)); }
-   template <typename T> T max(T x, T y) { return (x > y) ? x : y; }
-   template <typename T> T min(T x, T y) { return (x < y) ? x : y; }
+   template <typename T> T ComputeMax(T x, T y) { return (x > y) ? x : y; }
+   template <typename T> T ComputeMin(T x, T y) { return (x < y) ? x : y; }
    template <typename T> bool IsWithin(T x, T y, T z) { return (x >= y) && (x <= z); }
 
    struct matrix_t;
@@ -269,7 +268,7 @@ namespace Anchorzmo
    };
 
    vec_t makeVect(float _x, float _y, float _z = 0.f, float _w = 0.f) { vec_t res; res.x = _x; res.y = _y; res.z = _z; res.w = _w; return res; }
-   vec_t makeVect(GfVec2f v) { vec_t res; res.x = v.x; res.y = v.y; res.z = 0.f; res.w = 0.f; return res; }
+   vec_t makeVect(GfVec2f v) { vec_t res; res.x = v[0]; res.y = v[1]; res.z = 0.f; res.w = 0.f; return res; }
    vec_t vec_t::operator * (float f) const { return makeVect(x * f, y * f, z * f, w * f); }
    vec_t vec_t::operator - () const { return makeVect(-x, -y, -z, -w); }
    vec_t vec_t::operator - (const vec_t& v) const { return makeVect(x - v.x, y - v.y, z - v.z, w - v.w); }
@@ -734,13 +733,13 @@ namespace Anchorzmo
    static Context gContext;
 
    static const vec_t directionUnary[3] = { makeVect(1.f, 0.f, 0.f), makeVect(0.f, 1.f, 0.f), makeVect(0.f, 0.f, 1.f) };
-   static const AnchorU32 directionColor[3] = { IM_COL32(0xAA, 0, 0, 0xFF), IM_COL32(0, 0xAA, 0, 0xFF), IM_COL32(0, 0, 0xAA, 0XFF) };
+   static const AnchorU32 directionColor[3] = { ANCHOR_COL32(0xAA, 0, 0, 0xFF), ANCHOR_COL32(0, 0xAA, 0, 0xFF), ANCHOR_COL32(0, 0, 0xAA, 0XFF) };
 
    // Alpha: 100%: FF, 87%: DE, 70%: B3, 54%: 8A, 50%: 80, 38%: 61, 12%: 1F
-   static const AnchorU32 planeColor[3] = { IM_COL32(0xAA, 0, 0, 0x61), IM_COL32(0, 0xAA, 0, 0x61), IM_COL32(0, 0, 0xAA, 0x61) };
-   static const AnchorU32 selectionColor = IM_COL32(0xFF, 0x80, 0x10, 0x8A);
-   static const AnchorU32 inactiveColor = IM_COL32(0x99, 0x99, 0x99, 0x99);
-   static const AnchorU32 translationLineColor = IM_COL32(0xAA, 0xAA, 0xAA, 0xAA);
+   static const AnchorU32 planeColor[3] = { ANCHOR_COL32(0xAA, 0, 0, 0x61), ANCHOR_COL32(0, 0xAA, 0, 0x61), ANCHOR_COL32(0, 0, 0xAA, 0x61) };
+   static const AnchorU32 selectionColor = ANCHOR_COL32(0xFF, 0x80, 0x10, 0x8A);
+   static const AnchorU32 inactiveColor = ANCHOR_COL32(0x99, 0x99, 0x99, 0x99);
+   static const AnchorU32 translationLineColor = ANCHOR_COL32(0xAA, 0xAA, 0xAA, 0xAA);
    static const char* translationInfoMask[] = { "X : %5.3f", "Y : %5.3f", "Z : %5.3f",
       "Y : %5.3f Z : %5.3f", "X : %5.3f Z : %5.3f", "X : %5.3f Y : %5.3f",
       "X : %5.3f Y : %5.3f Z : %5.3f" };
@@ -766,22 +765,22 @@ namespace Anchorzmo
       trans *= 0.5f / trans.w;
       trans += makeVect(0.5f, 0.5f);
       trans.y = 1.f - trans.y;
-      trans.x *= size.x;
-      trans.y *= size.y;
-      trans.x += position.x;
-      trans.y += position.y;
+      trans.x *= size[0];
+      trans.y *= size[1];
+      trans.x += position[0];
+      trans.y += position[1];
       return GfVec2f(trans.x, trans.y);
    }
 
    static void ComputeCameraRay(vec_t& rayOrigin, vec_t& rayDir, GfVec2f position = GfVec2f(gContext.mX, gContext.mY), GfVec2f size = GfVec2f(gContext.mWidth, gContext.mHeight))
    {
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
 
       matrix_t mViewProjInverse;
       mViewProjInverse.Inverse(gContext.mViewMat * gContext.mProjectionMat);
 
-      const float mox = ((io.MousePos.x - position.x) / size.x) * 2.f - 1.f;
-      const float moy = (1.f - ((io.MousePos.y - position.y) / size.y)) * 2.f - 1.f;
+      const float mox = ((io.MousePos[0] - position[0]) / size[0]) * 2.f - 1.f;
+      const float moy = (1.f - ((io.MousePos[1] - position[1]) / size[1])) * 2.f - 1.f;
 
       const float zNear = gContext.mReversed ? (1.f - FLT_EPSILON) : 0.f;
       const float zFar = gContext.mReversed ? 0.f : (1.f - FLT_EPSILON);
@@ -880,7 +879,7 @@ namespace Anchorzmo
 
    static bool IsInContextRect(GfVec2f p)
    {
-      return IsWithin(p.x, gContext.mX, gContext.mXMax) && IsWithin(p.y, gContext.mY, gContext.mYMax);
+      return IsWithin(p[0], gContext.mX, gContext.mXMax) && IsWithin(p[1], gContext.mY, gContext.mYMax);
    }
 
    void SetRect(float x, float y, float width, float height)
@@ -901,12 +900,12 @@ namespace Anchorzmo
 
    void SetDrawlist(AnchorDrawList* drawlist)
    {
-      gContext.mDrawList = drawlist ? drawlist : Anchor::GetWindowDrawList();
+      gContext.mDrawList = drawlist ? drawlist : ANCHOR::GetWindowDrawList();
    }
 
-   void SetAnchorGuiContext(AnchorGuiContext* ctx)
+   void SetAnchorContext(AnchorContext* ctx)
    {
-      Anchor::SetCurrentContext(ctx);
+      ANCHOR::SetCurrentContext(ctx);
    }
 
    void BeginFrame()
@@ -914,23 +913,23 @@ namespace Anchorzmo
       const AnchorU32 flags = AnchorWindowFlags_NoTitleBar | AnchorWindowFlags_NoResize | AnchorWindowFlags_NoScrollbar | AnchorWindowFlags_NoInputs | AnchorWindowFlags_NoSavedSettings | AnchorWindowFlags_NoFocusOnAppearing | AnchorWindowFlags_NoBringToFrontOnFocus;
 
 #ifdef ANCHOR_HAS_VIEWPORT
-      Anchor::SetNextWindowSize(Anchor::GetMainViewport()->Size);
-      Anchor::SetNextWindowPos(Anchor::GetMainViewport()->Pos);
+      ANCHOR::SetNextWindowSize(ANCHOR::GetMainViewport()->Size);
+      ANCHOR::SetNextWindowPos(ANCHOR::GetMainViewport()->Pos);
 #else
-      AnchorIO& io = Anchor::GetIO();
-      Anchor::SetNextWindowSize(io.DisplaySize);
-      Anchor::SetNextWindowPos(GfVec2f(0, 0));
+      AnchorIO& io = ANCHOR::GetIO();
+      ANCHOR::SetNextWindowSize(io.DisplaySize);
+      ANCHOR::SetNextWindowPos(GfVec2f(0, 0));
 #endif
 
-      Anchor::PushStyleColor(AnchorCol_WindowBg, 0);
-      Anchor::PushStyleColor(AnchorCol_Border, 0);
-      Anchor::PushStyleVar(AnchorStyleVar_WindowRounding, 0.0f);
+      ANCHOR::PushStyleColor(AnchorCol_WindowBg, 0);
+      ANCHOR::PushStyleColor(AnchorCol_Border, 0);
+      ANCHOR::PushStyleVar(AnchorStyleVar_WindowRounding, 0.0f);
 
-      Anchor::Begin("gizmo", NULL, flags);
-      gContext.mDrawList = Anchor::GetWindowDrawList();
-      Anchor::End();
-      Anchor::PopStyleVar();
-      Anchor::PopStyleColor(2);
+      ANCHOR::Begin("gizmo", NULL, flags);
+      gContext.mDrawList = ANCHOR::GetWindowDrawList();
+      ANCHOR::End();
+      ANCHOR::PopStyleVar();
+      ANCHOR::PopStyleColor(2);
    }
 
    bool IsUsing()
@@ -1025,8 +1024,8 @@ namespace Anchorzmo
 
       GfVec2f centerSSpace = worldToPos(makeVect(0.f, 0.f), gContext.mMVP);
       gContext.mScreenSquareCenter = centerSSpace;
-      gContext.mScreenSquareMin = GfVec2f(centerSSpace.x - 10.f, centerSSpace.y - 10.f);
-      gContext.mScreenSquareMax = GfVec2f(centerSSpace.x + 10.f, centerSSpace.y + 10.f);
+      gContext.mScreenSquareMin = GfVec2f(centerSSpace[0] - 10.f, centerSSpace[1] - 10.f);
+      gContext.mScreenSquareMax = GfVec2f(centerSSpace[0] + 10.f, centerSSpace[1] + 10.f);
 
       ComputeCameraRay(gContext.mRayOrigin, gContext.mRayVector);
    }
@@ -1038,7 +1037,7 @@ namespace Anchorzmo
          switch (operation)
          {
          case TRANSLATE:
-            colors[0] = (type == MT_MOVE_SCREEN) ? selectionColor : IM_COL32_WHITE;
+            colors[0] = (type == MT_MOVE_SCREEN) ? selectionColor : ANCHOR_COL32_WHITE;
             for (int i = 0; i < 3; i++)
             {
                colors[i + 1] = (type == (int)(MT_MOVE_X + i)) ? selectionColor : directionColor[i];
@@ -1047,14 +1046,14 @@ namespace Anchorzmo
             }
             break;
          case ROTATE:
-            colors[0] = (type == MT_ROTATE_SCREEN) ? selectionColor : IM_COL32_WHITE;
+            colors[0] = (type == MT_ROTATE_SCREEN) ? selectionColor : ANCHOR_COL32_WHITE;
             for (int i = 0; i < 3; i++)
             {
                colors[i + 1] = (type == (int)(MT_ROTATE_X + i)) ? selectionColor : directionColor[i];
             }
             break;
          case SCALE:
-            colors[0] = (type == MT_SCALE_XYZ) ? selectionColor : IM_COL32_WHITE;
+            colors[0] = (type == MT_SCALE_XYZ) ? selectionColor : ANCHOR_COL32_WHITE;
             for (int i = 0; i < 3; i++)
             {
                colors[i + 1] = (type == (int)(MT_SCALE_X + i)) ? selectionColor : directionColor[i];
@@ -1243,14 +1242,14 @@ namespace Anchorzmo
             pos *= gContext.mScreenFactor;
             circlePos[i] = worldToPos(pos + gContext.mModel.v.position, gContext.mViewProjection);
          }
-         drawList->AddConvexPolyFilled(circlePos, halfCircleSegmentCount, IM_COL32(0xFF, 0x80, 0x10, 0x80));
-         drawList->AddPolyline(circlePos, halfCircleSegmentCount, IM_COL32(0xFF, 0x80, 0x10, 0xFF), true, 2);
+         drawList->AddConvexPolyFilled(circlePos, halfCircleSegmentCount, ANCHOR_COL32(0xFF, 0x80, 0x10, 0x80));
+         drawList->AddPolyline(circlePos, halfCircleSegmentCount, ANCHOR_COL32(0xFF, 0x80, 0x10, 0xFF), true, 2);
 
          GfVec2f destinationPosOnScreen = circlePos[1];
          char tmps[512];
          AnchorFormatString(tmps, sizeof(tmps), rotationInfoMask[type - MT_ROTATE_X], (gContext.mRotationAngle / ZPI) * 180.f, gContext.mRotationAngle);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), IM_COL32_BLACK, tmps);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), IM_COL32_WHITE, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15), ANCHOR_COL32_BLACK, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14), ANCHOR_COL32_WHITE, tmps);
       }
    }
 
@@ -1260,7 +1259,7 @@ namespace Anchorzmo
       {
          GfVec2f baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor, gContext.mMVP);
          GfVec2f worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) * gContext.mScreenFactor, gContext.mMVP);
-         gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, IM_COL32(0, 0, 0, 0x80), 6.f);
+         gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, ANCHOR_COL32(0, 0, 0, 0x80), 6.f);
       }
    }
 
@@ -1306,8 +1305,8 @@ namespace Anchorzmo
 
             if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID))
             {
-               drawList->AddLine(baseSSpace, worldDirSSpaceNoScale, IM_COL32(0x40, 0x40, 0x40, 0xFF), 3.f);
-               drawList->AddCircleFilled(worldDirSSpaceNoScale, 6.f, IM_COL32(0x40, 0x40, 0x40, 0xFF));
+               drawList->AddLine(baseSSpace, worldDirSSpaceNoScale, ANCHOR_COL32(0x40, 0x40, 0x40, 0xFF), 3.f);
+               drawList->AddCircleFilled(worldDirSSpaceNoScale, 6.f, ANCHOR_COL32(0x40, 0x40, 0x40, 0xFF));
             }
 
             if(!hasTranslateOnAxis || gContext.mbUsing)
@@ -1341,8 +1340,8 @@ namespace Anchorzmo
          //vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
          int componentInfoIndex = (type - MT_SCALE_X) * 3;
          AnchorFormatString(tmps, sizeof(tmps), scaleInfoMask[type - MT_SCALE_X], scaleDisplay[translationInfoIndex[componentInfoIndex]]);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), IM_COL32_BLACK, tmps);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), IM_COL32_WHITE, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15), ANCHOR_COL32_BLACK, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14), ANCHOR_COL32_WHITE, tmps);
       }
    }
 
@@ -1389,7 +1388,7 @@ namespace Anchorzmo
             dir /= d; // Normalize
             dir *= 6.0f;
 
-            GfVec2f ortogonalDir(dir.y, -dir.x); // Perpendicular vector
+            GfVec2f ortogonalDir(dir[1], -dir[0]); // Perpendicular vector
             GfVec2f a(worldDirSSpace + dir);
             drawList->AddTriangleFilled(worldDirSSpace - dir, a + ortogonalDir, a - ortogonalDir, colors[i + 1]);
             // Arrow head end
@@ -1420,25 +1419,25 @@ namespace Anchorzmo
       {
          GfVec2f sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
          GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
-         vec_t dif = { destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y - sourcePosOnScreen.y, 0.f, 0.f };
+         vec_t dif = { destinationPosOnScreen[0] - sourcePosOnScreen[0], destinationPosOnScreen[1] - sourcePosOnScreen[1], 0.f, 0.f };
          dif.Normalize();
          dif *= 5.f;
          drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
          drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
-         drawList->AddLine(GfVec2f(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y), GfVec2f(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y), translationLineColor, 2.f);
+         drawList->AddLine(GfVec2f(sourcePosOnScreen[0] + dif[0], sourcePosOnScreen[1] + dif[1]), GfVec2f(destinationPosOnScreen[0] - dif[0], destinationPosOnScreen[1] - dif[1]), translationLineColor, 2.f);
 
          char tmps[512];
          vec_t deltaInfo = gContext.mModel.v.position - gContext.mMatrixOrigin;
          int componentInfoIndex = (type - MT_MOVE_X) * 3;
          AnchorFormatString(tmps, sizeof(tmps), translationInfoMask[type - MT_MOVE_X], deltaInfo[translationInfoIndex[componentInfoIndex]], deltaInfo[translationInfoIndex[componentInfoIndex + 1]], deltaInfo[translationInfoIndex[componentInfoIndex + 2]]);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), IM_COL32_BLACK, tmps);
-         drawList->AddText(GfVec2f(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), IM_COL32_WHITE, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15), ANCHOR_COL32_BLACK, tmps);
+         drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14), ANCHOR_COL32_WHITE, tmps);
       }
    }
 
    static bool CanActivate()
    {
-      if (Anchor::IsMouseClicked(0) && !Anchor::IsAnyItemHovered() && !Anchor::IsAnyItemActive())
+      if (ANCHOR::IsMouseClicked(0) && !ANCHOR::IsAnyItemHovered() && !ANCHOR::IsAnyItemActive())
       {
          return true;
       }
@@ -1447,7 +1446,7 @@ namespace Anchorzmo
 
    static void HandleAndDrawLocalBounds(const float* bounds, matrix_t* matrix, const float* snapValues, OPERATION operation)
    {
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       AnchorDrawList* drawList = gContext.mDrawList;
 
       // compute best projection axis
@@ -1529,7 +1528,7 @@ namespace Anchorzmo
          }
 
          // draw bounds
-         unsigned int anchorAlpha = gContext.mbEnable ? IM_COL32_BLACK : IM_COL32(0, 0, 0, 0x80);
+         unsigned int anchorAlpha = gContext.mbEnable ? ANCHOR_COL32_BLACK : ANCHOR_COL32(0, 0, 0, 0x80);
 
          matrix_t boundsMVP = gContext.mModelSource * gContext.mViewProjection;
          for (int i = 0; i < 4; i++)
@@ -1542,7 +1541,7 @@ namespace Anchorzmo
             }
             float boundDistance = sqrtf(AnchorLengthSqr(worldBound1 - worldBound2));
             int stepCount = (int)(boundDistance / 10.f);
-            stepCount = min(stepCount, 1000);
+            stepCount = ComputeMin(stepCount, 1000);
             float stepLength = 1.f / (float)stepCount;
             for (int j = 0; j < stepCount; j++)
             {
@@ -1550,8 +1549,8 @@ namespace Anchorzmo
                float t2 = (float)j * stepLength + stepLength * 0.5f;
                GfVec2f worldBoundSS1 = AnchorLerp(worldBound1, worldBound2, GfVec2f(t1, t1));
                GfVec2f worldBoundSS2 = AnchorLerp(worldBound1, worldBound2, GfVec2f(t2, t2));
-               //drawList->AddLine(worldBoundSS1, worldBoundSS2, IM_COL32(0, 0, 0, 0) + anchorAlpha, 3.f);
-               drawList->AddLine(worldBoundSS1, worldBoundSS2, IM_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha, 2.f);
+               //drawList->AddLine(worldBoundSS1, worldBoundSS2, ANCHOR_COL32(0, 0, 0, 0) + anchorAlpha, 3.f);
+               drawList->AddLine(worldBoundSS1, worldBoundSS2, ANCHOR_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha, 2.f);
             }
             vec_t midPoint = (aabb[i] + aabb[(i + 1) % 4]) * 0.5f;
             GfVec2f midBound = worldToPos(midPoint, boundsMVP);
@@ -1582,13 +1581,13 @@ namespace Anchorzmo
                overSmallAnchor = false;
             }
 
-            unsigned int bigAnchorColor = overBigAnchor ? selectionColor : (IM_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha);
-            unsigned int smallAnchorColor = overSmallAnchor ? selectionColor : (IM_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha);
+            unsigned int bigAnchorColor = overBigAnchor ? selectionColor : (ANCHOR_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha);
+            unsigned int smallAnchorColor = overSmallAnchor ? selectionColor : (ANCHOR_COL32(0xAA, 0xAA, 0xAA, 0) + anchorAlpha);
 
-            drawList->AddCircleFilled(worldBound1, AnchorBigRadius, IM_COL32_BLACK);
+            drawList->AddCircleFilled(worldBound1, AnchorBigRadius, ANCHOR_COL32_BLACK);
             drawList->AddCircleFilled(worldBound1, AnchorBigRadius - 1.2f, bigAnchorColor);
 
-            drawList->AddCircleFilled(midBound, AnchorSmallRadius, IM_COL32_BLACK);
+            drawList->AddCircleFilled(midBound, AnchorSmallRadius, ANCHOR_COL32_BLACK);
             drawList->AddCircleFilled(midBound, AnchorSmallRadius - 1.2f, smallAnchorColor);
             int oppositeIndex = (i + 2) % 4;
             // big anchor on corners
@@ -1689,8 +1688,8 @@ namespace Anchorzmo
                , (bounds[4] - bounds[1]) * gContext.mBoundsMatrix.component[1].Length() * scale.component[1].Length()
                , (bounds[5] - bounds[2]) * gContext.mBoundsMatrix.component[2].Length() * scale.component[2].Length()
             );
-            drawList->AddText(GfVec2f(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), IM_COL32_BLACK, tmps);
-            drawList->AddText(GfVec2f(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), IM_COL32_WHITE, tmps);
+            drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15), ANCHOR_COL32_BLACK, tmps);
+            drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14), ANCHOR_COL32_WHITE, tmps);
          }
 
          if (!io.MouseDown[0]) {
@@ -1709,12 +1708,12 @@ namespace Anchorzmo
 
    static int GetScaleType(OPERATION op)
    {
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       int type = MT_NONE;
 
       // screen
-      if (io.MousePos.x >= gContext.mScreenSquareMin.x && io.MousePos.x <= gContext.mScreenSquareMax.x &&
-         io.MousePos.y >= gContext.mScreenSquareMin.y && io.MousePos.y <= gContext.mScreenSquareMax.y &&
+      if (io.MousePos[0] >= gContext.mScreenSquareMin[0] && io.MousePos[0] <= gContext.mScreenSquareMax[0] &&
+         io.MousePos[1] >= gContext.mScreenSquareMin[1] && io.MousePos[1] <= gContext.mScreenSquareMax[1] &&
          Contains(op, SCALE))
       {
          type = MT_SCALE_XYZ;
@@ -1755,10 +1754,10 @@ namespace Anchorzmo
 
    static int GetRotateType(OPERATION op)
    {
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       int type = MT_NONE;
 
-      vec_t deltaScreen = { io.MousePos.x - gContext.mScreenSquareCenter.x, io.MousePos.y - gContext.mScreenSquareCenter.y, 0.f, 0.f };
+      vec_t deltaScreen = { io.MousePos[0] - gContext.mScreenSquareCenter[0], io.MousePos[1] - gContext.mScreenSquareCenter[1], 0.f, 0.f };
       float dist = deltaScreen.Length();
       if (Intersects(op, ROTATE_SCREEN) && dist >= (gContext.mRadiusSquareCenter - 1.0f) && dist < (gContext.mRadiusSquareCenter + 1.0f))
       {
@@ -1794,7 +1793,7 @@ namespace Anchorzmo
          idealPosOnCircle.TransformVector(gContext.mModelInverse);
          const GfVec2f idealPosOnCircleScreen = worldToPos(idealPosOnCircle * gContext.mScreenFactor, gContext.mMVP);
 
-         //gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, IM_COL32_WHITE);
+         //gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, ANCHOR_COL32_WHITE);
          const GfVec2f distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
 
          const float distance = makeVect(distanceOnScreen).Length();
@@ -1813,12 +1812,12 @@ namespace Anchorzmo
       {
         return MT_NONE;
       }
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       int type = MT_NONE;
 
       // screen
-      if (io.MousePos.x >= gContext.mScreenSquareMin.x && io.MousePos.x <= gContext.mScreenSquareMax.x &&
-         io.MousePos.y >= gContext.mScreenSquareMin.y && io.MousePos.y <= gContext.mScreenSquareMax.y &&
+      if (io.MousePos[0] >= gContext.mScreenSquareMin[0] && io.MousePos[0] <= gContext.mScreenSquareMax[0] &&
+         io.MousePos[1] >= gContext.mScreenSquareMin[1] && io.MousePos[1] <= gContext.mScreenSquareMax[1] &&
          Contains(op, TRANSLATE))
       {
          type = MT_MOVE_SCREEN;
@@ -1869,14 +1868,14 @@ namespace Anchorzmo
       {
         return false;
       }
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       bool applyRotationLocaly = gContext.mMode == LOCAL || type == MT_MOVE_SCREEN;
       bool modified = false;
 
       // move
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) && IsTranslateType(gContext.mCurrentOperation))
       {
-         Anchor::CaptureMouseFromApp();
+         ANCHOR::CaptureMouseFromApp();
          const float len = fabsf(IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan)); // near plan
          vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
 
@@ -1946,7 +1945,7 @@ namespace Anchorzmo
          type = GetMoveType(op, &gizmoHitProportion);
          if (type != MT_NONE)
          {
-            Anchor::CaptureMouseFromApp();
+            ANCHOR::CaptureMouseFromApp();
          }
          if (CanActivate() && type != MT_NONE)
          {
@@ -1982,7 +1981,7 @@ namespace Anchorzmo
       {
          return false;
       }
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       bool modified = false;
 
       if (!gContext.mbUsing)
@@ -1991,7 +1990,7 @@ namespace Anchorzmo
          type = GetScaleType(op);
          if (type != MT_NONE)
          {
-            Anchor::CaptureMouseFromApp();
+            ANCHOR::CaptureMouseFromApp();
          }
          if (CanActivate() && type != MT_NONE)
          {
@@ -2008,13 +2007,13 @@ namespace Anchorzmo
             gContext.mScale.Set(1.f, 1.f, 1.f);
             gContext.mRelativeOrigin = (gContext.mTranslationPlanOrigin - gContext.mModel.v.position) * (1.f / gContext.mScreenFactor);
             gContext.mScaleValueOrigin = makeVect(gContext.mModelSource.v.right.Length(), gContext.mModelSource.v.up.Length(), gContext.mModelSource.v.dir.Length());
-            gContext.mSaveMousePosx = io.MousePos.x;
+            gContext.mSaveMousePosx = io.MousePos[0];
          }
       }
       // scale
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) && IsScaleType(gContext.mCurrentOperation))
       {
-         Anchor::CaptureMouseFromApp();
+         ANCHOR::CaptureMouseFromApp();
          const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
          vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
          vec_t newOrigin = newPos - gContext.mRelativeOrigin * gContext.mScreenFactor;
@@ -2031,12 +2030,12 @@ namespace Anchorzmo
             vec_t baseVector = gContext.mTranslationPlanOrigin - gContext.mModel.v.position;
             float ratio = Dot(axisValue, baseVector + delta) / Dot(axisValue, baseVector);
 
-            gContext.mScale[axisIndex] = max(ratio, 0.001f);
+            gContext.mScale[axisIndex] = ComputeMax(ratio, 0.001f);
          }
          else
          {
-            float scaleDelta = (io.MousePos.x - gContext.mSaveMousePosx) * 0.01f;
-            gContext.mScale.Set(max(1.f + scaleDelta, 0.001f));
+            float scaleDelta = (io.MousePos[0] - gContext.mSaveMousePosx) * 0.01f;
+            gContext.mScale.Set(ComputeMax(1.f + scaleDelta, 0.001f));
          }
 
          // snap
@@ -2048,7 +2047,7 @@ namespace Anchorzmo
 
          // no 0 allowed
          for (int i = 0; i < 3; i++)
-            gContext.mScale[i] = max(gContext.mScale[i], 0.001f);
+            gContext.mScale[i] = ComputeMax(gContext.mScale[i], 0.001f);
 
          if (gContext.mScaleLast != gContext.mScale)
          {
@@ -2095,7 +2094,7 @@ namespace Anchorzmo
       {
         return false;
       }
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       bool applyRotationLocaly = gContext.mMode == LOCAL;
       bool modified = false;
 
@@ -2105,7 +2104,7 @@ namespace Anchorzmo
 
          if (type != MT_NONE)
          {
-            Anchor::CaptureMouseFromApp();
+            ANCHOR::CaptureMouseFromApp();
          }
 
          if (type == MT_ROTATE_SCREEN)
@@ -2139,7 +2138,7 @@ namespace Anchorzmo
       // rotation
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) && IsRotateType(gContext.mCurrentOperation))
       {
-         Anchor::CaptureMouseFromApp();
+         ANCHOR::CaptureMouseFromApp();
          gContext.mRotationAngle = ComputeAngleOnPlan();
          if (snap)
          {
@@ -2426,7 +2425,7 @@ namespace Anchorzmo
             {
                cubeFace.faceCoordsScreen[iCoord] = worldToPos(faceCoords[iCoord] * 0.5f * invert, res);
             }
-            cubeFace.color = directionColor[normalIndex] | IM_COL32(0x80, 0x80, 0x80, 0);
+            cubeFace.color = directionColor[normalIndex] | ANCHOR_COL32(0x80, 0x80, 0x80, 0);
 
             cubeFace.z = centerPositionVP.z / centerPositionVP.w;
             cubeFaceCount++;
@@ -2493,9 +2492,9 @@ namespace Anchorzmo
             }
             if (visible)
             {
-               AnchorU32 col = IM_COL32(0x80, 0x80, 0x80, 0xFF);
-               col = (fmodf(fabsf(f), 10.f) < FLT_EPSILON) ? IM_COL32(0x90, 0x90, 0x90, 0xFF) : col;
-               col = (fabsf(f) < FLT_EPSILON) ? IM_COL32(0x40, 0x40, 0x40, 0xFF): col;
+               AnchorU32 col = ANCHOR_COL32(0x80, 0x80, 0x80, 0xFF);
+               col = (fmodf(fabsf(f), 10.f) < FLT_EPSILON) ? ANCHOR_COL32(0x90, 0x90, 0x90, 0xFF) : col;
+               col = (fabsf(f) < FLT_EPSILON) ? ANCHOR_COL32(0x40, 0x40, 0x40, 0xFF): col;
 
                float thickness = 1.f;
                thickness = (fmodf(fabsf(f), 10.f) < FLT_EPSILON) ? 1.5f : thickness;
@@ -2521,7 +2520,7 @@ namespace Anchorzmo
       svgView = gContext.mViewMat;
       svgProjection = gContext.mProjectionMat;
 
-      AnchorIO& io = Anchor::GetIO();
+      AnchorIO& io = ANCHOR::GetIO();
       gContext.mDrawList->AddRectFilled(position, position + size, backgroundColor);
       matrix_t viewInverse;
       viewInverse.Inverse(*(matrix_t*)view);
@@ -2532,7 +2531,7 @@ namespace Anchorzmo
       const float distance = 3.f;
       matrix_t cubeProjection, cubeView;
       float fov = acosf(distance / (sqrtf(distance * distance + 3.f))) * RAD2DEG;
-      Perspective(fov / sqrtf(2.f), size.x / size.y, 0.01f, 1000.f, cubeProjection.m16);
+      Perspective(fov / sqrtf(2.f), size[0] / size[1], 0.01f, 1000.f, cubeProjection.m16);
 
       vec_t dir = makeVect(viewInverse.m[2][0], viewInverse.m[2][1], viewInverse.m[2][2]);
       vec_t up = makeVect(viewInverse.m[1][0], viewInverse.m[1][1], viewInverse.m[1][2]);
@@ -2603,10 +2602,10 @@ namespace Anchorzmo
                const GfVec2f p = panelPosition[iPanel] * 2.f;
                const GfVec2f s = panelSize[iPanel] * 2.f;
                GfVec2f faceCoordsScreen[4];
-               vec_t panelPos[4] = { dx * p.x + dy * p.y,
-                                     dx * p.x + dy * (p.y + s.y),
-                                     dx * (p.x + s.x) + dy * (p.y + s.y),
-                                     dx * (p.x + s.x) + dy * p.y };
+               vec_t panelPos[4] = { dx * p[0] + dy * p[1],
+                                     dx * p[0] + dy * (p[1] + s[1]),
+                                     dx * (p[0] + s[0]) + dy * (p[1] + s[1]),
+                                     dx * (p[0] + s[0]) + dy * p[1] };
 
                for (unsigned int iCoord = 0; iCoord < 4; iCoord++)
                {
@@ -2614,7 +2613,7 @@ namespace Anchorzmo
                }
 
                const GfVec2f panelCorners[2] = { panelPosition[iPanel], panelPosition[iPanel] + panelSize[iPanel] };
-               bool insidePanel = localx > panelCorners[0].x && localx < panelCorners[1].x&& localy > panelCorners[0].y && localy < panelCorners[1].y;
+               bool insidePanel = localx > panelCorners[0][0] && localx < panelCorners[1][0] && localy > panelCorners[0][1] && localy < panelCorners[1][1];
                int boxCoordInt = int(boxCoord.x * 9.f + boxCoord.y * 3.f + boxCoord.z);
                assert(boxCoordInt < 27);
                boxes[boxCoordInt] |= insidePanel && (!isDraging);
@@ -2622,10 +2621,10 @@ namespace Anchorzmo
                // draw face with lighter color
                if (iPass)
                {
-                  gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, (directionColor[normalIndex] | IM_COL32(0x80, 0x80, 0x80, 0x80)) | (isInside ? IM_COL32(0x08, 0x08, 0x08, 0) : 0));
+                  gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, (directionColor[normalIndex] | ANCHOR_COL32(0x80, 0x80, 0x80, 0x80)) | (isInside ? ANCHOR_COL32(0x08, 0x08, 0x08, 0) : 0));
                   if (boxes[boxCoordInt])
                   {
-                     gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, IM_COL32(0xF0, 0xA0, 0x60, 0x80));
+                     gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, ANCHOR_COL32(0xF0, 0xA0, 0x60, 0x80));
 
                      if (!io.MouseDown[0] && !isDraging && isClicking)
                      {
@@ -2681,10 +2680,10 @@ namespace Anchorzmo
          vec_t newEye = camTarget + newDir * length;
          LookAt(&newEye.x, &camTarget.x, &newUp.x, view);
       }
-      isInside = AnchorRect(position, position + size).Contains(io.MousePos);
+      isInside = AnchorBBox(position, position + size).Contains(io.MousePos);
 
       // drag view
-      if (!isDraging && io.MouseDown[0] && isInside && (fabsf(io.MouseDelta.x) > 0.f || fabsf(io.MouseDelta.y) > 0.f))
+      if (!isDraging && io.MouseDown[0] && isInside && (fabsf(io.MouseDelta[0]) > 0.f || fabsf(io.MouseDelta[1]) > 0.f))
       {
          isDraging = true;
          isClicking = false;
@@ -2698,8 +2697,8 @@ namespace Anchorzmo
       {
          matrix_t rx, ry, roll;
 
-         rx.RotationAxis(referenceUp, -io.MouseDelta.x * 0.01f);
-         ry.RotationAxis(viewInverse.v.right, -io.MouseDelta.y * 0.01f);
+         rx.RotationAxis(referenceUp, -io.MouseDelta[0] * 0.01f);
+         ry.RotationAxis(viewInverse.v.right, -io.MouseDelta[1] * 0.01f);
 
          roll = rx * ry;
 

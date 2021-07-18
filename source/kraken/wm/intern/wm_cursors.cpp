@@ -38,9 +38,9 @@ WABI_NAMESPACE_BEGIN
 
 void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y)
 {
-  float fac = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  float fac = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
 
-  ANCHOR::ScreenToClient((ANCHOR_SystemWindowHandle)win->anchorwin, *x, *y, x, y);
+  ANCHOR::ScreenToClient((AnchorSystemWindowHandle)win->anchorwin, *x, *y, x, y);
   *x *= fac;
 
   GfVec2f win_size = FormFactory(win->size);
@@ -51,7 +51,7 @@ void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y)
 
 void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y)
 {
-  float fac = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  float fac = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
 
   GfVec2f win_size = FormFactory(win->size);
 
@@ -59,7 +59,7 @@ void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y)
   *y /= fac;
   *y = GET_Y(win_size) - *y - 1;
 
-  ANCHOR::ClientToScreen((ANCHOR_SystemWindowHandle)win->anchorwin, *x, *y, x, y);
+  ANCHOR::ClientToScreen((AnchorSystemWindowHandle)win->anchorwin, *x, *y, x, y);
 }
 
 void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4])

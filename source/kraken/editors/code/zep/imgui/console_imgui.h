@@ -59,7 +59,7 @@ struct ZepConsole : Zep::IZepComponent
   void Draw(const char *title, bool *p_open, const wabi::GfVec4f &targetRect, float blend)
   {
     ANCHOR::PushStyleColor(ANCHOR_Col_WindowBg, wabi::GfVec4f(0.13f, 0.1f, 0.12f, 0.95f));
-    ANCHOR::PushStyleVar(ANCHOR_StyleVar_WindowRounding, 0.0f);
+    ANCHOR::PushStyleVar(AnchorStyleVar_WindowRounding, 0.0f);
     ANCHOR::SetNextWindowSize(wabi::GfVec2f(targetRect[2], targetRect[3]), ANCHOR_Cond_Always);
     ANCHOR::SetNextWindowPos(
       wabi::GfVec2f(targetRect[0], (targetRect[1] - targetRect[3]) + (targetRect[3] * blend)),

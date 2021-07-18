@@ -221,7 +221,7 @@ bool ANCHOR::BeginTableEx(const char *name,
   const GfVec2f avail_size = GetContentRegionAvail();
   GfVec2f actual_outer_size = CalcItemSize(
     outer_size, AnchorMax(avail_size[0], 1.0f), use_child_window ? AnchorMax(avail_size[1], 1.0f) : 0.0f);
-  AnchorRect outer_rect(outer_window->DC.CursorPos, outer_window->DC.CursorPos + actual_outer_size);
+  AnchorBBox outer_rect(outer_window->DC.CursorPos, outer_window->DC.CursorPos + actual_outer_size);
   if (use_child_window && IsClippedEx(outer_rect, 0, false))
   {
     ItemSize(outer_rect);
@@ -875,7 +875,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
   table->ColumnsEnabledFixedCount = (AnchorTableColumnIdx)count_fixed;
 
   // [Part 4] Apply final widths based on requested widths
-  const AnchorRect work_rect = table->WorkRect;
+  const AnchorBBox work_rect = table->WorkRect;
   const float width_spacings = (table->OuterPaddingX * 2.0f) +
                                (table->CellSpacingX1 + table->CellSpacingX2) *
                                  (table->ColumnsEnabledCount - 1);
@@ -931,7 +931,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
 
   table->HoveredColumnBody = -1;
   table->HoveredColumnBorder = -1;
-  const AnchorRect mouse_hit_rect(
+  const AnchorBBox mouse_hit_rect(
     table->OuterRect.Min[0],
     table->OuterRect.Min[1],
     table->OuterRect.Max[0],
@@ -945,7 +945,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
   bool offset_x_frozen = (table->FreezeColumnsCount > 0);
   float offset_x = ((table->FreezeColumnsCount > 0) ? table->OuterRect.Min[0] : work_rect.Min[0]) +
                    table->OuterPaddingX - table->CellSpacingX1;
-  AnchorRect host_clip_rect = table->InnerClipRect;
+  AnchorBBox host_clip_rect = table->InnerClipRect;
   // host_clip_rect.Max[0] += table->CellPaddingX + table->CellSpacingX2;
   table->VisibleMaskByIndex = 0x00;
   table->RequestOutputMaskByIndex = 0x00;
@@ -1201,7 +1201,7 @@ void ANCHOR::TableUpdateBorders(AnchorTable *table)
         continue;
 
     ANCHOR_ID column_id = TableGetColumnResizeID(table, column_n, table->InstanceCurrent);
-    AnchorRect hit_rect(column->MaxX - hit_half_width, hit_y1, column->MaxX + hit_half_width, border_y2_hit);
+    AnchorBBox hit_rect(column->MaxX - hit_half_width, hit_y1, column->MaxX + hit_half_width, border_y2_hit);
     // GetForegroundDrawList()->AddRect(hit_rect.Min, hit_rect.Max, ANCHOR_COL32(255, 0, 0, 100));
     KeepAliveID(column_id);
 
@@ -1660,7 +1660,7 @@ AnchorTableColumnFlags ANCHOR::TableGetColumnFlags(int column_n)
 // - Important: if AnchorTableFlags_PadOuterX is set but AnchorTableFlags_PadInnerX is not set,
 // the outer-most left and right
 //   columns report a small offset so their CellBgRect can extend up to the outer border.
-AnchorRect ANCHOR::TableGetCellBgRect(const AnchorTable *table, int column_n)
+AnchorBBox ANCHOR::TableGetCellBgRect(const AnchorTable *table, int column_n)
 {
   const AnchorTableColumn *column = &table->Columns[column_n];
   float x1 = column->MinX;
@@ -1669,7 +1669,7 @@ AnchorRect ANCHOR::TableGetCellBgRect(const AnchorTable *table, int column_n)
     x1 -= table->CellSpacingX1;
   if (column->NextEnabledColumn == -1)
     x2 += table->CellSpacingX2;
-  return AnchorRect(x1, table->RowPosY1, x2, table->RowPosY2);
+  return AnchorBBox(x1, table->RowPosY1, x2, table->RowPosY2);
 }
 
 // Return the resizing ID for the right-side of the given column.
@@ -1877,7 +1877,7 @@ void ANCHOR::TableEndRow(AnchorTable *table)
     // We soft/cpu clip this so all backgrounds and borders can share the same clipping rectangle
     if (bg_col0 || bg_col1)
     {
-      AnchorRect row_rect(table->WorkRect.Min[0], bg_y1, table->WorkRect.Max[0], bg_y2);
+      AnchorBBox row_rect(table->WorkRect.Min[0], bg_y1, table->WorkRect.Max[0], bg_y2);
       row_rect.ClipWith(table->BgClipRect);
       if (bg_col0 != 0 && row_rect.Min[1] < row_rect.Max[1])
         window->DrawList->AddRectFilled(row_rect.Min, row_rect.Max, bg_col0);
@@ -1893,7 +1893,7 @@ void ANCHOR::TableEndRow(AnchorTable *table)
            cell_data++)
       {
         const AnchorTableColumn *column = &table->Columns[cell_data->Column];
-        AnchorRect cell_bg_rect = TableGetCellBgRect(table, cell_data->Column);
+        AnchorBBox cell_bg_rect = TableGetCellBgRect(table, cell_data->Column);
         cell_bg_rect.ClipWith(table->BgClipRect);
         cell_bg_rect.Min[0] = AnchorMax(
           cell_bg_rect.Min[0],
@@ -2485,7 +2485,7 @@ void ANCHOR::TableMergeDrawChannels(AnchorTable *table)
   // Track which groups we are going to attempt to merge, and which channels goes into each group.
   struct MergeGroup
   {
-    AnchorRect ClipRect;
+    AnchorBBox ClipRect;
     int ChannelsCount;
     AnchorBitArray<ANCHOR_TABLE_MAX_DRAW_CHANNELS> ChannelsMask;
 
@@ -2540,7 +2540,7 @@ void ANCHOR::TableMergeDrawChannels(AnchorTable *table)
       ANCHOR_ASSERT(channel_no < ANCHOR_TABLE_MAX_DRAW_CHANNELS);
       MergeGroup *merge_group = &merge_groups[merge_group_n];
       if (merge_group->ChannelsCount == 0)
-        merge_group->ClipRect = AnchorRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
+        merge_group->ClipRect = AnchorBBox(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
       merge_group->ChannelsMask.SetBit(channel_no);
       merge_group->ChannelsCount++;
       merge_group->ClipRect.Add(src_channel->_CmdBuffer[0].ClipRect);
@@ -2587,15 +2587,15 @@ void ANCHOR::TableMergeDrawChannels(AnchorTable *table)
     ANCHOR_ASSERT(has_freeze_v == false || table->Bg2DrawChannelUnfrozen != TABLE_DRAW_CHANNEL_BG2_FROZEN);
     int remaining_count = splitter->_Count -
                           (has_freeze_v ? LEADING_DRAW_CHANNELS + 1 : LEADING_DRAW_CHANNELS);
-    // AnchorRect host_rect = (table->InnerWindow == table->OuterWindow) ? table->InnerClipRect :
+    // AnchorBBox host_rect = (table->InnerWindow == table->OuterWindow) ? table->InnerClipRect :
     // table->HostClipRect;
-    AnchorRect host_rect = table->HostClipRect;
+    AnchorBBox host_rect = table->HostClipRect;
     for (int merge_group_n = 0; merge_group_n < ANCHOR_ARRAYSIZE(merge_groups); merge_group_n++)
     {
       if (int merge_channels_count = merge_groups[merge_group_n].ChannelsCount)
       {
         MergeGroup *merge_group = &merge_groups[merge_group_n];
-        AnchorRect merge_clip_rect = merge_group->ClipRect;
+        AnchorBBox merge_clip_rect = merge_group->ClipRect;
 
         // Extend outer-most clip limits to match those of host, so draw calls can be merged even
         // if outer-most columns have some outer padding offsetting them from their parent
@@ -2634,7 +2634,7 @@ void ANCHOR::TableMergeDrawChannels(AnchorTable *table)
 
           AnchorDrawChannel *channel = &splitter->_Channels[n];
           ANCHOR_ASSERT(channel->_CmdBuffer.Size == 1 &&
-                        merge_clip_rect.Contains(AnchorRect(channel->_CmdBuffer[0].ClipRect)));
+                        merge_clip_rect.Contains(AnchorBBox(channel->_CmdBuffer[0].ClipRect)));
           channel->_CmdBuffer[0].ClipRect = merge_clip_rect.ToVec4();
           memcpy(dst_tmp++, channel, sizeof(AnchorDrawChannel));
         }
@@ -2752,7 +2752,7 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
     // Another weird solution would be to display part of it in inner window, and the part that's
     // over scrollbars in the outer window..) Either solution currently won't allow us to use a
     // larger border size: the border would clipped.
-    const AnchorRect outer_border = table->OuterRect;
+    const AnchorBBox outer_border = table->OuterRect;
     const AnchorU32 outer_col = table->BorderColorStrong;
     if ((table->Flags & AnchorTableFlags_BordersOuter) == AnchorTableFlags_BordersOuter)
     {
@@ -3094,7 +3094,7 @@ void ANCHOR::TableHeader(const char *label)
 
   // If we already got a row height, there's use that.
   // FIXME-TABLE: Padding problem if the correct outer-padding CellBgRect strays off our ClipRect?
-  AnchorRect cell_r = TableGetCellBgRect(table, column_n);
+  AnchorBBox cell_r = TableGetCellBgRect(table, column_n);
   float label_height = AnchorMax(label_size[1], table->RowMinHeight - table->CellPaddingY * 2.0f);
 
   // Calculate ideal size for sort order arrow
@@ -3122,7 +3122,7 @@ void ANCHOR::TableHeader(const char *label)
   const bool selected = (table->IsContextPopupOpen && table->ContextPopupColumn == column_n &&
                          table->InstanceInteracted == table->InstanceCurrent);
   ANCHOR_ID id = window->GetID(label);
-  AnchorRect bb(cell_r.Min[0],
+  AnchorBBox bb(cell_r.Min[0],
                 cell_r.Min[1],
                 cell_r.Max[0],
                 AnchorMax(cell_r.Max[1], cell_r.Min[1] + label_height + g.Style.CellPadding[1] * 2.0f));
@@ -3965,7 +3965,7 @@ void ANCHOR::DebugNodeTable(AnchorTable *table)
     Selectable(buf);
     if (IsItemHovered())
     {
-      AnchorRect r(column->MinX, table->OuterRect.Min[1], column->MaxX, table->OuterRect.Max[1]);
+      AnchorBBox r(column->MinX, table->OuterRect.Min[1], column->MaxX, table->OuterRect.Max[1]);
       GetForegroundDrawList()->AddRect(r.Min, r.Max, ANCHOR_COL32(255, 255, 0, 255));
     }
   }
@@ -4043,7 +4043,7 @@ void ANCHOR::DebugNodeTableSettings(AnchorTableSettings *)
 // sequences, they would meddle many times with the underlying AnchorDrawCmd. Instead, we do a
 // preemptive overwrite of clipping rectangle _without_ altering the command-buffer and let the
 // subsequent single call to SetCurrentChannel() does it things once.
-void ANCHOR::SetWindowClipRectBeforeSetChannel(AnchorWindow *window, const AnchorRect &clip_rect)
+void ANCHOR::SetWindowClipRectBeforeSetChannel(AnchorWindow *window, const AnchorBBox &clip_rect)
 {
   GfVec4f clip_rect_vec4 = clip_rect.ToVec4();
   window->ClipRect = clip_rect;
@@ -4298,7 +4298,7 @@ void ANCHOR::BeginColumns(const char *str_id, int columns_count, AnchorOldColumn
     AnchorOldColumnData *column = &columns->Columns[n];
     float clip_x1 = IM_ROUND(window->Pos[0] + GetColumnOffset(n));
     float clip_x2 = IM_ROUND(window->Pos[0] + GetColumnOffset(n + 1) - 1.0f);
-    column->ClipRect = AnchorRect(clip_x1, -FLT_MAX, clip_x2, +FLT_MAX);
+    column->ClipRect = AnchorBBox(clip_x1, -FLT_MAX, clip_x2, +FLT_MAX);
     column->ClipRect.ClipWithFull(window->ClipRect);
   }
 
@@ -4414,7 +4414,7 @@ void ANCHOR::EndColumns()
       float x = window->Pos[0] + GetColumnOffset(n);
       const ANCHOR_ID column_id = columns->ID + ANCHOR_ID(n);
       const float column_hit_hw = COLUMNS_HIT_RECT_HALF_WIDTH;
-      const AnchorRect column_hit_rect(GfVec2f(x - column_hit_hw, y1), GfVec2f(x + column_hit_hw, y2));
+      const AnchorBBox column_hit_rect(GfVec2f(x - column_hit_hw, y1), GfVec2f(x + column_hit_hw, y2));
       KeepAliveID(column_id);
       if (IsClippedEx(column_hit_rect, column_id, false))
         continue;

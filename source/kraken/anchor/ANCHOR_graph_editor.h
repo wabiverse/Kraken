@@ -28,9 +28,9 @@
 #include <stdint.h>
 #include <string>
 #include "ANCHOR_api.h"
-#include "imgui_internal.h"
+#include "ANCHOR_internal.h"
 
-namespace GraphEditor {
+namespace AnchorGraphEditor {
 
 typedef size_t NodeIndex;
 typedef size_t SlotIndex;
@@ -49,16 +49,16 @@ enum FitOnScreen
 // Display options and colors
 struct Options
 {
-    AnchorRect mMinimap{{0.75f, 0.8f, 0.99f, 0.99f}}; // rectangle coordinates of minimap
-    AnchorU32 mBackgroundColor{ IM_COL32(40, 40, 40, 255) }; // full background color
-    AnchorU32 mGridColor{ IM_COL32(0, 0, 0, 60) }; // grid lines color
-    AnchorU32 mGridColor2{ IM_COL32(0, 0, 0, 160) }; // grid lines color every 10th
-    AnchorU32 mSelectedNodeBorderColor{ IM_COL32(255, 130, 30, 255) }; // node border color when it's selected
-    AnchorU32 mNodeBorderColor{ IM_COL32(100, 100, 100, 0) }; // node border color when it's not selected
-    AnchorU32 mQuadSelection{ IM_COL32(255, 32, 32, 64) }; // quad selection inside color
-    AnchorU32 mQuadSelectionBorder{ IM_COL32(255, 32, 32, 255) }; // quad selection border color
-    AnchorU32 mDefaultSlotColor{ IM_COL32(128, 128, 128, 255) }; // when no color is provided in node template, use this value
-    AnchorU32 mFrameFocus{ IM_COL32(64, 128, 255, 255) }; // rectangle border when graph editor has focus
+    AnchorBBox mMinimap{{0.75f, 0.8f, 0.99f, 0.99f}}; // rectangle coordinates of minimap
+    AnchorU32 mBackgroundColor{ ANCHOR_COL32(40, 40, 40, 255) }; // full background color
+    AnchorU32 mGridColor{ ANCHOR_COL32(0, 0, 0, 60) }; // grid lines color
+    AnchorU32 mGridColor2{ ANCHOR_COL32(0, 0, 0, 160) }; // grid lines color every 10th
+    AnchorU32 mSelectedNodeBorderColor{ ANCHOR_COL32(255, 130, 30, 255) }; // node border color when it's selected
+    AnchorU32 mNodeBorderColor{ ANCHOR_COL32(100, 100, 100, 0) }; // node border color when it's not selected
+    AnchorU32 mQuadSelection{ ANCHOR_COL32(255, 32, 32, 64) }; // quad selection inside color
+    AnchorU32 mQuadSelectionBorder{ ANCHOR_COL32(255, 32, 32, 255) }; // quad selection border color
+    AnchorU32 mDefaultSlotColor{ ANCHOR_COL32(128, 128, 128, 255) }; // when no color is provided in node template, use this value
+    AnchorU32 mFrameFocus{ ANCHOR_COL32(64, 128, 255, 255) }; // rectangle border when graph editor has focus
     float mLineThickness{ 5 }; // links width in pixels when zoom value is 1
     float mGridSize{ 64.f }; // background grid size in pixels when zoom value is 1
     float mRounding{ 3.f }; // rounding at node corners
@@ -101,7 +101,7 @@ struct Node
 {
     const char* mName;
     TemplateIndex mTemplateIndex;
-    AnchorRect mRect;
+    AnchorBBox mRect;
     bool mSelected{ false };
 };
 
@@ -124,7 +124,7 @@ struct Delegate
     virtual void DelLink(LinkIndex linkIndex) = 0;
     
     // user is responsible for clipping
-    virtual void CustomDraw(AnchorDrawList* drawList, AnchorRect rectangle, NodeIndex nodeIndex) = 0;
+    virtual void CustomDraw(AnchorDrawList* drawList, AnchorBBox rectangle, NodeIndex nodeIndex) = 0;
     
     // use mouse position to open context menu
     // if nodeIndex != -1, right click happens on the specified node

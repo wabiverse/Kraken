@@ -41,8 +41,8 @@ namespace ImZoomSlider
    template<typename T> bool ImZoomSlider(const T lower, const T higher, T& viewLower, T& viewHigher, float wheelRatio = 0.01f, AnchorZoomSliderFlags flags = AnchorZoomSliderFlags_None)
    {
       bool interacted = false;
-      AnchorIO& io = Anchor::GetIO();
-      AnchorDrawList* draw_list = Anchor::GetWindowDrawList();
+      AnchorIO& io = ANCHOR::GetIO();
+      AnchorDrawList* draw_list = ANCHOR::GetWindowDrawList();
 
       static const float handleSize = 12;
       static const float roundRadius = 3.f;
@@ -57,13 +57,13 @@ namespace ImZoomSlider
       static float saveViewHigher;
 
       const bool isVertical = flags & AnchorZoomSliderFlags_Vertical;
-      const GfVec2f canvasPos = Anchor::GetCursorScreenPos();
-      const GfVec2f canvasSize = Anchor::GetContentRegionAvail();
-      const float canvasSizeLength = isVertical ? Anchor::GetItemRectSize().y : canvasSize.x;
+      const GfVec2f canvasPos = ANCHOR::GetCursorScreenPos();
+      const GfVec2f canvasSize = ANCHOR::GetContentRegionAvail();
+      const float canvasSizeLength = isVertical ? ANCHOR::GetItemRectSize().y : canvasSize.x;
       const GfVec2f scrollBarSize = isVertical ? GfVec2f(14.f, canvasSizeLength) : GfVec2f(canvasSizeLength, 14.f);
 
-      Anchor::InvisibleButton(controlName, scrollBarSize);
-      const AnchorID currentId = Anchor::GetID(controlName);
+      ANCHOR::InvisibleButton(controlName, scrollBarSize);
+      const AnchorID currentId = ANCHOR::GetID(controlName);
 
       const bool usingEditingId = currentId == editingId;
       const bool canUseControl = usingEditingId || editingId == -1;
@@ -71,8 +71,8 @@ namespace ImZoomSlider
       const bool sizingRBar = usingEditingId ? sizingRBarSvg : false;
       const bool sizingLBar = usingEditingId ? sizingLBarSvg : false;
       const int componentIndex = isVertical ? 1 : 0;
-      const GfVec2f scrollBarMin = Anchor::GetItemRectMin();
-      const GfVec2f scrollBarMax = Anchor::GetItemRectMax();
+      const GfVec2f scrollBarMin = ANCHOR::GetItemRectMin();
+      const GfVec2f scrollBarMax = ANCHOR::GetItemRectMax();
       const GfVec2f scrollBarA = GfVec2f(scrollBarMin.x, scrollBarMin.y) - (isVertical ? GfVec2f(2,0) : GfVec2f(0,2));
       const GfVec2f scrollBarB = isVertical ? GfVec2f(scrollBarMax.x - 1.f, scrollBarMin.y + canvasSizeLength) : GfVec2f(scrollBarMin.x + canvasSizeLength, scrollBarMax.y - 1.f);
       const float scrollStart = ((viewLower - lower) / (higher - lower)) * canvasSizeLength + scrollBarMin[componentIndex];
@@ -80,13 +80,13 @@ namespace ImZoomSlider
       const float screenSize = scrollEnd - scrollStart;
       const GfVec2f scrollTopLeft = isVertical ? GfVec2f(scrollBarMin.x, scrollStart) : GfVec2f(scrollStart, scrollBarMin.y);
       const GfVec2f scrollBottomRight = isVertical ? GfVec2f(scrollBarMax.x - 2.f, scrollEnd) : GfVec2f(scrollEnd, scrollBarMax.y - 2.f);
-      const bool inScrollBar = canUseControl && AnchorRect(scrollTopLeft, scrollBottomRight).Contains(io.MousePos);
-      const AnchorRect scrollBarRect(scrollBarA, scrollBarB);
+      const bool inScrollBar = canUseControl && AnchorBBox(scrollTopLeft, scrollBottomRight).Contains(io.MousePos);
+      const AnchorBBox scrollBarRect(scrollBarA, scrollBarB);
       const float deltaScreen = io.MousePos[componentIndex] - scrollingSource;
       const float deltaView = ((higher - lower) / canvasSizeLength) * deltaScreen;
-      const uint32_t barColor = Anchor::GetColorU32((inScrollBar || movingScrollBar) ? AnchorCol_FrameBgHovered : AnchorCol_FrameBg);
+      const uint32_t barColor = ANCHOR::GetColorU32((inScrollBar || movingScrollBar) ? AnchorCol_FrameBgHovered : AnchorCol_FrameBg);
       const float middleCoord = (scrollStart + scrollEnd) * 0.5f;
-      const bool insideControl = canUseControl && AnchorRect(scrollBarMin, scrollBarMax).Contains(io.MousePos);
+      const bool insideControl = canUseControl && AnchorBBox(scrollBarMin, scrollBarMax).Contains(io.MousePos);
       const bool hasAnchors = !(flags & AnchorZoomSliderFlags_NoAnchors);
       const float viewMinSize = ((3.f * handleSize) / canvasSizeLength) * (higher - lower);
       const auto ClipView = [lower, higher, &viewLower, &viewHigher]() {
@@ -123,11 +123,11 @@ namespace ImZoomSlider
 
             if (isVertical)
             {
-               draw_list->AddLine(GfVec2f(base.x, coordA), GfVec2f(base.x, coordB), Anchor::GetColorU32(AnchorCol_SliderGrab));
+               draw_list->AddLine(GfVec2f(base.x, coordA), GfVec2f(base.x, coordB), ANCHOR::GetColorU32(AnchorCol_SliderGrab));
             }
             else
             {
-               draw_list->AddLine(GfVec2f(coordA, base.y), GfVec2f(coordB, base.y), Anchor::GetColorU32(AnchorCol_SliderGrab));
+               draw_list->AddLine(GfVec2f(coordA, base.y), GfVec2f(coordB, base.y), ANCHOR::GetColorU32(AnchorCol_SliderGrab));
             }
          }
       }
@@ -158,14 +158,14 @@ namespace ImZoomSlider
 
       if (screenSize > handleSize * 2.f && hasAnchors)
       {
-         const AnchorRect barHandleLeft(scrollTopLeft, isVertical ? GfVec2f(scrollBottomRight.x, scrollTopLeft.y + handleSize) : GfVec2f(scrollTopLeft.x + handleSize, scrollBottomRight.y));
-         const AnchorRect barHandleRight(isVertical ? GfVec2f(scrollTopLeft.x, scrollBottomRight.y - handleSize) : GfVec2f(scrollBottomRight.x - handleSize, scrollTopLeft.y), scrollBottomRight);
+         const AnchorBBox barHandleLeft(scrollTopLeft, isVertical ? GfVec2f(scrollBottomRight.x, scrollTopLeft.y + handleSize) : GfVec2f(scrollTopLeft.x + handleSize, scrollBottomRight.y));
+         const AnchorBBox barHandleRight(isVertical ? GfVec2f(scrollTopLeft.x, scrollBottomRight.y - handleSize) : GfVec2f(scrollBottomRight.x - handleSize, scrollTopLeft.y), scrollBottomRight);
 
          onLeft = barHandleLeft.Contains(io.MousePos);
          onRight = barHandleRight.Contains(io.MousePos);
 
-         draw_list->AddRectFilled(barHandleLeft.Min, barHandleLeft.Max, Anchor::GetColorU32((onLeft || sizingLBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab), roundRadius);
-         draw_list->AddRectFilled(barHandleRight.Min, barHandleRight.Max, Anchor::GetColorU32((onRight || sizingRBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab), roundRadius);
+         draw_list->AddRectFilled(barHandleLeft.Min, barHandleLeft.Max, ANCHOR::GetColorU32((onLeft || sizingLBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab), roundRadius);
+         draw_list->AddRectFilled(barHandleRight.Min, barHandleRight.Max, ANCHOR::GetColorU32((onRight || sizingRBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab), roundRadius);
       }
 
       if (sizingRBar)
@@ -210,7 +210,7 @@ namespace ImZoomSlider
          }
          else
          {
-            if (inScrollBar && Anchor::IsMouseClicked(0))
+            if (inScrollBar && ANCHOR::IsMouseClicked(0))
             {
                movingScrollBarSvg = true;
                scrollingSource = io.MousePos[componentIndex];
@@ -218,12 +218,12 @@ namespace ImZoomSlider
                saveViewHigher = viewHigher;
                editingId = currentId;
             }
-            if (!sizingRBar && onRight && Anchor::IsMouseClicked(0) && hasAnchors)
+            if (!sizingRBar && onRight && ANCHOR::IsMouseClicked(0) && hasAnchors)
             {
                sizingRBarSvg = true;
                editingId = currentId;
             }
-            if (!sizingLBar && onLeft && Anchor::IsMouseClicked(0) && hasAnchors)
+            if (!sizingLBar && onLeft && ANCHOR::IsMouseClicked(0) && hasAnchors)
             {
                sizingLBarSvg = true;
                editingId = currentId;

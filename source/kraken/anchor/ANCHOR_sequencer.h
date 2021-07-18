@@ -27,8 +27,8 @@
 #include <cstddef>
 
 struct AnchorDrawList;
-struct AnchorRect;
-namespace ImSequencer
+struct AnchorBBox;
+namespace AnchorSequencer
 {
    enum SEQUENCER_OPTIONS
    {
@@ -64,8 +64,8 @@ namespace ImSequencer
 
       virtual size_t GetCustomHeight(int) { return 0; }
       virtual void DoubleClick(int) {}
-      virtual void CustomDraw(int, AnchorDrawList*, const AnchorRect&, const AnchorRect&, const AnchorRect&, const AnchorRect&) {}
-      virtual void CustomDrawCompact(int, AnchorDrawList*, const AnchorRect&, const AnchorRect&) {}
+      virtual void CustomDraw(int, AnchorDrawList*, const AnchorBBox&, const AnchorBBox&, const AnchorBBox&, const AnchorBBox&) {}
+      virtual void CustomDrawCompact(int, AnchorDrawList*, const AnchorBBox&, const AnchorBBox&) {}
    };
 
 

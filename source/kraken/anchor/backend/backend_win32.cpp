@@ -29,6 +29,7 @@
 #include <vulkan/vulkan.h>
 
 #include "ANCHOR_BACKEND_vulkan.h"
+#include "ANCHOR_BACKEND_win32.h"
 #include "ANCHOR_rect.h"
 #include "ANCHOR_api.h"
 #include "ANCHOR_buttons.h"

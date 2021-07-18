@@ -139,67 +139,67 @@ class ZepEditor_ANCHOR : public ZepEditor
       }
     }
 
-    if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Tab)))
+    if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Tab)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::TAB, mod);
       return;
     }
-    if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Escape)))
+    if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Escape)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::ESCAPE, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Enter)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Enter)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::RETURN, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Delete)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Delete)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::DEL, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Home)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Home)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::HOME, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_End)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_End)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::END, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_Backspace)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Backspace)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::BACKSPACE, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_RightArrow)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_RightArrow)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::RIGHT, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_LeftArrow)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_LeftArrow)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::LEFT, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_UpArrow)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_UpArrow)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::UP, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_DownArrow)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_DownArrow)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::DOWN, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_PageDown)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageDown)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::PAGEDOWN, mod);
       return;
     }
-    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(ANCHOR_Key_PageUp)))
+    else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageUp)))
     {
       buffer.GetMode()->AddKeyPress(ExtKeys::PAGEUP, mod);
       return;

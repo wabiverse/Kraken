@@ -33,13 +33,13 @@ WABI_NAMESPACE_BEGIN
 
 void WM_init_default_styles()
 {
-  ANCHOR_Style &style = ANCHOR::GetStyle();
+  AnchorStyle &style = ANCHOR::GetStyle();
   style.WindowPadding = GfVec2f(2.0f, 2.0f);
   style.WindowRounding = 5.0f;
   style.WindowBorderSize = 0.0f;
   style.WindowMinSize = GfVec2f(0.0f, 0.0f);
   style.WindowTitleAlign = GfVec2f(0.0f, 0.5f);
-  style.WindowMenuButtonPosition = ANCHOR_Dir_Left;
+  style.WindowMenuButtonPosition = AnchorDir_Left;
 }
 
 WABI_NAMESPACE_END

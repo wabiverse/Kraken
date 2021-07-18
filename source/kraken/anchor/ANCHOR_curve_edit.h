@@ -27,9 +27,9 @@
 #include <stdint.h>
 #include "ANCHOR_api.h"
 
-struct AnchorRect;
+struct AnchorBBox;
 
-namespace ImCurveEdit
+namespace AnchorCurveEdit
 {
    enum CurveType
    {
@@ -76,5 +76,5 @@ namespace ImCurveEdit
       virtual void EndEdit() {}
    };
 
-   int Edit(Delegate& delegate, const wabi::GfVec2f& size, unsigned int id, const AnchorRect* clippingRect = NULL, ImVector<EditPoint>* selectedPoints = NULL);
+   int Edit(Delegate& delegate, const wabi::GfVec2f& size, unsigned int id, const AnchorBBox* clippingRect = NULL, std::vector<EditPoint>* selectedPoints = NULL);
 }

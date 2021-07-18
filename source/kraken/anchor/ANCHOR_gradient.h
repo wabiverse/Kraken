@@ -28,7 +28,7 @@
 
 #include <cstddef>
 
-namespace ImGradient
+namespace AnchorGradient
 {
    struct Delegate
    {

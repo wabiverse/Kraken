@@ -216,8 +216,8 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
 
   switch (type)
   {
-    case ANCHOR_EventTypeCursorMove: {
-      ANCHOR_EventCursorData *cd = (ANCHOR_EventCursorData *)customdata;
+    case AnchorEventTypeCursorMove: {
+      AnchorEventCursorData *cd = (AnchorEventCursorData *)customdata;
       event.mouse_pos = GfVec2i(cd->x, cd->y);
 
       event.type = MOUSEMOVE;

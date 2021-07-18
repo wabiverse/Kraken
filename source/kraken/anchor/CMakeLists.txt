@@ -126,6 +126,7 @@ if(WIN32)
   )
 endif()
 
+add_definitions(-DSTB_TEXTEDIT_IMPLEMENTATION)
 add_definitions(-DANCHOR_ENABLE_FREETYPE)
 
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

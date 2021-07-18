@@ -65,7 +65,7 @@ WABI_NAMESPACE_BEGIN
 
 
 /* handle to anchor system. */
-static ANCHOR_SystemHandle anchor_system = NULL;
+static AnchorSystemHandle anchor_system = NULL;
 
 
 enum eModifierKeyType
@@ -123,10 +123,10 @@ static void wm_window_set_dpi(const wmWindow *win)
   float win_scale = FormFactory(win->scale);
   float win_linewidth = FormFactory(win->linewidth);
 
-  float auto_dpi = ANCHOR::GetDPIHint((ANCHOR_SystemWindowHandle)win->anchorwin);
+  float auto_dpi = ANCHOR::GetDPIHint((AnchorSystemWindowHandle)win->anchorwin);
 
   auto_dpi = max_ff(auto_dpi, 96.0f);
-  auto_dpi *= ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  auto_dpi *= ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
   int dpi = auto_dpi * win_scale * (72.0 / 96.0f);
 
   int pixelsize = max_ii(1, (int)(dpi / 64));
@@ -159,7 +159,7 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
   wm->windrawable = win;
   if (activate)
   {
-    ANCHOR::ActivateWindowDrawingContext((ANCHOR_SystemWindowHandle)win->anchorwin);
+    ANCHOR::ActivateWindowDrawingContext((AnchorSystemWindowHandle)win->anchorwin);
   }
   // GPU_context_active_set(win->gpuctx);
 }
@@ -234,7 +234,7 @@ static void wm_get_desktopsize(int *r_width, int *r_height)
 
 static bool wm_window_update_size_position(wmWindow *win)
 {
-  AnchorRectangleHandle client_rect = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+  AnchorRectangleHandle client_rect = ANCHOR::GetClientBounds((AnchorSystemWindowHandle)win->anchorwin);
   int l, t, r, b;
   ANCHOR::GetRectangle(client_rect, &l, &t, &r, &b);
 
@@ -264,16 +264,16 @@ static bool wm_window_update_size_position(wmWindow *win)
  * This is called by anchor, and this is where
  * we handle events for windows or send them to
  * the event system. */
-static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
+static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 {
   kContext *C = (kContext *)C_void_ptr;
   wmWindowManager *wm = CTX_wm_manager(C);
   eAnchorEventType type = ANCHOR::GetEventType(evt);
 
-  if (type == ANCHOR_EventTypeQuitRequest)
+  if (type == AnchorEventTypeQuitRequest)
   {
     /* Find an active window to display quit dialog in. */
-    ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
+    AnchorSystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
 
     wmWindow *win = nullptr;
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
@@ -297,8 +297,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
   }
   else
   {
-    ANCHOR_SystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
-    ANCHOR_EventDataPtr data = ANCHOR::GetEventData(evt);
+    AnchorSystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
+    AnchorEventDataPtr data = ANCHOR::GetEventData(evt);
 
     if (!anchorwin)
     {
@@ -317,7 +317,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
     switch (type)
     {
-      case ANCHOR_EventTypeWindowDeactivate:
+      case AnchorEventTypeWindowDeactivate:
         WM_event_add_anchorevent(wm, win, type, data);
         win->active = 0;
 
@@ -327,8 +327,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         win->eventstate->oskey = 0;
         win->eventstate->keymodifier = 0;
         break;
-      case ANCHOR_EventTypeWindowActivate: {
-        ANCHOR_EventKeyData kdata;
+      case AnchorEventTypeWindowActivate: {
+        AnchorEventKeyData kdata;
         const int keymodifier = ((query_qual(SHIFT) ? KM_SHIFT : 0) |
                                  (query_qual(CONTROL) ? KM_CTRL : 0) |
                                  (query_qual(ALT) ? KM_ALT : 0) | (query_qual(OS) ? KM_OSKEY : 0));
@@ -342,8 +342,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         {
           if ((keymodifier & KM_SHIFT) == 0)
           {
-            kdata.key = ANCHOR_KeyLeftShift;
-            WM_event_add_anchorevent(wm, win, ANCHOR_EventTypeKeyUp, &kdata);
+            kdata.key = AnchorKeyLeftShift;
+            WM_event_add_anchorevent(wm, win, AnchorEventTypeKeyUp, &kdata);
           }
         }
 
@@ -351,8 +351,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         {
           if ((keymodifier & KM_CTRL) == 0)
           {
-            kdata.key = ANCHOR_KeyLeftControl;
-            WM_event_add_anchorevent(wm, win, ANCHOR_EventTypeKeyUp, &kdata);
+            kdata.key = AnchorKeyLeftControl;
+            WM_event_add_anchorevent(wm, win, AnchorEventTypeKeyUp, &kdata);
           }
         }
 
@@ -360,8 +360,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         {
           if ((keymodifier & KM_ALT) == 0)
           {
-            kdata.key = ANCHOR_KeyLeftAlt;
-            WM_event_add_anchorevent(wm, win, ANCHOR_EventTypeKeyUp, &kdata);
+            kdata.key = AnchorKeyLeftAlt;
+            WM_event_add_anchorevent(wm, win, AnchorEventTypeKeyUp, &kdata);
           }
         }
 
@@ -369,8 +369,8 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         {
           if ((keymodifier & KM_OSKEY) == 0)
           {
-            kdata.key = ANCHOR_KeyOS;
-            WM_event_add_anchorevent(wm, win, ANCHOR_EventTypeKeyUp, &kdata);
+            kdata.key = AnchorKeyOS;
+            WM_event_add_anchorevent(wm, win, AnchorEventTypeKeyUp, &kdata);
           }
         }
 
@@ -392,18 +392,18 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         wm_event_add(win, &event);
         break;
       }
-      case ANCHOR_EventTypeWindowClose: {
+      case AnchorEventTypeWindowClose: {
         wm_window_close(C, wm, win);
         break;
       }
-      case ANCHOR_EventTypeWindowUpdate: {
+      case AnchorEventTypeWindowUpdate: {
         wm_window_make_drawable(wm, win);
         WM_event_add_notifier(C, NC_WINDOW, NULL);
         break;
       }
-      case ANCHOR_EventTypeWindowSize:
-      case ANCHOR_EventTypeWindowMove: {
-        eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin);
+      case AnchorEventTypeWindowSize:
+      case AnchorEventTypeWindowMove: {
+        eAnchorWindowState state = ANCHOR::GetWindowState((AnchorSystemWindowHandle)win->anchorwin);
         win->windowstate = state;
         wm_window_set_dpi(win);
         if (state != AnchorWindowStateMinimized)
@@ -437,14 +437,14 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       }
 
-      case ANCHOR_EventTypeWindowDPIHintChanged: {
+      case AnchorEventTypeWindowDPIHintChanged: {
         wm_window_set_dpi(win);
 
         WM_main_add_notifier(NC_WINDOW, NULL);             /* full redraw */
         WM_main_add_notifier(NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
         break;
       }
-      case ANCHOR_EventTypeOpenMainFile: {
+      case AnchorEventTypeOpenMainFile: {
         const char *path = (const char *)ANCHOR::GetEventData(evt);
 
         if (path)
@@ -464,7 +464,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       }
 
-      case ANCHOR_EventTypeDraggingDropDone: {
+      case AnchorEventTypeDraggingDropDone: {
         Anchor_EventDragnDropData *ddd = (Anchor_EventDragnDropData *)ANCHOR::GetEventData(evt);
 
         /* entering window, update mouse pos */
@@ -516,7 +516,7 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         break;
       }
-      case ANCHOR_EventTypeNativeResolutionChange: {
+      case AnchorEventTypeNativeResolutionChange: {
         float pixelsize = FormFactory(win->pixelsz);
         float prev_pixelsize = pixelsize;
         wm_window_set_dpi(win);
@@ -538,22 +538,22 @@ static int anchor_event_proc(ANCHOR_EventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         break;
       }
-      case ANCHOR_EventTypeTrackpad: {
-        ANCHOR_EventTrackpadData *pd = (ANCHOR_EventTrackpadData *)data;
+      case AnchorEventTypeTrackpad: {
+        AnchorEventTrackpadData *pd = (AnchorEventTrackpadData *)data;
 
         WM_cursor_position_from_anchor(win, &pd->x, &pd->y);
         WM_event_add_anchorevent(wm, win, type, data);
         break;
       }
-      case ANCHOR_EventTypeCursorMove: {
-        ANCHOR_EventCursorData *cd = (ANCHOR_EventCursorData *)data;
+      case AnchorEventTypeCursorMove: {
+        AnchorEventCursorData *cd = (AnchorEventCursorData *)data;
 
         WM_cursor_position_from_anchor(win, &cd->x, &cd->y);
         WM_event_add_anchorevent(wm, win, type, data);
         break;
       }
-      case ANCHOR_EventTypeButtonDown:
-      case ANCHOR_EventTypeButtonUp: {
+      case AnchorEventTypeButtonDown:
+      case AnchorEventTypeButtonUp: {
         if (win->active == 0)
         {
           /* Entering window, update cursor and tablet state.
@@ -601,8 +601,8 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   wmWindow *prev_windrawable = wm->windrawable;
   wm_window_clear_drawable(wm);
 
-  ANCHOR_SystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
-                                                                   (win->parent) ? (ANCHOR_SystemWindowHandle)win->parent->anchorwin : NULL,
+  AnchorSystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
+                                                                   (win->parent) ? (AnchorSystemWindowHandle)win->parent->anchorwin : NULL,
                                                                    CHARALL(win_title),
                                                                    CHARALL(win_icon.GetAssetPath()),
                                                                    GET_X(win_pos),
@@ -630,10 +630,10 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     // wm_window_ensure_eventstate(win);
 
     /* store actual window size in kraken window */
-    AnchorRectangleHandle bounds = ANCHOR::GetClientBounds((ANCHOR_SystemWindowHandle)win->anchorwin);
+    AnchorRectangleHandle bounds = ANCHOR::GetClientBounds((AnchorSystemWindowHandle)win->anchorwin);
 
     /* win32: gives undefined window size when minimized */
-    if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) != AnchorWindowStateMinimized)
+    if (ANCHOR::GetWindowState((AnchorSystemWindowHandle)win->anchorwin) != AnchorWindowStateMinimized)
     {
       SET_VEC2(win_size, ANCHOR::GetWidthRectangle(bounds), ANCHOR::GetHeightRectangle(bounds));
       FormFactory(win->size, win_size);
@@ -675,10 +675,10 @@ static void wm_window_title(wmWindowManager *wm, wmWindow *win)
     //                wm->file_saved ? "" : "*",
     //                KKE_main_pixarfile_path_from_global(),
     //                G_MAIN->recovered ? " (Recovered)" : "");
-    //   ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, str);
+    //   ANCHOR::SetTitle((AnchorSystemWindowHandle)win->anchorwin, str);
     // }
     // else {
-    ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, "Kraken");
+    ANCHOR::SetTitle((AnchorSystemWindowHandle)win->anchorwin, "Kraken");
     // }
 
     /**
@@ -861,18 +861,18 @@ static void wm_window_check_size(GfVec4i *rect)
 
 void wm_window_set_size(wmWindow *win, int width, int height)
 {
-  ANCHOR::SetClientSize((ANCHOR_SystemWindowHandle)win->anchorwin, width, height);
+  ANCHOR::SetClientSize((AnchorSystemWindowHandle)win->anchorwin, width, height);
 }
 
 
 static void wm_window_raise(wmWindow *win)
 {
   /* Restore window if minimized */
-  if (ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin) == AnchorWindowStateMinimized)
+  if (ANCHOR::GetWindowState((AnchorSystemWindowHandle)win->anchorwin) == AnchorWindowStateMinimized)
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)win->anchorwin, AnchorWindowStateNormal);
+    ANCHOR::SetWindowState((AnchorSystemWindowHandle)win->anchorwin, AnchorWindowStateNormal);
   }
-  ANCHOR::SetWindowOrder((ANCHOR_SystemWindowHandle)win->anchorwin, AnchorWindowOrderTop);
+  ANCHOR::SetWindowOrder((AnchorSystemWindowHandle)win->anchorwin, AnchorWindowOrderTop);
 }
 
 bool WM_window_is_temp_screen(const wmWindow *win)
@@ -909,7 +909,7 @@ wmWindow *WM_window_open(kContext *C,
   GfVec2f pos = FormFactory(win_prev->pos);
   GfVec2f size = FormFactory(win_prev->size);
 
-  const float native_pixel_size = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win_prev->anchorwin);
+  const float native_pixel_size = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win_prev->anchorwin);
   /* convert to native OS window coordinates */
   rect[0] = pos[0] + (x / native_pixel_size);
   rect[1] = pos[1] + (y / native_pixel_size);
@@ -949,7 +949,7 @@ wmWindow *WM_window_open(kContext *C,
     {
       if (WM_window_is_temp_screen(VALUE(win_iter)))
       {
-        char *wintitle = ANCHOR::GetTitle((ANCHOR_SystemWindowHandle)VALUE(win_iter)->anchorwin);
+        char *wintitle = ANCHOR::GetTitle((AnchorSystemWindowHandle)VALUE(win_iter)->anchorwin);
         if (STREQ(title, wintitle))
         {
           win = VALUE(win_iter);
@@ -1027,7 +1027,7 @@ wmWindow *WM_window_open(kContext *C,
   if (win->anchorwin)
   {
     wm_window_raise(win);
-    ANCHOR::SetTitle((ANCHOR_SystemWindowHandle)win->anchorwin, title);
+    ANCHOR::SetTitle((AnchorSystemWindowHandle)win->anchorwin, title);
     return win;
   }
 
@@ -1156,7 +1156,7 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
 
 int WM_window_pixels_x(const wmWindow *win)
 {
-  float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  float f = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
 
   GfVec2f win_size = FormFactory(win->size);
 
@@ -1165,7 +1165,7 @@ int WM_window_pixels_x(const wmWindow *win)
 
 int WM_window_pixels_y(const wmWindow *win)
 {
-  float f = ANCHOR::GetNativePixelSize((ANCHOR_SystemWindowHandle)win->anchorwin);
+  float f = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
 
   GfVec2f win_size = FormFactory(win->size);
 
@@ -1310,7 +1310,7 @@ wmWindow *wm_window_copy(kContext *C,
                          const bool duplicate_layout,
                          const bool child)
 {
-  const bool is_dialog = ANCHOR::IsDialogWindow((ANCHOR_SystemWindowHandle)win_src->anchorwin);
+  const bool is_dialog = ANCHOR::IsDialogWindow((AnchorSystemWindowHandle)win_src->anchorwin);
   wmWindow *win_parent = (child) ? win_src : win_src->parent;
   wmWindow *win_dst = wm_window_new(C, wm, win_parent, is_dialog);
   WorkSpace *workspace = WM_window_get_active_workspace(win_src);
@@ -1394,7 +1394,7 @@ void WM_anchor_init(kContext *C)
 {
   if (!anchor_system)
   {
-    ANCHOR_EventConsumerHandle consumer;
+    AnchorEventConsumerHandle consumer;
 
     if (C != NULL)
     {
@@ -1438,7 +1438,7 @@ void WM_window_process_events(kContext *C)
 
 void WM_window_swap_buffers(wmWindow *win)
 {
-  ANCHOR::SwapChain((ANCHOR_SystemWindowHandle)win->anchorwin);
+  ANCHOR::SwapChain((AnchorSystemWindowHandle)win->anchorwin);
 }
 
 
@@ -1460,14 +1460,14 @@ static int wm_window_fullscreen_toggle_exec(kContext *C, wmOperator *UNUSED(op))
 {
   wmWindow *window = CTX_wm_window(C);
 
-  eAnchorWindowState state = ANCHOR::GetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin);
+  eAnchorWindowState state = ANCHOR::GetWindowState((AnchorSystemWindowHandle)window->anchorwin);
   if (state != AnchorWindowStateFullScreen)
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, AnchorWindowStateFullScreen);
+    ANCHOR::SetWindowState((AnchorSystemWindowHandle)window->anchorwin, AnchorWindowStateFullScreen);
   }
   else
   {
-    ANCHOR::SetWindowState((ANCHOR_SystemWindowHandle)window->anchorwin, AnchorWindowStateNormal);
+    ANCHOR::SetWindowState((AnchorSystemWindowHandle)window->anchorwin, AnchorWindowStateNormal);
   }
 
   return OPERATOR_FINISHED;

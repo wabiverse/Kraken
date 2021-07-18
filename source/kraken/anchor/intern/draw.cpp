@@ -33,101 +33,58 @@
 #endif
 
 #include "ANCHOR_internal.h"
-#ifdef ANCHOR_ENABLE_FREETYPE
-#  include "ANCHOR_freetype.h"
-#endif
+#include "ANCHOR_freetype.h"
 
-#include <stdio.h>  // vsnprintf, sscanf, printf
+#include <stdio.h>
 #if !defined(alloca)
 #  if defined(__GLIBC__) || defined(__sun) || defined(__APPLE__) || defined(__NEWLIB__)
-#    include <alloca.h>  // alloca (glibc uses <alloca.h>. Note that Cygwin may have _WIN32 defined, so the order matters here)
+#    include <alloca.h>
 #  elif defined(_WIN32)
-#    include <malloc.h>  // alloca
+#    include <malloc.h>
 #    if !defined(alloca)
-#      define alloca _alloca  // for clang with MS Codegen
+#      define alloca _alloca
 #    endif
 #  else
-#    include <stdlib.h>  // alloca
+#    include <stdlib.h>
 #  endif
 #endif
 
 // Visual Studio warnings
 #ifdef _MSC_VER
-#  pragma warning(disable : 4127)   // condition expression is constant
-#  pragma warning(disable : 4505)   // unreferenced local function has been removed (stb stuff)
-#  pragma warning(disable : 4996)   // 'This function or variable may be unsafe': strcpy, strdup, \
-                                      // sprintf, vsnprintf, sscanf, fopen
-#  pragma warning(disable : 6255)   // [Static Analyzer] _alloca indicates failure by raising a stack \
-                                      // overflow exception.  Consider using _malloca instead.
-#  pragma warning(disable : 26451)  // [Static Analyzer] Arithmetic overflow : Using operator \
-                                      // 'xxx' on a 4 byte value and then casting the result to a 8 \
-                                      // byte value. Cast the value to the wider type before \
-                                      // calling operator 'xxx' to avoid overflow(io.2).
-#  pragma warning(disable : 26812)  // [Static Analyzer] The enum type 'xxx' is unscoped. Prefer 'enum \
-                                      // class' over 'enum' (Enum.3). [MSVC Static Analyzer)
+#  pragma warning(disable : 4127)
+#  pragma warning(disable : 4505)
+#  pragma warning(disable : 4996)
+#  pragma warning(disable : 6255)
+#  pragma warning(disable : 26451)
+#  pragma warning(disable : 26812)
 #endif
 
 // Clang/GCC warnings with -Weverything
 #if defined(__clang__)
 #  if __has_warning("-Wunknown-warning-option")
-#    pragma clang diagnostic ignored \
-      "-Wunknown-warning-option"  // warning: unknown warning group 'xxx' // not all warnings \
-                                    // are known by all Clang versions and they tend to be \
-                                    // rename-happy.. so ignoring warnings triggers new warnings \
-                                    // on some configuration. Great!
+#    pragma clang diagnostic ignored "-Wunknown-warning-option"
 #  endif
 #  if __has_warning("-Walloca")
-#    pragma clang diagnostic ignored \
-      "-Walloca"  // warning: use of function '__builtin_alloca' is discouraged
+#    pragma clang diagnostic ignored "-Walloca"
 #  endif
-#  pragma clang diagnostic ignored "-Wunknown-pragmas"  // warning: unknown warning group 'xxx'
-#  pragma clang diagnostic ignored "-Wold-style-cast"   // warning: use of old-style cast // yes, \
-                                                          // they are more terse.
-#  pragma clang diagnostic ignored \
-    "-Wfloat-equal"  // warning: comparing floating point with == or != is unsafe // storing \
-                       // and comparing against same constants ok.
-#  pragma clang diagnostic ignored \
-    "-Wglobal-constructors"                             // warning: declaration requires a global destructor         // \
-                                                          // similar to above, not sure what the exact difference is.
-#  pragma clang diagnostic ignored "-Wsign-conversion"  // warning: implicit conversion changes signedness
-#  pragma clang diagnostic ignored \
-    "-Wzero-as-null-pointer-constant"                     // warning: zero as null pointer constant // some \
-                                                            // standard header variations use #define NULL 0
-#  pragma clang diagnostic ignored "-Wcomma"              // warning: possible misuse of comma operator here
-#  pragma clang diagnostic ignored "-Wreserved-id-macro"  // warning: macro name is a reserved identifier
-#  pragma clang diagnostic ignored \
-    "-Wdouble-promotion"  // warning: implicit conversion from 'float' to 'double' when passing \
-                            // argument to function  // using printf() is a misery with this as \
-                            // C++ va_arg ellipsis changes float to double.
-#  pragma clang diagnostic ignored \
-    "-Wimplicit-int-float-conversion"  // warning: implicit conversion from 'xxx' to 'float' \
-                                         // may lose precision
+#  pragma clang diagnostic ignored "-Wunknown-pragmas"
+#  pragma clang diagnostic ignored "-Wold-style-cast"
+#  pragma clang diagnostic ignored "-Wfloat-equal"
+#  pragma clang diagnostic ignored "-Wglobal-constructors"
+#  pragma clang diagnostic ignored "-Wsign-conversion"
+#  pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#  pragma clang diagnostic ignored "-Wcomma"
+#  pragma clang diagnostic ignored "-Wreserved-id-macro"
+#  pragma clang diagnostic ignored "-Wdouble-promotion"
+#  pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
 #elif defined(__GNUC__)
-#  pragma GCC diagnostic ignored \
-    "-Wpragmas"                                        // warning: unknown option after '#pragma GCC diagnostic' kind
-#  pragma GCC diagnostic ignored "-Wunused-function"   // warning: 'xxxx' defined but not used
-#  pragma GCC diagnostic ignored "-Wdouble-promotion"  // warning: implicit conversion from 'float' to \
-                                                         // 'double' when passing argument to function
-#  pragma GCC diagnostic ignored \
-    "-Wconversion"                                    // warning: conversion to 'xxxx' from 'xxxx' may alter its value
-#  pragma GCC diagnostic ignored "-Wstack-protector"  // warning: stack protector not protecting local \
-                                                        // variables: variable length buffer
-#  pragma GCC diagnostic ignored \
-    "-Wclass-memaccess"  // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object \
-                           // of type 'xxxx' with no trivial copy-assignment; use assignment or \
-                           // value-initialization instead
+#  pragma GCC diagnostic ignored "-Wpragmas"
+#  pragma GCC diagnostic ignored "-Wunused-function"
+#  pragma GCC diagnostic ignored "-Wdouble-promotion"
+#  pragma GCC diagnostic ignored "-Wconversion"
+#  pragma GCC diagnostic ignored "-Wstack-protector"
+#  pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
-
-//-------------------------------------------------------------------------
-// [SECTION] STB libraries implementation
-//-------------------------------------------------------------------------
-
-// Compile time options:
-//#define ANCHOR_STB_NAMESPACE           ImStb
-//#define ANCHOR_STB_TRUETYPE_FILENAME   "my_folder/stb_truetype.h"
-//#define ANCHOR_STB_RECT_PACK_FILENAME  "my_folder/stb_rect_pack.h"
-//#define ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
-//#define ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 
 #ifdef ANCHOR_STB_NAMESPACE
 namespace ANCHOR_STB_NAMESPACE
@@ -136,12 +93,10 @@ namespace ANCHOR_STB_NAMESPACE
 
 #ifdef _MSC_VER
 #  pragma warning(push)
-#  pragma warning(disable : 4456)   // declaration of 'xx' hides previous local declaration
-#  pragma warning(disable : 6011)   // (stb_rectpack) Dereferencing NULL pointer 'cur->next'.
-#  pragma warning(disable : 6385)   // (stb_truetype) Reading invalid data from 'buffer':  the readable size \
-                                      // is '_Old_3`kernel_width' bytes, but '3' bytes may be read.
-#  pragma warning(disable : 28182)  // (stb_rectpack) Dereferencing NULL pointer. 'cur' contains \
-                                      // the same NULL value as 'cur->next' did.
+#  pragma warning(disable : 4456)
+#  pragma warning(disable : 6011)
+#  pragma warning(disable : 6385)
+#  pragma warning(disable : 28182)
 #endif
 
 #if defined(__clang__)
@@ -149,23 +104,17 @@ namespace ANCHOR_STB_NAMESPACE
 #  pragma clang diagnostic ignored "-Wunused-function"
 #  pragma clang diagnostic ignored "-Wmissing-prototypes"
 #  pragma clang diagnostic ignored "-Wimplicit-fallthrough"
-#  pragma clang diagnostic ignored \
-    "-Wcast-qual"  // warning: cast from 'const xxxx *' to 'xxx *' drops const qualifier
+#  pragma clang diagnostic ignored "-Wcast-qual"
 #endif
 
 #if defined(__GNUC__)
 #  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wtype-limits"  // warning: comparison is always true due to \
-                                                    // limited range of data type [-Wtype-limits]
-#  pragma GCC diagnostic ignored "-Wcast-qual"    // warning: cast from type 'const xxxx *' to type \
-                                                    // 'xxxx *' casts away qualifiers
+#  pragma GCC diagnostic ignored "-Wtype-limits"
+#  pragma GCC diagnostic ignored "-Wcast-qual"
 #endif
 
-#ifndef STB_RECT_PACK_IMPLEMENTATION                   // in case the user already have an implementation in the \
-                                                         // _same_ compilation unit (e.g. unity builds)
-#  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION  // in case the user already have an \
-                                                         // implementation in another compilation \
-                                                         // unit
+#ifndef STB_RECT_PACK_IMPLEMENTATION
+#  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 #    define STBRP_STATIC
 #    define STBRP_ASSERT(x) \
       do \
@@ -182,12 +131,8 @@ namespace ANCHOR_STB_NAMESPACE
 #  endif
 #endif
 
-#ifdef ANCHOR_ENABLE_STB_TRUETYPE
-#  ifndef STB_TRUETYPE_IMPLEMENTATION                   // in case the user already have an implementation in the \
-                                                          // _same_ compilation unit (e.g. unity builds)
-#    ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION  // in case the user already have an \
-                                                          // implementation in another compilation \
-                                                          // unit
+#  ifndef STB_TRUETYPE_IMPLEMENTATION
+#    ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
 #      define STBTT_malloc(x, u) ((void)(u), IM_ALLOC(x))
 #      define STBTT_free(x, u) ((void)(u), IM_FREE(x))
 #      define STBTT_assert(x) \
@@ -212,7 +157,6 @@ namespace ANCHOR_STB_NAMESPACE
 #      include "ANCHOR_truetype.h"
 #    endif
 #  endif
-#endif  // ANCHOR_ENABLE_STB_TRUETYPE
 
 #if defined(__GNUC__)
 #  pragma GCC diagnostic pop
@@ -227,15 +171,11 @@ namespace ANCHOR_STB_NAMESPACE
 #endif
 
 #ifdef ANCHOR_STB_NAMESPACE
-}  // namespace ImStb
+}  // namespace AnchorStb
 using namespace ANCHOR_STB_NAMESPACE;
 #endif
 
 WABI_NAMESPACE_USING
-
-//-----------------------------------------------------------------------------
-// [SECTION] Style functions
-//-----------------------------------------------------------------------------
 
 void ANCHOR::StyleColorsDark(AnchorStyle *dst)
 {
@@ -2817,13 +2757,8 @@ bool AnchorFontAtlas::Build()
   const AnchorFontBuilderIO *builder_io = FontBuilderIO;
   if (builder_io == NULL)
   {
-#ifdef ANCHOR_ENABLE_FREETYPE
     builder_io = AnchorFreeType::GetBuilderForFreeType();
-#elif defined(ANCHOR_ENABLE_STB_TRUETYPE)
-    builder_io = AnchorFontAtlasGetBuilderForStbTruetype();
-#else
-    ANCHOR_ASSERT(0);  // Invalid Build function
-#endif
+    // builder_io = AnchorFontAtlasGetBuilderForStbTruetype();
   }
 
   // Build
@@ -2853,7 +2788,6 @@ void AnchorFontAtlasBuildMultiplyRectAlpha8(const unsigned char table[256],
       data[i] = table[data[i]];
 }
 
-#ifdef ANCHOR_ENABLE_STB_TRUETYPE
 // Temporary data for one source font (multiple source fonts can be merged into one destination
 // AnchorFont) (C++03 doesn't allow instancing AnchorVector<> with function-local types so we
 // declare the type here.)
@@ -3195,8 +3129,6 @@ const AnchorFontBuilderIO *AnchorFontAtlasGetBuilderForStbTruetype()
   io.FontBuilder_Build = AnchorFontAtlasBuildWithStbTruetype;
   return &io;
 }
-
-#endif  // ANCHOR_ENABLE_STB_TRUETYPE
 
 void AnchorFontAtlasBuildSetupFont(AnchorFontAtlas *atlas,
                                    AnchorFont *font,
@@ -7600,7 +7532,7 @@ static inline float AnchorAcos01(float x)
 
 // FIXME: Cleanup and move code to AnchorDrawList.
 void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
-                                    const AnchorRect &rect,
+                                    const AnchorBBox &rect,
                                     AnchorU32 col,
                                     float x_start_norm,
                                     float x_end_norm,
@@ -7667,8 +7599,8 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
 }
 
 void ANCHOR::RenderRectFilledWithHole(AnchorDrawList *draw_list,
-                                      AnchorRect outer,
-                                      AnchorRect inner,
+                                      AnchorBBox outer,
+                                      AnchorBBox inner,
                                       AnchorU32 col,
                                       float rounding)
 {

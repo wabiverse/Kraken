@@ -29,68 +29,68 @@
 #if 0
 void EditTransform(const Camera& camera, matrix_t& matrix)
 {
-   static Anchorzmo::OPERATION mCurrentGizmoOperation(Anchorzmo::ROTATE);
-   static Anchorzmo::MODE mCurrentGizmoMode(Anchorzmo::WORLD);
-   if (Anchor::IsKeyPressed(90))
-      mCurrentGizmoOperation = Anchorzmo::TRANSLATE;
-   if (Anchor::IsKeyPressed(69))
-      mCurrentGizmoOperation = Anchorzmo::ROTATE;
-   if (Anchor::IsKeyPressed(82)) // r Key
-      mCurrentGizmoOperation = Anchorzmo::SCALE;
-   if (Anchor::RadioButton("Translate", mCurrentGizmoOperation == Anchorzmo::TRANSLATE))
-      mCurrentGizmoOperation = Anchorzmo::TRANSLATE;
-   Anchor::SameLine();
-   if (Anchor::RadioButton("Rotate", mCurrentGizmoOperation == Anchorzmo::ROTATE))
-      mCurrentGizmoOperation = Anchorzmo::ROTATE;
-   Anchor::SameLine();
-   if (Anchor::RadioButton("Scale", mCurrentGizmoOperation == Anchorzmo::SCALE))
-      mCurrentGizmoOperation = Anchorzmo::SCALE;
+   static AnchorGizmo::OPERATION mCurrentGizmoOperation(AnchorGizmo::ROTATE);
+   static AnchorGizmo::MODE mCurrentGizmoMode(AnchorGizmo::WORLD);
+   if (ANCHOR::IsKeyPressed(90))
+      mCurrentGizmoOperation = AnchorGizmo::TRANSLATE;
+   if (ANCHOR::IsKeyPressed(69))
+      mCurrentGizmoOperation = AnchorGizmo::ROTATE;
+   if (ANCHOR::IsKeyPressed(82)) // r Key
+      mCurrentGizmoOperation = AnchorGizmo::SCALE;
+   if (ANCHOR::RadioButton("Translate", mCurrentGizmoOperation == AnchorGizmo::TRANSLATE))
+      mCurrentGizmoOperation = AnchorGizmo::TRANSLATE;
+   ANCHOR::SameLine();
+   if (ANCHOR::RadioButton("Rotate", mCurrentGizmoOperation == AnchorGizmo::ROTATE))
+      mCurrentGizmoOperation = AnchorGizmo::ROTATE;
+   ANCHOR::SameLine();
+   if (ANCHOR::RadioButton("Scale", mCurrentGizmoOperation == AnchorGizmo::SCALE))
+      mCurrentGizmoOperation = AnchorGizmo::SCALE;
    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-   Anchorzmo::DecomposeMatrixToComponents(matrix.m16, matrixTranslation, matrixRotation, matrixScale);
-   Anchor::InputFloat3("Tr", matrixTranslation, 3);
-   Anchor::InputFloat3("Rt", matrixRotation, 3);
-   Anchor::InputFloat3("Sc", matrixScale, 3);
-   Anchorzmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m16);
+   AnchorGizmo::DecomposeMatrixToComponents(matrix.m16, matrixTranslation, matrixRotation, matrixScale);
+   ANCHOR::InputFloat3("Tr", matrixTranslation, 3);
+   ANCHOR::InputFloat3("Rt", matrixRotation, 3);
+   ANCHOR::InputFloat3("Sc", matrixScale, 3);
+   AnchorGizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m16);
 
-   if (mCurrentGizmoOperation != Anchorzmo::SCALE)
+   if (mCurrentGizmoOperation != AnchorGizmo::SCALE)
    {
-      if (Anchor::RadioButton("Local", mCurrentGizmoMode == Anchorzmo::LOCAL))
-         mCurrentGizmoMode = Anchorzmo::LOCAL;
-      Anchor::SameLine();
-      if (Anchor::RadioButton("World", mCurrentGizmoMode == Anchorzmo::WORLD))
-         mCurrentGizmoMode = Anchorzmo::WORLD;
+      if (ANCHOR::RadioButton("Local", mCurrentGizmoMode == AnchorGizmo::LOCAL))
+         mCurrentGizmoMode = AnchorGizmo::LOCAL;
+      ANCHOR::SameLine();
+      if (ANCHOR::RadioButton("World", mCurrentGizmoMode == AnchorGizmo::WORLD))
+         mCurrentGizmoMode = AnchorGizmo::WORLD;
    }
    static bool useSnap(false);
-   if (Anchor::IsKeyPressed(83))
+   if (ANCHOR::IsKeyPressed(83))
       useSnap = !useSnap;
-   Anchor::Checkbox("", &useSnap);
-   Anchor::SameLine();
+   ANCHOR::Checkbox("", &useSnap);
+   ANCHOR::SameLine();
    vec_t snap;
    switch (mCurrentGizmoOperation)
    {
-   case Anchorzmo::TRANSLATE:
+   case AnchorGizmo::TRANSLATE:
       snap = config.mSnapTranslation;
-      Anchor::InputFloat3("Snap", &snap.x);
+      ANCHOR::InputFloat3("Snap", &snap.x);
       break;
-   case Anchorzmo::ROTATE:
+   case AnchorGizmo::ROTATE:
       snap = config.mSnapRotation;
-      Anchor::InputFloat("Angle Snap", &snap.x);
+      ANCHOR::InputFloat("Angle Snap", &snap.x);
       break;
-   case Anchorzmo::SCALE:
+   case AnchorGizmo::SCALE:
       snap = config.mSnapScale;
-      Anchor::InputFloat("Scale Snap", &snap.x);
+      ANCHOR::InputFloat("Scale Snap", &snap.x);
       break;
    }
-   AnchorIO& io = Anchor::GetIO();
-   Anchorzmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-   Anchorzmo::Manipulate(camera.mView.m16, camera.mProjection.m16, mCurrentGizmoOperation, mCurrentGizmoMode, matrix.m16, NULL, useSnap ? &snap.x : NULL);
+   AnchorIO& io = ANCHOR::GetIO();
+   AnchorGizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+   AnchorGizmo::Manipulate(camera.mView.m16, camera.mProjection.m16, mCurrentGizmoOperation, mCurrentGizmoMode, matrix.m16, NULL, useSnap ? &snap.x : NULL);
 }
 #endif
 
-namespace Anchorzmo
+namespace AnchorGizmo
 {
    // call inside your own window and before Manipulate() in order to draw gizmo to that window.
-   // Or pass a specific AnchorDrawList to draw to (e.g. Anchor::GetForegroundDrawList()).
+   // Or pass a specific AnchorDrawList to draw to (e.g. ANCHOR::GetForegroundDrawList()).
    ANCHOR_API void SetDrawlist(AnchorDrawList* drawlist = nullptr);
 
    // call BeginFrame right after Anchor_XXXX_NewFrame();
@@ -100,7 +100,7 @@ namespace Anchorzmo
    // globals are not shared between them.
    // More details at https://stackoverflow.com/questions/19373061/what-happens-to-global-and-static-variables-in-a-shared-library-when-it-is-dynam
    // expose method to set imgui context
-   ANCHOR_API void SetAnchorGuiContext(AnchorGuiContext* ctx);
+   ANCHOR_API void SetAnchorContext(AnchorContext* ctx);
 
    // return true if mouse cursor is over any gizmo control (axis, plan or screen component)
    ANCHOR_API bool IsOver();
@@ -117,11 +117,11 @@ namespace Anchorzmo
    // Angles are in degrees (more suitable for human editing)
    // example:
    // float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-   // Anchorzmo::DecomposeMatrixToComponents(gizmoMatrix.m16, matrixTranslation, matrixRotation, matrixScale);
-   // Anchor::InputFloat3("Tr", matrixTranslation, 3);
-   // Anchor::InputFloat3("Rt", matrixRotation, 3);
-   // Anchor::InputFloat3("Sc", matrixScale, 3);
-   // Anchorzmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, gizmoMatrix.m16);
+   // AnchorGizmo::DecomposeMatrixToComponents(gizmoMatrix.m16, matrixTranslation, matrixRotation, matrixScale);
+   // ANCHOR::InputFloat3("Tr", matrixTranslation, 3);
+   // ANCHOR::InputFloat3("Rt", matrixRotation, 3);
+   // ANCHOR::InputFloat3("Sc", matrixScale, 3);
+   // AnchorGizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, gizmoMatrix.m16);
    //
    // These functions have some numerical stability issues for now. Use with caution.
    ANCHOR_API void DecomposeMatrixToComponents(const float* matrix, float* translation, float* rotation, float* scale);
