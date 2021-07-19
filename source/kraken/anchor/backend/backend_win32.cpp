@@ -3483,7 +3483,19 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
     m_device(nullptr),
     m_commandQueue(nullptr),
     m_pipelineCache(nullptr),
-    m_instance(nullptr)
+    m_instance(nullptr),
+    m_d3dDevice(nullptr),
+    m_d3dRtvDescriptorHeap(nullptr),
+    m_d3dSrvDescriptorHeap(nullptr),
+    m_d3dCommandQueue(nullptr),
+    m_d3dCommandList(nullptr),
+    m_mainRenderTargetResource{},
+    m_mainRenderTargetDescriptor{},
+    m_frameContext{},
+    m_d3dSwapChainWaitObject(NULL),
+    m_fenceEvent(NULL),
+    m_frameIndex(0),
+    m_fenceLastSignaledValue(0)
 {
   DWORD style = parentWindow ?
                   WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
@@ -4112,9 +4124,6 @@ void AnchorWindowWin32::SetupVulkan()
   /**
    * Create Descriptor Pool. */
   {
-
-    /* clang-format off */
-
     VkDescriptorPoolSize pool_sizes[] = {
       {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
       {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
@@ -4126,10 +4135,7 @@ void AnchorWindowWin32::SetupVulkan()
       {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
       {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
       {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
-      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
-    };
-
-    /* clang-format on */
+      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}};
 
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
