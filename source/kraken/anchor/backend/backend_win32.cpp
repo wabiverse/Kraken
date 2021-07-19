@@ -725,6 +725,185 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
   return true;
 }
 
+struct VERTEX_CONSTANT_BUFFER
+{
+  float mvp[4][4];
+};
+
+static void AnchorBackendDXD12SetupRenderState(AnchorDrawData *draw_data, ID3D12GraphicsCommandList *ctx, AnchorBackendDXD12RenderBuffers *fr)
+{
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+
+  VERTEX_CONSTANT_BUFFER vertex_constant_buffer;
+  {
+    float L = draw_data->DisplayPos[0];
+    float R = draw_data->DisplayPos[0] + draw_data->DisplaySize[0];
+    float T = draw_data->DisplayPos[1];
+    float B = draw_data->DisplayPos[1] + draw_data->DisplaySize[1];
+    float mvp[4][4] =
+      {
+        {2.0f / (R - L), 0.0f, 0.0f, 0.0f},
+        {0.0f, 2.0f / (T - B), 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.5f, 0.0f},
+        {(R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f},
+      };
+    memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
+  }
+
+  D3D12_VIEWPORT vp;
+  memset(&vp, 0, sizeof(D3D12_VIEWPORT));
+  vp.Width = draw_data->DisplaySize[0];
+  vp.Height = draw_data->DisplaySize[1];
+  vp.MinDepth = 0.0f;
+  vp.MaxDepth = 1.0f;
+  vp.TopLeftX = vp.TopLeftY = 0.0f;
+  ctx->RSSetViewports(1, &vp);
+
+  unsigned int stride = sizeof(AnchorDrawVert);
+  unsigned int offset = 0;
+  D3D12_VERTEX_BUFFER_VIEW vbv;
+  memset(&vbv, 0, sizeof(D3D12_VERTEX_BUFFER_VIEW));
+  vbv.BufferLocation = fr->VertexBuffer->GetGPUVirtualAddress() + offset;
+  vbv.SizeInBytes = fr->VertexBufferSize * stride;
+  vbv.StrideInBytes = stride;
+  ctx->IASetVertexBuffers(0, 1, &vbv);
+  D3D12_INDEX_BUFFER_VIEW ibv;
+  memset(&ibv, 0, sizeof(D3D12_INDEX_BUFFER_VIEW));
+  ibv.BufferLocation = fr->IndexBuffer->GetGPUVirtualAddress();
+  ibv.SizeInBytes = fr->IndexBufferSize * sizeof(AnchorDrawIdx);
+  ibv.Format = sizeof(AnchorDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+  ctx->IASetIndexBuffer(&ibv);
+  ctx->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  ctx->SetPipelineState(bd->PipelineState);
+  ctx->SetGraphicsRootSignature(bd->RootSignature);
+  ctx->SetGraphicsRoot32BitConstants(0, 16, &vertex_constant_buffer, 0);
+
+  // Setup blend factor
+  const float blend_factor[4] = {0.f, 0.f, 0.f, 0.f};
+  ctx->OMSetBlendFactor(blend_factor);
+}
+
+static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12GraphicsCommandList *ctx)
+{
+  if (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f)
+    return;
+
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+  bd->frameIndex = bd->frameIndex + 1;
+  AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[bd->frameIndex % bd->numFramesInFlight];
+
+  if (fr->VertexBuffer == NULL || fr->VertexBufferSize < draw_data->TotalVtxCount)
+  {
+    SafeRelease(fr->VertexBuffer);
+    fr->VertexBufferSize = draw_data->TotalVtxCount + 5000;
+    D3D12_HEAP_PROPERTIES props;
+    memset(&props, 0, sizeof(D3D12_HEAP_PROPERTIES));
+    props.Type = D3D12_HEAP_TYPE_UPLOAD;
+    props.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    D3D12_RESOURCE_DESC desc;
+    memset(&desc, 0, sizeof(D3D12_RESOURCE_DESC));
+    desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    desc.Width = fr->VertexBufferSize * sizeof(AnchorDrawVert);
+    desc.Height = 1;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.Format = DXGI_FORMAT_UNKNOWN;
+    desc.SampleDesc.Count = 1;
+    desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    if (bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&fr->VertexBuffer)) < 0)
+      return;
+  }
+  if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount)
+  {
+    SafeRelease(fr->IndexBuffer);
+    fr->IndexBufferSize = draw_data->TotalIdxCount + 10000;
+    D3D12_HEAP_PROPERTIES props;
+    memset(&props, 0, sizeof(D3D12_HEAP_PROPERTIES));
+    props.Type = D3D12_HEAP_TYPE_UPLOAD;
+    props.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    D3D12_RESOURCE_DESC desc;
+    memset(&desc, 0, sizeof(D3D12_RESOURCE_DESC));
+    desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    desc.Width = fr->IndexBufferSize * sizeof(AnchorDrawIdx);
+    desc.Height = 1;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.Format = DXGI_FORMAT_UNKNOWN;
+    desc.SampleDesc.Count = 1;
+    desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    if (bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&fr->IndexBuffer)) < 0)
+      return;
+  }
+
+  // Upload vertex/index data into a single contiguous GPU buffer
+  void *vtx_resource, *idx_resource;
+  D3D12_RANGE range;
+  memset(&range, 0, sizeof(D3D12_RANGE));
+  if (fr->VertexBuffer->Map(0, &range, &vtx_resource) != S_OK)
+    return;
+  if (fr->IndexBuffer->Map(0, &range, &idx_resource) != S_OK)
+    return;
+  AnchorDrawVert *vtx_dst = (AnchorDrawVert *)vtx_resource;
+  AnchorDrawIdx *idx_dst = (AnchorDrawIdx *)idx_resource;
+  for (int n = 0; n < draw_data->CmdListsCount; n++)
+  {
+    const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
+    memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(AnchorDrawVert));
+    memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(AnchorDrawIdx));
+    vtx_dst += cmd_list->VtxBuffer.Size;
+    idx_dst += cmd_list->IdxBuffer.Size;
+  }
+  fr->VertexBuffer->Unmap(0, &range);
+  fr->IndexBuffer->Unmap(0, &range);
+
+  AnchorBackendDXD12SetupRenderState(draw_data, ctx, fr);
+
+  // Render command lists
+  int global_vtx_offset = 0;
+  int global_idx_offset = 0;
+  GfVec2f clip_off = draw_data->DisplayPos;
+  for (int n = 0; n < draw_data->CmdListsCount; n++)
+  {
+    const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
+    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+    {
+      const AnchorDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+      if (pcmd->UserCallback != NULL)
+      {
+        // User callback, registered via AnchorDrawList::AddCallback()
+        if (pcmd->UserCallback == AnchorDrawCallback_ResetRenderState)
+          AnchorBackendDXD12SetupRenderState(draw_data, ctx, fr);
+        else
+          pcmd->UserCallback(cmd_list, pcmd);
+      }
+      else
+      {
+        // Apply Scissor, Bind texture, Draw
+        const D3D12_RECT r = {
+          (LONG)(pcmd->ClipRect[0] - clip_off[0]),
+          (LONG)(pcmd->ClipRect[1] - clip_off[1]),
+          (LONG)(pcmd->ClipRect[2] - clip_off[0]),
+          (LONG)(pcmd->ClipRect[3] - clip_off[1])};
+
+        if (r.right > r.left && r.bottom > r.top)
+        {
+          D3D12_GPU_DESCRIPTOR_HANDLE texture_handle = {};
+          texture_handle.ptr = (UINT64)pcmd->GetTexID();
+          ctx->SetGraphicsRootDescriptorTable(1, texture_handle);
+          ctx->RSSetScissorRects(1, &r);
+          ctx->DrawIndexedInstanced(pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+        }
+      }
+    }
+    global_idx_offset += cmd_list->IdxBuffer.Size;
+    global_vtx_offset += cmd_list->VtxBuffer.Size;
+  }
+}
+
 static void AnchorBackendDXD12NewFrame()
 {
   AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
@@ -1533,7 +1712,8 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
   // }
 
   AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
-  if (window->getDrawingContextType() == ANCHOR_DrawingContextTypeDX12) {
+  if (window->getDrawingContextType() == ANCHOR_DrawingContextTypeDX12)
+  {
     AnchorBackendDXD12NewFrame();
   }
   AnchorBackendWin32NewFrame();
@@ -3426,6 +3606,7 @@ AnchorWindowWin32::~AnchorWindowWin32()
   }
 
   DestroyVulkan();
+  DestroyD3D();
 
   // closeWintab();
 
@@ -4744,6 +4925,32 @@ void AnchorWindowWin32::FramePresent()
   }
 }
 
+D3D12FrameContext *AnchorWindowWin32::WaitForNextD3D12FrameResources()
+{
+  UINT nextFrameIndex = m_frameIndex + 1;
+  m_frameIndex = nextFrameIndex;
+
+  HANDLE waitableObjects[] = {
+    m_d3dSwapChainWaitObject,
+    NULL};
+
+  DWORD numWaitableObjects = 1;
+
+  D3D12FrameContext *frameCtx = &m_frameContext[nextFrameIndex % NUM_FRAMES_IN_FLIGHT];
+  UINT64 fenceValue = frameCtx->FenceValue;
+  if (fenceValue != 0)  // means no fence was signaled
+  {
+    frameCtx->FenceValue = 0;
+    m_fence->SetEventOnCompletion(fenceValue, m_fenceEvent);
+    waitableObjects[1] = m_fenceEvent;
+    numWaitableObjects = 2;
+  }
+
+  WaitForMultipleObjects(numWaitableObjects, waitableObjects, TRUE, INFINITE);
+
+  return frameCtx;
+}
+
 eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
   if (ANCHOR::GetCurrentContext() == NULL)
@@ -4752,17 +4959,65 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
   }
 
   ANCHOR::Render();
-  AnchorDrawData *draw_data = ANCHOR::GetDrawData();
-  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
-  if (!is_minimized)
+
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
   {
-    m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
-    m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
-    m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
-    m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
-    FrameRender(draw_data);
-    FramePresent();
+    AnchorDrawData *draw_data = ANCHOR::GetDrawData();
+    const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
+    if (!is_minimized)
+    {
+
+      m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
+      m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
+      m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
+      m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
+      FrameRender(draw_data);
+      FramePresent();
+    }
   }
+
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
+  {
+    D3D12FrameContext *frameCtx = WaitForNextD3D12FrameResources();
+    UINT backBufferIdx = m_d3dSwapChain->GetCurrentBackBufferIndex();
+    frameCtx->CommandAllocator->Reset();
+
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = m_mainRenderTargetResource[backBufferIdx];
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_d3dCommandList->Reset(frameCtx->CommandAllocator, NULL);
+    m_d3dCommandList->ResourceBarrier(1, &barrier);
+
+    const float clear_color_with_alpha[4] = {
+      g_HDPARAMS_Apollo.clearColor[0] * g_HDPARAMS_Apollo.clearColor[3],
+      g_HDPARAMS_Apollo.clearColor[1] * g_HDPARAMS_Apollo.clearColor[3],
+      g_HDPARAMS_Apollo.clearColor[2] * g_HDPARAMS_Apollo.clearColor[3],
+      g_HDPARAMS_Apollo.clearColor[3]};
+
+    m_d3dCommandList->ClearRenderTargetView(m_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, NULL);
+    m_d3dCommandList->OMSetRenderTargets(1, &m_mainRenderTargetDescriptor[backBufferIdx], FALSE, NULL);
+    m_d3dCommandList->SetDescriptorHeaps(1, &m_d3dSrvDescriptorHeap);
+    AnchorBackendDXD12RenderDrawData(ANCHOR::GetDrawData(), m_d3dCommandList);
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    m_d3dCommandList->ResourceBarrier(1, &barrier);
+    m_d3dCommandList->Close();
+
+    m_d3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList *const *)&m_d3dCommandList);
+
+    m_d3dSwapChain->Present(1, 0);  // Present with vsync
+    //g_pSwapChain->Present(0, 0); // Present without vsync
+
+    UINT64 fenceValue = m_fenceLastSignaledValue + 1;
+    m_d3dCommandQueue->Signal(m_fence, fenceValue);
+    m_fenceLastSignaledValue = fenceValue;
+    frameCtx->FenceValue = fenceValue;
+  }
+
   return ANCHOR_SUCCESS;
 }
 

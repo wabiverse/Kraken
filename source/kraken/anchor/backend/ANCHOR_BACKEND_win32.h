@@ -431,6 +431,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   HANDLE m_d3dSwapChainWaitObject;
   HANDLE m_fenceEvent;
   UINT m_frameIndex;
+  UINT64 m_fenceLastSignaledValue;
 
  public:
   AnchorWindowWin32(AnchorSystemWin32 *system,
@@ -476,6 +477,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   void CreateD3DRenderTarget(void);
   void DestroyD3DRenderTarget(void);
   void WaitForLastD3DFrame(void);
+  D3D12FrameContext *WaitForNextD3D12FrameResources(void);
 
   wabi::HgiVulkanDevice *getHydraDevice()
   {

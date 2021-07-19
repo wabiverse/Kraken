@@ -602,17 +602,17 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   wm_window_clear_drawable(wm);
 
   AnchorSystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
-                                                                   (win->parent) ? (AnchorSystemWindowHandle)win->parent->anchorwin : NULL,
-                                                                   CHARALL(win_title),
-                                                                   CHARALL(win_icon.GetAssetPath()),
-                                                                   GET_X(win_pos),
-                                                                   GET_Y(win_pos),
-                                                                   GET_X(win_size),
-                                                                   GET_Y(win_size),
-                                                                   AnchorWindowStateNormal,
-                                                                   is_dialog,
-                                                                   ANCHOR_DrawingContextTypeVulkan,
-                                                                   0);
+                                                                  (win->parent) ? (AnchorSystemWindowHandle)win->parent->anchorwin : NULL,
+                                                                  CHARALL(win_title),
+                                                                  CHARALL(win_icon.GetAssetPath()),
+                                                                  GET_X(win_pos),
+                                                                  GET_Y(win_pos),
+                                                                  GET_X(win_size),
+                                                                  GET_Y(win_size),
+                                                                  AnchorWindowStateNormal,
+                                                                  is_dialog,
+                                                                  ANCHOR_DrawingContextTypeDX12,
+                                                                  0);
   if (anchorwin)
   {
     // win->gpuctx = GPU_context_create(anchorwin);
