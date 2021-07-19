@@ -160,6 +160,7 @@ class AnchorSystemWin32 : public AnchorSystem
 
  private:
   eAnchorStatus init();
+  eAnchorStatus exit();
 
   AnchorISystemWindow *createWindow(const char *title,
                                     const char *icon,
@@ -436,10 +437,8 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   void getWindowBounds(AnchorRect &bounds) const;
 
   void SetupVulkan();
-  void SetupVulkanWindow();
-
+  eAnchorStatus DestroyVulkan();
   uint32_t GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits);
-
   void CreateVulkanDescriptorSetLayout();
   void CreateVulkanFontTexture(VkCommandBuffer command_buffer);
   void DestroyVulkanFontTexture();

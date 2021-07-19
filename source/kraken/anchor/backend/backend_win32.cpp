@@ -1102,6 +1102,11 @@ void AnchorSystemWin32::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &hei
   height = ::GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
+eAnchorStatus AnchorSystemWin32::exit()
+{
+  return AnchorSystem::exit();
+}
+
 eAnchorStatus AnchorSystemWin32::init()
 {
   eAnchorStatus success = AnchorSystem::init();
@@ -2911,6 +2916,8 @@ AnchorWindowWin32::~AnchorWindowWin32()
     m_Bar = NULL;
   }
 
+  DestroyVulkan();
+
   // closeWintab();
 
   if (m_user32)
@@ -2956,6 +2963,76 @@ AnchorWindowWin32::~AnchorWindowWin32()
     ::DestroyWindow(m_hWnd);
     m_hWnd = 0;
   }
+}
+
+eAnchorStatus AnchorWindowWin32::DestroyVulkan()
+{
+  /**
+   * Free all Vulkan Resources to ensure
+   * clean shutdown and closeout of this
+   * window. */
+  if(m_device)
+  {
+    m_device->WaitForIdle();
+    DestroyVulkanFontTexture();
+
+    if(m_fontView)
+    {
+      vkDestroyImageView(m_device->GetVulkanDevice(), m_fontView, HgiVulkanAllocator());
+      m_fontView = VK_NULL_HANDLE;
+    }
+
+    if(m_fontImage)
+    {
+      vkDestroyImage(m_device->GetVulkanDevice(), m_fontImage, HgiVulkanAllocator());
+      m_fontImage = VK_NULL_HANDLE;
+    }
+
+    if(m_fontMemory)
+    {
+      vkFreeMemory(m_device->GetVulkanDevice(), m_fontMemory, HgiVulkanAllocator());
+      m_fontMemory = VK_NULL_HANDLE;
+    }
+
+    if(m_fontSampler)
+    {
+      vkDestroySampler(m_device->GetVulkanDevice(), m_fontSampler, HgiVulkanAllocator());
+      m_fontSampler = VK_NULL_HANDLE;
+    }
+
+    if(g_DescriptorSetLayout)
+    {
+      vkDestroyDescriptorSetLayout(m_device->GetVulkanDevice(), g_DescriptorSetLayout, HgiVulkanAllocator());
+      g_DescriptorSetLayout = VK_NULL_HANDLE;
+    }
+
+    if(m_device)
+    {
+      m_device = nullptr;
+    }
+
+    if(m_commandQueue)
+    {
+      m_commandQueue = nullptr;
+    }
+
+    if(m_pipelineCache)
+    {
+      m_pipelineCache = nullptr;
+    }
+
+    if(m_vkinstance)
+    {
+      delete m_vkinstance;
+    }
+
+    if(m_hgi)
+    {
+      delete m_hgi;
+    }
+  }
+
+  return ANCHOR_SUCCESS;
 }
 
 eAnchorStatus AnchorWindowWin32::releaseNativeHandles()
@@ -3191,7 +3268,7 @@ void AnchorWindowWin32::SetupVulkan()
 
   uint32_t queueCount = 0;
   vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(), &queueCount, NULL);
-  assert(queueCount >= 1);
+  ANCHOR_ASSERT(queueCount >= 1);
 
   std::vector<VkQueueFamilyProperties> queueProperties(queueCount);
   vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(), &queueCount, queueProperties.data());
@@ -3212,21 +3289,21 @@ void AnchorWindowWin32::SetupVulkan()
       }
     }
   }
-  assert(queueIndex != UINT32_MAX);
+  ANCHOR_ASSERT(queueIndex != UINT32_MAX);
 
   /**
    * Select Surface Format. */
   uint32_t formatCount = 0;
   err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(), surface, &formatCount, NULL);
-  assert(err == VK_SUCCESS);
-  assert(formatCount >= 1);
+  ANCHOR_ASSERT(err == VK_SUCCESS);
+  ANCHOR_ASSERT(formatCount >= 1);
 
   std::vector<VkSurfaceFormatKHR> surfaceFormats(formatCount);
   err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(),
                                              surface,
                                              &formatCount,
                                              surfaceFormats.data());
-  assert(err == VK_SUCCESS);
+  ANCHOR_ASSERT(err == VK_SUCCESS);
 
   VkFormat colorFormat;
   VkColorSpaceKHR colorSpace;
@@ -3247,7 +3324,7 @@ void AnchorWindowWin32::SetupVulkan()
 
   VkSurfaceCapabilitiesKHR caps = {};
   VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetVulkanPhysicalDevice(), surface, &caps);
-  assert(result == VK_SUCCESS);
+  ANCHOR_ASSERT(result == VK_SUCCESS);
 
   VkExtent2D swapchainExtent = {};
 
@@ -3268,8 +3345,8 @@ void AnchorWindowWin32::SetupVulkan()
                                                      surface,
                                                      &presentModeCount,
                                                      NULL);
-  assert(result == VK_SUCCESS);
-  assert(presentModeCount >= 1);
+  ANCHOR_ASSERT(result == VK_SUCCESS);
+  ANCHOR_ASSERT(presentModeCount >= 1);
 
   std::vector<VkPresentModeKHR> presentModes(presentModeCount);
   result = vkGetPhysicalDeviceSurfacePresentModesKHR(m_device->GetVulkanPhysicalDevice(),
@@ -3277,7 +3354,7 @@ void AnchorWindowWin32::SetupVulkan()
                                                      &presentModeCount,
                                                      presentModes.data());
 
-  assert(result == VK_SUCCESS);
+  ANCHOR_ASSERT(result == VK_SUCCESS);
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
   for (uint32_t i = 0; i < presentModeCount; i++)
@@ -3291,7 +3368,7 @@ void AnchorWindowWin32::SetupVulkan()
       presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
   }
 
-  assert(caps.maxImageCount >= 1);
+  ANCHOR_ASSERT(caps.maxImageCount >= 1);
   uint32_t imageCount = caps.minImageCount + 1;
   if (imageCount > caps.maxImageCount)
   {
@@ -3325,13 +3402,13 @@ void AnchorWindowWin32::SetupVulkan()
 
   VkSwapchainKHR swapchain;
   result = vkCreateSwapchainKHR(m_device->GetVulkanDevice(), &swapchainCreateInfo, NULL, &swapchain);
-  assert(result == VK_SUCCESS);
+  ANCHOR_ASSERT(result == VK_SUCCESS);
 
   m_vulkan_context->Swapchain = swapchain;
 
   result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(), m_vulkan_context->Swapchain, &m_vulkan_context->ImageCount, NULL);
-  assert(result == VK_SUCCESS);
-  assert(m_vulkan_context->ImageCount > 0);
+  ANCHOR_ASSERT(result == VK_SUCCESS);
+  ANCHOR_ASSERT(m_vulkan_context->ImageCount > 0);
 
   struct SwapChainBuffer
   {
@@ -3408,10 +3485,6 @@ static void SetFont()
   /* San Francisco Font (Default). */
   const static std::string sf_path = STRCAT(G.main->fonts_path, "SFProText-Medium.ttf");
   io.FontDefault = io.Fonts->AddFontFromFileTTF(CHARALL(sf_path), 14.0f);
-}
-
-void AnchorWindowWin32::SetupVulkanWindow()
-{
 }
 
 void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
@@ -3655,7 +3728,7 @@ uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties
   for (uint32_t i = 0; i < prop.memoryTypeCount; i++)
     if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1 << i))
       return i;
-  return 0xFFFFFFFF;  // Unable to find memoryType
+  return 0xFFFFFFFF;
 }
 
 void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
@@ -3663,12 +3736,9 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
   if (type == ANCHOR_DrawingContextTypeVulkan)
   {
     /**
-     * Create Vulkan Instance. */
-    SetupVulkan();
+     * Create Vulkan Resources. */
 
-    /**
-     * Create Vulkan Surface. */
-    SetupVulkanWindow();
+    SetupVulkan();
 
     /**
      * Setup ANCHOR context. */
@@ -3711,10 +3781,6 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     init_info.CheckVkResultFn            = check_vk_result;
     // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
 
-
-    /* clang-format on */
-
-
     /**
      * Create Pixar Hydra Graphics Interface. */
 
@@ -3731,32 +3797,29 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     SetFont();
 
+    HgiVulkanCommandBuffer *cmdbuffer = m_commandQueue->AcquireCommandBuffer();
+    VkCommandBuffer command_buffer = cmdbuffer->GetVulkanCommandBuffer();
+
     /**
-     * ------------------------------------------------------ Upload Fonts ----- */
-    {
-      HgiVulkanCommandBuffer *cmdbuffer = m_commandQueue->AcquireCommandBuffer();
-      VkCommandBuffer command_buffer = cmdbuffer->GetVulkanCommandBuffer();
+     * Create a texture with all our fonts. */
 
-      /**
-       * Create a texture with all our fonts. */
-      CreateVulkanDescriptorSetLayout();
-      CreateVulkanFontTexture(command_buffer);
+    CreateVulkanDescriptorSetLayout();
+    CreateVulkanFontTexture(command_buffer);
 
-      /* ------ */
+    /* ------ */
 
 
-      /**
-       * Commit the command buffer to the GPU queue for
-       * processing. */
+    /**
+     * Commit the command buffer to the GPU queue for
+     * processing. */
 
-      m_commandQueue->SubmitToQueue(cmdbuffer);
+    m_commandQueue->SubmitToQueue(cmdbuffer);
 
-      /**
-       * Destroy the objects used for font texture upload. */
+    /**
+     * Destroy the objects used for font texture upload. */
 
-      m_device->WaitForIdle();
-      DestroyVulkanFontTexture();
-    }
+    m_device->WaitForIdle();
+    DestroyVulkanFontTexture();
   }
 }
 
@@ -3772,11 +3835,13 @@ eAnchorStatus AnchorWindowWin32::activateDrawingContext()
 
   AnchorRect rect;
   getWindowBounds(rect);
-  if (getState() == AnchorWindowStateMinimized)
+  if (getState() == AnchorWindowStateMinimized) {
     rect.set(0, 0, 0, 0);
+  }
   io.DisplaySize = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
-  if (rect.getWidth() > 0 && rect.getHeight() > 0)
+  if (rect.getWidth() > 0 && rect.getHeight() > 0) {
     io.DisplayFramebufferScale = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
+  }
 
   /** 
    * Setup time step. */
@@ -3867,7 +3932,7 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
     info.pCommandBuffers = &vkcmdbuf;
     info.signalSemaphoreCount = 1;
     info.pSignalSemaphores = &render_complete_semaphore;
-    
+
     m_commandQueue->SubmitToQueue(cmdBuf);
 
   //   err = vkEndCommandBuffer(fd->CommandBuffer);
