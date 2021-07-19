@@ -3797,6 +3797,9 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 
   HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
 
+  VkCommandBuffer vkcmdbuf = cmdBuf->GetVulkanCommandBuffer();
+  VkCommandPool vkcmdpool = cmdBuf->GetVulkanCommandPool();
+
   VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
   err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
@@ -3825,12 +3828,12 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
     check_vk_result(err);
   }
   {
-    err = vkResetCommandPool(m_device->GetVulkanDevice(), cmdBuf->GetVulkanCommandPool(), 0);
+    err = vkResetCommandPool(m_device->GetVulkanDevice(), vkcmdpool, 0);
     check_vk_result(err);
     VkCommandBufferBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    err = vkBeginCommandBuffer(cmdBuf->GetVulkanCommandBuffer(), &info);
+    err = vkBeginCommandBuffer(vkcmdbuf, &info);
     check_vk_result(err);
   }
   {
@@ -3842,37 +3845,36 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
     info.renderArea.extent.height = m_vulkan_context->Height;
     info.clearValueCount = 1;
     info.pClearValues = &m_vulkan_context->ClearValue;
-    vkCmdBeginRenderPass(cmdBuf->GetVulkanCommandBuffer(), &info, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(vkcmdbuf, &info, VK_SUBPASS_CONTENTS_INLINE);
   }
 
   /**
    * Record ANCHOR primitives into command buffer. */
 
-  ANCHOR_ImplVulkan_RenderDrawData(draw_data, cmdBuf->GetVulkanCommandBuffer());
+  ANCHOR_ImplVulkan_RenderDrawData(draw_data, vkcmdbuf);
 
   /**
    * Submit command buffer. */
-
-  vkCmdEndRenderPass(cmdBuf->GetVulkanCommandBuffer());
-
-  m_commandQueue->SubmitToQueue(cmdBuf);
-  // {
-  //   VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  //   VkSubmitInfo info = {};
-  //   info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-  //   info.waitSemaphoreCount = 1;
-  //   info.pWaitSemaphores = &image_acquired_semaphore;
-  //   info.pWaitDstStageMask = &wait_stage;
-  //   info.commandBufferCount = 1;
-  //   info.pCommandBuffers = &fd->CommandBuffer;
-  //   info.signalSemaphoreCount = 1;
-  //   info.pSignalSemaphores = &render_complete_semaphore;
+  vkCmdEndRenderPass(vkcmdbuf);
+  {
+    VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkSubmitInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &image_acquired_semaphore;
+    info.pWaitDstStageMask = &wait_stage;
+    info.commandBufferCount = 1;
+    info.pCommandBuffers = &vkcmdbuf;
+    info.signalSemaphoreCount = 1;
+    info.pSignalSemaphores = &render_complete_semaphore;
+    
+    m_commandQueue->SubmitToQueue(cmdBuf);
 
   //   err = vkEndCommandBuffer(fd->CommandBuffer);
   //   check_vk_result(err);
   //   err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, fd->Fence);
   //   check_vk_result(err);
-  // }
+  }
 }
 
 void AnchorWindowWin32::FramePresent()
