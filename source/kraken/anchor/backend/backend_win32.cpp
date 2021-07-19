@@ -45,6 +45,7 @@
 #include <wabi/base/tf/diagnostic.h>
 #include <wabi/base/tf/envSetting.h>
 #include <wabi/imaging/hgiVulkan/diagnostic.h>
+#include <wabi/imaging/hgiVulkan/graphicsPipeline.h>
 #include <wabi/imaging/hgiVulkan/hgi.h>
 #include <wabi/imaging/hgiVulkan/instance.h>
 #include <wabi/imaging/hgiVulkan/commandBuffer.h>
@@ -106,10 +107,14 @@ WABI_NAMESPACE_USING
  * HYDRA RENDERING PARAMS. */
 static UsdApolloRenderParams g_HDPARAMS_Apollo;
 
+static VkDescriptorSetLayout g_DescriptorSetLayout = VK_NULL_HANDLE;
+static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+static VkDescriptorSet g_DescriptorSet = VK_NULL_HANDLE;
+
 static ANCHOR_VulkanGPU_Surface g_MainWindowData;
 static bool g_SwapChainRebuild = false;
 
-struct ANCHOR_ImplWin32_Data
+struct AnchorBackendWin32Data
 {
   HWND hWnd;
   INT64 Time;
@@ -124,7 +129,7 @@ struct ANCHOR_ImplWin32_Data
   PFN_XInputGetState XInputGetState;
 #endif
 
-  ANCHOR_ImplWin32_Data()
+  AnchorBackendWin32Data()
   {
     memset(this, 0, sizeof(*this));
   }
@@ -144,14 +149,14 @@ struct ANCHOR_ImplWin32_Data
  * - FIXME: some shared resources (mouse cursor
  *          shape, gamepad) are mishandled when
  *          using multi-context. */
-static ANCHOR_ImplWin32_Data *ANCHOR_ImplWin32_GetBackendData()
+static AnchorBackendWin32Data *AnchorBackendWin32GetBackendData()
 {
-  return ANCHOR::GetCurrentContext() ? (ANCHOR_ImplWin32_Data *)ANCHOR::GetIO().BackendPlatformUserData : NULL;
+  return ANCHOR::GetCurrentContext() ? (AnchorBackendWin32Data *)ANCHOR::GetIO().BackendPlatformUserData : NULL;
 }
 
 /**
  * Functions */
-bool ANCHOR_ImplWin32_Init(void *hwnd)
+static bool AnchorBackendWin32Init(void *hwnd)
 {
   AnchorIO &io = ANCHOR::GetIO();
   ANCHOR_ASSERT(io.BackendPlatformUserData == NULL && "Already initialized a platform backend!");
@@ -168,7 +173,7 @@ bool ANCHOR_ImplWin32_Init(void *hwnd)
    * - We can honor GetMouseCursor() values (optional).
    * - We can honor io.WantSetMousePos requests (optional,
    *   rarely used) */
-  ANCHOR_ImplWin32_Data *bd = IM_NEW(ANCHOR_ImplWin32_Data)();
+  AnchorBackendWin32Data *bd = IM_NEW(AnchorBackendWin32Data)();
   io.BackendPlatformUserData = (void *)bd;
   io.BackendPlatformName = "imgui_impl_win32";
   io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
@@ -237,10 +242,10 @@ bool ANCHOR_ImplWin32_Init(void *hwnd)
   return true;
 }
 
-void ANCHOR_ImplWin32_Shutdown()
+static void AnchorBackendWin32Shutdown()
 {
   AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
 
   if (bd->XInputDLL)
     ::FreeLibrary(bd->XInputDLL);
@@ -250,7 +255,7 @@ void ANCHOR_ImplWin32_Shutdown()
   IM_DELETE(bd);
 }
 
-static bool ANCHOR_ImplWin32_UpdateMouseCursor()
+static bool AnchorBackendWin32UpdateMouseCursor()
 {
   AnchorIO &io = ANCHOR::GetIO();
   if (io.ConfigFlags & AnchorConfigFlags_NoMouseCursorChange)
@@ -305,10 +310,10 @@ static bool ANCHOR_ImplWin32_UpdateMouseCursor()
   return true;
 }
 
-static void ANCHOR_ImplWin32_UpdateMousePos()
+static void AnchorBackendWin32UpdateMousePos()
 {
   AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
   ANCHOR_ASSERT(bd->hWnd != 0);
 
   /**
@@ -334,11 +339,11 @@ static void ANCHOR_ImplWin32_UpdateMousePos()
 
 /**
  * Gamepad navigation mapping */
-static void ANCHOR_ImplWin32_UpdateGamepads()
+static void AnchorBackendWin32UpdateGamepads()
 {
 #ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
   AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
   memset(io.NavInputs, 0, sizeof(io.NavInputs));
   if ((io.ConfigFlags & AnchorConfigFlags_NavEnableGamepad) == 0)
     return;
@@ -424,15 +429,15 @@ static void ANCHOR_ImplWin32_UpdateGamepads()
 #endif
 }
 
-void ANCHOR_ImplWin32_NewFrame()
+static void AnchorBackendWin32NewFrame()
 {
   AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
-  ANCHOR_ASSERT(bd != NULL && "Did you call ANCHOR_ImplWin32_Init()?");
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
+  ANCHOR_ASSERT(bd != NULL && "Did you call AnchorBackendWin32Init()?");
 
   /**
    * Setup display size (every frame
-   * 0to accommodate for window resizing) */
+   * to accommodate for window resizing) */
   RECT rect = {0, 0, 0, 0};
   ::GetClientRect(bd->hWnd, &rect);
   io.DisplaySize = wabi::GfVec2f((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
@@ -459,7 +464,7 @@ void ANCHOR_ImplWin32_NewFrame()
 
   /**
    * Update OS mouse position */
-  ANCHOR_ImplWin32_UpdateMousePos();
+  AnchorBackendWin32UpdateMousePos();
 
   /**
    * Update OS mouse cursor with the cursor requested by imgui */
@@ -467,12 +472,12 @@ void ANCHOR_ImplWin32_NewFrame()
   if (bd->LastMouseCursor != mouse_cursor)
   {
     bd->LastMouseCursor = mouse_cursor;
-    ANCHOR_ImplWin32_UpdateMouseCursor();
+    AnchorBackendWin32UpdateMouseCursor();
   }
 
   /**
    * Update game controllers (if enabled and available) */
-  ANCHOR_ImplWin32_UpdateGamepads();
+  AnchorBackendWin32UpdateGamepads();
 }
 
 /**
@@ -485,13 +490,13 @@ void ANCHOR_ImplWin32_NewFrame()
 #endif
 
 
-ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+ANCHOR_BACKEND_API LRESULT AnchorBackendWin32WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   if (ANCHOR::GetCurrentContext() == NULL)
     return 0;
 
   AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
 
   switch (msg)
   {
@@ -576,7 +581,7 @@ ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, 
         io.AddInputCharacterUTF16((unsigned short)wParam);
       return 0;
     case WM_SETCURSOR:
-      if (LOWORD(lParam) == HTCLIENT && ANCHOR_ImplWin32_UpdateMouseCursor())
+      if (LOWORD(lParam) == HTCLIENT && AnchorBackendWin32UpdateMouseCursor())
         return 1;
       return 0;
     case WM_DEVICECHANGE:
@@ -587,23 +592,6 @@ ANCHOR_BACKEND_API LRESULT ANCHOR_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, 
   return 0;
 }
 
-
-//--------------------------------------------------------------------------------------------------------
-// DPI-related helpers (optional)
-//--------------------------------------------------------------------------------------------------------
-// - Use to enable DPI awareness without having to create an application manifest.
-// - Your own app may already do this via a manifest or explicit calls. This is mostly useful for our examples/ apps.
-// - In theory we could call simple functions from Windows SDK such as SetProcessDPIAware(), SetProcessDpiAwareness(), etc.
-//   but most of the functions provided by Microsoft require Windows 8.1/10+ SDK at compile time and Windows 8/10+ at runtime,
-//   neither we want to require the user to have. So we dynamically select and load those functions to avoid dependencies.
-//---------------------------------------------------------------------------------------------------------
-// This is the scheme successfully used by GLFW (from which we borrowed some of the code) and other apps aiming to be highly portable.
-// ANCHOR_ImplWin32_EnableDpiAwareness() is just a helper called by main.cpp, we don't call it automatically.
-// If you are trying to implement your own backend for your own engine, you may ignore that noise.
-//---------------------------------------------------------------------------------------------------------
-
-// Perform our own check with RtlVerifyVersionInfo() instead of using functions from <VersionHelpers.h> as they
-// require a manifest to be functional for checks above 8.1. See https://github.com/ocornut/imgui/issues/4200
 static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
 {
   typedef LONG(WINAPI * PFN_RtlVerifyVersionInfo)(OSVERSIONINFOEXW *, ULONG, ULONGLONG);
@@ -656,7 +644,7 @@ typedef HRESULT(WINAPI *PFN_GetDpiForMonitor)(HMONITOR, MONITOR_DPI_TYPE, UINT *
 typedef DPI_AWARENESS_CONTEXT(WINAPI *PFN_SetThreadDpiAwarenessContext)(DPI_AWARENESS_CONTEXT);  // User32.lib + dll, Windows 10 v1607+ (Creators Update)
 
 // Helper function to enable DPI awareness without setting up a manifest
-void ANCHOR_ImplWin32_EnableDpiAwareness()
+static void AnchorBackendWin32EnableDpiAwareness()
 {
   if (_IsWindows10OrGreater())
   {
@@ -682,10 +670,10 @@ void ANCHOR_ImplWin32_EnableDpiAwareness()
 }
 
 #if defined(_MSC_VER) && !defined(NOGDI)
-#  pragma comment(lib, "gdi32")  // Link with gdi32.lib for GetDeviceCaps(). MinGW will require linking with '-lgdi32'
+#  pragma comment(lib, "gdi32")
 #endif
 
-float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor)
+static float AnchorBackendWin32GetDpiScaleForMonitor(void *monitor)
 {
   UINT xdpi = 96, ydpi = 96;
   if (_IsWindows8Point1OrGreater())
@@ -711,10 +699,10 @@ float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor)
   return xdpi / 96.0f;
 }
 
-float ANCHOR_ImplWin32_GetDpiScaleForHwnd(void *hwnd)
+static float AnchorBackendWin32GetDpiScaleForHwnd(void *hwnd)
 {
   HMONITOR monitor = ::MonitorFromWindow((HWND)hwnd, MONITOR_DEFAULTTONEAREST);
-  return ANCHOR_ImplWin32_GetDpiScaleForMonitor(monitor);
+  return AnchorBackendWin32GetDpiScaleForMonitor(monitor);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -725,10 +713,7 @@ float ANCHOR_ImplWin32_GetDpiScaleForHwnd(void *hwnd)
 #  pragma comment(lib, "dwmapi")  // Link with dwmapi.lib. MinGW will require linking with '-ldwmapi'
 #endif
 
-// [experimental]
-// Borrowed from GLFW's function updateFramebufferTransparency() in src/win32_window.c
-// (the Dwm* functions are Vista era functions but we are borrowing logic from GLFW)
-void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd)
+static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
 {
   if (!_IsWindowsVistaOrGreater())
     return;
@@ -1021,31 +1006,28 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
   } while (waitForEvent && !hasEventHandled);
 
 
-  if (g_SwapChainRebuild)
-  {
-    AnchorRect winrect;
-    AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
-    window->getWindowBounds(winrect);
-    if (winrect.getWidth() > 0 && winrect.getHeight() > 0)
-    {
-      ANCHOR_ImplVulkan_SetMinImageCount(window->getMinImageCount());
-      ANCHOR_ImplVulkanH_CreateOrResizeWindow(window->getHydraInstance()->GetVulkanInstance(),
-                                              window->getHydraDevice()->GetVulkanPhysicalDevice(),
-                                              window->getHydraDevice()->GetVulkanDevice(),
-                                              window->updateVulkanSurface(&g_MainWindowData),
-                                              window->getHydraDevice()->GetGfxQueueFamilyIndex(),
-                                              HgiVulkanAllocator(),
-                                              winrect.getWidth(),
-                                              winrect.getHeight(),
-                                              window->getMinImageCount());
-      g_MainWindowData.FrameIndex = 0;
-      g_SwapChainRebuild = false;
-    }
-  }
+  // if (g_SwapChainRebuild)
+  // {
+  //   AnchorRect winrect;
+  //   AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
+  //   window->getWindowBounds(winrect);
+  //   if (winrect.getWidth() > 0 && winrect.getHeight() > 0)
+  //   {
+  //     ANCHOR_ImplVulkan_SetMinImageCount(window->getMinImageCount());
+  //     ANCHOR_ImplVulkanH_CreateOrResizeWindow(window->getHydraInstance()->GetVulkanInstance(),
+  //                                             window->getHydraDevice()->GetVulkanPhysicalDevice(),
+  //                                             window->getHydraDevice()->GetVulkanDevice(),
+  //                                             window->updateVulkanSurface(&g_MainWindowData),
+  //                                             window->getHydraDevice()->GetGfxQueueFamilyIndex(),
+  //                                             HgiVulkanAllocator(),
+  //                                             winrect.getWidth(),
+  //                                             winrect.getHeight(),
+  //                                             window->getMinImageCount());
+  //     g_MainWindowData.FrameIndex = 0;
+  //     g_SwapChainRebuild = false;
+  //   }
+  // }
 
-
-  ANCHOR_ImplVulkan_NewFrame();
-  ANCHOR_ImplWin32_NewFrame();
   ANCHOR::NewFrame();
 
   ANCHOR::Begin("Kraken");
@@ -1151,8 +1133,7 @@ eAnchorStatus AnchorSystemWin32::init()
 
   if (success == ANCHOR_SUCCESS)
   {
-    WNDCLASSEX wc = {0};
-    wc.cbSize = sizeof(WNDCLASSEX);
+    WNDCLASSW wc = {0};
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = s_wndProc;
     wc.cbClsExtra = 0;
@@ -1167,11 +1148,9 @@ eAnchorStatus AnchorSystemWin32::init()
     wc.hCursor = ::LoadCursor(0, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
     wc.lpszMenuName = 0;
-    wc.lpszClassName = "AnchorWindowClass";
-    wc.hIconSm = ::LoadIcon(wc.hInstance, "APPICON");
+    wc.lpszClassName = L"AnchorWindowClass";
 
-    // Use RegisterClassEx for setting small icon
-    if (::RegisterClassEx(&wc) == 0)
+    if (::RegisterClassW(&wc) == 0)
     {
       success = ANCHOR_FAILURE;
     }
@@ -1208,7 +1187,6 @@ AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
 
   if (window->getValid())
   {
-
     /**
      * Store the pointer to the window. */
     m_windowManager->addWindow(window);
@@ -1364,12 +1342,6 @@ int AnchorSystemWin32::toggleConsole(int action)
 
 LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  if (ANCHOR::GetCurrentContext() == NULL)
-    return 0;
-
-  AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ImplWin32_Data *bd = ANCHOR_ImplWin32_GetBackendData();
-
   AnchorEvent *event = NULL;
   bool eventHandled = false;
 
@@ -2257,7 +2229,7 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
   return key;
 }
 
-eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
+eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<AnchorBackendWin32PointerInfo> &outPointerInfo,
                                                 WPARAM wParam,
                                                 LPARAM lParam)
 {
@@ -2414,7 +2386,7 @@ void AnchorSystemWin32::processPointerEvent(UINT type, AnchorWindowWin32 *window
   // }
 
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
-  std::vector<ANCHOR_PointerInfoWin32> pointerInfo;
+  std::vector<AnchorBackendWin32PointerInfo> pointerInfo;
 
   if (window->getPointerInfo(pointerInfo, wParam, lParam) != ANCHOR_SUCCESS)
   {
@@ -2857,7 +2829,7 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   /*  Store the device context. */
   m_hDC = ::GetDC(m_hWnd);
 
-  if (setDrawingContextType(type) != ANCHOR_SUCCESS)
+  if (!setDrawingContextType(type))
   {
     ::DestroyWindow(m_hWnd);
     m_hWnd = NULL;
@@ -2899,7 +2871,6 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
 
   if (m_wantAlphaBackground && m_parentWindowHwnd == 0)
   {
-
     HRESULT hr = S_OK;
 
     /* Create and populate the Blur Behind structure. */
@@ -2924,8 +2895,11 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   // }
 
   /* Allow the showing of a progress bar on the taskbar. */
-  CoCreateInstance(
-    CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
+  CoCreateInstance(CLSID_TaskbarList,
+                   NULL,
+                   CLSCTX_INPROC_SERVER,
+                   IID_ITaskbarList3,
+                   (LPVOID *)&m_Bar);
 }
 
 AnchorWindowWin32::~AnchorWindowWin32()
@@ -3012,10 +2986,10 @@ void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
   win_rect->bottom = win_rect->top + height;
 
   /* With Windows 10 and newer we can adjust for chrome that differs with DPI and scale. */
-  ANCHOR_WIN32_AdjustWindowRectExForDpi fpAdjustWindowRectExForDpi = nullptr;
+  AnchorAdjustWindowRectExForDpiCallback fpAdjustWindowRectExForDpi = nullptr;
   if (m_user32)
   {
-    fpAdjustWindowRectExForDpi = (ANCHOR_WIN32_AdjustWindowRectExForDpi)::GetProcAddress(
+    fpAdjustWindowRectExForDpi = (AnchorAdjustWindowRectExForDpiCallback)::GetProcAddress(
       m_user32, "AdjustWindowRectExForDpi");
   }
 
@@ -3155,9 +3129,7 @@ void AnchorWindowWin32::SetupVulkan()
   VkApplicationInfo app_info = {};
   app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   app_info.pNext = NULL;
-  app_info.pApplicationName = "Kraken";
-  app_info.pEngineName = "Pixar Hydra";
-  app_info.apiVersion = VK_MAKE_VERSION(1, 2, 182);
+  app_info.apiVersion = VK_VERSION_1_2;
 
   VkInstanceCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -3271,11 +3243,7 @@ void AnchorWindowWin32::SetupVulkan()
   colorSpace = surfaceFormats[0].colorSpace;
 
 
-  m_vulkan_context->SurfaceFormat = ANCHOR_ImplVulkanH_SelectSurfaceFormat(m_device->GetVulkanPhysicalDevice(),
-                                                                           m_vulkan_context->Surface,
-                                                                           &colorFormat,
-                                                                           formatCount,
-                                                                           colorSpace);
+  m_vulkan_context->SurfaceFormat = surfaceFormats[0];
 
   VkSurfaceCapabilitiesKHR caps = {};
   VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetVulkanPhysicalDevice(), surface, &caps);
@@ -3330,7 +3298,6 @@ void AnchorWindowWin32::SetupVulkan()
     imageCount = caps.maxImageCount;
   }
 
-  m_vulkan_context->PresentMode = presentMode;
   VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
   swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapchainCreateInfo.surface = surface;
@@ -3347,6 +3314,9 @@ void AnchorWindowWin32::SetupVulkan()
   swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
   swapchainCreateInfo.presentMode = presentMode;
 
+  m_vulkan_context->ImageCount = imageCount;
+  m_vulkan_context->PresentMode = presentMode;
+
   if (TfDebug::IsEnabled(ANCHOR_WIN32))
   {
     TF_SUCCESS_MSG("Anchor -- Rendering at maximum possible frames per second.");
@@ -3357,9 +3327,11 @@ void AnchorWindowWin32::SetupVulkan()
   result = vkCreateSwapchainKHR(m_device->GetVulkanDevice(), &swapchainCreateInfo, NULL, &swapchain);
   assert(result == VK_SUCCESS);
 
-  result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(), swapchain, &imageCount, NULL);
+  m_vulkan_context->Swapchain = swapchain;
+
+  result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(), m_vulkan_context->Swapchain, &m_vulkan_context->ImageCount, NULL);
   assert(result == VK_SUCCESS);
-  assert(imageCount > 0);
+  assert(m_vulkan_context->ImageCount > 0);
 
   struct SwapChainBuffer
   {
@@ -3368,53 +3340,53 @@ void AnchorWindowWin32::SetupVulkan()
     VkFramebuffer frameBuffer;
   };
 
-  // /**
-  //  * Create Descriptor Pool. */
-  // {
+  /**
+   * Create Descriptor Pool. */
+  {
 
-  //   /* clang-format off */
+    /* clang-format off */
 
-  //   VkDescriptorPoolSize pool_sizes[] = {
-  //     {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
-  //     {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
-  //     {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
-  //     {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
-  //     {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
-  //     {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
-  //   };
+    VkDescriptorPoolSize pool_sizes[] = {
+      {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
+      {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
+      {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
+      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}
+    };
 
-  //   /* clang-format on */
+    /* clang-format on */
 
-  //   VkDescriptorPoolCreateInfo pool_info = {};
-  //   pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  //   pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-  //   pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
-  //   pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
-  //   pool_info.pPoolSizes = pool_sizes;
-  //   err = vkCreateDescriptorPool(m_device->GetVulkanDevice(),
-  //                                &pool_info,
-  //                                HgiVulkanAllocator(),
-  //                                &g_DescriptorPool);
-  //   check_vk_result(err);
-  // }
+    VkDescriptorPoolCreateInfo pool_info = {};
+    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    pool_info.maxSets = 1000 * ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.poolSizeCount = (uint32_t)ANCHOR_ARRAYSIZE(pool_sizes);
+    pool_info.pPoolSizes = pool_sizes;
+    err = vkCreateDescriptorPool(m_device->GetVulkanDevice(),
+                                 &pool_info,
+                                 HgiVulkanAllocator(),
+                                 &g_DescriptorPool);
+    check_vk_result(err);
+  }
 
   /**
    * Create SwapChain, RenderPass, Framebuffer, etc. */
-  ANCHOR_ASSERT(getMinImageCount() >= 2);
-  ANCHOR_ImplVulkanH_CreateOrResizeWindow(m_instance,
-                                          m_device->GetVulkanPhysicalDevice(),
-                                          m_device->GetVulkanDevice(),
-                                          m_vulkan_context,
-                                          m_device->GetGfxQueueFamilyIndex(),
-                                          HgiVulkanAllocator(),
-                                          winrect.getWidth(),
-                                          winrect.getHeight(),
-                                          getMinImageCount());
+  // ANCHOR_ASSERT(getMinImageCount() >= 2);
+  // ANCHOR_ImplVulkanH_CreateOrResizeWindow(m_instance,
+  //                                         m_device->GetVulkanPhysicalDevice(),
+  //                                         m_device->GetVulkanDevice(),
+  //                                         m_vulkan_context,
+  //                                         m_device->GetGfxQueueFamilyIndex(),
+  //                                         HgiVulkanAllocator(),
+  //                                         winrect.getWidth(),
+  //                                         winrect.getHeight(),
+  //                                         getMinImageCount());
 
   m_commandQueue = m_hgi->GetPrimaryDevice()->GetCommandQueue();
   m_pipelineCache = m_hgi->GetPrimaryDevice()->GetPipelineCache();
@@ -3440,6 +3412,250 @@ static void SetFont()
 
 void AnchorWindowWin32::SetupVulkanWindow()
 {
+}
+
+void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
+{
+  AnchorIO &io = ANCHOR::GetIO();
+
+  unsigned char *pixels;
+  int width, height;
+  io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+  size_t upload_size = width * height * 4 * sizeof(char);
+
+  VkResult err;
+
+  // Create the Image:
+  {
+    VkImageCreateInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    info.imageType = VK_IMAGE_TYPE_2D;
+    info.format = VK_FORMAT_R8G8B8A8_UNORM;
+    info.extent.width = width;
+    info.extent.height = height;
+    info.extent.depth = 1;
+    info.mipLevels = 1;
+    info.arrayLayers = 1;
+    info.samples = VK_SAMPLE_COUNT_1_BIT;
+    info.tiling = VK_IMAGE_TILING_OPTIMAL;
+    info.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    err = vkCreateImage(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &m_fontImage);
+    check_vk_result(err);
+    VkMemoryRequirements req;
+    vkGetImageMemoryRequirements(m_device->GetVulkanDevice(), m_fontImage, &req);
+    VkMemoryAllocateInfo alloc_info = {};
+    alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    alloc_info.allocationSize = req.size;
+    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits); 
+    err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontMemory);
+    check_vk_result(err);
+    err = vkBindImageMemory(m_device->GetVulkanDevice(), m_fontImage, m_fontMemory, 0);
+    check_vk_result(err);
+  }
+
+  // Create the Image View:
+  {
+    VkImageViewCreateInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    info.image = m_fontImage;
+    info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    info.format = VK_FORMAT_R8G8B8A8_UNORM;
+    info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    info.subresourceRange.levelCount = 1;
+    info.subresourceRange.layerCount = 1;
+    err = vkCreateImageView(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &m_fontView);
+    check_vk_result(err);
+  }
+
+  // Update the Descriptor Set:
+  {
+    VkDescriptorImageInfo desc_image[1] = {};
+    desc_image[0].sampler = m_fontSampler;
+    desc_image[0].imageView = m_fontView;
+    desc_image[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    VkWriteDescriptorSet write_desc[1] = {};
+    write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    write_desc[0].dstSet = g_DescriptorSet;
+    write_desc[0].descriptorCount = 1;
+    write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    write_desc[0].pImageInfo = desc_image;
+    vkUpdateDescriptorSets(m_device->GetVulkanDevice(), 1, write_desc, 0, NULL);
+  }
+
+  // Create the Upload Buffer:
+  {
+    VkBufferCreateInfo buffer_info = {};
+    buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    buffer_info.size = upload_size;
+    buffer_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    err = vkCreateBuffer(m_device->GetVulkanDevice(), &buffer_info, HgiVulkanAllocator(), &m_fontUploadBuffer);
+    check_vk_result(err);
+    VkMemoryRequirements req;
+    vkGetBufferMemoryRequirements(m_device->GetVulkanDevice(), m_fontUploadBuffer, &req);
+    m_bufferMemoryAlignment = (m_bufferMemoryAlignment > req.alignment) ? m_bufferMemoryAlignment : req.alignment;
+    VkMemoryAllocateInfo alloc_info = {};
+    alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    alloc_info.allocationSize = req.size;
+    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                                                      req.memoryTypeBits);
+    err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontUploadBufferMemory);
+    check_vk_result(err);
+    err = vkBindBufferMemory(m_device->GetVulkanDevice(), m_fontUploadBuffer, m_fontUploadBufferMemory, 0);
+    check_vk_result(err);
+  }
+
+  // Upload to Buffer:
+  {
+    char *map = NULL;
+    err = vkMapMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, 0, upload_size, 0, (void **)(&map));
+    check_vk_result(err);
+    memcpy(map, pixels, upload_size);
+    VkMappedMemoryRange range[1] = {};
+    range[0].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    range[0].memory = m_fontUploadBufferMemory;
+    range[0].size = upload_size;
+    err = vkFlushMappedMemoryRanges(m_device->GetVulkanDevice(), 1, range);
+    check_vk_result(err);
+    vkUnmapMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory);
+  }
+
+  // Copy to Image:
+  {
+    VkImageMemoryBarrier copy_barrier[1] = {};
+    copy_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    copy_barrier[0].dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    copy_barrier[0].oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    copy_barrier[0].newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    copy_barrier[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    copy_barrier[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    copy_barrier[0].image = m_fontImage;
+    copy_barrier[0].subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copy_barrier[0].subresourceRange.levelCount = 1;
+    copy_barrier[0].subresourceRange.layerCount = 1;
+    vkCmdPipelineBarrier(command_buffer,
+                        VK_PIPELINE_STAGE_HOST_BIT,
+                        VK_PIPELINE_STAGE_TRANSFER_BIT,
+                        0,
+                        0,
+                        NULL,
+                        0,
+                        NULL,
+                        1,
+                        copy_barrier);
+
+    VkBufferImageCopy region = {};
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.layerCount = 1;
+    region.imageExtent.width = width;
+    region.imageExtent.height = height;
+    region.imageExtent.depth = 1;
+    vkCmdCopyBufferToImage(command_buffer,
+                            m_fontUploadBuffer,
+                            m_fontImage,
+                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                            1,
+                            &region);
+
+    VkImageMemoryBarrier use_barrier[1] = {};
+    use_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    use_barrier[0].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    use_barrier[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    use_barrier[0].oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    use_barrier[0].newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    use_barrier[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    use_barrier[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    use_barrier[0].image = m_fontImage;
+    use_barrier[0].subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    use_barrier[0].subresourceRange.levelCount = 1;
+    use_barrier[0].subresourceRange.layerCount = 1;
+    vkCmdPipelineBarrier(command_buffer,
+                        VK_PIPELINE_STAGE_TRANSFER_BIT,
+                        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                        0,
+                        0,
+                        NULL,
+                        0,
+                        NULL,
+                        1,
+                        use_barrier);
+  }
+
+  // Store our identifier
+  io.Fonts->SetTexID((AnchorTextureID)(intptr_t)m_fontImage);
+}
+
+void AnchorWindowWin32::DestroyVulkanFontTexture()
+{
+  if (m_fontUploadBuffer)
+  {
+    vkDestroyBuffer(m_device->GetVulkanDevice(), m_fontUploadBuffer, HgiVulkanAllocator());
+    m_fontUploadBuffer = VK_NULL_HANDLE;
+  }
+  if (m_fontUploadBufferMemory)
+  {
+    vkFreeMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, HgiVulkanAllocator());
+    m_fontUploadBufferMemory = VK_NULL_HANDLE;
+  }
+}
+
+void AnchorWindowWin32::CreateVulkanDescriptorSetLayout()
+{
+  VkResult err;
+
+  {
+    VkSamplerCreateInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    info.magFilter = VK_FILTER_LINEAR;
+    info.minFilter = VK_FILTER_LINEAR;
+    info.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    info.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    info.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    info.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    info.minLod = -1000;
+    info.maxLod = 1000;
+    info.maxAnisotropy = 1.0f;
+    err = vkCreateSampler(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &m_fontSampler);
+    check_vk_result(err);
+  }
+
+  {
+    VkSampler sampler[1] = {m_fontSampler};
+    VkDescriptorSetLayoutBinding binding[1] = {};
+    binding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    binding[0].descriptorCount = 1;
+    binding[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    binding[0].pImmutableSamplers = sampler;
+    VkDescriptorSetLayoutCreateInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    info.bindingCount = 1;
+    info.pBindings = binding;
+    err = vkCreateDescriptorSetLayout(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &g_DescriptorSetLayout);
+    check_vk_result(err);
+  }
+
+  // Create Descriptor Set:
+  {
+    VkDescriptorSetAllocateInfo alloc_info = {};
+    alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    alloc_info.descriptorPool = g_DescriptorPool;
+    alloc_info.descriptorSetCount = 1;
+    alloc_info.pSetLayouts = &g_DescriptorSetLayout;
+    err = vkAllocateDescriptorSets(m_device->GetVulkanDevice(), &alloc_info, &g_DescriptorSet);
+    check_vk_result(err);
+  }
+}
+
+uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits)
+{
+  VkPhysicalDeviceMemoryProperties prop;
+  vkGetPhysicalDeviceMemoryProperties(m_device->GetVulkanPhysicalDevice(), &prop);
+  for (uint32_t i = 0; i < prop.memoryTypeCount; i++)
+    if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1 << i))
+      return i;
+  return 0xFFFFFFFF;  // Unable to find memoryType
 }
 
 void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
@@ -3476,27 +3692,23 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
     ANCHOR::StyleColorsDefault();
 
-
-    /* clang-format off */
-
-
     /**
      * Setup Platform/Renderer backends. */
 
-    ANCHOR_ImplWin32_Init(m_hWnd);
+    AnchorBackendWin32Init(m_hWnd);
 
-    // ANCHOR_ImplVulkan_InitInfo init_info = {};
-    // init_info.Instance                   = m_instance;
-    // init_info.PhysicalDevice             = m_device->GetVulkanPhysicalDevice();
-    // init_info.Device                     = m_device->GetVulkanDevice();
-    // init_info.QueueFamily                = m_device->GetGfxQueueFamilyIndex();
-    // init_info.Queue                      = m_commandQueue->GetVulkanGraphicsQueue();
-    // init_info.PipelineCache              = m_pipelineCache->GetVulkanPipelineCache();
-    // init_info.DescriptorPool             = g_DescriptorPool;
-    // init_info.Allocator                  = HgiVulkanAllocator();
-    // init_info.MinImageCount              = getMinImageCount();
-    // init_info.ImageCount                 = m_vulkan_context->ImageCount;
-    // init_info.CheckVkResultFn            = check_vk_result;
+    ANCHOR_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance                   = m_instance;
+    init_info.PhysicalDevice             = m_device->GetVulkanPhysicalDevice();
+    init_info.Device                     = m_device->GetVulkanDevice();
+    init_info.QueueFamily                = m_device->GetGfxQueueFamilyIndex();
+    init_info.Queue                      = m_commandQueue->GetVulkanGraphicsQueue();
+    init_info.PipelineCache              = m_pipelineCache->GetVulkanPipelineCache();
+    init_info.DescriptorPool             = g_DescriptorPool;
+    init_info.Allocator                  = HgiVulkanAllocator();
+    init_info.MinImageCount              = getMinImageCount();
+    init_info.ImageCount                 = m_vulkan_context->ImageCount;
+    init_info.CheckVkResultFn            = check_vk_result;
     // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
 
 
@@ -3511,41 +3723,24 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     driver.name = HgiTokens->renderDriver;
     driver.driver = VtValue(hgi.get());
 
-
     /**
      * Setup Pixar Driver & Engine. */
 
     ANCHOR::GetPixarDriver().name = driver.name;
     ANCHOR::GetPixarDriver().driver = driver.driver;
 
-
     SetFont();
-
 
     /**
      * ------------------------------------------------------ Upload Fonts ----- */
     {
-
-      /* ------ */
-
       HgiVulkanCommandBuffer *cmdbuffer = m_commandQueue->AcquireCommandBuffer();
-
-      /**
-       * Ready to begin recieving commands. We are now Inflight. */
-      cmdbuffer->ResetIfConsumedByGPU();
-      cmdbuffer->BeginCommandBuffer(cmdbuffer->GetInflightId());
-
-      /**
-       * Get the Vulkan Command Pool and Buffer. */
-
-      VkCommandPool command_pool = cmdbuffer->GetVulkanCommandPool();
       VkCommandBuffer command_buffer = cmdbuffer->GetVulkanCommandBuffer();
-
 
       /**
        * Create a texture with all our fonts. */
-
-      ANCHOR_ImplVulkan_CreateFontsTexture(command_buffer);
+      CreateVulkanDescriptorSetLayout();
+      CreateVulkanFontTexture(command_buffer);
 
       /* ------ */
 
@@ -3556,12 +3751,11 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
       m_commandQueue->SubmitToQueue(cmdbuffer);
 
-
       /**
        * Destroy the objects used for font texture upload. */
 
       m_device->WaitForIdle();
-      ANCHOR_ImplVulkan_DestroyFontUploadObjects();
+      DestroyVulkanFontTexture();
     }
   }
 }
@@ -3599,112 +3793,118 @@ bool AnchorWindowWin32::isDialog() const
 
 void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 {
-  VkResult err;
+  // VkResult err;
 
-  VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
-  VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
-                              m_vulkan_context->Swapchain,
-                              UINT64_MAX,
-                              image_acquired_semaphore,
-                              VK_NULL_HANDLE,
-                              &m_vulkan_context->FrameIndex);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  {
-    g_SwapChainRebuild = true;
-    return;
-  }
-  check_vk_result(err);
+  // VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
+  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+  // err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
+  //                             m_vulkan_context->Swapchain,
+  //                             UINT64_MAX,
+  //                             image_acquired_semaphore,
+  //                             VK_NULL_HANDLE,
+  //                             &m_vulkan_context->FrameIndex);
+  // if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  // {
+  //   g_SwapChainRebuild = true;
+  //   return;
+  // }
+  // check_vk_result(err);
 
-  ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
-  {
-    err = vkWaitForFences(m_device->GetVulkanDevice(),
-                          1,
-                          &fd->Fence,
-                          VK_TRUE,
-                          /* wait indefinitely==**/ UINT64_MAX);
-    check_vk_result(err);
+  // ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
+  // {
+  //   err = vkWaitForFences(m_device->GetVulkanDevice(),
+  //                         1,
+  //                         &fd->Fence,
+  //                         VK_TRUE,
+  //                         /* wait indefinitely==**/ UINT64_MAX);
+  //   check_vk_result(err);
 
-    err = vkResetFences(m_device->GetVulkanDevice(), 1, &fd->Fence);
-    check_vk_result(err);
-  }
-  {
-    err = vkResetCommandPool(m_device->GetVulkanDevice(), fd->CommandPool, 0);
-    check_vk_result(err);
-    VkCommandBufferBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
-    check_vk_result(err);
-  }
-  {
-    VkRenderPassBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass = m_vulkan_context->RenderPass;
-    info.framebuffer = fd->Framebuffer;
-    info.renderArea.extent.width = m_vulkan_context->Width;
-    info.renderArea.extent.height = m_vulkan_context->Height;
-    info.clearValueCount = 1;
-    info.pClearValues = &m_vulkan_context->ClearValue;
-    vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
-  }
+  //   err = vkResetFences(m_device->GetVulkanDevice(), 1, &fd->Fence);
+  //   check_vk_result(err);
+  // }
+  // {
+  //   err = vkResetCommandPool(m_device->GetVulkanDevice(), fd->CommandPool, 0);
+  //   check_vk_result(err);
+  //   VkCommandBufferBeginInfo info = {};
+  //   info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  //   info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  //   err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
+  //   check_vk_result(err);
+  // }
+  // {
+  //   VkRenderPassBeginInfo info = {};
+  //   info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  //   info.renderPass = m_vulkan_context->RenderPass;
+  //   info.framebuffer = fd->Framebuffer;
+  //   info.renderArea.extent.width = m_vulkan_context->Width;
+  //   info.renderArea.extent.height = m_vulkan_context->Height;
+  //   info.clearValueCount = 1;
+  //   info.pClearValues = &m_vulkan_context->ClearValue;
+  //   vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+  // }
 
-  /**
-   * Record ANCHOR primitives into command buffer. */
+  // /**
+  //  * Record ANCHOR primitives into command buffer. */
 
-  ANCHOR_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
+  // ANCHOR_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
 
-  /**
-   * Submit command buffer. */
+  // /**
+  //  * Submit command buffer. */
 
-  vkCmdEndRenderPass(fd->CommandBuffer);
-  {
-    VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSubmitInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    info.waitSemaphoreCount = 1;
-    info.pWaitSemaphores = &image_acquired_semaphore;
-    info.pWaitDstStageMask = &wait_stage;
-    info.commandBufferCount = 1;
-    info.pCommandBuffers = &fd->CommandBuffer;
-    info.signalSemaphoreCount = 1;
-    info.pSignalSemaphores = &render_complete_semaphore;
+  // vkCmdEndRenderPass(fd->CommandBuffer);
+  // {
+  //   VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  //   VkSubmitInfo info = {};
+  //   info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  //   info.waitSemaphoreCount = 1;
+  //   info.pWaitSemaphores = &image_acquired_semaphore;
+  //   info.pWaitDstStageMask = &wait_stage;
+  //   info.commandBufferCount = 1;
+  //   info.pCommandBuffers = &fd->CommandBuffer;
+  //   info.signalSemaphoreCount = 1;
+  //   info.pSignalSemaphores = &render_complete_semaphore;
 
-    err = vkEndCommandBuffer(fd->CommandBuffer);
-    check_vk_result(err);
-    err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, fd->Fence);
-    check_vk_result(err);
-  }
+  //   err = vkEndCommandBuffer(fd->CommandBuffer);
+  //   check_vk_result(err);
+  //   err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, fd->Fence);
+  //   check_vk_result(err);
+  // }
 }
 
 void AnchorWindowWin32::FramePresent()
 {
-  if (g_SwapChainRebuild)
-  {
-    return;
-  }
-  VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  VkPresentInfoKHR info = {};
-  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  info.waitSemaphoreCount = 1;
-  info.pWaitSemaphores = &render_complete_semaphore;
-  info.swapchainCount = 1;
-  info.pSwapchains = &m_vulkan_context->Swapchain;
-  info.pImageIndices = &m_vulkan_context->FrameIndex;
-  VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  {
-    g_SwapChainRebuild = true;
-    return;
-  }
-  check_vk_result(err);
-  /**
-   * Now we can use the next set of semaphores. */
-  m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
+  // if (g_SwapChainRebuild)
+  // {
+  //   return;
+  // }
+  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+  // VkPresentInfoKHR info = {};
+  // info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  // info.waitSemaphoreCount = 1;
+  // info.pWaitSemaphores = &render_complete_semaphore;
+  // info.swapchainCount = 1;
+  // info.pSwapchains = &m_vulkan_context->Swapchain;
+  // info.pImageIndices = &m_vulkan_context->FrameIndex;
+  // VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
+  // if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  // {
+  //   g_SwapChainRebuild = true;
+  //   return;
+  // }
+  // check_vk_result(err);
+  // /**
+  //  * Now we can use the next set of semaphores. */
+  // m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
 }
 
 eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
+  if (ANCHOR::GetCurrentContext() == NULL)
+    return ANCHOR_FAILURE;
+
+  AnchorIO &io = ANCHOR::GetIO();
+  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
+
   ANCHOR::Render();
   AnchorDrawData *draw_data = ANCHOR::GetDrawData();
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
@@ -4083,7 +4283,7 @@ AnchorU16 AnchorWindowWin32::getDPIHint()
 {
   if (m_user32)
   {
-    ANCHOR_WIN32_GetDpiForWindow fpGetDpiForWindow = (ANCHOR_WIN32_GetDpiForWindow)::GetProcAddress(m_user32, "GetDpiForWindow");
+    AnchorGetDpiForWindowCallback fpGetDpiForWindow = (AnchorGetDpiForWindowCallback)::GetProcAddress(m_user32, "GetDpiForWindow");
 
     if (fpGetDpiForWindow)
     {

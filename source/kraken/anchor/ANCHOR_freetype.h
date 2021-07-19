@@ -63,7 +63,6 @@ enum AnchorFreeTypeBuilderFlags
 
 namespace AnchorFreeType
 {
-// This is automatically assigned when using '#define ANCHOR_ENABLE_FREETYPE'.
 // If you need to dynamically select between multiple builders:
 // - you can manually assign this builder with 'atlas->FontBuilderIO =
 // AnchorFreeType::GetBuilderForFreeType()'
@@ -78,8 +77,6 @@ ANCHOR_API void SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *user_
                                       void (*free_func)(void *ptr, void *user_data),
                                       void *user_data = NULL);
 
-// Obsolete names (will be removed soon)
-// Prefer using '#define ANCHOR_ENABLE_FREETYPE'
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
 static inline bool BuildFontAtlas(AnchorFontAtlas *atlas, unsigned int flags = 0)
 {

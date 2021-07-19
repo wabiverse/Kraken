@@ -52,10 +52,10 @@ enum eAnchorMouseCaptureEventWin32
   OperatorUngrab
 };
 
-typedef UINT(WINAPI *ANCHOR_WIN32_GetDpiForWindow)(HWND);
-typedef BOOL(WINAPI *ANCHOR_WIN32_AdjustWindowRectExForDpi)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
+typedef UINT(WINAPI *AnchorGetDpiForWindowCallback)(HWND);
+typedef BOOL(WINAPI *AnchorAdjustWindowRectExForDpiCallback)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
 
-struct ANCHOR_PointerInfoWin32
+struct AnchorBackendWin32PointerInfo
 {
   AnchorS32 pointerId;
   AnchorS32 isPrimary;
@@ -64,22 +64,6 @@ struct ANCHOR_PointerInfoWin32
   AnchorU64 time;
   AnchorTabletData tabletData;
 };
-
-ANCHOR_BACKEND_API bool ANCHOR_ImplWin32_Init(void *hwnd);
-ANCHOR_BACKEND_API void ANCHOR_ImplWin32_Shutdown();
-ANCHOR_BACKEND_API void ANCHOR_ImplWin32_NewFrame();
-
-// DPI-related helpers (optional)
-// - Use to enable DPI awareness without having to create an application manifest.
-ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableDpiAwareness();
-ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForHwnd(void *hwnd);        // HWND hwnd
-ANCHOR_BACKEND_API float ANCHOR_ImplWin32_GetDpiScaleForMonitor(void *monitor);  // HMONITOR monitor
-
-// Transparency related helpers (optional) [experimental]
-// - Use to enable alpha compositing transparency with the desktop.
-// - Use together with e.g. clearing your framebuffer with zero-alpha.
-ANCHOR_BACKEND_API void ANCHOR_ImplWin32_EnableAlphaCompositing(void *hwnd);  // HWND hwnd
-
 
 class AnchorSystemWin32 : public AnchorSystem
 {
@@ -406,6 +390,13 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   /**
    * Vulkan device objects. */
   VkInstance m_instance;
+  VkImage m_fontImage;
+  VkDeviceMemory m_fontMemory;
+  VkImageView m_fontView;
+  VkSampler m_fontSampler;
+  VkBuffer m_fontUploadBuffer;
+  VkDeviceMemory m_fontUploadBufferMemory;
+  VkDeviceSize m_bufferMemoryAlignment;
   wabi::HgiVulkan *m_hgi;
   wabi::HgiVulkanInstance *m_vkinstance;
   wabi::HgiVulkanDevice *m_device;
@@ -446,6 +437,12 @@ class AnchorWindowWin32 : public AnchorSystemWindow
 
   void SetupVulkan();
   void SetupVulkanWindow();
+
+  uint32_t GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits);
+
+  void CreateVulkanDescriptorSetLayout();
+  void CreateVulkanFontTexture(VkCommandBuffer command_buffer);
+  void DestroyVulkanFontTexture();
 
   wabi::HgiVulkanDevice *getHydraDevice()
   {
@@ -553,7 +550,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   HCURSOR getStandardCursor(eAnchorStandardCursor shape) const;
   void loadCursor(bool visible, eAnchorStandardCursor cursorShape) const;
 
-  eAnchorStatus getPointerInfo(std::vector<ANCHOR_PointerInfoWin32> &outPointerInfo,
+  eAnchorStatus getPointerInfo(std::vector<AnchorBackendWin32PointerInfo> &outPointerInfo,
                                WPARAM wParam,
                                LPARAM lParam);
 

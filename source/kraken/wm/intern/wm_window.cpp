@@ -607,8 +607,8 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
                                                                    CHARALL(win_icon.GetAssetPath()),
                                                                    GET_X(win_pos),
                                                                    GET_Y(win_pos),
-                                                                   50,
-                                                                   50,
+                                                                   GET_X(win_size),
+                                                                   GET_Y(win_size),
                                                                    AnchorWindowStateNormal,
                                                                    is_dialog,
                                                                    ANCHOR_DrawingContextTypeVulkan,
@@ -645,8 +645,6 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
     /* needed here, because it's used before it reads userdef */
     wm_window_set_dpi(win);
-
-    ANCHOR::ProcessEvents(anchor_system, false);
     WM_window_swap_buffers(win);
   }
 

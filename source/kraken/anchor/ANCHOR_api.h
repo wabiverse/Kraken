@@ -5937,9 +5937,7 @@ struct AnchorFontAtlas
   wabi::GfVec4f TexUvLines[ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1];  // UVs for baked anti-aliased lines
 
   // [Internal] Font builder
-  const AnchorFontBuilderIO
-    *FontBuilderIO;               // Opaque interface to a font builder (default to stb_truetype, can be
-                                  // changed to use FreeType by defining ANCHOR_ENABLE_FREETYPE).
+  const AnchorFontBuilderIO *FontBuilderIO;
   unsigned int FontBuilderFlags;  // Shared flags (for all fonts) for custom font builder. THIS IS
                                   // BUILD IMPLEMENTATION DEPENDENT. Per-font override is also
                                   // available in AnchorFontConfig.
