@@ -3820,7 +3820,7 @@ enum AnchorCond_
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// IM_MALLOC(), IM_FREE(), IM_NEW(), IM_PLACEMENT_NEW(), IM_DELETE()
+// ANCHOR_MALLOC(), ANCHOR_FREE(), ANCHOR_NEW(), ANCHOR_PLACEMENT_NEW(), ANCHOR_DELETE()
 // We call C++ constructor on own allocated memory via the placement "new(ptr) Type()" syntax.
 // Defining a custom placement new() with a custom parameter allows us to bypass including <new>
 // which on some platforms complains when user has disabled exceptions.
@@ -3835,12 +3835,12 @@ inline void *operator new(size_t, AnchorNewWrapper, void *ptr)
 }
 inline void operator delete(void *, AnchorNewWrapper, void *)
 {}  // This is only required so we can use the symmetrical new()
-#define IM_ALLOC(_SIZE) ANCHOR::MemAlloc(_SIZE)
-#define IM_FREE(_PTR) ANCHOR::MemFree(_PTR)
-#define IM_PLACEMENT_NEW(_PTR) new (AnchorNewWrapper(), _PTR)
-#define IM_NEW(_TYPE) new (AnchorNewWrapper(), ANCHOR::MemAlloc(sizeof(_TYPE))) _TYPE
+#define ANCHOR_ALLOC(_SIZE) ANCHOR::MemAlloc(_SIZE)
+#define ANCHOR_FREE(_PTR) ANCHOR::MemFree(_PTR)
+#define ANCHOR_PLACEMENT_NEW(_PTR) new (AnchorNewWrapper(), _PTR)
+#define ANCHOR_NEW(_TYPE) new (AnchorNewWrapper(), ANCHOR::MemAlloc(sizeof(_TYPE))) _TYPE
 template<typename T>
-void IM_DELETE(T *p)
+void ANCHOR_DELETE(T *p)
 {
   if (p)
   {
@@ -3900,7 +3900,7 @@ struct AnchorVector
   inline ~AnchorVector()
   {
     if (Data)
-      IM_FREE(Data);
+      ANCHOR_FREE(Data);
   }
 
   inline bool empty() const
@@ -3939,7 +3939,7 @@ struct AnchorVector
     if (Data)
     {
       Size = Capacity = 0;
-      IM_FREE(Data);
+      ANCHOR_FREE(Data);
       Data = NULL;
     }
   }
@@ -4021,11 +4021,11 @@ struct AnchorVector
   {
     if (new_capacity <= Capacity)
       return;
-    T *new_data = (T *)IM_ALLOC((size_t)new_capacity * sizeof(T));
+    T *new_data = (T *)ANCHOR_ALLOC((size_t)new_capacity * sizeof(T));
     if (Data)
     {
       memcpy(new_data, Data, (size_t)Size * sizeof(T));
-      IM_FREE(Data);
+      ANCHOR_FREE(Data);
     }
     Data = new_data;
     Capacity = new_capacity;

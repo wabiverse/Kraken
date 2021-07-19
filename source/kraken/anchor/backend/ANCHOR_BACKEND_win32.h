@@ -41,6 +41,11 @@
 #  include <ole2.h>  // for drag-n-drop
 #  include <shlobj.h>
 #  include <windows.h>
+#  include <d3d12.h>
+#  include <dxgi1_6.h>
+
+#define NUM_BACK_BUFFERS 3
+#define NUM_FRAMES_IN_FLIGHT 3
 
 class AnchorWindowWin32;
 
@@ -343,6 +348,11 @@ class AnchorDisplayManagerWin32 : public AnchorDisplayManager
                                          const ANCHOR_DisplaySetting &setting);
 };
 
+struct D3D12FrameContext
+{
+  ID3D12CommandAllocator* CommandAllocator;
+  UINT64                  FenceValue;
+};
 
 class AnchorWindowWin32 : public AnchorSystemWindow
 {
@@ -388,6 +398,8 @@ class AnchorWindowWin32 : public AnchorSystemWindow
 
   HWND m_parentWindowHwnd;
 
+  eAnchorDrawingContextType m_drawContextType;
+
   /**
    * Vulkan device objects. */
   VkInstance m_instance;
@@ -403,6 +415,22 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   wabi::HgiVulkanDevice *m_device;
   wabi::HgiVulkanCommandQueue *m_commandQueue;
   wabi::HgiVulkanPipelineCache *m_pipelineCache;
+
+  /**
+   * DirectX 12 device objects. */
+  ID3D12Device *m_d3dDevice; 
+  ID3D12DescriptorHeap *m_d3dRtvDescriptorHeap;
+  ID3D12DescriptorHeap *m_d3dSrvDescriptorHeap;
+  ID3D12CommandQueue *m_d3dCommandQueue;
+  ID3D12GraphicsCommandList *m_d3dCommandList;
+  ID3D12Resource *m_mainRenderTargetResource[NUM_BACK_BUFFERS];
+  D3D12_CPU_DESCRIPTOR_HANDLE m_mainRenderTargetDescriptor[NUM_BACK_BUFFERS];
+  D3D12FrameContext m_frameContext[NUM_FRAMES_IN_FLIGHT];
+  ID3D12Fence *m_fence;
+  IDXGISwapChain3 *m_d3dSwapChain;
+  HANDLE m_d3dSwapChainWaitObject;
+  HANDLE m_fenceEvent;
+  UINT m_frameIndex;
 
  public:
   AnchorWindowWin32(AnchorSystemWin32 *system,
@@ -443,6 +471,12 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   void CreateVulkanFontTexture(VkCommandBuffer command_buffer);
   void DestroyVulkanFontTexture();
 
+  eAnchorStatus SetupD3D(HWND hWnd);
+  void DestroyD3D(void);
+  void CreateD3DRenderTarget(void);
+  void DestroyD3DRenderTarget(void);
+  void WaitForLastD3DFrame(void);
+
   wabi::HgiVulkanDevice *getHydraDevice()
   {
     return m_device;
@@ -456,6 +490,11 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   ANCHOR_VulkanGPU_Surface *getVulkanSurface()
   {
     return m_vulkan_context;
+  }
+
+  eAnchorDrawingContextType getDrawingContextType()
+  {
+    return m_drawContextType;
   }
 
   int getMinImageCount();

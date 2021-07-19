@@ -72,9 +72,9 @@
 #endif
 
 #ifdef _WIN32
-#  define IM_NEWLINE "\r\n"
+#  define ANCHOR_NEWLINE "\r\n"
 #else
-#  define IM_NEWLINE "\n"
+#  define ANCHOR_NEWLINE "\n"
 #endif
 
 #if defined(_MSC_VER) && !defined(snprintf)
@@ -7141,13 +7141,13 @@ void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
           ANCHOR::LogToClipboard();
         else
           ANCHOR::LogToTTY();
-        ANCHOR::LogText("GfVec4f* colors = ANCHOR::GetStyle().Colors;" IM_NEWLINE);
+        ANCHOR::LogText("GfVec4f* colors = ANCHOR::GetStyle().Colors;" ANCHOR_NEWLINE);
         for (int i = 0; i < AnchorCol_COUNT; i++)
         {
           const GfVec4f &col = style.Colors[i];
           const char *name = ANCHOR::GetStyleColorName(i);
           if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(GfVec4f)) != 0)
-            ANCHOR::LogText("colors[AnchorCol_%s]%*s= GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" IM_NEWLINE,
+            ANCHOR::LogText("colors[AnchorCol_%s]%*s= GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" ANCHOR_NEWLINE,
                             name,
                             23 - (int)strlen(name),
                             "",

@@ -445,7 +445,7 @@ bool ANCHOR::BeginTableEx(const char *name,
     }
   }
   if (old_columns_raw_data)
-    IM_FREE(old_columns_raw_data);
+    ANCHOR_FREE(old_columns_raw_data);
 
   // Load settings
   if (table->IsSettingsRequestLoad)
@@ -502,7 +502,7 @@ void ANCHOR::TableBeginInitMemory(AnchorTable *table, int columns_count)
   span_allocator.Reserve(0, columns_count * sizeof(AnchorTableColumn));
   span_allocator.Reserve(1, columns_count * sizeof(AnchorTableColumnIdx));
   span_allocator.Reserve(2, columns_count * sizeof(AnchorTableCellData), 4);
-  table->RawData = IM_ALLOC(span_allocator.GetArenaSizeInBytes());
+  table->RawData = ANCHOR_ALLOC(span_allocator.GetArenaSizeInBytes());
   memset(table->RawData, 0, span_allocator.GetArenaSizeInBytes());
   span_allocator.SetArenaBasePtr(table->RawData);
   span_allocator.GetSpan(0, &table->Columns);
@@ -3397,11 +3397,11 @@ static void TableSettingsInit(AnchorTableSettings *settings,
                               int columns_count,
                               int columns_count_max)
 {
-  IM_PLACEMENT_NEW(settings)
+  ANCHOR_PLACEMENT_NEW(settings)
   AnchorTableSettings();
   AnchorTableColumnSettings *settings_column = settings->GetColumnSettings();
   for (int n = 0; n < columns_count_max; n++, settings_column++)
-    IM_PLACEMENT_NEW(settings_column)
+    ANCHOR_PLACEMENT_NEW(settings_column)
   AnchorTableColumnSettings();
   settings->ID = id;
   settings->ColumnsCount = (AnchorTableColumnIdx)columns_count;

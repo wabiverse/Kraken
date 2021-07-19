@@ -54,12 +54,12 @@ WABI_NAMESPACE_USING
 static void *AnchorFreeTypeDefaultAllocFunc(size_t size, void *user_data)
 {
   TF_UNUSED(user_data);
-  return IM_ALLOC(size);
+  return ANCHOR_ALLOC(size);
 }
 static void AnchorFreeTypeDefaultFreeFunc(void *ptr, void *user_data)
 {
   TF_UNUSED(user_data);
-  IM_FREE(ptr);
+  ANCHOR_FREE(ptr);
 }
 
 // Current memory allocators
@@ -563,7 +563,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   const int BITMAP_BUFFERS_CHUNK_SIZE = 256 * 1024;
   int buf_bitmap_current_used_bytes = 0;
   AnchorVector<unsigned char *> buf_bitmap_buffers;
-  buf_bitmap_buffers.push_back((unsigned char *)IM_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
+  buf_bitmap_buffers.push_back((unsigned char *)ANCHOR_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
 
   // 4. Gather glyphs sizes so we can pack them in our virtual canvas.
   // 8. Render/rasterize font characters into the texture
@@ -604,7 +604,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       if (buf_bitmap_current_used_bytes + bitmap_size_in_bytes > BITMAP_BUFFERS_CHUNK_SIZE)
       {
         buf_bitmap_current_used_bytes = 0;
-        buf_bitmap_buffers.push_back((unsigned char *)IM_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
+        buf_bitmap_buffers.push_back((unsigned char *)ANCHOR_ALLOC(BITMAP_BUFFERS_CHUNK_SIZE));
       }
 
       // Blit rasterized pixels to our temporary buffer and keep a pointer to it.
@@ -669,12 +669,12 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   atlas->TexUvScale = GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
   if (src_load_color)
   {
-    atlas->TexPixelsRGBA32 = (unsigned int *)IM_ALLOC(atlas->TexWidth * atlas->TexHeight * 4);
+    atlas->TexPixelsRGBA32 = (unsigned int *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight * 4);
     memset(atlas->TexPixelsRGBA32, 0, atlas->TexWidth * atlas->TexHeight * 4);
   }
   else
   {
-    atlas->TexPixelsAlpha8 = (unsigned char *)IM_ALLOC(atlas->TexWidth * atlas->TexHeight);
+    atlas->TexPixelsAlpha8 = (unsigned char *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight);
     memset(atlas->TexPixelsAlpha8, 0, atlas->TexWidth * atlas->TexHeight);
   }
 
@@ -757,7 +757,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
 
   // Cleanup
   for (int buf_i = 0; buf_i < buf_bitmap_buffers.Size; buf_i++)
-    IM_FREE(buf_bitmap_buffers[buf_i]);
+    ANCHOR_FREE(buf_bitmap_buffers[buf_i]);
   for (int src_i = 0; src_i < src_tmp_array.Size; src_i++)
     src_tmp_array[src_i].~AnchorFontBuildSrcDataFT();
 

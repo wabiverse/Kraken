@@ -879,7 +879,7 @@ void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
   {
     wrb->Index = 0;
     wrb->Count = v->ImageCount;
-    wrb->FrameRenderBuffers = (ANCHOR_VulkanGPU_FrameRenderBuffers *)IM_ALLOC(
+    wrb->FrameRenderBuffers = (ANCHOR_VulkanGPU_FrameRenderBuffers *)ANCHOR_ALLOC(
       sizeof(ANCHOR_VulkanGPU_FrameRenderBuffers) * wrb->Count);
     memset(wrb->FrameRenderBuffers, 0, sizeof(ANCHOR_VulkanGPU_FrameRenderBuffers) * wrb->Count);
   }
@@ -1779,8 +1779,8 @@ void ANCHOR_ImplVulkanH_CreateWindowSwapChain(VkPhysicalDevice physical_device,
     ANCHOR_ImplVulkanH_DestroyFrame(device, &wd->Frames[i], allocator);
     ANCHOR_ImplVulkanH_DestroyFrameSemaphores(device, &wd->FrameSemaphores[i], allocator);
   }
-  IM_FREE(wd->Frames);
-  IM_FREE(wd->FrameSemaphores);
+  ANCHOR_FREE(wd->Frames);
+  ANCHOR_FREE(wd->FrameSemaphores);
   wd->Frames = NULL;
   wd->FrameSemaphores = NULL;
   wd->ImageCount = 0;
@@ -1839,8 +1839,8 @@ void ANCHOR_ImplVulkanH_CreateWindowSwapChain(VkPhysicalDevice physical_device,
     check_vk_result(err);
 
     ANCHOR_ASSERT(wd->Frames == NULL);
-    wd->Frames = (ANCHOR_VulkanGPU_Frame *)IM_ALLOC(sizeof(ANCHOR_VulkanGPU_Frame) * wd->ImageCount);
-    wd->FrameSemaphores = (ANCHOR_VulkanGPU_FrameSemaphores *)IM_ALLOC(
+    wd->Frames = (ANCHOR_VulkanGPU_Frame *)ANCHOR_ALLOC(sizeof(ANCHOR_VulkanGPU_Frame) * wd->ImageCount);
+    wd->FrameSemaphores = (ANCHOR_VulkanGPU_FrameSemaphores *)ANCHOR_ALLOC(
       sizeof(ANCHOR_VulkanGPU_FrameSemaphores) * wd->ImageCount);
     memset(wd->Frames, 0, sizeof(wd->Frames[0]) * wd->ImageCount);
     memset(wd->FrameSemaphores, 0, sizeof(wd->FrameSemaphores[0]) * wd->ImageCount);
@@ -1968,8 +1968,8 @@ void ANCHOR_ImplVulkanH_DestroyWindow(VkInstance instance,
     ANCHOR_ImplVulkanH_DestroyFrame(device, &wd->Frames[i], allocator);
     ANCHOR_ImplVulkanH_DestroyFrameSemaphores(device, &wd->FrameSemaphores[i], allocator);
   }
-  IM_FREE(wd->Frames);
-  IM_FREE(wd->FrameSemaphores);
+  ANCHOR_FREE(wd->Frames);
+  ANCHOR_FREE(wd->FrameSemaphores);
   wd->Frames = NULL;
   wd->FrameSemaphores = NULL;
   vkDestroyPipeline(device, wd->Pipeline, allocator);
@@ -2038,7 +2038,7 @@ void ANCHOR_ImplVulkanH_DestroyWindowRenderBuffers(VkDevice device,
 {
   for (uint32_t n = 0; n < buffers->Count; n++)
     ANCHOR_ImplVulkanH_DestroyFrameRenderBuffers(device, &buffers->FrameRenderBuffers[n], allocator);
-  IM_FREE(buffers->FrameRenderBuffers);
+  ANCHOR_FREE(buffers->FrameRenderBuffers);
   buffers->FrameRenderBuffers = NULL;
   buffers->Index = 0;
   buffers->Count = 0;

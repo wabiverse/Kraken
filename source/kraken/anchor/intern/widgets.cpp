@@ -5468,7 +5468,7 @@ bool ANCHOR::InputTextEx(const char *label,
         const int clipboard_data_len = AnchorTextCountUtf8BytesFromStr(state->TextW.Data + ib,
                                                                        state->TextW.Data + ie) +
                                        1;
-        char *clipboard_data = (char *)IM_ALLOC(clipboard_data_len * sizeof(char));
+        char *clipboard_data = (char *)ANCHOR_ALLOC(clipboard_data_len * sizeof(char));
         AnchorTextStrToUtf8(clipboard_data, clipboard_data_len, state->TextW.Data + ib, state->TextW.Data + ie);
         SetClipboardText(clipboard_data);
         MemFree(clipboard_data);
@@ -5487,7 +5487,7 @@ bool ANCHOR::InputTextEx(const char *label,
       {
         // Filter pasted buffer
         const int clipboard_len = (int)strlen(clipboard);
-        AnchorWChar *clipboard_filtered = (AnchorWChar *)IM_ALLOC((clipboard_len + 1) * sizeof(AnchorWChar));
+        AnchorWChar *clipboard_filtered = (AnchorWChar *)ANCHOR_ALLOC((clipboard_len + 1) * sizeof(AnchorWChar));
         int clipboard_filtered_len = 0;
         for (const char *s = clipboard; *s;)
         {

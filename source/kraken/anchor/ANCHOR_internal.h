@@ -373,9 +373,9 @@ typedef struct
  * Misc Macros */
 #define IM_PI 3.14159265358979323846f
 #ifdef _WIN32
-#  define IM_NEWLINE "\r\n"
+#  define ANCHOR_NEWLINE "\r\n"
 #else
-#  define IM_NEWLINE "\n"
+#  define ANCHOR_NEWLINE "\n"
 #endif
 #define IM_TABSIZE (4)
 #define ANCHOR_MEMALIGN(_OFF, _ALIGN) \
@@ -1370,7 +1370,7 @@ struct ANCHOR_API AnchorPool
     {
       FreeIdx = *(int *)&Buf[idx];
     }
-    IM_PLACEMENT_NEW(&Buf[idx])
+    ANCHOR_PLACEMENT_NEW(&Buf[idx])
     T();
     return &Buf[idx];
   }
@@ -2403,9 +2403,9 @@ struct AnchorViewportP : public AnchorViewport
   ~AnchorViewportP()
   {
     if (DrawLists[0])
-      IM_DELETE(DrawLists[0]);
+      ANCHOR_DELETE(DrawLists[0]);
     if (DrawLists[1])
-      IM_DELETE(DrawLists[1]);
+      ANCHOR_DELETE(DrawLists[1]);
   }
 
   // Calculate work rect pos/size given a set of offset (we have 1 pair of offset for rect locked
@@ -2923,7 +2923,7 @@ struct AnchorContext
 
     Font = NULL;
     FontSize = FontBaseSize = 0.0f;
-    IO.Fonts = shared_font_atlas ? shared_font_atlas : IM_NEW(AnchorFontAtlas)();
+    IO.Fonts = shared_font_atlas ? shared_font_atlas : ANCHOR_NEW(AnchorFontAtlas)();
     Time = 0.0f;
     FrameCount = 0;
     FrameCountEnded = FrameCountRendered = -1;
@@ -3720,7 +3720,7 @@ struct AnchorTable
   }
   ANCHOR_API ~AnchorTable()
   {
-    IM_FREE(RawData);
+    ANCHOR_FREE(RawData);
   }
 };
 

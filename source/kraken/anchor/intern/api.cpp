@@ -824,7 +824,7 @@ void AnchorStrncpy(char *dst, const char *src, size_t count)
 char *AnchorStrdup(const char *str)
 {
   size_t len = strlen(str);
-  void *buf = IM_ALLOC(len + 1);
+  void *buf = ANCHOR_ALLOC(len + 1);
   return (char *)memcpy(buf, (const void *)str, len + 1);
 }
 
@@ -834,8 +834,8 @@ char *AnchorStrdupcpy(char *dst, size_t *p_dst_size, const char *src)
   size_t src_size = strlen(src) + 1;
   if (dst_buf_size < src_size)
   {
-    IM_FREE(dst);
-    dst = (char *)IM_ALLOC(src_size);
+    ANCHOR_FREE(dst);
+    dst = (char *)ANCHOR_ALLOC(src_size);
     if (p_dst_size)
       *p_dst_size = src_size;
   }
@@ -1342,7 +1342,7 @@ AnchorU64 ImFileWrite(const void *data, AnchorU64 sz, AnchorU64 count, ImFileHan
 #endif  // #ifndef ANCHOR_DISABLE_DEFAULT_FILE_FUNCTIONS
 
 // Helper: Load file content into memory
-// Memory allocated with IM_ALLOC(), must be freed by user using IM_FREE() == ANCHOR::MemFree()
+// Memory allocated with ANCHOR_ALLOC(), must be freed by user using ANCHOR_FREE() == ANCHOR::MemFree()
 // This can't really be used with "rt" because fseek size won't match read size.
 void *ImFileLoadToMemory(const char *filename, const char *mode, size_t *out_file_size, int padding_bytes)
 {
@@ -1361,7 +1361,7 @@ void *ImFileLoadToMemory(const char *filename, const char *mode, size_t *out_fil
     return NULL;
   }
 
-  void *file_data = IM_ALLOC(file_size + padding_bytes);
+  void *file_data = ANCHOR_ALLOC(file_size + padding_bytes);
   if (file_data == NULL)
   {
     ImFileClose(f);
@@ -1370,7 +1370,7 @@ void *ImFileLoadToMemory(const char *filename, const char *mode, size_t *out_fil
   if (ImFileRead(file_data, 1, file_size, f) != file_size)
   {
     ImFileClose(f);
-    IM_FREE(file_data);
+    ANCHOR_FREE(file_data);
     return NULL;
   }
   if (padding_bytes > 0)
@@ -2970,7 +2970,7 @@ AnchorWindow::AnchorWindow(AnchorContext *context, const char *name)
 AnchorWindow::~AnchorWindow()
 {
   ANCHOR_ASSERT(DrawList == &DrawListInst);
-  IM_DELETE(Name);
+  ANCHOR_DELETE(Name);
   for (int i = 0; i != ColumnsStorage.Size; i++)
     ColumnsStorage[i].~AnchorOldColumns();
 }
@@ -3405,7 +3405,7 @@ float ANCHOR::CalcWrapWidthForPos(const GfVec2f &pos, float wrap_pos_x)
   return AnchorMax(wrap_pos_x - pos[0], 1.0f);
 }
 
-// IM_ALLOC() == ANCHOR::MemAlloc()
+// ANCHOR_ALLOC() == ANCHOR::MemAlloc()
 void *ANCHOR::MemAlloc(size_t size)
 {
   if (AnchorContext *ctx = G_CTX)
@@ -3413,7 +3413,7 @@ void *ANCHOR::MemAlloc(size_t size)
   return (*GImAllocatorAllocFunc)(size, GImAllocatorUserData);
 }
 
-// IM_FREE() == ANCHOR::MemFree()
+// ANCHOR_FREE() == ANCHOR::MemFree()
 void ANCHOR::MemFree(void *ptr)
 {
   if (ptr)
@@ -3790,7 +3790,7 @@ void ANCHOR::GetAllocatorFunctions(ANCHORMemAllocFunc *p_alloc_func,
 
 AnchorContext *ANCHOR::CreateContext(AnchorFontAtlas *shared_font_atlas)
 {
-  AnchorContext *ctx = IM_NEW(AnchorContext)(shared_font_atlas);
+  AnchorContext *ctx = ANCHOR_NEW(AnchorContext)(shared_font_atlas);
   if (G_CTX == NULL)
     SetCurrentContext(ctx);
   Initialize(ctx);
@@ -3804,7 +3804,7 @@ void ANCHOR::DestroyContext(AnchorContext *ctx)
   Shutdown(ctx);
   if (G_CTX == ctx)
     SetCurrentContext(NULL);
-  IM_DELETE(ctx);
+  ANCHOR_DELETE(ctx);
 }
 
 // No specific ordering/dependency support, will see as needed
@@ -3885,7 +3885,7 @@ static AnchorDrawList *GetViewportDrawList(AnchorViewportP *viewport,
   AnchorDrawList *draw_list = viewport->DrawLists[drawlist_no];
   if (draw_list == NULL)
   {
-    draw_list = IM_NEW(AnchorDrawList)(&g.DrawListSharedData);
+    draw_list = ANCHOR_NEW(AnchorDrawList)(&g.DrawListSharedData);
     draw_list->_OwnerName = drawlist_name;
     viewport->DrawLists[drawlist_no] = draw_list;
   }
@@ -4655,7 +4655,7 @@ void ANCHOR::Initialize(AnchorContext *context)
   TableSettingsInstallHandler(context);
 
   // Create default viewport
-  AnchorViewportP *viewport = IM_NEW(AnchorViewportP)();
+  AnchorViewportP *viewport = ANCHOR_NEW(AnchorViewportP)();
   g.Viewports.push_back(viewport);
 
 #ifdef ANCHOR_HAS_DOCK
@@ -4673,7 +4673,7 @@ void ANCHOR::Shutdown(AnchorContext *context)
   if (g.IO.Fonts && g.FontAtlasOwnedByContext)
   {
     g.IO.Fonts->Locked = false;
-    IM_DELETE(g.IO.Fonts);
+    ANCHOR_DELETE(g.IO.Fonts);
   }
   g.IO.Fonts = NULL;
 
@@ -4695,7 +4695,7 @@ void ANCHOR::Shutdown(AnchorContext *context)
 
   // Clear everything else
   for (int i = 0; i < g.Windows.Size; i++)
-    IM_DELETE(g.Windows[i]);
+    ANCHOR_DELETE(g.Windows[i]);
   g.Windows.clear();
   g.WindowsFocusOrder.clear();
   g.WindowsTempSortBuffer.clear();
@@ -4713,7 +4713,7 @@ void ANCHOR::Shutdown(AnchorContext *context)
   g.BeginPopupStack.clear();
 
   for (int i = 0; i < g.Viewports.Size; i++)
-    IM_DELETE(g.Viewports[i]);
+    ANCHOR_DELETE(g.Viewports[i]);
   g.Viewports.clear();
 
   g.TabBars.Clear();
@@ -5722,7 +5722,7 @@ static AnchorWindow *CreateNewWindow(const char *name, AnchorWindowFlags flags)
   // ANCHOR_DEBUG_LOG("CreateNewWindow '%s', flags = 0x%08X\n", name, flags);
 
   // Create window the first time
-  AnchorWindow *window = IM_NEW(AnchorWindow)(&g, name);
+  AnchorWindow *window = ANCHOR_NEW(AnchorWindow)(&g, name);
   window->Flags = flags;
   g.WindowsById.SetVoidPtr(window->ID, window);
 
@@ -11663,7 +11663,7 @@ void ANCHOR::LogRenderedText(const GfVec2f *ref_pos, const char *text, const cha
     g.LogLinePosY = ref_pos->data()[1];
   if (log_new_line)
   {
-    LogText(IM_NEWLINE);
+    LogText(ANCHOR_NEWLINE);
     g.LogLineFirstItem = true;
   }
 
@@ -11694,7 +11694,7 @@ void ANCHOR::LogRenderedText(const GfVec2f *ref_pos, const char *text, const cha
       g.LogLineFirstItem = false;
       if (*line_end == '\n')
       {
-        LogText(IM_NEWLINE);
+        LogText(ANCHOR_NEWLINE);
         g.LogLineFirstItem = true;
       }
     }
@@ -11754,7 +11754,7 @@ void ANCHOR::LogToFile(int auto_open_depth, const char *filename)
 
   // FIXME: We could probably open the file in text mode "at", however note that clipboard/buffer
   // logging will still be subject to outputting OS-incompatible carriage return if within strings
-  // the user doesn't use IM_NEWLINE. By opening the file in binary mode "ab" we have consistent
+  // the user doesn't use ANCHOR_NEWLINE. By opening the file in binary mode "ab" we have consistent
   // output everywhere.
   if (!filename)
     filename = g.IO.LogFilename;
@@ -11794,7 +11794,7 @@ void ANCHOR::LogFinish()
   if (!g.LogEnabled)
     return;
 
-  LogText(IM_NEWLINE);
+  LogText(ANCHOR_NEWLINE);
   switch (g.LogType)
   {
     case ANCHORLogType_TTY:
@@ -11931,7 +11931,7 @@ AnchorWindowSettings *ANCHOR::CreateNewWindowSettings(const char *name)
   // Allocate chunk
   const size_t chunk_size = sizeof(AnchorWindowSettings) + name_len + 1;
   AnchorWindowSettings *settings = g.SettingsWindows.alloc_chunk(chunk_size);
-  IM_PLACEMENT_NEW(settings)
+  ANCHOR_PLACEMENT_NEW(settings)
   AnchorWindowSettings();
   settings->ID = AnchorHashStr(name, name_len);
   memcpy(settings->GetName(), name, name_len + 1);  // Store with zero terminator
@@ -11982,7 +11982,7 @@ void ANCHOR::LoadIniSettingsFromDisk(const char *ini_filename)
   if (!file_data)
     return;
   LoadIniSettingsFromMemory(file_data, (size_t)file_data_size);
-  IM_FREE(file_data);
+  ANCHOR_FREE(file_data);
 }
 
 // Zero-tolerance, no error reporting, cheap .ini parsing

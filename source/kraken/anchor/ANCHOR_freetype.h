@@ -70,7 +70,7 @@ namespace AnchorFreeType
 // that messes up static data.
 ANCHOR_API const AnchorFontBuilderIO *GetBuilderForFreeType();
 
-// Override allocators. By default AnchorFreeType will use IM_ALLOC()/IM_FREE()
+// Override allocators. By default AnchorFreeType will use ANCHOR_ALLOC()/ANCHOR_FREE()
 // However, as FreeType does lots of allocations we provide a way for the user to redirect it to a
 // separate memory heap if desired.
 ANCHOR_API void SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *user_data),

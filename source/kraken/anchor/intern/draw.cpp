@@ -133,8 +133,8 @@ namespace ANCHOR_STB_NAMESPACE
 
 #  ifndef STB_TRUETYPE_IMPLEMENTATION
 #    ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
-#      define STBTT_malloc(x, u) ((void)(u), IM_ALLOC(x))
-#      define STBTT_free(x, u) ((void)(u), IM_FREE(x))
+#      define STBTT_malloc(x, u) ((void)(u), ANCHOR_ALLOC(x))
+#      define STBTT_free(x, u) ((void)(u), ANCHOR_FREE(x))
 #      define STBTT_assert(x) \
         do \
         { \
@@ -440,7 +440,7 @@ void AnchorDrawList::_ClearFreeMemory()
 
 AnchorDrawList *AnchorDrawList::CloneOutput() const
 {
-  AnchorDrawList *dst = IM_NEW(AnchorDrawList(_Data));
+  AnchorDrawList *dst = ANCHOR_NEW(AnchorDrawList(_Data));
   dst->CmdBuffer = CmdBuffer;
   dst->IdxBuffer = IdxBuffer;
   dst->VtxBuffer = VtxBuffer;
@@ -2054,7 +2054,7 @@ void AnchorDrawListSplitter::Split(AnchorDrawList *draw_list, int channels_count
   {
     if (i >= old_channels_count)
     {
-      IM_PLACEMENT_NEW(&_Channels[i])
+      ANCHOR_PLACEMENT_NEW(&_Channels[i])
       AnchorDrawChannel();
     }
     else
@@ -2400,7 +2400,7 @@ void AnchorFontAtlas::ClearInputData()
   for (int i = 0; i < ConfigData.Size; i++)
     if (ConfigData[i].FontData && ConfigData[i].FontDataOwnedByAtlas)
     {
-      IM_FREE(ConfigData[i].FontData);
+      ANCHOR_FREE(ConfigData[i].FontData);
       ConfigData[i].FontData = NULL;
     }
 
@@ -2423,9 +2423,9 @@ void AnchorFontAtlas::ClearTexData()
   ANCHOR_ASSERT(!Locked &&
                 "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   if (TexPixelsAlpha8)
-    IM_FREE(TexPixelsAlpha8);
+    ANCHOR_FREE(TexPixelsAlpha8);
   if (TexPixelsRGBA32)
-    IM_FREE(TexPixelsRGBA32);
+    ANCHOR_FREE(TexPixelsRGBA32);
   TexPixelsAlpha8 = NULL;
   TexPixelsRGBA32 = NULL;
   TexPixelsUseColors = false;
@@ -2436,7 +2436,7 @@ void AnchorFontAtlas::ClearFonts()
   ANCHOR_ASSERT(!Locked &&
                 "Cannot modify a locked AnchorFontAtlas between NewFrame() and EndFrame/Render()!");
   for (int i = 0; i < Fonts.Size; i++)
-    IM_DELETE(Fonts[i]);
+    ANCHOR_DELETE(Fonts[i]);
   Fonts.clear();
 }
 
@@ -2483,7 +2483,7 @@ void AnchorFontAtlas::GetTexDataAsRGBA32(unsigned char **out_pixels,
     GetTexDataAsAlpha8(&pixels, NULL, NULL);
     if (pixels)
     {
-      TexPixelsRGBA32 = (unsigned int *)IM_ALLOC((size_t)TexWidth * (size_t)TexHeight * 4);
+      TexPixelsRGBA32 = (unsigned int *)ANCHOR_ALLOC((size_t)TexWidth * (size_t)TexHeight * 4);
       const unsigned char *src = pixels;
       unsigned int *dst = TexPixelsRGBA32;
       for (int n = TexWidth * TexHeight; n > 0; n--)
@@ -2509,7 +2509,7 @@ AnchorFont *AnchorFontAtlas::AddFont(const AnchorFontConfig *font_cfg)
 
   // Create new font
   if (!font_cfg->MergeMode)
-    Fonts.push_back(IM_NEW(AnchorFont));
+    Fonts.push_back(ANCHOR_NEW(AnchorFont));
   else
     ANCHOR_ASSERT(!Fonts.empty() &&
                   "Cannot use MergeMode for the first font");  // When using MergeMode make sure that a font
@@ -2523,7 +2523,7 @@ AnchorFont *AnchorFontAtlas::AddFont(const AnchorFontConfig *font_cfg)
     new_font_cfg.DstFont = Fonts.back();
   if (!new_font_cfg.FontDataOwnedByAtlas)
   {
-    new_font_cfg.FontData = IM_ALLOC(new_font_cfg.FontDataSize);
+    new_font_cfg.FontData = ANCHOR_ALLOC(new_font_cfg.FontDataSize);
     new_font_cfg.FontDataOwnedByAtlas = true;
     memcpy(new_font_cfg.FontData, font_cfg->FontData, (size_t)new_font_cfg.FontDataSize);
   }
@@ -2643,7 +2643,7 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedTTF(const void *compress
 {
   const unsigned int buf_decompressed_size = stb_decompress_length(
     (const unsigned char *)compressed_ttf_data);
-  unsigned char *buf_decompressed_data = (unsigned char *)IM_ALLOC(buf_decompressed_size);
+  unsigned char *buf_decompressed_data = (unsigned char *)ANCHOR_ALLOC(buf_decompressed_size);
   stb_decompress(
     buf_decompressed_data, (const unsigned char *)compressed_ttf_data, (unsigned int)compressed_ttf_size);
 
@@ -2660,11 +2660,11 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedBase85TTF(const char *co
                                                                   const AnchorWChar *glyph_ranges)
 {
   int compressed_ttf_size = (((int)strlen(compressed_ttf_data_base85) + 4) / 5) * 4;
-  void *compressed_ttf = IM_ALLOC((size_t)compressed_ttf_size);
+  void *compressed_ttf = ANCHOR_ALLOC((size_t)compressed_ttf_size);
   Decode85((const unsigned char *)compressed_ttf_data_base85, (unsigned char *)compressed_ttf);
   AnchorFont *font = AddFontFromMemoryCompressedTTF(
     compressed_ttf, compressed_ttf_size, size_pixels, font_cfg, glyph_ranges);
-  IM_FREE(compressed_ttf);
+  ANCHOR_FREE(compressed_ttf);
   return font;
 }
 
@@ -3036,7 +3036,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
                        (atlas->TexHeight + 1) :
                        ImUpperPowerOfTwo(atlas->TexHeight);
   atlas->TexUvScale = GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
-  atlas->TexPixelsAlpha8 = (unsigned char *)IM_ALLOC(atlas->TexWidth * atlas->TexHeight);
+  atlas->TexPixelsAlpha8 = (unsigned char *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight);
   memset(atlas->TexPixelsAlpha8, 0, atlas->TexWidth * atlas->TexHeight);
   spc.pixels = atlas->TexPixelsAlpha8;
   spc.height = atlas->TexHeight;

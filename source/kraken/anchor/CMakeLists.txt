@@ -123,6 +123,9 @@ if(WIN32)
     comctl32
     shcore
     shlwapi
+    d3d12
+    d3dcompiler
+    dxgi
   )
 endif()
 

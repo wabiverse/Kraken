@@ -81,6 +81,10 @@
 #include <tlhelp32.h>
 #include <windowsx.h>
 
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <d3dcompiler.h>
+
 #ifndef GET_POINTERID_WPARAM
 /**
  * GET_POINTERID_WPARAM */
@@ -173,7 +177,7 @@ static bool AnchorBackendWin32Init(void *hwnd)
    * - We can honor GetMouseCursor() values (optional).
    * - We can honor io.WantSetMousePos requests (optional,
    *   rarely used) */
-  AnchorBackendWin32Data *bd = IM_NEW(AnchorBackendWin32Data)();
+  AnchorBackendWin32Data *bd = ANCHOR_NEW(AnchorBackendWin32Data)();
   io.BackendPlatformUserData = (void *)bd;
   io.BackendPlatformName = "imgui_impl_win32";
   io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
@@ -242,6 +246,506 @@ static bool AnchorBackendWin32Init(void *hwnd)
   return true;
 }
 
+struct AnchorBackendDXD12RenderBuffers
+{
+  ID3D12Resource *IndexBuffer;
+  ID3D12Resource *VertexBuffer;
+  int IndexBufferSize;
+  int VertexBufferSize;
+};
+
+struct AnchorBackendDXD12Data
+{
+  ID3D12Device *d3dDevice;
+  ID3D12RootSignature *RootSignature;
+  ID3D12PipelineState *PipelineState;
+  DXGI_FORMAT RTVFormat;
+  ID3D12Resource *FontTextureResource;
+  D3D12_CPU_DESCRIPTOR_HANDLE FontSrvCpuDescHandle;
+  D3D12_GPU_DESCRIPTOR_HANDLE FontSrvGpuDescHandle;
+
+  AnchorBackendDXD12RenderBuffers *FrameResources;
+  UINT numFramesInFlight;
+  UINT frameIndex;
+
+  AnchorBackendDXD12Data()
+  {
+    memset(this, 0, sizeof(*this));
+    frameIndex = UINT_MAX;
+  }
+};
+
+static AnchorBackendDXD12Data *AnchorBackendDXD12GetBackendData()
+{
+  return ANCHOR::GetCurrentContext() ? (AnchorBackendDXD12Data *)ANCHOR::GetIO().BackendRendererUserData : NULL;
+}
+
+static bool AnchorBackendDXD12Init(ID3D12Device *device,
+                                   int num_frames_in_flight,
+                                   DXGI_FORMAT rtv_format,
+                                   ID3D12DescriptorHeap *cbv_srv_heap,
+                                   D3D12_CPU_DESCRIPTOR_HANDLE font_srv_cpu_desc_handle,
+                                   D3D12_GPU_DESCRIPTOR_HANDLE font_srv_gpu_desc_handle)
+{
+  AnchorIO &io = ANCHOR::GetIO();
+  ANCHOR_ASSERT(io.BackendRendererUserData == NULL && "Already initialized a renderer backend!");
+
+  AnchorBackendDXD12Data *bd = ANCHOR_NEW(AnchorBackendDXD12Data)();
+  io.BackendRendererUserData = (void *)bd;
+  io.BackendRendererName = "AnchorDXD12";
+  io.BackendFlags |= AnchorBackendFlags_RendererHasVtxOffset;
+
+  bd->d3dDevice = device;
+  bd->RTVFormat = rtv_format;
+  bd->FontSrvCpuDescHandle = font_srv_cpu_desc_handle;
+  bd->FontSrvGpuDescHandle = font_srv_gpu_desc_handle;
+  bd->FrameResources = new AnchorBackendDXD12RenderBuffers[num_frames_in_flight];
+  bd->numFramesInFlight = num_frames_in_flight;
+  bd->frameIndex = UINT_MAX;
+  TF_UNUSED(cbv_srv_heap);
+
+  for (int i = 0; i < num_frames_in_flight; i++)
+  {
+    AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[i];
+    fr->IndexBuffer = NULL;
+    fr->VertexBuffer = NULL;
+    fr->IndexBufferSize = 10000;
+    fr->VertexBufferSize = 5000;
+  }
+
+  return true;
+}
+
+template<typename T>
+static inline void SafeRelease(T *&res)
+{
+  if (res)
+    res->Release();
+  res = NULL;
+}
+
+static void AnchorBackendDXD12InvalidateDeviceObjects()
+{
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+  if (!bd || !bd->d3dDevice)
+    return;
+  AnchorIO &io = ANCHOR::GetIO();
+
+  SafeRelease(bd->RootSignature);
+  SafeRelease(bd->PipelineState);
+  SafeRelease(bd->FontTextureResource);
+  io.Fonts->SetTexID(NULL);
+
+  for (UINT i = 0; i < bd->numFramesInFlight; i++)
+  {
+    AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[i];
+    SafeRelease(fr->IndexBuffer);
+    SafeRelease(fr->VertexBuffer);
+  }
+}
+
+static void AnchorBackendDXD12CreateFontsTexture()
+{
+  AnchorIO &io = ANCHOR::GetIO();
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+  unsigned char *pixels;
+  int width, height;
+  io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+
+  // Upload texture to graphics system
+  {
+    D3D12_HEAP_PROPERTIES props;
+    memset(&props, 0, sizeof(D3D12_HEAP_PROPERTIES));
+    props.Type = D3D12_HEAP_TYPE_DEFAULT;
+    props.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+
+    D3D12_RESOURCE_DESC desc;
+    ZeroMemory(&desc, sizeof(desc));
+    desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    desc.Alignment = 0;
+    desc.Width = width;
+    desc.Height = height;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+    ID3D12Resource *pTexture = NULL;
+    bd->d3dDevice->CreateCommittedResource(&props,
+                                           D3D12_HEAP_FLAG_NONE,
+                                           &desc,
+                                           D3D12_RESOURCE_STATE_COPY_DEST,
+                                           NULL,
+                                           IID_PPV_ARGS(&pTexture));
+
+    UINT uploadPitch = (width * 4 + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u) & ~(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u);
+    UINT uploadSize = height * uploadPitch;
+    desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    desc.Alignment = 0;
+    desc.Width = uploadSize;
+    desc.Height = 1;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.Format = DXGI_FORMAT_UNKNOWN;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+    props.Type = D3D12_HEAP_TYPE_UPLOAD;
+    props.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+
+    ID3D12Resource *uploadBuffer = NULL;
+    HRESULT hr = bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&uploadBuffer));
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    void *mapped = NULL;
+    D3D12_RANGE range = {0, uploadSize};
+    hr = uploadBuffer->Map(0, &range, &mapped);
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+    for (int y = 0; y < height; y++)
+      memcpy((void *)((uintptr_t)mapped + y * uploadPitch), pixels + y * width * 4, width * 4);
+    uploadBuffer->Unmap(0, &range);
+
+    D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
+    srcLocation.pResource = uploadBuffer;
+    srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+    srcLocation.PlacedFootprint.Footprint.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    srcLocation.PlacedFootprint.Footprint.Width = width;
+    srcLocation.PlacedFootprint.Footprint.Height = height;
+    srcLocation.PlacedFootprint.Footprint.Depth = 1;
+    srcLocation.PlacedFootprint.Footprint.RowPitch = uploadPitch;
+
+    D3D12_TEXTURE_COPY_LOCATION dstLocation = {};
+    dstLocation.pResource = pTexture;
+    dstLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+    dstLocation.SubresourceIndex = 0;
+
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = pTexture;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+    ID3D12Fence *fence = NULL;
+    hr = bd->d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    HANDLE event = CreateEvent(0, 0, 0, 0);
+    ANCHOR_ASSERT(event != NULL);
+
+    D3D12_COMMAND_QUEUE_DESC queueDesc = {};
+    queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    queueDesc.NodeMask = 1;
+
+    ID3D12CommandQueue *cmdQueue = NULL;
+    hr = bd->d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&cmdQueue));
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    ID3D12CommandAllocator *cmdAlloc = NULL;
+    hr = bd->d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&cmdAlloc));
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    ID3D12GraphicsCommandList *cmdList = NULL;
+    hr = bd->d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, cmdAlloc, NULL, IID_PPV_ARGS(&cmdList));
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    cmdList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, NULL);
+    cmdList->ResourceBarrier(1, &barrier);
+
+    hr = cmdList->Close();
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    cmdQueue->ExecuteCommandLists(1, (ID3D12CommandList *const *)&cmdList);
+    hr = cmdQueue->Signal(fence, 1);
+    ANCHOR_ASSERT(SUCCEEDED(hr));
+
+    fence->SetEventOnCompletion(1, event);
+    WaitForSingleObject(event, INFINITE);
+
+    cmdList->Release();
+    cmdAlloc->Release();
+    cmdQueue->Release();
+    CloseHandle(event);
+    fence->Release();
+    uploadBuffer->Release();
+
+    // Create texture view
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = desc.MipLevels;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    bd->d3dDevice->CreateShaderResourceView(pTexture, &srvDesc, bd->FontSrvCpuDescHandle);
+    SafeRelease(bd->FontTextureResource);
+    bd->FontTextureResource = pTexture;
+  }
+
+  static_assert(sizeof(AnchorTextureID) >= sizeof(bd->FontSrvGpuDescHandle.ptr), "Can't pack descriptor handle into TexID, 32-bit not supported yet.");
+  io.Fonts->SetTexID((AnchorTextureID)bd->FontSrvGpuDescHandle.ptr);
+}
+
+static bool AnchorBackendDXD12CreateDeviceObjects()
+{
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+  if (!bd || !bd->d3dDevice)
+    return false;
+  if (bd->PipelineState)
+    AnchorBackendDXD12InvalidateDeviceObjects();
+
+  {
+    D3D12_DESCRIPTOR_RANGE descRange = {};
+    descRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    descRange.NumDescriptors = 1;
+    descRange.BaseShaderRegister = 0;
+    descRange.RegisterSpace = 0;
+    descRange.OffsetInDescriptorsFromTableStart = 0;
+
+    D3D12_ROOT_PARAMETER param[2] = {};
+
+    param[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+    param[0].Constants.ShaderRegister = 0;
+    param[0].Constants.RegisterSpace = 0;
+    param[0].Constants.Num32BitValues = 16;
+    param[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+    param[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    param[1].DescriptorTable.NumDescriptorRanges = 1;
+    param[1].DescriptorTable.pDescriptorRanges = &descRange;
+    param[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+    D3D12_STATIC_SAMPLER_DESC staticSampler = {};
+    staticSampler.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+    staticSampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    staticSampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    staticSampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    staticSampler.MipLODBias = 0.f;
+    staticSampler.MaxAnisotropy = 0;
+    staticSampler.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+    staticSampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+    staticSampler.MinLOD = 0.f;
+    staticSampler.MaxLOD = 0.f;
+    staticSampler.ShaderRegister = 0;
+    staticSampler.RegisterSpace = 0;
+    staticSampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+    D3D12_ROOT_SIGNATURE_DESC desc = {};
+    desc.NumParameters = _countof(param);
+    desc.pParameters = param;
+    desc.NumStaticSamplers = 1;
+    desc.pStaticSamplers = &staticSampler;
+    desc.Flags =
+      D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
+      D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+      D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+      D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+
+    static HINSTANCE d3d12_dll = ::GetModuleHandleA("d3d12.dll");
+    if (d3d12_dll == NULL)
+    {
+      const char *localD3d12Paths[] = {
+        ".\\d3d12.dll",
+        ".\\d3d12on7\\d3d12.dll",
+        ".\\12on7\\d3d12.dll"};
+
+      for (int i = 0; i < ANCHOR_ARRAYSIZE(localD3d12Paths); i++)
+        if ((d3d12_dll = ::LoadLibraryA(localD3d12Paths[i])) != NULL)
+          break;
+
+      /**
+       * If failed, we are on Windows >= 10. */
+      if (d3d12_dll == NULL)
+        d3d12_dll = ::LoadLibraryA("d3d12.dll");
+
+      if (d3d12_dll == NULL)
+        return false;
+    }
+
+    PFN_D3D12_SERIALIZE_ROOT_SIGNATURE D3D12SerializeRootSignatureFn = (PFN_D3D12_SERIALIZE_ROOT_SIGNATURE)::GetProcAddress(d3d12_dll, "D3D12SerializeRootSignature");
+    if (D3D12SerializeRootSignatureFn == NULL)
+      return false;
+
+    ID3DBlob *blob = NULL;
+    if (D3D12SerializeRootSignatureFn(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, NULL) != S_OK)
+      return false;
+
+    bd->d3dDevice->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&bd->RootSignature));
+    blob->Release();
+  }
+
+  D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+  memset(&psoDesc, 0, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+  psoDesc.NodeMask = 1;
+  psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+  psoDesc.pRootSignature = bd->RootSignature;
+  psoDesc.SampleMask = UINT_MAX;
+  psoDesc.NumRenderTargets = 1;
+  psoDesc.RTVFormats[0] = bd->RTVFormat;
+  psoDesc.SampleDesc.Count = 1;
+  psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+  ID3DBlob *vertexShaderBlob;
+  ID3DBlob *pixelShaderBlob;
+
+  /**
+   * Create the vertex shader. */
+  {
+    static const char *vertexShader =
+      "cbuffer vertexBuffer : register(b0) \
+            {\
+              float4x4 ProjectionMatrix; \
+            };\
+            struct VS_INPUT\
+            {\
+              float2 pos : POSITION;\
+              float4 col : COLOR0;\
+              float2 uv  : TEXCOORD0;\
+            };\
+            \
+            struct PS_INPUT\
+            {\
+              float4 pos : SV_POSITION;\
+              float4 col : COLOR0;\
+              float2 uv  : TEXCOORD0;\
+            };\
+            \
+            PS_INPUT main(VS_INPUT input)\
+            {\
+              PS_INPUT output;\
+              output.pos = mul( ProjectionMatrix, float4(input.pos.xy, 0.f, 1.f));\
+              output.col = input.col;\
+              output.uv  = input.uv;\
+              return output;\
+            }";
+
+    if (FAILED(D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &vertexShaderBlob, NULL)))
+      return false;
+    psoDesc.VS = {vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize()};
+
+    // Create the input layout
+    static D3D12_INPUT_ELEMENT_DESC local_layout[] =
+      {
+        {"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, pos), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, uv), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, col), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+      };
+    psoDesc.InputLayout = {local_layout, 3};
+  }
+
+  /**
+   * Create the pixel shader. */
+  {
+    static const char *pixelShader =
+      "struct PS_INPUT\
+            {\
+              float4 pos : SV_POSITION;\
+              float4 col : COLOR0;\
+              float2 uv  : TEXCOORD0;\
+            };\
+            SamplerState sampler0 : register(s0);\
+            Texture2D texture0 : register(t0);\
+            \
+            float4 main(PS_INPUT input) : SV_Target\
+            {\
+              float4 out_col = input.col * texture0.Sample(sampler0, input.uv); \
+              return out_col; \
+            }";
+
+    if (FAILED(D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_5_0", 0, 0, &pixelShaderBlob, NULL)))
+    {
+      vertexShaderBlob->Release();
+      return false;
+    }
+    psoDesc.PS = {pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize()};
+  }
+
+  /**
+   * Create the blending setup. */
+  {
+    D3D12_BLEND_DESC &desc = psoDesc.BlendState;
+    desc.AlphaToCoverageEnable = false;
+    desc.RenderTarget[0].BlendEnable = true;
+    desc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+    desc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+    desc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+    desc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+    desc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+    desc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+    desc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+  }
+
+  /**
+   * Create the rasterizer state. */
+  {
+    D3D12_RASTERIZER_DESC &desc = psoDesc.RasterizerState;
+    desc.FillMode = D3D12_FILL_MODE_SOLID;
+    desc.CullMode = D3D12_CULL_MODE_NONE;
+    desc.FrontCounterClockwise = FALSE;
+    desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+    desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+    desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+    desc.DepthClipEnable = true;
+    desc.MultisampleEnable = FALSE;
+    desc.AntialiasedLineEnable = FALSE;
+    desc.ForcedSampleCount = 0;
+    desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+  }
+
+  /**
+   * Create depth-stencil State. */
+  {
+    D3D12_DEPTH_STENCIL_DESC &desc = psoDesc.DepthStencilState;
+    desc.DepthEnable = false;
+    desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+    desc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+    desc.StencilEnable = false;
+    desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+    desc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+    desc.BackFace = desc.FrontFace;
+  }
+
+  HRESULT result_pipeline_state = bd->d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&bd->PipelineState));
+  vertexShaderBlob->Release();
+  pixelShaderBlob->Release();
+  if (result_pipeline_state != S_OK)
+    return false;
+
+  AnchorBackendDXD12CreateFontsTexture();
+
+  return true;
+}
+
+static void AnchorBackendDXD12NewFrame()
+{
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+  ANCHOR_ASSERT(bd != NULL && "Did you call AnchorBackendDXD12Init()?");
+
+  if (!bd->PipelineState)
+    AnchorBackendDXD12CreateDeviceObjects();
+}
+
+static void AnchorBackendDXD12Shutdown()
+{
+  AnchorIO &io = ANCHOR::GetIO();
+  AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
+
+  AnchorBackendDXD12InvalidateDeviceObjects();
+  delete[] bd->FrameResources;
+  io.BackendRendererName = NULL;
+  io.BackendRendererUserData = NULL;
+  ANCHOR_DELETE(bd);
+}
+
 static void AnchorBackendWin32Shutdown()
 {
   AnchorIO &io = ANCHOR::GetIO();
@@ -252,7 +756,7 @@ static void AnchorBackendWin32Shutdown()
 
   io.BackendPlatformName = NULL;
   io.BackendPlatformUserData = NULL;
-  IM_DELETE(bd);
+  ANCHOR_DELETE(bd);
 }
 
 static bool AnchorBackendWin32UpdateMouseCursor()
@@ -1028,6 +1532,11 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
   //   }
   // }
 
+  AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
+  if (window->getDrawingContextType() == ANCHOR_DrawingContextTypeDX12) {
+    AnchorBackendDXD12NewFrame();
+  }
+  AnchorBackendWin32NewFrame();
   ANCHOR::NewFrame();
 
   ANCHOR::Begin("Kraken");
@@ -2971,62 +3480,62 @@ eAnchorStatus AnchorWindowWin32::DestroyVulkan()
    * Free all Vulkan Resources to ensure
    * clean shutdown and closeout of this
    * window. */
-  if(m_device)
+  if (m_device)
   {
     m_device->WaitForIdle();
     DestroyVulkanFontTexture();
 
-    if(m_fontView)
+    if (m_fontView)
     {
       vkDestroyImageView(m_device->GetVulkanDevice(), m_fontView, HgiVulkanAllocator());
       m_fontView = VK_NULL_HANDLE;
     }
 
-    if(m_fontImage)
+    if (m_fontImage)
     {
       vkDestroyImage(m_device->GetVulkanDevice(), m_fontImage, HgiVulkanAllocator());
       m_fontImage = VK_NULL_HANDLE;
     }
 
-    if(m_fontMemory)
+    if (m_fontMemory)
     {
       vkFreeMemory(m_device->GetVulkanDevice(), m_fontMemory, HgiVulkanAllocator());
       m_fontMemory = VK_NULL_HANDLE;
     }
 
-    if(m_fontSampler)
+    if (m_fontSampler)
     {
       vkDestroySampler(m_device->GetVulkanDevice(), m_fontSampler, HgiVulkanAllocator());
       m_fontSampler = VK_NULL_HANDLE;
     }
 
-    if(g_DescriptorSetLayout)
+    if (g_DescriptorSetLayout)
     {
       vkDestroyDescriptorSetLayout(m_device->GetVulkanDevice(), g_DescriptorSetLayout, HgiVulkanAllocator());
       g_DescriptorSetLayout = VK_NULL_HANDLE;
     }
 
-    if(m_device)
+    if (m_device)
     {
       m_device = nullptr;
     }
 
-    if(m_commandQueue)
+    if (m_commandQueue)
     {
       m_commandQueue = nullptr;
     }
 
-    if(m_pipelineCache)
+    if (m_pipelineCache)
     {
       m_pipelineCache = nullptr;
     }
 
-    if(m_vkinstance)
+    if (m_vkinstance)
     {
       delete m_vkinstance;
     }
 
-    if(m_hgi)
+    if (m_hgi)
     {
       delete m_hgi;
     }
@@ -3510,7 +4019,7 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     VkMemoryAllocateInfo alloc_info = {};
     alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     alloc_info.allocationSize = req.size;
-    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits); 
+    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
     err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontMemory);
     check_vk_result(err);
     err = vkBindImageMemory(m_device->GetVulkanDevice(), m_fontImage, m_fontMemory, 0);
@@ -3562,7 +4071,7 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     alloc_info.allocationSize = req.size;
     alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                                                      req.memoryTypeBits);
+                                                     req.memoryTypeBits);
     err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontUploadBufferMemory);
     check_vk_result(err);
     err = vkBindBufferMemory(m_device->GetVulkanDevice(), m_fontUploadBuffer, m_fontUploadBufferMemory, 0);
@@ -3598,15 +4107,15 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     copy_barrier[0].subresourceRange.levelCount = 1;
     copy_barrier[0].subresourceRange.layerCount = 1;
     vkCmdPipelineBarrier(command_buffer,
-                        VK_PIPELINE_STAGE_HOST_BIT,
-                        VK_PIPELINE_STAGE_TRANSFER_BIT,
-                        0,
-                        0,
-                        NULL,
-                        0,
-                        NULL,
-                        1,
-                        copy_barrier);
+                         VK_PIPELINE_STAGE_HOST_BIT,
+                         VK_PIPELINE_STAGE_TRANSFER_BIT,
+                         0,
+                         0,
+                         NULL,
+                         0,
+                         NULL,
+                         1,
+                         copy_barrier);
 
     VkBufferImageCopy region = {};
     region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -3615,11 +4124,11 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     region.imageExtent.height = height;
     region.imageExtent.depth = 1;
     vkCmdCopyBufferToImage(command_buffer,
-                            m_fontUploadBuffer,
-                            m_fontImage,
-                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                            1,
-                            &region);
+                           m_fontUploadBuffer,
+                           m_fontImage,
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                           1,
+                           &region);
 
     VkImageMemoryBarrier use_barrier[1] = {};
     use_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -3634,15 +4143,15 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     use_barrier[0].subresourceRange.levelCount = 1;
     use_barrier[0].subresourceRange.layerCount = 1;
     vkCmdPipelineBarrier(command_buffer,
-                        VK_PIPELINE_STAGE_TRANSFER_BIT,
-                        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                        0,
-                        0,
-                        NULL,
-                        0,
-                        NULL,
-                        1,
-                        use_barrier);
+                         VK_PIPELINE_STAGE_TRANSFER_BIT,
+                         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                         0,
+                         0,
+                         NULL,
+                         0,
+                         NULL,
+                         1,
+                         use_barrier);
   }
 
   // Store our identifier
@@ -3720,9 +4229,243 @@ uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties
   return 0xFFFFFFFF;
 }
 
+void AnchorWindowWin32::CreateD3DRenderTarget()
+{
+  for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
+  {
+    ID3D12Resource *pBackBuffer = NULL;
+    m_d3dSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
+    m_d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, m_mainRenderTargetDescriptor[i]);
+    m_mainRenderTargetResource[i] = pBackBuffer;
+  }
+}
+
+eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
+{
+  /**
+   * Setup swap chain. */
+  DXGI_SWAP_CHAIN_DESC1 sd;
+  {
+    ZeroMemory(&sd, sizeof(sd));
+    sd.BufferCount = NUM_BACK_BUFFERS;
+    sd.Width = 0;
+    sd.Height = 0;
+    sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    sd.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+    sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    sd.SampleDesc.Count = 1;
+    sd.SampleDesc.Quality = 0;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    sd.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+    sd.Scaling = DXGI_SCALING_STRETCH;
+    sd.Stereo = FALSE;
+  }
+
+  /**
+   * Create device */
+  D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
+  if (D3D12CreateDevice(NULL, featureLevel, IID_PPV_ARGS(&m_d3dDevice)) != S_OK)
+  {
+    return ANCHOR_FAILURE;
+  }
+
+  {
+    D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+    desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    desc.NumDescriptors = NUM_BACK_BUFFERS;
+    desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    desc.NodeMask = 1;
+    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dRtvDescriptorHeap)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+
+    SIZE_T rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_d3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
+    {
+      m_mainRenderTargetDescriptor[i] = rtvHandle;
+      rtvHandle.ptr += rtvDescriptorSize;
+    }
+  }
+
+  {
+    D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+    desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    desc.NumDescriptors = 1;
+    desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dSrvDescriptorHeap)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+  }
+
+  {
+    D3D12_COMMAND_QUEUE_DESC desc = {};
+    desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    desc.NodeMask = 1;
+    if (m_d3dDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_d3dCommandQueue)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+  }
+
+  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
+  {
+    if (m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_frameContext[i].CommandAllocator)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+  }
+
+  if (m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_frameContext[0].CommandAllocator, NULL, IID_PPV_ARGS(&m_d3dCommandList)) != S_OK || m_d3dCommandList->Close() != S_OK)
+  {
+    return ANCHOR_FAILURE;
+  }
+
+  if (m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)) != S_OK)
+  {
+    return ANCHOR_FAILURE;
+  }
+
+  m_fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  if (m_fenceEvent == NULL)
+  {
+    return ANCHOR_FAILURE;
+  }
+
+  {
+    IDXGIFactory4 *dxgiFactory = NULL;
+    IDXGISwapChain1 *swapChain1 = NULL;
+    if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+    if (dxgiFactory->CreateSwapChainForHwnd(m_d3dCommandQueue, hWnd, &sd, NULL, NULL, &swapChain1) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+    if (swapChain1->QueryInterface(IID_PPV_ARGS(&m_d3dSwapChain)) != S_OK)
+    {
+      return ANCHOR_FAILURE;
+    }
+    swapChain1->Release();
+    dxgiFactory->Release();
+    m_d3dSwapChain->SetMaximumFrameLatency(NUM_BACK_BUFFERS);
+    m_d3dSwapChainWaitObject = m_d3dSwapChain->GetFrameLatencyWaitableObject();
+  }
+
+  CreateD3DRenderTarget();
+  return ANCHOR_SUCCESS;
+}
+
+void AnchorWindowWin32::DestroyD3DRenderTarget()
+{
+  WaitForLastD3DFrame();
+
+  for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
+    if (m_mainRenderTargetResource[i])
+    {
+      m_mainRenderTargetResource[i]->Release();
+      m_mainRenderTargetResource[i] = NULL;
+    }
+}
+
+void AnchorWindowWin32::WaitForLastD3DFrame()
+{
+  D3D12FrameContext *frame_ctx = &m_frameContext[m_frameIndex % NUM_FRAMES_IN_FLIGHT];
+
+  UINT64 fenceValue = frame_ctx->FenceValue;
+  if (fenceValue == 0)
+  {
+    /**
+       * No fence was signaled. */
+    return;
+  }
+
+  frame_ctx->FenceValue = 0;
+  if (m_fence->GetCompletedValue() >= fenceValue)
+  {
+    return;
+  }
+
+  m_fence->SetEventOnCompletion(fenceValue, m_fenceEvent);
+  WaitForSingleObject(m_fenceEvent, INFINITE);
+}
+
+void AnchorWindowWin32::DestroyD3D()
+{
+  DestroyD3DRenderTarget();
+
+  if (m_d3dSwapChain)
+  {
+    m_d3dSwapChain->Release();
+    m_d3dSwapChain = NULL;
+  }
+
+  if (m_d3dSwapChainWaitObject != NULL)
+  {
+    CloseHandle(m_d3dSwapChainWaitObject);
+  }
+
+  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
+  {
+    if (m_frameContext[i].CommandAllocator)
+    {
+      m_frameContext[i].CommandAllocator->Release();
+      m_frameContext[i].CommandAllocator = NULL;
+    }
+  }
+
+  if (m_d3dCommandQueue)
+  {
+    m_d3dCommandQueue->Release();
+    m_d3dCommandQueue = NULL;
+  }
+
+  if (m_d3dCommandList)
+  {
+    m_d3dCommandList->Release();
+    m_d3dCommandList = NULL;
+  }
+
+  if (m_d3dRtvDescriptorHeap)
+  {
+    m_d3dRtvDescriptorHeap->Release();
+    m_d3dRtvDescriptorHeap = NULL;
+  }
+
+  if (m_d3dSrvDescriptorHeap)
+  {
+    m_d3dSrvDescriptorHeap->Release();
+    m_d3dSrvDescriptorHeap = NULL;
+  }
+
+  if (m_fence)
+  {
+    m_fence->Release();
+    m_fence = NULL;
+  }
+
+  if (m_fenceEvent)
+  {
+    CloseHandle(m_fenceEvent);
+    m_fenceEvent = NULL;
+  }
+
+  if (m_d3dDevice)
+  {
+    m_d3dDevice->Release();
+    m_d3dDevice = NULL;
+  }
+}
+
 void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 {
-  if (type == ANCHOR_DrawingContextTypeVulkan)
+  m_drawContextType = type;
+
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
   {
     /**
      * Create Vulkan Resources. */
@@ -3757,17 +4500,17 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     AnchorBackendWin32Init(m_hWnd);
 
     ANCHOR_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance                   = m_instance;
-    init_info.PhysicalDevice             = m_device->GetVulkanPhysicalDevice();
-    init_info.Device                     = m_device->GetVulkanDevice();
-    init_info.QueueFamily                = m_device->GetGfxQueueFamilyIndex();
-    init_info.Queue                      = m_commandQueue->GetVulkanGraphicsQueue();
-    init_info.PipelineCache              = m_pipelineCache->GetVulkanPipelineCache();
-    init_info.DescriptorPool             = g_DescriptorPool;
-    init_info.Allocator                  = HgiVulkanAllocator();
-    init_info.MinImageCount              = getMinImageCount();
-    init_info.ImageCount                 = m_vulkan_context->ImageCount;
-    init_info.CheckVkResultFn            = check_vk_result;
+    init_info.Instance = m_instance;
+    init_info.PhysicalDevice = m_device->GetVulkanPhysicalDevice();
+    init_info.Device = m_device->GetVulkanDevice();
+    init_info.QueueFamily = m_device->GetGfxQueueFamilyIndex();
+    init_info.Queue = m_commandQueue->GetVulkanGraphicsQueue();
+    init_info.PipelineCache = m_pipelineCache->GetVulkanPipelineCache();
+    init_info.DescriptorPool = g_DescriptorPool;
+    init_info.Allocator = HgiVulkanAllocator();
+    init_info.MinImageCount = getMinImageCount();
+    init_info.ImageCount = m_vulkan_context->ImageCount;
+    init_info.CheckVkResultFn = check_vk_result;
     // ANCHOR_ImplVulkan_Init(&init_info, m_vulkan_context->RenderPass);
 
     /**
@@ -3810,6 +4553,31 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     m_device->WaitForIdle();
     DestroyVulkanFontTexture();
   }
+
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
+  {
+    if (!SetupD3D(m_hWnd))
+    {
+      DestroyD3D();
+    }
+
+    ANCHOR_CHECKVERSION();
+    ANCHOR::CreateContext();
+
+    AnchorIO &io = ANCHOR::GetIO();
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad;
+
+    ANCHOR::StyleColorsDefault();
+
+    AnchorBackendWin32Init(m_hWnd);
+    AnchorBackendDXD12Init(m_d3dDevice,
+                           NUM_FRAMES_IN_FLIGHT,
+                           DXGI_FORMAT_R8G8B8A8_UNORM,
+                           m_d3dSrvDescriptorHeap,
+                           m_d3dSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+                           m_d3dSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+  }
 }
 
 eAnchorStatus AnchorWindowWin32::activateDrawingContext()
@@ -3824,11 +4592,13 @@ eAnchorStatus AnchorWindowWin32::activateDrawingContext()
 
   AnchorRect rect;
   getWindowBounds(rect);
-  if (getState() == AnchorWindowStateMinimized) {
+  if (getState() == AnchorWindowStateMinimized)
+  {
     rect.set(0, 0, 0, 0);
   }
   io.DisplaySize = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
-  if (rect.getWidth() > 0 && rect.getHeight() > 0) {
+  if (rect.getWidth() > 0 && rect.getHeight() > 0)
+  {
     io.DisplayFramebufferScale = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
   }
 
@@ -3847,124 +4617,137 @@ bool AnchorWindowWin32::isDialog() const
 
 void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 {
-  VkResult err;
-
-  HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
-  HgiVulkanDevice *device = cmdBuf->GetDevice();
-
-  VkCommandBuffer vkcmdbuf = cmdBuf->GetVulkanCommandBuffer();
-  VkCommandPool vkcmdpool = cmdBuf->GetVulkanCommandPool();
-  VkFence vkfence = cmdBuf->GetVulkanFence();
-
-  VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
-  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
-
-  err = vkAcquireNextImageKHR(device->GetVulkanDevice(),
-                              m_vulkan_context->Swapchain,
-                              UINT64_MAX,
-                              image_acquired_semaphore,
-                              VK_NULL_HANDLE,
-                              &m_vulkan_context->FrameIndex);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
   {
-    g_SwapChainRebuild = true;
-    return;
+    VkResult err;
+
+    HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
+    HgiVulkanDevice *device = cmdBuf->GetDevice();
+
+    VkCommandBuffer vkcmdbuf = cmdBuf->GetVulkanCommandBuffer();
+    VkCommandPool vkcmdpool = cmdBuf->GetVulkanCommandPool();
+    VkFence vkfence = cmdBuf->GetVulkanFence();
+
+    VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
+    // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+    VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
+
+    err = vkAcquireNextImageKHR(device->GetVulkanDevice(),
+                                m_vulkan_context->Swapchain,
+                                UINT64_MAX,
+                                image_acquired_semaphore,
+                                VK_NULL_HANDLE,
+                                &m_vulkan_context->FrameIndex);
+    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+    {
+      g_SwapChainRebuild = true;
+      return;
+    }
+    check_vk_result(err);
+
+    ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
+    {
+      err = vkWaitForFences(device->GetVulkanDevice(),
+                            1,
+                            &vkfence,
+                            VK_TRUE,
+                            /* wait indefinitely==**/ UINT64_MAX);
+      check_vk_result(err);
+
+      err = vkResetFences(device->GetVulkanDevice(), 1, &vkfence);
+      check_vk_result(err);
+    }
+    {
+      err = vkResetCommandPool(device->GetVulkanDevice(), vkcmdpool, 0);
+      check_vk_result(err);
+      VkCommandBufferBeginInfo info = {};
+      info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+      info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+      err = vkBeginCommandBuffer(vkcmdbuf, &info);
+      check_vk_result(err);
+    }
+    {
+      VkRenderPassBeginInfo info = {};
+      info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+      info.renderPass = m_vulkan_context->RenderPass;
+      info.framebuffer = fd->Framebuffer;
+      info.renderArea.extent.width = m_vulkan_context->Width;
+      info.renderArea.extent.height = m_vulkan_context->Height;
+      info.clearValueCount = 1;
+      info.pClearValues = &m_vulkan_context->ClearValue;
+      vkCmdBeginRenderPass(vkcmdbuf, &info, VK_SUBPASS_CONTENTS_INLINE);
+    }
+
+    /**
+     * Record ANCHOR primitives into command buffer. */
+
+    ANCHOR_ImplVulkan_RenderDrawData(draw_data, vkcmdbuf);
+
+    /**
+     * Submit command buffer. */
+    vkCmdEndRenderPass(vkcmdbuf);
+    {
+      VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+      VkSubmitInfo info = {};
+      info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+      info.waitSemaphoreCount = 1;
+      info.pWaitSemaphores = &image_acquired_semaphore;
+      info.pWaitDstStageMask = &wait_stage;
+      info.commandBufferCount = 1;
+      info.pCommandBuffers = &vkcmdbuf;
+      info.signalSemaphoreCount = 1;
+      info.pSignalSemaphores = &render_complete_semaphore;
+
+      err = vkEndCommandBuffer(vkcmdbuf);
+      check_vk_result(err);
+      err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, vkfence);
+      check_vk_result(err);
+    }
   }
-  check_vk_result(err);
-
-  ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
   {
-    err = vkWaitForFences(device->GetVulkanDevice(),
-                          1,
-                          &vkfence,
-                          VK_TRUE,
-                          /* wait indefinitely==**/ UINT64_MAX);
-    check_vk_result(err);
-
-    err = vkResetFences(device->GetVulkanDevice(), 1, &vkfence);
-    check_vk_result(err);
-  }
-  {
-    err = vkResetCommandPool(device->GetVulkanDevice(), vkcmdpool, 0);
-    check_vk_result(err);
-    VkCommandBufferBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    err = vkBeginCommandBuffer(vkcmdbuf, &info);
-    check_vk_result(err);
-  }
-  {
-    VkRenderPassBeginInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass = m_vulkan_context->RenderPass;
-    info.framebuffer = fd->Framebuffer;
-    info.renderArea.extent.width = m_vulkan_context->Width;
-    info.renderArea.extent.height = m_vulkan_context->Height;
-    info.clearValueCount = 1;
-    info.pClearValues = &m_vulkan_context->ClearValue;
-    vkCmdBeginRenderPass(vkcmdbuf, &info, VK_SUBPASS_CONTENTS_INLINE);
-  }
-
-  /**
-   * Record ANCHOR primitives into command buffer. */
-
-  ANCHOR_ImplVulkan_RenderDrawData(draw_data, vkcmdbuf);
-
-  /**
-   * Submit command buffer. */
-  vkCmdEndRenderPass(vkcmdbuf);
-  {
-    VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSubmitInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    info.waitSemaphoreCount = 1;
-    info.pWaitSemaphores = &image_acquired_semaphore;
-    info.pWaitDstStageMask = &wait_stage;
-    info.commandBufferCount = 1;
-    info.pCommandBuffers = &vkcmdbuf;
-    info.signalSemaphoreCount = 1;
-    info.pSignalSemaphores = &render_complete_semaphore;
-
-    err = vkEndCommandBuffer(vkcmdbuf);
-    check_vk_result(err);
-    err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, vkfence);
-    check_vk_result(err);
   }
 }
 
 void AnchorWindowWin32::FramePresent()
 {
-  if (g_SwapChainRebuild)
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
   {
-    return;
-  }
-  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
-  VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
+    if (g_SwapChainRebuild)
+    {
+      return;
+    }
+    // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+    HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
+    VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
 
-  VkPresentInfoKHR info = {};
-  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  info.waitSemaphoreCount = 1;
-  info.pWaitSemaphores = &render_complete_semaphore;
-  info.swapchainCount = 1;
-  info.pSwapchains = &m_vulkan_context->Swapchain;
-  info.pImageIndices = &m_vulkan_context->FrameIndex;
-  VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  {
-    g_SwapChainRebuild = true;
-    return;
+    VkPresentInfoKHR info = {};
+    info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    info.waitSemaphoreCount = 1;
+    info.pWaitSemaphores = &render_complete_semaphore;
+    info.swapchainCount = 1;
+    info.pSwapchains = &m_vulkan_context->Swapchain;
+    info.pImageIndices = &m_vulkan_context->FrameIndex;
+    VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
+    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+    {
+      g_SwapChainRebuild = true;
+      return;
+    }
+    check_vk_result(err);
+    /**
+     * Now we can use the next set of semaphores. */
+    m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
   }
-  check_vk_result(err);
-  /**
-   * Now we can use the next set of semaphores. */
-  m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
+  {
+  }
 }
 
 eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
-  if (ANCHOR::GetCurrentContext() == NULL) {
+  if (ANCHOR::GetCurrentContext() == NULL)
+  {
     return ANCHOR_FAILURE;
   }
 
