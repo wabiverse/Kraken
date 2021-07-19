@@ -3793,65 +3793,69 @@ bool AnchorWindowWin32::isDialog() const
 
 void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 {
-  // VkResult err;
+  VkResult err;
 
-  // VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
-  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  // err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
-  //                             m_vulkan_context->Swapchain,
-  //                             UINT64_MAX,
-  //                             image_acquired_semaphore,
-  //                             VK_NULL_HANDLE,
-  //                             &m_vulkan_context->FrameIndex);
-  // if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  // {
-  //   g_SwapChainRebuild = true;
-  //   return;
-  // }
-  // check_vk_result(err);
+  HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
 
-  // ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
-  // {
-  //   err = vkWaitForFences(m_device->GetVulkanDevice(),
-  //                         1,
-  //                         &fd->Fence,
-  //                         VK_TRUE,
-  //                         /* wait indefinitely==**/ UINT64_MAX);
-  //   check_vk_result(err);
+  VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
+  VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+  err = vkAcquireNextImageKHR(m_device->GetVulkanDevice(),
+                              m_vulkan_context->Swapchain,
+                              UINT64_MAX,
+                              image_acquired_semaphore,
+                              VK_NULL_HANDLE,
+                              &m_vulkan_context->FrameIndex);
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  {
+    g_SwapChainRebuild = true;
+    return;
+  }
+  check_vk_result(err);
 
-  //   err = vkResetFences(m_device->GetVulkanDevice(), 1, &fd->Fence);
-  //   check_vk_result(err);
-  // }
-  // {
-  //   err = vkResetCommandPool(m_device->GetVulkanDevice(), fd->CommandPool, 0);
-  //   check_vk_result(err);
-  //   VkCommandBufferBeginInfo info = {};
-  //   info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  //   info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-  //   err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
-  //   check_vk_result(err);
-  // }
-  // {
-  //   VkRenderPassBeginInfo info = {};
-  //   info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-  //   info.renderPass = m_vulkan_context->RenderPass;
-  //   info.framebuffer = fd->Framebuffer;
-  //   info.renderArea.extent.width = m_vulkan_context->Width;
-  //   info.renderArea.extent.height = m_vulkan_context->Height;
-  //   info.clearValueCount = 1;
-  //   info.pClearValues = &m_vulkan_context->ClearValue;
-  //   vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
-  // }
+  ANCHOR_VulkanGPU_Frame *fd = &m_vulkan_context->Frames[m_vulkan_context->FrameIndex];
+  {
+    err = vkWaitForFences(m_device->GetVulkanDevice(),
+                          1,
+                          &fd->Fence,
+                          VK_TRUE,
+                          /* wait indefinitely==**/ UINT64_MAX);
+    check_vk_result(err);
 
-  // /**
-  //  * Record ANCHOR primitives into command buffer. */
+    err = vkResetFences(m_device->GetVulkanDevice(), 1, &fd->Fence);
+    check_vk_result(err);
+  }
+  {
+    err = vkResetCommandPool(m_device->GetVulkanDevice(), cmdBuf->GetVulkanCommandPool(), 0);
+    check_vk_result(err);
+    VkCommandBufferBeginInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    err = vkBeginCommandBuffer(cmdBuf->GetVulkanCommandBuffer(), &info);
+    check_vk_result(err);
+  }
+  {
+    VkRenderPassBeginInfo info = {};
+    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    info.renderPass = m_vulkan_context->RenderPass;
+    info.framebuffer = fd->Framebuffer;
+    info.renderArea.extent.width = m_vulkan_context->Width;
+    info.renderArea.extent.height = m_vulkan_context->Height;
+    info.clearValueCount = 1;
+    info.pClearValues = &m_vulkan_context->ClearValue;
+    vkCmdBeginRenderPass(cmdBuf->GetVulkanCommandBuffer(), &info, VK_SUBPASS_CONTENTS_INLINE);
+  }
 
-  // ANCHOR_ImplVulkan_RenderDrawData(draw_data, fd->CommandBuffer);
+  /**
+   * Record ANCHOR primitives into command buffer. */
 
-  // /**
-  //  * Submit command buffer. */
+  ANCHOR_ImplVulkan_RenderDrawData(draw_data, cmdBuf->GetVulkanCommandBuffer());
 
-  // vkCmdEndRenderPass(fd->CommandBuffer);
+  /**
+   * Submit command buffer. */
+
+  vkCmdEndRenderPass(cmdBuf->GetVulkanCommandBuffer());
+
+  m_commandQueue->SubmitToQueue(cmdBuf);
   // {
   //   VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
   //   VkSubmitInfo info = {};
@@ -3873,37 +3877,37 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 
 void AnchorWindowWin32::FramePresent()
 {
-  // if (g_SwapChainRebuild)
-  // {
-  //   return;
-  // }
-  // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
-  // VkPresentInfoKHR info = {};
-  // info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  // info.waitSemaphoreCount = 1;
-  // info.pWaitSemaphores = &render_complete_semaphore;
-  // info.swapchainCount = 1;
-  // info.pSwapchains = &m_vulkan_context->Swapchain;
-  // info.pImageIndices = &m_vulkan_context->FrameIndex;
-  // VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
-  // if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  // {
-  //   g_SwapChainRebuild = true;
-  //   return;
-  // }
-  // check_vk_result(err);
-  // /**
-  //  * Now we can use the next set of semaphores. */
-  // m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
+  if (g_SwapChainRebuild)
+  {
+    return;
+  }
+  VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+  VkPresentInfoKHR info = {};
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  info.waitSemaphoreCount = 1;
+  info.pWaitSemaphores = &render_complete_semaphore;
+  info.swapchainCount = 1;
+  info.pSwapchains = &m_vulkan_context->Swapchain;
+  info.pImageIndices = &m_vulkan_context->FrameIndex;
+  VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
+  {
+    g_SwapChainRebuild = true;
+    return;
+  }
+  check_vk_result(err);
+  /**
+   * Now we can use the next set of semaphores. */
+  m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
 }
 
 eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
-  if (ANCHOR::GetCurrentContext() == NULL)
+  if (ANCHOR::GetCurrentContext() == NULL) {
     return ANCHOR_FAILURE;
+  }
 
-  AnchorIO &io = ANCHOR::GetIO();
-  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
+  printf("Swapaduhbuffuh\n");
 
   ANCHOR::Render();
   AnchorDrawData *draw_data = ANCHOR::GetDrawData();
