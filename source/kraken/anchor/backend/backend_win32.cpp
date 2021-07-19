@@ -3907,8 +3907,6 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
     return ANCHOR_FAILURE;
   }
 
-  printf("Swapaduhbuffuh\n");
-
   ANCHOR::Render();
   AnchorDrawData *draw_data = ANCHOR::GetDrawData();
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
