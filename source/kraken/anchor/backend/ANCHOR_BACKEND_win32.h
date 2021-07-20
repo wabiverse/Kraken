@@ -136,8 +136,9 @@ class AnchorSystemWin32 : public AnchorSystem
    * Handles a mouse wheel event.
    * @param window: The window receiving the event (the active window).
    * @param wParam: The wParam from the wndproc.
-   * @param lParam: The lParam from the wndproc. */
-  static void processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam);
+   * @param lParam: The lParam from the wndproc.
+   * @param isHorizontal: Whether the wheel event is horizontal or (false) for vertical. */
+  static void processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool isHorizontal);
 
   /**
    * Handles minimum window size.

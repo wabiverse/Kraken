@@ -2323,7 +2323,22 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
            * since DefWindowProc propagates it up the parent chain
            * until it finds a window that processes it.
            */
-          processWheelEvent(window, wParam, lParam);
+          processWheelEvent(window, wParam, lParam, false);
+          eventHandled = true;
+#ifdef BROKEN_PEEK_TOUCHPAD
+          PostMessage(hwnd, WM_USER, 0, 0);
+#endif
+          break;
+        }
+        case WM_MOUSEHWHEEL: {
+          /* The WM_MOUSEWHEEL message is sent to the focus window
+           * when the mouse wheel is rotated. The DefWindowProc
+           * function propagates the message to the window's parent.
+           * There should be no internal forwarding of the message,
+           * since DefWindowProc propagates it up the parent chain
+           * until it finds a window that processes it.
+           */
+          processWheelEvent(window, wParam, lParam, true);
           eventHandled = true;
 #ifdef BROKEN_PEEK_TOUCHPAD
           PostMessage(hwnd, WM_USER, 0, 0);
@@ -2970,8 +2985,20 @@ AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
   return new AnchorEvent(ANCHOR::GetTime(), type, window);
 }
 
-void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam)
+void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool isHorizontal)
 {
+  AnchorIO &io = ANCHOR::GetIO();
+  
+  if (isHorizontal)
+  {
+    /**
+     * Anchor provides support for Horizontal scroll support.
+     * But Kraken has no use for this as of now, give Anchor
+     * the horizontal scroll information, then early out. */
+    io.MouseWheelH += (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+    return;
+  }
+
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
   int acc = system->m_wheelDeltaAccum;
@@ -2993,8 +3020,6 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wPar
   }
 
   system->m_wheelDeltaAccum = acc * direction;
-
-  AnchorIO &io = ANCHOR::GetIO();
   io.MouseWheel = system->m_wheelDeltaAccum;
 }
 
