@@ -2053,9 +2053,6 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
         // we need to check if new key layout has AltGr
         case WM_INPUTLANGCHANGE: {
           system->handleKeyboardChange();
-#ifdef WITH_INPUT_IME
-          window->getImeInput()->SetInputLanguage();
-#endif
           break;
         }
         ////////////////////////////////////////////////////////////////////////
@@ -2994,7 +2991,11 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wPar
     system->pushEvent(new AnchorEventWheel(ANCHOR::GetTime(), window, direction));
     acc -= WHEEL_DELTA;
   }
+
   system->m_wheelDeltaAccum = acc * direction;
+
+  AnchorIO &io = ANCHOR::GetIO();
+  io.MouseWheel = system->m_wheelDeltaAccum;
 }
 
 void AnchorSystemWin32::processPointerEvent(UINT type, AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
@@ -3144,6 +3145,52 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
     int msgPosY = GET_Y_LPARAM(msgPos);
     system->pushEvent(new AnchorEventCursor(
       ::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX, msgPosY, td));
+  }
+
+  /**
+   * Ensure Anchor Context's Main IO
+   * data is aware of Mouse Events. */
+  if (type == AnchorEventTypeButtonDown)
+  {
+    switch (mask)
+    {
+      case ANCHOR_ButtonMaskLeft:
+        ANCHOR::GetIO().MouseDown[0] = true;
+        break;
+      case ANCHOR_ButtonMaskRight:
+        ANCHOR::GetIO().MouseDown[1] = true;
+        break;
+      case ANCHOR_ButtonMaskMiddle:
+        ANCHOR::GetIO().MouseDown[2] = true;
+        break;
+      case ANCHOR_ButtonMaskButton4:
+        ANCHOR::GetIO().MouseDown[3] = true;
+        break;
+      case ANCHOR_ButtonMaskButton5:
+        ANCHOR::GetIO().MouseDown[4] = true;
+        break;
+    }
+  }
+  else
+  {
+    switch (mask)
+    {
+      case ANCHOR_ButtonMaskLeft:
+        ANCHOR::GetIO().MouseDown[0] = false;
+        break;
+      case ANCHOR_ButtonMaskRight:
+        ANCHOR::GetIO().MouseDown[1] = false;
+        break;
+      case ANCHOR_ButtonMaskMiddle:
+        ANCHOR::GetIO().MouseDown[2] = false;
+        break;
+      case ANCHOR_ButtonMaskButton4:
+        ANCHOR::GetIO().MouseDown[3] = false;
+        break;
+      case ANCHOR_ButtonMaskButton5:
+        ANCHOR::GetIO().MouseDown[4] = false;
+        break;
+    }
   }
 
   window->updateMouseCapture(type == AnchorEventTypeButtonDown ? MousePressed : MouseReleased);
@@ -5018,6 +5065,12 @@ void AnchorWindowWin32::lostMouseCapture()
     m_hasGrabMouse = false;
     m_nPressedButtons = 0;
     m_hasMouseCaptured = false;
+
+    AnchorIO &io = ANCHOR::GetIO();
+    io.MouseDown[0] = false;
+    io.MouseDown[1] = false;
+    io.MouseDown[2] = false;
+    io.MouseDown[3] = false;
   }
 }
 
