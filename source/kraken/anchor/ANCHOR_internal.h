@@ -3006,7 +3006,7 @@ struct AnchorContext
     TabFocusPressed = false;
 
     DimBgRatio = 0.0f;
-    MouseCursor = AnchorMouseCursor_Arrow;
+    MouseCursor = ANCHOR_StandardCursorDefault;
 
     DragDropActive = DragDropWithinSource = DragDropWithinTarget = false;
     DragDropSourceFlags = AnchorDragDropFlags_None;

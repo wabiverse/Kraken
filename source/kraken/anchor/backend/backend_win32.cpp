@@ -187,7 +187,7 @@ static bool AnchorBackendWin32Init(void *hwnd)
   bd->WantUpdateHasGamepad = true;
   bd->TicksPerSecond = perf_frequency;
   bd->Time = perf_counter;
-  bd->LastMouseCursor = AnchorMouseCursor_COUNT;
+  bd->LastMouseCursor = ANCHOR_StandardCursorNumCursors;
 
   io.ImeWindowHandle = hwnd;
 
@@ -938,61 +938,6 @@ static void AnchorBackendWin32Shutdown()
   ANCHOR_DELETE(bd);
 }
 
-static bool AnchorBackendWin32UpdateMouseCursor()
-{
-  AnchorIO &io = ANCHOR::GetIO();
-  if (io.ConfigFlags & AnchorConfigFlags_NoMouseCursorChange)
-    return false;
-
-  AnchorMouseCursor imgui_cursor = ANCHOR::GetMouseCursor();
-  if (imgui_cursor == AnchorMouseCursor_None || io.MouseDrawCursor)
-  {
-    /** 
-     * Hide OS mouse cursor if
-     * anchor is drawing it or
-     * if it wants no cursor. */
-    ::SetCursor(NULL);
-  }
-  else
-  {
-    /**
-     * Show OS mouse cursor */
-    LPTSTR win32_cursor = IDC_ARROW;
-    switch (imgui_cursor)
-    {
-      case AnchorMouseCursor_Arrow:
-        win32_cursor = IDC_ARROW;
-        break;
-      case AnchorMouseCursor_TextInput:
-        win32_cursor = IDC_IBEAM;
-        break;
-      case AnchorMouseCursor_ResizeAll:
-        win32_cursor = IDC_SIZEALL;
-        break;
-      case AnchorMouseCursor_ResizeEW:
-        win32_cursor = IDC_SIZEWE;
-        break;
-      case AnchorMouseCursor_ResizeNS:
-        win32_cursor = IDC_SIZENS;
-        break;
-      case AnchorMouseCursor_ResizeNESW:
-        win32_cursor = IDC_SIZENESW;
-        break;
-      case AnchorMouseCursor_ResizeNWSE:
-        win32_cursor = IDC_SIZENWSE;
-        break;
-      case AnchorMouseCursor_Hand:
-        win32_cursor = IDC_HAND;
-        break;
-      case AnchorMouseCursor_NotAllowed:
-        win32_cursor = IDC_NO;
-        break;
-    }
-    ::SetCursor(::LoadCursor(NULL, win32_cursor));
-  }
-  return true;
-}
-
 static void AnchorBackendWin32UpdateMousePos()
 {
   AnchorIO &io = ANCHOR::GetIO();
@@ -1133,29 +1078,15 @@ static void AnchorBackendWin32NewFrame()
   bd->Time = current_time;
 
   /**
-   * Read keyboard modifiers inputs
-   * 
-   * filled by the WndProc handler below:
-   *  -  io.KeysDown[], 
-   *  -  io.MousePos,
-   *  -  io.MouseDown[],
-   *  -  io.MouseWheel: */
-  io.KeyCtrl = (::GetKeyState(VK_CONTROL) & 0x8000) != 0;
-  io.KeyShift = (::GetKeyState(VK_SHIFT) & 0x8000) != 0;
-  io.KeyAlt = (::GetKeyState(VK_MENU) & 0x8000) != 0;
-  io.KeySuper = false;
-
-  /**
    * Update OS mouse position */
   AnchorBackendWin32UpdateMousePos();
 
   /**
    * Update OS mouse cursor with the cursor requested by imgui */
-  AnchorMouseCursor mouse_cursor = io.MouseDrawCursor ? AnchorMouseCursor_None : ANCHOR::GetMouseCursor();
+  AnchorMouseCursor mouse_cursor = io.MouseDrawCursor ? ANCHOR_StandardCursorNone : ANCHOR::GetMouseCursor();
   if (bd->LastMouseCursor != mouse_cursor)
   {
     bd->LastMouseCursor = mouse_cursor;
-    AnchorBackendWin32UpdateMouseCursor();
   }
 
   /**
@@ -1171,109 +1102,6 @@ static void AnchorBackendWin32NewFrame()
 #ifndef DBT_DEVNODES_CHANGED
 #  define DBT_DEVNODES_CHANGED 0x0007
 #endif
-
-
-ANCHOR_BACKEND_API LRESULT AnchorBackendWin32WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-  if (ANCHOR::GetCurrentContext() == NULL)
-    return 0;
-
-  AnchorIO &io = ANCHOR::GetIO();
-  AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
-
-  switch (msg)
-  {
-    case WM_LBUTTONDOWN:
-    case WM_LBUTTONDBLCLK:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONDBLCLK:
-    case WM_MBUTTONDOWN:
-    case WM_MBUTTONDBLCLK:
-    case WM_XBUTTONDOWN:
-    case WM_XBUTTONDBLCLK: {
-      int button = 0;
-      if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK)
-      {
-        button = 0;
-      }
-      if (msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK)
-      {
-        button = 1;
-      }
-      if (msg == WM_MBUTTONDOWN || msg == WM_MBUTTONDBLCLK)
-      {
-        button = 2;
-      }
-      if (msg == WM_XBUTTONDOWN || msg == WM_XBUTTONDBLCLK)
-      {
-        button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4;
-      }
-      if (!ANCHOR::IsAnyMouseDown() && ::GetCapture() == NULL)
-        ::SetCapture(hwnd);
-      io.MouseDown[button] = true;
-      return 0;
-    }
-    case WM_LBUTTONUP:
-    case WM_RBUTTONUP:
-    case WM_MBUTTONUP:
-    case WM_XBUTTONUP: {
-      int button = 0;
-      if (msg == WM_LBUTTONUP)
-      {
-        button = 0;
-      }
-      if (msg == WM_RBUTTONUP)
-      {
-        button = 1;
-      }
-      if (msg == WM_MBUTTONUP)
-      {
-        button = 2;
-      }
-      if (msg == WM_XBUTTONUP)
-      {
-        button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4;
-      }
-      io.MouseDown[button] = false;
-      if (!ANCHOR::IsAnyMouseDown() && ::GetCapture() == hwnd)
-        ::ReleaseCapture();
-      return 0;
-    }
-    case WM_MOUSEWHEEL:
-      io.MouseWheel += (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
-      return 0;
-    case WM_MOUSEHWHEEL:
-      io.MouseWheelH += (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
-      return 0;
-    case WM_KEYDOWN:
-    case WM_SYSKEYDOWN:
-      if (wParam < 256)
-        io.KeysDown[wParam] = 1;
-      return 0;
-    case WM_KEYUP:
-    case WM_SYSKEYUP:
-      if (wParam < 256)
-        io.KeysDown[wParam] = 0;
-      return 0;
-    case WM_KILLFOCUS:
-      memset(io.KeysDown, 0, sizeof(io.KeysDown));
-      return 0;
-    case WM_CHAR:
-      // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
-      if (wParam > 0 && wParam < 0x10000)
-        io.AddInputCharacterUTF16((unsigned short)wParam);
-      return 0;
-    case WM_SETCURSOR:
-      if (LOWORD(lParam) == HTCLIENT && AnchorBackendWin32UpdateMouseCursor())
-        return 1;
-      return 0;
-    case WM_DEVICECHANGE:
-      if ((UINT)wParam == DBT_DEVNODES_CHANGED)
-        bd->WantUpdateHasGamepad = true;
-      return 0;
-  }
-  return 0;
-}
 
 static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
 {
@@ -1705,27 +1533,36 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
 
 eAnchorStatus AnchorSystemWin32::getModifierKeys(AnchorModifierKeys &keys) const
 {
+  AnchorIO &io = ANCHOR::GetIO();
+
   bool down = HIBYTE(::GetKeyState(VK_LSHIFT)) != 0;
+  io.KeyShift = down;
   keys.set(ANCHOR_ModifierKeyLeftShift, down);
   down = HIBYTE(::GetKeyState(VK_RSHIFT)) != 0;
   keys.set(ANCHOR_ModifierKeyRightShift, down);
 
   down = HIBYTE(::GetKeyState(VK_LMENU)) != 0;
+  io.KeyAlt = down;
   keys.set(ANCHOR_ModifierKeyLeftAlt, down);
   down = HIBYTE(::GetKeyState(VK_RMENU)) != 0;
   keys.set(ANCHOR_ModifierKeyRightAlt, down);
 
   down = HIBYTE(::GetKeyState(VK_LCONTROL)) != 0;
+  io.KeyCtrl = down;
   keys.set(ANCHOR_ModifierKeyLeftControl, down);
   down = HIBYTE(::GetKeyState(VK_RCONTROL)) != 0;
   keys.set(ANCHOR_ModifierKeyRightControl, down);
 
   bool lwindown = HIBYTE(::GetKeyState(VK_LWIN)) != 0;
   bool rwindown = HIBYTE(::GetKeyState(VK_RWIN)) != 0;
-  if (lwindown || rwindown)
+  if (lwindown || rwindown) {
     keys.set(ANCHOR_ModifierKeyOS, true);
-  else
+    io.KeySuper = true;
+  } else {
     keys.set(ANCHOR_ModifierKeyOS, false);
+    io.KeySuper = false;
+  }
+
   return ANCHOR_SUCCESS;
 }
 
@@ -2087,14 +1924,23 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
         ////////////////////////////////////////////////////////////////////////
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
+          if (wParam < 256)
+            io.KeysDown[wParam] = 1;
+          break;
         case WM_KEYUP:
         case WM_SYSKEYUP:
+          if (wParam < 256)
+            io.KeysDown[wParam] = 0;
+          break;
         /* These functions were replaced by #WM_INPUT. */
         case WM_CHAR:
         /* The WM_CHAR message is posted to the window with the keyboard focus when
          * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
          * contains the character code of the key that was pressed.
          */
+          if (wParam > 0 && wParam < 0x10000)
+            io.AddInputCharacterUTF16((unsigned short)wParam);
+          break;
         case WM_DEADCHAR:
           /* The WM_DEADCHAR message is posted to the window with the keyboard focus when a
            * WM_KEYUP message is translated by the TranslateMessage function. WM_DEADCHAR
@@ -2365,6 +2211,11 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
             window->loadCursor(true, ANCHOR_StandardCursorDefault);
           }
           break;
+        case WM_DEVICECHANGE: {
+          if ((UINT)wParam == DBT_DEVNODES_CHANGED)
+            bd->WantUpdateHasGamepad = true;
+          break;
+        }
         case WM_MOUSELEAVE: {
           window->m_mousePresent = false;
           if (window->getTabletData().Active == AnchorTabletModeNone)
@@ -2548,6 +2399,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           /* The WM_KILLFOCUS message is sent to a window immediately before it loses the keyboard
            * focus. We want to prevent this if a window is still active and it loses focus to
            * nowhere. */
+          memset(io.KeysDown, 0, sizeof(io.KeysDown));
           if (!wParam && hwnd == ::GetActiveWindow())
           {
             ::SetFocus(hwnd);
@@ -2988,7 +2840,7 @@ AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
 void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool isHorizontal)
 {
   AnchorIO &io = ANCHOR::GetIO();
-  
+
   if (isHorizontal)
   {
     /**
@@ -3299,8 +3151,7 @@ eAnchorKey AnchorSystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, bool
 AnchorEvent *AnchorSystemWin32::processWindowSizeEvent(AnchorWindowWin32 *window)
 {
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
-  AnchorEvent *sizeEvent = new AnchorEvent(
-    ANCHOR::GetTime(), AnchorEventTypeWindowSize, window);
+  AnchorEvent *sizeEvent = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, window);
 
   /* We get WM_SIZE before we fully init. Do not dispatch before we are continuously resizing. */
   if (window->m_inLiveResize)
@@ -4767,32 +4618,10 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
 eAnchorStatus AnchorWindowWin32::activateDrawingContext()
 {
-  AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR_ASSERT(io.Fonts->IsBuilt() &&
-                "Font atlas not built! It is generally built by the renderer backend. Missing "
-                "call to renderer _NewFrame() function? e.g. ANCHOR_ImplOpenGL3_NewFrame().");
-
-  /**
-   * Setup display size (every frame to accommodate for window resizing). */
-
-  AnchorRect rect;
-  getWindowBounds(rect);
-  if (getState() == AnchorWindowStateMinimized)
-  {
-    rect.set(0, 0, 0, 0);
-  }
-  io.DisplaySize = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
-  if (rect.getWidth() > 0 && rect.getHeight() > 0)
-  {
-    io.DisplayFramebufferScale = GfVec2f((float)rect.getWidth(), (float)rect.getHeight());
-  }
-
-  /** 
-   * Setup time step. */
-
-  io.DeltaTime = m_system->getMilliSeconds();
-
-  return ANCHOR_SUCCESS;
+  if(ANCHOR::GetCurrentContext() != NULL)
+    return ANCHOR_SUCCESS;
+  else
+    return ANCHOR_FAILURE;
 }
 
 bool AnchorWindowWin32::isDialog() const
@@ -5133,11 +4962,14 @@ void AnchorWindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
 
 HCURSOR AnchorWindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
 {
-  // Convert ANCHOR cursor to Windows OEM cursor
+  /**
+   * Convert ANCHOR cursor to Windows OEM cursor */
   HANDLE cursor = NULL;
   HMODULE module = ::GetModuleHandle(0);
   AnchorU32 flags = LR_SHARED | LR_DEFAULTSIZE;
   int cx = 0, cy = 0;
+
+  ANCHOR::SetMouseCursor(shape);
 
   switch (shape)
   {
@@ -5310,6 +5142,7 @@ eAnchorStatus AnchorWindowWin32::setClientSize(AnchorU32 width, AnchorU32 height
   {
     success = ANCHOR_SUCCESS;
   }
+
   return success;
 }
 

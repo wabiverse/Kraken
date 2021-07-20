@@ -6,15 +6,40 @@
 	#define IDC_STATIC (-1)
 	#define STRINGIFY_(x) #x
 	#define STRINGIFY(x) STRINGIFY_(x)
-	#define WIN_VER_RC_STR STRINGIFY(WIN_VER_RC_STR_M)
+	#define KRAKEN_VER_RC_STR STRINGIFY(KRAKEN_VER_RC_STR_M)
 #endif
 
 APPICON ICON DISCARDABLE "winkraken.ico"
 KRAKENFILE ICON DISCARDABLE "winkrakenfile.ico"
 
+pointer_cursor CURSOR "cursors/pointer.cur"
+moveew_cursor CURSOR "cursors/moveew.cur"
+movens_cursor CURSOR "cursors/movens.cur"
+arrowdown_cursor CURSOR "cursors/arrowdown.cur"
+arrowleft_cursor CURSOR "cursors/arrowleft.cur"
+arrowright_cursor CURSOR "cursors/arrowright.cur"
+arrowup_cursor CURSOR "cursors/arrowup.cur"
+cross_cursor CURSOR "cursors/cross.cur"
+crossA_cursor CURSOR "cursors/crossa.cur"
+crossB_cursor CURSOR "cursors/crossb.cur"
+crossC_cursor CURSOR "cursors/crossc.cur"
+eraser_cursor CURSOR "cursors/eraser.cur"
+eyedropper_cursor CURSOR "cursors/eyedropper.cur"
+handopen_cursor CURSOR "cursors/handopen.cur"
+knife_cursor CURSOR "cursors/knife.cur"
+pencil_cursor CURSOR "cursors/pencil.cur"
+scrollew_cursor CURSOR "cursors/scrollew.cur"
+scrollns_cursor CURSOR "cursors/scrollns.cur"
+scrollnsew_cursor CURSOR "cursors/scrollnsew.cur"
+splith_cursor CURSOR "cursors/splith.cur"
+splitv_cursor CURSOR "cursors/splitv.cur"
+zoomin_cursor CURSOR "cursors/zoomin.cur"
+zoomout_cursor CURSOR "cursors/zoomout.cur"
+forbidden_cursor CURSOR "cursors/forbidden.cur"
+
 IDR_VERSION1 VERSIONINFO
-FILEVERSION WIN_VER_RC_1, WIN_VER_RC_2, WIN_VER_RC_3, WIN_VER_RC_4
-PRODUCTVERSION WIN_VER_RC_1, WIN_VER_RC_2, WIN_VER_RC_3, WIN_VER_RC_4
+FILEVERSION KRAKEN_VER_RC_1, KRAKEN_VER_RC_2, KRAKEN_VER_RC_3, KRAKEN_VER_RC_4
+PRODUCTVERSION KRAKEN_VER_RC_1, KRAKEN_VER_RC_2, KRAKEN_VER_RC_3, KRAKEN_VER_RC_4
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
@@ -22,11 +47,11 @@ BEGIN
   BEGIN
     BLOCK "04090000"
     BEGIN
-      VALUE "FileVersion", WIN_VER_RC_STR
-      VALUE "ProductVersion", WIN_VER_RC_STR
-      VALUE "CompanyName", "Wabi"
+      VALUE "FileVersion", KRAKEN_VER_RC_STR
+      VALUE "ProductVersion", KRAKEN_VER_RC_STR
+      VALUE "CompanyName", "Wabi Animation"
       VALUE "FileDescription", "Kraken"
-      VALUE "LegalCopyright", "LGPLv3 (Wabi)"
+      VALUE "LegalCopyright", "GPLv3 (Wabi Animation)"
       VALUE "OriginalFilename", "kraken.exe"
       VALUE "ProductName", "Kraken"
     END
@@ -36,3 +61,4 @@ BEGIN
     VALUE "Translation", 0x0409, 0x0000
   END
 END
+

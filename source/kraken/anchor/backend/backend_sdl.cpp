@@ -84,7 +84,7 @@ static bool                      g_SwapChainRebuild = false;
 static SDL_Window *g_Window                                 = NULL;
 static Uint64 g_Time                                        = 0;
 static bool g_MousePressed[3]                               = {false, false, false};
-static SDL_Cursor *g_MouseCursors[AnchorMouseCursor_COUNT] = {};
+static SDL_Cursor *g_MouseCursors[ANCHOR_StandardCursorNumCursors] = {};
 static char *g_ClipboardTextData                            = NULL;
 static bool g_MouseCanUseGlobalState                        = true;
 
@@ -198,15 +198,15 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   io.ClipboardUserData = NULL;
 
   // Load mouse cursors
-  g_MouseCursors[AnchorMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-  g_MouseCursors[AnchorMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-  g_MouseCursors[AnchorMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-  g_MouseCursors[AnchorMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-  g_MouseCursors[AnchorMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-  g_MouseCursors[AnchorMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-  g_MouseCursors[AnchorMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-  g_MouseCursors[AnchorMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-  g_MouseCursors[AnchorMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+  g_MouseCursors[ANCHOR_StandardCursorDefault] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  g_MouseCursors[ANCHOR_StandardCursorText] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+  g_MouseCursors[ANCHOR_StandardCursorNSEWScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+  g_MouseCursors[ANCHOR_StandardCursorNSScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+  g_MouseCursors[ANCHOR_StandardCursorEWScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+  g_MouseCursors[ANCHOR_StandardCursorBottomLeftCorner] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  g_MouseCursors[ANCHOR_StandardCursorBottomRightCorner] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+  g_MouseCursors[ANCHOR_StandardCursorMove] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  g_MouseCursors[ANCHOR_StandardCursorStop] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
   // Check and store if we are on a SDL backend that supports global mouse position
   // ("wayland" and "rpi" don't support it, but we chose to use a white-list instead of a
@@ -267,7 +267,7 @@ void AnchorSystemSDL::ANCHOR_ImplSDL2_Shutdown()
   g_ClipboardTextData = NULL;
 
   // Destroy SDL mouse cursors
-  for (AnchorMouseCursor cursor_n = 0; cursor_n < AnchorMouseCursor_COUNT; cursor_n++)
+  for (AnchorMouseCursor cursor_n = 0; cursor_n < ANCHOR_StandardCursorNumCursors; cursor_n++)
     SDL_FreeCursor(g_MouseCursors[cursor_n]);
   memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
 }
@@ -475,7 +475,7 @@ static void ANCHOR_ImplSDL2_UpdateMouseCursor()
     return;
 
   AnchorMouseCursor anchor_cursor = ANCHOR::GetMouseCursor();
-  if (io.MouseDrawCursor || anchor_cursor == AnchorMouseCursor_None)
+  if (io.MouseDrawCursor || anchor_cursor == ANCHOR_StandardCursorNone)
   {
     // Hide OS mouse cursor if anchor is drawing it or if it wants no cursor
     SDL_ShowCursor(SDL_FALSE);
@@ -484,7 +484,7 @@ static void ANCHOR_ImplSDL2_UpdateMouseCursor()
   {
     // Show OS mouse cursor
     SDL_SetCursor(g_MouseCursors[anchor_cursor] ? g_MouseCursors[anchor_cursor] :
-                                                  g_MouseCursors[AnchorMouseCursor_Arrow]);
+                                                  g_MouseCursors[ANCHOR_StandardCursorDefault]);
     SDL_ShowCursor(SDL_TRUE);
   }
 }

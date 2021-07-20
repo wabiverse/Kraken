@@ -1231,7 +1231,7 @@ void ANCHOR::TableUpdateBorders(AnchorTable *table)
     if ((hovered && g.HoveredIdTimer > TABLE_RESIZE_SEPARATOR_FEEDBACK_TIMER) || held)
     {
       table->HoveredColumnBorder = (AnchorTableColumnIdx)column_n;
-      SetMouseCursor(AnchorMouseCursor_ResizeEW);
+      SetMouseCursor(ANCHOR_StandardCursorEWScroll);
     }
   }
 }
@@ -4424,7 +4424,7 @@ void ANCHOR::EndColumns()
       {
         ButtonBehavior(column_hit_rect, column_id, &hovered, &held);
         if (hovered || held)
-          g.MouseCursor = AnchorMouseCursor_ResizeEW;
+          g.MouseCursor = ANCHOR_StandardCursorEWScroll;
         if (held && !(column->Flags & AnchorOldColumnFlags_NoResize))
           dragging_column = n;
       }

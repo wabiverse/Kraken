@@ -1688,7 +1688,7 @@ bool ANCHOR::SplitterBehavior(const AnchorBBox &bb,
 
   if (held ||
       (g.HoveredId == id && g.HoveredIdPreviousFrame == id && g.HoveredIdTimer >= hover_visibility_delay))
-    SetMouseCursor(axis == ANCHOR_Axis_Y ? AnchorMouseCursor_ResizeNS : AnchorMouseCursor_ResizeEW);
+    SetMouseCursor(axis == ANCHOR_Axis_Y ? ANCHOR_StandardCursorNSScroll : ANCHOR_StandardCursorEWScroll);
 
   AnchorBBox bb_render = bb;
   if (held)
@@ -5081,7 +5081,7 @@ bool ANCHOR::InputTextEx(const char *label,
   }
   const bool hovered = ItemHoverable(frame_bb, id);
   if (hovered)
-    g.MouseCursor = AnchorMouseCursor_TextInput;
+    g.MouseCursor = ANCHOR_StandardCursorText;
 
   // We are only allowed to access the state if we are already the active widget.
   AnchorInputTextState *state = GetInputTextState(id);

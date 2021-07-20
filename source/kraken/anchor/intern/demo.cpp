@@ -6764,7 +6764,7 @@ static void ShowDemoWindowMisc()
                                            "ResizeNWSE",
                                            "Hand",
                                            "NotAllowed"};
-      ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(mouse_cursors_names) == AnchorMouseCursor_COUNT);
+      ANCHOR_ASSERT(ANCHOR_ARRAYSIZE(mouse_cursors_names) == ANCHOR_StandardCursorNumCursors);
 
       AnchorMouseCursor current = ANCHOR::GetMouseCursor();
       ANCHOR::Text("Current mouse cursor = %d: %s", current, mouse_cursors_names[current]);
@@ -6776,7 +6776,7 @@ static void ShowDemoWindowMisc()
         "If software cursor rendering (io.MouseDrawCursor) is set ANCHOR will draw the right "
         "cursor for you, "
         "otherwise your backend needs to handle it.");
-      for (int i = 0; i < AnchorMouseCursor_COUNT; i++)
+      for (int i = 0; i < ANCHOR_StandardCursorNumCursors; i++)
       {
         char label[32];
         sprintf(label, "Mouse cursor %d: %s", i, mouse_cursors_names[i]);

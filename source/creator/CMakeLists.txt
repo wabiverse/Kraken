@@ -66,16 +66,12 @@ set(SRC
 
 # MSVC 2010 gives linking errors with the manifest
 if(WIN32 AND NOT UNIX)
-
-  string(SUBSTRING ${KRAKEN_VERSION} 0 1 wver1)
-  string(SUBSTRING ${KRAKEN_VERSION} 2 1 wver2)
-  string(SUBSTRING ${KRAKEN_VERSION} 3 1 wver3)
   add_definitions(
-    -DWIN_VER_RC_STR="${KRAKEN_VERSION}"
-    -DWIN_VER_RC_1=${wver1}
-    -DWIN_VER_RC_2=${wver2}
-    -DWIN_VER_RC_3=${wver3}
-    -DWIN_VER_RC_4=0
+    -DKRAKEN_VER_RC_STR="${KRAKEN_VERSION}"
+    -DKRAKEN_VER_RC_1=${KRAKEN_VERSION_MAJOR}
+    -DKRAKEN_VER_RC_2=${KRAKEN_VERSION_MINOR}
+    -DKRAKEN_VER_RC_3=${KRAKEN_VERSION_PATCH}
+    -DKRAKEN_VER_RC_4=0
   )
 
 

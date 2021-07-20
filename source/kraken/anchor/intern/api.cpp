@@ -4535,7 +4535,7 @@ void ANCHOR::NewFrame()
   else
     g.DimBgRatio = AnchorMax(g.DimBgRatio - g.IO.DeltaTime * 10.0f, 0.0f);
 
-  g.MouseCursor = AnchorMouseCursor_Arrow;
+  g.MouseCursor = ANCHOR_StandardCursorDefault;
   g.WantCaptureMouseNextFrame = g.WantCaptureKeyboardNextFrame = g.WantTextInputNextFrame = -1;
   g.PlatformImePos = GfVec2f(1.0f,
                              1.0f);  // OS Input Method Editor showing on top-left of our window by default
@@ -4615,7 +4615,7 @@ void ANCHOR::UpdateDebugToolItemPicker()
   if (g.DebugItemPickerActive)
   {
     const ANCHOR_ID hovered_id = g.HoveredIdPreviousFrame;
-    SetMouseCursor(AnchorMouseCursor_Hand);
+    SetMouseCursor(ANCHOR_StandardCursorMove);
     if (IsKeyPressedMap(AnchorKey_Escape))
       g.DebugItemPickerActive = false;
     if (IsMouseClicked(0) && hovered_id)
@@ -6079,7 +6079,7 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
     // GetForegroundDrawList(window)->AddRect(resize_rect.Min, resize_rect.Max, ANCHOR_COL32(255,
     // 255, 0, 255));
     if (hovered || held)
-      g.MouseCursor = (resize_grip_n & 1) ? AnchorMouseCursor_ResizeNESW : AnchorMouseCursor_ResizeNWSE;
+      g.MouseCursor = (resize_grip_n & 1) ? ANCHOR_StandardCursorBottomLeftCorner : ANCHOR_StandardCursorBottomRightCorner;
 
     if (held && g.IO.MouseDoubleClicked[0] && resize_grip_n == 0)
     {
@@ -6126,7 +6126,7 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
     // 255, 0, 255));
     if ((hovered && g.HoveredIdTimer > WINDOWS_RESIZE_FROM_EDGES_FEEDBACK_TIMER) || held)
     {
-      g.MouseCursor = (axis == ANCHOR_Axis_X) ? AnchorMouseCursor_ResizeEW : AnchorMouseCursor_ResizeNS;
+      g.MouseCursor = (axis == ANCHOR_Axis_X) ? ANCHOR_StandardCursorEWScroll : ANCHOR_StandardCursorNSScroll;
       if (held)
         *border_held = border_n;
     }

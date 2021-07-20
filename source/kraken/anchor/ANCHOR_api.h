@@ -228,8 +228,14 @@ enum eAnchorWindowOrder
   AnchorWindowOrderBottom,
 };
 
+/**
+ * Enumeration for GetMouseCursor()
+ * User code may request backend to
+ * display given cursor by calling
+ * SetMouseCursor() */
 enum eAnchorStandardCursor
 {
+  ANCHOR_StandardCursorNone = -1,
   ANCHOR_StandardCursorFirstCursor = 0,
   ANCHOR_StandardCursorDefault = 0,
   ANCHOR_StandardCursorRightArrow,
@@ -3779,25 +3785,6 @@ enum AnchorMouseButton_
   AnchorMouseButton_Right = 1,
   AnchorMouseButton_Middle = 2,
   AnchorMouseButton_COUNT = 5
-};
-
-// Enumeration for GetMouseCursor()
-// User code may request backend to display given cursor by calling SetMouseCursor(), which is why
-// we have some cursors that are marked unused here
-enum AnchorMouseCursor_
-{
-  AnchorMouseCursor_None = -1,
-  AnchorMouseCursor_Arrow = 0,
-  AnchorMouseCursor_TextInput,   // When hovering over InputText, etc.
-  AnchorMouseCursor_ResizeAll,   // (Unused by ANCHOR functions)
-  AnchorMouseCursor_ResizeNS,    // When hovering over an horizontal border
-  AnchorMouseCursor_ResizeEW,    // When hovering over a vertical border or a column
-  AnchorMouseCursor_ResizeNESW,  // When hovering over the bottom-left corner of a window
-  AnchorMouseCursor_ResizeNWSE,  // When hovering over the bottom-right corner of a window
-  AnchorMouseCursor_Hand,        // (Unused by ANCHOR functions. Use for e.g. hyperlinks)
-  AnchorMouseCursor_NotAllowed,  // When hovering something with disallowed interaction. Usually a
-                                 // crossed circle.
-  AnchorMouseCursor_COUNT
 };
 
 // Enumeration for ANCHOR::SetWindow***(), SetNextWindow***(), SetNextItem***() functions

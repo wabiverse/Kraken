@@ -2367,16 +2367,16 @@ static const char
     "                                                      -    XX           XX    -              "
     "               "};
 
-static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[AnchorMouseCursor_COUNT][3] = {
+static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_StandardCursorNumCursors][3] = {
   // Pos ........ Size ......... Offset ......
-  {GfVec2f(0, 3), GfVec2f(12, 19), GfVec2f(0, 0)},     // AnchorMouseCursor_Arrow
-  {GfVec2f(13, 0), GfVec2f(7, 16), GfVec2f(1, 8)},     // AnchorMouseCursor_TextInput
-  {GfVec2f(31, 0), GfVec2f(23, 23), GfVec2f(11, 11)},  // AnchorMouseCursor_ResizeAll
-  {GfVec2f(21, 0), GfVec2f(9, 23), GfVec2f(4, 11)},    // AnchorMouseCursor_ResizeNS
-  {GfVec2f(55, 18), GfVec2f(23, 9), GfVec2f(11, 4)},   // AnchorMouseCursor_ResizeEW
-  {GfVec2f(73, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // AnchorMouseCursor_ResizeNESW
-  {GfVec2f(55, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // AnchorMouseCursor_ResizeNWSE
-  {GfVec2f(91, 0), GfVec2f(17, 22), GfVec2f(5, 0)},    // AnchorMouseCursor_Hand
+  {GfVec2f(0, 3), GfVec2f(12, 19), GfVec2f(0, 0)},     // ANCHOR_StandardCursorDefault
+  {GfVec2f(13, 0), GfVec2f(7, 16), GfVec2f(1, 8)},     // ANCHOR_StandardCursorText
+  {GfVec2f(31, 0), GfVec2f(23, 23), GfVec2f(11, 11)},  // ANCHOR_StandardCursorNSEWScroll
+  {GfVec2f(21, 0), GfVec2f(9, 23), GfVec2f(4, 11)},    // ANCHOR_StandardCursorNSScroll
+  {GfVec2f(55, 18), GfVec2f(23, 9), GfVec2f(11, 4)},   // ANCHOR_StandardCursorEWScroll
+  {GfVec2f(73, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_StandardCursorBottomLeftCorner
+  {GfVec2f(55, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_StandardCursorBottomRightCorner
+  {GfVec2f(91, 0), GfVec2f(17, 22), GfVec2f(5, 0)},    // ANCHOR_StandardCursorMove
 };
 
 AnchorFontAtlas::AnchorFontAtlas()
@@ -2721,7 +2721,7 @@ bool AnchorFontAtlas::GetMouseCursorTexData(AnchorMouseCursor cursor_type,
                                             GfVec2f out_uv_border[2],
                                             GfVec2f out_uv_fill[2])
 {
-  if (cursor_type <= AnchorMouseCursor_None || cursor_type >= AnchorMouseCursor_COUNT)
+  if (cursor_type <= ANCHOR_StandardCursorNone || cursor_type >= ANCHOR_StandardCursorNumCursors)
     return false;
   if (Flags & AnchorFontAtlasFlags_NoMouseCursors)
     return false;
@@ -7458,9 +7458,9 @@ void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
                                AnchorU32 col_border,
                                AnchorU32 col_shadow)
 {
-  if (mouse_cursor == AnchorMouseCursor_None)
+  if (mouse_cursor == ANCHOR_StandardCursorNone)
     return;
-  ANCHOR_ASSERT(mouse_cursor > AnchorMouseCursor_None && mouse_cursor < AnchorMouseCursor_COUNT);
+  ANCHOR_ASSERT(mouse_cursor > ANCHOR_StandardCursorNone && mouse_cursor < ANCHOR_StandardCursorNumCursors);
 
   AnchorFontAtlas *font_atlas = draw_list->_Data->Font->ContainerAtlas;
   GfVec2f offset, size, uv[4];
