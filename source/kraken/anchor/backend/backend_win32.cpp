@@ -179,7 +179,7 @@ static bool AnchorBackendWin32Init(void *hwnd)
    *   rarely used) */
   AnchorBackendWin32Data *bd = ANCHOR_NEW(AnchorBackendWin32Data)();
   io.BackendPlatformUserData = (void *)bd;
-  io.BackendPlatformName = "imgui_impl_win32";
+  io.BackendPlatformName = "AnchorBackendWin32";
   io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
   io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;
 
@@ -292,7 +292,7 @@ static bool AnchorBackendDXD12Init(ID3D12Device *device,
 
   AnchorBackendDXD12Data *bd = ANCHOR_NEW(AnchorBackendDXD12Data)();
   io.BackendRendererUserData = (void *)bd;
-  io.BackendRendererName = "AnchorDXD12";
+  io.BackendRendererName = "AnchorBackendDXD12";
   io.BackendFlags |= AnchorBackendFlags_RendererHasVtxOffset;
 
   bd->d3dDevice = device;
@@ -1688,29 +1688,6 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
 
   } while (waitForEvent && !hasEventHandled);
 
-
-  // if (g_SwapChainRebuild)
-  // {
-  //   AnchorRect winrect;
-  //   AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
-  //   window->getWindowBounds(winrect);
-  //   if (winrect.getWidth() > 0 && winrect.getHeight() > 0)
-  //   {
-  //     ANCHOR_ImplVulkan_SetMinImageCount(window->getMinImageCount());
-  //     ANCHOR_ImplVulkanH_CreateOrResizeWindow(window->getHydraInstance()->GetVulkanInstance(),
-  //                                             window->getHydraDevice()->GetVulkanPhysicalDevice(),
-  //                                             window->getHydraDevice()->GetVulkanDevice(),
-  //                                             window->updateVulkanSurface(&g_MainWindowData),
-  //                                             window->getHydraDevice()->GetGfxQueueFamilyIndex(),
-  //                                             HgiVulkanAllocator(),
-  //                                             winrect.getWidth(),
-  //                                             winrect.getHeight(),
-  //                                             window->getMinImageCount());
-  //     g_MainWindowData.FrameIndex = 0;
-  //     g_SwapChainRebuild = false;
-  //   }
-  // }
-
   AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
   if (window->getDrawingContextType() == ANCHOR_DrawingContextTypeDX12)
   {
@@ -1813,7 +1790,7 @@ eAnchorStatus AnchorSystemWin32::init()
   {
     if (TfDebug::IsEnabled(ANCHOR_WIN32))
     {
-      TF_SUCCESS_MSG("Anchor -- High Frequency Performance Timer available");
+      TF_MSG_SUCCESS("Anchor -- High Frequency Performance Timer available");
     }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
   }
@@ -1890,7 +1867,7 @@ AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
   {
     if (TfDebug::IsEnabled(ANCHOR_WIN32))
     {
-      TF_ERROR_MSG("Window invalid");
+      TF_MSG_ERROR("Window invalid");
     }
     delete window;
     window = NULL;
@@ -2041,9 +2018,6 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 
   LRESULT lResult = 0;
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
-#ifdef WITH_INPUT_IME
-  AnchorEventManager *eventManager = system->getEventManager();
-#endif
   ANCHOR_ASSERT(system);
 
   if (hwnd)
@@ -2068,6 +2042,12 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
     AnchorWindowWin32 *window = (AnchorWindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
     if (window)
     {
+      if (ANCHOR::GetCurrentContext() == NULL)
+        return 0;
+
+      AnchorIO &io = ANCHOR::GetIO();
+      AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
+
       switch (msg)
       {
         // we need to check if new key layout has AltGr
@@ -2102,63 +2082,9 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
                 }
               }
               break;
-#ifdef WITH_INPUT_NDOF
-            case RIM_TYPEHID:
-              if (system->processNDOF(raw))
-              {
-                eventHandled = true;
-              }
-              break;
-#endif
           }
           break;
         }
-#ifdef WITH_INPUT_IME
-        ////////////////////////////////////////////////////////////////////////
-        // IME events, processed, read more in ANCHOR_IME.h
-        ////////////////////////////////////////////////////////////////////////
-        case WM_IME_SETCONTEXT: {
-          ANCHOR_ImeWin32 *ime = window->getImeInput();
-          ime->SetInputLanguage();
-          ime->CreateImeWindow(hwnd);
-          ime->CleanupComposition(hwnd);
-          ime->CheckFirst(hwnd);
-          break;
-        }
-        case WM_IME_STARTCOMPOSITION: {
-          ANCHOR_ImeWin32 *ime = window->getImeInput();
-          eventHandled = true;
-          /* remove input event before start comp event, avoid redundant input */
-          eventManager->removeTypeEvents(AnchorEventTypeKeyDown, window);
-          ime->CreateImeWindow(hwnd);
-          ime->ResetComposition(hwnd);
-          event = processImeEvent(AnchorEventTypeImeCompositionStart, window, &ime->eventImeData);
-          break;
-        }
-        case WM_IME_COMPOSITION: {
-          ANCHOR_ImeWin32 *ime = window->getImeInput();
-          eventHandled = true;
-          ime->UpdateImeWindow(hwnd);
-          ime->UpdateInfo(hwnd);
-          if (ime->eventImeData.result_len)
-          {
-            /* remove redundant IME event */
-            eventManager->removeTypeEvents(AnchorEventTypeImeComposition, window);
-          }
-          event = processImeEvent(AnchorEventTypeImeComposition, window, &ime->eventImeData);
-          break;
-        }
-        case WM_IME_ENDCOMPOSITION: {
-          ANCHOR_ImeWin32 *ime = window->getImeInput();
-          eventHandled = true;
-          /* remove input event after end comp event, avoid redundant input */
-          eventManager->removeTypeEvents(AnchorEventTypeKeyDown, window);
-          ime->ResetComposition(hwnd);
-          ime->DestroyImeWindow(hwnd);
-          event = processImeEvent(AnchorEventTypeImeCompositionEnd, window, &ime->eventImeData);
-          break;
-        }
-#endif /* WITH_INPUT_IME */
         ////////////////////////////////////////////////////////////////////////
         // Keyboard events, ignored
         ////////////////////////////////////////////////////////////////////////
@@ -3883,7 +3809,7 @@ static void check_vk_result(VkResult err)
   if (err == VK_ERROR_INCOMPATIBLE_DRIVER)
   {
 
-    TF_ERROR_MSG(
+    TF_MSG_ERROR(
       "Cannot find a compatible Vulkan installable client"
       "driver (ICD). Please make sure your driver supports"
       "Vulkan before continuing. The vulkan call which has"
@@ -3895,7 +3821,7 @@ static void check_vk_result(VkResult err)
   else if (err != VK_SUCCESS)
   {
 
-    TF_ERROR_MSG(
+    TF_MSG_ERROR(
       "The call to vkCreateInstance failed. Please make"
       "sure you have a Vulkan installable client driver"
       "(ICD) before continuing.");
@@ -4100,7 +4026,7 @@ void AnchorWindowWin32::SetupVulkan()
 
   if (TfDebug::IsEnabled(ANCHOR_WIN32))
   {
-    TF_SUCCESS_MSG("Anchor -- Rendering at maximum possible frames per second.");
+    TF_MSG_SUCCESS("Anchor -- Rendering at maximum possible frames per second.");
     TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
   }
 
@@ -4567,7 +4493,7 @@ void AnchorWindowWin32::WaitForLastD3DFrame()
   if (fenceValue == 0)
   {
     /**
-       * No fence was signaled. */
+     * No fence was signaled. */
     return;
   }
 

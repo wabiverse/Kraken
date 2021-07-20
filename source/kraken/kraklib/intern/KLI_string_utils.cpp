@@ -799,6 +799,31 @@ char *KLI_string_join_array(char *result,
   return c;
 }
 
+int KLI_str_utf8_size(const char *p)
+{
+  int mask = 0, len;
+  const unsigned char c = (unsigned char)*p;
+
+  UTF8_COMPUTE(c, mask, len, -1);
+
+  (void)mask; /* quiet warning */
+
+  return len;
+}
+
+/* use when we want to skip errors */
+int KLI_str_utf8_size_safe(const char *p)
+{
+  int mask = 0, len;
+  const unsigned char c = (unsigned char)*p;
+
+  UTF8_COMPUTE(c, mask, len, 1);
+
+  (void)mask; /* quiet warning */
+
+  return len;
+}
+
 size_t KLI_str_utf8_from_unicode(uint c, char *outbuf)
 {
   /* If this gets modified, also update the copy in g_string_insert_unichar() */

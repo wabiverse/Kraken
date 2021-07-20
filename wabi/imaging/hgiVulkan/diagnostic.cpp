@@ -69,7 +69,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL _VulkanDebugCallback(VkDebugUtilsMessageSeverityF
 
   if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
   {
-    TF_ERROR_MSG("%s! %s", type, callbackData->pMessage);
+    TF_MSG_ERROR("%s! %s", type, callbackData->pMessage);
   }
   else
   {

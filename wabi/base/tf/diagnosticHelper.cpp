@@ -106,7 +106,7 @@ bool Tf_PostQuietlyErrorHelper(const TfCallContext &context,
 void Tf_PostErrorHelper(const TfCallContext &context, const std::string &msg)
 {
   TfDiagnosticMgr::ErrorHelper(
-    context, TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE)).c_str())
+    context, TF_DIAGNOSTIC_MSG_ERROR_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_MSG_ERROR_TYPE)).c_str())
     .Post(msg);
 }
 
@@ -206,7 +206,7 @@ void Tf_PostWarningHelper(const TfCallContext &context,
 void Tf_PostMsgHelper(const TfCallContext &context, const std::string &msg)
 {
   TfDiagnosticMgr::StatusHelper(
-    context, TF_DIAGNOSTIC_RUNTIME_MSG_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_RUNTIME_MSG_TYPE)).c_str())
+    context, TF_DIAGNOSTIC_MSG_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_MSG_TYPE)).c_str())
     .Post(msg);
 }
 
@@ -218,10 +218,25 @@ void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...)
   va_end(ap);
 }
 
+void Tf_PostMsgWarningHelper(const TfCallContext &context, const std::string &msg)
+{
+  TfDiagnosticMgr::StatusHelper(
+    context, TF_DIAGNOSTIC_MSG_WARNING_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_MSG_WARNING_TYPE)).c_str())
+    .Post(msg);
+}
+
+void Tf_PostMsgWarningHelper(const TfCallContext &context, const char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  Tf_PostMsgSuccessHelper(context, TfVStringPrintf(fmt, ap));
+  va_end(ap);
+}
+
 void Tf_PostMsgSuccessHelper(const TfCallContext &context, const std::string &msg)
 {
   TfDiagnosticMgr::StatusHelper(
-    context, TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE)).c_str())
+    context, TF_DIAGNOSTIC_MSG_SUCCESS_TYPE, TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_MSG_SUCCESS_TYPE)).c_str())
     .Post(msg);
 }
 

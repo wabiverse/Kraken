@@ -26,5 +26,7 @@
 
 #include "KLI_api.h"
 
+double PIL_check_seconds_timer(void);
 void PIL_sleep_ms(int ms);
+
 void KLI_pretty_time(time_t timer, char *r_time);

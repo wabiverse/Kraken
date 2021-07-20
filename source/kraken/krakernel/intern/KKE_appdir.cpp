@@ -943,7 +943,7 @@ static void tempdir_session_create(char *tempdir_session,
     }
   }
 
-  TF_ERROR_MSG("Could not generate a temp file name for '%s', falling back to '%s'", tempdir_session, tempdir);
+  TF_MSG_ERROR("Could not generate a temp file name for '%s', falling back to '%s'", tempdir_session, tempdir);
   KLI_strncpy(tempdir_session, tempdir, tempdir_session_len);
 }
 

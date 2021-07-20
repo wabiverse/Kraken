@@ -270,7 +270,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirT
       folderid = FOLDERID_Videos;
       break;
     default:
-      TF_ERROR_MSG("Anchor -- Invalid enum value for type parameter");
+      TF_MSG_ERROR("Anchor -- Invalid enum value for type parameter");
       return NULL;
   }
 

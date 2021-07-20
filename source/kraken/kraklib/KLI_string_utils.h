@@ -75,6 +75,12 @@ size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
                                  const size_t maxncpy)
   ATTR_NONNULL();
 
+int KLI_str_utf8_size(const char *p)
+  ATTR_NONNULL();
+
+int KLI_str_utf8_size_safe(const char *p)
+  ATTR_NONNULL();
+
 size_t KLI_str_utf8_from_unicode(uint c, char *outbuf);
 
 size_t KLI_strnlen(const char *s, const size_t maxlen)
@@ -135,6 +141,36 @@ char *KLI_string_join_array(char *result,
 #define STRCASEEQLEN(a, b, n) (strncasecmp(a, b, n) == 0)
 
 #define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
+
+#define UTF8_COMPUTE(Char, Mask, Len, Err) \
+  if (Char < 128) { \
+    Len = 1; \
+    Mask = 0x7f; \
+  } \
+  else if ((Char & 0xe0) == 0xc0) { \
+    Len = 2; \
+    Mask = 0x1f; \
+  } \
+  else if ((Char & 0xf0) == 0xe0) { \
+    Len = 3; \
+    Mask = 0x0f; \
+  } \
+  else if ((Char & 0xf8) == 0xf0) { \
+    Len = 4; \
+    Mask = 0x07; \
+  } \
+  else if ((Char & 0xfc) == 0xf8) { \
+    Len = 5; \
+    Mask = 0x03; \
+  } \
+  else if ((Char & 0xfe) == 0xfc) { \
+    Len = 6; \
+    Mask = 0x01; \
+  } \
+  else { \
+    Len = Err; /* -1 is the typical error value or 1 to skip */ \
+  } \
+  (void)0
 
 /* ------------------------------------------------------ MODERN CXX STD::STRING UTILITIES ----- */
 

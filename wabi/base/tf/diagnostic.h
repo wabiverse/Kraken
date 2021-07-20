@@ -343,19 +343,25 @@ void Tf_TerminateHandler();
 #        undef TF_RUNTIME_MSG
 #      endif
 #      define TF_RUNTIME_MSG(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_MSG_TYPE).IssueStatus
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
 
-#      ifdef TF_RUNTIME_SUCCESS_MSG
-#        undef TF_RUNTIME_SUCCESS_MSG
+#      ifdef TF_RUNTIME_MSG_SUCCESS
+#        undef TF_RUNTIME_MSG_SUCCESS
 #      endif
-#      define TF_RUNTIME_SUCCESS_MSG(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE).IssueStatus
+#      define TF_RUNTIME_MSG_SUCCESS(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus
 
-#      ifdef TF_RUNTIME_ERROR_MSG
-#        undef TF_RUNTIME_ERROR_MSG
+#      ifdef TF_RUNTIME_MSG_ERROR
+#        undef TF_RUNTIME_MSG_ERROR
 #      endif
-#      define TF_RUNTIME_ERROR_MSG(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE).IssueError
+#      define TF_RUNTIME_MSG_ERROR(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueError
+
+#      ifdef TF_RUNTIME_MSG_WARNING
+#        undef TF_RUNTIME_MSG_WARNING
+#      endif
+#      define TF_RUNTIME_MSG_WARNING(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueWarning
 
 #      ifdef TF_RUNTIME_ERROR
 #        undef TF_RUNTIME_ERROR
@@ -395,15 +401,20 @@ void Tf_TerminateHandler();
 #      endif  // TF_MSG
 #      define TF_MSG(...) Tf_PostMsgHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
-#      ifdef TF_SUCCESS_MSG
-#        undef TF_SUCCESS_MSG
-#      endif  // TF_SUCCESS_MSG
-#      define TF_SUCCESS_MSG(...) Tf_PostMsgSuccessHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+#      ifdef TF_MSG_SUCCESS
+#        undef TF_MSG_SUCCESS
+#      endif  // TF_MSG_SUCCESS
+#      define TF_MSG_SUCCESS(...) Tf_PostMsgSuccessHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
-#      ifdef TF_ERROR_MSG
-#        undef TF_ERROR_MSG
-#      endif  // TF_ERROR_MSG
-#      define TF_ERROR_MSG(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+#      ifdef TF_MSG_ERROR
+#        undef TF_MSG_ERROR
+#      endif  // TF_MSG_ERROR
+#      define TF_MSG_ERROR(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_MSG_WARNING
+#        undef TF_MSG_WARNING
+#      endif  // TF_MSG_ERROR
+#      define TF_MSG_WARNING(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN

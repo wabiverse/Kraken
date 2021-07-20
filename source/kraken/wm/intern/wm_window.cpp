@@ -147,8 +147,11 @@ static void wm_window_set_dpi(const wmWindow *win)
 
   /* ----- */
 
-  /* update font drawing */
-  ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
+  /** 
+   * Update font drawing
+   * 
+   * TODO: This makes font F@&#ng HUGE. Fix. */
+  // ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
 }
 
 
@@ -645,7 +648,6 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
 
     /* needed here, because it's used before it reads userdef */
     wm_window_set_dpi(win);
-    WM_window_swap_buffers(win);
   }
 
   else

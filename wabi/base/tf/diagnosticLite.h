@@ -50,21 +50,62 @@
 
 WABI_NAMESPACE_BEGIN
 
-/// \enum TfDiagnosticType
-/// Enum describing various diagnostic conditions.
+/**
+ * @enum TfDiagnosticType
+ * Enum describing various
+ * diagnostic conditions.
+ * 
+ * These are ordered by enum
+ * value of MSDOS's ability
+ * to color console messages
+ * w/ SetConsoleTextAttribute
+ * 
+ * Those color values are as
+ * follows:
+ * 
+ * 1: Blue
+ * 2: Green
+ * 3: Cyan
+ * 4: Red
+ * 5: Pink
+ * 6: Yellow
+ * 7: White
+ * 8: Gray 
+ * 
+ * Then, these color values repeat
+ * with higher vibrancies, ex:
+ * 
+ * 9: Light Blue
+ * 10: Light Green
+ * 11: Light Cyan
+ * etc... */
 enum TfDiagnosticType : int
 {
+  /** Color Invalid - Black */
   TF_DIAGNOSTIC_INVALID_TYPE = 0,
+  /** Color Blue */
   TF_DIAGNOSTIC_CODING_ERROR_TYPE,
-  TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE,
+  /** Color Green (User Friendly) */
+  TF_DIAGNOSTIC_MSG_SUCCESS_TYPE,
+  /** Color Cyan */
   TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE,
-  TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE,
+  /** Color Red (User Friendly) */
+  TF_DIAGNOSTIC_MSG_ERROR_TYPE,
+  /** Color Pink */
   TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE,
-  TF_DIAGNOSTIC_WARNING_TYPE,
-  TF_DIAGNOSTIC_RUNTIME_MSG_TYPE,
+  /** Color Yellow (User Friendly) */
+  TF_DIAGNOSTIC_MSG_WARNING_TYPE,
+  /** Color White (User Friendly) */
+  TF_DIAGNOSTIC_MSG_TYPE,
+  /** Color Gray */
   TF_DIAGNOSTIC_STATUS_TYPE,
+  /** Color Light Blue */
   TF_DIAGNOSTIC_NONFATAL_ERROR_TYPE,
+  /** Color Light Green */
   TF_DIAGNOSTIC_FATAL_ERROR_TYPE,
+  /** Color Light Cyan */
+  TF_DIAGNOSTIC_WARNING_TYPE,
+  /** Color Light Red */
   TF_APPLICATION_EXIT_TYPE,
 };
 
@@ -97,13 +138,16 @@ struct Tf_DiagnosticLiteHelper
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
 
 #  define TF_RUNTIME_MSG \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_MSG_TYPE).IssueStatus
+    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
 
-#  define TF_RUNTIME_SUCCESS_MSG \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_SUCCESS_MSG_TYPE).IssueStatus
+#  define TF_RUNTIME_MSG_SUCCESS \
+    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus
 
-#  define TF_RUNTIME_ERROR_MSG \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE).IssueError
+#  define TF_RUNTIME_MSG_ERROR \
+    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueError
+
+#  define TF_RUNTIME_MSG_WARNING \
+    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_WARNING_TYPE).IssueWarning
 
 #  define TF_RUNTIME_ERROR \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE).IssueError

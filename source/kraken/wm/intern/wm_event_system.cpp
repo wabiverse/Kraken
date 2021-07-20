@@ -39,6 +39,8 @@
 #include "KKE_context.h"
 
 #include "KLI_assert.h"
+#include "KLI_string_utils.h"
+#include "KLI_time.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
@@ -57,6 +59,49 @@ static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *ref
   }
 
   return false;
+}
+
+bool WM_event_is_tablet(const wmEvent *event)
+{
+  return (event->tablet.active != EVT_TABLET_NONE);
+}
+
+int WM_event_drag_threshold(const wmEvent *event)
+{
+  int drag_threshold;
+  if (ISMOUSE(event->prevtype))
+  {
+    KLI_assert(event->prevtype != MOUSEMOVE);
+    if (WM_event_is_tablet(event))
+    {
+      drag_threshold = UI_DRAG_THRESHOLD_TABLET;
+    }
+    else
+    {
+      drag_threshold = UI_DRAG_THRESHOLD_MOUSE;
+    }
+  }
+  else
+  {
+    /* Typically keyboard, could be NDOF button or other less common types. */
+    drag_threshold = UI_DRAG_THRESHOLD;
+  }
+  return drag_threshold * UI_DPI_FAC;
+}
+
+bool WM_event_drag_test_with_delta(const wmEvent *event, const int drag_delta[2])
+{
+  const int drag_threshold = WM_event_drag_threshold(event);
+  return abs(drag_delta[0]) > drag_threshold || abs(drag_delta[1]) > drag_threshold;
+}
+
+bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2])
+{
+  const int drag_delta[2] = {
+    GET_X(prev_xy) - GET_X(event->mouse_pos),
+    GET_Y(prev_xy) - GET_Y(event->mouse_pos),
+  };
+  return WM_event_drag_test_with_delta(event, drag_delta);
 }
 
 
@@ -146,11 +191,15 @@ void WM_event_add_mousemove(wmWindow *win)
 }
 
 
-wmEvent *wm_event_add(wmWindow *win, wmEvent *event_to_add)
+wmEvent *wm_event_add(wmWindow *win, const wmEvent *event_to_add)
 {
   return wm_event_add_ex(win, event_to_add, NULL);
 }
 
+static void wm_event_free_last(wmWindow *win)
+{
+  win->event_queue.pop_back();
+}
 
 static wmEvent *wm_event_add_mousemove(wmWindow *win, wmEvent *event)
 {
@@ -198,6 +247,352 @@ static wmWindow *wm_event_cursor_other_windows(wmWindowManager *wm, wmWindow *wi
 }
 
 
+static wmEvent *wm_event_add_trackpad(wmWindow *win, const wmEvent *event, int deltax, int deltay)
+{
+  wmEvent *event_last = win->event_queue.back();
+  if (event_last && event_last->type == event->type)
+  {
+    deltax += GET_X(event_last->mouse_pos) - GET_X(event_last->prev_mouse_pos);
+    deltay += GET_Y(event_last->mouse_pos) - GET_Y(event_last->prev_mouse_pos);
+
+    wm_event_free_last(win);
+  }
+
+  wmEvent *event_new = wm_event_add(win, event);
+  GET_X(event_new->prev_mouse_pos) = GET_X(event_new->mouse_pos) - deltax;
+  GET_Y(event_new->prev_mouse_pos) = GET_Y(event_new->mouse_pos) - deltay;
+
+  return event_new;
+}
+
+static float wm_pressure_curve(float pressure)
+{
+  if (UI_PRESSURE_THRESHOLD_MAX != 0.0f)
+  {
+    pressure /= UI_PRESSURE_THRESHOLD_MAX;
+  }
+
+  CLAMP(pressure, 0.0f, 1.0f);
+
+  if (UI_PRESSURE_SOFTNESS != 0.0f)
+  {
+    pressure = powf(pressure, powf(4.0f, -UI_PRESSURE_SOFTNESS));
+  }
+
+  return pressure;
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Anchor Event Conversion
+ * \{ */
+
+static int convert_key(eAnchorKey key)
+{
+  if (key >= AnchorKeyA && key <= AnchorKeyZ)
+  {
+    return (EVT_AKEY + ((int)key - AnchorKeyA));
+  }
+  if (key >= AnchorKey0 && key <= AnchorKey9)
+  {
+    return (EVT_ZEROKEY + ((int)key - AnchorKey0));
+  }
+  if (key >= AnchorKeyNumpad0 && key <= AnchorKeyNumpad9)
+  {
+    return (EVT_PAD0 + ((int)key - AnchorKeyNumpad0));
+  }
+  if (key >= AnchorKeyF1 && key <= AnchorKeyF24)
+  {
+    return (EVT_F1KEY + ((int)key - AnchorKeyF1));
+  }
+
+  switch (key)
+  {
+    case AnchorKeyBackSpace:
+      return EVT_BACKSPACEKEY;
+    case AnchorKeyTab:
+      return EVT_TABKEY;
+    case AnchorKeyLinefeed:
+      return EVT_LINEFEEDKEY;
+    case AnchorKeyClear:
+      return 0;
+    case AnchorKeyEnter:
+      return EVT_RETKEY;
+
+    case AnchorKeyEsc:
+      return EVT_ESCKEY;
+    case AnchorKeySpace:
+      return EVT_SPACEKEY;
+    case AnchorKeyQuote:
+      return EVT_QUOTEKEY;
+    case AnchorKeyComma:
+      return EVT_COMMAKEY;
+    case AnchorKeyMinus:
+      return EVT_MINUSKEY;
+    case AnchorKeyPlus:
+      return EVT_PLUSKEY;
+    case AnchorKeyPeriod:
+      return EVT_PERIODKEY;
+    case AnchorKeySlash:
+      return EVT_SLASHKEY;
+
+    case AnchorKeySemicolon:
+      return EVT_SEMICOLONKEY;
+    case AnchorKeyEqual:
+      return EVT_EQUALKEY;
+
+    case AnchorKeyLeftBracket:
+      return EVT_LEFTBRACKETKEY;
+    case AnchorKeyRightBracket:
+      return EVT_RIGHTBRACKETKEY;
+    case AnchorKeyBackslash:
+      return EVT_BACKSLASHKEY;
+    case AnchorKeyAccentGrave:
+      return EVT_ACCENTGRAVEKEY;
+
+    case AnchorKeyLeftShift:
+      return EVT_LEFTSHIFTKEY;
+    case AnchorKeyRightShift:
+      return EVT_RIGHTSHIFTKEY;
+    case AnchorKeyLeftControl:
+      return EVT_LEFTCTRLKEY;
+    case AnchorKeyRightControl:
+      return EVT_RIGHTCTRLKEY;
+    case AnchorKeyOS:
+      return EVT_OSKEY;
+    case AnchorKeyLeftAlt:
+      return EVT_LEFTALTKEY;
+    case AnchorKeyRightAlt:
+      return EVT_RIGHTALTKEY;
+    case AnchorKeyApp:
+      return EVT_APPKEY;
+
+    case AnchorKeyCapsLock:
+      return EVT_CAPSLOCKKEY;
+    case AnchorKeyNumLock:
+      return 0;
+    case AnchorKeyScrollLock:
+      return 0;
+
+    case AnchorKeyLeftArrow:
+      return EVT_LEFTARROWKEY;
+    case AnchorKeyRightArrow:
+      return EVT_RIGHTARROWKEY;
+    case AnchorKeyUpArrow:
+      return EVT_UPARROWKEY;
+    case AnchorKeyDownArrow:
+      return EVT_DOWNARROWKEY;
+
+    case AnchorKeyPrintScreen:
+      return 0;
+    case AnchorKeyPause:
+      return EVT_PAUSEKEY;
+
+    case AnchorKeyInsert:
+      return EVT_INSERTKEY;
+    case AnchorKeyDelete:
+      return EVT_DELKEY;
+    case AnchorKeyHome:
+      return EVT_HOMEKEY;
+    case AnchorKeyEnd:
+      return EVT_ENDKEY;
+    case AnchorKeyUpPage:
+      return EVT_PAGEUPKEY;
+    case AnchorKeyDownPage:
+      return EVT_PAGEDOWNKEY;
+
+    case AnchorKeyNumpadPeriod:
+      return EVT_PADPERIOD;
+    case AnchorKeyNumpadEnter:
+      return EVT_PADENTER;
+    case AnchorKeyNumpadPlus:
+      return EVT_PADPLUSKEY;
+    case AnchorKeyNumpadMinus:
+      return EVT_PADMINUS;
+    case AnchorKeyNumpadAsterisk:
+      return EVT_PADASTERKEY;
+    case AnchorKeyNumpadSlash:
+      return EVT_PADSLASHKEY;
+
+    case AnchorKeyGrLess:
+      return EVT_GRLESSKEY;
+
+    case AnchorKeyMediaPlay:
+      return EVT_MEDIAPLAY;
+    case AnchorKeyMediaStop:
+      return EVT_MEDIASTOP;
+    case AnchorKeyMediaFirst:
+      return EVT_MEDIAFIRST;
+    case AnchorKeyMediaLast:
+      return EVT_MEDIALAST;
+
+    default:
+      return EVT_UNKNOWNKEY; /* AnchorKeyUnknown */
+  }
+}
+
+static void wm_eventemulation(wmEvent *event, bool test_only)
+{
+  static int emulating_event = EVENT_NONE;
+
+  /* Middle-mouse emulation. */
+  if (UI_FLAG & USER_TWOBUTTONMOUSE)
+  {
+
+    if (event->type == LEFTMOUSE)
+    {
+      short *mod = (
+#if !defined(WIN32)
+        (UI_MOUSE_EMULATE_3BUTTON_MODIFIER == USER_EMU_MMB_MOD_OSKEY) ? &event->oskey :
+                                                                        &event->alt
+#else
+        /* Disable for WIN32 for now because it accesses the start menu. */
+        &event->alt
+#endif
+      );
+
+      if (event->val == KM_PRESS)
+      {
+        if (*mod)
+        {
+          *mod = 0;
+          event->type = MIDDLEMOUSE;
+
+          if (!test_only)
+          {
+            emulating_event = MIDDLEMOUSE;
+          }
+        }
+      }
+      else if (event->val == KM_RELEASE)
+      {
+        /* Only send middle-mouse release if emulated. */
+        if (emulating_event == MIDDLEMOUSE)
+        {
+          event->type = MIDDLEMOUSE;
+          *mod = 0;
+        }
+
+        if (!test_only)
+        {
+          emulating_event = EVENT_NONE;
+        }
+      }
+    }
+  }
+
+  /* Numpad emulation. */
+  if (UI_FLAG & USER_NONUMPAD)
+  {
+    switch (event->type)
+    {
+      case EVT_ZEROKEY:
+        event->type = EVT_PAD0;
+        break;
+      case EVT_ONEKEY:
+        event->type = EVT_PAD1;
+        break;
+      case EVT_TWOKEY:
+        event->type = EVT_PAD2;
+        break;
+      case EVT_THREEKEY:
+        event->type = EVT_PAD3;
+        break;
+      case EVT_FOURKEY:
+        event->type = EVT_PAD4;
+        break;
+      case EVT_FIVEKEY:
+        event->type = EVT_PAD5;
+        break;
+      case EVT_SIXKEY:
+        event->type = EVT_PAD6;
+        break;
+      case EVT_SEVENKEY:
+        event->type = EVT_PAD7;
+        break;
+      case EVT_EIGHTKEY:
+        event->type = EVT_PAD8;
+        break;
+      case EVT_NINEKEY:
+        event->type = EVT_PAD9;
+        break;
+      case EVT_MINUSKEY:
+        event->type = EVT_PADMINUS;
+        break;
+      case EVT_EQUALKEY:
+        event->type = EVT_PADPLUSKEY;
+        break;
+      case EVT_BACKSLASHKEY:
+        event->type = EVT_PADSLASHKEY;
+        break;
+    }
+  }
+}
+
+static const wmTabletData wm_event_tablet_data_default = {
+  .active = EVT_TABLET_NONE,
+  .pressure = 1.0f,
+  .x_tilt = 0.0f,
+  .y_tilt = 0.0f,
+  .is_motion_absolute = false,
+};
+
+void WM_event_tablet_data_default_set(wmTabletData *tablet_data)
+{
+  *tablet_data = wm_event_tablet_data_default;
+}
+
+static void wm_tablet_data_from_anchor(const AnchorTabletData *tablet_data, wmTabletData *wmtab)
+{
+  if ((tablet_data != NULL) && tablet_data->Active != AnchorTabletModeNone)
+  {
+    wmtab->active = static_cast<eWmTabletEventType>(tablet_data->Active);
+    wmtab->pressure = wm_pressure_curve(tablet_data->Pressure);
+    wmtab->x_tilt = tablet_data->Xtilt;
+    wmtab->y_tilt = tablet_data->Ytilt;
+    wmtab->is_motion_absolute = true;
+  }
+  else
+  {
+    *wmtab = wm_event_tablet_data_default;
+  }
+}
+
+/**
+ * Copy the current state to the previous event state. */
+static void wm_event_prev_values_set(wmEvent *event, wmEvent *event_state)
+{
+  event->prevval = event_state->prevval = event_state->val;
+  event->prevtype = event_state->prevtype = event_state->type;
+}
+
+static void wm_event_prev_click_set(wmEvent *event, wmEvent *event_state)
+{
+  event->prevclicktime = event_state->prevclicktime = PIL_check_seconds_timer();
+  event->prevclickx = event_state->prevclickx = GET_X(event_state->mouse_pos);
+  event->prevclicky = event_state->prevclicky = GET_Y(event_state->mouse_pos);
+}
+
+static bool wm_event_is_double_click(const wmEvent *event)
+{
+  if ((event->type == event->prevtype) && (event->prevval == KM_RELEASE) &&
+      (event->val == KM_PRESS))
+  {
+    if (ISMOUSE(event->type) && WM_event_drag_test(event, &event->prevclickx))
+    {
+      /* Pass. */
+    }
+    else
+    {
+      if ((PIL_check_seconds_timer() - event->prevclicktime) * 1000 < UI_DOUBLE_CLICK_TIME)
+      {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 void WM_event_init_from_window(wmWindow *win, wmEvent *event)
 {
   *event = *(win->eventstate);
@@ -214,6 +609,20 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
   event.prevtype = event.type;
   event.prevval = event.val;
 
+#ifndef NDEBUG
+  if ((event_state->type || event_state->val) &&
+      !(ISMOUSE_BUTTON(event_state->type) || ISKEYBOARD(event_state->type) || (event_state->type == EVENT_NONE)))
+  {
+    TF_MSG_WARNING("WM -- Non-keyboard/mouse button found in 'win->eventstate->type = %d'", event_state->type);
+  }
+  if ((event_state->prevtype || event_state->prevval) && /* Ignore cleared event state. */
+      !(ISMOUSE_BUTTON(event_state->prevtype) || ISKEYBOARD(event_state->prevtype) ||
+        (event_state->type == EVENT_NONE)))
+  {
+    TF_MSG_WARNING("WM -- Non-keyboard/mouse button found in 'win->eventstate->prevtype = %d'", event_state->prevtype);
+  }
+#endif
+
   switch (type)
   {
     case AnchorEventTypeCursorMove: {
@@ -227,6 +636,349 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
       }
 
       wmWindow *win_other = wm_event_cursor_other_windows(wm, win, &event);
+      if (win_other)
+      {
+        wmEvent event_other = *win_other->eventstate;
+
+        event_other.prevtype = event_other.type;
+        event_other.prevval = event_other.val;
+
+        event_other.mouse_pos = event.mouse_pos;
+        event_other.type = MOUSEMOVE;
+        {
+          wmEvent *event_new = wm_event_add_mousemove(win_other, &event_other);
+          win_other->eventstate->mouse_pos = event_new->mouse_pos;
+          win_other->eventstate->tablet.is_motion_absolute = event_new->tablet.is_motion_absolute;
+        }
+      }
+
+      break;
+    }
+
+    case AnchorEventTypeTrackpad: {
+      AnchorEventTrackpadData *pd = (AnchorEventTrackpadData *)customdata;
+      switch (pd->subtype)
+      {
+        case ANCHOR_TrackpadEventMagnify:
+          event.type = MOUSEZOOM;
+          pd->deltaX = -pd->deltaX;
+          pd->deltaY = -pd->deltaY;
+          break;
+        case ANCHOR_TrackpadEventSmartMagnify:
+          event.type = MOUSESMARTZOOM;
+          break;
+        case ANCHOR_TrackpadEventRotate:
+          event.type = MOUSEROTATE;
+          break;
+        case ANCHOR_TrackpadEventScroll:
+        default:
+          event.type = MOUSEPAN;
+          break;
+      }
+
+      event.mouse_pos = event_state->mouse_pos = GfVec2i(pd->x, pd->y);
+      event.val = KM_NOTHING;
+
+      /* The direction is inverted from the device due to system preferences. */
+      event.is_direction_inverted = pd->isDirectionInverted;
+
+      wm_event_add_trackpad(win, &event, pd->deltaX, -pd->deltaY);
+      break;
+    }
+
+    /* Mouse button. */
+    case AnchorEventTypeButtonDown:
+    case AnchorEventTypeButtonUp: {
+      AnchorEventButtonData *bd = (AnchorEventButtonData *)customdata;
+
+      /* Get value and type from Anchor. */
+      event.val = (type == AnchorEventTypeButtonDown) ? KM_PRESS : KM_RELEASE;
+
+      if (bd->button == ANCHOR_ButtonMaskLeft)
+      {
+        event.type = LEFTMOUSE;
+      }
+      else if (bd->button == ANCHOR_ButtonMaskRight)
+      {
+        event.type = RIGHTMOUSE;
+      }
+      else if (bd->button == ANCHOR_ButtonMaskButton4)
+      {
+        event.type = BUTTON4MOUSE;
+      }
+      else if (bd->button == ANCHOR_ButtonMaskButton5)
+      {
+        event.type = BUTTON5MOUSE;
+      }
+      else if (bd->button == ANCHOR_ButtonMaskButton6)
+      {
+        event.type = BUTTON6MOUSE;
+      }
+      else if (bd->button == ANCHOR_ButtonMaskButton7)
+      {
+        event.type = BUTTON7MOUSE;
+      }
+      else
+      {
+        event.type = MIDDLEMOUSE;
+      }
+
+      /* Get tablet data. */
+      wm_tablet_data_from_anchor(&bd->tablet, &event.tablet);
+
+      wm_eventemulation(&event, false);
+      wm_event_prev_values_set(&event, event_state);
+
+      /* Copy to event state. */
+      event_state->val = event.val;
+      event_state->type = event.type;
+
+      /* Double click test. */
+      if (wm_event_is_double_click(&event))
+      {
+        TF_MSG("WM -- Send double click");
+        event.val = KM_DBL_CLICK;
+      }
+      if (event.val == KM_PRESS)
+      {
+        wm_event_prev_click_set(&event, event_state);
+      }
+
+      /* Add to other window if event is there (not to both!). */
+      wmWindow *win_other = wm_event_cursor_other_windows(wm, win, &event);
+      if (win_other)
+      {
+        wmEvent event_other = *win_other->eventstate;
+
+        event_other.prevtype = event_other.type;
+        event_other.prevval = event_other.val;
+
+        event_other.mouse_pos = event.mouse_pos;
+
+        event_other.type = event.type;
+        event_other.val = event.val;
+        event_other.tablet = event.tablet;
+
+        wm_event_add(win_other, &event_other);
+      }
+      else
+      {
+        wm_event_add(win, &event);
+      }
+
+      break;
+    }
+    /* Keyboard. */
+    case AnchorEventTypeKeyDown:
+    case AnchorEventTypeKeyUp: {
+      AnchorEventKeyData *kd = (AnchorEventKeyData *)customdata;
+      short keymodifier = KM_NOTHING;
+      event.type = static_cast<eWmEventType>(convert_key(kd->key));
+      event.ascii = kd->ascii;
+      memcpy(event.utf8_buf, kd->utf8_buf, sizeof(event.utf8_buf));
+      event.is_repeat = kd->is_repeat;
+      event.val = (type == AnchorEventTypeKeyDown) ? KM_PRESS : KM_RELEASE;
+
+      wm_eventemulation(&event, false);
+      wm_event_prev_values_set(&event, event_state);
+
+      /* Copy to event state. */
+      event_state->val = event.val;
+      event_state->type = event.type;
+      event_state->is_repeat = event.is_repeat;
+
+      /* Exclude arrow keys, esc, etc from text input. */
+      if (type == AnchorEventTypeKeyUp)
+      {
+        event.ascii = '\0';
+
+        /* Anchor should do this already for key up. */
+        if (event.utf8_buf[0])
+        {
+          TF_MSG_ERROR("WM -- Anchor on your platform is misbehaving, utf8 events on key up!");
+        }
+        event.utf8_buf[0] = '\0';
+      }
+      else
+      {
+        if (event.ascii < 32 && event.ascii > 0)
+        {
+          event.ascii = '\0';
+        }
+        if (event.utf8_buf[0] < 32 && event.utf8_buf[0] > 0)
+        {
+          event.utf8_buf[0] = '\0';
+        }
+      }
+
+      if (event.utf8_buf[0])
+      {
+        if (KLI_str_utf8_size(event.utf8_buf) == -1)
+        {
+          TF_MSG_ERROR("WM -- Anchor detected an invalid unicode character '%d'", (int)(unsigned char)event.utf8_buf[0]);
+          event.utf8_buf[0] = '\0';
+        }
+      }
+
+      switch (event.type)
+      {
+        case EVT_LEFTSHIFTKEY:
+        case EVT_RIGHTSHIFTKEY:
+          if (event.val == KM_PRESS)
+          {
+            if (event_state->ctrl || event_state->alt || event_state->oskey)
+            {
+              keymodifier = (KM_MOD_FIRST | KM_MOD_SECOND);
+            }
+            else
+            {
+              keymodifier = KM_MOD_FIRST;
+            }
+          }
+          event.shift = event_state->shift = keymodifier;
+          break;
+        case EVT_LEFTCTRLKEY:
+        case EVT_RIGHTCTRLKEY:
+          if (event.val == KM_PRESS)
+          {
+            if (event_state->shift || event_state->alt || event_state->oskey)
+            {
+              keymodifier = (KM_MOD_FIRST | KM_MOD_SECOND);
+            }
+            else
+            {
+              keymodifier = KM_MOD_FIRST;
+            }
+          }
+          event.ctrl = event_state->ctrl = keymodifier;
+          break;
+        case EVT_LEFTALTKEY:
+        case EVT_RIGHTALTKEY:
+          if (event.val == KM_PRESS)
+          {
+            if (event_state->ctrl || event_state->shift || event_state->oskey)
+            {
+              keymodifier = (KM_MOD_FIRST | KM_MOD_SECOND);
+            }
+            else
+            {
+              keymodifier = KM_MOD_FIRST;
+            }
+          }
+          event.alt = event_state->alt = keymodifier;
+          break;
+        case EVT_OSKEY:
+          if (event.val == KM_PRESS)
+          {
+            if (event_state->ctrl || event_state->alt || event_state->shift)
+            {
+              keymodifier = (KM_MOD_FIRST | KM_MOD_SECOND);
+            }
+            else
+            {
+              keymodifier = KM_MOD_FIRST;
+            }
+          }
+          event.oskey = event_state->oskey = keymodifier;
+          break;
+        default:
+          if (event.val == KM_PRESS && event.keymodifier == 0)
+          {
+            /* Only set in eventstate, for next event. */
+            event_state->keymodifier = event.type;
+          }
+          else if (event.val == KM_RELEASE && event.keymodifier == event.type)
+          {
+            event.keymodifier = event_state->keymodifier = 0;
+          }
+          break;
+      }
+
+      /* Double click test. */
+      /* If previous event was same type, and previous was release, and now it presses... */
+      if (wm_event_is_double_click(&event))
+      {
+        TF_MSG("WM -- Send double click");
+        event.val = KM_DBL_CLICK;
+      }
+
+      /* This case happens on holding a key pressed,
+       * it should not generate press events with the same key as modifier. */
+      if (event.keymodifier == event.type)
+      {
+        event.keymodifier = 0;
+      }
+
+      /* This case happens with an external numpad, and also when using 'dead keys'
+       * (to compose complex latin characters e.g.), it's not really clear why.
+       * Since it's impossible to map a key modifier to an unknown key,
+       * it shouldn't harm to clear it. */
+      if (event.keymodifier == EVT_UNKNOWNKEY)
+      {
+        event_state->keymodifier = event.keymodifier = 0;
+      }
+
+      /* If test_break set, it catches this. Do not set with modifier presses.
+       * XXX Keep global for now? */
+      if ((event.type == EVT_ESCKEY && event.val == KM_PRESS) &&
+          /* Check other modifiers because ms-windows uses these to bring up the task manager. */
+          (event.shift == 0 && event.ctrl == 0 && event.alt == 0))
+      {
+        G.is_break = true;
+      }
+
+      /* Double click test - only for press. */
+      if (event.val == KM_PRESS)
+      {
+        /* Don't reset timer & location when holding the key generates repeat events. */
+        if (event.is_repeat == false)
+        {
+          wm_event_prev_click_set(&event, event_state);
+        }
+      }
+
+      wm_event_add(win, &event);
+
+      break;
+    }
+
+    case AnchorEventTypeWheel: {
+      AnchorEventWheelData *wheelData = (AnchorEventWheelData *)customdata;
+
+      if (wheelData->z > 0)
+      {
+        event.type = WHEELUPMOUSE;
+      }
+      else
+      {
+        event.type = WHEELDOWNMOUSE;
+      }
+
+      event.val = KM_PRESS;
+      wm_event_add(win, &event);
+
+      break;
+    }
+    case AnchorEventTypeTimer: {
+      event.type = TIMER;
+      event.custom = EVT_DATA_TIMER;
+      event.customdata = customdata;
+      event.val = KM_NOTHING;
+      event.keymodifier = 0;
+      wm_event_add(win, &event);
+
+      break;
+    }
+
+    case AnchorEventTypeUnknown:
+    case ANCHOR_NumEventTypes:
+      break;
+
+    case AnchorEventTypeWindowDeactivate: {
+      event.type = WINDEACTIVATE;
+      wm_event_add(win, &event);
+
+      break;
     }
   }
 }

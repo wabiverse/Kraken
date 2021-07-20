@@ -119,6 +119,10 @@ struct Global
   bool factory_startup;
   bool custom_startup;
 
+  /**
+   * Has escape been pressed or Ctrl+C pressed in background mode, used for render quit. */
+  bool is_break;
+
   bool is_rendering;
 
   short debug_value;
@@ -183,8 +187,19 @@ const char *KKE_kraken_version_string(void);
 /* Setup in KKE_kraken. */
 extern Global G;
 
-/* Setup in KKE_kraken. */
+/**
+ * Setup in KKE_kraken.
+ * TODO: Move these into
+ * UserDef. */
 extern float UI_DPI_FAC;
+extern float UI_PRESSURE_SOFTNESS;
+extern float UI_PRESSURE_THRESHOLD_MAX;
+extern int UI_FLAG;
+extern bool UI_MOUSE_EMULATE_3BUTTON_MODIFIER;
+extern int UI_DRAG_THRESHOLD_MOUSE;
+extern int UI_DRAG_THRESHOLD_TABLET;
+extern int UI_DRAG_THRESHOLD;
+extern short UI_DOUBLE_CLICK_TIME;
 
 WABI_NAMESPACE_END
 

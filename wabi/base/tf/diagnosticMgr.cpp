@@ -431,7 +431,7 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
       fprintf(stderr, "Fatal error: %s [%s].\n", msg.c_str(), ArchGetProgramNameForErrors());
       exit(1);
     }
-    else if (statusCode == TF_DIAGNOSTIC_RUNTIME_MSG_TYPE || statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_MSG_TYPE)
+    else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE || statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE)
     {
       fprintf(stderr, "%s\n", msg.c_str());
     }

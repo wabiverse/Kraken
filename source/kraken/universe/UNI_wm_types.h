@@ -538,6 +538,11 @@ enum eWmEventType
   EVT_GIZMO_UPDATE = 0x5025, /* 20517 */
 };
 
+enum eWmTabletEventType {
+  EVT_TABLET_NONE = 0,
+  EVT_TABLET_STYLUS = 1,
+  EVT_TABLET_ERASER = 2,
+};
 
 enum eWmOperatorType
 {
@@ -616,6 +621,18 @@ struct ReportList
   {}
 };
 
+struct wmTabletData {
+  /** 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER. */
+  eWmTabletEventType active;
+  /** range 0.0 (not touching) to 1.0 (full pressure). */
+  float pressure;
+  /** range 0.0 (upright) to 1.0 (tilted fully against the tablet surface). */
+  float x_tilt;
+  /** as above. */
+  float y_tilt;
+  /** Interpret mouse motion as absolute as typical for tablets. */
+  bool is_motion_absolute;
+};
 
 struct wmEvent
 {
@@ -664,6 +681,9 @@ struct wmEvent
   /** Raw-key modifier (allow using any key as a modifier). */
   short keymodifier;
 
+  /** Tablet info, available for mouse move and button events. */
+  wmTabletData tablet;
+
   /* Custom data. */
   /** Custom data type, stylus, 6dof, see wm_event_types.h */
   short custom;
@@ -696,6 +716,7 @@ struct wmEvent
       alt(VALUE_ZERO),
       oskey(VALUE_ZERO),
       keymodifier(VALUE_ZERO),
+      tablet{},
       custom(VALUE_ZERO),
       customdatafree(VALUE_ZERO),
       customdata(POINTER_ZERO),

@@ -77,6 +77,15 @@ Global G;
 
 /** User Prefs modifies this value globally. */
 float UI_DPI_FAC = float(1.0f);
+float UI_PRESSURE_SOFTNESS = float(1.0f);
+float UI_PRESSURE_THRESHOLD_MAX = float(0.0f);
+int UI_FLAG = int(0);
+bool UI_MOUSE_EMULATE_3BUTTON_MODIFIER = bool(false);
+int UI_DRAG_THRESHOLD_MOUSE = int(0);
+int UI_DRAG_THRESHOLD_TABLET = int(0);
+int UI_DRAG_THRESHOLD = int(0);
+short UI_DOUBLE_CLICK_TIME = short(0);
+
 static std::string kraken_version_string = "";
 
 static void kraken_version_init()

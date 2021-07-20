@@ -30,6 +30,17 @@
 #ifdef __linux__
 #  include <sys/time.h>
 #  include <unistd.h>
+
+double PIL_check_seconds_timer(void)
+{
+  struct timeval tv;
+  struct timezone tz;
+
+  gettimeofday(&tv, &tz);
+
+  return ((double)tv.tv_sec + tv.tv_usec / 1000000.0);
+}
+
 #elif _WIN32
 #  include "stdlib.h"
 #  include <windows.h>
@@ -48,7 +59,42 @@ void usleep(__int64 usec)
   CloseHandle(timer);
 }
 
-#endif
+double PIL_check_seconds_timer(void)
+{
+  static int hasperfcounter = -1; /* (-1 == unknown) */
+  static double perffreq;
+
+  if (hasperfcounter == -1) {
+    __int64 ifreq;
+    hasperfcounter = QueryPerformanceFrequency((LARGE_INTEGER *)&ifreq);
+    perffreq = (double)ifreq;
+  }
+
+  if (hasperfcounter) {
+    __int64 count;
+
+    QueryPerformanceCounter((LARGE_INTEGER *)&count);
+
+    return count / perffreq;
+  }
+  else {
+    static double accum = 0.0;
+    static int ltick = 0;
+    int ntick = GetTickCount();
+
+    if (ntick < ltick) {
+      accum += (0xFFFFFFFF - ltick + ntick) / 1000.0;
+    }
+    else {
+      accum += (ntick - ltick) / 1000.0;
+    }
+
+    ltick = ntick;
+    return accum;
+  }
+}
+
+#endif /* WIN32 */
 
 void PIL_sleep_ms(int ms)
 {

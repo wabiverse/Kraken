@@ -70,6 +70,37 @@ enum eUserprefUIFlag
   USER_HIDE_SYSTEM_BOOKMARKS = (1u << 31),
 };
 
+enum eUserPrefFlag {
+  USER_AUTOSAVE = (1 << 0),
+  USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
+  USER_FLAG_UNUSED_2 = (1 << 2), /* cleared */
+  USER_FLAG_UNUSED_3 = (1 << 3), /* cleared */
+  USER_FLAG_UNUSED_4 = (1 << 4), /* cleared */
+  USER_TRACKBALL = (1 << 5),
+  USER_FLAG_UNUSED_6 = (1 << 6), /* cleared */
+  USER_FLAG_UNUSED_7 = (1 << 7), /* cleared */
+  USER_MAT_ON_OB = (1 << 8),
+  USER_FLAG_UNUSED_9 = (1 << 9), /* cleared */
+  USER_DEVELOPER_UI = (1 << 10),
+  USER_TOOLTIPS = (1 << 11),
+  USER_TWOBUTTONMOUSE = (1 << 12),
+  USER_NONUMPAD = (1 << 13),
+  USER_ADD_CURSORALIGNED = (1 << 14),
+  USER_FILECOMPRESS = (1 << 15),
+  USER_SAVE_PREVIEWS = (1 << 16),
+  USER_CUSTOM_RANGE = (1 << 17),
+  USER_ADD_EDITMODE = (1 << 18),
+  USER_ADD_VIEWALIGNED = (1 << 19),
+  USER_RELPATHS = (1 << 20),
+  USER_RELEASECONFIRM = (1 << 21),
+  USER_SCRIPT_AUTOEXEC_DISABLE = (1 << 22),
+  USER_FILENOUI = (1 << 23),
+  USER_NONEGFRAMES = (1 << 24),
+  USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
+  USER_TOOLTIPS_PYTHON = (1 << 26),
+  USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
+};
+
 struct UserDef : public UsdUIUserPref, public ObjectUNI
 {
 

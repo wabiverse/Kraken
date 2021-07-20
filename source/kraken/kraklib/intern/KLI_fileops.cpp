@@ -143,7 +143,7 @@ bool KLI_dir_create_recursive(const char *dirname)
 
 static void callLocalErrorCallBack(const char *err)
 {
-  TF_ERROR_MSG("%s\n", err);
+  TF_MSG_ERROR("%s\n", err);
 }
 
 static bool delete_unique(const char *path, const bool dir)
