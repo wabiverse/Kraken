@@ -5071,6 +5071,7 @@ void AnchorWindowWin32::lostMouseCapture()
     io.MouseDown[1] = false;
     io.MouseDown[2] = false;
     io.MouseDown[3] = false;
+    io.MouseDown[4] = false;
   }
 }
 
