@@ -97,6 +97,7 @@ struct wmWindow : public UsdUIWindow, public ObjectUNI
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
+  std::vector<wmEventHandler*> modalhandlers;
 
   /** Runtime Window State. */
   char windowstate;

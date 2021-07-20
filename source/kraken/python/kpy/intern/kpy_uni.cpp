@@ -532,6 +532,78 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   Py_RETURN_NONE;
 }
 
+#ifdef USE_PYUNI_OBJECT_REFERENCE
+static void pyuni_object_reference_set(KPy_ObjectUNI *self, PyObject *reference)
+{
+  if (self->reference) {
+    PyObject_GC_UnTrack(self);
+    Py_CLEAR(self->reference);
+  }
+  /* Reference is now NULL. */
+
+  if (reference) {
+    self->reference = reference;
+    Py_INCREF(reference);
+    PyObject_GC_Track(self);
+  }
+}
+#endif /* !USE_PYRNA_STRUCT_REFERENCE */
+
+#ifdef USE_PYUNI_INVALIDATE_WEAKREF
+static RHash *id_weakref_pool = nullptr;
+static PyObject *id_free_weakref_cb(PyObject *weakinfo_pair, PyObject *weakref);
+static PyMethodDef id_free_weakref_cb_def = {
+  "id_free_weakref_cb", (PyCFunction)id_free_weakref_cb, METH_O, NULL
+};
+
+static RHash *id_weakref_pool_get(const SdfPath &id)
+{
+  RHash *weakinfo_hash = nullptr;
+
+  if (id_weakref_pool) {
+    weakinfo_hash = (RHash *)KKE_rhash_lookup(id_weakref_pool, id.GetAsToken());
+  }
+  else {
+    /* First time, allocate pool. */
+    // id_weakref_pool = KLI_rhash_ptr_new("uni_global_pool");
+    // weakinfo_hash = NULL;
+  }
+
+  if (weakinfo_hash == NULL) {
+    // weakinfo_hash = KKE_rhash_ptr_new("rna_id");
+    KKE_rhash_insert(id_weakref_pool, id.GetAsToken(), weakinfo_hash);
+  }
+
+  return weakinfo_hash;
+}
+
+static void id_weakref_pool_add(const SdfPath &id, KPy_DummyPointerUNI *pyuni)
+{
+  PyObject *weakref;
+  PyObject *weakref_capsule;
+  PyObject *weakref_cb_py;
+
+  /* Create a new function instance and insert the list as 'self'
+   * so we can remove ourself from it. */
+  RHash *weakinfo_hash = id_weakref_pool_get(id); /* New or existing. */
+
+  weakref_capsule = PyCapsule_New(weakinfo_hash, NULL, NULL);
+  weakref_cb_py = PyCFunction_New(&id_free_weakref_cb_def, weakref_capsule);
+  Py_DECREF(weakref_capsule);
+
+  /* Add weakref to weakinfo_hash list. */
+  weakref = PyWeakref_NewRef((PyObject *)pyuni, weakref_cb_py);
+
+  Py_DECREF(weakref_cb_py); /* Function owned by the weakref now. */
+
+  /* Important to add at the end of the hash, since first removal looks at the end. */
+
+  /* Using a hash table as a set, all 'id's are the same. */
+  KKE_rhash_insert(weakinfo_hash, id.GetAsToken(), weakref);
+  /* weakinfo_hash owns the weakref */
+}
+#endif /* USE_PYUNI_INVALIDATE_WEAKREF */
+
 #ifdef USE_PYUNI_ITER
 
 static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self);
@@ -770,6 +842,13 @@ PyObject *KPY_uni_module(void)
   return (PyObject *)pyuni;
 }
 
+void KPY_update_uni_module(void)
+{
+  if (uni_module_ptr) {
+    uni_module_ptr->data = G.main;
+  }
+}
+
 void pyuni_alloc_types(void)
 {
   // #ifdef DEBUG
@@ -890,9 +969,9 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   // PyC_ObSpit("NewStructRNA: ", (PyObject *)pyuni);
 
 #ifdef USE_PYUNI_INVALIDATE_WEAKREF
-  if (ptr->owner_id)
+  if (!ptr->path.IsEmpty())
   {
-    id_weakref_pool_add(ptr->owner_id, (KPy_DummyPointerRNA *)pyuni);
+    id_weakref_pool_add(ptr->path, (KPy_DummyPointerUNI *)pyuni);
   }
 #endif
   return (PyObject *)pyuni;

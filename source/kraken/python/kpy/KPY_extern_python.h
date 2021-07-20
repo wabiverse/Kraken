@@ -36,8 +36,11 @@ struct kContext;
 /**
  * Functionality relating to Python setup & teardown. */
 
+void KPY_modules_update(void);
+
 /* wpy_interface.cpp */
 void KPY_python_start(struct kContext *C, int argc, const char **argv);
+void KPY_python_end(void);
 
 void KPY_python_reset(struct kContext *C);
 

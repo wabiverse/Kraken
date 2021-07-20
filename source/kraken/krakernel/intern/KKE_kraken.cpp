@@ -163,4 +163,102 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
   }
 }
 
+void KKE_main_free(Main *mainvar)
+{
+  UNIVERSE_FOR_ALL(windowmanager, mainvar->wm)
+  {
+    delete windowmanager;
+  }
+  mainvar->wm.clear();
+
+  UNIVERSE_FOR_ALL(workspace, mainvar->workspaces)
+  {
+    delete workspace;
+  }
+  mainvar->workspaces.clear();
+
+  UNIVERSE_FOR_ALL(screen, mainvar->screens)
+  {
+    delete screen;
+  }
+  mainvar->screens.clear();
+
+  delete mainvar;
+}
+
+void KKE_kraken_free(void)
+{
+  // KKE_studiolight_free();
+
+  KKE_main_free(G.main);
+  G.main = nullptr;
+
+  // if (G.log.file != NULL) {
+  //   fclose(G.log.file);
+  // }
+
+  // KKE_spacetypes_free();
+
+  // IMB_exit();
+  // KKE_cachefiles_exit();
+  // KKE_images_exit();
+  // DEG_free_node_types();
+
+  // KKE_brush_system_exit();
+  // RE_texture_rng_exit();
+
+  // KKE_callback_global_finalize();
+
+  // IMB_moviecache_destruct();
+
+  // KKE_node_system_exit();
+}
+
+
+static struct AtExitData {
+  struct AtExitData *next;
+
+  void (*func)(void *user_data);
+  void *user_data;
+} *g_atexit = NULL;
+
+void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data)
+{
+  struct AtExitData *ae = (AtExitData *)malloc(sizeof(*ae));
+  ae->next = g_atexit;
+  ae->func = func;
+  ae->user_data = user_data;
+  g_atexit = ae;
+}
+
+void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data)
+{
+  struct AtExitData *ae = g_atexit;
+  struct AtExitData **ae_p = &g_atexit;
+
+  while (ae) {
+    if ((ae->func == func) && (ae->user_data == user_data)) {
+      *ae_p = ae->next;
+      free(ae);
+      return;
+    }
+    ae_p = &ae->next;
+    ae = ae->next;
+  }
+}
+
+void KKE_kraken_atexit(void)
+{
+  struct AtExitData *ae = g_atexit, *ae_next;
+  while (ae) {
+    ae_next = ae->next;
+
+    ae->func(ae->user_data);
+
+    free(ae);
+    ae = ae_next;
+  }
+  g_atexit = NULL;
+}
+
 WABI_NAMESPACE_END

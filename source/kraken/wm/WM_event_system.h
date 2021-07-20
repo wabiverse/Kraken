@@ -35,6 +35,8 @@
 
 WABI_NAMESPACE_BEGIN
 
+struct ARegion;
+struct ScrArea;
 struct wmEvent;
 
 /* test whether the event is a key on the keyboard */
@@ -61,6 +63,15 @@ struct wmEvent;
    (event_type) == BUTTON5MOUSE || \
    (event_type) == BUTTON6MOUSE || \
    (event_type) == BUTTON7MOUSE)
+
+void wm_event_free_handler(wmEventHandler *handler);
+void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler*> handlers);
+wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
+                                          std::vector<wmEventHandler*> handlers,
+                                          wmUIHandlerFunc handle_fn,
+                                          wmUIHandlerRemoveFunc remove_fn,
+                                          void *user_data,
+                                          const char flag);
 
 void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata);
 wmEvent *wm_event_add(wmWindow *win, const wmEvent *event_to_add);

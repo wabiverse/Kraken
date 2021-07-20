@@ -20,38 +20,15 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * KRAKEN Python.
+ * It Bites.
  */
 
-#include "WM_api.h"
+#include "KPY_api.h"
 
 WABI_NAMESPACE_BEGIN
 
-void WM_init(kContext *C, int argc, const char **argv);
-void WM_exit(kContext *C);
-void WM_exit_ex(kContext *C, const bool do_python);
-
-void WM_init_default_styles();
-void WM_jobs_kill_all(wmWindowManager *wm);
-void WM_main(kContext *C);
-void wm_add_default(struct Main *kmain, kContext *C);
-void WM_check(kContext *C);
-
-enum eWmModes
-{
-  KRAKEN_NORMAL_MODE = 0,
-  KRAKEN_DEBUG_MODE
-};
-
-enum eWmKernelPaths
-{
-  EXE_PATH = 0,
-  DATAFILES_PATH,
-  ICONS_PATH,
-  PROJECT_FILE,
-
-  VERSION_DECIMAL
-};
+bool KPY_run_string_exec(struct kContext *C, const char *imports[], const char *expr);
+bool KPY_run_string_eval(struct kContext *C, const char *imports[], const char *expr);
 
 WABI_NAMESPACE_END

@@ -45,6 +45,7 @@ bool ED_area_is_global(const ScrArea *area);
 int ED_area_global_size_y(const ScrArea *area);
 void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const bool skip_region_exit);
 
+void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen);
 kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect);
 ScrVert *screen_geom_vertex_add_ex(ScrAreaMap *area_map, short x, short y);
 ScrVert *screen_geom_vertex_add(kScreen *screen, short x, short y);

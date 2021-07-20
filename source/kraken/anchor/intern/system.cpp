@@ -274,11 +274,6 @@ AnchorSystemHandle ANCHOR_CreateSystem()
   return (AnchorSystemHandle)system;
 }
 
-// void ANCHOR_DestroySystem(AnchorSystemHandle *system)
-// {
-//   ANCHOR_clean_vulkan(system);
-// }
-
 bool AnchorSystem::useNativePixel(void)
 {
   m_nativePixel = true;

@@ -598,6 +598,36 @@ void WM_event_init_from_window(wmWindow *win, wmEvent *event)
   *event = *(win->eventstate);
 }
 
+wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
+                                          std::vector<wmEventHandler*> handlers,
+                                          wmUIHandlerFunc handle_fn,
+                                          wmUIHandlerRemoveFunc remove_fn,
+                                          void *user_data,
+                                          const char flag)
+{
+  wmEventHandlerUI *handler = new wmEventHandlerUI();
+  handler->type = WM_HANDLER_TYPE_UI;
+  handler->handle_fn = handle_fn;
+  handler->remove_fn = remove_fn;
+  handler->user_data = user_data;
+  if (C) {
+    handler->context.area = CTX_wm_area(C);
+    handler->context.region = CTX_wm_region(C);
+    handler->context.menu = CTX_wm_menu(C);
+  }
+  else {
+    handler->context.area = NULL;
+    handler->context.region = NULL;
+    handler->context.menu = NULL;
+  }
+
+  KLI_assert((flag & WM_HANDLER_DO_FREE) == 0);
+  handler->flag = flag;
+
+  handlers.insert(handlers.begin(), handler);
+
+  return handler;
+}
 
 void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata)
 {
@@ -981,6 +1011,50 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
       break;
     }
   }
+}
+
+void wm_event_free_handler(wmEventHandler *handler)
+{
+  delete handler;
+}
+
+void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler*> handlers)
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+  std::vector<wmEventHandler*>::iterator iter;
+
+  for (iter = handlers.begin(); iter != handlers.end(); ++iter) {
+    KLI_assert((*iter)->type != 0);
+    if ((*iter)->type == WM_HANDLER_TYPE_UI) {
+      wmEventHandlerUI *handler = (wmEventHandlerUI *)(*iter);
+
+      if (handler->remove_fn) {
+        ScrArea *area = CTX_wm_area(C);
+        ARegion *region = CTX_wm_region(C);
+        ARegion *menu = CTX_wm_menu(C);
+
+        if (handler->context.area) {
+          CTX_wm_area_set(C, handler->context.area);
+        }
+        if (handler->context.region) {
+          CTX_wm_region_set(C, handler->context.region);
+        }
+        if (handler->context.menu) {
+          CTX_wm_menu_set(C, handler->context.menu);
+        }
+
+        handler->remove_fn(C, handler->user_data);
+
+        CTX_wm_area_set(C, area);
+        CTX_wm_region_set(C, region);
+        CTX_wm_menu_set(C, menu);
+      }
+    }
+
+    wm_event_free_handler((*iter));
+  }
+
+  handlers.clear();
 }
 
 

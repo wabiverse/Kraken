@@ -75,6 +75,8 @@ struct kContext : public ObjectUNI
     Scene *scene;
     Stage stage;
     UserDef *prefs;
+
+    bool py_init;
   } data;
 };
 
@@ -127,55 +129,70 @@ void CTX_free(kContext *C)
   delete C;
 }
 
+bool CTX_py_init_get(kContext *C)
+{
+  return C->data.py_init;
+}
+
+void CTX_py_init_set(kContext *C, bool value)
+{
+  C->data.py_init = value;
+}
+
 /**
  * Getters. */
 
-Main *CTX_data_main(kContext *C)
+Main *CTX_data_main(const kContext *C)
 {
   return C->data.main;
 }
 
-wmWindowManager *CTX_wm_manager(kContext *C)
+wmWindowManager *CTX_wm_manager(const kContext *C)
 {
   return C->wm.manager;
 }
 
-wmWindow *CTX_wm_window(kContext *C)
+wmWindow *CTX_wm_window(const kContext *C)
 {
   return (wmWindow *)ctx_wm_python_context_get(C, "window", &UNI_Window, C->wm.window);
 }
 
-WorkSpace *CTX_wm_workspace(kContext *C)
+WorkSpace *CTX_wm_workspace(const kContext *C)
 {
   return (WorkSpace *)ctx_wm_python_context_get(C, "workspace", &UNI_WorkSpace, C->wm.workspace);
 }
 
-kScreen *CTX_wm_screen(kContext *C)
+kScreen *CTX_wm_screen(const kContext *C)
 {
   return (kScreen *)ctx_wm_python_context_get(C, "screen", &UNI_Screen, C->wm.screen);
 }
 
-ScrArea *CTX_wm_area(kContext *C)
+ScrArea *CTX_wm_area(const kContext *C)
 {
   return (ScrArea *)ctx_wm_python_context_get(C, "area", &UNI_Area, C->wm.area);
 }
 
-ARegion *CTX_wm_region(kContext *C)
+ARegion *CTX_wm_region(const kContext *C)
 {
   return (ARegion *)ctx_wm_python_context_get(C, "region", &UNI_Region, C->wm.region);
 }
 
-Scene *CTX_data_scene(kContext *C)
+ARegion *CTX_wm_menu(const kContext *C)
+{
+  return C->wm.menu;
+}
+
+Scene *CTX_data_scene(const kContext *C)
 {
   return C->data.scene;
 }
 
-Stage CTX_data_stage(kContext *C)
+Stage CTX_data_stage(const kContext *C)
 {
   return C->data.stage;
 }
 
-UserDef *CTX_data_prefs(kContext *C)
+UserDef *CTX_data_prefs(const kContext *C)
 {
   return C->data.prefs;
 }

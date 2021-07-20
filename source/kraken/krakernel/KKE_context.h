@@ -55,22 +55,29 @@ kContext *CTX_create(void);
 void CTX_free(kContext *C);
 
 /**
+ * need to store if python
+ * is initialized or not */
+bool CTX_py_init_get(kContext *C);
+void CTX_py_init_set(kContext *C, bool value);
+
+/**
  * Kraken Context Getters:
  *  - System Main.
  *  - WindowManager.
  *  - Scene data.
  *  - Stage data. */
 
-Main *CTX_data_main(kContext *C);
-wmWindowManager *CTX_wm_manager(kContext *C);
-wmWindow *CTX_wm_window(kContext *C);
-WorkSpace *CTX_wm_workspace(kContext *C);
-kScreen *CTX_wm_screen(kContext *C);
-ScrArea *CTX_wm_area(kContext *C);
-ARegion *CTX_wm_region(kContext *C);
-Scene *CTX_data_scene(kContext *C);
-Stage CTX_data_stage(kContext *C);
-UserDef *CTX_data_prefs(kContext *C);
+Main *CTX_data_main(const kContext *C);
+wmWindowManager *CTX_wm_manager(const kContext *C);
+wmWindow *CTX_wm_window(const kContext *C);
+WorkSpace *CTX_wm_workspace(const kContext *C);
+kScreen *CTX_wm_screen(const kContext *C);
+ScrArea *CTX_wm_area(const kContext *C);
+ARegion *CTX_wm_region(const kContext *C);
+ARegion *CTX_wm_menu(const kContext *C);
+Scene *CTX_data_scene(const kContext *C);
+Stage CTX_data_stage(const kContext *C);
+UserDef *CTX_data_prefs(const kContext *C);
 
 /**
  * Kraken Context Setters:

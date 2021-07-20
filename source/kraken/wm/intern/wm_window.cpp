@@ -291,11 +291,11 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
     /* Display quit dialog or quit immediately. */
     if (win)
     {
-      wm_quit_with_optional_confirmation_prompt(C, win);
+      WM_quit_with_optional_confirmation_prompt(C, win);
     }
     else
     {
-      wm_exit_schedule_delayed(C);
+      WM_exit_schedule_delayed(C);
     }
   }
   else
@@ -1038,46 +1038,54 @@ wmWindow *WM_window_open(kContext *C,
   return nullptr;
 }
 
+static void WM_generic_callback_free(wmGenericCallback *callback)
+{
+  if (callback->free_user_data) {
+    callback->free_user_data(callback->user_data);
+  }
+  delete callback;
+}
 
 static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
 {
-  /**
-   * TODO. */
-
-  post_action->free_user_data(post_action->user_data);
-
-  delete post_action;
+  if (/*!UI_popup_block_name_exists(CTX_wm_screen(C), close_file_dialog_name)*/false) {
+    // UI_popup_block_invoke(C, block_create__close_file_dialog, post_action, free_post_file_close_action);
+  }
+  else {
+    WM_generic_callback_free(post_action);
+  }
 }
 
 
-void wm_exit_schedule_delayed(kContext *C)
+static int wm_exit_handler(kContext *C, const wmEvent *event, void *userdata)
+{
+  WM_exit(C);
+
+  TF_UNUSED(event);
+  TF_UNUSED(userdata);
+  return WM_UI_HANDLER_BREAK;
+}
+
+
+void WM_exit_schedule_delayed(const kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
-  /**
-   * TODO. */
-
-  exit(KRAKEN_SUCCESS);
+  WM_event_add_ui_handler(C, win->modalhandlers, wm_exit_handler, NULL, NULL, 0);
+  WM_event_add_mousemove(win);
 }
 
 
 static void wm_save_file_on_quit_dialog_callback(kContext *C, void *UNUSED(user_data))
 {
-  wm_exit_schedule_delayed(C);
+  WM_exit_schedule_delayed(C);
 }
 
 static void wm_confirm_quit(kContext *C)
 {
-  /** Save User's Work. */
-  TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("WARNING: Saving without a confirmation Dialog. Overwriting existing changes.");
-
-  Stage stage = CTX_data_stage(C);
-  if (stage->GetRootLayer()->Save())
-  {
-    wmGenericCallback *action = new wmGenericCallback;
-    action->exec = (wmGenericCallbackFn)wm_save_file_on_quit_dialog_callback;
-    wm_close_file_dialog(C, action);
-  }
+  wmGenericCallback *action = new wmGenericCallback();
+  action->exec = wm_save_file_on_quit_dialog_callback;
+  wm_close_file_dialog(C, action);
 }
 
 
@@ -1172,22 +1180,20 @@ int WM_window_pixels_y(const wmWindow *win)
   return (int)(f * GET_Y(win_size));
 }
 
-
-void wm_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
+void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
 {
   wmWindow *win_ctx = CTX_wm_window(C);
-
-  Stage stage = CTX_data_stage(C);
-  UserDef *uprefs = CTX_data_prefs(C);
 
   /* The popup will be displayed in the context window which may not be set
    * here (this function gets called outside of normal event handling loop). */
   CTX_wm_window_set(C, win);
 
+  UserDef *uprefs = CTX_data_prefs(C);
   bool show_save = FormFactory(uprefs->showsave);
 
   if (show_save)
   {
+    Stage stage = CTX_data_stage(C);
     if (stage->GetRootLayer()->IsDirty())
     {
       wm_window_raise(win);
@@ -1195,12 +1201,12 @@ void wm_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
     }
     else
     {
-      wm_exit_schedule_delayed(C);
+      WM_exit_schedule_delayed(C);
     }
   }
   else
   {
-    wm_exit_schedule_delayed(C);
+    WM_exit_schedule_delayed(C);
   }
 
   CTX_wm_window_set(C, win_ctx);
@@ -1226,7 +1232,7 @@ void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
 
   if (win->parent == NULL)
   {
-    wm_quit_with_optional_confirmation_prompt(C, win);
+    WM_quit_with_optional_confirmation_prompt(C, win);
     return;
   }
 
@@ -1417,6 +1423,13 @@ void WM_anchor_init(kContext *C)
   }
 }
 
+void WM_anchor_exit(void)
+{
+  if (anchor_system) {
+    ANCHOR::DestroySystem(anchor_system);
+  }
+  anchor_system = NULL;
+}
 
 void WM_window_process_events(kContext *C)
 {
@@ -1503,7 +1516,7 @@ static bool wm_operator_winactive_normal(kContext *C)
 
 static int wm_exit_kraken_exec(kContext *C, wmOperator *UNUSED(op))
 {
-  wm_exit_schedule_delayed(C);
+  WM_exit_schedule_delayed(C);
   return OPERATOR_FINISHED;
 }
 
@@ -1516,11 +1529,11 @@ static int wm_exit_kraken_invoke(kContext *C, wmOperator *UNUSED(op), wmEvent *U
 
   if (prompt_save)
   {
-    wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
+    WM_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
   }
   else
   {
-    wm_exit_schedule_delayed(C);
+    WM_exit_schedule_delayed(C);
   }
   return OPERATOR_FINISHED;
 }

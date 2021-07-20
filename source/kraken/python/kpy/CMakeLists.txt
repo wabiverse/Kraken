@@ -18,6 +18,7 @@ set(SRC
   intern/kpy_driver.cpp
   intern/kpy_init_exit.cpp
   intern/kpy_interface_atexit.cpp
+  intern/kpy_interface_run.cpp
   intern/kpy_interface.cpp
   intern/kpy_intern_string.cpp
   intern/kpy_library_load.cpp
@@ -40,6 +41,7 @@ set(SRC
 
   KPY_api.h
   KPY_extern_python.h
+  KPY_extern_run.h
   KPY_init_exit.h
 )
 
@@ -47,6 +49,7 @@ set(INC_SYS
   ${TBB_INCLUDE_DIR}
   ${Boost_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIR}
+  ${PTHREADS_INCLUDE_DIR}
 )
 
 set(LIB
@@ -57,6 +60,7 @@ set(LIB
   ${TBB_LIBRARIES}
   ${PYTHON_LINKFLAGS}
   ${PYTHON_LIBRARIES}
+  ${PTHREADS_LIBRARY}
 )
 
 # configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)

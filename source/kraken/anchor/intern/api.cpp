@@ -3481,6 +3481,13 @@ AnchorU8 ANCHOR::GetNumDisplays(AnchorSystemHandle systemhandle)
   return system->getNumDisplays();
 }
 
+eAnchorStatus ANCHOR::DestroySystem(AnchorSystemHandle systemhandle)
+{
+  AnchorISystem *system = (AnchorISystem *)systemhandle;
+
+  return system->destroySystem();
+}
+
 AnchorSystemWindowHandle ANCHOR::CreateSystemWindow(AnchorSystemHandle systemhandle,
                                                     AnchorSystemWindowHandle parent_windowhandle,
                                                     const char *title,

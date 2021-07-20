@@ -101,7 +101,7 @@ extern PyTypeObject pyuni_object_Type;
 #define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_ObjectUNI *)(pyuni))->ptr.type != NULL))
 #define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyUNI *)(pyuni))->ptr.type != NULL))
 
-struct KPy_UniverseDummyPointer
+struct KPy_DummyPointerUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
@@ -164,6 +164,8 @@ struct KPy_UniverseFunction
 void KPY_uni_init(void);
 PyObject *KPY_uni_types(void);
 PyObject *KPY_uni_module(void);
+
+void KPY_update_uni_module(void);
 
 ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix);
 PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr);

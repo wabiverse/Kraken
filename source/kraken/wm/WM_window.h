@@ -71,6 +71,7 @@ bool WM_window_is_temp_screen(const wmWindow *win);
 
 void WM_anchor_init(kContext *C);
 void WM_anchor_exit(void);
+
 void WM_window_process_events(kContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
@@ -89,10 +90,15 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
                                  wmWindow **r_win,
                                  GfVec2i *r_mval);
 void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
+
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
+kScreen *WM_window_get_active_screen(const wmWindow *win);
+WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win);
+
+void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceLayout *layout);
 
 /** Cleanup. */
-void wm_exit_schedule_delayed(kContext *C);
-void wm_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win);
+void WM_exit_schedule_delayed(const kContext *C);
+void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win);
 
 WABI_NAMESPACE_END

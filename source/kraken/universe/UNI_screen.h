@@ -91,6 +91,7 @@ struct kScreen : public UsdUIScreen, public ObjectUNI
   std::vector<ScrVert *> verts;
   std::vector<ScrEdge *> edges;
   std::vector<ScrArea *> areas;
+  std::vector<ARegion *> regions;
 
   ARegion *active_region;
 
@@ -112,6 +113,7 @@ kScreen::kScreen(kContext *C, const SdfPath &stagepath)
     areas_rel(CreateAreasRel()),
     verts(EMPTY),
     areas(EMPTY),
+    regions(EMPTY),
     active_region(POINTER_ZERO),
     redraws_flag(VALUE_ZERO),
     temp(VALUE_ZERO),

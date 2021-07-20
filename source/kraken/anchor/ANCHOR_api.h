@@ -985,6 +985,9 @@ float GetNativePixelSize(AnchorSystemWindowHandle windowhandle);
 ANCHOR_API
 void GetMainDisplayDimensions(AnchorSystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
 
+ANCHOR_API
+eAnchorStatus DestroySystem(AnchorSystemHandle systemhandle);
+
 /**
  * Initialize Anchor System Window.
  *

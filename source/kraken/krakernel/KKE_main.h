@@ -172,6 +172,13 @@ enum ckeErrorType
 };
 
 Main KKE_main_init(void);
+void KKE_main_free(Main *mainvar);
+void KKE_kraken_free(void);
+
+void KKE_kraken_atexit(void);
+void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data);
+void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data);
+
 void KKE_kraken_main_init(kContext *C, int argc, const char **argv);
 void KKE_kraken_globals_init();
 void KKE_kraken_plugins_init(void);

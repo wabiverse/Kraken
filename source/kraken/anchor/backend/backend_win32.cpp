@@ -99,11 +99,9 @@
 
 /**
  * Using XInput for gamepad (will load DLL dynamically) */
-#ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
 #  include <xinput.h>
 typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES *);
 typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
-#endif
 
 WABI_NAMESPACE_USING
 
@@ -127,11 +125,9 @@ struct AnchorBackendWin32Data
   bool HasGamepad;
   bool WantUpdateHasGamepad;
 
-#ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
   HMODULE XInputDLL;
   PFN_XInputGetCapabilities XInputGetCapabilities;
   PFN_XInputGetState XInputGetState;
-#endif
 
   AnchorBackendWin32Data()
   {
@@ -969,7 +965,6 @@ static void AnchorBackendWin32UpdateMousePos()
  * Gamepad navigation mapping */
 static void AnchorBackendWin32UpdateGamepads()
 {
-#ifndef ANCHOR_IMPL_WIN32_DISABLE_GAMEPAD
   AnchorIO &io = ANCHOR::GetIO();
   AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
   memset(io.NavInputs, 0, sizeof(io.NavInputs));
@@ -1054,7 +1049,6 @@ static void AnchorBackendWin32UpdateGamepads()
 #  undef MAP_BUTTON
 #  undef MAP_ANALOG
   }
-#endif
 }
 
 static void AnchorBackendWin32NewFrame()
@@ -3468,6 +3462,9 @@ AnchorWindowWin32::~AnchorWindowWin32()
 
   DestroyVulkan();
   DestroyD3D();
+
+  AnchorBackendDXD12Shutdown();
+  AnchorBackendWin32Shutdown();
 
   // closeWintab();
 

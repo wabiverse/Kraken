@@ -22,12 +22,20 @@
  * It Bites.
  */
 
+#include <Python.h>
+
+#include <float.h>
+#include <stddef.h>
+
+#include "KLI_threads.h"
+
 #include "KKE_appdir.h"
 
 #include "KPY_api.h"
 #include "KPY_extern_python.h"
 
 #include "kpy.h"
+#include "kpy_capi_utils.h"
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
@@ -35,8 +43,61 @@
 
 WABI_NAMESPACE_BEGIN
 
+/* In case a python script triggers another python
+ * call, stop kpy_context_clear from invalidating. */
+static int py_call_level = 0;
+
 /* Set by command line arguments before Python starts. */
 static bool py_use_system_env = false;
+
+
+/* use for updating while a python script runs - in case of file load */
+void KPY_context_update(kContext *C)
+{
+  if (!KLI_thread_is_main()) {
+    return;
+  }
+
+  KPY_context_set(C);
+  KPY_modules_update();
+}
+
+void kpy_context_set(kContext *C, PyGILState_STATE *gilstate)
+{
+  py_call_level++;
+
+  if (gilstate) {
+    *gilstate = PyGILState_Ensure();
+  }
+
+  if (py_call_level == 1) {
+    KPY_context_update(C);
+  }
+}
+
+void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
+{
+  py_call_level--;
+
+  if (gilstate) {
+    PyGILState_Release(*gilstate);
+  }
+
+  if (py_call_level < 0) {
+    fprintf(stderr, "ERROR: Python context internal state bug. this should not happen!\n");
+  }
+  else if (py_call_level == 0) {
+
+  }
+}
+
+/**
+ * Needed so the #Main pointer in `kpy.data` doesn't become out of date */
+void KPY_modules_update(void)
+{
+  /* refreshes the main struct */
+  KPY_update_uni_module();
+}
 
 static struct _inittab kpy_internal_modules[] = {
   {"_kpy_path", KPyInit__kpy_path},
@@ -236,9 +297,47 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
 #ifdef WITH_PYTHON_MODULE
   /* Disable all add-ons at exit, not essential, it just avoids resource leaks. */
-  KPY_run_string_eval(C,
-                      (const char *[]){"atexit", "addon_utils", NULL},
-                      "atexit.register(addon_utils.disable_all)");
+  const char *imports[] = {"atexit", "addon_utils", NULL};
+  KPY_run_string_eval(C, imports, "atexit.register(addon_utils.disable_all)");
+#endif
+}
+
+static void kpy_context_end(kContext *C)
+{
+  if (UNLIKELY(C == NULL)) {
+    return;
+  }
+  CTX_wm_operator_poll_msg_clear(C);
+}
+
+void KPY_python_end(void)
+{
+  PyGILState_STATE gilstate;
+
+  /* finalizing, no need to grab the state, except when we are a module */
+  gilstate = PyGILState_Ensure();
+
+  /* Clear Python values in the context so freeing the context after Python exits doesn't crash. */
+  kpy_context_end(KPY_context_get());
+
+  /* Decrement user counts of all callback functions. */
+  // KPY_uni_props_clear_all();
+
+  /* free other python data. */
+  // pyuni_free_types();
+
+  /* clear all python data from structs */
+
+  kpy_intern_string_exit();
+
+#ifndef WITH_PYTHON_MODULE
+  KPY_atexit_unregister(); /* without this we get recursive calls to WM_exit */
+
+  Py_Finalize();
+
+  (void)gilstate;
+#else
+  PyGILState_Release(gilstate);
 #endif
 }
 

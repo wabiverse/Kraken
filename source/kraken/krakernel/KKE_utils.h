@@ -46,5 +46,6 @@ std::string kraken_startup_file_init(void);
 typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
 
 void *KKE_rhash_lookup(RHash *rh, const TfToken &key);
+void KKE_rhash_insert(RHash *rh, const TfToken &key, void* value);
 
 WABI_NAMESPACE_END

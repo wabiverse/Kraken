@@ -60,6 +60,9 @@ WABI_NAMESPACE_BEGIN
 #define KM_DBL_CLICK 4
 #define KM_CLICK_DRAG 5
 
+#define WM_UI_HANDLER_CONTINUE 0
+#define WM_UI_HANDLER_BREAK 1
+
 /* category */
 #define NOTE_CATEGORY 0xFF000000
 #define NC_WM (1 << 24)
@@ -722,6 +725,43 @@ struct wmEvent
       customdata(POINTER_ZERO),
       is_direction_inverted(VALUE_ZERO)
   {}
+};
+
+typedef bool (*EventHandlerPoll)(const struct ARegion *region, const wmEvent *event);
+typedef int (*wmUIHandlerFunc)(kContext *C, const wmEvent *event, void *userdata);
+typedef void (*wmUIHandlerRemoveFunc)(kContext *C, void *userdata);
+
+enum eWmEventHandlerType {
+  WM_HANDLER_TYPE_GIZMO = 1,
+  WM_HANDLER_TYPE_UI,
+  WM_HANDLER_TYPE_OP,
+  WM_HANDLER_TYPE_DROPBOX,
+  WM_HANDLER_TYPE_KEYMAP,
+};
+
+enum {
+  WM_HANDLER_BLOCKING = (1 << 0),
+  WM_HANDLER_ACCEPT_DBL_CLICK = (1 << 1),
+  WM_HANDLER_DO_FREE = (1 << 7),
+};
+
+struct wmEventHandler {
+  eWmEventHandlerType type;
+  char flag;
+
+  EventHandlerPoll poll;
+};
+
+struct wmEventHandlerUI : public wmEventHandler {
+  wmUIHandlerFunc handle_fn;
+  wmUIHandlerRemoveFunc remove_fn;
+  void *user_data;
+
+  struct {
+    struct ScrArea *area;
+    struct ARegion *region;
+    struct ARegion *menu;
+  } context;
 };
 
 enum

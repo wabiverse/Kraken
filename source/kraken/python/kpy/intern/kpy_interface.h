@@ -36,6 +36,9 @@
 
 WABI_NAMESPACE_BEGIN
 
+void KPY_context_set(kContext *C);
 kContext *KPY_context_get(void);
+
+void KPY_context_update(kContext *C);
 
 WABI_NAMESPACE_END

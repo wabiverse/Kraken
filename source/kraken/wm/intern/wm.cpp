@@ -206,4 +206,10 @@ void WM_check(kContext *C)
   // }
 }
 
+/* wait until every job ended */
+void WM_jobs_kill_all(wmWindowManager *wm)
+{
+
+}
+
 WABI_NAMESPACE_END

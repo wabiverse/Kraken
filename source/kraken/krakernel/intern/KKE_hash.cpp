@@ -32,4 +32,9 @@ void *KKE_rhash_lookup(RHash *rh, const TfToken &key)
   return ot ? ot : NULL;
 }
 
+void KKE_rhash_insert(RHash *rh, const TfToken &key, void* value)
+{
+  rh->insert(typename RHash::value_type(std::make_pair(key, value)));
+}
+
 WABI_NAMESPACE_END

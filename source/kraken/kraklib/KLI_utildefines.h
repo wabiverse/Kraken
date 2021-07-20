@@ -366,6 +366,7 @@ namespace fs = std::filesystem;
 #endif
 
 #define IFACE_(msgid) msgid
+#define TIP_(msgid) msgid
 #define N_(msgid) msgid
 
 /* hint to mark function arguments expected to be non-null

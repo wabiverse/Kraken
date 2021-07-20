@@ -78,6 +78,9 @@ int main(int argc, const char **argv)
 
   /* Runtime. */
   WM_init(C, argc, (const char **)argv);
+
+  CTX_py_init_set(C, true);
+
   WM_main(C);
 
   return KRAKEN_SUCCESS;

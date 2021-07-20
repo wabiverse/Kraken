@@ -57,13 +57,31 @@ uint32_t PyC_Long_AsU32(PyObject *value);
 uint64_t PyC_Long_AsU64(PyObject *value);
 #endif
 
+void PyC_FileAndNum(const char **r_filename, int *r_lineno);
+void PyC_FileAndNum_Safe(const char **r_filename, int *r_lineno);
+
 PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *format, ...);
 PyObject *PyC_Err_SetString_Prefix(PyObject *exception_type_prefix, const char *str);
+PyObject *PyC_ExceptionBuffer(void);
+PyObject *PyC_ExceptionBuffer_Simple(void);
 
 int PyC_ParseStringEnum(PyObject *o, void *p);
 int PyC_ParseBool(PyObject *o, void *p);
 
 PyObject *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size);
 PyObject *PyC_UnicodeFromByte(const char *str);
+
+PyObject *PyC_DefaultNameSpace(const char *filename);
+bool PyC_NameSpace_ImportArray(PyObject *py_dict, const char *imports[]);
+void PyC_MainModule_Backup(PyObject **r_main_mod);
+void PyC_MainModule_Restore(PyObject *main_mod);
+bool PyC_IsInterpreterActive(void);
+
+/* Kpy ----  */
+
+bool KPy_errors_to_report(struct ReportList *reports);
+
+extern void kpy_context_set(struct kContext *C, PyGILState_STATE *gilstate);
+extern void kpy_context_clear(struct kContext *C, const PyGILState_STATE *gilstate);
 
 WABI_NAMESPACE_END
