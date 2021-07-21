@@ -98,8 +98,9 @@ class UsdSchemaBase
   }
 
   /// Returns the kind of schema this class is.
-  UsdSchemaKind GetUsdSchemaKind() const {
-      return GetSchemaKind();
+  UsdSchemaKind GetUsdSchemaKind() const
+  {
+    return GetSchemaKind();
   }
 
   /// Construct and store \p prim as the held prim.

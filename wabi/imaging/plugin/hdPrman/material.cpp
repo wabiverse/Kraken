@@ -55,7 +55,7 @@ TF_MAKE_STATIC_DATA(NdrTokenVec, _sourceTypes)
   *_sourceTypes = {
     TfToken("OSL"),
     TfToken("RmanCpp"),
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#ifdef WITH_MATERIALX
     TfToken("mtlx")
 #endif
   };
@@ -72,7 +72,7 @@ TF_MAKE_STATIC_DATA(MatfiltFilterChain, _filterChain)
   *_filterChain = {
     MatfiltConvertPreviewMaterial,
     MatfiltResolveVstructs,
-#ifdef PXR_MATERIALX_SUPPORT_ENABLED
+#ifdef WITH_MATERIALX
     MatfiltMaterialX
 #endif
   };

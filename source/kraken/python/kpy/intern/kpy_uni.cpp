@@ -621,7 +621,7 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *sel
 
 static PyTypeObject pyuni_prop_collection_iter_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_prop_collection_iter", /* tp_name */
-  sizeof(KPy_CollectionPropertyLUXO),                         /* tp_basicsize */
+  sizeof(KPy_CollectionPropertyLUXO),                        /* tp_basicsize */
   0,                                                         /* tp_itemsize */
   /* methods */
   (destructor)pyuni_prop_collection_iter_dealloc, /* tp_dealloc */
@@ -706,7 +706,7 @@ static PyTypeObject pyuni_prop_collection_iter_Type = {
 static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerLUXO *ptr, PropertyLUXO *prop)
 {
   KPy_CollectionPropertyLUXO *self = PyObject_New(KPy_CollectionPropertyLUXO,
-                                                 &pyuni_prop_collection_iter_Type);
+                                                  &pyuni_prop_collection_iter_Type);
 
 #  ifdef USE_WEAKREFS
   self->in_weakreflist = NULL;

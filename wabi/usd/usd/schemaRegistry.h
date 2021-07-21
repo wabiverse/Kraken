@@ -80,7 +80,7 @@ class UsdSchemaRegistry : public TfWeakBase, boost::noncopyable
   template<class SchemaType>
   static TfToken GetSchemaTypeName()
   {
-    return GetSchemaTypeName(SchemaType::_GetStaticTfType());
+    return GetSchemaTypeName(SchemaType::GetStaticTfType());
   }
 
   /// Return the type name in the USD schema for concrete prim types only from

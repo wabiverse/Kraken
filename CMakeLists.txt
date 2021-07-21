@@ -112,8 +112,9 @@ endif()
 #-----------------------------------------------------------------------------
 # Force colored output on Unix
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
 if(UNIX)
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_compile_options(-fdiagnostics-color=always)
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

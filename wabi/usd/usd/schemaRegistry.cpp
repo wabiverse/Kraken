@@ -221,7 +221,7 @@ _IsMultipleApplySchemaKind(const UsdSchemaKind schemaKind)
 }
 
 static UsdSchemaKind
-_GetSchemaKindFromMetadata(const JsObject &dict)
+GetSchemaKindFromMetadata(const JsObject &dict)
 {
   const JsValue *kindValue = TfMapLookupPtr(dict, _tokens->schemaKind);
   if (!kindValue)
@@ -264,7 +264,7 @@ _GetSchemaKindFromMetadata(const JsObject &dict)
 }
 
 static UsdSchemaKind
-_GetSchemaKindFromPlugin(const TfType &schemaType)
+GetSchemaKindFromPlugin(const TfType &schemaType)
 {
   PlugPluginPtr plugin =
     PlugRegistry::GetInstance().GetPluginForType(schemaType);
@@ -275,7 +275,7 @@ _GetSchemaKindFromPlugin(const TfType &schemaType)
     return UsdSchemaKind::Invalid;
   }
 
-  return _GetSchemaKindFromMetadata(plugin->GetMetadataForType(schemaType));
+  return GetSchemaKindFromMetadata(plugin->GetMetadataForType(schemaType));
 }
 
 /*static*/
@@ -295,7 +295,7 @@ UsdSchemaRegistry::GetConcreteSchemaTypeName(const TfType &schemaType)
   auto it = typeMapCache.typeToName.find(schemaType);
   if (it != typeMapCache.typeToName.end() &&
       it->second.isTyped &&
-      _IsConcreteSchemaKind(_GetSchemaKindFromPlugin(schemaType)))
+      _IsConcreteSchemaKind(GetSchemaKindFromPlugin(schemaType)))
   {
     return it->second.name;
   }
@@ -330,7 +330,7 @@ UsdSchemaRegistry::GetConcreteTypeFromSchemaTypeName(const TfToken &typeName)
   auto it = typeMapCache.nameToType.find(typeName);
   if (it != typeMapCache.nameToType.end() &&
       it->second.isTyped &&
-      _IsConcreteSchemaKind(_GetSchemaKindFromPlugin(it->second.type)))
+      _IsConcreteSchemaKind(GetSchemaKindFromPlugin(it->second.type)))
   {
     return it->second.type;
   }
@@ -360,7 +360,7 @@ UsdSchemaRegistry::GetSchemaKind(const TfType &schemaType)
     return UsdSchemaKind::Invalid;
   }
   // Is a valid schema type.
-  return _GetSchemaKindFromPlugin(schemaType);
+  return GetSchemaKindFromPlugin(schemaType);
 }
 
 /*static*/
@@ -375,7 +375,7 @@ UsdSchemaRegistry::GetSchemaKind(const TfToken &typeName)
     return UsdSchemaKind::Invalid;
   }
   // Is a valid schema type.
-  return _GetSchemaKindFromPlugin(it->second.type);
+  return GetSchemaKindFromPlugin(it->second.type);
 }
 
 /*static*/
@@ -491,7 +491,7 @@ _GetAppliedAPISchemaNames()
     const TfToken &typeName = valuePair.second.name;
 
     if (!valuePair.second.isTyped &&
-        _IsAppliedAPISchemaKind(_GetSchemaKindFromPlugin(type)))
+        _IsAppliedAPISchemaKind(GetSchemaKindFromPlugin(type)))
     {
       result.insert(typeName);
     }
@@ -1248,7 +1248,7 @@ void Usd_GetAPISchemaPluginApplyToInfoForType(
   const JsObject dict = plugin->GetMetadataForType(apiSchemaType);
 
   // Skip types that aren't applied API schemas
-  const UsdSchemaKind schemaKind = _GetSchemaKindFromMetadata(dict);
+  const UsdSchemaKind schemaKind = GetSchemaKindFromMetadata(dict);
   if (!_IsAppliedAPISchemaKind(schemaKind))
   {
     return;
