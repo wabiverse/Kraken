@@ -31,9 +31,11 @@
 
 #include "KKE_context.h"
 #include "KKE_main.h"
+#include "KKE_report.h"
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 
+#include "UNI_file.h"
 #include "UNI_space_types.h"
 
 #include "kpy_capi_utils.h"
@@ -42,6 +44,11 @@
 #include "kpy_uni.h"
 #include "kpy_utildefines.h"
 
+#include <wabi/usd/sdf/layer.h>
+#include <wabi/usd/ar/resolver.h>
+#include <wabi/usd/usd/primRange.h>
+#include <wabi/usd/usd/stage.h>
+
 WABI_NAMESPACE_BEGIN
 
 #define INDEX_ID_MAX 41
@@ -49,13 +56,13 @@ WABI_NAMESPACE_BEGIN
 struct KPy_Library
 {
   PyObject_HEAD /* Required Python macro. */
-    /* Collection iterator specific parts. */
-    char relpath[FILE_MAX];
-  char abspath[FILE_MAX]; /* absolute path */
+
+  char relpath[FILE_MAX];
+  char abspath[FILE_MAX];
+  KrakenHandle *kr_handle;
   int flag;
   PyObject *dict;
-  /* Borrowed reference to the `bmain`, taken from the RNA instance of #RNA_BlendDataLibraries.
-   * Defaults to #G.main, Otherwise use a temporary #Main when `bmain_is_temp` is true. */
+
   Main *kmain;
   bool kmain_is_temp;
 };
@@ -213,6 +220,35 @@ static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *k
   return (PyObject *)ret;
 }
 
+static const void _AppendToPaths(SdfPathVector paths, const SdfPath &path)
+{
+  paths.push_back(path);
+}
+
+static PyObject *_kpy_names(KPy_Library *self, const SdfPath &prim)
+{
+  PyObject *list;
+  SdfPathVector paths;
+
+  SdfLayerRefPtr layer = self->kr_handle->sdf_handle;
+
+  SdfLayer::TraversalFunction appendFunc = std::bind(&_AppendToPaths, paths, std::placeholders::_1);
+  layer->Traverse(prim, appendFunc);
+
+  list = PyList_New(paths.size());
+
+  if (!paths.empty()) {
+    int counter = 0;
+    UNIVERSE_FOR_ALL (sdf_path, paths) {
+      PyList_SET_ITEM(list, counter, PyUnicode_FromString(CHARALL(sdf_path.GetName())));
+      counter++;
+    }
+    paths.clear();
+  }
+
+  return list;
+}
+
 static PyObject *kpy_lib_enter(KPy_Library *self)
 {
   PyObject *ret;
@@ -220,40 +256,48 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
   PyObject *from_dict = _PyDict_NewPresized(INDEX_ID_MAX);
   ReportList reports;
 
-  //   KKE_reports_init(&reports, RPT_STORE);
-  //   PixarFileReadReport kr_reports = {.reports = &reports};
+  KKE_reports_init(&reports, RPT_STORE);
+  KrakenFileReadReport kr_reports = {.reports = &reports};
 
-  //   int i = 0, code;
-  //   while ((code = KKE_idtype_idcode_iter_step(&i))) {
-  //     if (KKE_idtype_idcode_is_linkable(code)) {
-  //       const char *name_plural = BKE_idtype_idcode_to_name_plural(code);
-  //       PyObject *str = PyUnicode_FromString(name_plural);
-  //       PyObject *item;
+  self->kr_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);
 
-  //       PyDict_SetItem(self->dict, str, item = PyList_New(0));
-  //       Py_DECREF(item);
-  //       PyDict_SetItem(from_dict, str, item = _kpy_names(self, code));
-  //       Py_DECREF(item);
+  if (self->kr_handle == NULL) {
+    if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1) {
+      PyErr_Format(PyExc_IOError, "load: %s failed to open kraken project file", self->abspath);
+    }
+    return NULL;
+  }
 
-  //       Py_DECREF(str);
-  //     }
-  //   }
+  SdfLayer::RootPrimsView prims = self->kr_handle->sdf_handle->GetRootPrims();
+
+  UNIVERSE_FOR_ALL(prim, prims)
+  {
+    PyObject *str = PyUnicode_FromString(CHARALL(prim->GetName()));
+    PyObject *item;
+
+    PyDict_SetItem(self->dict, str, item = PyList_New(0));
+    Py_DECREF(item);
+    PyDict_SetItem(from_dict, str, item = _kpy_names(self, prim->GetPath()));
+    Py_DECREF(item);
+
+    Py_DECREF(str);
+  }
 
   /* create a dummy */
   self_from = PyObject_New(KPy_Library, &kpy_lib_Type);
   KLI_strncpy(self_from->relpath, self->relpath, sizeof(self_from->relpath));
   KLI_strncpy(self_from->abspath, self->abspath, sizeof(self_from->abspath));
 
-  //   self_from->blo_handle = NULL;
+  self_from->kr_handle = nullptr;
   self_from->flag = 0;
   self_from->dict = from_dict; /* owns the dict */
 
   /* return pair */
   ret = PyTuple_New(2);
-  //   PyTuple_SET_ITEMS(ret, (PyObject *)self_from, (PyObject *)self);
+  PyTuple_SET_ITEMS(ret, (PyObject *)self_from, (PyObject *)self);
   Py_INCREF(self);
 
-  //   KKE_reports_clear(&reports);
+  KKE_reports_clear(&reports);
 
   return ret;
 }

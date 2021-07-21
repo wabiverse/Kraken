@@ -91,6 +91,7 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
                                  GfVec2i *r_mval);
 void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
 
+Scene *WM_window_get_active_scene(const wmWindow *win);
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 kScreen *WM_window_get_active_screen(const wmWindow *win);
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win);

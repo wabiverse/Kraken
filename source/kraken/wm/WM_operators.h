@@ -64,7 +64,7 @@ struct wmOperatorType
   const TfNotice notice;
 
   /** Properties on this operator. */
-  ObjectUNI *uni;
+  KrakenPrim *uni;
 
   eWmOperatorType flag;
 

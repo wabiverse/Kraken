@@ -4,6 +4,7 @@ add_subdirectory(wm)
 add_subdirectory(krakernel)
 add_subdirectory(kraklib)
 add_subdirectory(universe)
+add_subdirectory(luxo)
 add_subdirectory(python)
 
 # if(WITH_TESTS)

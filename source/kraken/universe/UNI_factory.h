@@ -88,9 +88,9 @@ namespace CreationFactory
 {
 namespace PTR
 {
-inline void New(SdfPath id, ObjectUNI *type, void *data, PointerUNI *r_ptr)
+inline void New(SdfPath id, KrakenPrim *type, void *data, PointerUNI *r_ptr)
 {
-  r_ptr = new ObjectUNI();
+  r_ptr = new KrakenPrim();
   r_ptr->path = id;
   r_ptr->type = type;
 }
@@ -105,9 +105,9 @@ inline void Set(PointerUNI *ptr, const std::string &name, const std::string &val
   strprop.variability = SdfVariabilityUniform;
   strprop.custom = false;
 
-  UsdAttribute attr = ptr->CreateAttribute(strprop.name,
-                                           strprop.type,
-                                           strprop.variability);
+  UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
+                                                     strprop.type,
+                                                     strprop.variability);
   attr.Set(std::string(value));
   ptr->props.push_back(attr);
 }
@@ -122,9 +122,9 @@ inline void Set(PointerUNI *ptr, const std::string &name, const bool &value)
   strprop.variability = SdfVariabilityUniform;
   strprop.custom = false;
 
-  UsdAttribute attr = ptr->CreateAttribute(strprop.name,
-                                           strprop.type,
-                                           strprop.variability);
+  UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
+                                                     strprop.type,
+                                                     strprop.variability);
   attr.Set(bool(value));
   ptr->props.push_back(attr);
 }

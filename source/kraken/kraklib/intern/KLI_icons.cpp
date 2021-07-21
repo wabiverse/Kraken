@@ -34,10 +34,12 @@ WABI_NAMESPACE_BEGIN
 /**
  * Refactor and hash these in so we're not creating 19 billion strings. */
 
-std::string KLI_icon(int icon_id)
+std::string KLI_icon(eKrakenIcon icon_id)
 {
   switch (icon_id)
   {
+    case ICON_NONE:
+      return std::string();
     case ICON_KRAKEN:
       return STRCAT(G.main->icons_path, "kraken-desktop.png");
     case ICON_WINDOW_CLOSE:
@@ -165,7 +167,7 @@ std::string KLI_icon(int icon_id)
     case ICON_CLICK_MIDDLE:
       return STRCAT(G.main->icons_path, "click_middle.png");
     default:
-      return STRCAT(G.main->icons_path, "kraken-desktop.png");
+      return std::string();
   }
 }
 

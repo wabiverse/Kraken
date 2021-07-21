@@ -81,7 +81,7 @@ void CREATOR_setup_args(int argc, const char **argv)
     ("factory-startup", CREATOR_ARGS::bool_switch(&G.factory_startup),
     "Resets factory default settings and preferences on startup")
 
-    ("server", CREATOR_ARGS::bool_switch(&G.server),
+    ("server", CREATOR_ARGS::bool_switch(&G.background),
     "Puts KRAKEN in a headless client-serving server mode")
 
     ("diagnostics", CREATOR_ARGS::bool_switch(&run_diagnostics),

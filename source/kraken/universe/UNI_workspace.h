@@ -80,7 +80,7 @@ struct WorkSpaceDataRelation
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
-struct WorkSpace : public UsdUIWorkspace, public ObjectUNI
+struct WorkSpace : public UsdUIWorkspace, KrakenPrim
 {
   SdfPath path;
 
@@ -95,7 +95,7 @@ struct WorkSpace : public UsdUIWorkspace, public ObjectUNI
 };
 
 WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
-  : UsdUIWorkspace(KRAKEN_UNIVERSE_CREATE(C)),
+  : UsdUIWorkspace(KRAKEN_LUXOVERSE_CREATE(C)),
     path(UsdUIWorkspace::GetPath()),
     name(CreateNameAttr(DEFAULT_TOKEN("Workspace"))),
     screen_rel(CreateScreenRel()),

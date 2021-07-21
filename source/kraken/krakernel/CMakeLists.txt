@@ -7,6 +7,7 @@ set(INC
   ../editors/include
   ../kraklib
   ../wm
+  ../luxo
   ../universe
   ../gatekeeper
   ../python
@@ -16,11 +17,14 @@ set(SRC
   intern/KKE_appdir.cpp
   intern/KKE_context.cpp
   intern/KKE_kraken.cpp
+  intern/KKE_kraken_prim.cpp
   intern/KKE_diagnostics.cpp
   intern/KKE_hash.cpp
   intern/KKE_icons.cpp
   intern/KKE_plugins.cpp
   intern/KKE_python.cpp
+  intern/KKE_report.cpp
+  intern/KKE_scene.cpp
   intern/KKE_screen.cpp
   intern/KKE_utils.cpp
   intern/KKE_workspace.cpp
@@ -29,8 +33,11 @@ set(SRC
   KKE_appdir.h
   KKE_context.h
   KKE_icons.h
+  KKE_kraken_prim.h
   KKE_main.h
+  KKE_report.h
   KKE_robinhood.h
+  KKE_scene.h
   KKE_screen.h
   KKE_space.h
   KKE_workspace.h
@@ -53,6 +60,7 @@ set(LIB
   kraken_lib
   kraken_python
   kraken_wm
+  kraken_luxo
   kraken_universe
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}

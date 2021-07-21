@@ -27,6 +27,7 @@
 #include "UNI_area.h"
 #include "UNI_context.h"
 #include "UNI_region.h"
+#include "UNI_scene.h"
 #include "UNI_screen.h"
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
@@ -62,7 +63,7 @@ struct ScrAreaMap
   {}
 };
 
-struct wmWindow : public UsdUIWindow, public ObjectUNI
+struct wmWindow : public UsdUIWindow, KrakenPrim
 {
   SdfPath path;
   wmWindow *parent;
@@ -84,7 +85,7 @@ struct wmWindow : public UsdUIWindow, public ObjectUNI
   UsdRelationship workspace_rel;
 
   /** Active scene for this window. */
-  TfToken scene;
+  Scene *scene;
 
   /** Anchor system backend pointer. */
   void *anchorwin;
@@ -114,7 +115,7 @@ struct wmWindow : public UsdUIWindow, public ObjectUNI
 
 
 wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_UNIVERSE_CREATE(C)),
+  : UsdUIWindow(KRAKEN_LUXOVERSE_CREATE(C)),
     path(stagepath),
     parent(NULL),
     title(CreateTitleAttr()),
@@ -141,7 +142,7 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
 {}
 
 wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
+  : UsdUIWindow(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
     path(UsdUIWindow::GetPath()),
     parent(prim),
     title(CreateTitleAttr()),
@@ -197,7 +198,7 @@ struct wmSpaceTypeListenerParams
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
-struct wmWindowManager : public ObjectUNI
+struct wmWindowManager : public KrakenPrim
 {
   SdfPath path;
 

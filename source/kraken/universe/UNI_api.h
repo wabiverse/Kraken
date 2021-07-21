@@ -34,29 +34,29 @@
 #include <iterator>
 
 #if defined(WABI_STATIC)
-#  define KRAKEN_UNIVERSE_API
-#  define KRAKEN_UNIVERSE_API_TEMPLATE_CLASS(...)
-#  define KRAKEN_UNIVERSE_API_TEMPLATE_STRUCT(...)
-#  define KRAKEN_UNIVERSE_LOCAL
+#  define KRAKEN_LUXOVERSE_API
+#  define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...)
+#  define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...)
+#  define KRAKEN_LUXOVERSE_LOCAL
 #else
-#  if defined(KRAKEN_UNIVERSE_EXPORTS)
-#    define KRAKEN_UNIVERSE_API ARCH_EXPORT
-#    define KRAKEN_UNIVERSE_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
-#    define KRAKEN_UNIVERSE_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
+#  if defined(KRAKEN_LUXOVERSE_EXPORTS)
+#    define KRAKEN_LUXOVERSE_API ARCH_EXPORT
+#    define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
+#    define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
 #  else
-#    define KRAKEN_UNIVERSE_API ARCH_IMPORT
-#    define KRAKEN_UNIVERSE_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
-#    define KRAKEN_UNIVERSE_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
+#    define KRAKEN_LUXOVERSE_API ARCH_IMPORT
+#    define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
+#    define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
 #  endif
-#  define KRAKEN_UNIVERSE_LOCAL ARCH_HIDDEN
+#  define KRAKEN_LUXOVERSE_LOCAL ARCH_HIDDEN
 #endif
 
 #define KRAKEN_DECLARE_STATIC_TOKEN(x) const TfToken x
 #define KRAKEN_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
 #define IDNAME(z) KRAKEN_OPERATOR_TOKENS->z
 
-#define KRAKEN_UNIVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
-#define KRAKEN_UNIVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
+#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
+#define KRAKEN_LUXOVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
 #define KRAKEN_PRIM_OPERATOR_CREATE(x, y) CTX_data_stage(x)->DefinePrim(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
 
 #define GET_X(x) x[0]
@@ -86,6 +86,9 @@
 #define DEFAULT_TOKEN(t) VtValue(TfToken(t))
 #define DEFAULT_ASSET(a) VtValue(SdfAssetPath(a))
 #define DEFAULT_VEC2F(v1f, v2f) VtValue(GfVec2f(v1f, v2f))
+
+#define KRAKEN_FILE_VERSION_HEADER \
+  (std::string("Kraken v" + TfStringify(KRAKEN_VERSION_MAJOR) + "." + TfStringify(KRAKEN_VERSION_MINOR)))
 
 enum eIconSizes
 {

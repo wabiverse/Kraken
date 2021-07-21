@@ -51,6 +51,8 @@
 
 /* clang-format on */
 
+#define CHECK_TYPE_ANY(...) (void)0
+
 #define PyTuple_SET_ITEMS(op_arg, ...) \
   { \
     PyTupleObject *op = (PyTupleObject *)op_arg; \

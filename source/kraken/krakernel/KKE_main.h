@@ -33,7 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Main : public ObjectUNI
+struct Main : public KrakenPrim
 {
   uint64_t build_commit_timestamp;
   std::string build_hash;
@@ -54,6 +54,7 @@ struct Main : public ObjectUNI
   std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;
+  std::vector<struct Scene *> scenes;
 };
 
 /** #Global.debug */
@@ -111,13 +112,20 @@ enum
   (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
    G_DEBUG_FREESTYLE | G_DEBUG_STAGE | G_DEBUG_IO | G_DEBUG_ANCHOR)
 
+enum eGlobalFileFlags {
+  G_FILE_AUTOPACK = (1 << 0),
+  G_FILE_COMPRESS = (1 << 1),
+  G_FILE_NO_UI = (1 << 2),
+  G_FILE_RECOVER_READ = (1 << 3),
+  G_FILE_RECOVER_WRITE = (1 << 4),
+};
+
 struct Global
 {
   Main *main;
 
-  bool server;
+  bool background;
   bool factory_startup;
-  bool custom_startup;
 
   /**
    * Has escape been pressed or Ctrl+C pressed in background mode, used for render quit. */
@@ -137,6 +145,8 @@ struct Global
    * - set python or command line args */
   int debug;
 
+  /** #eGlobalFileFlags */
+  int fileflags;
 
   /** Message to use when auto execution fails. */
   char autoexec_fail[200];

@@ -67,7 +67,7 @@ struct ScrGlobalAreaData
 };
 
 
-struct ScrArea : public UsdUIArea, public ObjectUNI
+struct ScrArea : public UsdUIArea, KrakenPrim
 {
   int areaid;
   SdfPath path;
@@ -85,13 +85,21 @@ struct ScrArea : public UsdUIArea, public ObjectUNI
   struct SpaceType *type;
   ScrGlobalAreaData *global;
 
+  /** Private, for spacetype refresh callback. */
+  bool do_refresh;
+
+  /**
+   * Index of last used region of 'RGN_TYPE_WINDOW'
+   * runtime variable, updated by executing operators. */
+  short region_active_win;
+
   std::vector<ARegion *> regions;
 
   inline ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };
 
 ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
+  : UsdUIArea(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
     areaid(VALUE_ZERO),
     path(UsdUIArea::GetPath()),
     v1(POINTER_ZERO),
@@ -104,7 +112,10 @@ ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
     pos(CreatePosAttr(DEFAULT_VEC2F(0, 0))),
     size(CreateSizeAttr(DEFAULT_VEC2F(1, 1))),
     type(POINTER_ZERO),
-    global(POINTER_ZERO)
+    global(POINTER_ZERO),
+    do_refresh(VALUE_ZERO),
+    region_active_win(VALUE_ZERO),
+    regions(EMPTY)
 {}
 
 WABI_NAMESPACE_END

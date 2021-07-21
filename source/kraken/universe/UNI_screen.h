@@ -81,7 +81,7 @@ struct ScrEdge
   {}
 };
 
-struct kScreen : public UsdUIScreen, public ObjectUNI
+struct kScreen : public UsdUIScreen, KrakenPrim
 {
   SdfPath path;
 
@@ -107,7 +107,7 @@ struct kScreen : public UsdUIScreen, public ObjectUNI
 };
 
 kScreen::kScreen(kContext *C, const SdfPath &stagepath)
-  : UsdUIScreen(KRAKEN_UNIVERSE_CREATE(C)),
+  : UsdUIScreen(KRAKEN_LUXOVERSE_CREATE(C)),
     path(UsdUIScreen::GetPath()),
     align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
     areas_rel(CreateAreasRel()),

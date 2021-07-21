@@ -29,6 +29,8 @@
 
 #include "KLI_string_utils.h"
 
+#include "KKE_report.h"
+
 #include "kpy_capi_utils.h"
 
 #include <wabi/base/arch/hints.h>
@@ -529,7 +531,7 @@ bool KPy_errors_to_report_ex(ReportList *reports,
   }
 
   if (pystring == NULL) {
-    // KKE_report(reports, RPT_ERROR, "Unknown py-exception, could not convert");
+    KKE_report(reports, RPT_ERROR, "Unknown py-exception, could not convert");
     return 0;
   }
 
@@ -547,13 +549,13 @@ bool KPy_errors_to_report_ex(ReportList *reports,
       filename = "<unknown location>";
     }
 
-    // KKE_reportf(reports,
-    //             RPT_ERROR,
-    //             TIP_("%s: %s\nlocation: %s:%d\n"),
-    //             error_prefix,
-    //             PyUnicode_AsUTF8(pystring),
-    //             filename,
-    //             lineno);
+    KKE_reportf(reports,
+                RPT_ERROR,
+                TIP_("%s: %s\nlocation: %s:%d\n"),
+                error_prefix,
+                PyUnicode_AsUTF8(pystring),
+                filename,
+                lineno);
 
     /* Not exactly needed. Useful for developers tracking down issues. */
     fprintf(stderr,
@@ -564,11 +566,29 @@ bool KPy_errors_to_report_ex(ReportList *reports,
             lineno);
   }
   else {
-    // KKE_reportf(reports, RPT_ERROR, "%s: %s", error_prefix, PyUnicode_AsUTF8(pystring));
+    KKE_reportf(reports, RPT_ERROR, "%s: %s", error_prefix, PyUnicode_AsUTF8(pystring));
   }
 
   Py_DECREF(pystring);
   return 1;
+}
+
+short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool clear)
+{
+  char *report_str = nullptr;
+
+  report_str = KKE_reports_string(reports, RPT_ERROR);
+
+  if (clear == true) {
+    KKE_reports_clear(reports);
+  }
+
+  if (report_str) {
+    PyErr_SetString(exception, report_str);
+    free(report_str);
+  }
+
+  return (report_str == NULL) ? 0 : -1;
 }
 
 bool KPy_errors_to_report(ReportList *reports)

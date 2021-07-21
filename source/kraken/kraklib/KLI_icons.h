@@ -28,9 +28,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-enum
+enum eKrakenIcon
 {
-  ICON_KRAKEN = 0,
+  ICON_NONE = 0,
+  ICON_KRAKEN,
   ICON_WINDOW_CLOSE,
   ICON_WINDOW_MINIMIZE,
   ICON_WINDOW_FULLSCREEN,
@@ -95,6 +96,6 @@ enum
   ICON_CLICK_MIDDLE,
 };
 
-std::string KLI_icon(int icon_id);
+std::string KLI_icon(eKrakenIcon icon_id);
 
 WABI_NAMESPACE_END

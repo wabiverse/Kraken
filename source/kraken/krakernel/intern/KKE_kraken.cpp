@@ -44,7 +44,10 @@
 #include "UNI_wm_types.h"
 #include "UNI_workspace.h"
 
-/* KERNEL */
+/* KRAKEN LIBRARY */
+#include "KLI_string_utils.h"
+
+/* KRAKEN KERNEL */
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"

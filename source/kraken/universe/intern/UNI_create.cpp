@@ -28,7 +28,8 @@
 #include "KKE_main.h"
 #include "KKE_screen.h"
 
-#include "UNI_access.h"
+#include "LUXO_runtime.h"
+
 #include "UNI_api.h"
 #include "UNI_area.h"
 #include "UNI_context.h"
@@ -57,18 +58,6 @@
 #include <wabi/usd/usd/stage.h>
 
 WABI_NAMESPACE_BEGIN
-
-KrakenUNI KRAKEN_UNI;
-
-ObjectUNI UNI_Area;
-ObjectUNI UNI_Context;
-ObjectUNI UNI_KrakenData;
-ObjectUNI UNI_KrakenUNI;
-ObjectUNI UNI_Region;
-ObjectUNI UNI_Screen;
-ObjectUNI UNI_Window;
-ObjectUNI UNI_WorkSpace;
-ObjectUNI UNI_Object;
 
 void UNI_create_stage(kContext *C)
 {

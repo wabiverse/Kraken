@@ -39,6 +39,11 @@ struct ARegion;
 struct ScrArea;
 struct wmEvent;
 
+#define WM_HANDLER_CONTINUE 0
+#define WM_HANDLER_BREAK 1
+#define WM_HANDLER_HANDLED 2
+#define WM_HANDLER_MODAL 4
+
 /* test whether the event is a key on the keyboard */
 #define ISKEYBOARD(event_type) \
   (((event_type) >= 0x0020 && (event_type) <= 0x00ff) || \

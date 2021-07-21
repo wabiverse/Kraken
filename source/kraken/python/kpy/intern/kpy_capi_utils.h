@@ -80,6 +80,7 @@ bool PyC_IsInterpreterActive(void);
 /* Kpy ----  */
 
 bool KPy_errors_to_report(struct ReportList *reports);
+short KPy_reports_to_error(struct ReportList *reports, PyObject *exception, const bool clear);
 
 extern void kpy_context_set(struct kContext *C, PyGILState_STATE *gilstate);
 extern void kpy_context_clear(struct kContext *C, const PyGILState_STATE *gilstate);

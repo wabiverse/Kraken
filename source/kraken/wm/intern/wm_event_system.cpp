@@ -25,6 +25,7 @@
 #include "WM_event_system.h"
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
+#include "WM_dragdrop.h"
 #include "WM_operators.h"
 #include "WM_window.h"
 
@@ -41,6 +42,8 @@
 #include "KLI_assert.h"
 #include "KLI_string_utils.h"
 #include "KLI_time.h"
+
+#include "ED_screen.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
@@ -1594,13 +1597,13 @@ static int wm_operator_call_internal(kContext *C,
 
         if (!(region && region->regiontype == type) && area)
         {
-          // ARegion *region_other = (type == RGN_TYPE_WINDOW) ?
-          //                         KKE_area_find_region_active_win(area) :
-          //                         KKE_area_find_region_type(area, type);
-          // if (region_other)
-          // {
-          //   CTX_wm_region_set(C, region_other);
-          // }
+          ARegion *region_other = (type == RGN_TYPE_WINDOW) ?
+                                  KKE_area_find_region_active_win(area) :
+                                  KKE_area_find_region_type(area, type);
+          if (region_other)
+          {
+            CTX_wm_region_set(C, region_other);
+          }
         }
 
         retval = wm_operator_invoke(C, ot, event, properties, reports, poll_only, true);
@@ -1666,7 +1669,98 @@ int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, Po
 
 
 void WM_event_do_refresh_wm(kContext *C)
-{}
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+
+  UNIVERSE_FOR_ALL (win, wm->windows) {
+
+    const kScreen *screen = WM_window_get_active_screen(VALUE(win));
+
+    CTX_wm_window_set(C, VALUE(win));
+
+    UNIVERSE_FOR_ALL (area, screen->areas) {
+      if (area->do_refresh) {
+        CTX_wm_area_set(C, area);
+        ED_area_do_refresh(C, area);
+      }
+    }
+
+  }
+
+  CTX_wm_window_set(C, NULL);
+}
+
+static void wm_event_free(wmEvent *event)
+{
+  if (event->customdata) {
+    if (event->customdatafree) {
+      if (event->custom == EVT_DATA_DRAGDROP) {
+        WM_drag_free_list((std::vector<wmDrag*>&)event->customdata);
+      }
+      else {
+        free(event->customdata);
+      }
+    }
+  }
+
+  free(event);
+}
+
+static void wm_event_free_all(wmWindow *win)
+{
+  wmEvent *event;
+  while (!win->event_queue.empty()) {
+    wm_event_free(event);
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Main Event Queue (Every Window)
+ *
+ * Handle events for all windows, run from the #WM_main event loop.
+ * \{ */
+
+/* Called in main loop. */
+/* Goes over entire hierarchy:  events -> window -> screen -> area -> region. */
+void WM_event_do_handlers(kContext *C)
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+  // KLI_assert(ED_undo_is_state_valid(C));
+
+  /* Update key configuration before handling events. */
+  // WM_keyconfig_update(wm);
+  // WM_gizmoconfig_update(CTX_data_main(C));
+
+  UNIVERSE_FOR_ALL (win, wm->windows) {
+    kScreen *screen = WM_window_get_active_screen(VALUE(win));
+
+    /* Some safety checks - these should always be set! */
+    KLI_assert(WM_window_get_active_scene(VALUE(win)));
+    KLI_assert(WM_window_get_active_screen(VALUE(win)));
+    KLI_assert(WM_window_get_active_workspace(VALUE(win)));
+
+    if (screen == NULL) {
+      wm_event_free_all(VALUE(win));
+    }
+    else {
+      Scene *scene = WM_window_get_active_scene(VALUE(win));
+    }
+
+    wmEvent *event;
+    while ((event = (* VALUE(win)->event_queue.begin()))) {
+      int action = WM_HANDLER_CONTINUE;
+
+      screen = WM_window_get_active_screen(VALUE(win));
+
+      if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) && ((event->type != MOUSEMOVE) || (event->type != INBETWEEN_MOUSEMOVE))) {
+        TF_MSG("\n%s: Handling event\n", __func__);
+        // WM_event_print(event);
+      }
+
+      CTX_wm_window_set(C, VALUE(win));
+    }
+  }
+}
 
 
 static int wm_handler_fileselect()

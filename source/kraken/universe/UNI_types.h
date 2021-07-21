@@ -30,27 +30,27 @@ WABI_NAMESPACE_BEGIN
 
 struct Main;
 struct ReportList;
-struct ObjectUNI;
+struct KrakenPrim;
 struct PropertyUNI;
 struct kContext;
 
-typedef struct ObjectUNI ObjectUNI;
+typedef struct KrakenPrim KrakenPrim;
 
-typedef int (*ObjectValidateFunc)(struct ObjectUNI *ptr, void *data, int *have_function);
+typedef int (*ObjectValidateFunc)(struct KrakenPrim *ptr, void *data, int *have_function);
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
-                                  struct ObjectUNI *ptr,
+                                  struct KrakenPrim *ptr,
                                   void *func,
                                   UsdAttributeVector list);
 typedef void (*ObjectFreeFunc)(void *data);
-typedef struct ObjectUNI *(*ObjectRegisterFunc)(struct Main *kmain,
+typedef struct KrakenPrim *(*ObjectRegisterFunc)(struct Main *kmain,
                                                 struct ReportList *reports,
                                                 void *data,
                                                 const char *identifier,
                                                 ObjectValidateFunc validate,
                                                 ObjectCallbackFunc call,
                                                 ObjectFreeFunc free);
-typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct ObjectUNI *type);
-typedef void **(*ObjectInstanceFunc)(struct ObjectUNI *ptr);
+typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct KrakenPrim *type);
+typedef void **(*ObjectInstanceFunc)(struct KrakenPrim *ptr);
 
 /**
  * Kraken UNI
@@ -59,7 +59,7 @@ typedef void **(*ObjectInstanceFunc)(struct ObjectUNI *ptr);
 
 struct KrakenUNI
 {
-  std::vector<struct ObjectUNI *> objects;
+  std::vector<struct KrakenPrim *> objects;
 };
 
 WABI_NAMESPACE_END

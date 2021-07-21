@@ -16,24 +16,45 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * KRAKEN Kernel.
+ * Purple Underground.
  */
 
-#include "UNI_wm_types.h"
+#include "UNI_scene.h"
+#include "UNI_object.h"
 
-#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_scene.h"
+
+#include "KKE_kraken_prim.h"
+
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
 
-void WM_drag_free(wmDrag *drag);
-void WM_drag_free_list(std::vector<wmDrag*> &drags);
+static bool SceneInitData(KrakenPrim *prim)
+{
+  Scene *scene = (Scene*)prim;
+  Stage stage = scene->stage;
 
-wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags);
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
+  if (ARCH_UNLIKELY(scene == NULL))
+  {
+    return false;
+  }
+
+  stage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
+  stage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
+  stage->SetColorConfiguration(SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
+  stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
+
+  return true;
+}
+
+TF_REGISTRY_FUNCTION(KrakenPrim)
+{
+  RegisterKrakenInitFunction<Scene>(SceneInitData);
+}
 
 WABI_NAMESPACE_END

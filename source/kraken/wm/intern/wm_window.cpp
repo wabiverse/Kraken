@@ -189,6 +189,10 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
   }
 }
 
+Scene *WM_window_get_active_scene(const wmWindow *win)
+{
+  return win->scene;
+}
 
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win)
 {

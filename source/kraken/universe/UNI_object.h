@@ -34,6 +34,7 @@
 #include <wabi/base/tf/weakBase.h>
 
 #include <wabi/usd/usd/prim.h>
+#include <wabi/usd/usd/typed.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -47,7 +48,7 @@ struct PropertyUNI
 
 typedef std::vector<PropertyUNI *> CollectionPropertyUNI;
 
-struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
+struct KrakenPrim : public UsdTyped
 {
   SdfPath path;
 
@@ -57,7 +58,7 @@ struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
 
   const char *identifier;
 
-  struct ObjectUNI *type;
+  struct KrakenPrim *type;
   void *data;
 
   UsdAttributeVector props;
@@ -65,7 +66,7 @@ struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
 
   /**
    * Object this is derived from */
-  struct ObjectUNI *base;
+  struct KrakenPrim *base;
 
   /**
    * Function to register/unregister subclasses */
@@ -74,19 +75,31 @@ struct ObjectUNI : public UsdPrim, public TfRefBase, public TfWeakBase
 
   ObjectInstanceFunc instance;
 
-  virtual ~ObjectUNI()
+  static bool KrakenInitPrimsFromPlugins(KrakenPrim *prim);
+
+  virtual ~KrakenPrim()
   {}
 
-  inline ObjectUNI();
+  inline explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
+  inline explicit KrakenPrim(const UsdSchemaBase &schemaObj);
 };
 
-ObjectUNI::ObjectUNI()
-  : notice(TfNotice()),
+KrakenPrim::KrakenPrim(const UsdPrim &prim)
+  : UsdTyped(prim),
+    notice(TfNotice()),
     type(nullptr),
     data(nullptr),
     base(nullptr)
 {}
 
-typedef ObjectUNI PointerUNI;
+KrakenPrim::KrakenPrim(const UsdSchemaBase &schemaObj)
+  : UsdTyped(schemaObj),
+    notice(TfNotice()),
+    type(nullptr),
+    data(nullptr),
+    base(nullptr)
+{}
+
+typedef KrakenPrim PointerUNI;
 
 WABI_NAMESPACE_END

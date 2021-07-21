@@ -27,6 +27,8 @@
 
 #include "KLI_utildefines.h"
 
+#include <wabi/usd/sdf/path.h>
+
 #if defined(WABI_STATIC)
 #  define KRAKEN_KERNEL_API
 #  define KRAKEN_KERNEL_API_TEMPLATE_CLASS(...)
@@ -43,6 +45,14 @@
 #    define KRAKEN_KERNEL_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
 #  endif
 #  define KRAKEN_KERNEL_LOCAL ARCH_HIDDEN
+#endif
+
+#ifdef __BIG_ENDIAN__
+/* big endian */
+#  define MAKE_ID2(c, d) ((c) << 8 | (d))
+#else
+/* little endian */
+#  define MAKE_ID2(c, d) ((d) << 8 | (c))
 #endif
 
 #endif /* KRAKEN_KERNEL_API_H */

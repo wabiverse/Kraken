@@ -113,44 +113,17 @@ enum eSceneLoadSet
   SCENE_LOAD_NONE
 };
 
-struct Scene : public ObjectUNI
+struct Scene : public KrakenPrim
 {
-
   /** This scenes active stage. */
   UsdStageRefPtr stage;
 
-  /** Which way is up? */
-  TfToken upAxis;
-
-  /** Specifies the initial set of prims to load. */
-  eSceneLoadSet loadSet;
-
-  inline Scene(const std::string &identifier,
-               const TfToken &stageUpAxis = UsdGeomTokens->z,
-               eSceneLoadSet loadingSet = SCENE_LOAD_ALL);
+  inline Scene(const std::string &identifier);
 };
 
-Scene::Scene(const std::string &identifier, const TfToken &stageUpAxis, eSceneLoadSet loadingSet)
-  : stage(UsdStage::CreateNew(identifier, UsdStage::InitialLoadSet(loadingSet))),
-    upAxis(stageUpAxis),
-    loadSet(loadingSet)
-{
-  /**
-   * Default Stage Up-Axis to Z-Up
-   * AKA Blender-Up. */
-  stage->SetMetadata(UsdGeomTokens->upAxis, upAxis);
+Scene::Scene(const std::string &identifier)
+  : stage(UsdStage::CreateNew(identifier))
+{}
 
-  /**
-   * Add Kraken Version number. */
-  stage->GetRootLayer()->SetDocumentation(std::string("Kraken v" +
-                                                      TfStringify(KRAKEN_VERSION_MAJOR) + "." +
-                                                      TfStringify(KRAKEN_VERSION_MINOR)));
-  /**
-   * Setup Default Color Management with OCIO,
-   * and pointed to the same OCIO config that
-   * Blender uses. */
-  stage->SetColorConfiguration(SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
-  stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
-}
 
 WABI_NAMESPACE_END

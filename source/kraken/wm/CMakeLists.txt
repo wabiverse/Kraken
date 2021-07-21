@@ -1,6 +1,7 @@
 set(INC
   .
   ../../../. # Pixar USD
+  ../luxo
   ../anchor
   ../editors/include
   ../krakernel
@@ -57,6 +58,7 @@ set(LIB
   kraken_editor_spaceview3d
   # kraken_editor_code
   kraken_lib
+  kraken_luxo
   kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

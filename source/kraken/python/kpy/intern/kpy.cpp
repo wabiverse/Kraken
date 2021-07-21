@@ -34,7 +34,9 @@
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 
-#include "UNI_access.h"
+#include "LUXO_access.h"
+#include "LUXO_runtime.h"
+
 #include "UNI_factory.h"
 #include "UNI_types.h"
 #include "UNI_wm_types.h"
@@ -440,8 +442,8 @@ void KPy_init_modules(struct kContext *C)
   // PyModule_AddObject(mod, "_utils_previews", KPY_utils_previews_module());
   // PyModule_AddObject(mod, "msgbus", KPY_msgbus_module());
 
-  CreationFactory::PTR::New(SdfPath("/"), &UNI_Context, C, &ctx_ptr);
-  kpy_context_module = (KPy_ObjectUNI *)pyuni_object_CreatePyObject(&ctx_ptr);
+  CreationFactory::PTR::New(SdfPath("/"), &LUXO_Context, C, &ctx_ptr);
+  kpy_context_module = (KPy_KrakenPrim *)pyuni_object_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */
   Py_INCREF(kpy_context_module);

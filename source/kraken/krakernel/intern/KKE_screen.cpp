@@ -116,6 +116,34 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
   return big;
 }
 
+ARegion *KKE_area_find_region_type(const ScrArea *area, int region_type)
+{
+  if (area) {
+    UNIVERSE_FOR_ALL (region, area->regions) {
+      if (region->regiontype == region_type) {
+        return region;
+      }
+    }
+  }
+
+  return NULL;
+}
+
+ARegion *KKE_area_find_region_active_win(ScrArea *area)
+{
+  if (area == NULL) {
+    return NULL;
+  }
+
+  ARegion *region = area->regions.at(area->region_active_win);
+  if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
+    return region;
+  }
+
+  /* fallback to any */
+  return KKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+}
+
 void KKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2)
 {
   if (*v1 > *v2)

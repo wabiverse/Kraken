@@ -53,6 +53,10 @@ WABI_NAMESPACE_BEGIN
 
 void WM_main(kContext *C)
 {
+  /**
+   * Single refresh before handling events. */
+  WM_event_do_refresh_wm(C);
+
   while (1)
   {
 
@@ -85,7 +89,8 @@ void wm_add_default(Main *kmain, kContext *C)
 
   CTX_wm_manager_set(C, wm);
   win = wm_window_new(C, wm, NULL, false);
-
+  win->scene = CTX_data_scene(C);
+  
   if (!workspace)
   {
     workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));

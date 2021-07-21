@@ -62,6 +62,13 @@ struct RegionTypeAlignInfo
   } by_type[RGN_TYPE_LEN];
 };
 
+void ED_area_do_refresh(kContext *C, ScrArea *area)
+{
+  if (area->type && area->type->refresh) {
+    area->type->refresh(C, area);
+  }
+  area->do_refresh = false;
+}
 
 static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_align_info)
 {

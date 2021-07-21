@@ -7,12 +7,14 @@ kraken_include_dirs(
   ../kraken/kraklib
   ../kraken/krakernel
   ../kraken/wm
+  ../kraken/luxo
   ../kraken/universe
 )
 
 set(LIB
   kraken_wm
   kraken_kernel
+  kraken_luxo
   kraken_universe
   kraken_intern_utfconv
   kraken_python

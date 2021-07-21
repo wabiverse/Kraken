@@ -20,20 +20,26 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * KRAKEN Kernel.
+ * Purple Underground.
  */
+
+#include "KKE_api.h"
+#include "KKE_utils.h"
 
 #include "UNI_wm_types.h"
 
-#include "KKE_context.h"
-
 WABI_NAMESPACE_BEGIN
 
-void WM_drag_free(wmDrag *drag);
-void WM_drag_free_list(std::vector<wmDrag*> &drags);
+void KKE_reports_init(ReportList *reports, int flag);
+void KKE_reports_clear(ReportList *reports);
 
-wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags);
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
+void KKE_report(ReportList *reports, eReportType type, const char *_message);
+void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...)
+  ATTR_PRINTF_FORMAT(3, 4);
+
+char *KKE_reports_string(ReportList *reports, eReportType level);
+
+const char *KKE_report_type_str(eReportType type);
 
 WABI_NAMESPACE_END

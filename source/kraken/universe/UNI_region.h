@@ -78,7 +78,7 @@ enum
 };
 
 
-struct ARegion : public UsdUIArea, public ObjectUNI
+struct ARegion : public UsdUIArea, KrakenPrim
 {
   SdfPath path;
 
@@ -98,7 +98,7 @@ struct ARegion : public UsdUIArea, public ObjectUNI
 };
 
 ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(KRAKEN_UNIVERSE_CREATE_CHILD(C)),
+  : UsdUIArea(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
     path(UsdUIArea::GetPath()),
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),

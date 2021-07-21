@@ -20,20 +20,39 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * KRAKEN Kernel.
+ * Purple Underground.
  */
 
-#include "UNI_wm_types.h"
-
+#include "KKE_api.h"
 #include "KKE_context.h"
+#include "KKE_robinhood.h"
+
+#include "UNI_object.h"
+
+#include <wabi/usd/usd/prim.h>
+#include <wabi/usd/usd/stage.h>
+#include <wabi/usd/usd/typed.h>
 
 WABI_NAMESPACE_BEGIN
 
-void WM_drag_free(wmDrag *drag);
-void WM_drag_free_list(std::vector<wmDrag*> &drags);
+/**
+ * Initialize a new data-block. May be NULL if there is nothing to do. */
 
-wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags);
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
+typedef bool (*KrakenPrimInitFunction)(KrakenPrim *prim);
+
+
+/**
+ * Register the init function with Kraken. */
+
+template<class PrimType>
+inline void RegisterKrakenInitFunction(const KrakenPrimInitFunction &fn)
+{
+  static_assert(std::is_base_of<KrakenPrim, PrimType>::value, "Prim type must derive from KrakenPrim");
+
+  RegisterKrakenInitFunction(TfType::Find<PrimType>(), fn);
+}
+
+void RegisterKrakenInitFunction(const TfType &boundableType, const KrakenPrimInitFunction &fn);
 
 WABI_NAMESPACE_END

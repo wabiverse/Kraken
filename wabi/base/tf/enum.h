@@ -362,6 +362,36 @@ class TfEnum : boost::totally_ordered<TfEnum>
 
   ///@}
 
+  /** 
+   * Associates a name with an enumerated value, icon, display name, as
+   * well as user interface description. This is to be used with Digital
+   * Content Creation Platforms.
+   *
+   * @warning This method is called by the @c TF_ADD_ENUM_NAME() macro, and
+   * should NOT be called directly. Instead, call AddName(), which does
+   * exactly the same thing. */
+  TF_API
+  static void _AddName(TfEnum val,
+                       const std::string &valName,
+                       TfEnum icon,
+                       const std::string &displayName,
+                       const std::string &description);
+
+  /**
+   * Associates a name with an enumerated value, icon, display name, as
+   * well as user interface description. This is to be used with Digital
+   * Content Creation Platforms.
+   * 
+   * @see _AddName(). */
+  static void AddName(TfEnum val,
+                      const std::string &valName,
+                      TfEnum icon,
+                      const std::string &displayName,
+                      const std::string &description)
+  {
+    _AddName(val, valName, icon, displayName, description);
+  }
+
   /// Associates a name with an enumerated value.
   ///
   /// \warning This method is called by the \c TF_ADD_ENUM_NAME() macro, and
@@ -445,6 +475,9 @@ TF_API std::ostream &operator<<(std::ostream &out, const TfEnum &e);
 ///
 /// \ingroup group_tf_RuntimeTyping
 /// \hideinitializer
+#define TF_ADD_USER_INTERFACE_ENUM(VAL, IDENT, ICO, NAME, DESC) \
+  TfEnum::_AddName(VAL, IDENT, ICO, NAME, DESC)
+
 #define TF_ADD_ENUM_NAME(VAL, ...) \
   TfEnum::_AddName(VAL, TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)
 

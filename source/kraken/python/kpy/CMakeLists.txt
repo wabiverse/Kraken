@@ -3,6 +3,7 @@ set(INC
   ./intern/.
   ../../../../. # Pixar USD
   ../editors/include
+  ../../luxo
   ../../krakernel
   ../../kraklib
   ../../universe
@@ -55,6 +56,7 @@ set(INC_SYS
 set(LIB
   maelstrom
   kraken_kernel
+  kraken_luxo
   kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

@@ -107,7 +107,7 @@ static struct _inittab kpy_internal_modules[] = {
 #ifndef WITH_PYTHON_MODULE
 static void pystatus_exit_on_error(PyStatus status)
 {
-  if (UNLIKELY(PyStatus_Exception(status)))
+  if (ARCH_UNLIKELY(PyStatus_Exception(status)))
   {
     fputs("Internal error initializing Python!\n", stderr);
     /* This calls `exit`. */
@@ -304,7 +304,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
 static void kpy_context_end(kContext *C)
 {
-  if (UNLIKELY(C == NULL)) {
+  if (ARCH_UNLIKELY(C == NULL)) {
     return;
   }
   CTX_wm_operator_poll_msg_clear(C);

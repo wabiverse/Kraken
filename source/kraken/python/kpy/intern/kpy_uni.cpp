@@ -35,7 +35,9 @@
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 
-#include "UNI_access.h"
+#include "LUXO_access.h"
+#include "LUXO_runtime.h"
+
 #include "UNI_object.h"
 #include "UNI_wm_types.h"
 
@@ -53,7 +55,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-KPy_ObjectUNI *kpy_context_module = nullptr; /* for fast access */
+KPy_KrakenPrim *kpy_context_module = nullptr; /* for fast access */
 
 static PyObject *pyuni_register_class(PyObject *self, PyObject *py_class);
 static PyObject *pyuni_unregister_class(PyObject *self, PyObject *py_class);
@@ -75,13 +77,13 @@ void pyuni_write_set(bool val)
   uni_disallow_writes = !val;
 }
 
-static int kpy_class_validate(ObjectUNI *dummyptr, void *py_data, int *have_function)
+static int kpy_class_validate(KrakenPrim *dummyptr, void *py_data, int *have_function)
 {
   // return kpy_class_validate_recursive(dummyptr, dummyptr->type, py_data, have_function);
   return 1;
 }
 
-static int kpy_class_call(kContext *C, ObjectUNI *ptr, void *func, UsdAttributeVector parms)
+static int kpy_class_call(kContext *C, KrakenPrim *ptr, void *func, UsdAttributeVector parms)
 {
   return 1;
 }
@@ -92,9 +94,9 @@ static void kpy_class_free(void *pyob_ptr)
 
 struct KPy_TypesModule_State
 {
-  /** `UNI_KrakenUNI`. */
+  /** `LUXO_KrakenLUXO`. */
   PointerUNI ptr;
-  /** `UNI_KrakenUNI.objects`, exposed as `kpy.types` */
+  /** `LUXO_KrakenLUXO.objects`, exposed as `kpy.types` */
   PropertyUNI *prop;
 };
 
@@ -195,7 +197,7 @@ PyTypeObject pyuni_struct_meta_idprop_Type = {
 
 PyTypeObject pyuni_object_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_object", /* tp_name */
-  sizeof(KPy_ObjectUNI),                       /* tp_basicsize */
+  sizeof(KPy_KrakenPrim),                       /* tp_basicsize */
   0,                                           /* tp_itemsize */
   /* methods */
   NULL,  //(destructor)pyuni_object_dealloc, /* tp_dealloc */
@@ -251,7 +253,7 @@ PyTypeObject pyuni_object_Type = {
 
 /***  weak reference enabler ***/
 #ifdef USE_WEAKREFS
-  offsetof(KPy_ObjectUNI, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_KrakenPrim, in_weakreflist), /* long tp_weaklistoffset; */
 #else
   0,
 #endif
@@ -311,8 +313,8 @@ PyObject *KPY_uni_types(void)
   PyObject *submodule = PyModule_Create(&kpy_types_module_def);
   KPy_TypesModule_State *state = (KPy_TypesModule_State *)PyModule_GetState(submodule);
 
-  UNI_kraken_uni_pointer_create(&state->ptr);
-  state->prop = UNI_object_find_property(&state->ptr, "objects");
+  LUXO_kraken_luxo_pointer_create(&state->ptr);
+  state->prop = LUXO_object_find_property(&state->ptr, "objects");
 
   /* Internal base types we have no other accessors for. */
   {
@@ -335,15 +337,15 @@ PyObject *KPY_uni_types(void)
   return submodule;
 }
 
-ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix)
+KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix)
 {
-  KPy_ObjectUNI *py_uni = NULL;
-  ObjectUNI *uni;
+  KPy_KrakenPrim *py_uni = NULL;
+  KrakenPrim *uni;
 
   /* Unfortunately PyObject_GetAttrString won't look up this types tp_dict first :/ */
   if (PyType_Check(self))
   {
-    py_uni = (KPy_ObjectUNI *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict, kpy_intern_str_kr_uni);
+    py_uni = (KPy_KrakenPrim *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict, kpy_intern_str_kr_uni);
     Py_XINCREF(py_uni);
   }
 
@@ -353,7 +355,7 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
      * modifying this will do confusing stuff! */
     if (py_uni == NULL)
     {
-      py_uni = (KPy_ObjectUNI *)PyObject_GetAttr(self, kpy_intern_str_kr_uni);
+      py_uni = (KPy_KrakenPrim *)PyObject_GetAttr(self, kpy_intern_str_kr_uni);
     }
   }
 
@@ -366,7 +368,7 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
     return NULL;
   }
 
-  if (!KPy_ObjectUNI_Check(py_uni))
+  if (!KPy_KrakenPrim_Check(py_uni))
   {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, kr_uni attribute wrong type '%.200s' on '%.200s'' instance",
@@ -377,17 +379,17 @@ ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *er
     return NULL;
   }
 
-  if (py_uni->ptr.type != &UNI_Object)
+  if (py_uni->ptr.type != &LUXO_Object)
   {
     PyErr_Format(PyExc_TypeError,
-                 "%.200s, kr_uni attribute not a UNI_Object, on '%.200s'' instance",
+                 "%.200s, kr_uni attribute not a LUXO_Object, on '%.200s'' instance",
                  error_prefix,
                  Py_TYPE(self)->tp_name);
     Py_DECREF(py_uni);
     return NULL;
   }
 
-  uni = (ObjectUNI *)py_uni->ptr.data;
+  uni = (KrakenPrim *)py_uni->ptr.data;
   Py_DECREF(py_uni);
 
   return uni;
@@ -421,8 +423,8 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   kContext *C = nullptr;
   ReportList reports;
   ObjectRegisterFunc reg;
-  ObjectUNI *uni;
-  ObjectUNI *uni_new;
+  KrakenPrim *uni;
+  KrakenPrim *uni_new;
   const char *identifier;
   PyObject *py_cls_meth;
   const char *error_prefix = "register_class(...):";
@@ -462,14 +464,14 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   }
 
   /* Check that we have a register callback for this type. */
-  reg = UNI_object_register(uni);
+  reg = LUXO_object_register(uni);
 
   if (!reg)
   {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): expected a subclass of a registerable "
                  "UNI type (%.200s does not support registration)",
-                 UNI_object_identifier(uni));
+                 LUXO_object_identifier(uni));
     return NULL;
   }
 
@@ -533,7 +535,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 }
 
 #ifdef USE_PYUNI_OBJECT_REFERENCE
-static void pyuni_object_reference_set(KPy_ObjectUNI *self, PyObject *reference)
+static void pyuni_object_reference_set(KPy_KrakenPrim *self, PyObject *reference)
 {
   if (self->reference) {
     PyObject_GC_UnTrack(self);
@@ -702,7 +704,7 @@ static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerUNI *ptr, Prop
   self->in_weakreflist = NULL;
 #  endif
 
-  UNI_property_collection_begin(ptr, prop, self->iter);
+  LUXO_property_collection_begin(ptr, prop, self->iter);
 
   return (PyObject *)self;
 }
@@ -720,7 +722,7 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self
     return NULL;
   }
 
-  KPy_ObjectUNI *pyuni = (KPy_ObjectUNI *)pyuni_object_CreatePyObject(new ObjectUNI());
+  KPy_KrakenPrim *pyuni = (KPy_KrakenPrim *)pyuni_object_CreatePyObject(new KrakenPrim());
 
 #  ifdef USE_PYUNI_OBJECT_REFERENCE
   if (pyuni)
@@ -820,7 +822,7 @@ static PyObject *pyuni_unregister_class(PyObject *UNUSED(self), PyObject *py_cla
 {
   kContext *C = NULL;
   ObjectUnregisterFunc unreg;
-  ObjectUNI *srna;
+  KrakenPrim *srna;
   PyObject *py_cls_meth;
 
   Py_RETURN_NONE;
@@ -831,12 +833,12 @@ static PyObject *pyuni_unregister_class(PyObject *UNUSED(self), PyObject *py_cla
 static PointerUNI *uni_module_ptr = NULL;
 PyObject *KPY_uni_module(void)
 {
-  KPy_ObjectUNI *pyuni;
+  KPy_KrakenPrim *pyuni;
   PointerUNI ptr;
 
   /* For now, return the base RNA type rather than a real module. */
-  UNI_main_pointer_create(G.main, &ptr);
-  pyuni = (KPy_ObjectUNI *)pyuni_object_CreatePyObject(&ptr);
+  LUXO_main_pointer_create(G.main, &ptr);
+  pyuni = (KPy_KrakenPrim *)pyuni_object_CreatePyObject(&ptr);
 
   uni_module_ptr = &pyuni->ptr;
   return (PyObject *)pyuni;
@@ -860,8 +862,8 @@ void pyuni_alloc_types(void)
   //   gilstate = PyGILState_Ensure();
 
   //   /* Avoid doing this lookup for every getattr. */
-  //   UNI_kraken_uni_pointer_create(&ptr);
-  //   prop = UNI_object_find_property(&ptr, "objects");
+  //   LUXO_kraken_luxo_pointer_create(&ptr);
+  //   prop = LUXO_object_find_property(&ptr, "objects");
 
   //   UNI_PROP_BEGIN (&ptr, itemptr, prop) {
   //     PyObject *item = pyuni_object_Subtype(&itemptr);
@@ -884,7 +886,7 @@ void pyuni_alloc_types(void)
 /*-----------------------CreatePyObject---------------------------------*/
 PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
 {
-  KPy_ObjectUNI *pyuni = NULL;
+  KPy_KrakenPrim *pyuni = NULL;
 
   /* Note: don't rely on this to return None since NULL data with a valid type can often crash. */
   if (ptr->data == NULL && ptr->type == NULL)
@@ -892,10 +894,10 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
     Py_RETURN_NONE;
   }
 
-  void **instance = ptr->data ? UNI_object_instance(ptr) : NULL;
+  void **instance = ptr->data ? LUXO_object_instance(ptr) : NULL;
   if (instance && *instance)
   {
-    pyuni = (KPy_ObjectUNI *)*instance;
+    pyuni = (KPy_KrakenPrim *)*instance;
 
     /* Refine may have changed types after the first instance was created. */
     if (ptr->type == pyuni->ptr.type)
@@ -917,7 +919,7 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   // PyTypeObject *tp = (PyTypeObject *)pyuni_object_Subtype(ptr);
 
   // if (tp) {
-  // pyuni = (KPy_ObjectUNI *)tp->tp_alloc(tp, 0);
+  // pyuni = (KPy_KrakenPrim *)tp->tp_alloc(tp, 0);
   // #ifdef USE_PYUNI_OBJECT_REFERENCE
   /* #PyType_GenericAlloc will have set tracking.
        * We only want tracking when `StructRNA.reference` has been set. */
@@ -928,12 +930,12 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
   // Py_DECREF(tp); /* srna owns, can't hold a reference. */
   // }
   // else {
-  // TF_MSG("could not make type '%s'", UNI_object_identifier(ptr->type));
+  // TF_MSG("could not make type '%s'", LUXO_object_identifier(ptr->type));
 
 #ifdef USE_PYUNI_OBJECT_REFERENCE
-  pyuni = (KPy_ObjectUNI *)PyObject_GC_New(KPy_ObjectUNI, &pyuni_object_Type);
+  pyuni = (KPy_KrakenPrim *)PyObject_GC_New(KPy_KrakenPrim, &pyuni_object_Type);
 #else
-  pyuni = (KPy_ObjectUNI *)PyObject_New(KPy_ObjectUNI, &pyuni_object_Type);
+  pyuni = (KPy_KrakenPrim *)PyObject_New(KPy_KrakenPrim, &pyuni_object_Type);
 #endif
 
   // #ifdef USE_WEAKREFS

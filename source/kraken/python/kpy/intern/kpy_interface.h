@@ -30,8 +30,9 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
+#include "LUXO_runtime.h"
+
 #include "UNI_api.h"
-#include "UNI_access.h"
 #include "UNI_object.h"
 
 WABI_NAMESPACE_BEGIN

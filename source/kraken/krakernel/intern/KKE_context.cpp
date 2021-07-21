@@ -30,7 +30,9 @@
 #include "KKE_version.h"
 #include "KKE_workspace.h"
 
-#include "UNI_access.h"
+#include "LUXO_access.h"
+#include "LUXO_runtime.h"
+
 #include "UNI_area.h"
 #include "UNI_object.h"
 #include "UNI_region.h"
@@ -47,7 +49,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct kContext : public ObjectUNI
+struct kContext : public KrakenPrim
 {
   kContext() = default;
 
@@ -83,7 +85,7 @@ struct kContext : public ObjectUNI
 struct kContextDataResult
 {
   PointerUNI ptr;
-  std::vector<ObjectUNI *> list;
+  std::vector<KrakenPrim *> list;
   const char **dir;
   short type; /* 0: normal, 1: seq */
 };
@@ -154,27 +156,27 @@ wmWindowManager *CTX_wm_manager(const kContext *C)
 
 wmWindow *CTX_wm_window(const kContext *C)
 {
-  return (wmWindow *)ctx_wm_python_context_get(C, "window", &UNI_Window, C->wm.window);
+  return (wmWindow *)ctx_wm_python_context_get(C, "window", &LUXO_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(const kContext *C)
 {
-  return (WorkSpace *)ctx_wm_python_context_get(C, "workspace", &UNI_WorkSpace, C->wm.workspace);
+  return (WorkSpace *)ctx_wm_python_context_get(C, "workspace", &LUXO_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(const kContext *C)
 {
-  return (kScreen *)ctx_wm_python_context_get(C, "screen", &UNI_Screen, C->wm.screen);
+  return (kScreen *)ctx_wm_python_context_get(C, "screen", &LUXO_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(const kContext *C)
 {
-  return (ScrArea *)ctx_wm_python_context_get(C, "area", &UNI_Area, C->wm.area);
+  return (ScrArea *)ctx_wm_python_context_get(C, "area", &LUXO_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(const kContext *C)
 {
-  return (ARegion *)ctx_wm_python_context_get(C, "region", &UNI_Region, C->wm.region);
+  return (ARegion *)ctx_wm_python_context_get(C, "region", &LUXO_Region, C->wm.region);
 }
 
 ARegion *CTX_wm_menu(const kContext *C)

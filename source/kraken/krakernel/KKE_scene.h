@@ -20,20 +20,27 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * KRAKEN Kernel.
+ * Purple Underground.
  */
 
-#include "UNI_wm_types.h"
-
+#include "KKE_api.h"
 #include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_utils.h"
+
+#include "UNI_area.h"
+#include "UNI_object.h"
+#include "UNI_region.h"
+#include "UNI_scene.h"
+#include "UNI_screen.h"
+#include "UNI_space_types.h"
+#include "UNI_window.h"
+#include "UNI_wm_types.h"
+#include "UNI_workspace.h"
 
 WABI_NAMESPACE_BEGIN
 
-void WM_drag_free(wmDrag *drag);
-void WM_drag_free_list(std::vector<wmDrag*> &drags);
-
-wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags);
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
+Scene *KKE_scene_add(kContext *C, Main *kmain, const char *name);
 
 WABI_NAMESPACE_END

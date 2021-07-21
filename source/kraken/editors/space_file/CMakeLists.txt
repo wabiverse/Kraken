@@ -5,6 +5,7 @@ set(INC
   ../../anchor
   ../../kraklib
   ../../krakernel
+  ../../luxo
   ../../universe
   ../../wm
 )

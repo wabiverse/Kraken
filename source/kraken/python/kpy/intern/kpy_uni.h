@@ -67,8 +67,8 @@ extern PyTypeObject pyuni_object_Type;
 // extern PyTypeObject pyuni_prop_collection_Type;
 // extern PyTypeObject pyuni_func_Type;
 
-#define KPy_ObjectUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_object_Type))
-#define KPy_ObjectUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_object_Type)
+#define KPy_KrakenPrim_Check(v) (PyObject_TypeCheck(v, &pyuni_object_Type))
+#define KPy_KrakenPrim_CheckExact(v) (Py_TYPE(v) == &pyuni_object_Type)
 #define KPy_PropertyUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
 #define KPy_PropertyUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
 
@@ -98,23 +98,23 @@ extern PyTypeObject pyuni_object_Type;
   } \
   (void)0
 
-#define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_ObjectUNI *)(pyuni))->ptr.type != NULL))
+#define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_KrakenPrim *)(pyuni))->ptr.type != NULL))
 #define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyUNI *)(pyuni))->ptr.type != NULL))
 
 struct KPy_DummyPointerUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-    PyObject *in_weakreflist;
+  PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 };
 
-struct KPy_ObjectUNI
+struct KPy_KrakenPrim
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-    PyObject *in_weakreflist;
+  PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 #ifdef USE_PYUNI_OBJECT_REFERENCE
@@ -134,7 +134,7 @@ struct KPy_PropertyUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-    PyObject *in_weakreflist;
+  PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   PropertyUNI *prop;
@@ -144,7 +144,7 @@ struct KPy_CollectionPropertyUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-    PyObject *in_weakreflist;
+  PyObject *in_weakreflist;
 #endif
 
   /* collection iterator specific parts */
@@ -155,7 +155,7 @@ struct KPy_UniverseFunction
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-    PyObject *in_weakreflist;
+  PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   void *func;
@@ -167,7 +167,7 @@ PyObject *KPY_uni_module(void);
 
 void KPY_update_uni_module(void);
 
-ObjectUNI *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix);
+KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix);
 PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr);
 void pyuni_alloc_types(void);
 
@@ -179,6 +179,6 @@ extern PyMethodDef meth_kpy_unregister_class;
 extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 
-extern KPy_ObjectUNI *kpy_context_module;
+extern KPy_KrakenPrim *kpy_context_module;
 
 WABI_NAMESPACE_END

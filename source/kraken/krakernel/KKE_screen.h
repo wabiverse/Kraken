@@ -169,6 +169,9 @@ struct SpaceType
 SdfPath make_screenpath(const char *layout_name, int id);
 int find_free_screenid(kContext *C);
 
+ARegion *KKE_area_find_region_type(const ScrArea *area, int type);
+ARegion *KKE_area_find_region_active_win(ScrArea *area);
+
 SpaceType *KKE_spacetype_from_id(int spaceid);
 bool KKE_screen_is_used(const kScreen *screen);
 void KKE_screen_sort_scrvert(struct ScrVert **v1, struct ScrVert **v2);

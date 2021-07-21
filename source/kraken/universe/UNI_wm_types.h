@@ -37,28 +37,32 @@
 WABI_NAMESPACE_BEGIN
 
 /* modifier */
-#define KM_SHIFT 1
-#define KM_CTRL 2
-#define KM_ALT 4
-#define KM_OSKEY 8
+enum eWmModifierTypes {
+  KM_SHIFT = 1,
+  KM_CTRL = 2,
+  KM_ALT = 4,
+  KM_OSKEY = 8,
+  KM_SHIFT2 = 16,
+  KM_CTRL2 = 32,
+  KM_ALT2 = 64,
+  KM_OSKEY2 = 128,
+};
 
-#define KM_SHIFT2 16
-#define KM_CTRL2 32
-#define KM_ALT2 64
-#define KM_OSKEY2 128
+enum eWmModPosTypes {
+  KM_MOD_FIRST = 1,
+  KM_MOD_SECOND = 2,
+};
 
-#define KM_MOD_FIRST 1
-#define KM_MOD_SECOND 2
-
-#define KM_TEXTINPUT -2
-
-#define KM_ANY -1
-#define KM_NOTHING 0
-#define KM_PRESS 1
-#define KM_RELEASE 2
-#define KM_CLICK 3
-#define KM_DBL_CLICK 4
-#define KM_CLICK_DRAG 5
+enum eWmMiscKmTypes {
+  KM_TEXTINPUT = -2,
+  KM_ANY = -1,
+  KM_NOTHING = 0,
+  KM_PRESS = 1,
+  KM_RELEASE = 2,
+  KM_CLICK = 3,
+  KM_DBL_CLICK = 4,
+  KM_CLICK_DRAG = 5,
+};
 
 #define WM_UI_HANDLER_CONTINUE 0
 #define WM_UI_HANDLER_BREAK 1
@@ -566,6 +570,17 @@ enum eWmOperatorType
   OPTYPE_UNDO_GROUPED = (1 << 10),
 };
 
+enum eReportType {
+  RPT_DEBUG = (1 << 0),
+  RPT_INFO = (1 << 1),
+  RPT_OPERATOR = (1 << 2),
+  RPT_PROPERTY = (1 << 3),
+  RPT_WARNING = (1 << 4),
+  RPT_ERROR = (1 << 5),
+  RPT_ERROR_INVALID_INPUT = (1 << 6),
+  RPT_ERROR_INVALID_CONTEXT = (1 << 7),
+  RPT_ERROR_OUT_OF_MEMORY = (1 << 8),
+};
 
 struct wmTimer
 {
@@ -606,12 +621,22 @@ struct wmTimer
   {}
 };
 
+struct Report {
+  /** eReportType. */
+  short type;
+  short flag;
+
+  int len;
+  const char *typestr;
+  const char *message;
+};
 
 struct ReportList
 {
-  /** ReportType. */
+  std::vector<Report*> list;
+  /** eReportType. */
   int printlevel;
-  /** ReportType. */
+  /** eReportType. */
   int storelevel;
   int flag;
   wmTimer *reporttimer;
@@ -640,7 +665,7 @@ struct wmTabletData {
 struct wmEvent
 {
   /** Event code itself. */
-  eWmEventType type;
+  int type;
   /** Press, release, scroll-value. */
   short val;
   /** Mouse pointer position, screen coord. */
@@ -834,11 +859,9 @@ struct wmDragAsset
 };
 
 
-struct wmDrag
+struct wmDrag : public wmEvent
 {
   int icon;
-  /** See 'WM_DRAG_' defines above. */
-  int type;
   void *poin;
   char path[1024]; /* FILE_MAX */
   double value;
@@ -854,7 +877,6 @@ struct wmDrag
 
   wmDrag()
     : icon(VALUE_ZERO),
-      type(VALUE_ZERO),
       poin(POINTER_ZERO),
       path{VALUE_ZERO},
       value(VALUE_ZERO),

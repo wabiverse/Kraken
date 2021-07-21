@@ -146,7 +146,7 @@ static PyObject *make_app_info(void)
   SetStrItem(STRINGIFY(KRAKEN_VERSION_CYCLE));
   SetStrItem("");
   SetStrItem(KKE_appdir_program_path());
-  SetObjItemBoolIncrementInfo(app_info, pos, G.server);
+  SetObjItemBoolIncrementInfo(app_info, pos, G.background);
   SetObjItemBoolIncrementInfo(app_info, pos, G.factory_startup);
 
   /* build info, use bytes since we can't assume any encoding: */
