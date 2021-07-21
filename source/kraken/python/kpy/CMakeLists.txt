@@ -23,7 +23,6 @@ set(SRC
   intern/kpy_interface.cpp
   intern/kpy_intern_string.cpp
   intern/kpy_library_load.cpp
-  # intern/kpy_module.cpp
   intern/kpy_path.cpp
   intern/kpy_uni.cpp
   intern/kpy.cpp
