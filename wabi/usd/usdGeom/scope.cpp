@@ -71,35 +71,29 @@ UsdGeomScope UsdGeomScope::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomScope::_GetSchemaKind() const
+UsdSchemaKind UsdGeomScope::GetSchemaKind() const
 {
   return UsdGeomScope::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomScope::_GetSchemaType() const
-{
-  return UsdGeomScope::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomScope::_GetStaticTfType()
+const TfType &UsdGeomScope::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomScope>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomScope::_IsTypedSchema()
+bool UsdGeomScope::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomScope::_GetTfType() const
+const TfType &UsdGeomScope::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

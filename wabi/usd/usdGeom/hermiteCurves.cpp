@@ -71,35 +71,29 @@ UsdGeomHermiteCurves UsdGeomHermiteCurves::Define(const UsdStagePtr &stage, cons
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomHermiteCurves::_GetSchemaKind() const
+UsdSchemaKind UsdGeomHermiteCurves::GetSchemaKind() const
 {
   return UsdGeomHermiteCurves::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomHermiteCurves::_GetSchemaType() const
-{
-  return UsdGeomHermiteCurves::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomHermiteCurves::_GetStaticTfType()
+const TfType &UsdGeomHermiteCurves::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomHermiteCurves>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomHermiteCurves::_IsTypedSchema()
+bool UsdGeomHermiteCurves::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomHermiteCurves::_GetTfType() const
+const TfType &UsdGeomHermiteCurves::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomHermiteCurves::GetTangentsAttr() const

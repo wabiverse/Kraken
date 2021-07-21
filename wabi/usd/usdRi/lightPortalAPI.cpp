@@ -62,15 +62,9 @@ UsdRiLightPortalAPI UsdRiLightPortalAPI::Get(const UsdStagePtr &stage, const Sdf
 }
 
 /* virtual */
-UsdSchemaKind UsdRiLightPortalAPI::_GetSchemaKind() const
+UsdSchemaKind UsdRiLightPortalAPI::GetSchemaKind() const
 {
   return UsdRiLightPortalAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdRiLightPortalAPI::_GetSchemaType() const
-{
-  return UsdRiLightPortalAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdRiLightPortalAPI UsdRiLightPortalAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRiLightPortalAPI::_GetStaticTfType()
+const TfType &UsdRiLightPortalAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiLightPortalAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiLightPortalAPI::_IsTypedSchema()
+bool UsdRiLightPortalAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiLightPortalAPI::_GetTfType() const
+const TfType &UsdRiLightPortalAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiLightPortalAPI::GetRiPortalIntensityAttr() const

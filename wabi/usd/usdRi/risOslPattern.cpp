@@ -78,35 +78,29 @@ UsdRiRisOslPattern UsdRiRisOslPattern::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdRiRisOslPattern::_GetSchemaKind() const
+UsdSchemaKind UsdRiRisOslPattern::GetSchemaKind() const
 {
   return UsdRiRisOslPattern::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiRisOslPattern::_GetSchemaType() const
-{
-  return UsdRiRisOslPattern::schemaType;
-}
-
 /* static */
-const TfType &UsdRiRisOslPattern::_GetStaticTfType()
+const TfType &UsdRiRisOslPattern::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRisOslPattern>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRisOslPattern::_IsTypedSchema()
+bool UsdRiRisOslPattern::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRisOslPattern::_GetTfType() const
+const TfType &UsdRiRisOslPattern::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiRisOslPattern::GetFilePathAttr() const

@@ -79,35 +79,29 @@ UsdUIArea UsdUIArea::Define(const UsdStagePtr &stage, const SdfPath &path)
   return UsdUIArea(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIArea::_GetSchemaKind() const
+UsdSchemaKind UsdUIArea::GetSchemaKind() const
 {
   return UsdUIArea::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdUIArea::_GetSchemaType() const
-{
-  return UsdUIArea::schemaType;
-}
-
 /* static */
-const TfType &UsdUIArea::_GetStaticTfType()
+const TfType &UsdUIArea::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUIArea>();
   return tfType;
 }
 
 /* static */
-bool UsdUIArea::_IsTypedSchema()
+bool UsdUIArea::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIArea::_GetTfType() const
+const TfType &UsdUIArea::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdUIArea::GetNameAttr() const

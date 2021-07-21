@@ -71,35 +71,29 @@ UsdGeomXform UsdGeomXform::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomXform::_GetSchemaKind() const
+UsdSchemaKind UsdGeomXform::GetSchemaKind() const
 {
   return UsdGeomXform::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomXform::_GetSchemaType() const
-{
-  return UsdGeomXform::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomXform::_GetStaticTfType()
+const TfType &UsdGeomXform::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomXform>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomXform::_IsTypedSchema()
+bool UsdGeomXform::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomXform::_GetTfType() const
+const TfType &UsdGeomXform::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

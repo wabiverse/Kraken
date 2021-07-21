@@ -94,10 +94,10 @@ void wrapUsdUIScreen()
         arg("includeInherited") = true,
         return_value_policy<TfPySequenceToList>())
         .staticmethod("GetSchemaAttributeNames")
-    .def("_GetStaticTfType",
+    .def("GetStaticTfType",
         (TfType const &(*)())TfType::Find<This>,
         return_value_policy<return_by_value>())
-    .staticmethod("_GetStaticTfType")
+    .staticmethod("GetStaticTfType")
     .def(!self)
     .def("GetAlignmentAttr", &This::GetAlignmentAttr)
     .def("CreateAlignmentAttr", &_CreateAlignmentAttr,

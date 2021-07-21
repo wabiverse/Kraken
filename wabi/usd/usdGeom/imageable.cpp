@@ -52,35 +52,29 @@ UsdGeomImageable UsdGeomImageable::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomImageable::_GetSchemaKind() const
+UsdSchemaKind UsdGeomImageable::GetSchemaKind() const
 {
   return UsdGeomImageable::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomImageable::_GetSchemaType() const
-{
-  return UsdGeomImageable::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomImageable::_GetStaticTfType()
+const TfType &UsdGeomImageable::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomImageable>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomImageable::_IsTypedSchema()
+bool UsdGeomImageable::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomImageable::_GetTfType() const
+const TfType &UsdGeomImageable::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomImageable::GetVisibilityAttr() const

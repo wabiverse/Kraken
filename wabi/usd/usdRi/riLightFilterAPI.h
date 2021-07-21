@@ -113,16 +113,16 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   static UsdRiRiLightFilterAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDRI_API
-  virtual const TfType &_GetTfType() const;
+  virtual const TfType &GetType() const;
 
  public:
   // --------------------------------------------------------------------- //

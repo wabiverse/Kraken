@@ -77,10 +77,7 @@ class UsdSkelBlendShape : public UsdTyped
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::ConcreteTyped;
+
 
   /// Construct a UsdSkelBlendShape on UsdPrim \p prim .
   /// Equivalent to UsdSkelBlendShape::Get(prim.GetStage(), prim.GetPath())
@@ -149,25 +146,19 @@ class UsdSkelBlendShape : public UsdTyped
   ///
   /// \sa UsdSchemaKind
   USDSKEL_API
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /// \deprecated
-  /// Same as _GetSchemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  USDSKEL_API
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   // --------------------------------------------------------------------- //

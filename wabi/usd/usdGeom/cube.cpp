@@ -71,35 +71,29 @@ UsdGeomCube UsdGeomCube::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCube::_GetSchemaKind() const
+UsdSchemaKind UsdGeomCube::GetSchemaKind() const
 {
   return UsdGeomCube::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomCube::_GetSchemaType() const
-{
-  return UsdGeomCube::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomCube::_GetStaticTfType()
+const TfType &UsdGeomCube::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCube>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCube::_IsTypedSchema()
+bool UsdGeomCube::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCube::_GetTfType() const
+const TfType &UsdGeomCube::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCube::GetSizeAttr() const

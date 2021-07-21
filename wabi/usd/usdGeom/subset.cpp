@@ -71,35 +71,29 @@ UsdGeomSubset UsdGeomSubset::Define(const UsdStagePtr &stage, const SdfPath &pat
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomSubset::_GetSchemaKind() const
+UsdSchemaKind UsdGeomSubset::GetSchemaKind() const
 {
   return UsdGeomSubset::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomSubset::_GetSchemaType() const
-{
-  return UsdGeomSubset::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomSubset::_GetStaticTfType()
+const TfType &UsdGeomSubset::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomSubset>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomSubset::_IsTypedSchema()
+bool UsdGeomSubset::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomSubset::_GetTfType() const
+const TfType &UsdGeomSubset::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomSubset::GetElementTypeAttr() const

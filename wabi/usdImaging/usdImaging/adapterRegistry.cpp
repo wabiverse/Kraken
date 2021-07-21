@@ -189,7 +189,7 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
       const TfType derivedType = derivedTypesStack.back();
       derivedTypesStack.pop_back();
 
-      const TfToken typeName = UsdSchemaRegistry::GetSchemaTypeName(derivedType);
+      const TfToken typeName = UsdSchemaRegistry::GetSchemaKind(derivedType);
       if (typeName.IsEmpty())
       {
         continue;

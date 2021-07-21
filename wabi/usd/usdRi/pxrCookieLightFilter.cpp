@@ -78,35 +78,29 @@ UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Define(const UsdStagePtr &s
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrCookieLightFilter::_GetSchemaKind() const
+UsdSchemaKind UsdRiPxrCookieLightFilter::GetSchemaKind() const
 {
   return UsdRiPxrCookieLightFilter::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiPxrCookieLightFilter::_GetSchemaType() const
-{
-  return UsdRiPxrCookieLightFilter::schemaType;
-}
-
 /* static */
-const TfType &UsdRiPxrCookieLightFilter::_GetStaticTfType()
+const TfType &UsdRiPxrCookieLightFilter::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrCookieLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrCookieLightFilter::_IsTypedSchema()
+bool UsdRiPxrCookieLightFilter::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrCookieLightFilter::_GetTfType() const
+const TfType &UsdRiPxrCookieLightFilter::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrCookieLightFilter::GetCookieModeAttr() const

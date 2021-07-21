@@ -73,10 +73,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::SingleApplyAPI;
+
 
   /// Construct a UsdRiTextureAPI on UsdPrim \p prim .
   /// Equivalent to UsdRiTextureAPI::Get(prim.GetStage(), prim.GetPath())
@@ -137,25 +134,19 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   ///
   /// \sa UsdSchemaKind
   USDRI_API
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /// \deprecated
-  /// Same as _GetSchemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  USDRI_API
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   // --------------------------------------------------------------------- //

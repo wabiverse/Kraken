@@ -50,35 +50,29 @@ UsdAPISchemaBase::~UsdAPISchemaBase()
 {}
 
 /* virtual */
-UsdSchemaKind UsdAPISchemaBase::_GetSchemaKind() const
+UsdSchemaKind UsdAPISchemaBase::GetSchemaKind() const
 {
   return UsdAPISchemaBase::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdAPISchemaBase::_GetSchemaType() const
-{
-  return UsdAPISchemaBase::schemaType;
-}
-
 /* static */
-const TfType &UsdAPISchemaBase::_GetStaticTfType()
+const TfType &UsdAPISchemaBase::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdAPISchemaBase>();
   return tfType;
 }
 
 /* static */
-bool UsdAPISchemaBase::_IsTypedSchema()
+bool UsdAPISchemaBase::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdAPISchemaBase::_GetTfType() const
+const TfType &UsdAPISchemaBase::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/
@@ -124,7 +118,7 @@ bool UsdAPISchemaBase::_IsCompatible() const
    * API schema. For applied API schemas, we'd like to check whether
    * the API schema has been applied properly on the prim. */
   if (IsAppliedAPISchema() &&
-      !GetPrim()._HasAPI(_GetTfType(), /*validateSchemaType*/ false, _instanceName))
+      !GetPrim()._HasAPI(GetType(), /*validateSchemaType*/ false, _instanceName))
   {
     return false;
   }

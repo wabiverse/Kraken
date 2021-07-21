@@ -76,10 +76,7 @@ class UsdRenderSettingsBase : public UsdTyped
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::AbstractTyped;
+
 
   /// Construct a UsdRenderSettingsBase on UsdPrim \p prim .
   /// Equivalent to UsdRenderSettingsBase::Get(prim.GetStage(), prim.GetPath())
@@ -123,25 +120,19 @@ class UsdRenderSettingsBase : public UsdTyped
   ///
   /// \sa UsdSchemaKind
   USDRENDER_API
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /// \deprecated
-  /// Same as _GetSchemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  USDRENDER_API
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRENDER_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDRENDER_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   // --------------------------------------------------------------------- //

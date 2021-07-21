@@ -55,15 +55,9 @@ UsdGeomMotionAPI UsdGeomMotionAPI::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomMotionAPI::_GetSchemaKind() const
+UsdSchemaKind UsdGeomMotionAPI::GetSchemaKind() const
 {
   return UsdGeomMotionAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdGeomMotionAPI::_GetSchemaType() const
-{
-  return UsdGeomMotionAPI::schemaType;
 }
 
 /* static */
@@ -77,23 +71,23 @@ UsdGeomMotionAPI UsdGeomMotionAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdGeomMotionAPI::_GetStaticTfType()
+const TfType &UsdGeomMotionAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomMotionAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomMotionAPI::_IsTypedSchema()
+bool UsdGeomMotionAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomMotionAPI::_GetTfType() const
+const TfType &UsdGeomMotionAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomMotionAPI::GetVelocityScaleAttr() const

@@ -78,35 +78,29 @@ UsdLuxRectLight UsdLuxRectLight::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxRectLight::_GetSchemaKind() const
+UsdSchemaKind UsdLuxRectLight::GetSchemaKind() const
 {
   return UsdLuxRectLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxRectLight::_GetSchemaType() const
-{
-  return UsdLuxRectLight::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxRectLight::_GetStaticTfType()
+const TfType &UsdLuxRectLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxRectLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxRectLight::_IsTypedSchema()
+bool UsdLuxRectLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxRectLight::_GetTfType() const
+const TfType &UsdLuxRectLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdLuxRectLight::GetWidthAttr() const

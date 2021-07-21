@@ -34,12 +34,59 @@
 
 WABI_NAMESPACE_BEGIN
 
+TF_REGISTRY_FUNCTION(TfType)
+{
+  TfType::Define<Scene, TfType::Bases<KrakenPrim>>();
+  TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
+}
+
+Scene::Scene(const std::string &identifier, const UsdPrim &prim)
+  : stage(UsdStage::CreateNew(identifier)),
+    KrakenPrim(prim)
+{}
+
+Scene::Scene(const std::string &identifier, const UsdSchemaBase &schemaObj)
+  : stage(UsdStage::CreateNew(identifier)),
+    KrakenPrim(schemaObj)
+{}
+
+Scene::~Scene()
+{}
+
+UsdSchemaKind Scene::GetSchemaKind() const
+{
+  return Scene::schemaKind;
+}
+
+/* static */
+const TfType &Scene::GetStaticTfType()
+{
+  static TfType tfType = TfType::Find<Scene>();
+  return tfType;
+}
+
+/* static */
+bool Scene::IsTypedSchema()
+{
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
+}
+
+/* virtual */
+const TfType &Scene::GetType() const
+{
+  return GetStaticTfType();
+}
+
+
 static bool SceneInitData(KrakenPrim *prim)
 {
-  Scene *scene = (Scene*)prim;
-  Stage stage = scene->stage;
+  TF_MSG("TEST, scene init");
 
-  if (ARCH_UNLIKELY(scene == NULL))
+  Scene scene(G.main->stage_id.string(), *prim);
+  Stage stage = scene.stage;
+
+  if (ARCH_UNLIKELY(scene.GetPrim().IsValid() != NULL))
   {
     return false;
   }
@@ -52,7 +99,7 @@ static bool SceneInitData(KrakenPrim *prim)
   return true;
 }
 
-TF_REGISTRY_FUNCTION(KrakenPrim)
+TF_REGISTRY_FUNCTION_WITH_TAG(KrakenPrimRegistry, KrakenPrim)
 {
   RegisterKrakenInitFunction<Scene>(SceneInitData);
 }

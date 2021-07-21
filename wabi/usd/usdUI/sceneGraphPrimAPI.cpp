@@ -69,15 +69,9 @@ UsdUISceneGraphPrimAPI UsdUISceneGraphPrimAPI::Get(const UsdStagePtr &stage, con
 }
 
 /* virtual */
-UsdSchemaKind UsdUISceneGraphPrimAPI::_GetSchemaKind() const
+UsdSchemaKind UsdUISceneGraphPrimAPI::GetSchemaKind() const
 {
   return UsdUISceneGraphPrimAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdUISceneGraphPrimAPI::_GetSchemaType() const
-{
-  return UsdUISceneGraphPrimAPI::schemaType;
 }
 
 /* static */
@@ -91,23 +85,23 @@ UsdUISceneGraphPrimAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdUISceneGraphPrimAPI::_GetStaticTfType()
+const TfType &UsdUISceneGraphPrimAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUISceneGraphPrimAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdUISceneGraphPrimAPI::_IsTypedSchema()
+bool UsdUISceneGraphPrimAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUISceneGraphPrimAPI::_GetTfType() const
+const TfType &UsdUISceneGraphPrimAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayNameAttr() const

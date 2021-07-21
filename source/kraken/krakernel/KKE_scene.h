@@ -41,6 +41,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-Scene *KKE_scene_add(kContext *C, Main *kmain, const char *name);
+
 
 WABI_NAMESPACE_END

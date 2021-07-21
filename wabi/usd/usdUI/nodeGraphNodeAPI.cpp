@@ -69,15 +69,9 @@ UsdUINodeGraphNodeAPI UsdUINodeGraphNodeAPI::Get(const UsdStagePtr &stage, const
 }
 
 /* virtual */
-UsdSchemaKind UsdUINodeGraphNodeAPI::_GetSchemaKind() const
+UsdSchemaKind UsdUINodeGraphNodeAPI::GetSchemaKind() const
 {
   return UsdUINodeGraphNodeAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdUINodeGraphNodeAPI::_GetSchemaType() const
-{
-  return UsdUINodeGraphNodeAPI::schemaType;
 }
 
 /* static */
@@ -91,23 +85,23 @@ UsdUINodeGraphNodeAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdUINodeGraphNodeAPI::_GetStaticTfType()
+const TfType &UsdUINodeGraphNodeAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUINodeGraphNodeAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdUINodeGraphNodeAPI::_IsTypedSchema()
+bool UsdUINodeGraphNodeAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUINodeGraphNodeAPI::_GetTfType() const
+const TfType &UsdUINodeGraphNodeAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdUINodeGraphNodeAPI::GetPosAttr() const

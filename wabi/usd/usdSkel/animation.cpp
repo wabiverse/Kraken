@@ -78,35 +78,29 @@ UsdSkelAnimation UsdSkelAnimation::Define(const UsdStagePtr &stage, const SdfPat
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelAnimation::_GetSchemaKind() const
+UsdSchemaKind UsdSkelAnimation::GetSchemaKind() const
 {
   return UsdSkelAnimation::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdSkelAnimation::_GetSchemaType() const
-{
-  return UsdSkelAnimation::schemaType;
-}
-
 /* static */
-const TfType &UsdSkelAnimation::_GetStaticTfType()
+const TfType &UsdSkelAnimation::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelAnimation>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelAnimation::_IsTypedSchema()
+bool UsdSkelAnimation::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelAnimation::_GetTfType() const
+const TfType &UsdSkelAnimation::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdSkelAnimation::GetJointsAttr() const

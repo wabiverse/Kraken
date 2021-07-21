@@ -55,35 +55,29 @@ UsdShadeCoordSysAPI UsdShadeCoordSysAPI::Get(const UsdStagePtr &stage, const Sdf
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeCoordSysAPI::_GetSchemaKind() const
+UsdSchemaKind UsdShadeCoordSysAPI::GetSchemaKind() const
 {
   return UsdShadeCoordSysAPI::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdShadeCoordSysAPI::_GetSchemaType() const
-{
-  return UsdShadeCoordSysAPI::schemaType;
-}
-
 /* static */
-const TfType &UsdShadeCoordSysAPI::_GetStaticTfType()
+const TfType &UsdShadeCoordSysAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeCoordSysAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeCoordSysAPI::_IsTypedSchema()
+bool UsdShadeCoordSysAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeCoordSysAPI::_GetTfType() const
+const TfType &UsdShadeCoordSysAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

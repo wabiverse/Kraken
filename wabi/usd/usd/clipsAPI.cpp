@@ -55,35 +55,29 @@ UsdClipsAPI UsdClipsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdClipsAPI::_GetSchemaKind() const
+UsdSchemaKind UsdClipsAPI::GetSchemaKind() const
 {
   return UsdClipsAPI::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdClipsAPI::_GetSchemaType() const
-{
-  return UsdClipsAPI::schemaType;
-}
-
 /* static */
-const TfType &UsdClipsAPI::_GetStaticTfType()
+const TfType &UsdClipsAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdClipsAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdClipsAPI::_IsTypedSchema()
+bool UsdClipsAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdClipsAPI::_GetTfType() const
+const TfType &UsdClipsAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

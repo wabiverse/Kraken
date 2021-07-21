@@ -62,15 +62,9 @@ UsdSkelBindingAPI UsdSkelBindingAPI::Get(const UsdStagePtr &stage, const SdfPath
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelBindingAPI::_GetSchemaKind() const
+UsdSchemaKind UsdSkelBindingAPI::GetSchemaKind() const
 {
   return UsdSkelBindingAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdSkelBindingAPI::_GetSchemaType() const
-{
-  return UsdSkelBindingAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdSkelBindingAPI UsdSkelBindingAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdSkelBindingAPI::_GetStaticTfType()
+const TfType &UsdSkelBindingAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelBindingAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelBindingAPI::_IsTypedSchema()
+bool UsdSkelBindingAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelBindingAPI::_GetTfType() const
+const TfType &UsdSkelBindingAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdSkelBindingAPI::GetGeomBindTransformAttr() const

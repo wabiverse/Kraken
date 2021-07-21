@@ -34,6 +34,18 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/typed.h>
 
+#include <wabi/base/js/value.h>
+#include <wabi/base/plug/notice.h>
+#include <wabi/base/plug/plugin.h>
+#include <wabi/base/plug/registry.h>
+#include <wabi/base/tf/instantiateSingleton.h>
+#include <wabi/base/tf/singleton.h>
+#include <wabi/base/tf/weakBase.h>
+
+#include <memory>
+#include <tbb/queuing_rw_mutex.h>
+#include <unordered_map>
+
 WABI_NAMESPACE_BEGIN
 
 /**
@@ -41,6 +53,38 @@ WABI_NAMESPACE_BEGIN
 
 typedef bool (*KrakenPrimInitFunction)(KrakenPrim *prim);
 
+
+class KrakenPrimRegistry : public TfWeakBase
+{
+
+ public:
+
+  KrakenPrimRegistry();
+ 
+  static KrakenPrimRegistry &GetInstance();
+  void RegisterInitFunction(const TfType &schemaType, const KrakenPrimInitFunction &fn);
+  KrakenPrimInitFunction GetInitFunction(const UsdPrim &prim);
+
+
+ private:
+
+  void WaitUntilInitialized();
+  std::vector<TfType> GetTypesThatMayHaveRegisteredFunctions(const TfType &type) const;
+  bool LoadPluginForType(const TfType &type) const;
+  void DidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n);
+  bool FindFunctionForType(const TfType &type, KrakenPrimInitFunction *fn) const;
+
+
+ private:
+
+  using RWMutex = tbb::queuing_rw_mutex;
+  mutable RWMutex m_mutex;
+
+  using Registry = std::unordered_map<TfType, KrakenPrimInitFunction, TfHash>;
+  Registry m_registry;
+
+  std::atomic<bool> m_initialized;
+};
 
 /**
  * Register the init function with Kraken. */

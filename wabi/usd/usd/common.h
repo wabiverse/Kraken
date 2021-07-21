@@ -145,9 +145,6 @@ enum class UsdSchemaKind
   MultipleApplyAPI
 };
 
-/// \deprecated Backwards compatible type name mapping.
-using UsdSchemaType = UsdSchemaKind;
-
 WABI_NAMESPACE_END
 
 #endif

@@ -78,35 +78,29 @@ UsdRiRslShader UsdRiRslShader::Define(const UsdStagePtr &stage, const SdfPath &p
 }
 
 /* virtual */
-UsdSchemaKind UsdRiRslShader::_GetSchemaKind() const
+UsdSchemaKind UsdRiRslShader::GetSchemaKind() const
 {
   return UsdRiRslShader::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiRslShader::_GetSchemaType() const
-{
-  return UsdRiRslShader::schemaType;
-}
-
 /* static */
-const TfType &UsdRiRslShader::_GetStaticTfType()
+const TfType &UsdRiRslShader::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRslShader>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRslShader::_IsTypedSchema()
+bool UsdRiRslShader::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRslShader::_GetTfType() const
+const TfType &UsdRiRslShader::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiRslShader::GetSloPathAttr() const

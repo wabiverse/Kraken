@@ -55,22 +55,22 @@ void wrapUsdSchemaRegistry()
   class_<This, ThisPtr, boost::noncopyable>("SchemaRegistry", no_init)
     .def(TfPySingleton())
 
-    .def("GetSchemaTypeName", (TfToken(*)(const TfType &)) & This::GetSchemaTypeName, (arg("schemaType")))
-    .staticmethod("GetSchemaTypeName")
-    .def("GetConcreteSchemaTypeName",
-         (TfToken(*)(const TfType &)) & This::GetConcreteSchemaTypeName,
-         (arg("schemaType")))
-    .staticmethod("GetConcreteSchemaTypeName")
-    .def(
-      "GetAPISchemaTypeName", (TfToken(*)(const TfType &)) & This::GetAPISchemaTypeName, (arg("schemaType")))
-    .staticmethod("GetAPISchemaTypeName")
+//     .def("GetSchemaTypeName", (TfToken(*)(const TfType &)) & This::GetSchemaTypeName, (arg("schemaType")))
+//     .staticmethod("GetSchemaTypeName")
+//     .def("GetConcreteSchemaTypeName",
+//          (TfToken(*)(const TfType &)) & This::GetConcreteSchemaTypeName,
+//          (arg("schemaType")))
+//     .staticmethod("GetConcreteSchemaTypeName")
+//     .def(
+//       "GetAPISchemaTypeName", (TfToken(*)(const TfType &)) & This::GetAPISchemaTypeName, (arg("schemaType")))
+//     .staticmethod("GetAPISchemaTypeName")
 
-    .def("GetTypeFromSchemaTypeName", &This::GetTypeFromSchemaTypeName, (arg("typeName")))
-    .staticmethod("GetTypeFromSchemaTypeName")
-    .def("GetConcreteTypeFromSchemaTypeName", &This::GetConcreteTypeFromSchemaTypeName, (arg("typeName")))
-    .staticmethod("GetConcreteTypeFromSchemaTypeName")
-    .def("GetAPITypeFromSchemaTypeName", &This::GetAPITypeFromSchemaTypeName, (arg("typeName")))
-    .staticmethod("GetAPITypeFromSchemaTypeName")
+//     .def("GetTypeFromSchemaTypeName", &This::GetTypeFromSchemaTypeName, (arg("typeName")))
+//     .staticmethod("GetTypeFromSchemaTypeName")
+//     .def("GetConcreteTypeFromSchemaTypeName", &This::GetConcreteTypeFromSchemaTypeName, (arg("typeName")))
+//     .staticmethod("GetConcreteTypeFromSchemaTypeName")
+//     .def("GetAPITypeFromSchemaTypeName", &This::GetAPITypeFromSchemaTypeName, (arg("typeName")))
+//     .staticmethod("GetAPITypeFromSchemaTypeName")
 
     .def("IsDisallowedField", &This::IsDisallowedField, (arg("fieldName")))
     .staticmethod("IsDisallowedField")

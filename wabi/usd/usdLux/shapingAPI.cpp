@@ -62,15 +62,9 @@ UsdLuxShapingAPI UsdLuxShapingAPI::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxShapingAPI::_GetSchemaKind() const
+UsdSchemaKind UsdLuxShapingAPI::GetSchemaKind() const
 {
   return UsdLuxShapingAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdLuxShapingAPI::_GetSchemaType() const
-{
-  return UsdLuxShapingAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdLuxShapingAPI UsdLuxShapingAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdLuxShapingAPI::_GetStaticTfType()
+const TfType &UsdLuxShapingAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxShapingAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxShapingAPI::_IsTypedSchema()
+bool UsdLuxShapingAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxShapingAPI::_GetTfType() const
+const TfType &UsdLuxShapingAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdLuxShapingAPI::GetShapingFocusAttr() const

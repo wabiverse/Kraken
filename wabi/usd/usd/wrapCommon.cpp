@@ -51,7 +51,4 @@ void wrapUsdCommon()
     .value("NonAppliedAPI", UsdSchemaKind::NonAppliedAPI)
     .value("SingleApplyAPI", UsdSchemaKind::SingleApplyAPI)
     .value("MultipleApplyAPI", UsdSchemaKind::MultipleApplyAPI);
-  // Deprecated aliasing of UsdSchemaType to UsdSchemaKind for backward
-  // compatibility.
-  scope().attr("SchemaType") = scope().attr("SchemaKind");
 }

@@ -55,35 +55,29 @@ UsdGeomXformCommonAPI UsdGeomXformCommonAPI::Get(const UsdStagePtr &stage, const
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomXformCommonAPI::_GetSchemaKind() const
+UsdSchemaKind UsdGeomXformCommonAPI::GetSchemaKind() const
 {
   return UsdGeomXformCommonAPI::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomXformCommonAPI::_GetSchemaType() const
-{
-  return UsdGeomXformCommonAPI::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomXformCommonAPI::_GetStaticTfType()
+const TfType &UsdGeomXformCommonAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomXformCommonAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomXformCommonAPI::_IsTypedSchema()
+bool UsdGeomXformCommonAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomXformCommonAPI::_GetTfType() const
+const TfType &UsdGeomXformCommonAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

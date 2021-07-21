@@ -88,10 +88,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::SingleApplyAPI;
+
 
   /// Construct a UsdShadeNodeDefAPI on UsdPrim \p prim .
   /// Equivalent to UsdShadeNodeDefAPI::Get(prim.GetStage(), prim.GetPath())
@@ -152,25 +149,19 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   ///
   /// \sa UsdSchemaKind
   USDSHADE_API
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /// \deprecated
-  /// Same as _GetSchemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  USDSHADE_API
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   // --------------------------------------------------------------------- //

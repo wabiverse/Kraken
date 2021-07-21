@@ -50,55 +50,41 @@ typedef std::vector<PropertyUNI *> CollectionPropertyUNI;
 
 struct KrakenPrim : public UsdTyped
 {
-  SdfPath path;
+  inline explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
+  inline explicit KrakenPrim(const UsdSchemaBase &schemaObj);
+  virtual ~KrakenPrim();
 
-  /**
-   * Notifier to MsgBus */
-  TfNotice notice = TfNotice();
+  static bool RegisterPrimInitFromPlugins(KrakenPrim *prim);
+
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
+
+  /** This scenes active stage. */
+  SdfPath path;
+  TfNotice notice;
 
   const char *identifier;
-
   struct KrakenPrim *type;
   void *data;
 
   UsdAttributeVector props;
   CollectionPropertyUNI collection;
 
-  /**
-   * Object this is derived from */
   struct KrakenPrim *base;
 
-  /**
-   * Function to register/unregister subclasses */
   ObjectRegisterFunc reg;
   ObjectUnregisterFunc unreg;
-
   ObjectInstanceFunc instance;
 
-  static bool KrakenInitPrimsFromPlugins(KrakenPrim *prim);
+ protected:
+  UsdSchemaKind GetSchemaKind() const override;
 
-  virtual ~KrakenPrim()
-  {}
+ private:
+  friend class UsdSchemaRegistry;
 
-  inline explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
-  inline explicit KrakenPrim(const UsdSchemaBase &schemaObj);
+  static const TfType &GetStaticTfType();
+  static bool IsTypedSchema();
+  const TfType &GetTfType() const override;
 };
-
-KrakenPrim::KrakenPrim(const UsdPrim &prim)
-  : UsdTyped(prim),
-    notice(TfNotice()),
-    type(nullptr),
-    data(nullptr),
-    base(nullptr)
-{}
-
-KrakenPrim::KrakenPrim(const UsdSchemaBase &schemaObj)
-  : UsdTyped(schemaObj),
-    notice(TfNotice()),
-    type(nullptr),
-    data(nullptr),
-    base(nullptr)
-{}
 
 typedef KrakenPrim PointerUNI;
 

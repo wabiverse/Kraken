@@ -93,12 +93,6 @@ class {{ cls.cppClassName }} : public {{ cls.parentCppClassName }} {
    * @sa UsdSchemaKind */
   static const UsdSchemaKind schemaKind = {{ cls.schemaKindEnumValue }};
 
-  /**
-   * @deprecated
-   * Same as schemaKind, provided to maintain temporary backward
-   * compatibility with older generated schemas. */
-  static const UsdSchemaKind schemaType = {{ cls.schemaKindEnumValue }};
-
 {% if cls.isMultipleApply %}
   /**
    * Construct a {{ cls.cppClassName }} on UsdPrim @p prim with name @p name.
@@ -320,33 +314,24 @@ GetSchemaAttributeNames(bool includeInherited = true);
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /**
-   * @deprecated
-   * Same as _GetSchemaKind, provided to maintain temporary backward
-   * compatibility with older generated schemas. */
-  {% if useExportAPI -%}
-  {{ Upper(libraryName) }}_API
-  {% endif -%}
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  /* needs to invoke _GetStaticTfType. */
+  /* needs to invoke GetStaticTfType. */
   friend class UsdSchemaRegistry;
 
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   /* override SchemaBase virtuals. */
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 {% for attrName in cls.attrOrder %}
 {% set attr = cls.attrs[attrName]%}
 {# Only emit Create / Get API and doxygen if apiName is not empty string. #}

@@ -130,12 +130,6 @@ class UsdAPISchemaBase : public UsdSchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractBase;
 
   /**
-   * @deprecated
-   * Same as schemaKind, provided to maintain temporary backward
-   * compatibility with older generated schemas. */
-  static const UsdSchemaKind schemaType = UsdSchemaKind::AbstractBase;
-
-  /**
    * Construct a UsdAPISchemaBase on UsdPrim @p prim . Equivalent to
    * UsdAPISchemaBase::Get(prim.GetStage(), prim.GetPath()) for a @em
    * valid @p prim, but will not immediately throw an error for an invalid
@@ -170,27 +164,20 @@ class UsdAPISchemaBase : public UsdSchemaBase
    *
    * @sa UsdSchemaKind */
   USD_API
-  UsdSchemaKind _GetSchemaKind() const override;
-
-  /**
-   * @deprecated
-   * Same as _GetSchemaKind, provided to maintain temporary backward
-   * compatibility with older generated schemas. */
-  USD_API
-  UsdSchemaKind _GetSchemaType() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
  private:
-  /* needs to invoke _GetStaticTfType. */
+  /* needs to invoke GetStaticTfType. */
   friend class UsdSchemaRegistry;
 
   USD_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   /* override SchemaBase virtuals. */
   USD_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   /**

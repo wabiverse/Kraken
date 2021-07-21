@@ -52,35 +52,29 @@ UsdGeomBoundable UsdGeomBoundable::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomBoundable::_GetSchemaKind() const
+UsdSchemaKind UsdGeomBoundable::GetSchemaKind() const
 {
   return UsdGeomBoundable::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomBoundable::_GetSchemaType() const
-{
-  return UsdGeomBoundable::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomBoundable::_GetStaticTfType()
+const TfType &UsdGeomBoundable::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomBoundable>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomBoundable::_IsTypedSchema()
+bool UsdGeomBoundable::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomBoundable::_GetTfType() const
+const TfType &UsdGeomBoundable::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomBoundable::GetExtentAttr() const

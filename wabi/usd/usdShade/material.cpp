@@ -71,35 +71,29 @@ UsdShadeMaterial UsdShadeMaterial::Define(const UsdStagePtr &stage, const SdfPat
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeMaterial::_GetSchemaKind() const
+UsdSchemaKind UsdShadeMaterial::GetSchemaKind() const
 {
   return UsdShadeMaterial::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdShadeMaterial::_GetSchemaType() const
-{
-  return UsdShadeMaterial::schemaType;
-}
-
 /* static */
-const TfType &UsdShadeMaterial::_GetStaticTfType()
+const TfType &UsdShadeMaterial::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeMaterial>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeMaterial::_IsTypedSchema()
+bool UsdShadeMaterial::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeMaterial::_GetTfType() const
+const TfType &UsdShadeMaterial::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdShadeMaterial::GetSurfaceAttr() const

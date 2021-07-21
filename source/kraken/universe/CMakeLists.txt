@@ -18,6 +18,7 @@ set(SRC
   intern/UNI_create.cpp
   intern/UNI_default_tables.cpp
   intern/UNI_file.cpp
+  intern/UNI_object.cpp
   intern/UNI_pixar_utils.cpp
 
   UNI_api.h

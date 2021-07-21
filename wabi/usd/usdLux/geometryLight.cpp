@@ -78,35 +78,29 @@ UsdLuxGeometryLight UsdLuxGeometryLight::Define(const UsdStagePtr &stage, const 
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxGeometryLight::_GetSchemaKind() const
+UsdSchemaKind UsdLuxGeometryLight::GetSchemaKind() const
 {
   return UsdLuxGeometryLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxGeometryLight::_GetSchemaType() const
-{
-  return UsdLuxGeometryLight::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxGeometryLight::_GetStaticTfType()
+const TfType &UsdLuxGeometryLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxGeometryLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxGeometryLight::_IsTypedSchema()
+bool UsdLuxGeometryLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxGeometryLight::_GetTfType() const
+const TfType &UsdLuxGeometryLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdRelationship UsdLuxGeometryLight::GetGeometryRel() const

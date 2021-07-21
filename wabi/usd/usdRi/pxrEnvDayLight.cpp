@@ -78,35 +78,29 @@ UsdRiPxrEnvDayLight UsdRiPxrEnvDayLight::Define(const UsdStagePtr &stage, const 
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrEnvDayLight::_GetSchemaKind() const
+UsdSchemaKind UsdRiPxrEnvDayLight::GetSchemaKind() const
 {
   return UsdRiPxrEnvDayLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiPxrEnvDayLight::_GetSchemaType() const
-{
-  return UsdRiPxrEnvDayLight::schemaType;
-}
-
 /* static */
-const TfType &UsdRiPxrEnvDayLight::_GetStaticTfType()
+const TfType &UsdRiPxrEnvDayLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrEnvDayLight>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrEnvDayLight::_IsTypedSchema()
+bool UsdRiPxrEnvDayLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrEnvDayLight::_GetTfType() const
+const TfType &UsdRiPxrEnvDayLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrEnvDayLight::GetDayAttr() const

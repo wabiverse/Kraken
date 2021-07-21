@@ -78,35 +78,29 @@ UsdLuxDiskLight UsdLuxDiskLight::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxDiskLight::_GetSchemaKind() const
+UsdSchemaKind UsdLuxDiskLight::GetSchemaKind() const
 {
   return UsdLuxDiskLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxDiskLight::_GetSchemaType() const
-{
-  return UsdLuxDiskLight::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxDiskLight::_GetStaticTfType()
+const TfType &UsdLuxDiskLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxDiskLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxDiskLight::_IsTypedSchema()
+bool UsdLuxDiskLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxDiskLight::_GetTfType() const
+const TfType &UsdLuxDiskLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdLuxDiskLight::GetRadiusAttr() const

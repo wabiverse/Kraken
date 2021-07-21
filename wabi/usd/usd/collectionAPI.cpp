@@ -108,15 +108,9 @@ bool UsdCollectionAPI::IsCollectionAPIPath(const SdfPath &path, TfToken *name)
 }
 
 /* virtual */
-UsdSchemaKind UsdCollectionAPI::_GetSchemaKind() const
+UsdSchemaKind UsdCollectionAPI::GetSchemaKind() const
 {
   return UsdCollectionAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdCollectionAPI::_GetSchemaType() const
-{
-  return UsdCollectionAPI::schemaType;
 }
 
 /* static */
@@ -150,23 +144,23 @@ UsdCollectionAPI UsdCollectionAPI::Apply(const UsdPrim &prim, const TfToken &nam
 }
 
 /* static */
-const TfType &UsdCollectionAPI::_GetStaticTfType()
+const TfType &UsdCollectionAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdCollectionAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdCollectionAPI::_IsTypedSchema()
+bool UsdCollectionAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdCollectionAPI::_GetTfType() const
+const TfType &UsdCollectionAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /// Returns the property name prefixed with the correct namespace prefix, which
@@ -362,7 +356,7 @@ std::vector<UsdCollectionAPI> UsdCollectionAPI::GetAllCollections(const UsdPrim 
     return collections;
   }
 
-  static const std::vector<std::string> collectionAPIAliases = _GetCollectionAPIAliases(_GetStaticTfType());
+  static const std::vector<std::string> collectionAPIAliases = _GetCollectionAPIAliases(GetStaticTfType());
 
   for (const auto &appliedSchema : appliedSchemas)
   {

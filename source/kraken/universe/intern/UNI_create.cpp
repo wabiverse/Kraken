@@ -25,7 +25,9 @@
 #include "KLI_icons.h"
 
 #include "KKE_context.h"
+#include "KKE_kraken_prim.h"
 #include "KKE_main.h"
+#include "KKE_scene.h"
 #include "KKE_screen.h"
 
 #include "LUXO_runtime.h"
@@ -57,6 +59,9 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/stage.h>
 
+#include <wabi/base/plug/plugin.h>
+#include <wabi/base/plug/registry.h>
+
 WABI_NAMESPACE_BEGIN
 
 void UNI_create_stage(kContext *C)
@@ -65,7 +70,17 @@ void UNI_create_stage(kContext *C)
 
   main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
 
-  CTX_data_scene_set(C, new Scene(main->stage_id.string()));
+  Scene *scene = new Scene(main->stage_id.string());
+  CTX_data_scene_set(C, scene);
+
+  KrakenPrimRegistry &reg = KrakenPrimRegistry::GetInstance();
+
+  TfRegistryManager::GetInstance().SubscribeTo<KrakenPrimRegistry>();
+  // TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();
+
+  // const UsdPrim &prim = scene->stage->DefinePrim(SdfPath("/Scene"), TfToken("Scene"));
+  // prim.SetTypeName(TfToken("Scene"));
+  // reg.GetInitFunction(prim);
 }
 
 void UNI_destroy(kContext *C)

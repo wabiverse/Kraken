@@ -62,15 +62,9 @@ UsdRenderSettingsAPI UsdRenderSettingsAPI::Get(const UsdStagePtr &stage, const S
 }
 
 /* virtual */
-UsdSchemaKind UsdRenderSettingsAPI::_GetSchemaKind() const
+UsdSchemaKind UsdRenderSettingsAPI::GetSchemaKind() const
 {
   return UsdRenderSettingsAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdRenderSettingsAPI::_GetSchemaType() const
-{
-  return UsdRenderSettingsAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdRenderSettingsAPI UsdRenderSettingsAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRenderSettingsAPI::_GetStaticTfType()
+const TfType &UsdRenderSettingsAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRenderSettingsAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRenderSettingsAPI::_IsTypedSchema()
+bool UsdRenderSettingsAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRenderSettingsAPI::_GetTfType() const
+const TfType &UsdRenderSettingsAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

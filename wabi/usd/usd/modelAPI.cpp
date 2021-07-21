@@ -69,35 +69,29 @@ UsdModelAPI UsdModelAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdModelAPI::_GetSchemaKind() const
+UsdSchemaKind UsdModelAPI::GetSchemaKind() const
 {
   return UsdModelAPI::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdModelAPI::_GetSchemaType() const
-{
-  return UsdModelAPI::schemaType;
-}
-
 /* static */
-const TfType &UsdModelAPI::_GetStaticTfType()
+const TfType &UsdModelAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdModelAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdModelAPI::_IsTypedSchema()
+bool UsdModelAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdModelAPI::_GetTfType() const
+const TfType &UsdModelAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

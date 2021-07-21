@@ -55,35 +55,29 @@ UsdShadeConnectableAPI UsdShadeConnectableAPI::Get(const UsdStagePtr &stage, con
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeConnectableAPI::_GetSchemaKind() const
+UsdSchemaKind UsdShadeConnectableAPI::GetSchemaKind() const
 {
   return UsdShadeConnectableAPI::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdShadeConnectableAPI::_GetSchemaType() const
-{
-  return UsdShadeConnectableAPI::schemaType;
-}
-
 /* static */
-const TfType &UsdShadeConnectableAPI::_GetStaticTfType()
+const TfType &UsdShadeConnectableAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeConnectableAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeConnectableAPI::_IsTypedSchema()
+bool UsdShadeConnectableAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeConnectableAPI::_GetTfType() const
+const TfType &UsdShadeConnectableAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

@@ -78,35 +78,29 @@ UsdLuxSphereLight UsdLuxSphereLight::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxSphereLight::_GetSchemaKind() const
+UsdSchemaKind UsdLuxSphereLight::GetSchemaKind() const
 {
   return UsdLuxSphereLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxSphereLight::_GetSchemaType() const
-{
-  return UsdLuxSphereLight::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxSphereLight::_GetStaticTfType()
+const TfType &UsdLuxSphereLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxSphereLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxSphereLight::_IsTypedSchema()
+bool UsdLuxSphereLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxSphereLight::_GetTfType() const
+const TfType &UsdLuxSphereLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdLuxSphereLight::GetRadiusAttr() const

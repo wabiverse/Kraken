@@ -78,35 +78,29 @@ UsdMediaSpatialAudio UsdMediaSpatialAudio::Define(const UsdStagePtr &stage, cons
 }
 
 /* virtual */
-UsdSchemaKind UsdMediaSpatialAudio::_GetSchemaKind() const
+UsdSchemaKind UsdMediaSpatialAudio::GetSchemaKind() const
 {
   return UsdMediaSpatialAudio::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdMediaSpatialAudio::_GetSchemaType() const
-{
-  return UsdMediaSpatialAudio::schemaType;
-}
-
 /* static */
-const TfType &UsdMediaSpatialAudio::_GetStaticTfType()
+const TfType &UsdMediaSpatialAudio::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdMediaSpatialAudio>();
   return tfType;
 }
 
 /* static */
-bool UsdMediaSpatialAudio::_IsTypedSchema()
+bool UsdMediaSpatialAudio::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdMediaSpatialAudio::_GetTfType() const
+const TfType &UsdMediaSpatialAudio::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdMediaSpatialAudio::GetFilePathAttr() const

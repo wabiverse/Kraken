@@ -62,15 +62,9 @@ UsdRiTextureAPI UsdRiTextureAPI::Get(const UsdStagePtr &stage, const SdfPath &pa
 }
 
 /* virtual */
-UsdSchemaKind UsdRiTextureAPI::_GetSchemaKind() const
+UsdSchemaKind UsdRiTextureAPI::GetSchemaKind() const
 {
   return UsdRiTextureAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdRiTextureAPI::_GetSchemaType() const
-{
-  return UsdRiTextureAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdRiTextureAPI UsdRiTextureAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRiTextureAPI::_GetStaticTfType()
+const TfType &UsdRiTextureAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiTextureAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiTextureAPI::_IsTypedSchema()
+bool UsdRiTextureAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiTextureAPI::_GetTfType() const
+const TfType &UsdRiTextureAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiTextureAPI::GetRiTextureGammaAttr() const

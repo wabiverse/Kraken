@@ -52,35 +52,29 @@ UsdGeomXformable UsdGeomXformable::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomXformable::_GetSchemaKind() const
+UsdSchemaKind UsdGeomXformable::GetSchemaKind() const
 {
   return UsdGeomXformable::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomXformable::_GetSchemaType() const
-{
-  return UsdGeomXformable::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomXformable::_GetStaticTfType()
+const TfType &UsdGeomXformable::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomXformable>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomXformable::_IsTypedSchema()
+bool UsdGeomXformable::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomXformable::_GetTfType() const
+const TfType &UsdGeomXformable::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomXformable::GetXformOpOrderAttr() const

@@ -71,35 +71,29 @@ UsdGeomPointInstancer UsdGeomPointInstancer::Define(const UsdStagePtr &stage, co
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomPointInstancer::_GetSchemaKind() const
+UsdSchemaKind UsdGeomPointInstancer::GetSchemaKind() const
 {
   return UsdGeomPointInstancer::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomPointInstancer::_GetSchemaType() const
-{
-  return UsdGeomPointInstancer::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomPointInstancer::_GetStaticTfType()
+const TfType &UsdGeomPointInstancer::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomPointInstancer>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomPointInstancer::_IsTypedSchema()
+bool UsdGeomPointInstancer::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomPointInstancer::_GetTfType() const
+const TfType &UsdGeomPointInstancer::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomPointInstancer::GetProtoIndicesAttr() const

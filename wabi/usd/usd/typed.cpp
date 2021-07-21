@@ -60,7 +60,7 @@ TF_MAKE_STATIC_DATA(TfType, _tfType)
 {
   *_tfType = TfType::Find<UsdTyped>();
 }
-const TfType &UsdTyped::_GetTfType() const
+const TfType &UsdTyped::GetType() const
 {
   return *_tfType;
 }

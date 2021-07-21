@@ -62,15 +62,9 @@ UsdRiSplineAPI UsdRiSplineAPI::Get(const UsdStagePtr &stage, const SdfPath &path
 }
 
 /* virtual */
-UsdSchemaKind UsdRiSplineAPI::_GetSchemaKind() const
+UsdSchemaKind UsdRiSplineAPI::GetSchemaKind() const
 {
   return UsdRiSplineAPI::schemaKind;
-}
-
-/* virtual */
-UsdSchemaKind UsdRiSplineAPI::_GetSchemaType() const
-{
-  return UsdRiSplineAPI::schemaType;
 }
 
 /* static */
@@ -84,23 +78,23 @@ UsdRiSplineAPI UsdRiSplineAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRiSplineAPI::_GetStaticTfType()
+const TfType &UsdRiSplineAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiSplineAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiSplineAPI::_IsTypedSchema()
+bool UsdRiSplineAPI::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiSplineAPI::_GetTfType() const
+const TfType &UsdRiSplineAPI::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

@@ -78,35 +78,29 @@ UsdRiRisIntegrator UsdRiRisIntegrator::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdRiRisIntegrator::_GetSchemaKind() const
+UsdSchemaKind UsdRiRisIntegrator::GetSchemaKind() const
 {
   return UsdRiRisIntegrator::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiRisIntegrator::_GetSchemaType() const
-{
-  return UsdRiRisIntegrator::schemaType;
-}
-
 /* static */
-const TfType &UsdRiRisIntegrator::_GetStaticTfType()
+const TfType &UsdRiRisIntegrator::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRisIntegrator>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRisIntegrator::_IsTypedSchema()
+bool UsdRiRisIntegrator::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRisIntegrator::_GetTfType() const
+const TfType &UsdRiRisIntegrator::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiRisIntegrator::GetFilePathAttr() const

@@ -71,35 +71,29 @@ UsdGeomNurbsPatch UsdGeomNurbsPatch::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomNurbsPatch::_GetSchemaKind() const
+UsdSchemaKind UsdGeomNurbsPatch::GetSchemaKind() const
 {
   return UsdGeomNurbsPatch::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomNurbsPatch::_GetSchemaType() const
-{
-  return UsdGeomNurbsPatch::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomNurbsPatch::_GetStaticTfType()
+const TfType &UsdGeomNurbsPatch::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomNurbsPatch>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomNurbsPatch::_IsTypedSchema()
+bool UsdGeomNurbsPatch::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsPatch::_GetTfType() const
+const TfType &UsdGeomNurbsPatch::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomNurbsPatch::GetUVertexCountAttr() const

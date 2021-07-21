@@ -78,35 +78,29 @@ UsdRiRisBxdf UsdRiRisBxdf::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdRiRisBxdf::_GetSchemaKind() const
+UsdSchemaKind UsdRiRisBxdf::GetSchemaKind() const
 {
   return UsdRiRisBxdf::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiRisBxdf::_GetSchemaType() const
-{
-  return UsdRiRisBxdf::schemaType;
-}
-
 /* static */
-const TfType &UsdRiRisBxdf::_GetStaticTfType()
+const TfType &UsdRiRisBxdf::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRisBxdf>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRisBxdf::_IsTypedSchema()
+bool UsdRiRisBxdf::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRisBxdf::_GetTfType() const
+const TfType &UsdRiRisBxdf::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

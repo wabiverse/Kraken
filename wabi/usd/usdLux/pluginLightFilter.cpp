@@ -78,35 +78,29 @@ UsdLuxPluginLightFilter UsdLuxPluginLightFilter::Define(const UsdStagePtr &stage
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxPluginLightFilter::_GetSchemaKind() const
+UsdSchemaKind UsdLuxPluginLightFilter::GetSchemaKind() const
 {
   return UsdLuxPluginLightFilter::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxPluginLightFilter::_GetSchemaType() const
-{
-  return UsdLuxPluginLightFilter::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxPluginLightFilter::_GetStaticTfType()
+const TfType &UsdLuxPluginLightFilter::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxPluginLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxPluginLightFilter::_IsTypedSchema()
+bool UsdLuxPluginLightFilter::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxPluginLightFilter::_GetTfType() const
+const TfType &UsdLuxPluginLightFilter::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

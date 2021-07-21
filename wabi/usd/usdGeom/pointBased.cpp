@@ -52,35 +52,29 @@ UsdGeomPointBased UsdGeomPointBased::Get(const UsdStagePtr &stage, const SdfPath
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomPointBased::_GetSchemaKind() const
+UsdSchemaKind UsdGeomPointBased::GetSchemaKind() const
 {
   return UsdGeomPointBased::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomPointBased::_GetSchemaType() const
-{
-  return UsdGeomPointBased::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomPointBased::_GetStaticTfType()
+const TfType &UsdGeomPointBased::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomPointBased>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomPointBased::_IsTypedSchema()
+bool UsdGeomPointBased::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomPointBased::_GetTfType() const
+const TfType &UsdGeomPointBased::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomPointBased::GetPointsAttr() const

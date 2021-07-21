@@ -115,15 +115,24 @@ enum eSceneLoadSet
 
 struct Scene : public KrakenPrim
 {
+  explicit Scene(const std::string &identifier, const UsdPrim &prim = UsdPrim());
+  explicit Scene(const std::string &identifier, const UsdSchemaBase &schemaObj);
+  virtual ~Scene();
+
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
+
   /** This scenes active stage. */
   UsdStageRefPtr stage;
 
-  inline Scene(const std::string &identifier);
+ protected:
+  UsdSchemaKind GetSchemaKind() const override;
+
+ private:
+  friend class UsdSchemaRegistry;
+
+  static const TfType &GetStaticTfType();
+  static bool IsTypedSchema();
+  const TfType &GetTfType() const override;
 };
-
-Scene::Scene(const std::string &identifier)
-  : stage(UsdStage::CreateNew(identifier))
-{}
-
 
 WABI_NAMESPACE_END

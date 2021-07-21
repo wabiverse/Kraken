@@ -59,35 +59,29 @@ UsdLuxLight UsdLuxLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxLight::_GetSchemaKind() const
+UsdSchemaKind UsdLuxLight::GetSchemaKind() const
 {
   return UsdLuxLight::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdLuxLight::_GetSchemaType() const
-{
-  return UsdLuxLight::schemaType;
-}
-
 /* static */
-const TfType &UsdLuxLight::_GetStaticTfType()
+const TfType &UsdLuxLight::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxLight::_IsTypedSchema()
+bool UsdLuxLight::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxLight::_GetTfType() const
+const TfType &UsdLuxLight::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdLuxLight::GetIntensityAttr() const

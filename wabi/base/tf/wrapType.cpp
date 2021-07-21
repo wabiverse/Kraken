@@ -61,7 +61,7 @@ namespace
 
 // Provide conversion of either string typenames or Python class objects
 // to TfTypes.
-static TfType _GetTfTypeFromPython(PyObject *p)
+static TfType GetTfTypeFromPython(PyObject *p)
 {
   if (TfPyString_Check(p))
     return TfType::FindByName(extract<string>(p)());
@@ -69,7 +69,7 @@ static TfType _GetTfTypeFromPython(PyObject *p)
     return TfType::FindByPythonClass(object(borrowed(p)));
 }
 
-// A from-Python converter that uses the _GetTfTypeFromPython function.
+// A from-Python converter that uses the GetTfTypeFromPython function.
 struct _TfTypeFromPython
 {
   _TfTypeFromPython()
@@ -80,7 +80,7 @@ struct _TfTypeFromPython
  private:
   static void *_Convertible(PyObject *p)
   {
-    if (_GetTfTypeFromPython(p).IsUnknown())
+    if (GetTfTypeFromPython(p).IsUnknown())
     {
       TfPyThrowTypeError(
         TfStringPrintf("cannot convert %s to TfType; has that type "
@@ -94,7 +94,7 @@ struct _TfTypeFromPython
   {
     void *const storage = ((converter::rvalue_from_python_storage<TfType> *)data)->storage.bytes;
 
-    TfType type = _GetTfTypeFromPython(p);
+    TfType type = GetTfTypeFromPython(p);
     new (storage) TfType(type);
     data->convertible = storage;
   }

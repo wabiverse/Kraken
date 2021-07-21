@@ -71,35 +71,29 @@ UsdGeomNurbsCurves UsdGeomNurbsCurves::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomNurbsCurves::_GetSchemaKind() const
+UsdSchemaKind UsdGeomNurbsCurves::GetSchemaKind() const
 {
   return UsdGeomNurbsCurves::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomNurbsCurves::_GetSchemaType() const
-{
-  return UsdGeomNurbsCurves::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomNurbsCurves::_GetStaticTfType()
+const TfType &UsdGeomNurbsCurves::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomNurbsCurves>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomNurbsCurves::_IsTypedSchema()
+bool UsdGeomNurbsCurves::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsCurves::_GetTfType() const
+const TfType &UsdGeomNurbsCurves::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomNurbsCurves::GetOrderAttr() const

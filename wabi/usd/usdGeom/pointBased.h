@@ -63,10 +63,7 @@ class UsdGeomPointBased : public UsdGeomGprim
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::AbstractTyped;
+
 
   /// Construct a UsdGeomPointBased on UsdPrim \p prim .
   /// Equivalent to UsdGeomPointBased::Get(prim.GetStage(), prim.GetPath())
@@ -110,25 +107,20 @@ class UsdGeomPointBased : public UsdGeomGprim
   ///
   /// \sa UsdSchemaKind
   USDGEOM_API
-  UsdSchemaKind _GetSchemaKind() const override;
+  UsdSchemaKind GetSchemaKind() const override;
 
-  /// \deprecated
-  /// Same as _GetSchemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  USDGEOM_API
-  UsdSchemaKind _GetSchemaType() const override;
 
  private:
-  // needs to invoke _GetStaticTfType.
+  // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
-  static const TfType &_GetStaticTfType();
+  static const TfType &GetStaticTfType();
 
-  static bool _IsTypedSchema();
+  static bool IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 
  public:
   // --------------------------------------------------------------------- //

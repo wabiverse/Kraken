@@ -51,11 +51,6 @@ class UsdTyped : public UsdSchemaBase
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractBase;
 
-  /// \deprecated
-  /// Same as schemaKind, provided to maintain temporary backward
-  /// compatibility with older generated schemas.
-  static const UsdSchemaKind schemaType = UsdSchemaKind::AbstractBase;
-
   /// Construct a UsdTyped on UsdPrim \p prim .
   /// Equivalent to UsdTyped::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
@@ -102,7 +97,7 @@ class UsdTyped : public UsdSchemaBase
 
  private:
   USD_API
-  const TfType &_GetTfType() const override;
+  const TfType &GetTfType() const override;
 };
 
 WABI_NAMESPACE_END

@@ -78,35 +78,29 @@ UsdVolVolume UsdVolVolume::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdVolVolume::_GetSchemaKind() const
+UsdSchemaKind UsdVolVolume::GetSchemaKind() const
 {
   return UsdVolVolume::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdVolVolume::_GetSchemaType() const
-{
-  return UsdVolVolume::schemaType;
-}
-
 /* static */
-const TfType &UsdVolVolume::_GetStaticTfType()
+const TfType &UsdVolVolume::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdVolVolume>();
   return tfType;
 }
 
 /* static */
-bool UsdVolVolume::_IsTypedSchema()
+bool UsdVolVolume::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdVolVolume::_GetTfType() const
+const TfType &UsdVolVolume::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/

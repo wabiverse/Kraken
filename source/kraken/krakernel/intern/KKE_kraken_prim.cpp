@@ -29,181 +29,147 @@
 #include "KKE_main.h"
 #include "KKE_scene.h"
 
-#include <wabi/base/js/value.h>
-#include <wabi/base/plug/notice.h>
-#include <wabi/base/plug/plugin.h>
-#include <wabi/base/plug/registry.h>
-#include <wabi/base/tf/instantiateSingleton.h>
-#include <wabi/base/tf/singleton.h>
-#include <wabi/base/tf/weakBase.h>
-
-#include <memory>
-#include <tbb/queuing_rw_mutex.h>
-#include <unordered_map>
-
 WABI_NAMESPACE_BEGIN
 
 /**
  *  -------------------------------------- The Kraken Prim Registry. ----- */
 
-class KrakenPrimRegistry : public TfWeakBase
+KrakenPrimRegistry::KrakenPrimRegistry()
+  : m_initialized(false)
 {
+  TF_MSG("HI");
 
- public:
+  TfSingleton<KrakenPrimRegistry>::SetInstanceConstructed(*this);
+  TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();
 
+  m_initialized.store(true, std::memory_order_release);
 
-  KrakenPrimRegistry()
-    : m_initialized(false)
+  TfNotice::Register(TfCreateWeakPtr(this), &KrakenPrimRegistry::DidRegisterPlugins);
+}
+
+KrakenPrimRegistry &KrakenPrimRegistry::GetInstance()
+{
+  return TfSingleton<KrakenPrimRegistry>::GetInstance();
+}
+
+void KrakenPrimRegistry::RegisterInitFunction(const TfType &schemaType, const KrakenPrimInitFunction &fn)
+{
+  bool didInsert = false;
   {
-    TfSingleton<KrakenPrimRegistry>::SetInstanceConstructed(*this);
-    TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();
-
-    m_initialized.store(true, std::memory_order_release);
-
-    TfNotice::Register(TfCreateWeakPtr(this), &KrakenPrimRegistry::DidRegisterPlugins);
-  }
- 
-
-  static KrakenPrimRegistry &GetInstance()
-  {
-    return TfSingleton<KrakenPrimRegistry>::GetInstance();
-  }
-
-
-  void RegisterInitFunction(const TfType &schemaType, const KrakenPrimInitFunction &fn)
-  {
-    bool didInsert = false;
-    {
-      RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
-      didInsert = m_registry.emplace(schemaType, fn).second;
-    }
-
-    if (!didInsert)
-    {
-      TF_MSG_ERROR("UsdGeomComputeExtentFunction already registered for "
-                   "prim type '%s'", schemaType.GetTypeName().c_str());
-    }
+    RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
+    didInsert = m_registry.emplace(schemaType, fn).second;
   }
 
-
-  KrakenPrimInitFunction GetInitFunction(const UsdPrim &prim)
+  if (!didInsert)
   {
-    WaitUntilInitialized();
+    TF_MSG_ERROR("KrakenInitFunction already registered for "
+                  "prim type '%s'", schemaType.GetTypeName().c_str());
+  }
+}
 
-    const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
-    if (!primSchemaType)
+KrakenPrimInitFunction KrakenPrimRegistry::GetInitFunction(const UsdPrim &prim)
+{
+  WaitUntilInitialized();
+
+  const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
+  if (!primSchemaType)
+  {
+    TF_MSG_ERROR("Could not find prim type '%s' for prim %s",
+                  prim.GetTypeName().GetText(),
+                  UsdDescribe(prim).c_str());
+    return nullptr;
+  }
+
+  KrakenPrimInitFunction fn = nullptr;
+  if (FindFunctionForType(primSchemaType, &fn))
+  {
+    return fn;
+  }
+
+  const std::vector<TfType> primSchemaTypeAndBases = GetTypesThatMayHaveRegisteredFunctions(primSchemaType);
+
+  auto i = primSchemaTypeAndBases.cbegin();
+  for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
+  {
+    const TfType &type = *i;
+    if (FindFunctionForType(type, &fn))
     {
-      TF_MSG_ERROR("Could not find prim type '%s' for prim %s",
-                   prim.GetTypeName().GetText(),
-                   UsdDescribe(prim).c_str());
-      return nullptr;
+      break;
     }
 
-    KrakenPrimInitFunction fn = nullptr;
-    if (FindFunctionForType(primSchemaType, &fn))
+    if (LoadPluginForType(type))
     {
-      return fn;
-    }
-
-    const std::vector<TfType> primSchemaTypeAndBases = GetTypesThatMayHaveRegisteredFunctions(primSchemaType);
-
-    auto i = primSchemaTypeAndBases.cbegin();
-    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
-    {
-      const TfType &type = *i;
       if (FindFunctionForType(type, &fn))
       {
         break;
       }
-
-      if (LoadPluginForType(type))
-      {
-        if (FindFunctionForType(type, &fn))
-        {
-          break;
-        }
-      }
-    }
-
-    RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
-    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
-    {
-      m_registry.emplace(*it, fn);
-    }
-
-    return fn;
-  }
-
-
- private:
-
-  void WaitUntilInitialized()
-  {
-    while (ARCH_UNLIKELY(!m_initialized.load(std::memory_order_acquire)))
-    {
-      std::this_thread::yield();
     }
   }
 
-
-  std::vector<TfType> GetTypesThatMayHaveRegisteredFunctions(const TfType &type) const
+  RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
+  for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
   {
-    std::vector<TfType> result;
-    type.GetAllAncestorTypes(&result);
-
-    static const TfType krakenType = TfType::Find<KrakenPrim>();
-    result.erase(
-      std::remove_if(result.begin(), result.end(), [](const TfType &t) { return !t.IsA(krakenType); }),
-      result.end());
-    return result;
+    m_registry.emplace(*it, fn);
   }
 
+  return fn;
+}
 
-  bool LoadPluginForType(const TfType &type) const
+void KrakenPrimRegistry::WaitUntilInitialized()
+{
+  while (ARCH_UNLIKELY(!m_initialized.load(std::memory_order_acquire)))
   {
-    PlugRegistry &plugReg = PlugRegistry::GetInstance();
+    std::this_thread::yield();
+  }
+}
 
-    const JsValue isKrakenBuiltinPrim = plugReg.GetDataFromPluginMetaData(type, "isKrakenBuiltinPrim");
-    if (!isKrakenBuiltinPrim.Is<bool>() || !isKrakenBuiltinPrim.Get<bool>())
-    {
-      return false;
-    }
 
-    const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
-    if (!pluginForType)
-    {
-      TF_MSG_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
-      return false;
-    }
+std::vector<TfType> KrakenPrimRegistry::GetTypesThatMayHaveRegisteredFunctions(const TfType &type) const
+{
+  std::vector<TfType> result;
+  type.GetAllAncestorTypes(&result);
 
-    return pluginForType->Load();
+  static const TfType krakenType = TfType::Find<KrakenPrim>();
+  result.erase(
+    std::remove_if(result.begin(), result.end(), [](const TfType &t) { return !t.IsA(krakenType); }),
+    result.end());
+  return result;
+}
+
+
+bool KrakenPrimRegistry::LoadPluginForType(const TfType &type) const
+{
+  PlugRegistry &plugReg = PlugRegistry::GetInstance();
+
+  const JsValue isKrakenBuiltinPrim = plugReg.GetDataFromPluginMetaData(type, "isKrakenBuiltinPrim");
+  if (!isKrakenBuiltinPrim.Is<bool>() || !isKrakenBuiltinPrim.Get<bool>())
+  {
+    return false;
   }
 
-
-  void DidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n)
+  const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
+  if (!pluginForType)
   {
-    RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
-    m_registry.clear();
+    TF_MSG_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
+    return false;
   }
 
-
-  bool FindFunctionForType(const TfType &type, KrakenPrimInitFunction *fn) const
-  {
-    RWMutex::scoped_lock lock(m_mutex, /* write = */ false);
-    return TfMapLookup(m_registry, type, fn);
-  }
+  return pluginForType->Load();
+}
 
 
- private:
+void KrakenPrimRegistry::DidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n)
+{
+  RWMutex::scoped_lock lock(m_mutex, /* write = */ true);
+  m_registry.clear();
+}
 
-  using RWMutex = tbb::queuing_rw_mutex;
-  mutable RWMutex m_mutex;
 
-  using Registry = std::unordered_map<TfType, KrakenPrimInitFunction, TfHash>;
-  Registry m_registry;
-
-  std::atomic<bool> m_initialized;
-};
+bool KrakenPrimRegistry::FindFunctionForType(const TfType &type, KrakenPrimInitFunction *fn) const
+{
+  RWMutex::scoped_lock lock(m_mutex, /* write = */ false);
+  return TfMapLookup(m_registry, type, fn);
+}
 
 /**
  *  -------------------------------------- The Kraken Prim Registry. Initialization. ----- */
@@ -227,7 +193,7 @@ static bool InitKrakenPrimsFromPlugins(KrakenPrim *prim)
 }
 
 
-bool KrakenPrim::KrakenInitPrimsFromPlugins(KrakenPrim *prim)
+bool KrakenPrim::RegisterPrimInitFromPlugins(KrakenPrim *prim)
 {
   return InitKrakenPrimsFromPlugins(prim);
 }

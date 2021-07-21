@@ -78,35 +78,29 @@ UsdVolField3DAsset UsdVolField3DAsset::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdVolField3DAsset::_GetSchemaKind() const
+UsdSchemaKind UsdVolField3DAsset::GetSchemaKind() const
 {
   return UsdVolField3DAsset::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdVolField3DAsset::_GetSchemaType() const
-{
-  return UsdVolField3DAsset::schemaType;
-}
-
 /* static */
-const TfType &UsdVolField3DAsset::_GetStaticTfType()
+const TfType &UsdVolField3DAsset::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdVolField3DAsset>();
   return tfType;
 }
 
 /* static */
-bool UsdVolField3DAsset::_IsTypedSchema()
+bool UsdVolField3DAsset::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdVolField3DAsset::_GetTfType() const
+const TfType &UsdVolField3DAsset::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdVolField3DAsset::GetFieldDataTypeAttr() const

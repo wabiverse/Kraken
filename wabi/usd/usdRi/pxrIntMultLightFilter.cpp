@@ -78,35 +78,29 @@ UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Define(const UsdStagePtr 
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrIntMultLightFilter::_GetSchemaKind() const
+UsdSchemaKind UsdRiPxrIntMultLightFilter::GetSchemaKind() const
 {
   return UsdRiPxrIntMultLightFilter::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdRiPxrIntMultLightFilter::_GetSchemaType() const
-{
-  return UsdRiPxrIntMultLightFilter::schemaType;
-}
-
 /* static */
-const TfType &UsdRiPxrIntMultLightFilter::_GetStaticTfType()
+const TfType &UsdRiPxrIntMultLightFilter::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrIntMultLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrIntMultLightFilter::_IsTypedSchema()
+bool UsdRiPxrIntMultLightFilter::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrIntMultLightFilter::_GetTfType() const
+const TfType &UsdRiPxrIntMultLightFilter::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrIntMultLightFilter::GetRiIntensityAttr() const

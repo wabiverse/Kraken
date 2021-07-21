@@ -163,16 +163,11 @@ bool {{ cls.cppClassName }}::Is{{ cls.usdPrimTypeName }}Path(const SdfPath &path
 }
 {% endif %}
 /* virtual */
-UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaKind() const
+UsdSchemaKind {{ cls.cppClassName }}::GetSchemaKind() const
 {
   return {{ cls.cppClassName }}::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaType() const
-{
-  return {{ cls.cppClassName }}::schemaType;
-}
 {% if cls.isAppliedAPISchema %}
 
 /* static */
@@ -215,23 +210,23 @@ UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaType() const
 {% endif %}
 
 /* static */
-const TfType &{{ cls.cppClassName }}::_GetStaticTfType()
+const TfType &{{ cls.cppClassName }}::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<{{cls.cppClassName}}>();
   return tfType;
 }
 
 /* static */
-bool {{ cls.cppClassName }}::_IsTypedSchema()
+bool {{ cls.cppClassName }}::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &{{ cls.cppClassName }}::_GetTfType() const
+const TfType &{{ cls.cppClassName }}::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 {% if cls.isMultipleApply and cls.propertyNamespacePrefix %}
 

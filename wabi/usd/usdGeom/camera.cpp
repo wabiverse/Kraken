@@ -71,35 +71,29 @@ UsdGeomCamera UsdGeomCamera::Define(const UsdStagePtr &stage, const SdfPath &pat
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCamera::_GetSchemaKind() const
+UsdSchemaKind UsdGeomCamera::GetSchemaKind() const
 {
   return UsdGeomCamera::schemaKind;
 }
 
-/* virtual */
-UsdSchemaKind UsdGeomCamera::_GetSchemaType() const
-{
-  return UsdGeomCamera::schemaType;
-}
-
 /* static */
-const TfType &UsdGeomCamera::_GetStaticTfType()
+const TfType &UsdGeomCamera::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCamera>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCamera::_IsTypedSchema()
+bool UsdGeomCamera::IsTypedSchema()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCamera::_GetTfType() const
+const TfType &UsdGeomCamera::GetType() const
 {
-  return _GetStaticTfType();
+  return GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCamera::GetProjectionAttr() const
