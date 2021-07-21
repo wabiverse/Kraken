@@ -91,7 +91,7 @@ bool UsdGeomNurbsPatch::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsPatch::GetType() const
+const TfType &UsdGeomNurbsPatch::GetTfType() const
 {
   return GetStaticTfType();
 }

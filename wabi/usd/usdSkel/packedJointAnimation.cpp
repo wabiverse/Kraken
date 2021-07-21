@@ -99,7 +99,7 @@ bool UsdSkelPackedJointAnimation::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelPackedJointAnimation::GetType() const
+const TfType &UsdSkelPackedJointAnimation::GetTfType() const
 {
   return GetStaticTfType();
 }

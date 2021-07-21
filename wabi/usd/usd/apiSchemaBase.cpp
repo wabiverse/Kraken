@@ -70,7 +70,7 @@ bool UsdAPISchemaBase::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdAPISchemaBase::GetType() const
+const TfType &UsdAPISchemaBase::GetTfType() const
 {
   return GetStaticTfType();
 }

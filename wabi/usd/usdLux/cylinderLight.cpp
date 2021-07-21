@@ -98,7 +98,7 @@ bool UsdLuxCylinderLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxCylinderLight::GetType() const
+const TfType &UsdLuxCylinderLight::GetTfType() const
 {
   return GetStaticTfType();
 }

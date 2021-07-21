@@ -98,7 +98,7 @@ bool UsdVolVolume::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdVolVolume::GetType() const
+const TfType &UsdVolVolume::GetTfType() const
 {
   return GetStaticTfType();
 }

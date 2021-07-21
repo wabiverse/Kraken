@@ -99,7 +99,7 @@ bool UsdUIBackdrop::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdUIBackdrop::GetType() const
+const TfType &UsdUIBackdrop::GetTfType() const
 {
   return GetStaticTfType();
 }

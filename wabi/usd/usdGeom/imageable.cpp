@@ -72,7 +72,7 @@ bool UsdGeomImageable::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomImageable::GetType() const
+const TfType &UsdGeomImageable::GetTfType() const
 {
   return GetStaticTfType();
 }

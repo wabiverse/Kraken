@@ -91,7 +91,7 @@ bool UsdGeomCapsule::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomCapsule::GetType() const
+const TfType &UsdGeomCapsule::GetTfType() const
 {
   return GetStaticTfType();
 }

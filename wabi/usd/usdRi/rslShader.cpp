@@ -98,7 +98,7 @@ bool UsdRiRslShader::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiRslShader::GetType() const
+const TfType &UsdRiRslShader::GetTfType() const
 {
   return GetStaticTfType();
 }

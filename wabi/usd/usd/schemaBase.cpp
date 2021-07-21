@@ -77,7 +77,7 @@ TF_MAKE_STATIC_DATA(TfType, _tfType) {
     *_tfType = TfType::Find<UsdSchemaBase>();
 }
 const TfType &
-UsdSchemaBase::GetType() const
+UsdSchemaBase::GetTfType() const
 {
     return *_tfType;
 }

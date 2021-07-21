@@ -91,7 +91,7 @@ bool UsdShadeNodeGraph::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeNodeGraph::GetType() const
+const TfType &UsdShadeNodeGraph::GetTfType() const
 {
   return GetStaticTfType();
 }

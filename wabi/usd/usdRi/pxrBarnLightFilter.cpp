@@ -98,7 +98,7 @@ bool UsdRiPxrBarnLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrBarnLightFilter::GetType() const
+const TfType &UsdRiPxrBarnLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -98,7 +98,7 @@ bool UsdSkelRoot::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelRoot::GetType() const
+const TfType &UsdSkelRoot::GetTfType() const
 {
   return GetStaticTfType();
 }

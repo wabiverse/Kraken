@@ -92,7 +92,7 @@ bool UsdSkelBindingAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelBindingAPI::GetType() const
+const TfType &UsdSkelBindingAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

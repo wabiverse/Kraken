@@ -98,7 +98,7 @@ bool UsdRenderProduct::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRenderProduct::GetType() const
+const TfType &UsdRenderProduct::GetTfType() const
 {
   return GetStaticTfType();
 }

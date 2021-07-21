@@ -92,7 +92,7 @@ bool UsdRiStatementsAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiStatementsAPI::GetType() const
+const TfType &UsdRiStatementsAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

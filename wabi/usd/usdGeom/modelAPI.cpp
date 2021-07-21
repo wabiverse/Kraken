@@ -85,7 +85,7 @@ bool UsdGeomModelAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomModelAPI::GetType() const
+const TfType &UsdGeomModelAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

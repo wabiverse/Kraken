@@ -92,7 +92,7 @@ bool UsdLuxShapingAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxShapingAPI::GetType() const
+const TfType &UsdLuxShapingAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

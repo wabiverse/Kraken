@@ -91,7 +91,7 @@ bool UsdShadeShader::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeShader::GetType() const
+const TfType &UsdShadeShader::GetTfType() const
 {
   return GetStaticTfType();
 }

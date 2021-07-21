@@ -98,7 +98,7 @@ bool UsdRiPxrAovLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrAovLight::GetType() const
+const TfType &UsdRiPxrAovLight::GetTfType() const
 {
   return GetStaticTfType();
 }

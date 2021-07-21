@@ -61,7 +61,7 @@ const TfType &KrakenPrim::GetStaticTfType()
   return tfType;
 }
 
-const TfType &KrakenPrim::GetType() const
+const TfType &KrakenPrim::GetTfType() const
 {
   return GetStaticTfType();
 }

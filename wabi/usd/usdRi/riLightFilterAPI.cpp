@@ -73,7 +73,7 @@ bool UsdRiRiLightFilterAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiRiLightFilterAPI::GetType() const
+const TfType &UsdRiRiLightFilterAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -98,7 +98,7 @@ bool UsdRiPxrRampLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrRampLightFilter::GetType() const
+const TfType &UsdRiPxrRampLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -98,7 +98,7 @@ bool UsdSkelAnimation::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelAnimation::GetType() const
+const TfType &UsdSkelAnimation::GetTfType() const
 {
   return GetStaticTfType();
 }

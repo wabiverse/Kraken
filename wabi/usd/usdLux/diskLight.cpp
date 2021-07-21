@@ -98,7 +98,7 @@ bool UsdLuxDiskLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxDiskLight::GetType() const
+const TfType &UsdLuxDiskLight::GetTfType() const
 {
   return GetStaticTfType();
 }

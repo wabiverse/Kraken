@@ -72,7 +72,7 @@ bool UsdGeomBoundable::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomBoundable::GetType() const
+const TfType &UsdGeomBoundable::GetTfType() const
 {
   return GetStaticTfType();
 }

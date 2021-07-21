@@ -99,7 +99,7 @@ bool UsdUINodeGraphNodeAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdUINodeGraphNodeAPI::GetType() const
+const TfType &UsdUINodeGraphNodeAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

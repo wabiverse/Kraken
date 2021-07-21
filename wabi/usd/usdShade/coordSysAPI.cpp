@@ -75,7 +75,7 @@ bool UsdShadeCoordSysAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeCoordSysAPI::GetType() const
+const TfType &UsdShadeCoordSysAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -98,7 +98,7 @@ bool UsdRiPxrCookieLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrCookieLightFilter::GetType() const
+const TfType &UsdRiPxrCookieLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -72,7 +72,7 @@ bool UsdGeomCurves::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomCurves::GetType() const
+const TfType &UsdGeomCurves::GetTfType() const
 {
   return GetStaticTfType();
 }

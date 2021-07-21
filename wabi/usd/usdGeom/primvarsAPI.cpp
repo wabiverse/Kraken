@@ -75,7 +75,7 @@ bool UsdGeomPrimvarsAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomPrimvarsAPI::GetType() const
+const TfType &UsdGeomPrimvarsAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

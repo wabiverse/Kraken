@@ -98,7 +98,7 @@ bool UsdLuxSphereLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxSphereLight::GetType() const
+const TfType &UsdLuxSphereLight::GetTfType() const
 {
   return GetStaticTfType();
 }

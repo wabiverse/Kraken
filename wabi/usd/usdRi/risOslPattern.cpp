@@ -98,7 +98,7 @@ bool UsdRiRisOslPattern::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiRisOslPattern::GetType() const
+const TfType &UsdRiRisOslPattern::GetTfType() const
 {
   return GetStaticTfType();
 }

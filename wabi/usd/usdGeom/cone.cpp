@@ -91,7 +91,7 @@ bool UsdGeomCone::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomCone::GetType() const
+const TfType &UsdGeomCone::GetTfType() const
 {
   return GetStaticTfType();
 }

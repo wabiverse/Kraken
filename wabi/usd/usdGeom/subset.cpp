@@ -91,7 +91,7 @@ bool UsdGeomSubset::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomSubset::GetType() const
+const TfType &UsdGeomSubset::GetTfType() const
 {
   return GetStaticTfType();
 }

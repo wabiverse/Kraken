@@ -99,7 +99,7 @@ bool UsdUIScreen::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdUIScreen::GetType() const
+const TfType &UsdUIScreen::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -91,7 +91,7 @@ bool UsdGeomCamera::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomCamera::GetType() const
+const TfType &UsdGeomCamera::GetTfType() const
 {
   return GetStaticTfType();
 }

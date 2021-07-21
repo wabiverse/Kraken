@@ -98,7 +98,7 @@ bool UsdLuxPluginLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxPluginLightFilter::GetType() const
+const TfType &UsdLuxPluginLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -79,7 +79,7 @@ bool UsdVolFieldAsset::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdVolFieldAsset::GetType() const
+const TfType &UsdVolFieldAsset::GetTfType() const
 {
   return GetStaticTfType();
 }

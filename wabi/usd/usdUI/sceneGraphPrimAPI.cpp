@@ -99,7 +99,7 @@ bool UsdUISceneGraphPrimAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdUISceneGraphPrimAPI::GetType() const
+const TfType &UsdUISceneGraphPrimAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -72,7 +72,7 @@ bool UsdGeomXformable::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomXformable::GetType() const
+const TfType &UsdGeomXformable::GetTfType() const
 {
   return GetStaticTfType();
 }

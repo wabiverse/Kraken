@@ -75,7 +75,7 @@ bool UsdShadeConnectableAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeConnectableAPI::GetType() const
+const TfType &UsdShadeConnectableAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

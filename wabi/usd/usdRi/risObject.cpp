@@ -98,7 +98,7 @@ bool UsdRiRisObject::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiRisObject::GetType() const
+const TfType &UsdRiRisObject::GetTfType() const
 {
   return GetStaticTfType();
 }

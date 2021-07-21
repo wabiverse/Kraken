@@ -98,7 +98,7 @@ bool UsdLuxGeometryLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxGeometryLight::GetType() const
+const TfType &UsdLuxGeometryLight::GetTfType() const
 {
   return GetStaticTfType();
 }

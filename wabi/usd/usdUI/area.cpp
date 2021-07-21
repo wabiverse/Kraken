@@ -99,7 +99,7 @@ bool UsdUIArea::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdUIArea::GetType() const
+const TfType &UsdUIArea::GetTfType() const
 {
   return GetStaticTfType();
 }

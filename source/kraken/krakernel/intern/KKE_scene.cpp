@@ -73,7 +73,7 @@ bool Scene::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &Scene::GetType() const
+const TfType &Scene::GetTfType() const
 {
   return GetStaticTfType();
 }

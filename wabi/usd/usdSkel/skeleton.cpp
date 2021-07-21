@@ -98,7 +98,7 @@ bool UsdSkelSkeleton::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelSkeleton::GetType() const
+const TfType &UsdSkelSkeleton::GetTfType() const
 {
   return GetStaticTfType();
 }

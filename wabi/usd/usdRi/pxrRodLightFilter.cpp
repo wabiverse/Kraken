@@ -98,7 +98,7 @@ bool UsdRiPxrRodLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrRodLightFilter::GetType() const
+const TfType &UsdRiPxrRodLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

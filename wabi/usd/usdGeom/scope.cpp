@@ -91,7 +91,7 @@ bool UsdGeomScope::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomScope::GetType() const
+const TfType &UsdGeomScope::GetTfType() const
 {
   return GetStaticTfType();
 }

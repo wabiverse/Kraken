@@ -98,7 +98,7 @@ bool UsdRiPxrEnvDayLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrEnvDayLight::GetType() const
+const TfType &UsdRiPxrEnvDayLight::GetTfType() const
 {
   return GetStaticTfType();
 }

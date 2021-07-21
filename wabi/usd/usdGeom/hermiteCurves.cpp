@@ -91,7 +91,7 @@ bool UsdGeomHermiteCurves::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomHermiteCurves::GetType() const
+const TfType &UsdGeomHermiteCurves::GetTfType() const
 {
   return GetStaticTfType();
 }

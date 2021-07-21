@@ -75,7 +75,7 @@ bool UsdGeomXformCommonAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomXformCommonAPI::GetType() const
+const TfType &UsdGeomXformCommonAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

@@ -89,7 +89,7 @@ bool UsdModelAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdModelAPI::GetType() const
+const TfType &UsdModelAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

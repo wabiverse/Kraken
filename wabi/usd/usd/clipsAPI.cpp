@@ -75,7 +75,7 @@ bool UsdClipsAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdClipsAPI::GetType() const
+const TfType &UsdClipsAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

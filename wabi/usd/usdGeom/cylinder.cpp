@@ -91,7 +91,7 @@ bool UsdGeomCylinder::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomCylinder::GetType() const
+const TfType &UsdGeomCylinder::GetTfType() const
 {
   return GetStaticTfType();
 }

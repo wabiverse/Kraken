@@ -85,7 +85,7 @@ bool UsdShadeMaterialBindingAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeMaterialBindingAPI::GetType() const
+const TfType &UsdShadeMaterialBindingAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

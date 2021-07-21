@@ -224,7 +224,7 @@ bool {{ cls.cppClassName }}::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &{{ cls.cppClassName }}::GetType() const
+const TfType &{{ cls.cppClassName }}::GetTfType() const
 {
   return GetStaticTfType();
 }

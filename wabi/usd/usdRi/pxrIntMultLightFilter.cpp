@@ -98,7 +98,7 @@ bool UsdRiPxrIntMultLightFilter::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiPxrIntMultLightFilter::GetType() const
+const TfType &UsdRiPxrIntMultLightFilter::GetTfType() const
 {
   return GetStaticTfType();
 }

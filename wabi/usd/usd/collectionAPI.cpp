@@ -158,7 +158,7 @@ bool UsdCollectionAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdCollectionAPI::GetType() const
+const TfType &UsdCollectionAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

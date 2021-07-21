@@ -72,7 +72,7 @@ bool UsdGeomGprim::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomGprim::GetType() const
+const TfType &UsdGeomGprim::GetTfType() const
 {
   return GetStaticTfType();
 }

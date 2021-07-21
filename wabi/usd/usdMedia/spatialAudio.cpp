@@ -98,7 +98,7 @@ bool UsdMediaSpatialAudio::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdMediaSpatialAudio::GetType() const
+const TfType &UsdMediaSpatialAudio::GetTfType() const
 {
   return GetStaticTfType();
 }

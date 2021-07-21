@@ -92,7 +92,7 @@ bool UsdRiLightPortalAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRiLightPortalAPI::GetType() const
+const TfType &UsdRiLightPortalAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

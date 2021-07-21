@@ -92,7 +92,7 @@ bool UsdRenderSettingsAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdRenderSettingsAPI::GetType() const
+const TfType &UsdRenderSettingsAPI::GetTfType() const
 {
   return GetStaticTfType();
 }

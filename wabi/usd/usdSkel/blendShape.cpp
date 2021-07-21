@@ -98,7 +98,7 @@ bool UsdSkelBlendShape::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdSkelBlendShape::GetType() const
+const TfType &UsdSkelBlendShape::GetTfType() const
 {
   return GetStaticTfType();
 }

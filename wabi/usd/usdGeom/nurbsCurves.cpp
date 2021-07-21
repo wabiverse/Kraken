@@ -91,7 +91,7 @@ bool UsdGeomNurbsCurves::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsCurves::GetType() const
+const TfType &UsdGeomNurbsCurves::GetTfType() const
 {
   return GetStaticTfType();
 }

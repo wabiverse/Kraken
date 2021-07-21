@@ -91,7 +91,7 @@ bool UsdGeomPoints::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdGeomPoints::GetType() const
+const TfType &UsdGeomPoints::GetTfType() const
 {
   return GetStaticTfType();
 }

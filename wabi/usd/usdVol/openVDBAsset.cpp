@@ -98,7 +98,7 @@ bool UsdVolOpenVDBAsset::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdVolOpenVDBAsset::GetType() const
+const TfType &UsdVolOpenVDBAsset::GetTfType() const
 {
   return GetStaticTfType();
 }

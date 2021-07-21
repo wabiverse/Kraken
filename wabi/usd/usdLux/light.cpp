@@ -79,7 +79,7 @@ bool UsdLuxLight::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdLuxLight::GetType() const
+const TfType &UsdLuxLight::GetTfType() const
 {
   return GetStaticTfType();
 }

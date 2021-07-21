@@ -85,7 +85,7 @@ bool UsdShadeNodeDefAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &UsdShadeNodeDefAPI::GetType() const
+const TfType &UsdShadeNodeDefAPI::GetTfType() const
 {
   return GetStaticTfType();
 }
