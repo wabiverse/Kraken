@@ -105,9 +105,10 @@ wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double 
   return drag;
 }
 
-void WM_drag_free_list(std::vector<wmDrag*> &drags)
+void WM_drag_free_list(std::vector<wmDrag *> &drags)
 {
-  for (auto &drag : drags) {
+  for (auto &drag : drags)
+  {
     free(drag);
   }
 

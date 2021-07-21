@@ -70,7 +70,8 @@ enum eUserprefUIFlag
   USER_HIDE_SYSTEM_BOOKMARKS = (1u << 31),
 };
 
-enum eUserPrefFlag {
+enum eUserPrefFlag
+{
   USER_AUTOSAVE = (1 << 0),
   USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
   USER_FLAG_UNUSED_2 = (1 << 2), /* cleared */

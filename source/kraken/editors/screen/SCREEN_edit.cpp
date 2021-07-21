@@ -150,26 +150,31 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen)
 
   screen->active_region = NULL;
 
-  UNIVERSE_FOR_ALL (region, screen->regions) {
+  UNIVERSE_FOR_ALL(region, screen->regions)
+  {
     ED_region_exit(C, region);
   }
 
-  UNIVERSE_FOR_ALL (area, screen->areas) {
+  UNIVERSE_FOR_ALL(area, screen->areas)
+  {
     ED_area_exit(C, area);
   }
 
-  UNIVERSE_FOR_ALL (area, window->global_areas.areas) {
+  UNIVERSE_FOR_ALL(area, window->global_areas.areas)
+  {
     ED_area_exit(C, area);
   }
 
   /* mark it available for use for other windows */
   screen->winid = 0;
 
-  if (!WM_window_is_temp_screen(prevwin)) {
+  if (!WM_window_is_temp_screen(prevwin))
+  {
     /* use previous window if possible */
     CTX_wm_window_set(C, prevwin);
   }
-  else {
+  else
+  {
     /* none otherwise */
     CTX_wm_window_set(C, NULL);
   }

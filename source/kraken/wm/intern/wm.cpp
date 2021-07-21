@@ -90,7 +90,7 @@ void wm_add_default(Main *kmain, kContext *C)
   CTX_wm_manager_set(C, wm);
   win = wm_window_new(C, wm, NULL, false);
   win->scene = CTX_data_scene(C);
-  
+
   if (!workspace)
   {
     workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
@@ -214,7 +214,6 @@ void WM_check(kContext *C)
 /* wait until every job ended */
 void WM_jobs_kill_all(wmWindowManager *wm)
 {
-
 }
 
 WABI_NAMESPACE_END

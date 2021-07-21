@@ -37,7 +37,8 @@
 WABI_NAMESPACE_BEGIN
 
 /* modifier */
-enum eWmModifierTypes {
+enum eWmModifierTypes
+{
   KM_SHIFT = 1,
   KM_CTRL = 2,
   KM_ALT = 4,
@@ -48,12 +49,14 @@ enum eWmModifierTypes {
   KM_OSKEY2 = 128,
 };
 
-enum eWmModPosTypes {
+enum eWmModPosTypes
+{
   KM_MOD_FIRST = 1,
   KM_MOD_SECOND = 2,
 };
 
-enum eWmMiscKmTypes {
+enum eWmMiscKmTypes
+{
   KM_TEXTINPUT = -2,
   KM_ANY = -1,
   KM_NOTHING = 0,
@@ -545,7 +548,8 @@ enum eWmEventType
   EVT_GIZMO_UPDATE = 0x5025, /* 20517 */
 };
 
-enum eWmTabletEventType {
+enum eWmTabletEventType
+{
   EVT_TABLET_NONE = 0,
   EVT_TABLET_STYLUS = 1,
   EVT_TABLET_ERASER = 2,
@@ -570,7 +574,8 @@ enum eWmOperatorType
   OPTYPE_UNDO_GROUPED = (1 << 10),
 };
 
-enum eReportType {
+enum eReportType
+{
   RPT_DEBUG = (1 << 0),
   RPT_INFO = (1 << 1),
   RPT_OPERATOR = (1 << 2),
@@ -621,7 +626,8 @@ struct wmTimer
   {}
 };
 
-struct Report {
+struct Report
+{
   /** eReportType. */
   short type;
   short flag;
@@ -633,7 +639,7 @@ struct Report {
 
 struct ReportList
 {
-  std::vector<Report*> list;
+  std::vector<Report *> list;
   /** eReportType. */
   int printlevel;
   /** eReportType. */
@@ -649,7 +655,8 @@ struct ReportList
   {}
 };
 
-struct wmTabletData {
+struct wmTabletData
+{
   /** 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER. */
   eWmTabletEventType active;
   /** range 0.0 (not touching) to 1.0 (full pressure). */
@@ -756,7 +763,8 @@ typedef bool (*EventHandlerPoll)(const struct ARegion *region, const wmEvent *ev
 typedef int (*wmUIHandlerFunc)(kContext *C, const wmEvent *event, void *userdata);
 typedef void (*wmUIHandlerRemoveFunc)(kContext *C, void *userdata);
 
-enum eWmEventHandlerType {
+enum eWmEventHandlerType
+{
   WM_HANDLER_TYPE_GIZMO = 1,
   WM_HANDLER_TYPE_UI,
   WM_HANDLER_TYPE_OP,
@@ -764,25 +772,29 @@ enum eWmEventHandlerType {
   WM_HANDLER_TYPE_KEYMAP,
 };
 
-enum {
+enum
+{
   WM_HANDLER_BLOCKING = (1 << 0),
   WM_HANDLER_ACCEPT_DBL_CLICK = (1 << 1),
   WM_HANDLER_DO_FREE = (1 << 7),
 };
 
-struct wmEventHandler {
+struct wmEventHandler
+{
   eWmEventHandlerType type;
   char flag;
 
   EventHandlerPoll poll;
 };
 
-struct wmEventHandlerUI : public wmEventHandler {
+struct wmEventHandlerUI : public wmEventHandler
+{
   wmUIHandlerFunc handle_fn;
   wmUIHandlerRemoveFunc remove_fn;
   void *user_data;
 
-  struct {
+  struct
+  {
     struct ScrArea *area;
     struct ARegion *region;
     struct ARegion *menu;

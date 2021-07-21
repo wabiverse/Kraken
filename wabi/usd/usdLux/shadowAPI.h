@@ -74,7 +74,6 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdLuxShadowAPI on UsdPrim \p prim .
   /// Equivalent to UsdLuxShadowAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

@@ -72,7 +72,6 @@ class UsdGeomGprim : public UsdGeomBoundable
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
 
-
   /// Construct a UsdGeomGprim on UsdPrim \p prim .
   /// Equivalent to UsdGeomGprim::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

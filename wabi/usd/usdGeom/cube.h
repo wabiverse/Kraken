@@ -66,7 +66,6 @@ class UsdGeomCube : public UsdGeomGprim
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomCube on UsdPrim \p prim .
   /// Equivalent to UsdGeomCube::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

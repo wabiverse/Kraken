@@ -76,7 +76,6 @@ class UsdSkelSkeleton : public UsdGeomBoundable
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdSkelSkeleton on UsdPrim \p prim .
   /// Equivalent to UsdSkelSkeleton::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

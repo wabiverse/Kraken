@@ -83,7 +83,6 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomNurbsCurves on UsdPrim \p prim .
   /// Equivalent to UsdGeomNurbsCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

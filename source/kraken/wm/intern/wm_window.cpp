@@ -1044,7 +1044,8 @@ wmWindow *WM_window_open(kContext *C,
 
 static void WM_generic_callback_free(wmGenericCallback *callback)
 {
-  if (callback->free_user_data) {
+  if (callback->free_user_data)
+  {
     callback->free_user_data(callback->user_data);
   }
   delete callback;
@@ -1052,10 +1053,12 @@ static void WM_generic_callback_free(wmGenericCallback *callback)
 
 static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
 {
-  if (/*!UI_popup_block_name_exists(CTX_wm_screen(C), close_file_dialog_name)*/false) {
+  if (/*!UI_popup_block_name_exists(CTX_wm_screen(C), close_file_dialog_name)*/ false)
+  {
     // UI_popup_block_invoke(C, block_create__close_file_dialog, post_action, free_post_file_close_action);
   }
-  else {
+  else
+  {
     WM_generic_callback_free(post_action);
   }
 }
@@ -1429,7 +1432,8 @@ void WM_anchor_init(kContext *C)
 
 void WM_anchor_exit(void)
 {
-  if (anchor_system) {
+  if (anchor_system)
+  {
     ANCHOR::DestroySystem(anchor_system);
   }
   anchor_system = NULL;

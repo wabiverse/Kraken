@@ -764,8 +764,8 @@ bool ANCHOR::ButtonEx(const char *label, const GfVec2f &size_arg, AnchorButtonFl
 
   // Render
   const AnchorU32 col = GetColorU32((held && hovered) ? AnchorCol_ButtonActive :
-                                    hovered           ? AnchorCol_ButtonHovered :
-                                                        AnchorCol_Button);
+                                                        hovered ? AnchorCol_ButtonHovered :
+                                                                  AnchorCol_Button);
   RenderNavHighlight(bb, id);
   RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
@@ -863,8 +863,8 @@ bool ANCHOR::ArrowButtonEx(const char *str_id, AnchorDir dir, GfVec2f size, Anch
   /**
    * Render */
   const AnchorU32 bg_col = GetColorU32((held && hovered) ? AnchorCol_ButtonActive :
-                                       hovered           ? AnchorCol_ButtonHovered :
-                                                           AnchorCol_Button);
+                                                           hovered ? AnchorCol_ButtonHovered :
+                                                                     AnchorCol_Button);
   const AnchorU32 text_col = GetColorU32(AnchorCol_Text);
   RenderNavHighlight(bb, id);
   RenderFrame(bb.Min, bb.Max, bg_col, true, g.Style.FrameRounding);
@@ -943,8 +943,8 @@ bool ANCHOR::CollapseButton(ANCHOR_ID id, const GfVec2f &pos)
 
   // Render
   AnchorU32 bg_col = GetColorU32((held && hovered) ? AnchorCol_ButtonActive :
-                                 hovered           ? AnchorCol_ButtonHovered :
-                                                     AnchorCol_Button);
+                                                     hovered ? AnchorCol_ButtonHovered :
+                                                               AnchorCol_Button);
   AnchorU32 text_col = GetColorU32(AnchorCol_Text);
   GfVec2f center = bb.GetCenter();
   if (hovered || held)
@@ -1123,9 +1123,9 @@ bool ANCHOR::ScrollbarEx(const AnchorBBox &bb_frame,
 
   // Render
   const AnchorU32 bg_col = GetColorU32(AnchorCol_ScrollbarBg);
-  const AnchorU32 grab_col = GetColorU32(held    ? AnchorCol_ScrollbarGrabActive :
-                                         hovered ? AnchorCol_ScrollbarGrabHovered :
-                                                   AnchorCol_ScrollbarGrab,
+  const AnchorU32 grab_col = GetColorU32(held ? AnchorCol_ScrollbarGrabActive :
+                                                hovered ? AnchorCol_ScrollbarGrabHovered :
+                                                          AnchorCol_ScrollbarGrab,
                                          alpha);
   window->DrawList->AddRectFilled(bb_frame.Min, bb_frame.Max, bg_col, window->WindowRounding, flags);
   AnchorBBox grab_rect;
@@ -1201,8 +1201,8 @@ bool ANCHOR::ImageButtonEx(ANCHOR_ID id,
 
   // Render
   const AnchorU32 col = GetColorU32((held && hovered) ? AnchorCol_ButtonActive :
-                                    hovered           ? AnchorCol_ButtonHovered :
-                                                        AnchorCol_Button);
+                                                        hovered ? AnchorCol_ButtonHovered :
+                                                                  AnchorCol_Button);
   RenderNavHighlight(bb, id);
   RenderFrame(
     bb.Min, bb.Max, col, true, AnchorClamp((float)AnchorMin(padding[0], padding[1]), 0.0f, g.Style.FrameRounding));
@@ -1280,8 +1280,8 @@ bool ANCHOR::Checkbox(const char *label, bool *v)
   RenderFrame(check_bb.Min,
               check_bb.Max,
               GetColorU32((held && hovered) ? AnchorCol_FrameBgActive :
-                          hovered           ? AnchorCol_FrameBgHovered :
-                                              AnchorCol_FrameBg),
+                                              hovered ? AnchorCol_FrameBgHovered :
+                                                        AnchorCol_FrameBg),
               true,
               style.FrameRounding);
   AnchorU32 check_col = GetColorU32(AnchorCol_CheckMark);
@@ -1303,8 +1303,7 @@ bool ANCHOR::Checkbox(const char *label, bool *v)
   GfVec2f label_pos = GfVec2f(check_bb.Max[0] + style.ItemInnerSpacing[0],
                               check_bb.Min[1] + style.FramePadding[1]);
   if (g.LogEnabled)
-    LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" :
-                                                           "[ ]");
+    LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
   if (label_size[0] > 0.0f)
     RenderText(label_pos, label);
 
@@ -1399,8 +1398,8 @@ bool ANCHOR::RadioButton(const char *label, bool active)
   window->DrawList->AddCircleFilled(center,
                                     radius,
                                     GetColorU32((held && hovered) ? AnchorCol_FrameBgActive :
-                                                hovered           ? AnchorCol_FrameBgHovered :
-                                                                    AnchorCol_FrameBg),
+                                                                    hovered ? AnchorCol_FrameBgHovered :
+                                                                              AnchorCol_FrameBg),
                                     16);
   if (active)
   {
@@ -1720,7 +1719,7 @@ bool ANCHOR::SplitterBehavior(const AnchorBBox &bb,
 
   // Render
   const AnchorU32 col = GetColorU32(held ? AnchorCol_SeparatorActive :
-                                    (hovered && g.HoveredIdTimer >= hover_visibility_delay) ?
+                                           (hovered && g.HoveredIdTimer >= hover_visibility_delay) ?
                                            AnchorCol_SeparatorHovered :
                                            AnchorCol_Separator);
   window->DrawList->AddRectFilled(bb_render.Min, bb_render.Max, col, 0.0f);
@@ -3040,9 +3039,9 @@ bool ANCHOR::DragScalar(const char *label,
   }
 
   // Draw frame
-  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id  ? AnchorCol_FrameBgActive :
-                                          g.HoveredId == id ? AnchorCol_FrameBgHovered :
-                                                              AnchorCol_FrameBg);
+  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id ? AnchorCol_FrameBgActive :
+                                                             g.HoveredId == id ? AnchorCol_FrameBgHovered :
+                                                                                 AnchorCol_FrameBg);
   RenderNavHighlight(frame_bb, id);
   RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
 
@@ -3991,9 +3990,9 @@ bool ANCHOR::SliderScalar(const char *label,
   }
 
   // Draw frame
-  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id  ? AnchorCol_FrameBgActive :
-                                          g.HoveredId == id ? AnchorCol_FrameBgHovered :
-                                                              AnchorCol_FrameBg);
+  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id ? AnchorCol_FrameBgActive :
+                                                             g.HoveredId == id ? AnchorCol_FrameBgHovered :
+                                                                                 AnchorCol_FrameBg);
   RenderNavHighlight(frame_bb, id);
   RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
 
@@ -4213,9 +4212,9 @@ bool ANCHOR::VSliderScalar(const char *label,
   }
 
   // Draw frame
-  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id  ? AnchorCol_FrameBgActive :
-                                          g.HoveredId == id ? AnchorCol_FrameBgHovered :
-                                                              AnchorCol_FrameBg);
+  const AnchorU32 frame_col = GetColorU32(g.ActiveId == id ? AnchorCol_FrameBgActive :
+                                                             g.HoveredId == id ? AnchorCol_FrameBgHovered :
+                                                                                 AnchorCol_FrameBg);
   RenderNavHighlight(frame_bb, id);
   RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
 
@@ -5369,15 +5368,15 @@ bool ANCHOR::InputTextEx(const char *label,
     if (IsKeyPressedMap(AnchorKey_LeftArrow))
     {
       state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINESTART :
-                           is_wordmove_key_down ? STB_TEXTEDIT_K_WORDLEFT :
-                                                  STB_TEXTEDIT_K_LEFT) |
+                                                  is_wordmove_key_down ? STB_TEXTEDIT_K_WORDLEFT :
+                                                                         STB_TEXTEDIT_K_LEFT) |
                           k_mask);
     }
     else if (IsKeyPressedMap(AnchorKey_RightArrow))
     {
       state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINEEND :
-                           is_wordmove_key_down ? STB_TEXTEDIT_K_WORDRIGHT :
-                                                  STB_TEXTEDIT_K_RIGHT) |
+                                                  is_wordmove_key_down ? STB_TEXTEDIT_K_WORDRIGHT :
+                                                                         STB_TEXTEDIT_K_RIGHT) |
                           k_mask);
     }
     else if (IsKeyPressedMap(AnchorKey_UpArrow) && is_multiline)
@@ -6145,8 +6144,7 @@ bool ANCHOR::ColorEdit4(const char *label, float col[4], AnchorColorEditFlags fl
       {"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"},  // Long display for RGBA
       {"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}   // Long display for HSVA
     };
-    const int fmt_idx = hide_prefix ? 0 : (flags & AnchorColorEditFlags_DisplayHSV) ? 2 :
-                                                                                      1;
+    const int fmt_idx = hide_prefix ? 0 : (flags & AnchorColorEditFlags_DisplayHSV) ? 2 : 1;
 
     for (int n = 0; n < components; n++)
     {
@@ -7490,8 +7488,8 @@ bool ANCHOR::TreeNodeBehavior(ANCHOR_ID id,
   {
     // Framed type
     const AnchorU32 bg_col = GetColorU32((held && hovered) ? AnchorCol_HeaderActive :
-                                         hovered           ? AnchorCol_HeaderHovered :
-                                                             AnchorCol_Header);
+                                                             hovered ? AnchorCol_HeaderHovered :
+                                                                       AnchorCol_Header);
     RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, true, style.FrameRounding);
     RenderNavHighlight(frame_bb, id, nav_highlight_flags);
     if (flags & AnchorTreeNodeFlags_Bullet)
@@ -7519,8 +7517,8 @@ bool ANCHOR::TreeNodeBehavior(ANCHOR_ID id,
     if (hovered || selected)
     {
       const AnchorU32 bg_col = GetColorU32((held && hovered) ? AnchorCol_HeaderActive :
-                                           hovered           ? AnchorCol_HeaderHovered :
-                                                               AnchorCol_Header);
+                                                               hovered ? AnchorCol_HeaderHovered :
+                                                                         AnchorCol_Header);
       RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
       RenderNavHighlight(frame_bb, id, nav_highlight_flags);
     }
@@ -7839,8 +7837,8 @@ bool ANCHOR::Selectable(const char *label,
   if (hovered || selected)
   {
     const AnchorU32 col = GetColorU32((held && hovered) ? AnchorCol_HeaderActive :
-                                      hovered           ? AnchorCol_HeaderHovered :
-                                                          AnchorCol_Header);
+                                                          hovered ? AnchorCol_HeaderHovered :
+                                                                    AnchorCol_Header);
     RenderFrame(bb.Min, bb.Max, col, false, 0.0f);
     RenderNavHighlight(bb, id, AnchorNavHighlightFlags_TypeThin | AnchorNavHighlightFlags_NoRounding);
   }
@@ -8927,9 +8925,9 @@ AnchorTabBar::AnchorTabBar()
 
 static inline int TabItemGetSectionIdx(const AnchorTabItem *tab)
 {
-  return (tab->Flags & AnchorTabItemFlags_Leading)  ? 0 :
-         (tab->Flags & AnchorTabItemFlags_Trailing) ? 2 :
-                                                      1;
+  return (tab->Flags & AnchorTabItemFlags_Leading) ? 0 :
+                                                     (tab->Flags & AnchorTabItemFlags_Trailing) ? 2 :
+                                                                                                  1;
 }
 
 static int ANCHOR_CDECL TabItemComparerBySection(const void *lhs, const void *rhs)
@@ -9932,9 +9930,9 @@ bool ANCHOR::TabItemEx(AnchorTabBar *tab_bar, const char *label, bool *p_open, A
   // Render tab shape
   AnchorDrawList *display_draw_list = window->DrawList;
   const AnchorU32 tab_col = GetColorU32(
-    (held || hovered)    ? AnchorCol_TabHovered :
-    tab_contents_visible ? (tab_bar_focused ? AnchorCol_TabActive : AnchorCol_TabUnfocusedActive) :
-                           (tab_bar_focused ? AnchorCol_Tab : AnchorCol_TabUnfocused));
+    (held || hovered) ? AnchorCol_TabHovered :
+                        tab_contents_visible ? (tab_bar_focused ? AnchorCol_TabActive : AnchorCol_TabUnfocusedActive) :
+                                               (tab_bar_focused ? AnchorCol_Tab : AnchorCol_TabUnfocused));
   TabItemBackground(display_draw_list, bb, flags, tab_col);
   RenderNavHighlight(bb, id);
 

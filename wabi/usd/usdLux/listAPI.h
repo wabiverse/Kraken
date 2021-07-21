@@ -193,7 +193,6 @@ class UsdLuxListAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdLuxListAPI on UsdPrim \p prim .
   /// Equivalent to UsdLuxListAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

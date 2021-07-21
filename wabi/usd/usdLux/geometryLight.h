@@ -71,7 +71,6 @@ class UsdLuxGeometryLight : public UsdLuxLight
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdLuxGeometryLight on UsdPrim \p prim .
   /// Equivalent to UsdLuxGeometryLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

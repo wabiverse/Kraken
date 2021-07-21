@@ -33,14 +33,16 @@ WABI_NAMESPACE_BEGIN
  * file extension, binary
  * Pixar files being the
  * most performant. */
-enum eKrakenFileType {
+enum eKrakenFileType
+{
   KRAKEN_FILETYPE_USD = 1,
   KRAKEN_FILETYPE_USDC,
   KRAKEN_FILETYPE_USDZ,
   KRAKEN_FILETYPE_USDA,
 };
 
-struct KrakenFileData {
+struct KrakenFileData
+{
   struct Main *main;
   struct UserDef *user;
 
@@ -54,31 +56,36 @@ struct KrakenFileData {
   eKrakenFileType type;
 };
 
-enum eUndoStepDir {
+enum eUndoStepDir
+{
   STEP_REDO = 1,
   STEP_UNDO = -1,
   STEP_INVALID = 0,
 };
 
-struct KrakenFileReadParams {
+struct KrakenFileReadParams
+{
   uint skip_flags : 3;
   uint is_startup : 1;
 
   eUndoStepDir undo_direction;
 };
 
-struct KrakenFileReadReport {
+struct KrakenFileReadReport
+{
   /* General reports handling. */
   struct ReportList *reports;
 };
 
 #define SIZEOFKRAKENHEADER 12
 
-enum eFileDataFlag {
+enum eFileDataFlag
+{
   FD_FLAGS_FILE_OK = (1 << 3),
 };
 
-struct FileData {
+struct FileData
+{
   int fileversion;
 
   /** #eFileDataFlag */

@@ -72,7 +72,6 @@ class UsdGeomCylinder : public UsdGeomGprim
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomCylinder on UsdPrim \p prim .
   /// Equivalent to UsdGeomCylinder::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

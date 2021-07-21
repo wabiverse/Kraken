@@ -98,7 +98,6 @@ class UsdLuxDomeLight : public UsdLuxLight
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdLuxDomeLight on UsdPrim \p prim .
   /// Equivalent to UsdLuxDomeLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

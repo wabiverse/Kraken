@@ -69,7 +69,6 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdSkelPackedJointAnimation on UsdPrim \p prim .
   /// Equivalent to UsdSkelPackedJointAnimation::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

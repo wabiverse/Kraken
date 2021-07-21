@@ -197,7 +197,7 @@ PyTypeObject pyuni_struct_meta_idprop_Type = {
 
 PyTypeObject pyuni_object_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_object", /* tp_name */
-  sizeof(KPy_KrakenPrim),                       /* tp_basicsize */
+  sizeof(KPy_KrakenPrim),                      /* tp_basicsize */
   0,                                           /* tp_itemsize */
   /* methods */
   NULL,  //(destructor)pyuni_object_dealloc, /* tp_dealloc */
@@ -537,13 +537,15 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 #ifdef USE_PYUNI_OBJECT_REFERENCE
 static void pyuni_object_reference_set(KPy_KrakenPrim *self, PyObject *reference)
 {
-  if (self->reference) {
+  if (self->reference)
+  {
     PyObject_GC_UnTrack(self);
     Py_CLEAR(self->reference);
   }
   /* Reference is now NULL. */
 
-  if (reference) {
+  if (reference)
+  {
     self->reference = reference;
     Py_INCREF(reference);
     PyObject_GC_Track(self);
@@ -555,23 +557,28 @@ static void pyuni_object_reference_set(KPy_KrakenPrim *self, PyObject *reference
 static RHash *id_weakref_pool = nullptr;
 static PyObject *id_free_weakref_cb(PyObject *weakinfo_pair, PyObject *weakref);
 static PyMethodDef id_free_weakref_cb_def = {
-  "id_free_weakref_cb", (PyCFunction)id_free_weakref_cb, METH_O, NULL
-};
+  "id_free_weakref_cb",
+  (PyCFunction)id_free_weakref_cb,
+  METH_O,
+  NULL};
 
 static RHash *id_weakref_pool_get(const SdfPath &id)
 {
   RHash *weakinfo_hash = nullptr;
 
-  if (id_weakref_pool) {
+  if (id_weakref_pool)
+  {
     weakinfo_hash = (RHash *)KKE_rhash_lookup(id_weakref_pool, id.GetAsToken());
   }
-  else {
+  else
+  {
     /* First time, allocate pool. */
     // id_weakref_pool = KLI_rhash_ptr_new("uni_global_pool");
     // weakinfo_hash = NULL;
   }
 
-  if (weakinfo_hash == NULL) {
+  if (weakinfo_hash == NULL)
+  {
     // weakinfo_hash = KKE_rhash_ptr_new("rna_id");
     KKE_rhash_insert(id_weakref_pool, id.GetAsToken(), weakinfo_hash);
   }
@@ -846,7 +853,8 @@ PyObject *KPY_uni_module(void)
 
 void KPY_update_uni_module(void)
 {
-  if (uni_module_ptr) {
+  if (uni_module_ptr)
+  {
     uni_module_ptr->data = G.main;
   }
 }

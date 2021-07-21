@@ -105,7 +105,7 @@ struct KPy_DummyPointerUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 };
@@ -114,7 +114,7 @@ struct KPy_KrakenPrim
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
 #ifdef USE_PYUNI_OBJECT_REFERENCE
@@ -134,7 +134,7 @@ struct KPy_PropertyUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   PropertyUNI *prop;
@@ -144,7 +144,7 @@ struct KPy_CollectionPropertyUNI
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
 
   /* collection iterator specific parts */
@@ -155,7 +155,7 @@ struct KPy_UniverseFunction
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
-  PyObject *in_weakreflist;
+    PyObject *in_weakreflist;
 #endif
   PointerUNI ptr;
   void *func;

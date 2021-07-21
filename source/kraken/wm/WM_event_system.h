@@ -70,9 +70,9 @@ struct wmEvent;
    (event_type) == BUTTON7MOUSE)
 
 void wm_event_free_handler(wmEventHandler *handler);
-void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler*> handlers);
+void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handlers);
 wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
-                                          std::vector<wmEventHandler*> handlers,
+                                          std::vector<wmEventHandler *> handlers,
                                           wmUIHandlerFunc handle_fn,
                                           wmUIHandlerRemoveFunc remove_fn,
                                           void *user_data,

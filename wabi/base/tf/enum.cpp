@@ -110,9 +110,9 @@ class Tf_EnumRegistry : boost::noncopyable
   _EnumToNameTableType _enumToFullName;
   _EnumToNameTableType _enumToDisplayName;
   _EnumToIDTableType _enumToIconID;
-  
+
   _IDToEnumTableType _idIconToEnum;
-  
+
   _NameToEnumTableType _fullNameToEnum;
   _TypeNameToNameVectorTableType _typeNameToNameVector;
   _TypeNameToTypeTableType _typeNameToType;

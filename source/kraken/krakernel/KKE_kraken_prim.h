@@ -56,18 +56,15 @@ typedef bool (*KrakenPrimInitFunction)(KrakenPrim *prim);
 
 class KrakenPrimRegistry : public TfWeakBase
 {
-
  public:
-
   KrakenPrimRegistry();
- 
+
   static KrakenPrimRegistry &GetInstance();
   void RegisterInitFunction(const TfType &schemaType, const KrakenPrimInitFunction &fn);
   KrakenPrimInitFunction GetInitFunction(const UsdPrim &prim);
 
 
  private:
-
   void WaitUntilInitialized();
   std::vector<TfType> GetTypesThatMayHaveRegisteredFunctions(const TfType &type) const;
   bool LoadPluginForType(const TfType &type) const;
@@ -76,7 +73,6 @@ class KrakenPrimRegistry : public TfWeakBase
 
 
  private:
-
   using RWMutex = tbb::queuing_rw_mutex;
   mutable RWMutex m_mutex;
 

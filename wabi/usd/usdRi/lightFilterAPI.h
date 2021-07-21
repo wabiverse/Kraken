@@ -79,7 +79,6 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdRiLightFilterAPI on UsdPrim \p prim .
   /// Equivalent to UsdRiLightFilterAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

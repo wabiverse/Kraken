@@ -83,10 +83,12 @@ void WM_exit_ex(kContext *C, const bool do_python)
 {
   wmWindowManager *wm = C ? CTX_wm_manager(C) : NULL;
 
-  if (C && wm) {
+  if (C && wm)
+  {
     WM_jobs_kill_all(wm);
 
-    UNIVERSE_FOR_ALL (win, wm->windows) {
+    UNIVERSE_FOR_ALL(win, wm->windows)
+    {
       CTX_wm_window_set(C, VALUE(win));
       WM_event_remove_handlers(C, VALUE(win)->modalhandlers);
       ED_screen_exit(C, VALUE(win), WM_window_get_active_screen(VALUE(win)));
@@ -97,8 +99,10 @@ void WM_exit_ex(kContext *C, const bool do_python)
 
     bool show_save = FormFactory(uprefs->showsave);
 
-    if ((show_save) && ((G.f & G_FLAG_USERPREF_NO_SAVE_ON_EXIT) == 0)) {
-      if (stage->GetRootLayer()->IsDirty()) {
+    if ((show_save) && ((G.f & G_FLAG_USERPREF_NO_SAVE_ON_EXIT) == 0))
+    {
+      if (stage->GetRootLayer()->IsDirty())
+      {
         stage->GetRootLayer()->Save();
       }
     }
@@ -170,7 +174,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
   // }
 
   /* KKE_kraken.cpp, does entire library and spacetypes */
-  KKE_kraken_free(); 
+  KKE_kraken_free();
   // ANIM_fcurves_copybuf_free();
   // ANIM_drivers_copybuf_free();
   // ANIM_driver_vars_copybuf_free();
@@ -187,11 +191,11 @@ void WM_exit_ex(kContext *C, const bool do_python)
   // KLF_exit();
 
   // if (gpu_is_init) {
-    // DRW_gpu_context_enable_ex(false);
-    // GPU_pass_cache_free();
-    // GPU_exit();
-    // DRW_gpu_context_disable_ex(false);
-    // DRW_gpu_context_destroy();
+  // DRW_gpu_context_enable_ex(false);
+  // GPU_pass_cache_free();
+  // GPU_exit();
+  // DRW_gpu_context_disable_ex(false);
+  // DRW_gpu_context_destroy();
   // }
 
   // ANIM_keyingset_infos_exit();
@@ -200,7 +204,8 @@ void WM_exit_ex(kContext *C, const bool do_python)
 
 #ifdef WITH_PYTHON
   /* option not to close python so we can use 'atexit' */
-  if (do_python && ((C == NULL) || CTX_py_init_get(C))) {
+  if (do_python && ((C == NULL) || CTX_py_init_get(C)))
+  {
     /* NOTE: (old note)
      * before BKE_blender_free so Python's garbage-collection happens while library still exists.
      * Needed at least for a rare crash that can happen in python-drivers.
@@ -248,16 +253,20 @@ static void wait_for_console_key(void)
 {
   HANDLE hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
 
-  if (((hConsoleInput != NULL) || (hConsoleInput != INVALID_HANDLE_VALUE)) && FlushConsoleInputBuffer(hConsoleInput)) {
-    for (;;) {
+  if (((hConsoleInput != NULL) || (hConsoleInput != INVALID_HANDLE_VALUE)) && FlushConsoleInputBuffer(hConsoleInput))
+  {
+    for (;;)
+    {
       INPUT_RECORD buffer;
       DWORD ignored;
 
-      if (!ReadConsoleInput(hConsoleInput, &buffer, 1, &ignored)) {
+      if (!ReadConsoleInput(hConsoleInput, &buffer, 1, &ignored))
+      {
         break;
       }
 
-      if (buffer.EventType == KEY_EVENT) {
+      if (buffer.EventType == KEY_EVENT)
+      {
         break;
       }
     }
@@ -272,7 +281,8 @@ void WM_exit(kContext *C)
   printf("\nKraken quit\n");
 
 #ifdef WIN32
-  if (G.debug & G_DEBUG) {
+  if (G.debug & G_DEBUG)
+  {
     printf("Press any key to exit . . .\n\n");
     wait_for_console_key();
   }

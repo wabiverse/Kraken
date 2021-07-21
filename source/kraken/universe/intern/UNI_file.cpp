@@ -92,15 +92,18 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
 {
   decode_kraken_header(fd);
 
-  if (fd->flags & FD_FLAGS_FILE_OK) {
+  if (fd->flags & FD_FLAGS_FILE_OK)
+  {
     const char *error_message = NULL;
-    if (fd->sdf_handle->IsEmpty()) {
+    if (fd->sdf_handle->IsEmpty())
+    {
       KKE_reportf(reports, RPT_ERROR, "Failed to read project file '%s': %s", fd->relabase, error_message);
       delete fd;
       fd = NULL;
     }
   }
-  else {
+  else
+  {
     KKE_reportf(reports, RPT_ERROR, "Failed to read project file '%s', not a supported kraken file", fd->relabase);
     delete fd;
     fd = NULL;
@@ -132,7 +135,8 @@ static FileData *kr_filedata_from_file_descriptor(const char *filepath,
 
   /* Regular file. */
   errno = 0;
-  if (!STREQ(KLI_strncpy(header, CHARALL(filedoc), sizeof(header)), CHARALL(filedoc))) {
+  if (!STREQ(KLI_strncpy(header, CHARALL(filedoc), sizeof(header)), CHARALL(filedoc)))
+  {
     KKE_reportf(reports->reports,
                 RPT_WARNING,
                 "Unable to read '%s': %s",
@@ -141,7 +145,8 @@ static FileData *kr_filedata_from_file_descriptor(const char *filepath,
     return NULL;
   }
 
-  if (!KLI_has_pixar_extension(file->GetFileExtension())) {
+  if (!KLI_has_pixar_extension(file->GetFileExtension()))
+  {
     KKE_reportf(reports->reports, RPT_WARNING, "Unrecognized file format '%s'", filepath);
     return NULL;
   }
@@ -159,7 +164,8 @@ static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileRead
   errno = 0;
   SdfLayerRefPtr file = SdfLayer::FindOrOpen(filepath);
 
-  if (!file) {
+  if (!file)
+  {
     KKE_reportf(reports->reports,
                 RPT_WARNING,
                 "Unable to open '%s': %s",
@@ -168,7 +174,8 @@ static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileRead
     return NULL;
   }
   FileData *fd = kr_filedata_from_file_descriptor(filepath, reports, file);
-  if ((fd == NULL) || (fd->filedes.empty())) {
+  if ((fd == NULL) || (fd->filedes.empty()))
+  {
     file->Clear();
   }
   return fd;
@@ -177,7 +184,8 @@ static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileRead
 FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *reports)
 {
   FileData *fd = kr_filedata_from_file_open(filepath, reports);
-  if (fd != NULL) {
+  if (fd != NULL)
+  {
     /* needed for library_append and read_libraries */
     KLI_strncpy(fd->relabase, filepath, sizeof(fd->relabase));
 

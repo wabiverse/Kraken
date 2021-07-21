@@ -57,7 +57,7 @@ struct KPy_Library
 {
   PyObject_HEAD /* Required Python macro. */
 
-  char relpath[FILE_MAX];
+    char relpath[FILE_MAX];
   char abspath[FILE_MAX];
   KrakenHandle *kr_handle;
   int flag;
@@ -237,9 +237,11 @@ static PyObject *_kpy_names(KPy_Library *self, const SdfPath &prim)
 
   list = PyList_New(paths.size());
 
-  if (!paths.empty()) {
+  if (!paths.empty())
+  {
     int counter = 0;
-    UNIVERSE_FOR_ALL (sdf_path, paths) {
+    UNIVERSE_FOR_ALL(sdf_path, paths)
+    {
       PyList_SET_ITEM(list, counter, PyUnicode_FromString(CHARALL(sdf_path.GetName())));
       counter++;
     }
@@ -261,8 +263,10 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
 
   self->kr_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);
 
-  if (self->kr_handle == NULL) {
-    if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1) {
+  if (self->kr_handle == NULL)
+  {
+    if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1)
+    {
       PyErr_Format(PyExc_IOError, "load: %s failed to open kraken project file", self->abspath);
     }
     return NULL;

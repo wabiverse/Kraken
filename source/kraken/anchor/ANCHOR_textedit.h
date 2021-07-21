@@ -71,10 +71,10 @@ void STB_TEXTEDIT_LAYOUTROW(StbTexteditRow *r, STB_TEXTEDIT_STRING *obj, int lin
   const AnchorWChar *text = obj->TextW.Data;
   const AnchorWChar *text_remaining = NULL;
   const wabi::GfVec2f size = InputTextCalcTextSizeW(text + line_start_idx,
-                                              text + obj->CurLenW,
-                                              &text_remaining,
-                                              NULL,
-                                              true);
+                                                    text + obj->CurLenW,
+                                                    &text_remaining,
+                                                    NULL,
+                                                    true);
   r->x0 = 0.0f;
   r->x1 = size[0];
   r->baseline_y_delta = size[1];

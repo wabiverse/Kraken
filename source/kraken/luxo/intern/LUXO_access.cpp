@@ -89,11 +89,11 @@ SdfValueTypeName LUXO_property_type(PropertyUNI *prop)
 
 bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier)
 {
-//   const int i = LUXO_enum_from_value(item, value);
-//   if (i != -1) {
-//     *r_identifier = item[i].identifier;
-//     return true;
-//   }
+  //   const int i = LUXO_enum_from_value(item, value);
+  //   if (i != -1) {
+  //     *r_identifier = item[i].identifier;
+  //     return true;
+  //   }
   return false;
 }
 
@@ -123,8 +123,8 @@ PropertyUNI *LUXO_object_find_property(PointerUNI *ptr, const char *identifier)
 }
 
 void LUXO_property_collection_begin(PointerUNI *ptr,
-                                   PropertyUNI *prop,
-                                   CollectionPropertyUNI iter)
+                                    PropertyUNI *prop,
+                                    CollectionPropertyUNI iter)
 {
   iter.push_back(prop);
   iter.begin();

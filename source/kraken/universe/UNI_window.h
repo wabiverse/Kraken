@@ -98,7 +98,7 @@ struct wmWindow : public UsdUIWindow, KrakenPrim
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
-  std::vector<wmEventHandler*> modalhandlers;
+  std::vector<wmEventHandler *> modalhandlers;
 
   /** Runtime Window State. */
   char windowstate;

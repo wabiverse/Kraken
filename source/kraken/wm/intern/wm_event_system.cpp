@@ -602,7 +602,7 @@ void WM_event_init_from_window(wmWindow *win, wmEvent *event)
 }
 
 wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
-                                          std::vector<wmEventHandler*> handlers,
+                                          std::vector<wmEventHandler *> handlers,
                                           wmUIHandlerFunc handle_fn,
                                           wmUIHandlerRemoveFunc remove_fn,
                                           void *user_data,
@@ -613,12 +613,14 @@ wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
   handler->handle_fn = handle_fn;
   handler->remove_fn = remove_fn;
   handler->user_data = user_data;
-  if (C) {
+  if (C)
+  {
     handler->context.area = CTX_wm_area(C);
     handler->context.region = CTX_wm_region(C);
     handler->context.menu = CTX_wm_menu(C);
   }
-  else {
+  else
+  {
     handler->context.area = NULL;
     handler->context.region = NULL;
     handler->context.menu = NULL;
@@ -1021,28 +1023,34 @@ void wm_event_free_handler(wmEventHandler *handler)
   delete handler;
 }
 
-void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler*> handlers)
+void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handlers)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  std::vector<wmEventHandler*>::iterator iter;
+  std::vector<wmEventHandler *>::iterator iter;
 
-  for (iter = handlers.begin(); iter != handlers.end(); ++iter) {
+  for (iter = handlers.begin(); iter != handlers.end(); ++iter)
+  {
     KLI_assert((*iter)->type != 0);
-    if ((*iter)->type == WM_HANDLER_TYPE_UI) {
+    if ((*iter)->type == WM_HANDLER_TYPE_UI)
+    {
       wmEventHandlerUI *handler = (wmEventHandlerUI *)(*iter);
 
-      if (handler->remove_fn) {
+      if (handler->remove_fn)
+      {
         ScrArea *area = CTX_wm_area(C);
         ARegion *region = CTX_wm_region(C);
         ARegion *menu = CTX_wm_menu(C);
 
-        if (handler->context.area) {
+        if (handler->context.area)
+        {
           CTX_wm_area_set(C, handler->context.area);
         }
-        if (handler->context.region) {
+        if (handler->context.region)
+        {
           CTX_wm_region_set(C, handler->context.region);
         }
-        if (handler->context.menu) {
+        if (handler->context.menu)
+        {
           CTX_wm_menu_set(C, handler->context.menu);
         }
 
@@ -1598,8 +1606,8 @@ static int wm_operator_call_internal(kContext *C,
         if (!(region && region->regiontype == type) && area)
         {
           ARegion *region_other = (type == RGN_TYPE_WINDOW) ?
-                                  KKE_area_find_region_active_win(area) :
-                                  KKE_area_find_region_type(area, type);
+                                    KKE_area_find_region_active_win(area) :
+                                    KKE_area_find_region_type(area, type);
           if (region_other)
           {
             CTX_wm_region_set(C, region_other);
@@ -1672,19 +1680,21 @@ void WM_event_do_refresh_wm(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
+  UNIVERSE_FOR_ALL(win, wm->windows)
+  {
 
     const kScreen *screen = WM_window_get_active_screen(VALUE(win));
 
     CTX_wm_window_set(C, VALUE(win));
 
-    UNIVERSE_FOR_ALL (area, screen->areas) {
-      if (area->do_refresh) {
+    UNIVERSE_FOR_ALL(area, screen->areas)
+    {
+      if (area->do_refresh)
+      {
         CTX_wm_area_set(C, area);
         ED_area_do_refresh(C, area);
       }
     }
-
   }
 
   CTX_wm_window_set(C, NULL);
@@ -1692,12 +1702,16 @@ void WM_event_do_refresh_wm(kContext *C)
 
 static void wm_event_free(wmEvent *event)
 {
-  if (event->customdata) {
-    if (event->customdatafree) {
-      if (event->custom == EVT_DATA_DRAGDROP) {
-        WM_drag_free_list((std::vector<wmDrag*>&)event->customdata);
+  if (event->customdata)
+  {
+    if (event->customdatafree)
+    {
+      if (event->custom == EVT_DATA_DRAGDROP)
+      {
+        WM_drag_free_list((std::vector<wmDrag *> &)event->customdata);
       }
-      else {
+      else
+      {
         free(event->customdata);
       }
     }
@@ -1709,7 +1723,8 @@ static void wm_event_free(wmEvent *event)
 static void wm_event_free_all(wmWindow *win)
 {
   wmEvent *event;
-  while (!win->event_queue.empty()) {
+  while (!win->event_queue.empty())
+  {
     wm_event_free(event);
   }
 }
@@ -1731,7 +1746,8 @@ void WM_event_do_handlers(kContext *C)
   // WM_keyconfig_update(wm);
   // WM_gizmoconfig_update(CTX_data_main(C));
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
+  UNIVERSE_FOR_ALL(win, wm->windows)
+  {
     kScreen *screen = WM_window_get_active_screen(VALUE(win));
 
     /* Some safety checks - these should always be set! */
@@ -1739,20 +1755,24 @@ void WM_event_do_handlers(kContext *C)
     KLI_assert(WM_window_get_active_screen(VALUE(win)));
     KLI_assert(WM_window_get_active_workspace(VALUE(win)));
 
-    if (screen == NULL) {
+    if (screen == NULL)
+    {
       wm_event_free_all(VALUE(win));
     }
-    else {
+    else
+    {
       Scene *scene = WM_window_get_active_scene(VALUE(win));
     }
 
     wmEvent *event;
-    while ((event = (* VALUE(win)->event_queue.begin()))) {
+    while ((event = (*VALUE(win)->event_queue.begin())))
+    {
       int action = WM_HANDLER_CONTINUE;
 
       screen = WM_window_get_active_screen(VALUE(win));
 
-      if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) && ((event->type != MOUSEMOVE) || (event->type != INBETWEEN_MOUSEMOVE))) {
+      if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) && ((event->type != MOUSEMOVE) || (event->type != INBETWEEN_MOUSEMOVE)))
+      {
         TF_MSG("\n%s: Handling event\n", __func__);
         // WM_event_print(event);
       }

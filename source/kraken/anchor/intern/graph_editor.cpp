@@ -937,7 +937,7 @@ void Show(Delegate &delegate, const Options &options, ViewState &viewState, bool
 
 #ifdef WITH_ANCHOR_CURVE_EDIT_SHADOW
         GfVec2f shadowOffset = GfVec2f(30, 30);
-        GfVec2f shadowPivot = (nodeRect.Min + nodeRect.Max) /2.f;
+        GfVec2f shadowPivot = (nodeRect.Min + nodeRect.Max) / 2.f;
         GfVec2f shadowPointMiddle = shadowPivot + shadowOffset;
         GfVec2f shadowPointTop = GfVec2f(shadowPivot[0], nodeRect.Min[1]) + shadowOffset;
         GfVec2f shadowPointBottom = GfVec2f(shadowPivot[0], nodeRect.Max[1]) + shadowOffset;
@@ -945,16 +945,16 @@ void Show(Delegate &delegate, const Options &options, ViewState &viewState, bool
         GfVec2f shadowPointRight = GfVec2f(nodeRect.Max[0], shadowPivot[1]) + shadowOffset;
 
         /* top left */
-        drawList->AddRectFilledMultiColor(nodeRect.Min + shadowOffset, shadowPointMiddle, ANCHOR_COL32(0 ,0, 0, 0), ANCHOR_COL32(0,0,0,0), ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0, 0, 0, 0));
+        drawList->AddRectFilledMultiColor(nodeRect.Min + shadowOffset, shadowPointMiddle, ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0, 0, 0, 0));
 
         /* top right */
-        drawList->AddRectFilledMultiColor(shadowPointTop, shadowPointRight, ANCHOR_COL32(0 ,0, 0, 0), ANCHOR_COL32(0,0,0,0), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 255));
+        drawList->AddRectFilledMultiColor(shadowPointTop, shadowPointRight, ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 255));
 
         /* bottom left */
-        drawList->AddRectFilledMultiColor(shadowPointLeft, shadowPointBottom, ANCHOR_COL32(0 ,0, 0, 0), ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0,0,0,0));
+        drawList->AddRectFilledMultiColor(shadowPointLeft, shadowPointBottom, ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0));
 
         /* bottom right */
-        drawList->AddRectFilledMultiColor(shadowPointMiddle, nodeRect.Max + shadowOffset, ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0 ,0, 0, 0), ANCHOR_COL32(0,0,0,0), ANCHOR_COL32(0, 0, 0, 0));
+        drawList->AddRectFilledMultiColor(shadowPointMiddle, nodeRect.Max + shadowOffset, ANCHOR_COL32(0, 0, 0, 255), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0), ANCHOR_COL32(0, 0, 0, 0));
 #endif /* WITH_ANCHOR_CURVE_EDIT_SHADOW */
 
         if (DrawNode(drawList, nodeIndex, offset, viewState.mFactor, delegate, overInput, options, inMinimap, regionRect))

@@ -218,7 +218,8 @@ void KKE_kraken_free(void)
 }
 
 
-static struct AtExitData {
+static struct AtExitData
+{
   struct AtExitData *next;
 
   void (*func)(void *user_data);
@@ -239,8 +240,10 @@ void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *use
   struct AtExitData *ae = g_atexit;
   struct AtExitData **ae_p = &g_atexit;
 
-  while (ae) {
-    if ((ae->func == func) && (ae->user_data == user_data)) {
+  while (ae)
+  {
+    if ((ae->func == func) && (ae->user_data == user_data))
+    {
       *ae_p = ae->next;
       free(ae);
       return;
@@ -253,7 +256,8 @@ void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *use
 void KKE_kraken_atexit(void)
 {
   struct AtExitData *ae = g_atexit, *ae_next;
-  while (ae) {
+  while (ae)
+  {
     ae_next = ae->next;
 
     ae->func(ae->user_data);

@@ -44,8 +44,8 @@
 #  include <d3d12.h>
 #  include <dxgi1_6.h>
 
-#define NUM_BACK_BUFFERS 3
-#define NUM_FRAMES_IN_FLIGHT 3
+#  define NUM_BACK_BUFFERS 3
+#  define NUM_FRAMES_IN_FLIGHT 3
 
 class AnchorWindowWin32;
 
@@ -351,8 +351,8 @@ class AnchorDisplayManagerWin32 : public AnchorDisplayManager
 
 struct D3D12FrameContext
 {
-  ID3D12CommandAllocator* CommandAllocator;
-  UINT64                  FenceValue;
+  ID3D12CommandAllocator *CommandAllocator;
+  UINT64 FenceValue;
 };
 
 class AnchorWindowWin32 : public AnchorSystemWindow
@@ -419,7 +419,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
 
   /**
    * DirectX 12 device objects. */
-  ID3D12Device *m_d3dDevice; 
+  ID3D12Device *m_d3dDevice;
   ID3D12DescriptorHeap *m_d3dRtvDescriptorHeap;
   ID3D12DescriptorHeap *m_d3dSrvDescriptorHeap;
   ID3D12CommandQueue *m_d3dCommandQueue;

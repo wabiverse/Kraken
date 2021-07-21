@@ -74,7 +74,6 @@ class UsdRiRisPattern : public UsdRiRisObject
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdRiRisPattern on UsdPrim \p prim .
   /// Equivalent to UsdRiRisPattern::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

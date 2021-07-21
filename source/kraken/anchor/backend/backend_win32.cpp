@@ -99,7 +99,7 @@
 
 /**
  * Using XInput for gamepad (will load DLL dynamically) */
-#  include <xinput.h>
+#include <xinput.h>
 typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES *);
 typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
 
@@ -992,18 +992,18 @@ static void AnchorBackendWin32UpdateGamepads()
     const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
     io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 
-#  define MAP_BUTTON(NAV_NO, BUTTON_ENUM) \
-    { \
-      io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; \
-    }
-#  define MAP_ANALOG(NAV_NO, VALUE, V0, V1) \
-    { \
-      float vn = (float)(VALUE - V0) / (float)(V1 - V0); \
-      if (vn > 1.0f) \
-        vn = 1.0f; \
-      if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
-        io.NavInputs[NAV_NO] = vn; \
-    }
+#define MAP_BUTTON(NAV_NO, BUTTON_ENUM) \
+  { \
+    io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; \
+  }
+#define MAP_ANALOG(NAV_NO, VALUE, V0, V1) \
+  { \
+    float vn = (float)(VALUE - V0) / (float)(V1 - V0); \
+    if (vn > 1.0f) \
+      vn = 1.0f; \
+    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
+      io.NavInputs[NAV_NO] = vn; \
+  }
 
 
     /**
@@ -1046,8 +1046,8 @@ static void AnchorBackendWin32UpdateGamepads()
     MAP_ANALOG(AnchorNavInput_LStickRight, gamepad.sThumbLX, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
     MAP_ANALOG(AnchorNavInput_LStickUp, gamepad.sThumbLY, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
     MAP_ANALOG(AnchorNavInput_LStickDown, gamepad.sThumbLY, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
-#  undef MAP_BUTTON
-#  undef MAP_ANALOG
+#undef MAP_BUTTON
+#undef MAP_ANALOG
   }
 }
 
@@ -1549,10 +1549,13 @@ eAnchorStatus AnchorSystemWin32::getModifierKeys(AnchorModifierKeys &keys) const
 
   bool lwindown = HIBYTE(::GetKeyState(VK_LWIN)) != 0;
   bool rwindown = HIBYTE(::GetKeyState(VK_RWIN)) != 0;
-  if (lwindown || rwindown) {
+  if (lwindown || rwindown)
+  {
     keys.set(ANCHOR_ModifierKeyOS, true);
     io.KeySuper = true;
-  } else {
+  }
+  else
+  {
     keys.set(ANCHOR_ModifierKeyOS, false);
     io.KeySuper = false;
   }
@@ -1928,7 +1931,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           break;
         /* These functions were replaced by #WM_INPUT. */
         case WM_CHAR:
-        /* The WM_CHAR message is posted to the window with the keyboard focus when
+          /* The WM_CHAR message is posted to the window with the keyboard focus when
          * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
          * contains the character code of the key that was pressed.
          */
@@ -4615,7 +4618,7 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 
 eAnchorStatus AnchorWindowWin32::activateDrawingContext()
 {
-  if(ANCHOR::GetCurrentContext() != NULL)
+  if (ANCHOR::GetCurrentContext() != NULL)
     return ANCHOR_SUCCESS;
   else
     return ANCHOR_FAILURE;

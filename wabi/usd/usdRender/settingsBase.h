@@ -77,7 +77,6 @@ class UsdRenderSettingsBase : public UsdTyped
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
 
-
   /// Construct a UsdRenderSettingsBase on UsdPrim \p prim .
   /// Equivalent to UsdRenderSettingsBase::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

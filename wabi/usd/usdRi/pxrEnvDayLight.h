@@ -70,7 +70,6 @@ class UsdRiPxrEnvDayLight : public UsdLuxLight
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdRiPxrEnvDayLight on UsdPrim \p prim .
   /// Equivalent to UsdRiPxrEnvDayLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

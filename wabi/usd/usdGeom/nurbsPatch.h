@@ -116,7 +116,6 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomNurbsPatch on UsdPrim \p prim .
   /// Equivalent to UsdGeomNurbsPatch::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

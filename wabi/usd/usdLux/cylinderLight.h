@@ -73,7 +73,6 @@ class UsdLuxCylinderLight : public UsdLuxLight
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdLuxCylinderLight on UsdPrim \p prim .
   /// Equivalent to UsdLuxCylinderLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

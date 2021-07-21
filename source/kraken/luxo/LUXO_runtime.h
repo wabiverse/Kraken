@@ -43,7 +43,7 @@
  *  Copyright (C) 2021 Wabi Animation Studios.
  *  All Rights Reserved.
  * 
- */                                                                         
+ */
 
 #define KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(x) \
   TF_REGISTRY_FUNCTION(x)

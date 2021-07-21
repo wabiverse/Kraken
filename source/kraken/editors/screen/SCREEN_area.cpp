@@ -64,7 +64,8 @@ struct RegionTypeAlignInfo
 
 void ED_area_do_refresh(kContext *C, ScrArea *area)
 {
-  if (area->type && area->type->refresh) {
+  if (area->type && area->type->refresh)
+  {
     area->type->refresh(C, area);
   }
   area->do_refresh = false;

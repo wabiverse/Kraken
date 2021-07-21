@@ -143,31 +143,38 @@ char *KLI_string_join_array(char *result,
 #define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
 
 #define UTF8_COMPUTE(Char, Mask, Len, Err) \
-  if (Char < 128) { \
+  if (Char < 128) \
+  { \
     Len = 1; \
     Mask = 0x7f; \
   } \
-  else if ((Char & 0xe0) == 0xc0) { \
+  else if ((Char & 0xe0) == 0xc0) \
+  { \
     Len = 2; \
     Mask = 0x1f; \
   } \
-  else if ((Char & 0xf0) == 0xe0) { \
+  else if ((Char & 0xf0) == 0xe0) \
+  { \
     Len = 3; \
     Mask = 0x0f; \
   } \
-  else if ((Char & 0xf8) == 0xf0) { \
+  else if ((Char & 0xf8) == 0xf0) \
+  { \
     Len = 4; \
     Mask = 0x07; \
   } \
-  else if ((Char & 0xfc) == 0xf8) { \
+  else if ((Char & 0xfc) == 0xf8) \
+  { \
     Len = 5; \
     Mask = 0x03; \
   } \
-  else if ((Char & 0xfe) == 0xfc) { \
+  else if ((Char & 0xfe) == 0xfc) \
+  { \
     Len = 6; \
     Mask = 0x01; \
   } \
-  else { \
+  else \
+  { \
     Len = Err; /* -1 is the typical error value or 1 to skip */ \
   } \
   (void)0

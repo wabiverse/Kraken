@@ -43,12 +43,12 @@ typedef int (*ObjectCallbackFunc)(struct kContext *C,
                                   UsdAttributeVector list);
 typedef void (*ObjectFreeFunc)(void *data);
 typedef struct KrakenPrim *(*ObjectRegisterFunc)(struct Main *kmain,
-                                                struct ReportList *reports,
-                                                void *data,
-                                                const char *identifier,
-                                                ObjectValidateFunc validate,
-                                                ObjectCallbackFunc call,
-                                                ObjectFreeFunc free);
+                                                 struct ReportList *reports,
+                                                 void *data,
+                                                 const char *identifier,
+                                                 ObjectValidateFunc validate,
+                                                 ObjectCallbackFunc call,
+                                                 ObjectFreeFunc free);
 typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct KrakenPrim *type);
 typedef void **(*ObjectInstanceFunc)(struct KrakenPrim *ptr);
 

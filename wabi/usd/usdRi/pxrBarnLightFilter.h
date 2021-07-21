@@ -78,7 +78,6 @@ class UsdRiPxrBarnLightFilter : public UsdLuxLightFilter
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdRiPxrBarnLightFilter on UsdPrim \p prim .
   /// Equivalent to UsdRiPxrBarnLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

@@ -97,7 +97,6 @@ class UsdGeomCamera : public UsdGeomXformable
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomCamera on UsdPrim \p prim .
   /// Equivalent to UsdGeomCamera::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

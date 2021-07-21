@@ -62,8 +62,10 @@ void KrakenPrimRegistry::RegisterInitFunction(const TfType &schemaType, const Kr
 
   if (!didInsert)
   {
-    TF_MSG_ERROR("KrakenInitFunction already registered for "
-                  "prim type '%s'", schemaType.GetTypeName().c_str());
+    TF_MSG_ERROR(
+      "KrakenInitFunction already registered for "
+      "prim type '%s'",
+      schemaType.GetTypeName().c_str());
   }
 }
 
@@ -75,8 +77,8 @@ KrakenPrimInitFunction KrakenPrimRegistry::GetInitFunction(const UsdPrim &prim)
   if (!primSchemaType)
   {
     TF_MSG_ERROR("Could not find prim type '%s' for prim %s",
-                  prim.GetTypeName().GetText(),
-                  UsdDescribe(prim).c_str());
+                 prim.GetTypeName().GetText(),
+                 UsdDescribe(prim).c_str());
     return nullptr;
   }
 
@@ -175,9 +177,7 @@ bool KrakenPrimRegistry::FindFunctionForType(const TfType &type, KrakenPrimInitF
  *  -------------------------------------- The Kraken Prim Registry. Initialization. ----- */
 
 
-
 TF_INSTANTIATE_SINGLETON(KrakenPrimRegistry);
-
 
 
 static bool InitKrakenPrimsFromPlugins(KrakenPrim *prim)

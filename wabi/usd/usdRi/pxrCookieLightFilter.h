@@ -78,7 +78,6 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdRiPxrCookieLightFilter on UsdPrim \p prim .
   /// Equivalent to UsdRiPxrCookieLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

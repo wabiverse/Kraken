@@ -319,7 +319,7 @@ typedef struct
    * height of row above
    * and below baseline. */
   float ymin, ymax;
-  
+
   int num_chars;
 } StbTexteditRow;
 
@@ -1897,8 +1897,8 @@ enum ANCHORInputSource
   ANCHORInputSource_Gamepad,
   /**
    * Currently only used by InputText() */
-  ANCHORInputSource_Nav,        
-  ANCHORInputSource_Clipboard,  
+  ANCHORInputSource_Nav,
+  ANCHORInputSource_Clipboard,
   ANCHORInputSource_COUNT
 };
 
@@ -2082,7 +2082,7 @@ struct ANCHOR_API AnchorInputTextState
                                          // active (until then we pull the data from user argument)
   int BufCapacityA;                      // end-user buffer capacity
   float ScrollX;                         // horizontal scrolling/offset
-  AnchorStb::STB_TexteditState Stb;          // state for stb_textedit.h
+  AnchorStb::STB_TexteditState Stb;      // state for stb_textedit.h
   float CursorAnim;                      // timer for cursor blink, reset on every user action so the cursor reappears
                                          // immediately
   bool CursorFollow;                     // set when we want scrolling to follow the current cursor position (not

@@ -76,7 +76,6 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdVolField3DAsset on UsdPrim \p prim .
   /// Equivalent to UsdVolField3DAsset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

@@ -70,7 +70,6 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdRenderSettingsAPI on UsdPrim \p prim .
   /// Equivalent to UsdRenderSettingsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

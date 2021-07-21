@@ -131,32 +131,32 @@ namespace ANCHOR_STB_NAMESPACE
 #  endif
 #endif
 
-#  ifndef STB_TRUETYPE_IMPLEMENTATION
-#    ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
-#      define STBTT_malloc(x, u) ((void)(u), ANCHOR_ALLOC(x))
-#      define STBTT_free(x, u) ((void)(u), ANCHOR_FREE(x))
-#      define STBTT_assert(x) \
-        do \
-        { \
-          ANCHOR_ASSERT(x); \
-        } while (0)
-#      define STBTT_fmod(x, y) AnchorFmod(x, y)
-#      define STBTT_sqrt(x) AnchorSqrt(x)
-#      define STBTT_pow(x, y) AnchorPow(x, y)
-#      define STBTT_fabs(x) AnchorFabs(x)
-#      define STBTT_ifloor(x) ((int)AnchorFloorSigned(x))
-#      define STBTT_iceil(x) ((int)ImCeil(x))
-#      define STBTT_STATIC
-#      define STB_TRUETYPE_IMPLEMENTATION
-#    else
-#      define STBTT_DEF extern
-#    endif
-#    ifdef ANCHOR_STB_TRUETYPE_FILENAME
-#      include ANCHOR_STB_TRUETYPE_FILENAME
-#    else
-#      include "ANCHOR_truetype.h"
-#    endif
+#ifndef STB_TRUETYPE_IMPLEMENTATION
+#  ifndef ANCHOR_DISABLE_STB_TRUETYPE_IMPLEMENTATION
+#    define STBTT_malloc(x, u) ((void)(u), ANCHOR_ALLOC(x))
+#    define STBTT_free(x, u) ((void)(u), ANCHOR_FREE(x))
+#    define STBTT_assert(x) \
+      do \
+      { \
+        ANCHOR_ASSERT(x); \
+      } while (0)
+#    define STBTT_fmod(x, y) AnchorFmod(x, y)
+#    define STBTT_sqrt(x) AnchorSqrt(x)
+#    define STBTT_pow(x, y) AnchorPow(x, y)
+#    define STBTT_fabs(x) AnchorFabs(x)
+#    define STBTT_ifloor(x) ((int)AnchorFloorSigned(x))
+#    define STBTT_iceil(x) ((int)ImCeil(x))
+#    define STBTT_STATIC
+#    define STB_TRUETYPE_IMPLEMENTATION
+#  else
+#    define STBTT_DEF extern
 #  endif
+#  ifdef ANCHOR_STB_TRUETYPE_FILENAME
+#    include ANCHOR_STB_TRUETYPE_FILENAME
+#  else
+#    include "ANCHOR_truetype.h"
+#  endif
+#endif
 
 #if defined(__GNUC__)
 #  pragma GCC diagnostic pop

@@ -64,7 +64,6 @@ class UsdGeomPointBased : public UsdGeomGprim
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
 
-
   /// Construct a UsdGeomPointBased on UsdPrim \p prim .
   /// Equivalent to UsdGeomPointBased::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

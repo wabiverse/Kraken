@@ -112,7 +112,8 @@ enum
   (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
    G_DEBUG_FREESTYLE | G_DEBUG_STAGE | G_DEBUG_IO | G_DEBUG_ANCHOR)
 
-enum eGlobalFileFlags {
+enum eGlobalFileFlags
+{
   G_FILE_AUTOPACK = (1 << 0),
   G_FILE_COMPRESS = (1 << 1),
   G_FILE_NO_UI = (1 << 2),

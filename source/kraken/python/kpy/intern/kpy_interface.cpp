@@ -54,7 +54,8 @@ static bool py_use_system_env = false;
 /* use for updating while a python script runs - in case of file load */
 void KPY_context_update(kContext *C)
 {
-  if (!KLI_thread_is_main()) {
+  if (!KLI_thread_is_main())
+  {
     return;
   }
 
@@ -66,11 +67,13 @@ void kpy_context_set(kContext *C, PyGILState_STATE *gilstate)
 {
   py_call_level++;
 
-  if (gilstate) {
+  if (gilstate)
+  {
     *gilstate = PyGILState_Ensure();
   }
 
-  if (py_call_level == 1) {
+  if (py_call_level == 1)
+  {
     KPY_context_update(C);
   }
 }
@@ -79,15 +82,17 @@ void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
 {
   py_call_level--;
 
-  if (gilstate) {
+  if (gilstate)
+  {
     PyGILState_Release(*gilstate);
   }
 
-  if (py_call_level < 0) {
+  if (py_call_level < 0)
+  {
     fprintf(stderr, "ERROR: Python context internal state bug. this should not happen!\n");
   }
-  else if (py_call_level == 0) {
-
+  else if (py_call_level == 0)
+  {
   }
 }
 
@@ -304,7 +309,8 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
 static void kpy_context_end(kContext *C)
 {
-  if (ARCH_UNLIKELY(C == NULL)) {
+  if (ARCH_UNLIKELY(C == NULL))
+  {
     return;
   }
   CTX_wm_operator_poll_msg_clear(C);

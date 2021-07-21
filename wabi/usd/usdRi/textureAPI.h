@@ -74,7 +74,6 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdRiTextureAPI on UsdPrim \p prim .
   /// Equivalent to UsdRiTextureAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

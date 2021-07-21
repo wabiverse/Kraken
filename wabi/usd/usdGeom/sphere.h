@@ -66,7 +66,6 @@ class UsdGeomSphere : public UsdGeomGprim
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
 
-
   /// Construct a UsdGeomSphere on UsdPrim \p prim .
   /// Equivalent to UsdGeomSphere::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for

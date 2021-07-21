@@ -51,7 +51,8 @@ static bool kpy_run_string_impl(kContext *C,
   PyObject *py_dict, *retval;
   bool ok = true;
 
-  if (expr[0] == '\0') {
+  if (expr[0] == '\0')
+  {
     return ok;
   }
 
@@ -61,19 +62,23 @@ static bool kpy_run_string_impl(kContext *C,
 
   py_dict = PyC_DefaultNameSpace("<kraken string>");
 
-  if (imports && (!PyC_NameSpace_ImportArray(py_dict, imports))) {
+  if (imports && (!PyC_NameSpace_ImportArray(py_dict, imports)))
+  {
     Py_DECREF(py_dict);
     retval = NULL;
   }
-  else {
+  else
+  {
     retval = PyRun_String(expr, mode, py_dict, py_dict);
   }
 
-  if (retval == NULL) {
+  if (retval == NULL)
+  {
     ok = false;
     // KPy_errors_to_report(CTX_wm_reports(C));
   }
-  else {
+  else
+  {
     Py_DECREF(retval);
   }
 

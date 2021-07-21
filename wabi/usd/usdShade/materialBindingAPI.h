@@ -157,7 +157,6 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
 
-
   /// Construct a UsdShadeMaterialBindingAPI on UsdPrim \p prim .
   /// Equivalent to UsdShadeMaterialBindingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
