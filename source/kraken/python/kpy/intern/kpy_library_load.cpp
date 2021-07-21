@@ -67,7 +67,7 @@ struct KPy_Library
   bool kmain_is_temp;
 };
 
-static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *kwds);
+static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kwds);
 static PyObject *kpy_lib_enter(KPy_Library *self);
 static PyObject *kpy_lib_exit(KPy_Library *self, PyObject *args);
 static PyObject *kpy_lib_dir(KPy_Library *self);
@@ -179,7 +179,7 @@ PyDoc_STRVAR(
   "   :type relative: bool\n"
   "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
   "   :type assets_only: bool\n");
-static PyObject *kpy_lib_load(KPy_PropertyUNI *self, PyObject *args, PyObject *kw)
+static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
   Main *kmain = (Main *)self->ptr.data; /* Typically #G_MAIN */

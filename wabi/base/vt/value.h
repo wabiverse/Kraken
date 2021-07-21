@@ -573,7 +573,7 @@ class VtValue
     {
       return TfSafeTypeCompare(typeid(ProxiedType), query);
     }
-    static TfType GetType()(T const &tp)
+    static TfType GetTfType(T const &tp)
     {
       return TfType::Find<ProxiedType>();
     }
@@ -643,7 +643,7 @@ class VtValue
     {
       return VtErasedProxyHoldsType(ep, query);
     }
-    static TfType GetType()(ErasedProxy const &ep)
+    static TfType GetTfType(ErasedProxy const &ep)
     {
       return VtGetErasedProxiedTfType(ep);
     }
@@ -816,7 +816,7 @@ class VtValue
 
     static TfType _GetProxiedType(_Storage const &storage)
     {
-      return ProxyHelper::GetType()(GetObj(storage));
+      return ProxyHelper::GetTfType(GetObj(storage));
     }
 
     static std::type_info const &_GetProxiedTypeid(_Storage const &storage)

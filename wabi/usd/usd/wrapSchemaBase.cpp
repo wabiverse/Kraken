@@ -57,7 +57,7 @@ static object __getattribute__(object selfObj, const char *name)
   if ((name[0] == '_' && name[1] == '_') || extract<UsdSchemaBase &>(selfObj)().GetPrim().IsValid() ||
       strcmp(name, "GetPrim") == 0 || strcmp(name, "GetPath") == 0 ||
       strcmp(name, "GetSchemaClassPrimDefinition") == 0 || strcmp(name, "GetSchemaAttributeNames") == 0 ||
-      strcmp(name, "GetSchemaType") == 0 || strcmp(name, "GetSchemaKind") == 0 ||
+      strcmp(name, "GetSchemaType") == 0 || strcmp(name, "GetUsdSchemaKind") == 0 ||
       strcmp(name, "IsAPISchema") == 0 || strcmp(name, "IsConcrete") == 0 || strcmp(name, "IsTyped") == 0 ||
       strcmp(name, "IsAppliedAPISchema") == 0 || strcmp(name, "IsMultipleApplyAPISchema") == 0)
   {
@@ -98,8 +98,7 @@ void wrapUsdSchemaBase()
     .def("IsAppliedAPISchema", &UsdSchemaBase::IsAppliedAPISchema)
     .def("IsMultipleApplyAPISchema", &UsdSchemaBase::IsMultipleApplyAPISchema)
 
-    .def("GetSchemaType", &UsdSchemaBase::GetSchemaType)
-    .def("GetSchemaKind", &UsdSchemaBase::GetSchemaKind)
+    .def("GetUsdSchemaKind", &UsdSchemaBase::GetUsdSchemaKind)
 
     .def(!self)
 

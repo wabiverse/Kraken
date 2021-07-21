@@ -12,6 +12,7 @@ kraken_include_dirs(
 )
 
 set(LIB
+  maelstrom
   kraken_wm
   kraken_kernel
   kraken_luxo

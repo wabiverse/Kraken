@@ -98,9 +98,9 @@ class UsdSchemaBase
   }
 
   /// Returns the kind of schema this class is.
-  // UsdSchemaKind GetSchemaKind() const {
-  //     return _GetSchemaKind();
-  // }
+  UsdSchemaKind GetUsdSchemaKind() const {
+      return GetSchemaKind();
+  }
 
   /// Construct and store \p prim as the held prim.
   USD_API

@@ -46,12 +46,14 @@ TF_MAKE_STATIC_DATA(TfType, _adapterBaseType)
   *_adapterBaseType = TfType::Find<UsdImagingPrimAdapter>();
 }
 
-TF_DEFINE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens, USD_IMAGING_ADAPTER_KEY_TOKENS);
+TF_DEFINE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens,
+                        USD_IMAGING_ADAPTER_KEY_TOKENS);
 
 // static
 bool UsdImagingAdapterRegistry::AreExternalPluginsEnabled()
 {
-  static bool areExternalPluginsEnabled = TfGetenvBool("USDIMAGING_ENABLE_PLUGINS", true);
+  static bool areExternalPluginsEnabled =
+    TfGetenvBool("USDIMAGING_ENABLE_PLUGINS", true);
   return areExternalPluginsEnabled;
 }
 
@@ -70,11 +72,10 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
     PlugPluginPtr plugin = plugReg.GetPluginForType(*typeIt);
     if (!plugin)
     {
-      TF_DEBUG(USDIMAGING_PLUGINS)
-        .Msg(
-          "[PluginDiscover] Plugin could "
-          "not be loaded for TfType '%s'\n",
-          typeIt->GetTypeName().c_str());
+      TF_DEBUG(USDIMAGING_PLUGINS).Msg(
+        "[PluginDiscover] Plugin could "
+        "not be loaded for TfType '%s'\n",
+        typeIt->GetTypeName().c_str());
       continue;
     }
 
@@ -110,13 +111,13 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
 
     if (!isEnabled)
     {
-      TF_DEBUG(USDIMAGING_PLUGINS)
-        .Msg(
-          "[PluginDiscover] Plugin disabled "
-          "because external plugins were disabled '%s'\n",
-          typeIt->GetTypeName().c_str());
+      TF_DEBUG(USDIMAGING_PLUGINS).Msg(
+        "[PluginDiscover] Plugin disabled "
+        "because external plugins were disabled '%s'\n",
+        typeIt->GetTypeName().c_str());
       continue;
     }
+
 
     JsObject::const_iterator it = metadata.find("primTypeName");
     if (it == metadata.end())
@@ -138,17 +139,17 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
 
     const TfToken primTypeName(it->second.Get<std::string>());
 
-    TF_DEBUG(USDIMAGING_PLUGINS)
-      .Msg(
-        "[PluginDiscover] Plugin discovered "
-        "'%s'\n",
-        typeIt->GetTypeName().c_str());
+    TF_DEBUG(USDIMAGING_PLUGINS).Msg(
+      "[PluginDiscover] Plugin discovered "
+      "'%s'\n",
+      typeIt->GetTypeName().c_str());
     _typeMap[primTypeName] = *typeIt;
 
     // Adapters can opt in to being used as the adapter for any derived
     // prim types (without adapters of their own) of the targeted prim type
     // through additional metadata.
-    JsObject::const_iterator includeDerivedIt = metadata.find("includeDerivedPrimTypes");
+    JsObject::const_iterator includeDerivedIt =
+      metadata.find("includeDerivedPrimTypes");
     if (includeDerivedIt != metadata.end())
     {
       if (!includeDerivedIt->second.Is<bool>())
@@ -171,7 +172,8 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
   // explicit prim type to adapter mappings have been found.
   for (const TfToken &primTypeName : includeDerivedPrimTypes)
   {
-    const TfType primType = UsdSchemaRegistry::GetTypeFromSchemaTypeName(primTypeName);
+    const TfType primType =
+      UsdSchemaRegistry::GetTypeFromSchemaTypeName(primTypeName);
     if (!primType)
     {
       continue;
@@ -182,14 +184,16 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
     // Start with just the directly derived types; we'll continue to
     // propagate the adapter type through derived prim types that do not
     // have their own adapter already.
-    std::vector<TfType> derivedTypesStack = PlugRegistry::GetDirectlyDerivedTypes(primType);
+    std::vector<TfType> derivedTypesStack =
+      PlugRegistry::GetDirectlyDerivedTypes(primType);
 
     while (!derivedTypesStack.empty())
     {
       const TfType derivedType = derivedTypesStack.back();
       derivedTypesStack.pop_back();
 
-      const TfToken typeName = UsdSchemaRegistry::GetSchemaKind(derivedType);
+      const TfToken typeName =
+        UsdSchemaRegistry::GetSchemaTypeName(derivedType);
       if (typeName.IsEmpty())
       {
         continue;
@@ -202,14 +206,14 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
       // types regardless of whether they have adapters already or not.
       if (_typeMap.emplace(typeName, adapterType).second)
       {
-        TF_DEBUG(USDIMAGING_PLUGINS)
-          .Msg(
-            "[PluginDiscover] Mapping adapter for type '%s' to derived "
-            "type '%s'\n",
-            primTypeName.GetText(),
-            typeName.GetText());
+        TF_DEBUG(USDIMAGING_PLUGINS).Msg(
+          "[PluginDiscover] Mapping adapter for type '%s' to derived "
+          "type '%s'\n",
+          primTypeName.GetText(),
+          typeName.GetText());
 
-        for (const TfType &type : PlugRegistry::GetDirectlyDerivedTypes(derivedType))
+        for (const TfType &type :
+             PlugRegistry::GetDirectlyDerivedTypes(derivedType))
         {
           derivedTypesStack.push_back(type);
         }
@@ -218,7 +222,6 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
   }
 }
 
-USDIMAGING_API
 bool UsdImagingAdapterRegistry::HasAdapter(TfToken const &adapterKey)
 {
   // Check if the key refers to any special built-in adapter types.
@@ -229,14 +232,16 @@ bool UsdImagingAdapterRegistry::HasAdapter(TfToken const &adapterKey)
   return _typeMap.find(adapterKey) != _typeMap.end();
 }
 
-UsdImagingPrimAdapterSharedPtr UsdImagingAdapterRegistry::ConstructAdapter(TfToken const &adapterKey)
+UsdImagingPrimAdapterSharedPtr
+UsdImagingAdapterRegistry::ConstructAdapter(TfToken const &adapterKey)
 {
   static UsdImagingPrimAdapterSharedPtr NULL_ADAPTER;
 
   // Check if the key refers to any special built-in adapter types.
   if (adapterKey == UsdImagingAdapterKeyTokens->instanceAdapterKey)
   {
-    return UsdImagingPrimAdapterSharedPtr(new UsdImagingInstanceAdapter);
+    return UsdImagingPrimAdapterSharedPtr(
+      new UsdImagingInstanceAdapter);
   }
 
   // Lookup the plug-in type name based on the prim type.
@@ -245,11 +250,10 @@ UsdImagingPrimAdapterSharedPtr UsdImagingAdapterRegistry::ConstructAdapter(TfTok
   if (typeIt == _typeMap.end())
   {
     // Unknown prim type.
-    TF_DEBUG(USDIMAGING_PLUGINS)
-      .Msg(
-        "[PluginLoad] Unknown prim "
-        "type '%s'\n",
-        adapterKey.GetText());
+    TF_DEBUG(USDIMAGING_PLUGINS).Msg(
+      "[PluginLoad] Unknown prim "
+      "type '%s'\n",
+      adapterKey.GetText());
     return NULL_ADAPTER;
   }
 
@@ -264,7 +268,8 @@ UsdImagingPrimAdapterSharedPtr UsdImagingAdapterRegistry::ConstructAdapter(TfTok
     return NULL_ADAPTER;
   }
 
-  UsdImagingPrimAdapterFactoryBase *factory = typeIt->second.GetFactory<UsdImagingPrimAdapterFactoryBase>();
+  UsdImagingPrimAdapterFactoryBase *factory =
+    typeIt->second.GetFactory<UsdImagingPrimAdapterFactoryBase>();
   if (!factory)
   {
     TF_CODING_ERROR(
@@ -287,10 +292,7 @@ UsdImagingPrimAdapterSharedPtr UsdImagingAdapterRegistry::ConstructAdapter(TfTok
     return NULL_ADAPTER;
   }
 
-  TF_DEBUG(USDIMAGING_PLUGINS)
-    .Msg("[PluginLoad] Loaded plugin '%s' > '%s'\n",
-         adapterKey.GetText(),
-         typeIt->second.GetTypeName().c_str());
+  TF_DEBUG(USDIMAGING_PLUGINS).Msg("[PluginLoad] Loaded plugin '%s' > '%s'\n", adapterKey.GetText(), typeIt->second.GetTypeName().c_str());
 
   return instance;
 }

@@ -89,7 +89,7 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
   notice.Send(invoker);
 }
 
-void WM_operator_properties_free(PointerUNI *ptr)
+void WM_operator_properties_free(PointerLUXO *ptr)
 {
   // IDProperty *properties = ptr->data;
 
@@ -99,7 +99,7 @@ void WM_operator_properties_free(PointerUNI *ptr)
   // }
 }
 
-void WM_operator_properties_create_ptr(PointerUNI *prop_ptr, wmOperatorType *ot)
+void WM_operator_properties_create_ptr(PointerLUXO *prop_ptr, wmOperatorType *ot)
 {
   CreationFactory::PTR::New(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_WM), ot->uni, NULL, prop_ptr);
 }

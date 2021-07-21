@@ -45,6 +45,7 @@
 #include "kpy_intern_string.h"
 #include "kpy_uni.h"
 
+#include <wabi/usd/usd/prim.h>
 #include <wabi/base/tf/iterator.h>
 
 #define USE_PEDANTIC_WRITE
@@ -62,7 +63,7 @@ static PyObject *pyuni_unregister_class(PyObject *self, PyObject *py_class);
 
 static bool uni_disallow_writes = false;
 
-static bool rna_id_write_error(PointerUNI *ptr, PyObject *key)
+static bool rna_id_write_error(PointerLUXO *ptr, PyObject *key)
 {
   return false;
 }
@@ -95,9 +96,9 @@ static void kpy_class_free(void *pyob_ptr)
 struct KPy_TypesModule_State
 {
   /** `LUXO_KrakenLUXO`. */
-  PointerUNI ptr;
+  PointerLUXO ptr;
   /** `LUXO_KrakenLUXO.objects`, exposed as `kpy.types` */
-  PropertyUNI *prop;
+  PropertyLUXO *prop;
 };
 
 static PyObject *kpy_types_module_getattro(PyObject *self, PyObject *pyname)
@@ -586,7 +587,7 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
   return weakinfo_hash;
 }
 
-static void id_weakref_pool_add(const SdfPath &id, KPy_DummyPointerUNI *pyuni)
+static void id_weakref_pool_add(const SdfPath &id, KPy_DummyPointerLUXO *pyuni)
 {
   PyObject *weakref;
   PyObject *weakref_capsule;
@@ -615,12 +616,12 @@ static void id_weakref_pool_add(const SdfPath &id, KPy_DummyPointerUNI *pyuni)
 
 #ifdef USE_PYUNI_ITER
 
-static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self);
-static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self);
+static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyLUXO *self);
+static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *self);
 
 static PyTypeObject pyuni_prop_collection_iter_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_prop_collection_iter", /* tp_name */
-  sizeof(KPy_CollectionPropertyUNI),                         /* tp_basicsize */
+  sizeof(KPy_CollectionPropertyLUXO),                         /* tp_basicsize */
   0,                                                         /* tp_itemsize */
   /* methods */
   (destructor)pyuni_prop_collection_iter_dealloc, /* tp_dealloc */
@@ -668,7 +669,7 @@ static PyTypeObject pyuni_prop_collection_iter_Type = {
 
 /***  weak reference enabler ***/
 #  ifdef USE_WEAKREFS
-  offsetof(KPy_CollectionPropertyUNI, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_CollectionPropertyLUXO, in_weakreflist), /* long tp_weaklistoffset; */
 #  else
   0,
 #  endif
@@ -702,9 +703,9 @@ static PyTypeObject pyuni_prop_collection_iter_Type = {
   NULL,
 };
 
-static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerUNI *ptr, PropertyUNI *prop)
+static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerLUXO *ptr, PropertyLUXO *prop)
 {
-  KPy_CollectionPropertyUNI *self = PyObject_New(KPy_CollectionPropertyUNI,
+  KPy_CollectionPropertyLUXO *self = PyObject_New(KPy_CollectionPropertyLUXO,
                                                  &pyuni_prop_collection_iter_Type);
 
 #  ifdef USE_WEAKREFS
@@ -716,12 +717,12 @@ static PyObject *pyuni_prop_collection_iter_CreatePyObject(PointerUNI *ptr, Prop
   return (PyObject *)self;
 }
 
-static PyObject *pyuni_prop_collection_iter(KPy_PropertyUNI *self)
+static PyObject *pyuni_prop_collection_iter(KPy_PropertyLUXO *self)
 {
   return pyuni_prop_collection_iter_CreatePyObject(&self->ptr, self->prop);
 }
 
-static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self)
+static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *self)
 {
   if (self->iter.empty())
   {
@@ -745,12 +746,12 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyUNI *self
   }
 #  endif /* !USE_PYUNI_OBJECT_REFERENCE */
 
-  self->iter.push_back(new PropertyUNI());
+  self->iter.push_back(new PropertyLUXO());
 
   return (PyObject *)pyuni;
 }
 
-static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyUNI *self)
+static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyLUXO *self)
 {
 #  ifdef USE_WEAKREFS
   if (self->in_weakreflist != NULL)
@@ -837,11 +838,11 @@ static PyObject *pyuni_unregister_class(PyObject *UNUSED(self), PyObject *py_cla
 
 
 /* 'kpy.data' from Python. */
-static PointerUNI *uni_module_ptr = NULL;
+static PointerLUXO *uni_module_ptr = NULL;
 PyObject *KPY_uni_module(void)
 {
   KPy_KrakenPrim *pyuni;
-  PointerUNI ptr;
+  PointerLUXO ptr;
 
   /* For now, return the base RNA type rather than a real module. */
   LUXO_main_pointer_create(G.main, &ptr);
@@ -864,8 +865,8 @@ void pyuni_alloc_types(void)
   // #ifdef DEBUG
   //   PyGILState_STATE gilstate;
 
-  //   PointerUNI ptr;
-  //   PropertyUNI *prop;
+  //   PointerLUXO ptr;
+  //   PropertyLUXO *prop;
 
   //   gilstate = PyGILState_Ensure();
 
@@ -892,7 +893,7 @@ void pyuni_alloc_types(void)
 }
 
 /*-----------------------CreatePyObject---------------------------------*/
-PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
+PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
 {
   KPy_KrakenPrim *pyuni = NULL;
 
@@ -981,7 +982,7 @@ PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr)
 #ifdef USE_PYUNI_INVALIDATE_WEAKREF
   if (!ptr->path.IsEmpty())
   {
-    id_weakref_pool_add(ptr->path, (KPy_DummyPointerUNI *)pyuni);
+    id_weakref_pool_add(ptr->path, (KPy_DummyPointerLUXO *)pyuni);
   }
 #endif
   return (PyObject *)pyuni;

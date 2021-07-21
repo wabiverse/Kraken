@@ -459,7 +459,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
           wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_open_mainfile));
           CTX_wm_window_set(C, win);
 
-          PointerUNI props_ptr;
+          PointerLUXO props_ptr;
           WM_operator_properties_create_ptr(&props_ptr, ot);
           CreationFactory::STR::Set(&props_ptr, "filepath", path);
           CreationFactory::BOOL::Set(&props_ptr, "display_file_selector", false);

@@ -67,7 +67,7 @@ const char *LUXO_object_identifier(const KrakenPrim *type)
   return type->identifier;
 }
 
-void **LUXO_object_instance(PointerUNI *ptr)
+void **LUXO_object_instance(PointerLUXO *ptr)
 {
   KrakenPrim *type = ptr->type;
 
@@ -82,7 +82,7 @@ void **LUXO_object_instance(PointerUNI *ptr)
   return NULL;
 }
 
-SdfValueTypeName LUXO_property_type(PropertyUNI *prop)
+SdfValueTypeName LUXO_property_type(PropertyLUXO *prop)
 {
   return prop->type;
 }
@@ -97,13 +97,13 @@ bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier
   return false;
 }
 
-PropertyUNI *LUXO_object_find_property(PointerUNI *ptr, const char *identifier)
+PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier)
 {
   // if (identifier[0] == '[' && identifier[1] == '"') { /* "  (dummy comment to avoid confusing some
   //                                                      * function lists in text editors) */
   //   /* id prop lookup, not so common */
-  //   PropertyUNI *r_prop = NULL;
-  //   PointerUNI r_ptr; /* only support single level props */
+  //   PropertyLUXO *r_prop = NULL;
+  //   PointerLUXO r_ptr; /* only support single level props */
   //   if (UNI_path_resolve_property(ptr, identifier, &r_ptr, &r_prop) && (r_ptr.type == ptr->type) &&
   //       (r_ptr.data == ptr->data)) {
   //     return r_prop;
@@ -111,8 +111,8 @@ PropertyUNI *LUXO_object_find_property(PointerUNI *ptr, const char *identifier)
   // }
   // else {
   //   /* most common case */
-  //   PropertyUNI *iterprop = UNI_object_iterator_property(ptr->type);
-  //   PointerUNI propptr;
+  //   PropertyLUXO *iterprop = UNI_object_iterator_property(ptr->type);
+  //   PointerLUXO propptr;
 
   //   if (UNI_property_collection_lookup_string(ptr, iterprop, identifier, &propptr)) {
   //     return propptr.data;
@@ -122,22 +122,22 @@ PropertyUNI *LUXO_object_find_property(PointerUNI *ptr, const char *identifier)
   return NULL;
 }
 
-void LUXO_property_collection_begin(PointerUNI *ptr,
-                                    PropertyUNI *prop,
-                                    CollectionPropertyUNI iter)
+void LUXO_property_collection_begin(PointerLUXO *ptr,
+                                    PropertyLUXO *prop,
+                                    CollectionPropertyLUXO iter)
 {
   iter.push_back(prop);
   iter.begin();
 }
 
-void LUXO_main_pointer_create(struct Main *main, PointerUNI *r_ptr)
+void LUXO_main_pointer_create(struct Main *main, PointerLUXO *r_ptr)
 {
   r_ptr->path = SdfPath("/Main");
   r_ptr->type = &LUXO_KrakenData;
   r_ptr->data = main;
 }
 
-void LUXO_kraken_luxo_pointer_create(PointerUNI *r_ptr)
+void LUXO_kraken_luxo_pointer_create(PointerLUXO *r_ptr)
 {
   r_ptr->path = SdfPath("/Kraken");
   r_ptr->type = &LUXO_KrakenLUXO;

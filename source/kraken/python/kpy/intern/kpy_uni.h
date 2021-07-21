@@ -69,8 +69,8 @@ extern PyTypeObject pyuni_object_Type;
 
 #define KPy_KrakenPrim_Check(v) (PyObject_TypeCheck(v, &pyuni_object_Type))
 #define KPy_KrakenPrim_CheckExact(v) (Py_TYPE(v) == &pyuni_object_Type)
-#define KPy_PropertyUNI_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
-#define KPy_PropertyUNI_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
+#define KPy_PropertyLUXO_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
+#define KPy_PropertyLUXO_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
 
 #define PYUNI_STRUCT_CHECK_OBJ(obj) \
   if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) \
@@ -99,15 +99,15 @@ extern PyTypeObject pyuni_object_Type;
   (void)0
 
 #define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_KrakenPrim *)(pyuni))->ptr.type != NULL))
-#define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyUNI *)(pyuni))->ptr.type != NULL))
+#define PYUNI_PROP_IS_VALID(pysrna) (LIKELY(((KPy_PropertyLUXO *)(pyuni))->ptr.type != NULL))
 
-struct KPy_DummyPointerUNI
+struct KPy_DummyPointerLUXO
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerUNI ptr;
+  PointerLUXO ptr;
 };
 
 struct KPy_KrakenPrim
@@ -116,7 +116,7 @@ struct KPy_KrakenPrim
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerUNI ptr;
+  PointerLUXO ptr;
 #ifdef USE_PYUNI_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
@@ -130,17 +130,17 @@ struct KPy_KrakenPrim
 #endif          /* PYUNI_FREE_SUPPORT */
 };
 
-struct KPy_PropertyUNI
+struct KPy_PropertyLUXO
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerUNI ptr;
-  PropertyUNI *prop;
+  PointerLUXO ptr;
+  PropertyLUXO *prop;
 };
 
-struct KPy_CollectionPropertyUNI
+struct KPy_CollectionPropertyLUXO
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
@@ -148,7 +148,7 @@ struct KPy_CollectionPropertyUNI
 #endif
 
   /* collection iterator specific parts */
-  CollectionPropertyUNI iter;
+  CollectionPropertyLUXO iter;
 };
 
 struct KPy_UniverseFunction
@@ -157,7 +157,7 @@ struct KPy_UniverseFunction
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerUNI ptr;
+  PointerLUXO ptr;
   void *func;
 };
 
@@ -168,7 +168,7 @@ PyObject *KPY_uni_module(void);
 void KPY_update_uni_module(void);
 
 KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *error_prefix);
-PyObject *pyuni_object_CreatePyObject(PointerUNI *ptr);
+PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr);
 void pyuni_alloc_types(void);
 
 /* kpy.utils.(un)register_class */

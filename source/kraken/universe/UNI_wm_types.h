@@ -931,7 +931,7 @@ struct wmKeyMapItem
   /** Keymap editor. */
   short maptype;
   short id;
-  PointerUNI *ptr;
+  PointerLUXO *ptr;
 
   wmKeyMapItem()
     : idname(EMPTY),

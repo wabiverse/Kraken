@@ -84,7 +84,7 @@ struct kContext : public KrakenPrim
 
 struct kContextDataResult
 {
-  PointerUNI ptr;
+  PointerLUXO ptr;
   std::vector<KrakenPrim *> list;
   const char **dir;
   short type; /* 0: normal, 1: seq */

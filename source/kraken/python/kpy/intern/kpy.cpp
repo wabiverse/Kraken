@@ -391,7 +391,7 @@ static PyObject *kpy_import_test(const char *modname)
  ******************************************************************************/
 void KPy_init_modules(struct kContext *C)
 {
-  PointerUNI ctx_ptr;
+  PointerLUXO ctx_ptr;
   PyObject *mod;
 
   /* Needs to be first since this dir is needed for future modules */

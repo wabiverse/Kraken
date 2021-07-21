@@ -1092,7 +1092,7 @@ bool WM_operator_poll(kContext *C, wmOperatorType *ot)
 
 static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
-                                      PointerUNI *properties,
+                                      PointerLUXO *properties,
                                       ReportList *reports)
 {
   wmOperator *op = new wmOperator();
@@ -1307,7 +1307,7 @@ static void wm_event_handler_ui_cancel(kContext *C)
 static int wm_operator_invoke(kContext *C,
                               wmOperatorType *ot,
                               wmEvent *event,
-                              PointerUNI *properties,
+                              PointerLUXO *properties,
                               ReportList *reports,
                               const bool poll_only,
                               bool use_last_properties)
@@ -1509,7 +1509,7 @@ static int wm_operator_invoke(kContext *C,
 
 static int wm_operator_call_internal(kContext *C,
                                      wmOperatorType *ot,
-                                     PointerUNI *properties,
+                                     PointerLUXO *properties,
                                      ReportList *reports,
                                      const short context,
                                      const bool poll_only,
@@ -1658,13 +1658,13 @@ static int wm_operator_call_internal(kContext *C,
 int WM_operator_name_call_ptr(kContext *C,
                               wmOperatorType *ot,
                               short context,
-                              PointerUNI *properties)
+                              PointerLUXO *properties)
 {
   return wm_operator_call_internal(C, ot, properties, NULL, context, false, NULL);
 }
 
 
-int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, PointerUNI *properties)
+int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, PointerLUXO *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot)

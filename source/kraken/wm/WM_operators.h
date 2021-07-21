@@ -81,8 +81,8 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
 void WM_operators_register(kContext *C);
 
-void WM_operator_properties_create_ptr(PointerUNI *ptr, wmOperatorType *ot);
-void WM_operator_properties_free(PointerUNI *ptr);
+void WM_operator_properties_create_ptr(PointerLUXO *ptr, wmOperatorType *ot);
+void WM_operator_properties_free(PointerLUXO *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 

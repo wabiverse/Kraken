@@ -37,7 +37,7 @@ struct wmOperator
   /** Used to retrieve type pointer. */
   TfToken idname;
   /** Saved, user-settable properties. */
-  PointerUNI *properties;
+  PointerLUXO *properties;
 
   /* runtime */
   /** Operator type definition from idname. */

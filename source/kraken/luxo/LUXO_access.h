@@ -52,20 +52,20 @@ extern KrakenPrim LUXO_Window;
 extern KrakenPrim LUXO_WorkSpace;
 extern KrakenPrim LUXO_Object;
 
-void LUXO_kraken_luxo_pointer_create(PointerUNI *r_ptr);
-void LUXO_main_pointer_create(Main *main, PointerUNI *r_ptr);
+void LUXO_kraken_luxo_pointer_create(PointerLUXO *r_ptr);
+void LUXO_main_pointer_create(Main *main, PointerLUXO *r_ptr);
 
 ObjectRegisterFunc LUXO_object_register(KrakenPrim *type);
 ObjectUnregisterFunc LUXO_object_unregister(KrakenPrim *type);
 
-PropertyUNI *LUXO_object_find_property(PointerUNI *ptr, const char *identifier);
-void **LUXO_object_instance(PointerUNI *ptr);
+PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier);
+void **LUXO_object_instance(PointerLUXO *ptr);
 const char *LUXO_object_identifier(const KrakenPrim *type);
 
-SdfValueTypeName LUXO_property_type(PropertyUNI *prop);
+SdfValueTypeName LUXO_property_type(PropertyLUXO *prop);
 
-void LUXO_property_collection_begin(PointerUNI *ptr,
-                                    PropertyUNI *prop,
-                                    CollectionPropertyUNI iter);
+void LUXO_property_collection_begin(PointerLUXO *ptr,
+                                    PropertyLUXO *prop,
+                                    CollectionPropertyLUXO iter);
 
 WABI_NAMESPACE_END

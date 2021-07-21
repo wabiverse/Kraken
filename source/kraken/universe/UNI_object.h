@@ -38,7 +38,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct PropertyUNI
+struct PropertyLUXO
 {
   TfToken name;
   SdfValueTypeName type;
@@ -46,12 +46,12 @@ struct PropertyUNI
   bool custom;
 };
 
-typedef std::vector<PropertyUNI *> CollectionPropertyUNI;
+typedef std::vector<PropertyLUXO *> CollectionPropertyLUXO;
 
 struct KrakenPrim : public UsdTyped
 {
-  inline explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
-  inline explicit KrakenPrim(const UsdSchemaBase &schemaObj);
+  explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
+  explicit KrakenPrim(const UsdSchemaBase &schemaObj);
   virtual ~KrakenPrim();
 
   static bool RegisterPrimInitFromPlugins(KrakenPrim *prim);
@@ -67,7 +67,7 @@ struct KrakenPrim : public UsdTyped
   void *data;
 
   UsdAttributeVector props;
-  CollectionPropertyUNI collection;
+  CollectionPropertyLUXO collection;
 
   struct KrakenPrim *base;
 
@@ -86,6 +86,6 @@ struct KrakenPrim : public UsdTyped
   const TfType &GetTfType() const override;
 };
 
-typedef KrakenPrim PointerUNI;
+typedef KrakenPrim PointerLUXO;
 
 WABI_NAMESPACE_END

@@ -22,6 +22,8 @@
  * Set the Stage.
  */
 
+#include "KKE_main.h"
+
 #include "UNI_api.h"
 #include "UNI_object.h"
 
@@ -88,7 +90,7 @@ namespace CreationFactory
 {
 namespace PTR
 {
-inline void New(SdfPath id, KrakenPrim *type, void *data, PointerUNI *r_ptr)
+inline void New(SdfPath id, KrakenPrim *type, void *data, PointerLUXO *r_ptr)
 {
   r_ptr = new KrakenPrim();
   r_ptr->path = id;
@@ -97,9 +99,9 @@ inline void New(SdfPath id, KrakenPrim *type, void *data, PointerUNI *r_ptr)
 }  // namespace PTR
 namespace STR
 {
-inline void Set(PointerUNI *ptr, const std::string &name, const std::string &value)
+inline void Set(PointerLUXO *ptr, const std::string &name, const std::string &value)
 {
-  PropertyUNI strprop;
+  PropertyLUXO strprop;
   strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->String;
   strprop.variability = SdfVariabilityUniform;
@@ -114,9 +116,9 @@ inline void Set(PointerUNI *ptr, const std::string &name, const std::string &val
 }  // namespace STR
 namespace BOOL
 {
-inline void Set(PointerUNI *ptr, const std::string &name, const bool &value)
+inline void Set(PointerLUXO *ptr, const std::string &name, const bool &value)
 {
-  PropertyUNI strprop;
+  PropertyLUXO strprop;
   strprop.name = TfToken(name);
   strprop.type = SdfValueTypeNames->Bool;
   strprop.variability = SdfVariabilityUniform;

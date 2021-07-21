@@ -603,10 +603,10 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, T>::value, "Provided type must not be UsdAPISchemaBase.");
     static_assert(
-      (T::schemaType == UsdSchemaKind::SingleApplyAPI || T::schemaType == UsdSchemaKind::MultipleApplyAPI),
+      (T::schemaKind == UsdSchemaKind::SingleApplyAPI || T::schemaKind == UsdSchemaKind::MultipleApplyAPI),
       "Provided schema type must be an applied API schema.");
 
-    if (T::schemaType != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty())
+    if (T::schemaKind != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty())
     {
       TF_CODING_ERROR(
         "HasAPI: single application API schemas like %s do "
@@ -648,7 +648,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::SingleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::SingleApplyAPI,
                   "Provided schema type must be a single apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();
@@ -684,7 +684,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::MultipleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::MultipleApplyAPI,
                   "Provided schema type must be a multiple apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();
@@ -724,7 +724,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::SingleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::SingleApplyAPI,
                   "Provided schema type must be a single apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();
@@ -767,7 +767,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::MultipleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::MultipleApplyAPI,
                   "Provided schema type must be a multiple apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();
@@ -806,7 +806,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::SingleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::SingleApplyAPI,
                   "Provided schema type must be a single apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();
@@ -850,7 +850,7 @@ class UsdPrim : public UsdObject
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, SchemaType>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert(SchemaType::schemaType == UsdSchemaKind::MultipleApplyAPI,
+    static_assert(SchemaType::schemaKind == UsdSchemaKind::MultipleApplyAPI,
                   "Provided schema type must be a multiple apply API schema.");
 
     static const TfType schemaType = TfType::Find<SchemaType>();

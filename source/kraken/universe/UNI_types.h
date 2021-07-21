@@ -31,7 +31,7 @@ WABI_NAMESPACE_BEGIN
 struct Main;
 struct ReportList;
 struct KrakenPrim;
-struct PropertyUNI;
+struct PropertyLUXO;
 struct kContext;
 
 typedef struct KrakenPrim KrakenPrim;
