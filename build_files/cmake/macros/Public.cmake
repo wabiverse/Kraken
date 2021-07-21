@@ -252,7 +252,7 @@ function(wabi_library NAME)
 
     # If python support is enabled, merge the python specific categories
     # with the more general before setting up compilation.
-    if(WABI_ENABLE_PYTHON_SUPPORT)
+    if(WITH_PYTHON)
         if(args_PYTHON_PUBLIC_CLASSES)
             list(APPEND args_PUBLIC_CLASSES ${args_PYTHON_PUBLIC_CLASSES})
         endif()
@@ -346,7 +346,7 @@ function(wabi_library NAME)
         LIB_INSTALL_PREFIX_RESULT libInstallPrefix
     )
 
-    if(WABI_ENABLE_PYTHON_SUPPORT AND (args_PYMODULE_CPPFILES OR args_PYMODULE_FILES OR args_PYSIDE_UI_FILES))
+    if(WITH_PYTHON AND (args_PYMODULE_CPPFILES OR args_PYMODULE_FILES OR args_PYSIDE_UI_FILES))
         _wabi_python_module(
             ${NAME}
             WRAPPED_LIB_INSTALL_PREFIX "${libInstallPrefix}"
@@ -999,7 +999,7 @@ function(wabi_maelstrom_prologue)
 
     # Create a target for targets that require Python.  Each should add
     # itself as a dependency to the "python" target.
-    if(TARGET shared_libs AND WABI_ENABLE_PYTHON_SUPPORT)
+    if(TARGET shared_libs AND WITH_PYTHON)
         add_custom_target(python ALL)
     endif()
 endfunction() # wabi_maelstrom_prologue
@@ -1202,7 +1202,7 @@ function(wabi_core_epilogue)
             wabi_monolithic_epilogue()
             set(_building_monolithic FALSE PARENT_SCOPE)
         endif()
-        if(WABI_ENABLE_PYTHON_SUPPORT)
+        if(WITH_PYTHON)
             wabi_setup_python()
         endif()
         set(_building_core FALSE PARENT_SCOPE)

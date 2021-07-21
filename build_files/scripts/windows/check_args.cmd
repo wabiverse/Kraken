@@ -93,6 +93,9 @@ if NOT "%1" == "" (
 		set DOCS=1
 		set DOCS_ARGS=%2
 		goto EOF
+	) else if "%1" == "precommit" (
+		set PRECOMMIT_HOOK=1
+		goto EOF
 	) else if "%1" == "deps" (
 		set BUILD_ENVIRONMENT=1
 		set BUILD_ENVIRONMENT_ARGS=%2

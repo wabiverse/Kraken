@@ -39,7 +39,6 @@ option(WABI_BUILD_USD_TOOLS                     "Build commandline tools"       
 option(WABI_BUILD_IMAGING                       "Build imaging components"                                                 ON)
 option(WABI_BUILD_USD_IMAGING                   "Build USD imaging components"                                             ON)
 option(WABI_BUILD_DOCUMENTATION                 "Generate doxygen documentation"                                          OFF)
-option(WABI_ENABLE_PYTHON_SUPPORT               "Enable Python based components for USD"                                   ON)
 option(WABI_ENABLE_NAMESPACES                   "Enable C++ namespaces."                                                   ON)
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -113,9 +112,6 @@ endif()
 if(${WITH_PIXAR_USDVIEW})
   if(NOT ${WABI_BUILD_USD_IMAGING})
     message(STATUS "Setting WITH_PIXAR_USDVIEW=OFF because WABI_BUILD_USD_IMAGING=OFF")
-    set(WITH_PIXAR_USDVIEW "OFF" CACHE BOOL "" FORCE)
-  elseif (NOT ${WABI_ENABLE_PYTHON_SUPPORT})
-    message(STATUS "Setting WITH_PIXAR_USDVIEW=OFF because WABI_ENABLE_PYTHON_SUPPORT=OFF")
     set(WITH_PIXAR_USDVIEW "OFF" CACHE BOOL "" FORCE)
   elseif (NOT ${WITH_GPU_SUPPORT})
     message(STATUS "Setting WITH_PIXAR_USDVIEW=OFF because WITH_GPU_SUPPORT=OFF")

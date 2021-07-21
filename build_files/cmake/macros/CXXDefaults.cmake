@@ -86,17 +86,3 @@ else()
     set(WABI_USE_NAMESPACES "0")
     message(STATUS "C++ namespaces disabled.")
 endif()
-
-# Set Python configuration
-if (WABI_ENABLE_PYTHON_SUPPORT)
-    set(WITH_PYTHON "1")
-else()
-    set(WITH_PYTHON "0")
-endif()
-
-# Set safety/performance configuration
-if(WITH_SAFETY_OVER_SPEED)
-   set(WITH_SAFETY_OVER_SPEED "1")
-else()
-   set(WITH_SAFETY_OVER_SPEED "0")
-endif()

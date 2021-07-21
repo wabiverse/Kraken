@@ -255,7 +255,29 @@ set(WABI_PYTHON_SHEBANG "${PYTHON_EXECUTABLE}" CACHE STRING "Replacement path fo
 
 include(CXXDefaults)
 add_definitions(${_WABI_CXX_DEFINITIONS})
-set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+
+#-----------------------------------------------------------------------------
+# Set Compiler flags.
+
+if(WIN32)
+  set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${_WABI_C_FLAGS} ${CMAKE_C_FLAGS}")
+  if(KRAKEN_RELEASE_MODE)
+    set(CMAKE_CXX_FLAGS_RELEASE "${_WABI_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS_RELEASE "${_WABI_C_FLAGS_RELEASE} ${CMAKE_C_FLAGS}")
+  else()
+    set(CMAKE_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS_DEBUG "${_WABI_C_FLAGS_DEBUG} ${CMAKE_C_FLAGS}")
+  endif()
+elseif(UNIX OR APPLE)
+  set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS_RELEASE "${_WABI_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${_WABI_C_FLAGS} ${CMAKE_C_FLAGS}")
+  set(CMAKE_C_FLAGS_DEBUG "${_WABI_C_FLAGS_DEBUG} ${CMAKE_C_FLAGS}")
+  set(CMAKE_C_FLAGS_RELEASE "${_WABI_C_FLAGS_RELEASE} ${CMAKE_C_FLAGS}")
+endif()
+  
 
 #-----------------------------------------------------------------------------
 # Kraken Universe. The Universe - Descripted.

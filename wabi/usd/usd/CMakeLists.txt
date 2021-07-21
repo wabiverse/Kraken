@@ -182,9 +182,9 @@ wabi_library(usd
         doxygen/images/instancing/Uninstanced_vs_Instanced.png
 )
 
-if (NOT WABI_ENABLE_PYTHON_SUPPORT)
+if(NOT WITH_PYTHON)
     message(STATUS "Skipping building usdGenSchema, Python modules required.")
-elseif (NOT JINJA2_FOUND)
+elseif(NOT JINJA2_FOUND)
     message(WARNING "Skipping building usdGenSchema due to missing dependency: Jinja2")
 else()
     # wabi_python_bin(usdGenSchema

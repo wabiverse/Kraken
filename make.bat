@@ -55,6 +55,11 @@ if "%FORMAT%" == "1" (
 	goto EOF
 )
 
+if "%PRECOMMIT_HOOK%" == "1" (
+	call pwsh.exe -ExecutionPolicy RemoteSigned -File "%KRAKEN_DIR%\.git\hooks\pre-commit-hook.ps1"
+	goto EOF
+)
+
 if "%BUILD_ENVIRONMENT%" == "1" (
 	call "%KRAKEN_DIR%\build_files\scripts\windows\check_libraries.cmd"
 	call "%KRAKEN_DIR%\build_files\scripts\windows\build_environment.cmd"
