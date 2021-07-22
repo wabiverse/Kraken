@@ -29,10 +29,6 @@ function DeleteConsoleLogs {
   clear
 }
 
-function Beanstalk {
-  & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/Scripts/eb.exe" $args
-}
-
 function Kraken-PythonRelease {
   & "$env:USERPROFILE/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
 }
@@ -41,17 +37,23 @@ function Kraken-PythonDebug {
   & "$env:USERPROFILE/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
 }
 
+function Beanstalk {
+    & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/Scripts/eb.exe" $args
+  }
+
 function connectkraken {
-  ssh -i C:\Users\tyler\.ssh\lightsail_ssh.pub bitnami@3.231.135.196
+  ssh -i $env:USERPROFILE\.ssh\lightsail_ssh.pub bitnami@3.231.135.196
 }
 
 function ShowPrettyGitRevision {
   Write-Output " "
   $AUTHOR = git show --format="%an`n" -s
-  $LATEST_REVISION = git show --summary --pretty=format:"%h     `n"
-  $FOR_DATE = git show --summary --pretty=format:"%x07%ad`n"
-  $DID_WHAT = git show --summary --pretty=format:"%s"
-  Write-Color -Text "Latest Revision: ", "$LATEST_REVISION", "$FOR_DATE`n", "      Work Done: ", "$DID_WHAT `n", "    Authored by: ", "$AUTHOR" -Color Red, Yellow, Green, Blue, Cyan, Green, DarkMagenta
+  $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
+  $FOR_DATE = git show --summary --pretty=format:"%x07%ad"
+  $DID_WHAT = git show --summary --pretty=format:"%x07%s"
+  Write-Color -Text "Latest Revision: ", "$LATEST_REVISION ", "$FOR_DATE" -Color Red, Yellow, Green
+  Write-Color -Text "      Work Done: ", "$DID_WHAT" -Color Blue, Cyan
+  Write-Color -Text "    Authored by: ", "$AUTHOR" -Color Green, DarkMagenta
 }
 
 function ShowBanner {
