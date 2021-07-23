@@ -79,7 +79,6 @@ struct ParamDesc
   TfToken hdName;
 };
 
-#if WABI_VERSION >= 2102
 std::vector<ParamDesc> genericParams = {
   {"intensity", UsdLuxTokens->inputsIntensity},
   {"exposure", UsdLuxTokens->inputsExposure},
@@ -87,66 +86,25 @@ std::vector<ParamDesc> genericParams = {
   {"diffuse", UsdLuxTokens->inputsDiffuse},
   {"specular", UsdLuxTokens->inputsSpecular},
   {"normalize", UsdLuxTokens->inputsNormalize},
-#  if WABI_VERSION >= 2105
   {"cast_shadows", UsdLuxTokens->inputsShadowEnable},
   {"shadow_color", UsdLuxTokens->inputsShadowColor},
-#  else
-  {"cast_shadows", UsdLuxTokens->shadowEnable},
-  {"shadow_color", UsdLuxTokens->shadowColor},
-#  endif
 };
 
 std::vector<ParamDesc> pointParams = {{"radius", UsdLuxTokens->inputsRadius}};
 
 std::vector<ParamDesc> spotParams = {
-#  if WABI_VERSION >= 2105
   {"radius", UsdLuxTokens->inputsRadius},
   {"cosine_power", UsdLuxTokens->inputsShapingFocus}};
-#  else
-  {"radius", UsdLuxTokens->inputsRadius},
-  {"cosine_power", UsdLuxTokens->shapingFocus}};
-#  endif
 
 std::vector<ParamDesc> photometricParams = {
-#  if WABI_VERSION >= 2105
   {"filename", UsdLuxTokens->inputsShapingIesFile},
   {"radius", UsdLuxTokens->inputsRadius}};
-#  else
-  {"filename", UsdLuxTokens->shapingIesFile},
-  {"radius", UsdLuxTokens->inputsRadius}};
-#  endif
 
 std::vector<ParamDesc> distantParams = {{"angle", UsdLuxTokens->inputsAngle}};
 
 std::vector<ParamDesc> diskParams = {{"radius", UsdLuxTokens->inputsRadius}};
 
 std::vector<ParamDesc> cylinderParams = {{"radius", UsdLuxTokens->inputsRadius}};
-#else
-std::vector<ParamDesc> genericParams = {
-  {"intensity", HdLightTokens->intensity},
-  {"exposure", HdLightTokens->exposure},
-  {"color", HdLightTokens->color},
-  {"diffuse", HdLightTokens->diffuse},
-  {"specular", HdLightTokens->specular},
-  {"normalize", HdLightTokens->normalize},
-  {"cast_shadows", HdLightTokens->shadowEnable},
-  {"shadow_color", HdLightTokens->shadowColor},
-};
-
-std::vector<ParamDesc> pointParams = {{"radius", HdLightTokens->radius}};
-
-std::vector<ParamDesc> spotParams = {{"radius", HdLightTokens->radius},
-                                     {"cosine_power", HdLightTokens->shapingFocus}};
-
-std::vector<ParamDesc> photometricParams = {{"filename", _tokens->shapingIesFile},
-                                            {"radius", HdLightTokens->radius}};
-
-std::vector<ParamDesc> distantParams = {{"angle", HdLightTokens->angle}};
-
-std::vector<ParamDesc> diskParams = {{"radius", HdLightTokens->radius}};
-
-std::vector<ParamDesc> cylinderParams = {{"radius", HdLightTokens->radius}};
-#endif
 
 void iterateParams(AtNode *light,
                    const AtNodeEntry *nentry,
@@ -188,13 +146,8 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
     return true;
   };
   auto hasIesFile = [&]() -> bool {
-#if WABI_VERSION >= 2105
+
     auto val = delegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingIesFile);
-#elif WABI_VERSION >= 2102
-    auto val = delegate->GetLightParamValue(id, UsdLuxTokens->shapingIesFile);
-#else
-    auto val = delegate->GetLightParamValue(id, _tokens->shapingIesFile);
-#endif
     if (val.IsEmpty())
     {
       return false;
@@ -211,20 +164,10 @@ AtString getLightType(HdSceneDelegate *delegate, const SdfPath &id)
     return false;
   };
   // If any of the shaping params exists or non-default we have a spot light.
-#if WABI_VERSION >= 2105
   if (!isDefault(UsdLuxTokens->inputsShapingFocus, 0.0f) ||
       !isDefault(UsdLuxTokens->inputsShapingConeAngle, 180.0f) ||
       !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f))
   {
-#elif WABI_VERSION >= 2102
-  if (!isDefault(UsdLuxTokens->shapingFocus, 0.0f) || !isDefault(UsdLuxTokens->shapingConeAngle, 180.0f) ||
-      !isDefault(UsdLuxTokens->shapingConeSoftness, 0.0f))
-  {
-#else
-  if (!isDefault(_tokens->shapingFocus, 0.0f) || !isDefault(_tokens->shapingConeAngle, 180.0f) ||
-      !isDefault(_tokens->shapingConeSoftness, 0.0f))
-  {
-#endif
     return str::spot_light;
   }
   return hasIesFile() ? str::photometric_light : str::point_light;
@@ -237,22 +180,11 @@ auto spotLightSync = [](AtNode *light,
                         HdSceneDelegate *sceneDelegate,
                         HdArnoldRenderDelegate *renderDelegate) {
   iterateParams(light, nentry, id, sceneDelegate, spotParams);
-#if WABI_VERSION >= 2105
+
   const auto hdAngle =
     sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeAngle).GetWithDefault(180.0f);
   const auto softness =
     sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeSoftness).GetWithDefault(0.0f);
-#elif WABI_VERSION >= 2102
-  const auto hdAngle =
-    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeAngle).GetWithDefault(180.0f);
-  const auto softness =
-    sceneDelegate->GetLightParamValue(id, UsdLuxTokens->shapingConeSoftness).GetWithDefault(0.0f);
-#else
-  const auto hdAngle =
-    sceneDelegate->GetLightParamValue(id, _tokens->shapingConeAngle).GetWithDefault(180.0f);
-  const auto softness =
-    sceneDelegate->GetLightParamValue(id, _tokens->shapingConeSoftness).GetWithDefault(0.0f);
-#endif
   const auto arnoldAngle = hdAngle * 2.0f;
   const auto penumbra = arnoldAngle * softness;
   AiNodeSetFlt(light, str::cone_angle, arnoldAngle);
@@ -319,11 +251,8 @@ auto pointLightSync = [](AtNode *light,
                          HdSceneDelegate *sceneDelegate,
                          HdArnoldRenderDelegate *renderDelegate) {
   TF_UNUSED(filter);
-#if WABI_VERSION >= 2102
+
   const auto treatAsPointValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint);
-#else
-  const auto treatAsPointValue = sceneDelegate->GetLightParamValue(id, _tokens->treatAsPoint);
-#endif
   if (treatAsPointValue.IsHolding<bool>() && treatAsPointValue.UncheckedGet<bool>())
   {
     AiNodeSetFlt(light, str::radius, 0.0f);
@@ -376,20 +305,14 @@ auto rectLightSync = [](AtNode *light,
   TF_UNUSED(filter);
   float width = 1.0f;
   float height = 1.0f;
-#if WABI_VERSION >= 2102
+
   const auto &widthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsWidth);
-#else
-  const auto &widthValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->width);
-#endif
   if (widthValue.IsHolding<float>())
   {
     width = widthValue.UncheckedGet<float>();
   }
-#if WABI_VERSION >= 2102
+
   const auto &heightValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsHeight);
-#else
-  const auto &heightValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->height);
-#endif
   if (heightValue.IsHolding<float>())
   {
     height = heightValue.UncheckedGet<float>();
@@ -418,11 +341,8 @@ auto cylinderLightSync = [](AtNode *light,
   TF_UNUSED(filter);
   iterateParams(light, nentry, id, sceneDelegate, cylinderParams);
   float length = 1.0f;
-#if WABI_VERSION >= 2102
+
   const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsLength);
-#else
-  const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->length);
-#endif
   if (lengthValue.IsHolding<float>())
   {
     length = lengthValue.UncheckedGet<float>();
@@ -439,11 +359,8 @@ auto domeLightSync = [](AtNode *light,
                         HdSceneDelegate *sceneDelegate,
                         HdArnoldRenderDelegate *renderDelegate) {
   TF_UNUSED(filter);
-#if WABI_VERSION >= 2102
+
   const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFormat);
-#else
-  const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->textureFormat);
-#endif
   if (formatValue.IsHolding<TfToken>())
   {
     const auto &textureFormat = formatValue.UncheckedGet<TfToken>();
@@ -633,11 +550,7 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
     _syncParams(_light, &_filter, nentry, id, sceneDelegate, _delegate);
     if (_supportsTexture)
     {
-#if WABI_VERSION >= 2102
       SetupTexture(sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFile));
-#else
-      SetupTexture(sceneDelegate->GetLightParamValue(id, HdLightTokens->textureFile));
-#endif
     }
     // Primvars are not officially supported on lights, but pre-20.11 the query functions checked
     // for primvars on all primitives uniformly. We have to pass the full name of the primvar
@@ -649,11 +562,7 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
                                        primvar.name,
                                        sceneDelegate->Get(
                                          id,
-#if WABI_VERSION >= 2011
                                          TfToken { TfStringPrintf("primvars:%s", primvar.name.GetText()) }
-#else
-                                         primvar.name
-#endif
                                          ));
     }
     const auto filtersValue = sceneDelegate->GetLightParamValue(id, _tokens->filters);
@@ -720,13 +629,9 @@ void HdArnoldGenericLight::Sync(HdSceneDelegate *sceneDelegate,
       }
     }
   };
-#if WABI_VERSION >= 2102
+
   updateLightLinking(_lightLink, UsdLuxTokens->lightLink, false);
   updateLightLinking(_shadowLink, UsdLuxTokens->shadowLink, true);
-#else
-  updateLightLinking(_lightLink, HdTokens->lightLink, false);
-  updateLightLinking(_shadowLink, HdTokens->shadowLink, true);
-#endif
 
   *dirtyBits = HdLight::Clean;
 }

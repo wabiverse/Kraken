@@ -32,24 +32,12 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldBasisCurves : public HdArnoldRprim<HdBasisCurves>
 {
  public:
-#if WABI_VERSION >= 2102
   /// Constructor for HdArnoldBasisCurves.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
   /// @param id Path to the basis curves.
   HDARNOLD_API
   HdArnoldBasisCurves(HdArnoldRenderDelegate *delegate, const SdfPath &id);
-#else
-  /// Constructor for HdArnoldBasisCurves.
-  ///
-  /// @param renderDelegate Pointer to the Render Delegate.
-  /// @param id Path to the basis curves.
-  /// @param instancerId Path to the Point Instancer for this basis curves.
-  HDARNOLD_API
-  HdArnoldBasisCurves(HdArnoldRenderDelegate *delegate,
-                      const SdfPath &id,
-                      const SdfPath &instancerId = SdfPath());
-#endif
 
   /// Destructor for HdArnoldBasisCurves.
   ///

@@ -16,17 +16,8 @@ limitations under the License.
 
 #include "wabi/imaging/rprUsd/api.h"
 
-#if WABI_VERSION >= 2102
-#  include "wabi/imaging/garch/glApi.h"
-#else
-#  include "wabi/imaging/glf/glew.h"
-#endif
-
-#if WABI_VERSION >= 2105
-#  include "wabi/imaging/hio/image.h"
-#else
-#  include "wabi/imaging/glf/uvTextureData.h"
-#endif
+#include "wabi/imaging/garch/glApi.h"
+#include "wabi/imaging/hio/image.h"
 
 #include <string>
 
@@ -50,12 +41,8 @@ class RPRUSD_API RprUsdTextureData
   GLMetadata GetGLMetadata() const;
 
  private:
-#if WABI_VERSION >= 2105
   HioImage::StorageSpec _hioStorageSpec;
   std::unique_ptr<uint8_t[]> _data;
-#else  // WABI_VERSION < 2105
-  GlfUVTextureDataRefPtr _uvTextureData;
-#endif
 };
 
 using RprUsdTextureDataRefPtr = std::shared_ptr<RprUsdTextureData>;

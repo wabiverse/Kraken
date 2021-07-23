@@ -86,7 +86,6 @@ NdrCyclesParserPlugin::~NdrCyclesParserPlugin()
 NdrNodeUniquePtr NdrCyclesParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
 {
   NdrPropertyUniquePtrVec properties;
-#if WABI_VERSION_MINOR >= 20 && WABI_VERSION_PATCH >= 5
   return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,     // identifier
                                             discoveryResult.version,        // version
                                             discoveryResult.name,           // name
@@ -96,16 +95,6 @@ NdrNodeUniquePtr NdrCyclesParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
                                             discoveryResult.uri,            // uri
                                             discoveryResult.uri,            // resolvedUri
                                             std::move(properties)));
-#else
-  return NdrNodeUniquePtr(new SdrShaderNode(discoveryResult.identifier,     // identifier
-                                            discoveryResult.version,        // version
-                                            discoveryResult.name,           // name
-                                            discoveryResult.family,         // family
-                                            discoveryResult.discoveryType,  // context
-                                            discoveryResult.sourceType,     // sourceType
-                                            discoveryResult.uri,            // uri
-                                            std::move(properties)));
-#endif
 }
 
 const NdrTokenVec &NdrCyclesParserPlugin::GetDiscoveryTypes() const

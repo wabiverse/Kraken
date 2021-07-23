@@ -28,7 +28,6 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-include(Version)
 
 function(_copy_headers LIBRARY_NAME)
     set(options  "")

@@ -38,9 +38,7 @@ class HdRprNdrParserPlugin final : public NdrParserPlugin
       /* context     = */ _tokens->rpr,
       /* sourceType  = */ _tokens->rpr,
       /* uri         = */ discoveryResult.uri,
-#if WABI_VERSION > 1911
       /* resolvedUri = */ discoveryResult.resolvedUri,
-#endif
       /* properties  = */ NdrPropertyUniquePtrVec{},
       /* metadata    = */ discoveryResult.metadata,
       /* sourceCode  = */ discoveryResult.sourceCode);

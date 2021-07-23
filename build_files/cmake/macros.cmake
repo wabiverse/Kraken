@@ -733,6 +733,55 @@ function(ADD_CHECK_CXX_COMPILER_FLAG
   endif()
 endfunction()
 
+function(get_pixar_version)
+  # extracts header vars and defines them in the parent scope:
+  #
+  # - WABI_VERSION_DECIMAL (major.minor.patch)
+  # - WABI_VERSION (major * 10000 + minor * 100 + patch)
+  # - WABI_VERSION_MAJOR
+  # - WABI_VERSION_MINOR
+  # - WABI_VERSION_PATCH
+
+  # So cmake depends on wabi.h, beware of inf-loops!
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/wabi/wabi.h
+                 ${CMAKE_BINARY_DIR}/wabi/wabi.h.done)
+
+  file(STRINGS ${CMAKE_SOURCE_DIR}/wabi/wabi.h _contents REGEX "^#define[ \t]+WABI_.*$")
+
+  string(REGEX REPLACE ".*#define[ \t]+WABI_VERSION_MAJOR[ \t]+([0-9]+).*" "\\1" _out_version_major "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+WABI_VERSION_MINOR[ \t]+([0-9]+).*" "\\1" _out_version_minor "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+WABI_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")
+
+  if(NOT ${_out_version_major} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for WABI_VERSION_MAJOR")
+  endif()
+
+  if(NOT ${_out_version_minor} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for WABI_VERSION_MINOR")
+  endif()
+
+  if(NOT ${_out_version_patch} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for KRAKEN_VERSION_PATCH")
+  endif()
+
+  if(${_out_version_major} MATCHES "0")
+    set(_wabi_version_not_major ON)
+  endif()
+
+  math(EXPR _out_version "${_out_version_major} * 10000 + ${_out_version_minor} * 100 + ${_out_version_patch}")
+
+  # output vars
+  if(_wabi_version_not_major)
+    set(WABI_VERSION_DECIMAL "${_out_version_minor}.${_out_version_patch}" PARENT_SCOPE)
+  else()
+    set(WABI_VERSION_DECIMAL "${_out_version_major}.${_out_version_minor}.${_out_version_patch}" PARENT_SCOPE)
+  endif()
+  set(KRAKEN_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+
+endfunction()
+
 function(get_kraken_version)
   # extracts header vars and defines them in the parent scope:
   #

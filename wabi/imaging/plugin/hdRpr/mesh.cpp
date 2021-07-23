@@ -200,7 +200,6 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     {
       m_pointSamples.clear();
 
-#if WABI_VERSION >= 2105
       HdExtComputationUtils::SampledValueStore<2> valueStore;
       HdExtComputationUtils::SampleComputedPrimvarValues(
         {desc}, sceneDelegate, m_numGeometrySamples, &valueStore);
@@ -232,26 +231,6 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
           newMesh = true;
         }
       }
-#else   // WABI_VERSION < 2105
-      if (m_numGeometrySamples != 1)
-      {
-        TF_WARN(
-          "UsdSkel deformation motion blur is supported only in USD 21.05+ (current version "
-          "%d.%d)",
-          WABI_VERSION_MINOR,
-          WABI_VERSION_PATCH);
-      }
-      auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues({desc}, sceneDelegate);
-      auto pointValueIt = valueStore.find(desc.name);
-      if (pointValueIt != valueStore.end())
-      {
-        m_pointSamples = {pointValueIt->second.Get<VtVec3fArray>()};
-        m_normalsValid = false;
-        pointsIsComputed = true;
-
-        newMesh = true;
-      }
-#endif  // WABI_VERSION >= 2105
     }
 
     break;

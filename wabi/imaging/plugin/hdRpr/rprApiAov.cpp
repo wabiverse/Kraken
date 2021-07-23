@@ -715,8 +715,6 @@ HdRprApiDepthAov::HdRprApiDepthAov(int width,
   m_filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_NDC_DEPTH, rifContext);
   m_ndcFilter = m_filter.get();
   m_remapFilter = nullptr;
-
-#if WABI_VERSION >= 2002
   m_retainedFilter = std::move(m_filter);
 
   m_filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_REMAP_RANGE, rifContext);
@@ -726,7 +724,6 @@ HdRprApiDepthAov::HdRprApiDepthAov(int width,
   m_filter->SetParam("dstLo", 0.0f);
   m_filter->SetParam("dstHi", 1.0f);
   m_remapFilter = m_filter.get();
-#endif
 }
 
 void HdRprApiDepthAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)

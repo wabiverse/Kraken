@@ -21,22 +21,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-#if WABI_VERSION >= 2102
 HdArnoldNativeRprim::HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
                                          const AtString &arnoldType,
                                          const SdfPath &id)
   : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id),
     _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
 {}
-#else
-HdArnoldNativeRprim::HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
-                                         const AtString &arnoldType,
-                                         const SdfPath &id,
-                                         const SdfPath &instancerId)
-  : HdArnoldRprim<HdRprim>(arnoldType, renderDelegate, id, instancerId),
-    _paramList(renderDelegate->GetNativeRprimParamList(arnoldType))
-{}
-#endif
 
 void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
                                HdRenderParam *renderParam,
@@ -53,7 +43,6 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
     param.Interrupt();
     for (const auto &paramIt : *_paramList)
     {
-#if WABI_VERSION >= 2011
       const auto val = sceneDelegate->Get(id, str::t_arnold__attributes);
       if (val.IsHolding<ArnoldUsdParamValueList>())
       {
@@ -64,14 +53,6 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
             GetArnoldNode(), AiNodeEntryLookUpParameter(nodeEntry, param.first), param.second);
         }
       }
-#else
-      const auto val = sceneDelegate->Get(id, paramIt.first);
-      // Do we need to check for this?
-      if (!val.IsEmpty())
-      {
-        HdArnoldSetParameter(GetArnoldNode(), paramIt.second, val);
-      }
-#endif
     }
   }
 

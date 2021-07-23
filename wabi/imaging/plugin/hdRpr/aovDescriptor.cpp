@@ -203,11 +203,7 @@ HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(uint32_t id, bool compute
 
 TfToken const &HdRprGetCameraDepthAovName()
 {
-#if WABI_VERSION < 2002
-  return HdAovTokens->linearDepth;
-#else
   return HdAovTokens->cameraDepth;
-#endif
 }
 
 WABI_NAMESPACE_END

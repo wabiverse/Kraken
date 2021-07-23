@@ -40,14 +40,8 @@ bool RprUsdGetUDIMFormatString(std::string const &filepath, std::string *out_for
 
 bool RprUsdInitGLApi()
 {
-#if WABI_VERSION >= 2102
   return GarchGLApiLoad();
-#else
-  return GlfGlewInit();
-#endif
 }
-
-#if WABI_VERSION >= 2011
 
 static const RprUsdTextureData::GLMetadata g_GLMetadata[HioFormatCount] = {
   // glFormat, glType,        glInternatFormat  // HioFormat
@@ -113,10 +107,6 @@ static const RprUsdTextureData::GLMetadata g_GLMetadata[HioFormatCount] = {
   {GL_RGBA, GL_UNSIGNED_BYTE, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT},     // BC3UNorm8Vec4
 };
 
-#endif  // WABI_VERSION >= 2011
-
-#if WABI_VERSION >= 2105
-
 std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &filepath)
 {
   auto ret = std::make_unique<RprUsdTextureData>();
@@ -164,57 +154,5 @@ RprUsdTextureData::GLMetadata RprUsdTextureData::GetGLMetadata() const
 {
   return g_GLMetadata[_hioStorageSpec.format];
 }
-
-#else  // WABI_VERSION < 2105
-
-std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &filepath)
-{
-  auto ret = std::make_unique<RprUsdTextureData>();
-
-  ret->_uvTextureData = GlfUVTextureData::New(filepath, INT_MAX, 0, 0, 0, 0);
-  if (!ret->_uvTextureData || !ret->_uvTextureData->Read(0, false))
-  {
-    return nullptr;
-  }
-
-  return ret;
-}
-
-uint8_t *RprUsdTextureData::GetData() const
-{
-  return _uvTextureData->GetRawBuffer();
-}
-
-int RprUsdTextureData::GetWidth() const
-{
-  return _uvTextureData->ResizedWidth();
-}
-
-int RprUsdTextureData::GetHeight() const
-{
-  return _uvTextureData->ResizedHeight();
-}
-
-RprUsdTextureData::GLMetadata RprUsdTextureData::GetGLMetadata() const
-{
-#  if WABI_VERSION >= 2011
-
-#    if WABI_VERSION >= 2102
-  HioFormat hioFormat = _uvTextureData->GetFormat();
-#    else   // WABI_VERSION < 2102
-  HioFormat hioFormat = _uvTextureData->GetHioFormat();
-#    endif  // WABI_VERSION >= 2102
-  return g_GLMetadata[hioFormat];
-
-#  else   // WABI_VERSION < 2011
-  RprUsdTextureData::GLMetadata ret;
-  ret.internalFormat = _uvTextureData->GLInternalFormat();
-  ret.glType = _uvTextureData->GLType();
-  ret.glFormat = _uvTextureData->GLFormat();
-  return ret;
-#  endif  // WABI_VERSION >= 2011
-}
-
-#endif  // WABI_VERSION >= 2105
 
 WABI_NAMESPACE_END

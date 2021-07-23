@@ -31,15 +31,9 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-#if WABI_VERSION >= 2105
-#  define USD_LUX_TOKEN_SHAPING_IES_FILE UsdLuxTokens->inputsShapingIesFile
-#  define USD_LUX_TOKEN_SHAPING_CONE_ANGLE UsdLuxTokens->inputsShapingConeAngle
-#  define USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS UsdLuxTokens->inputsShapingConeSoftness
-#else
-#  define USD_LUX_TOKEN_SHAPING_IES_FILE UsdLuxTokens->shapingIesFile
-#  define USD_LUX_TOKEN_SHAPING_CONE_ANGLE UsdLuxTokens->shapingConeAngle
-#  define USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS UsdLuxTokens->shapingConeSoftness
-#endif
+#define USD_LUX_TOKEN_SHAPING_IES_FILE UsdLuxTokens->inputsShapingIesFile
+#define USD_LUX_TOKEN_SHAPING_CONE_ANGLE UsdLuxTokens->inputsShapingConeAngle
+#define USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS UsdLuxTokens->inputsShapingConeSoftness
 
 namespace
 {
@@ -521,11 +515,7 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam
 
   if (bits & DirtyBits::DirtyTransform)
   {
-#if WABI_VERSION >= 2011
     m_transform = GfMatrix4f(sceneDelegate->GetTransform(id));
-#else
-    m_transform = GfMatrix4f(sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
-#endif
   }
 
   if (bits & DirtyParams)

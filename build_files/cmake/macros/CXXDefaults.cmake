@@ -29,7 +29,6 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 include(CXXHelpers)
-include(Version)
 include(Options)
 
 # Require C++20

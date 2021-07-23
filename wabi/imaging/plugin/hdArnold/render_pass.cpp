@@ -259,7 +259,6 @@ const TfToken _GetTokenFromRenderBufferType(const HdRenderBuffer *buffer)
 
 GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
 {
-#if WABI_VERSION >= 2102
   const auto &framing = renderPassState->GetFraming();
   if (framing.IsValid())
   {
@@ -267,14 +266,11 @@ GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
   }
   else
   {
-#endif
     // For applications that use the old viewport API instead of
     // the new camera framing API.
     const auto &vp = renderPassState->GetViewport();
     return GfRect2i(GfVec2i(0), int(vp[2]), int(vp[3]));
-#if WABI_VERSION >= 2102
   }
-#endif
 }
 
 void _ReadNodeParameters(AtNode *node, const TfToken &prefix, const HdAovSettingsMap &settings)

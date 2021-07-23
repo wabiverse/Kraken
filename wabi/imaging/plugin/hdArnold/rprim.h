@@ -22,9 +22,7 @@
 
 #include <wabi/wabi.h>
 
-#if WABI_VERSION >= 2102
-#  include <wabi/imaging/hd/instancer.h>
-#endif
+#include <wabi/imaging/hd/instancer.h>
 #include <wabi/imaging/hd/rprim.h>
 
 #include "material_tracker.h"
@@ -37,7 +35,6 @@ template<typename HydraType>
 class HdArnoldRprim : public HydraType
 {
  public:
-#if WABI_VERSION >= 2102
   /// Constructor for HdArnoldRprim.
   ///
   /// @param shapeType AtString storing the type of the Arnold Shape node.
@@ -49,23 +46,6 @@ class HdArnoldRprim : public HydraType
       _renderDelegate(renderDelegate),
       _shape(shapeType, renderDelegate, id, HydraType::GetPrimId())
   {}
-#else
-  /// Constructor for HdArnoldRprim.
-  ///
-  /// @param shapeType AtString storing the type of the Arnold Shape node.
-  /// @param renderDelegate Pointer to the Render Delegate.
-  /// @param id Path to the primitive.
-  /// @param instancerId Path to the point instancer.
-  HDARNOLD_API
-  HdArnoldRprim(const AtString &shapeType,
-                HdArnoldRenderDelegate *renderDelegate,
-                const SdfPath &id,
-                const SdfPath &instancerId)
-    : HydraType(id, instancerId),
-      _shape(shapeType, renderDelegate, id, HydraType::GetPrimId()),
-      _renderDelegate(renderDelegate)
-  {}
-#endif
 
   /// Destructor for HdArnoldRprim.
   ///
@@ -116,12 +96,11 @@ class HdArnoldRprim : public HydraType
                  HdArnoldRenderParamInterrupt &param,
                  bool force = false)
   {
-#if WABI_VERSION >= 2102
     // Newer USD versions need to update the instancer before accessing the instancer id.
     HydraType::_UpdateInstancer(sceneDelegate, &dirtyBits);
     // We also force syncing of the parent instancers.
     HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(), HydraType::GetInstancerId());
-#endif
+
     _shape.Sync(this, dirtyBits, _renderDelegate, sceneDelegate, param, force);
   }
   /// Sets the internal visibility parameter.

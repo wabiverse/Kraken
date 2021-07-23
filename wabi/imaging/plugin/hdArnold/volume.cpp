@@ -187,19 +187,10 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 );
 // clang-format on
 
-#if WABI_VERSION >= 2102
 HdArnoldVolume::HdArnoldVolume(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
   : HdVolume(id),
     _renderDelegate(renderDelegate)
 {}
-#else
-HdArnoldVolume::HdArnoldVolume(HdArnoldRenderDelegate *renderDelegate,
-                               const SdfPath &id,
-                               const SdfPath &instancerId)
-  : HdVolume(id, instancerId),
-    _renderDelegate(renderDelegate)
-{}
-#endif
 
 HdArnoldVolume::~HdArnoldVolume()
 {
@@ -273,12 +264,10 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
     _ForEachVolume([&](HdArnoldShape *s) { s->SetVisibility(visibility); });
   }
 
-#if WABI_VERSION >= 2102
   // Newer USD versions need to update the instancer before accessing the instancer id.
   _UpdateInstancer(sceneDelegate, dirtyBits);
   // We also force syncing of the parent instancers.
   HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(), GetInstancerId());
-#endif
 
   _ForEachVolume([&](HdArnoldShape *shape) {
     shape->Sync(this, *dirtyBits, _renderDelegate, sceneDelegate, param, transformDirtied);

@@ -29,16 +29,8 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim>
 {
  public:
-#if WABI_VERSION >= 2102
   HDARNOLD_API
   HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate, const AtString &arnoldType, const SdfPath &id);
-#else
-  HDARNOLD_API
-  HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
-                      const AtString &arnoldType,
-                      const SdfPath &id,
-                      const SdfPath &instancerId);
-#endif
 
   ~HdArnoldNativeRprim() override = default;
 

@@ -21,13 +21,8 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-#if WABI_VERSION >= 2102
-#  define HDRPR_INSTANCER_ID_ARG_DECL
-#  define HDRPR_INSTANCER_ID_ARG
-#else
-#  define HDRPR_INSTANCER_ID_ARG_DECL , SdfPath const &instancerId
-#  define HDRPR_INSTANCER_ID_ARG , instancerId
-#endif
+#define HDRPR_INSTANCER_ID_ARG_DECL
+#define HDRPR_INSTANCER_ID_ARG
 
 class HdRprDiagnosticMgrDelegate;
 class HdRprRenderParam;
@@ -84,12 +79,10 @@ class HdRprDelegate final : public HdRenderDelegate
   bool Pause() override;
   bool Resume() override;
 
-#if WABI_VERSION >= 2005
   bool IsStopSupported() const override;
   bool Stop() override;
   bool Restart() override;
   void SetDrivers(HdDriverVector const &drivers) override;
-#endif  // WABI_VERSION >= 2005
 
  private:
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;

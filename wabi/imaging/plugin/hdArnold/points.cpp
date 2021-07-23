@@ -19,17 +19,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-#if WABI_VERSION >= 2102
 HdArnoldPoints::HdArnoldPoints(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
   : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id)
 {}
-#else
-HdArnoldPoints::HdArnoldPoints(HdArnoldRenderDelegate *renderDelegate,
-                               const SdfPath &id,
-                               const SdfPath &instancerId)
-  : HdArnoldRprim<HdPoints>(str::points, renderDelegate, id, instancerId)
-{}
-#endif
 
 HdDirtyBits HdArnoldPoints::GetInitialDirtyBitsMask() const
 {

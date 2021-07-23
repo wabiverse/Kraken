@@ -98,11 +98,7 @@ class HdCyclesMaterial final : public HdMaterial
    * @brief Causes the shader to be reloaded
    *
    */
-  void Reload()
-#if WABI_VERSION_MAJOR > 19
-    override
-#endif
-    ;
+  void Reload();
 
   /**
    * @return Return true if this material is valid

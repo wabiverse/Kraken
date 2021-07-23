@@ -430,8 +430,6 @@ bool HdRprDelegate::Resume()
   return true;
 }
 
-#if WABI_VERSION >= 2005
-
 bool HdRprDelegate::IsStopSupported() const
 {
   return true;
@@ -483,8 +481,6 @@ void HdRprDelegate::SetDrivers(HdDriverVector const &drivers)
     }
   }
 }
-
-#endif  // WABI_VERSION >= 2005
 
 WABI_NAMESPACE_END
 

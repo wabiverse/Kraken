@@ -49,24 +49,12 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldMesh : public HdArnoldRprim<HdMesh>
 {
  public:
-#if WABI_VERSION >= 2102
   /// Constructor for HdArnoldMesh.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
   /// @param id Path to the mesh.
   HDARNOLD_API
   HdArnoldMesh(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
-#else
-  /// Constructor for HdArnoldMesh.
-  ///
-  /// @param renderDelegate Pointer to the Render Delegate.
-  /// @param id Path to the mesh.
-  /// @param instancerId Path to the Point Instancer for this mesh.
-  HDARNOLD_API
-  HdArnoldMesh(HdArnoldRenderDelegate *renderDelegate,
-               const SdfPath &id,
-               const SdfPath &instancerId = SdfPath());
-#endif
 
   /// Destructor for HdArnoldMesh.
   ///

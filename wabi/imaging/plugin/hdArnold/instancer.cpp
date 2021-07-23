@@ -43,22 +43,12 @@ void _AccumulateSampleTimes(const HdArnoldSampledType<T1> &in, HdArnoldSampledTy
 
 }  // namespace
 
-#if WABI_VERSION >= 2102
 HdArnoldInstancer::HdArnoldInstancer(HdArnoldRenderDelegate *renderDelegate,
                                      HdSceneDelegate *sceneDelegate,
                                      const SdfPath &id)
   : HdInstancer(sceneDelegate, id)
 {}
-#else
-HdArnoldInstancer::HdArnoldInstancer(HdArnoldRenderDelegate *renderDelegate,
-                                     HdSceneDelegate *sceneDelegate,
-                                     const SdfPath &id,
-                                     const SdfPath &parentInstancerId)
-  : HdInstancer(sceneDelegate, id, parentInstancerId)
-{}
-#endif
 
-#if WABI_VERSION >= 2102
 void HdArnoldInstancer::Sync(HdSceneDelegate *sceneDelegate,
                              HdRenderParam *renderParam,
                              HdDirtyBits *dirtyBits)
@@ -70,20 +60,12 @@ void HdArnoldInstancer::Sync(HdSceneDelegate *sceneDelegate,
     _SyncPrimvars(*dirtyBits);
   }
 }
-#endif
 
-void HdArnoldInstancer::_SyncPrimvars(
-#if WABI_VERSION >= 2102
-  HdDirtyBits dirtyBits
-#endif
-)
+void HdArnoldInstancer::_SyncPrimvars(HdDirtyBits dirtyBits)
 {
   auto &changeTracker = GetDelegate()->GetRenderIndex().GetChangeTracker();
   const auto &id = GetId();
 
-#if WABI_VERSION < 2102
-  auto dirtyBits = changeTracker.GetInstancerDirtyBits(id);
-#endif
   if (!HdChangeTracker::IsAnyPrimvarDirty(dirtyBits, id))
   {
     return;
@@ -141,9 +123,6 @@ void HdArnoldInstancer::_SyncPrimvars(
 void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
                                                   HdArnoldSampledMatrixArrayType &sampleArray)
 {
-#if WABI_VERSION < 2102
-  _SyncPrimvars();
-#endif
   sampleArray.Resize(0);
 
   const auto &id = GetId();
@@ -197,11 +176,7 @@ void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
     {
       translates = _translates.Resample(t);
     }
-#if WABI_VERSION >= 2008
     VtQuathArray rotates;
-#else
-    VtVec4fArray rotates;
-#endif
     if (_rotates.count > 0)
     {
       rotates = _rotates.Resample(t);
@@ -225,12 +200,7 @@ void HdArnoldInstancer::CalculateInstanceMatrices(const SdfPath &prototypeId,
       if (rotates.size() > static_cast<size_t>(instanceIndex))
       {
         GfMatrix4d m(1.0);
-#if WABI_VERSION >= 2008
         m.SetRotate(GfRotation{rotates[instanceIndex]});
-#else
-        const auto quat = rotates[instanceIndex];
-        m.SetRotate(GfRotation(GfQuaternion(quat[0], GfVec3f(quat[1], quat[2], quat[3]))));
-#endif
         matrix = m * matrix;
       }
       if (scales.size() > static_cast<size_t>(instanceIndex))

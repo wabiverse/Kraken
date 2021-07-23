@@ -151,7 +151,10 @@ elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
   option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
 endif()
 
+get_pixar_version()
 get_kraken_version()
+
+add_definitions(-DWABI_VERSION_DECIMAL=${WABI_VERSION_DECIMAL})
 
 set(TARGETDIR_VER ${KRAKEN_VERSION})
 

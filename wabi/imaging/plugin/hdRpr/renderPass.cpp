@@ -37,14 +37,12 @@ HdRprRenderPass::~HdRprRenderPass()
 
 static GfVec2i GetViewportSize(HdRenderPassStateSharedPtr const &renderPassState)
 {
-#if WABI_VERSION >= 2102
   // XXX (RPR): there is no way to efficiently handle thew new camera framing API with RPR
   const CameraUtilFraming &framing = renderPassState->GetFraming();
   if (framing.IsValid())
   {
     return framing.dataWindow.GetSize();
   }
-#endif
 
   // For applications that use the old viewport API instead of
   // the new camera framing API.
