@@ -761,7 +761,7 @@ function(get_pixar_version)
   endif()
 
   if(NOT ${_out_version_patch} MATCHES "[0-9]+")
-    message(FATAL_ERROR "Version parsing failed for KRAKEN_VERSION_PATCH")
+    message(FATAL_ERROR "Version parsing failed for WABI_VERSION_PATCH")
   endif()
 
   if(${_out_version_major} MATCHES "0")
@@ -776,9 +776,9 @@ function(get_pixar_version)
   else()
     set(WABI_VERSION_DECIMAL "${_out_version_major}.${_out_version_minor}.${_out_version_patch}" PARENT_SCOPE)
   endif()
-  set(KRAKEN_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
-  set(KRAKEN_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
-  set(KRAKEN_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+  set(WABI_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
+  set(WABI_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+  set(WABI_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
 
 endfunction()
 
