@@ -1,0 +1,74 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "lightBlue",
+          "properties": {
+            "prefix": "",
+            "text": ""
+          },
+          "style": "plain",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "cyan",
+          "properties": {
+            "host_color": "green",
+            "prefix": "\n",
+            "user_color": "cyan",
+            "user_info_separator": "<darkGray>@</>"
+          },
+          "style": "plain",
+          "type": "session"
+        },
+        {
+          "foreground": "lightYellow",
+          "properties": {
+            "prefix": "<darkGray>in </>",
+            "style": "full"
+          },
+          "style": "plain",
+          "type": "path"
+        },
+        {
+          "foreground": "magenta",
+          "properties": {
+            "prefix": "<darkGray>on</> <blue></> <green>git</><cyan>:</>"
+          },
+          "type": "git",
+          "style": "powerline"
+        },
+        {
+          "foreground": "darkGray",
+          "properties": {
+            "postfix": "]",
+            "prefix": "["
+          },
+          "style": "plain",
+          "type": "time"
+        },
+        {
+          "foreground": "lightRed",
+          "properties": {
+            "postfix": " ",
+            "prefix": " ",
+            "text": "$"
+          },
+          "style": "plain",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ]
+}
+      

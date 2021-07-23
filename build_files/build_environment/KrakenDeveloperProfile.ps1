@@ -66,7 +66,7 @@ function RunDevelopmentDebugKraken {
   }
 }
 
-function ReloadProm {
+function ReloadDeveloperProfile {
   . $PROFILE
 }
 
@@ -74,7 +74,7 @@ function DeleteConsoleLogs {
   clear
 }
 
-function Kraken-PythonRelease {
+function KrakenPythonRelease {
   if($IsWindows) {
     & "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
   }
@@ -86,7 +86,7 @@ function Kraken-PythonRelease {
   }
 }
 
-function Kraken-PythonDebug {
+function KrakenPythonDebug {
   if($IsWindows) {
     & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
   }
@@ -98,7 +98,7 @@ function Kraken-PythonDebug {
   }
 }
 
-function connectkraken {
+function ConnectKraken {
   if($IsWindows) {
     ssh -i $env:USERPROFILE\.ssh\lightsail_ssh.pub bitnami@3.231.135.196
   }
@@ -140,7 +140,7 @@ function ShowBanner {
 }
 
 if($IsWindows) {
-  Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\KrakenDeveloperTheme.omp.json"
+  Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\krakentheme.omp.json"
 }
 if($IsMacOS) {
   Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
@@ -153,9 +153,9 @@ Set-Alias makechaos RunOfficialReleaseKraken
 Set-Alias krakenRunRel RunDevelopmentReleaseKraken
 Set-Alias krakenRunDeb RunDevelopmentDebugKraken
 Set-Alias xx DeleteConsoleLogs
-Set-Alias python Kraken-PythonRelease
-Set-Alias python_d Kraken-PythonDebug
-Set-Alias wabiserver connectkraken
-Set-Alias rr ReloadProm
+Set-Alias python KrakenPythonRelease
+Set-Alias python_d KrakenPythonDebug
+Set-Alias wabiserver ConnectKraken
+Set-Alias rr ReloadDeveloperProfile
 
 ShowBanner
