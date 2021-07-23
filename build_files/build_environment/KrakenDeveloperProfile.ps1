@@ -1,4 +1,8 @@
+if($IsWindows) {
 #Requires -RunAsAdministrator
+}
+
+
 
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
@@ -9,16 +13,57 @@ $SHOW_KRAKEN_HUD = 1
 
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
 
+
+
+Set-Alias g git
+Import-Module -Name Terminal-Icons
+Import-Module PSWriteColor
+Import-Module oh-my-posh
+Import-Module posh-git
+
+if($IsWindows) {
+  $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+  if (Test-Path($ChocolateyProfile)) {
+    Import-Module "$ChocolateyProfile"
+  }
+}
+
+
+
 function RunOfficialReleaseKraken {
-  & "$env:ProgramFiles\Wabi Animation\Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR\kraken.exe" $args
+  if($IsWindows) {
+    & "$env:ProgramFiles\Wabi Animation\Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR\kraken.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
 }
 
 function RunDevelopmentReleaseKraken {
-  & "$env:USERPROFILE\dev\build_KRAKEN_Release\bin\Release\kraken.exe" $args
+  if($IsWindows) {
+    & "$env:USERPROFILE\dev\build_KRAKEN_Release\bin\Release\kraken.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
 }
 
 function RunDevelopmentDebugKraken {
-  & "$env:USERPROFILE\dev\build_KRAKEN_Debug\bin\Debug\kraken.exe" $args
+  if($IsWindows) {
+    & "$env:USERPROFILE\dev\build_KRAKEN_Debug\bin\Debug\kraken.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
 }
 
 function ReloadProm {
@@ -30,19 +75,39 @@ function DeleteConsoleLogs {
 }
 
 function Kraken-PythonRelease {
-  & "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
+  if($IsWindows) {
+    & "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
+  }
 }
 
 function Kraken-PythonDebug {
-  & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
+  if($IsWindows) {
+    & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
+  }
 }
 
-function Beanstalk {
-    & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/Scripts/eb.exe" $args
-  }
-
 function connectkraken {
-  ssh -i $env:USERPROFILE\.ssh\lightsail_ssh.pub bitnami@3.231.135.196
+  if($IsWindows) {
+    ssh -i $env:USERPROFILE\.ssh\lightsail_ssh.pub bitnami@3.231.135.196
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
+  }
 }
 
 function ShowPrettyGitRevision {
@@ -74,18 +139,15 @@ function ShowBanner {
   }
 }
 
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
+if($IsWindows) {
+  Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\KrakenDeveloperTheme.omp.json"
 }
-
-Set-Alias g git
-
-Import-Module -Name Terminal-Icons
-Import-Module PSWriteColor
-Import-Module oh-my-posh
-Import-Module posh-git
-Set-PoshPrompt -Theme ~/.furby.omp.json
+if($IsMacOS) {
+  Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+}
+if($IsLinux) {
+  Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red  
+}
 
 Set-Alias makechaos RunOfficialReleaseKraken
 Set-Alias krakenRunRel RunDevelopmentReleaseKraken
@@ -94,7 +156,6 @@ Set-Alias xx DeleteConsoleLogs
 Set-Alias python Kraken-PythonRelease
 Set-Alias python_d Kraken-PythonDebug
 Set-Alias wabiserver connectkraken
-Set-Alias aws Beanstalk
 Set-Alias rr ReloadProm
 
 ShowBanner
