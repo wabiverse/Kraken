@@ -4,6 +4,12 @@ import multiprocessing
 import os
 import sys
 import subprocess
+import io
+import difflib
+import fnmatch
+import signal
+
+from functools import partial
 
 CLANG_FORMAT_CMD = "clang-format"
 VERSION_MIN = (6, 0, 0)
@@ -33,16 +39,45 @@ def compute_paths(paths):
     # Optionally pass in files to operate on.
     if not paths:
         paths = (
-            "wabi/base",
-            "wabi/imaging",
-            "wabi/usd",
-            "wabi/usdImaging",
+            "wabi",
             "source",
         )
 
     if os.sep != "/":
         paths = [f.replace("/", os.sep) for f in paths]
     return paths
+
+
+def list_files(files, recursive=False, extensions=None, exclude=None):
+    if extensions is None:
+        extensions = []
+    if exclude is None:
+        exclude = []
+
+    out = []
+    for file in files:
+        if recursive and os.path.isdir(file):
+            for dirpath, dnames, fnames in os.walk(file):
+                fpaths = [os.path.join(dirpath, fname) for fname in fnames]
+                for pattern in exclude:
+                    # os.walk() supports trimming down the dnames list
+                    # by modifying it in-place,
+                    # to avoid unnecessary directory listings.
+                    dnames[:] = [
+                        x for x in dnames
+                        if
+                        not fnmatch.fnmatch(os.path.join(dirpath, x), pattern)
+                    ]
+                    fpaths = [
+                        x for x in fpaths if not fnmatch.fnmatch(x, pattern)
+                    ]
+                for f in fpaths:
+                    ext = os.path.splitext(f)[1][1:]
+                    if ext in extensions:
+                        out.append(f)
+        else:
+            out.append(file)
+    return out
 
 
 def source_files_from_git(paths):
@@ -86,27 +121,112 @@ def clang_format_version():
     return version
 
 
-def clang_format_file(files):
-    cmd = ["clang-format", "-i", "-verbose"] + files
-    return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+def clang_format_file(file):
+    try:
+        with io.open(file, 'r', encoding='utf-8') as f:
+            original = f.readlines()
+    except IOError as exc:
+        print("Cannot open {}".format(file))
+        return [], ""
+        # raise DiffError(str(exc))
+    cmd = ["clang-format", "-i", file]
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            encoding='utf-8')
+    except OSError as exc:
+        print("Error")
+    proc_stdout = proc.stdout
+    proc_stderr = proc.stderr
+    outs = list(proc_stdout.readlines())
+    errs = list(proc_stderr.readlines())
+    proc.wait()
+    if proc.returncode:
+        return "Nonzero exit status"
+    return [], errs
+    # return make_diff(file, original, outs), errs
+    # return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+
+def make_diff(file, original, reformatted):
+    return list(
+        difflib.unified_diff(
+            original,
+            reformatted,
+            fromfile='{}\t(original)'.format(file),
+            tofile='{}\t(reformatted)'.format(file),
+            n=3))
+
+def bold_red(s):
+    return '\x1b[1m\x1b[31m' + s + '\x1b[0m'
 
 
-def clang_print_output(output):
-    print(output.decode('utf8', errors='ignore').strip())
+def colorize(diff_lines):
+    def bold(s):
+        return '\x1b[1m' + s + '\x1b[0m'
 
+    def cyan(s):
+        return '\x1b[36m' + s + '\x1b[0m'
+
+    def green(s):
+        return '\x1b[32m' + s + '\x1b[0m'
+
+    def red(s):
+        return '\x1b[31m' + s + '\x1b[0m'
+
+    for line in diff_lines:
+        if line[:4] in ['--- ', '+++ ']:
+            yield bold(line)
+        elif line.startswith('@@ '):
+            yield cyan(line)
+        elif line.startswith('+'):
+            yield green(line)
+        elif line.startswith('-'):
+            yield red(line)
+        else:
+            yield line
+
+def print_diff(diff_lines, use_color):
+    if use_color:
+        diff_lines = colorize(diff_lines)
+    sys.stdout.writelines(diff_lines)
 
 def clang_format(files):
-    pool = multiprocessing.Pool()
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    try:
+        signal.SIGPIPE
+    except AttributeError:
+        # compatibility, SIGPIPE does not exist on Windows
+        pass
+    else:
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+    colored_stdout = True
+    colored_stderr = True
 
     # Process in chunks to reduce overhead of starting processes.
-    cpu_count = multiprocessing.cpu_count()
-    chunk_size = min(max(len(files) // cpu_count // 2, 1), 32)
-    for i in range(0, len(files), chunk_size):
-        files_chunk = files[i:i+chunk_size];
-        pool.apply_async(clang_format_file, args=[files_chunk], callback=clang_print_output)
-
+    cpu_count = multiprocessing.cpu_count() + 1
+    njobs = min(len(files), cpu_count)
+    pool = multiprocessing.Pool(njobs)
+    it = pool.imap_unordered(partial(clang_format_file), files)
     pool.close()
-    pool.join()
+    while True:
+        try:
+            outs, errs = next(it)
+        except StopIteration:
+            break
+        except:
+            break
+        else:
+            sys.stderr.writelines(errs)
+            if outs == []:
+                continue
+            print_diff(outs, use_color=colored_stdout)
+
+    if pool:
+        pool.join()
 
 def argparse_create():
     import argparse

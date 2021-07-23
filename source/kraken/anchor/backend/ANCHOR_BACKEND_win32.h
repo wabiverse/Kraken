@@ -58,7 +58,11 @@ enum eAnchorMouseCaptureEventWin32
 };
 
 typedef UINT(WINAPI *AnchorGetDpiForWindowCallback)(HWND);
-typedef BOOL(WINAPI *AnchorAdjustWindowRectExForDpiCallback)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
+typedef BOOL(WINAPI *AnchorAdjustWindowRectExForDpiCallback)(LPRECT lpRect,
+                                                             DWORD dwStyle,
+                                                             BOOL bMenu,
+                                                             DWORD dwExStyle,
+                                                             UINT dpi);
 
 struct AnchorBackendWin32PointerInfo
 {
@@ -121,7 +125,11 @@ class AnchorSystemWin32 : public AnchorSystem
    * @param wParam: The wParam from the wndproc.
    * @param lParam: The lParam from the wndproc.
    * @param eventhandled: True if the method handled the event. */
-  static void processPointerEvent(UINT type, AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventhandled);
+  static void processPointerEvent(UINT type,
+                                  AnchorWindowWin32 *window,
+                                  WPARAM wParam,
+                                  LPARAM lParam,
+                                  bool &eventhandled);
 
   /**
    * Creates tablet events from pointer events.
@@ -328,25 +336,21 @@ class AnchorDisplayManagerWin32 : public AnchorDisplayManager
    * @param index: The setting index to be returned.
    * @param setting: The setting of the display device with this index.
    * @return Indication of success. */
-  eAnchorStatus getDisplaySetting(AnchorU8 display,
-                                  AnchorS32 index,
-                                  ANCHOR_DisplaySetting &setting) const;
+  eAnchorStatus getDisplaySetting(AnchorU8 display, AnchorS32 index, ANCHOR_DisplaySetting &setting) const;
 
   /**
    * Returns the current setting for this display device.
    * @param display: The index of the display to query with 0 <= display < getNumDisplays().
    * @param setting: The current setting of the display device with this index.
    * @return Indication of success. */
-  eAnchorStatus getCurrentDisplaySetting(AnchorU8 display,
-                                         ANCHOR_DisplaySetting &setting) const;
+  eAnchorStatus getCurrentDisplaySetting(AnchorU8 display, ANCHOR_DisplaySetting &setting) const;
 
   /**
    * Changes the current setting for this display device.
    * @param display: The index of the display to query with 0 <= display < getNumDisplays().
    * @param setting: The current setting of the display device with this index.
    * @return Indication of success. */
-  eAnchorStatus setCurrentDisplaySetting(AnchorU8 display,
-                                         const ANCHOR_DisplaySetting &setting);
+  eAnchorStatus setCurrentDisplaySetting(AnchorU8 display, const ANCHOR_DisplaySetting &setting);
 };
 
 struct D3D12FrameContext
@@ -366,15 +370,15 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   int m_nPressedButtons;
   bool m_hasMouseCaptured;
 
-  /** 
+  /**
    * Most recent tablet data. */
   AnchorTabletData m_lastPointerTabletData;
 
-  /** 
+  /**
    * HCURSOR structure of the custom cursor. */
   HCURSOR m_customCursor;
 
-  /** 
+  /**
    * Request Vulkan with alpha channel. */
   bool m_wantAlphaBackground;
 
@@ -450,9 +454,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
 
   ~AnchorWindowWin32();
 
-  void adjustWindowRectForClosestMonitor(LPRECT win_rect,
-                                         DWORD dwStyle,
-                                         DWORD dwExStyle);
+  void adjustWindowRectForClosestMonitor(LPRECT win_rect, DWORD dwStyle, DWORD dwExStyle);
 
   void setTitle(const char *title);
   std::string getTitle() const;
@@ -546,15 +548,9 @@ class AnchorWindowWin32 : public AnchorSystemWindow
    * @return A boolean success indicator. */
   eAnchorStatus swapBuffers();
 
-  void screenToClient(AnchorS32 inX,
-                      AnchorS32 inY,
-                      AnchorS32 &outX,
-                      AnchorS32 &outY) const;
+  void screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const;
 
-  void clientToScreen(AnchorS32 inX,
-                      AnchorS32 inY,
-                      AnchorS32 &outX,
-                      AnchorS32 &outY) const;
+  void clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const;
 
   eAnchorStatus setClientSize(AnchorU32 width, AnchorU32 height);
 
@@ -613,11 +609,11 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   AnchorU16 getDPIHint();
 
  public:
-  /** 
+  /**
    * True if the window currently resizing. */
   bool m_inLiveResize;
 
-  /** 
+  /**
    * True if the mouse is either over or captured by the window. */
   bool m_mousePresent;
 };
@@ -631,7 +627,7 @@ class VulkanSwapchain
 };
 
 
-#elif
+#else
 
 /* This file is ignored on all platforms outside Windows. */
 

@@ -10,7 +10,9 @@
 #                       parameter_two,
 #                       parameter_three);
 #
-AlignAfterOpenBracket: 'Align'
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignEscapedNewlines: DontAlign
 
 # Disallow short functions on one line; break them up.
 AllowShortBlocksOnASingleLine: false
@@ -35,7 +37,14 @@ BinPackArguments: false
 BinPackParameters: false
 
 # Line width (don't exceed 110).
-ColumnLimit: 0
+# We still want to wrap at 109, so to leverage this,
+# we format once at ColumnLimit then leave it default
+# off...
+
+# Swap these out before formatting large swaths of code.
+# Then swap them back and format everything again.
+ColumnLimit: 109
+#ColumnLimit: 0
 
 # Setup preferred inheritance list to break before the colon and after the
 # commas
@@ -64,28 +73,36 @@ ConstructorInitializerIndentWidth: 2
 
 # Make access modifier slightly more visible.
 AccessModifierOffset: -1
+EmptyLineBeforeAccessModifier: Always
 
 # This will unfortunately use spaces in some cases where it's not desired (like
 # function calls) but the overall result is better since it will allow
 # alignment to work properly with different tab width settings.
 ContinuationIndentWidth: 2
 
-# This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
-BraceWrapping: {
-    AfterClass: 'true'
-    AfterControlStatement: 'true'
-    AfterEnum : 'true'
-    AfterFunction : 'true'
-    AfterNamespace : 'true'
-    AfterStruct : 'true'
-    AfterUnion : 'true'
-    BeforeCatch : 'true'
-    BeforeElse : 'true'
-    IndentBraces : 'false'
-    SplitEmptyFunction : 'false'
-    AfterObjCDeclaration: 'true'
-}
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterExternBlock: false
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: false
+  BeforeWhile: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+  AfterObjCDeclaration: true
+
+# Always indent within all namespaces.
+NamespaceIndentation: All
 
 # For switch statements, indent the cases.
 IndentCaseLabels: true
@@ -95,6 +112,7 @@ IndentPPDirectives: AfterHash
 
 BreakBeforeTernaryOperators: false
 
+AlwaysBreakTemplateDeclarations: Yes
 SpaceAfterTemplateKeyword: false
 
 # Handy comment at the end of each C++ name space.
@@ -120,6 +138,8 @@ UseTab: Never
 TabWidth: 2
 IndentWidth: 2
 
+AlwaysBreakAfterReturnType: None
+
 # Add a big penalty on breaking after the return type of functions. For example,
 #
 #   static void foo(...)
@@ -129,7 +149,7 @@ IndentWidth: 2
 #   static void
 #   foo(very long content here that maybe could be stacked)
 #
-PenaltyReturnTypeOnItsOwnLine: 10000
+PenaltyReturnTypeOnItsOwnLine: 1000000
 
 # Avoid having function calls broken onto a new line:
 #
@@ -146,9 +166,6 @@ PenaltyBreakAssignment: 110
 AllowShortFunctionsOnASingleLine: None
 
 SortIncludes: false
-
-# Don't right align escaped newlines to the right because we have a wide default
-AlignEscapedNewlines: DontAlign
 
 # Always break:
 #
